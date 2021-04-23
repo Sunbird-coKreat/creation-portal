@@ -479,7 +479,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   getcontentAggregationData() {
     return this.collectionHierarchyService.getContentAggregation(this.programId).pipe(
       tap((response: any) => {
-        if (response && response.result && response.result.content) {
+        if (response && response.result && (response.result.content || response.result.QuestionSet)) {
           this.contentAggregationData = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
       }),

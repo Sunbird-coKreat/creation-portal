@@ -1040,38 +1040,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   attachContentToTextbook (action) {
-    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
-    if (hierarchyObj) {
-      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
-      let channel =  rootOriginInfo && rootOriginInfo.channel;
-      if (_.isUndefined(channel)) {
-        const originInfo = _.get(_.get(hierarchyObj, this.unitIdentifier), 'originData');
-        channel = originInfo && originInfo.channel;
-      }
-      const originData = {
-        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
-        unitOriginId: _.get(_.get(hierarchyObj, this.unitIdentifier), 'origin'),
-        channel: channel
-      };
-      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
-        if (action === 'accept') {
-          action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
-          // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.contentMetaData);
-        } else if (action === 'reject' && this.FormControl.value.rejectComment.length) {
-          // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.contentMetaData.identifier, originData, this.contentMetaData, this.FormControl.value.rejectComment);
-        }
-      } else {
-        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-        console.error('origin data missing');
-      }
-    } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
-      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-      console.error('origin data missing');
-    }
+    this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, this.FormControl.value.rejectComment, this.isMetadataOverridden);
   }
 
   ngOnDestroy() {

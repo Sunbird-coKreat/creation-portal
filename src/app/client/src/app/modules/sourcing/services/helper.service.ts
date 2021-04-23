@@ -265,6 +265,15 @@ export class HelperService {
             }
           }
         };
+        
+        let createRes;
+        if (_.get(contentMetaData, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
+          reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
+          reqOption.data.request['questionset'] = {};
+          reqOption.data.request['questionset'] = reqOption.data.request.content;
+          delete reqOption.data.request.content;
+        } 
+
         this.learnerService.post(reqOption).subscribe((res: any) => {
           if (res && res.result) {
             const me = this;
@@ -721,5 +730,40 @@ export class HelperService {
     return this.publicDataService.get(req).pipe(map((response: ServerResponse) => {
         return response;
     }));
+  }
+
+  manageSourcingActions (action, sessionContext, unitIdentifier, contentData, rejectComment = '', isMetadataOverridden =  false) {
+    const hierarchyObj  = _.get(sessionContext.hierarchyObj, 'hierarchy');
+    if (hierarchyObj) {
+      const rootOriginInfo = _.get(_.get(hierarchyObj, sessionContext.collection), 'originData');
+      let channel =  rootOriginInfo && rootOriginInfo.channel;
+      if (_.isUndefined(channel)) {
+        const originInfo = _.get(_.get(hierarchyObj, unitIdentifier), 'originData');
+        channel = originInfo && originInfo.channel;
+      }
+      const originData = {
+        textbookOriginId: _.get(_.get(hierarchyObj, sessionContext.collection), 'origin'),
+        unitOriginId: _.get(_.get(hierarchyObj, unitIdentifier), 'origin'),
+        channel: channel
+      };
+      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+        if (action === 'accept') {
+          action = isMetadataOverridden ? 'acceptWithChanges' : 'accept';
+          // tslint:disable-next-line:max-line-length
+          this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData);
+        } else if (action === 'reject' && rejectComment.length) {
+          // tslint:disable-next-line:max-line-length
+          this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData, rejectComment);
+        }
+      } else {
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+        console.error('origin data missing');
+      }
+    } else {
+      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
+      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+      console.error('origin data missing');
+    }
   }
 }
