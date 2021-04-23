@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, FrameworkService, ProgramsService, ContentService } from '@sunbird/core';
 import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
@@ -31,6 +31,8 @@ export class QuestionSetEditorComponent implements OnInit {
   public collectionDetails: any;
   public showQuestionEditor = false;
   public sessionContext: any;
+  public programContext: any;
+  public unitIdentifier: string;
   public telemetryPageId: string;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
@@ -39,7 +41,7 @@ export class QuestionSetEditorComponent implements OnInit {
     private contentService: ContentService, public toasterService: ToasterService,
     private resourceService: ResourceService, private programStageService: ProgramStageService,
     private helperService: HelperService, private collectionHierarchyService: CollectionHierarchyService,
-    private sourcingService: SourcingService,
+    private sourcingService: SourcingService, public router: Router
     ) {
       const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
       const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
@@ -52,11 +54,12 @@ export class QuestionSetEditorComponent implements OnInit {
     this.questionSetEditorInput = this.questionSetEditorComponentInput;
     this.sessionContext  = _.get(this.questionSetEditorInput, 'sessionContext');
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
+    this.programContext = _.get(this.questionSetEditorInput, 'programContext');
+    this.unitIdentifier  = _.get(this.questionSetEditorInput, 'unitIdentifier');
 
     // this.telemetryPageId = _.get(this.questionSetEditorInput, 'telemetryPageDetails.telemetryPageId');
     // this.templateDetails  = _.get(this.questionSetEditorInput, 'templateDetails');
-    // this.unitIdentifier  = _.get(this.questionSetEditorInput, 'unitIdentifier');
-    // this.programContext = _.get(this.questionSetEditorInput, 'programContext');
+    // 
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorInput, 'contentId'),
     };
@@ -131,7 +134,10 @@ export class QuestionSetEditorComponent implements OnInit {
   
 
   getFrameWorkDetails() {
-    this.programsService.getCategoryDefinition(this.collectionDetails.primaryCategory, this.userService.channel, 'QuestionSet')
+    if (this.programContext.rootorg_id) {
+      this.helperService.fetchChannelData(this.programContext.rootorg_id);
+    }
+    this.programsService.getCategoryDefinition(this.collectionDetails.primaryCategory, this.programContext.rootorg_id, 'QuestionSet')
     .subscribe(data => {
       // tslint:disable-next-line:max-line-length
       if (_.get(data, 'result.objectCategoryDefinition.objectMetadata.config')) {
@@ -186,7 +192,6 @@ export class QuestionSetEditorComponent implements OnInit {
     return childrenData;
   }
 
-
   setEditorConfig() {
     // tslint:disable-next-line:max-line-length
     const additionalCategories = _.merge(this.frameworkService['_channelData'].contentAdditionalCategories, this.frameworkService['_channelData'].collectionAdditionalCategories);
@@ -237,19 +242,54 @@ export class QuestionSetEditorComponent implements OnInit {
 
   private getEditorMode() {
     const contentStatus = this.collectionDetails.status.toLowerCase();
-    if (contentStatus === 'draft') {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
+    // If loggedin user is a contentCreator and content status is draft
+    if (submissionDateFlag && this.canSubmit()) {
       return 'edit';
     }
-    if (contentStatus === 'review') {
-      if (this.collectionDetails.sampleContent || this.collectionDetails.createdBy === this.userProfile.id) {
-        return 'read';
-      } else {
-        return 'review';
-      }
+    
+    if (submissionDateFlag && this.canReviewContent()) {
+      return 'review';
     }
-    if (contentStatus === 'live') {
+      
+    if (this.canSourcingReviewerPerformActions()) {
       return 'sourcingReview';
     }
+
+    return 'read';
+  }
+
+  canSourcingReviewerPerformActions() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+    const sourcingReviewStatus = _.get(this.questionSetEditorInput, 'sourcingStatus') || '';
+    const originCollectionData = _.get(this.questionSetEditorInput, 'originCollectionData');
+    const selectedOriginUnitStatus = _.get(this.questionSetEditorInput, 'content.originUnitStatus');
+
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/sourcing')
+    && !this.collectionDetails.sampleContent === true && resourceStatus === 'live'
+    && this.userService.userid !== this.collectionDetails.createdBy
+    && resourceStatus === 'live' && !sourcingReviewStatus &&
+    (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
+    && this.programsService.isProjectLive(this.programContext));
+  }
+
+  canReviewContent() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.collectionDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && resourceStatus === 'review' && this.userService.userid !== this.collectionDetails.createdBy);
+  }
+
+  canSubmit() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && resourceStatus === 'draft' && this.userService.userid === this.collectionDetails.createdBy);
+  }
+
+  hasAccessFor(roles: Array<string>) {
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
   }
 
   editorEventListener(event) {
@@ -264,15 +304,17 @@ export class QuestionSetEditorComponent implements OnInit {
        this.programStageService.removeLastStage();
       }
       break;
-    case "sendForCorrections" : 
+    case "sendForCorrections": 
       this.toasterService.success("This action is not enabled on the system yet");
       this.programStageService.removeLastStage();
       break;
-    case "sourcingApprove" : 
-        this.toasterService.success("This action is not enabled on the system yet");
-        this.programStageService.removeLastStage();
-        break;
-    case "saveCollection" : // saving as draft
+    case "sourcingApprove":
+      this.helperService.manageSourcingActions('accept', this.sessionContext, this.unitIdentifier, this.collectionDetails);
+      break;
+    case "sourcingReject": 
+      this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
+      break;
+    case "saveCollection": // saving as draft
     default: this.programStageService.removeLastStage();
       break;
    }
