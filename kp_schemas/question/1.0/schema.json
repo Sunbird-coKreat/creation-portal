@@ -534,6 +534,9 @@
     },
     "requestChanges": {
       "type": "string"
+    },
+    "variants": {
+      "type": "object"
     }
   }
 }
