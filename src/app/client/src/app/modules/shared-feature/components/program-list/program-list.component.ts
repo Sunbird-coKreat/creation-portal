@@ -342,8 +342,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.programs = _.get(myProgramsResponse, 'result.programs');
         this.count = this.programs.length;
         this.tempSortPrograms = this.programs;
+        this.logTelemetryImpressionEvent();
         this.showLoader = false;
       }, error => {
+        this.logTelemetryImpressionEvent();
         this.showLoader = false;
         const errInfo = {
           errorMsg: this.resourceService.messages.emsg.projects.m0001,
