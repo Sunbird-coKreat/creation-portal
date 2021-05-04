@@ -137,7 +137,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     this.telemetryInteractObject = {};
-    this.programContentTypes = _.join(this.programContext.content_types, ', ');
+    this.programContentTypes = (!_.isEmpty(this.programContext.targetprimarycategories)) ? _.join(_.map(this.programContext.targetprimarycategories, 'name'), ', ') : _.join(this.programContext.content_types, ', ');
     this.setActiveDate();
 
     // To avoid nomination list api call if nominationDetails already available
