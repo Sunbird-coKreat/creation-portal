@@ -139,7 +139,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryInteractObject = {};
     this.programContentTypes = (!_.isEmpty(this.programContext.targetprimarycategories)) ? _.join(_.map(this.programContext.targetprimarycategories, 'name'), ', ') : _.join(this.programContext.content_types, ', ');
     this.setActiveDate();
-
     // To avoid nomination list api call if nominationDetails already available
     this.afterNominationCheck(this.sessionContext.nominationDetails);
   }
