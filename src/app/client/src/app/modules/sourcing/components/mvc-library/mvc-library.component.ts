@@ -182,8 +182,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     this.filterData['medium'] = this.collectionData.medium;
     this.filterData['subject'] = this.collectionData.subject;
     this.filterData['gradeLevel'] = this.plusMinusGradeLevel(this.collectionData.gradeLevel);
-    this.filterData['contentType'] =  this.programDetails.targetprimarycategories ?
-    _.map(this.programDetails.targetprimarycategories, 'name') : this.programDetails.content_types;
+    this.filterData['contentType'] = this.programDetails.content_types;
     if (_.isEmpty(this.activeFilterData)) { this.activeFilterData = _.cloneDeep(this.filterData); }
     const textbookLevel = this.getNameAndConceptOfSelectedUnit(this.collectionHierarchy, this.collectionUnitId);
     this.activeFilterData = _.assign(this.activeFilterData, ...textbookLevel);
