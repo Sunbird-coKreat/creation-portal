@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService } from '@sunbird/core';
+import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService, LearnerService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService, 
   ServerResponse } from '@sunbird/shared';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
@@ -45,7 +45,8 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private userService: UserService, private programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public publicDataService: PublicDataService, private helperService: HelperService,
-    private actionService: ActionService, public programTelemetryService: ProgramTelemetryService, public configService: ConfigService) { }
+    private actionService: ActionService, public programTelemetryService: ProgramTelemetryService, public configService: ConfigService,
+    public learnerService: LearnerService) { }
 
   ngOnInit() {
     this.checkBulkApproveHistory();
@@ -127,40 +128,81 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   sendContentForBulkApproval() {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
-    const contents = _.compact(_.map(this.approvalPending, contnet => {
-      if (contnet.originUnitId) {
-        const reqFormat = {
-          source: `${baseUrl}/api/content/v1/read/${contnet.identifier}`,
-          metadata: {..._.pick(this.storedCollectionData, ['framework']),
-                       ..._.pick(_.get(this.storedCollectionData, 'originData'), ['channel']),
-                        ..._.pick(contnet, ['name', 'code', 'mimeType', 'contentType']),
-                          ...{lastPublishedBy: this.userService.userProfile.userId}},
-          collection: [
-            {
-              identifier: this.storedCollectionData.origin,
-              unitId: contnet.originUnitId
-            }
-          ]
-        };
-        return reqFormat;
+    const contents = [];
+    const questionSets = [];
+    const temp = _.compact(_.map(this.approvalPending, item => {
+      if (item.originUnitId) {
+        const reqFormat = {};
+        reqFormat['metadata'] = {..._.pick(this.storedCollectionData, ['framework']),
+                        ..._.pick(_.get(this.storedCollectionData, 'originData'), ['channel']),
+                          ..._.pick(item, ['name', 'code', 'mimeType', 'contentType']),
+                            ...{lastPublishedBy: this.userService.userProfile.userId}},
+        reqFormat['collection'] =  [
+          {
+            identifier: this.storedCollectionData.origin,
+            unitId: item.originUnitId
+          }
+        ]
+          
+        if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
+          reqFormat['source'] = `${baseUrl}/api/questionset/v1/read/${item.identifier}`;
+          questionSets.push(reqFormat);
+        } 
+        else {
+          reqFormat['source'] = `${baseUrl}/api/content/v1/read/${item.identifier}`;
+          contents.push(reqFormat);
+        }
       }
     }));
     if (contents && contents.length) {
-      const data = {
-        request: {
-          content: [
-            ...contents
-          ]
+      const reqOption = {
+        url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
+        data: {
+          request: {
+            content: [
+              ...contents
+            ]
+          }
         }
       };
-      this.httpClient.post('learner/content/v1/import', data).subscribe((res: any) => {
+
+      this.learnerService.post(reqOption).subscribe((res: any) => {
         if (res && res.result && res.result.processId) {
           this.processId = res.result.processId;
-          this.createBulkApprovalJob();
-          this.updateCollection();
+         
+          if (questionSets && questionSets.length) {
+            reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
+            reqOption.data.request['questionset'] = {};
+            reqOption.data.request['questionset'] = [...questionSets]
+            delete reqOption.data.request.content;
+
+          this.learnerService.post(reqOption).subscribe((res: any) => {
+            this.createBulkApprovalJob();
+            this.updateCollection();
+          });
+        } else {
+            this.createBulkApprovalJob();
+            this.updateCollection();
+          }
         }
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
+      });
+    } else if (questionSets && questionSets.length) {
+      const reqOption = {
+        url: this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1,
+        data: {
+          request: {
+            questionset: [
+              ...questionSets
+            ]
+          }
+        }
+      };
+      this.learnerService.post(reqOption).subscribe((res: any) => {
+        this.processId = res.result.processId;
+        this.createBulkApprovalJob();
+        this.updateCollection();
       });
     } else {
       this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
