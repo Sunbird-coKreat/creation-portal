@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges, ViewEncapsulation } from '@angular/core';
 import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-data-form',
   templateUrl: './data-form.component.html',
-  styleUrls: ['./data-form.component.scss']
+  styleUrls: ['./data-form.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
