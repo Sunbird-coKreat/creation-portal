@@ -1014,6 +1014,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'createdBy': this.userService.userid,
               'primaryCategory': this.templateDetails.name,
               'creator': creator,
+              'author': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
               'unitIdentifiers': [this.unitIdentifier],
