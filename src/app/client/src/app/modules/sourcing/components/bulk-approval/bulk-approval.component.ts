@@ -172,6 +172,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
          
           if (questionSets && questionSets.length) {
             reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
+            reqOption.data.request['processId'] = this.processId;
             reqOption.data.request['questionset'] = {};
             reqOption.data.request['questionset'] = [...questionSets]
             delete reqOption.data.request.content;
