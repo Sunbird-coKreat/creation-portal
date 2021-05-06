@@ -101,8 +101,8 @@ export class BulkUploadComponent implements OnInit {
   getContentTypes() {
     const req = [];
     const appFilesConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-    this.contentTypes =  this.sessionContext.nominationDetails.targetprimarycategories ?
-     _.map(this.sessionContext.nominationDetails.targetprimarycategories, 'name') : this.sessionContext.nominationDetails.content_types;
+    const targetprimarycategories = _.filter(this.sessionContext.nominationDetails.targetprimarycategories, {'targetObjectType': 'Content'});
+    this.contentTypes =  targetprimarycategories ? _.map(targetprimarycategories, 'name') : this.sessionContext.nominationDetails.content_types;
     return new Promise((resolve) => {
       _.forEach(this.contentTypes, (contentType) => {
         this.catFormatMapping[_.toLower(contentType)] = [];
