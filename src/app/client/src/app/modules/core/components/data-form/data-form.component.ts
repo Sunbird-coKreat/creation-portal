@@ -67,7 +67,7 @@ export class DataFormComponent implements OnInit {
   ngOnInit() {
     this.formFieldProperties.forEach(formProperty => {
       if(formProperty.code == 'name') {
-        formProperty.validation = [
+        formProperty.validations = [
           { type: "maxLength", value: "50", message: "Input is Exceeded"},
           {
             type: "required", message: "Name is required"
