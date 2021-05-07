@@ -107,7 +107,7 @@
     "sb_cache_manager": "file:libs/sb_cache_manager",
     "sb_logger_util_v2": "file:libs/sb_logger_util_v2",
     "sb_telemetry_util": "file:libs/sb_telemetry_util",
-    "ua-parser-js": "^0.7.13",
+    "ua-parser-js": "^0.7.24",
     "uuid": "^3.1.0"
   },
   "standard": {
