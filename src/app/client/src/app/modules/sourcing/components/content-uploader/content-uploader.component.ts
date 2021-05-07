@@ -113,6 +113,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentEditRole: string;
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -1096,5 +1097,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   hasRole(role) {
     return this.sessionContext.currentRoles.includes(role);
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
   }
 }

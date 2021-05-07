@@ -10,6 +10,7 @@ import * as _ from 'lodash-es';
 export class DataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
   @Input() categoryMasterList: any;
+  @Output() formStatus = new EventEmitter<any>();
 
   /**
    * formInputData is to take input data's from form
@@ -275,6 +276,7 @@ export class DataFormComponent implements OnInit {
   outputData($event) {
   }
 
-  onStatusChanges($event) {
+  onStatusChanges(event) {
+    this.formStatus.emit(event);
   }
 }
