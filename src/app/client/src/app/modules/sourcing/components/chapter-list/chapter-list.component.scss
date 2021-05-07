@@ -298,3 +298,10 @@
 .max-height-2-5 {
   max-height: 2.5rem;
 }
+.textbook-details{
+  label{
+    &.fs-1{
+      font-weight: 600 !important;
+    }
+  }
+}
