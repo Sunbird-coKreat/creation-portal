@@ -802,18 +802,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.programData['nomination_enddate']) {
       this.programData['nomination_enddate']= null;
+    } else {
+      this.programData['nomination_enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['shortlisting_enddate']) {
       this.programData['shortlisting_enddate'] = null;
+    } else {
+      this.programData['shortlisting_enddate'].setHours(23,59,59);
     }
 
-    if (!this.programData['program_end_date']) {
-      this.programData['program_end_date'] = null;
+    if (!this.programData['enddate']) {
+      this.programData['enddate'] = null;
+    } else {
+      this.programData['enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['content_submission_enddate']) {
       this.programData['content_submission_enddate'] = null;
+    } else {
+      this.programData['content_submission_enddate'].setHours(23,59,59);
     }
 
     if (!this.programConfig['blueprintMap']) {
@@ -883,7 +891,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (_.includes(invalidValues, prgData.shortlisting_enddate)) {
         prgData['shortlisting_enddate'] = null;
-      }
+      } 
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
@@ -897,6 +905,22 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
+
+      if (prgData['nomination_enddate']) {
+        prgData['nomination_enddate'].setHours(23,59,59);
+      }
+
+      if (prgData['shortlisting_enddate']) {
+        prgData['shortlisting_enddate'].setHours(23,59,59);
+      } 
+
+      if (prgData['enddate']) {
+        prgData['enddate'].setHours(23,59,59);
+      }
+
+      if (prgData['content_submission_enddate']) {
+        prgData['content_submission_enddate'].setHours(23,59,59);
+      } 
 
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
