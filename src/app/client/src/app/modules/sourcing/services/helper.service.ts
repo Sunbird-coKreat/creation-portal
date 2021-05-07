@@ -565,7 +565,8 @@ export class HelperService {
           categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
         }
         if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
-          formFieldCategory.range = this.getAvailableLicences();
+          const licenseRange = this.getAvailableLicences()
+          formFieldCategory.range = _.map(licenseRange, 'name');
         }
       });
     });
