@@ -19,6 +19,7 @@ import { AuthGuard } from './guard/auth-gard.service';
 import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { CommonFormElementsModule } from 'common-form-elements';
 @NgModule({
   imports: [
     CommonModule,
@@ -31,7 +32,8 @@ import { TelemetryModule } from '@sunbird/telemetry';
     ReactiveFormsModule,
     WebExtensionModule,
     TelemetryModule,
-    AvatarModule
+    AvatarModule,
+    CommonFormElementsModule
   ],
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
     BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
