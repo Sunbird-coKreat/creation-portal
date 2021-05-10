@@ -6,8 +6,8 @@ import { PublicDataService, UserService, ActionService, PlayerService, Framework
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
-import { throwError, Observable, Subject } from 'rxjs';
+import { catchError, map, filter, take, takeUntil, switchMap } from 'rxjs/operators';
+import { throwError, Observable, Subject, of } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -794,7 +794,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
+
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.contentMetaData.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.contentMetaData.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    // this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   changePolicyCheckValue (event) {

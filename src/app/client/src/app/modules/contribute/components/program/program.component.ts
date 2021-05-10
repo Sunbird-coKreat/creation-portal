@@ -714,6 +714,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
+    this.sessionContext.targetCollectionMimetype = _.get(collection, 'mimeType');
+    this.sessionContext.targetCollectionObjectType = _.get(collection, 'objectType');
     this.sessionContext.telemetryPageDetails = {
       telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
       telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')

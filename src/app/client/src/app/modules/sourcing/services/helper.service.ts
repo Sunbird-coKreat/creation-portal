@@ -47,8 +47,36 @@ export class HelperService {
     });
   }
 
+  getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta) {
+    // tslint:disable-next-line:max-line-length
+    const categoryDefinition$ = this.programsService.getCollectionCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId)
+      .pipe(
+        switchMap((response: any) => {
+          const targetCollectionFormData = _.get(response, 'result.objectCategoryDefinition.forms.childMetadata.properties');
+          if (!targetCollectionFormData) {
+            // tslint:disable-next-line:max-line-length
+            const contentCategoryDefinition$ = this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType);
+            return contentCategoryDefinition$.pipe(
+              map(data => _.get(data, 'result.objectCategoryDefinition.forms.update.properties')));
+            // return of(this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType));
+          }
+          return of(targetCollectionFormData);
+        })
+      );
+
+    categoryDefinition$.subscribe(
+      (response) => {
+        console.log(response);
+        this.selectedCategoryMetaData = response;
+        this._categoryMetaData$.next(response);
+      }
+    );
+
+  }
+
   set selectedCategoryMetaData(data) {
     this._categoryMetaData = data;
+    this._categoryMetaData$.next(data);
   }
 
   get selectedCategoryMetaData() {
@@ -639,7 +667,7 @@ export class HelperService {
   }
 
   getFormConfiguration() {
-    const formFields = _.get(this.selectedCategoryMetaData, 'result.objectCategoryDefinition.forms.update.properties');
+    const formFields = _.cloneDeep(this.selectedCategoryMetaData);
     const contentPolicyCheck = [{
       'code': 'contentPolicyCheck',
       'editable': true,
