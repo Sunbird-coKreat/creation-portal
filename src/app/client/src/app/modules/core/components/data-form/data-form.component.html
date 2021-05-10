@@ -1,5 +1,6 @@
-
-<div class="ui grid sb-form m-0 sb-workspace-modal p-16">
+<sb-dynamic-form [config]="formFieldProperties" (initialize)="outputData($event)"
+(statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-dynamic-form>
+<!-- <div class="ui grid sb-form m-0 sb-workspace-modal p-16">
   <div *ngFor="let field of formFieldProperties;let i = index" class="{{field.renderingHints.semanticColumnWidth || 'twelve'}} wide column">
     <div *ngIf="field.inputType==='text' || field.inputType==='number'" class="sb-field-group py-5" [ngClass]="{ 'disabled':!field.editable}">
       <label>
@@ -48,4 +49,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->

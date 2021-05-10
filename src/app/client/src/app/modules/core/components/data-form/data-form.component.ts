@@ -10,6 +10,7 @@ import * as _ from 'lodash-es';
 export class DataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
   @Input() categoryMasterList: any;
+  @Output() formStatus = new EventEmitter<any>();
 
   /**
    * formInputData is to take input data's from form
@@ -36,6 +37,7 @@ export class DataFormComponent implements OnInit {
         }
       }
       if (field.defaultValue) {
+        field['default'] = field.defaultValue;
         this.formInputData[field.code] = field.defaultValue;
       }
     });
@@ -64,6 +66,22 @@ export class DataFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.formFieldProperties.forEach(formProperty => {
+      if(formProperty.code == 'name') {
+        formProperty.validations = [
+          { type: "maxLength", value: "50", message: "Input is Exceeded"},
+          {
+            type: "required", message: "Name is required"
+          }
+      ];
+      }
+      if(formProperty.code == 'additionalCategories') {
+        formProperty.inputType = 'nestedselect';
+      }
+      if(formProperty.code == 'contentPolicyCheck') {
+        formProperty.dataType = 'boolean';
+      }
+    });
     this.mapParents(this.formFieldProperties, (data) => {
       this.formFieldProperties = data;
       this.setFormConfig();
@@ -240,5 +258,25 @@ export class DataFormComponent implements OnInit {
     } else {
       this.formInputData[code] = false;
     }
+  }
+
+  valueChanges(event) {
+    _.forEach(this.formFieldProperties, (field) => {
+      _.forEach(event, (eventValue, eventKey) => {
+          if (field['code'] == eventKey) {
+            field['defaultValue'] = eventValue;
+            this.formInputData[field.code] = field.defaultValue;
+          }
+      });
+    });
+    // todo : remove this console log later
+    console.log('formInputData', this.formInputData);
+  }
+
+  outputData($event) {
+  }
+
+  onStatusChanges(event) {
+    this.formStatus.emit(event);
   }
 }
