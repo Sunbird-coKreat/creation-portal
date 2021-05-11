@@ -237,8 +237,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, isSample, orgId, userId)
         .subscribe(
           (response) => {
-            if (response && response.result && response.result.content) {
-              const contents = _.get(response.result, 'content');
+            if (response && response.result && (_.get(response.result, 'content') || _.get(response.result, 'QuestionSet'))) {
+              const contents = _.compact(_.concat(_.get(response.result, 'content'), _.get(response.result, 'QuestionSet')));
               let contentStatusCounts: any = {};
               if (this.isNominationOrg()) {
                 // tslint:disable-next-line:max-line-length
