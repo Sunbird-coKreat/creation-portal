@@ -380,8 +380,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   printPreview(): void {
+    this.toasterService.info(this.resourceService.messages.imsg.generatingPreview || 'Generating PDF. Please wait...')
     let identifier = this.collectionData.identifier;
-    this.programsService.generateCollectionPDF(identifier).subscribe((res) => {
+    this.programsService.generateCollectionPDF(identifier).subscribe((res) => {      
       if(res.responseCode === 'OK') {
         this.pdfData = res.result.base64string;
         const byteCharacters = atob(this.pdfData);
