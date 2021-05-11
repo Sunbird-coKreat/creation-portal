@@ -222,43 +222,47 @@ export class HelperService {
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       if (this.checkIfContentPublishedOrRejected(data, action, contentId)) { return; }
       if (action === 'accept' || action === 'acceptWithChanges') {
-        // tslint:disable-next-line:max-line-length
-        const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-        ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+        if (_.get(this._selectedCollectionMetaData, 'printable')) {
+          this.attachContentToTextbook(action, collectionId, contentId, data, rejectedComments);
+        } else {
+          // tslint:disable-next-line:max-line-length
+          const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+          ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
 
-        const reqFormat = {
-          source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
-          metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
-                      ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
-                       ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType']),
-                        ...{'lastPublishedBy': this.userService.userProfile.userId}},
-          collection: [
-            {
-              identifier: originData.textbookOriginId,
-              unitId: originData.unitOriginId,
+          const reqFormat = {
+            source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
+            metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
+                        ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
+                        ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType']),
+                          ...{'lastPublishedBy': this.userService.userProfile.userId}},
+            collection: [
+              {
+                identifier: originData.textbookOriginId,
+                unitId: originData.unitOriginId,
+              }
+            ]
+          };
+          const reqOption = {
+            url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
+            data: {
+              request: {
+                content: [
+                  reqFormat
+                ]
+              }
             }
-          ]
-        };
-        const reqOption = {
-          url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
-          data: {
-            request: {
-              content: [
-                reqFormat
-              ]
+          };
+          this.learnerService.post(reqOption).subscribe((res: any) => {
+            if (res && res.result) {
+              const me = this;
+              setTimeout(() => {
+                me.attachContentToTextbook(action, collectionId, contentId, data);
+              }, 1000);
             }
-          }
-        };
-        this.learnerService.post(reqOption).subscribe((res: any) => {
-          if (res && res.result) {
-            const me = this;
-            setTimeout(() => {
-              me.attachContentToTextbook(action, collectionId, contentId, data);
-            }, 1000);
-          }
-        }, err => {
-          this.acceptContent_errMsg(action);
-        });
+          }, err => {
+            this.acceptContent_errMsg(action);
+          });
+        }
       } else {
         const me = this;
         setTimeout(() => {
@@ -561,7 +565,7 @@ export class HelperService {
           if (!_.isEmpty(this.userService.userProfile.lastName)) {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
-          formFieldCategory.defaultValue = creator;
+          formFieldCategory.defaultValue = contentMetadata.creator || creator;
         }        
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
@@ -632,6 +636,15 @@ export class HelperService {
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
+    _.forEach(formFields, formField => {
+      if(_.has(formField, 'validations')) {
+        _.forEach(formField.validations, validation => {
+            if (validation['type'] === 'maxlength') {
+              formField[validation['type']] = validation['value']
+            }
+        });
+       }
+    });
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
 

@@ -288,7 +288,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
     this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
@@ -344,7 +344,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Live'
     && this.userService.userid !== this.contentMetaData.createdBy
     && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
-    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')
+    && this.programsService.isProjectLive(this.programContext));
   }
 
   initiateUploadModal() {

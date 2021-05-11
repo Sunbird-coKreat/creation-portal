@@ -509,7 +509,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = submissionDateFlag && this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
   }
 
   canDeleteQuestion() {
@@ -563,7 +563,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     && !this.resourceDetails.sampleContent === true && this.resourceStatus === 'Live'
     && this.userService.userid !== this.resourceDetails.createdBy
     && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
-    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft'));
+    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')
+    && this.programsService.isProjectLive(this.programContext));
   }
 
   canEditContentTitle() {
@@ -1237,9 +1238,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.sessionContext.questionList = [];
-    this.onComponentDestroy$.next();
-    this.onComponentDestroy$.complete();
+    if (this.sessionContext && _.has(this.sessionContext, 'questionList')) {
+      this.sessionContext.questionList = [];
+    }
+    if (this.onComponentDestroy$) {
+      this.onComponentDestroy$.next();
+      this.onComponentDestroy$.complete();
+    }
   }
 
   handleBack() {

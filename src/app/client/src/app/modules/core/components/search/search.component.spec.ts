@@ -14,7 +14,7 @@ import { mockResponse } from './search.component.spec.data';
 import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
 
 import { CacheService } from 'ng2-cache-service';
-xdescribe('SearchComponent', () => {
+describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
   let location: Location;

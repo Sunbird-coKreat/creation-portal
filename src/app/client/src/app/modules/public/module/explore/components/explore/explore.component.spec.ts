@@ -13,7 +13,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ExploreComponent } from './explore.component';
 import { RouterTestingModule } from '@angular/router/testing';
-xdescribe('ExploreComponent', () => {
+describe('ExploreComponent', () => {
   let component: ExploreComponent;
   let fixture: ComponentFixture<ExploreComponent>;
   let toasterService, userService, pageApiService, orgDetailsService;

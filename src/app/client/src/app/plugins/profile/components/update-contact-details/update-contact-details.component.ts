@@ -182,8 +182,12 @@ export class UpdateContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-    this.contactTypeModal.deny();
+    if (this.unsubscribe) {
+      this.unsubscribe.next();
+      this.unsubscribe.complete();
+    }
+    if (this.contactTypeModal) {
+      this.contactTypeModal.deny();
+    }
   }
 }

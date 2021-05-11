@@ -930,8 +930,7 @@ showTexbooklist(showTextBookSelector = true) {
           channel: this.userprofile.rootOrgId,
         },
         limit: 1000,
-        not_exists: ['programId'],
-        exists: ["medium", "gradeLevel", "subject"],
+        not_exists: ['programId']
       }
     };
 
@@ -1249,6 +1248,12 @@ showTexbooklist(showTextBookSelector = true) {
             validity = false;
           }
         }
+      }
+      if(prop.code === 'totalMarks') {
+        if(val) {
+          console.log(isNaN(val))
+          if(isNaN(val) && isNaN(parseFloat(val))) validity = false;
+        } 
       }
     })
     return validity;

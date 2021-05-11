@@ -10,7 +10,7 @@ import { SharedModule, NavigationHelperService } from '@sunbird/shared';
 import { CoreModule} from '@sunbird/core';
 import { TelemetryService } from './../../../telemetry/services/telemetry/telemetry.service';
 
-describe('HelpPageComponent', () => {
+xdescribe('HelpPageComponent', () => {
   let component: HelpPageComponent;
   let fixture: ComponentFixture<HelpPageComponent>;
 
