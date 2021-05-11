@@ -619,7 +619,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   setCollectionTree(data, identifier) {
-    console.log(data);
     // tslint:disable-next-line:max-line-length
     if (this.sessionContext.currentOrgRole !== 'user' && this.sessionContext.nominationDetails && !_.includes(['Approved', 'Rejected'], this.sessionContext.nominationDetails.status)) {
       this.sampleContent = true;
@@ -882,9 +881,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   generateNodeMeta(node, sharedMeta) {
-    if (node.identifier == "do_113273487868092416132") {
-      console.log(node);
-    }
    const nodeMeta =  {
       identifier: node.identifier,
       name: node.name,
@@ -908,9 +904,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         ...sharedMeta
       }
     };
-    if (node.identifier == "do_113273487868092416132") {
-      console.log(nodeMeta);
-    }
     return nodeMeta;
   }
 
