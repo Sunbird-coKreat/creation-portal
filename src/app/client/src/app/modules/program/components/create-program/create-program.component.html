@@ -849,7 +849,7 @@
 								</div>
 							</div>
 							<sui-select class="selection p-5 b-100 min-w-0" #select *ngIf="property.inputType === 'select' && !property.children"
-								[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
+								[isSearchable]=true
 								[options]="property.options ? property.options : questionCountRange"
 								name="{{property.code}}"
 								[(ngModel)]="localBlueprint[property.code]">
