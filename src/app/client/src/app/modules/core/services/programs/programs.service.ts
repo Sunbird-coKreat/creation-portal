@@ -898,9 +898,23 @@ export class ProgramsService extends DataService implements CanActivate {
               }
             });
         }
+        tempLearningOutcomeOptions = _.uniqBy(tempLearningOutcomeOptions, 'code');
 
-        return [tempTopicOptions, tempLearningOutcomeOptions];
+        return [topicTerms, tempLearningOutcomeOptions];
     }
+  
+  filterBlueprintMetadata(selectedTopics) {
+    let tempLearningOutcomeOptions = [];
+    if(selectedTopics) {
+      _.forEach(selectedTopics, (term) => {
+        if(term.associations) {
+          tempLearningOutcomeOptions = _.concat(tempLearningOutcomeOptions || [], _.map(term.associations, (learningOutcome) => learningOutcome));
+            }
+          });
+      }
+      tempLearningOutcomeOptions = _.uniqBy(tempLearningOutcomeOptions, 'code');
+      return tempLearningOutcomeOptions;
+  }
 
   getNominationList(reqFilters) {
     const req = {

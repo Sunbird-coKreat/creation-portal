@@ -827,7 +827,7 @@
 							<label class="d-inline-block fs-0-925 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
 							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  	autofocus />
 							<sui-multi-select #multiselect *ngIf="property.inputType === 'multiSelect' && !property.children" class="selection p-5 b-100 min-w-0"
-								[isSearchable]=true (selectedOptionChange)="onChangeBlueprint()"
+								[isSearchable]=true (selectedOptionsChange)="property.code === 'topics' ? onChangeTopics() : null"
 								name="{{property.code}}"								
 								[options]="property.options ? property.options : []"
 								[(ngModel)]="localBlueprint[property.code]" 
@@ -838,13 +838,14 @@
 							<div *ngIf="property.children" class="d-flex">
 								<div *ngFor="let child of property.children" class="pl-10 w-60">
 									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
-									<sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
+									<input #nestedText type="text" class="sb-form-control" name="{{child.code}}" [(ngModel)]="localBlueprint[property.code][child.code]"  />
+									<!-- <sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
 									name="{{child.code}}"
 									[isSearchable]=false (selectedOptionChange)="onChangeBlueprint()"
 									[options]="property.options ? property.options : []"
 									[(ngModel)]="localBlueprint[property.code][child.code]">
 										<sui-select-option *ngFor="let option of nestedSelect.filteredOptions" [value]="option" ></sui-select-option>
-									</sui-select>
+									</sui-select> -->
 								</div>
 							</div>
 							<sui-select class="selection p-5 b-100 min-w-0" #select *ngIf="property.inputType === 'select' && !property.children"
@@ -856,7 +857,7 @@
 							</sui-select>							
 						</div>
 					</div>	
-					<label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{localBlueprint.totalQuestions || 0}}</label>
+					<label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{totalQuestions() || 0}}</label>
 				</div>
 			</form>
 		</div>
