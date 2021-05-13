@@ -1269,6 +1269,7 @@ showTexbooklist(showTextBookSelector = true) {
         else if(typeof val === 'object') {
           if(_.reduce(val, (result, child, key) => {
             if(isNaN(parseFloat(child))) validity = false;
+            else if(parseFloat(child) < 0) validity = false;
             result = result + parseInt(child);
             return result;
           }, 0) === 0) {
@@ -1279,6 +1280,7 @@ showTexbooklist(showTextBookSelector = true) {
       if(prop.code === 'totalMarks') {
         if(val) {          
           if(isNaN(parseFloat(val))) validity = false;
+          else if(parseFloat(val) < 0) validity = false;
         }
       }
     })
