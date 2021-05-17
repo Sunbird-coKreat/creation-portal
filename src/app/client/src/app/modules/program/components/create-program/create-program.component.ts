@@ -1208,12 +1208,19 @@ showTexbooklist(showTextBookSelector = true) {
     this.editBlueprintFlag = true;
   }
 
-  public onChangeBlueprint() {
+  public totalQuestions() {
     let revisedTotalCount = 0;
     _.forEach(Object.keys(this.localBlueprint.questionTypes), (type: any) => {
-      revisedTotalCount = revisedTotalCount + this.localBlueprint.questionTypes[type]
+      revisedTotalCount = revisedTotalCount + parseInt(this.localBlueprint.questionTypes[type]);
     });
     this.localBlueprint.totalQuestions  = revisedTotalCount;
+    return revisedTotalCount;
+  }
+
+  public onChangeTopics() {    
+    this.blueprintTemplate.properties.forEach( (property) => {
+      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
+    })
   }
 
   public mapBlueprintToId() {
@@ -1251,17 +1258,19 @@ showTexbooklist(showTextBookSelector = true) {
   }
 
   isBlueprintValid() {
-    let validity = true;
+    let validity = true, totalQuestions = this.localBlueprint.totalQuestions;  
     _.forEach(this.blueprintTemplate.properties, (prop) => {
       let val = this.localBlueprint[prop.code]
       if(prop.required) {
         if(!val) validity = false;
-        else if(Array.isArray(val) && !val.length) {
-          validity = false;
+        else if(Array.isArray(val)) {
+          if(!val.length) validity = false;
         }
         else if(typeof val === 'object') {
           if(_.reduce(val, (result, child, key) => {
-            result = result + child;
+            if(isNaN(parseFloat(child))) validity = false;
+            else if(parseFloat(child) < 0) validity = false;
+            result = result + parseInt(child);
             return result;
           }, 0) === 0) {
             validity = false;
@@ -1269,12 +1278,16 @@ showTexbooklist(showTextBookSelector = true) {
         }
       }
       if(prop.code === 'totalMarks') {
-        if(val) {
-          console.log(isNaN(val))
-          if(isNaN(val) && isNaN(parseFloat(val))) validity = false;
+        if(val) {          
+          if(isNaN(parseFloat(val))) validity = false;
+          else if(parseFloat(val) < 0) validity = false;
         }
       }
     })
+    if(!totalQuestions) validity = false;
+    else {
+      if(isNaN(totalQuestions) && isNaN(parseFloat(totalQuestions))) validity = false;
+    }
     return validity;
   }
 
