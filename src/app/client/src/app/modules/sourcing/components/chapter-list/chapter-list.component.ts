@@ -897,7 +897,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       createdBy: node.createdBy || null,
       parentId: node.parent || null,
       organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
-      prevStatus: node.prevStatus || node.prevState || null,
+      prevStatus: node.prevStatus || null,
       sourceURL : node.sourceURL,
       sampleContent: node.sampleContent || null,
       sharedContext: {
