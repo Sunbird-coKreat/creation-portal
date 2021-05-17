@@ -99,6 +99,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public btnDoneDisabled = false;
   public telemetryPageId: string;
   private pageStartTime: any;
+  public enableQuestionSetEditor: string;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -121,6 +122,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
+    this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
+      ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'false';
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.programConfig = _.cloneDeep(programConfigObj);
@@ -128,7 +131,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.localBlueprintMap = {};
     this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-    this.telemetryInteractObject = {};    
+    this.telemetryInteractObject = {};
     this.getPageId();
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdfFiles, 'pdf');
     // get target collection in dropdown
@@ -289,7 +292,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      
+
       //this.selectedContentTypes = _.get(this.programDetails, 'content_types');
       //this.programDetails['content_types'] = _.join(this.selectedContentTypes, ', ');
 
@@ -297,7 +300,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
-      }      
+      }
       this.initializeFormFields();
     }, error => {
       this.showLoader = false;
@@ -483,14 +486,23 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
     this.programScope['targetPrimaryCategories'] = [];
-    this.programScope['targetPrimaryObjects'] =  _.filter(channelCats, (o) => {
-      if (o.targetObjectType === "Content" || o.targetObjectType === "QuestionSet") {
-        if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)){
-          this.programScope['targetPrimaryCategories'].push(o.name)
-          return o;
-        }
+    const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+    if (this.enableQuestionSetEditor === 'true') {
+      const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+      this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
+      this.programScope['targetPrimaryObjects'] = questionSetCategories;
+    }
+
+    const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
+    // tslint:disable-next-line:max-line-length
+    this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+      if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+        this.programScope['targetPrimaryCategories'].push(o.name);
+        return o;
       }
-    });   
+    }));
+
+    // tslint:disable-next-line:max-line-length
     this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
     this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
     this.programScope['medium'] = [];
@@ -587,8 +599,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   fetchBlueprintTemplate(): void {
     this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {         
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;                             
+      if(templateDetails && templateDetails.forms) {
+        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
       }
     })
   }
@@ -654,7 +666,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
       this.fetchBlueprintTemplate();
       this.showProgramScope = false;
-      this.showTextBookSelector = false;      
+      this.showTextBookSelector = false;
     }
 
     this.showLoader = false;
@@ -780,13 +792,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
     this.programData['content_types']  = [];
-    
+
     this.programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
       if (_.includes(this.selectedTargetCategories, o.name)) {
         return o;
       }
     });
-    
+
     this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
     this.programData['createdby'] = this.userprofile.id;
@@ -858,7 +870,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.programConfig['gradeLevel'] = config.gradeLevel;
           this.programConfig['medium'] = config.medium;
           this.programConfig['subject'] = config.subject;
-          this.programConfig['collections'] = this.getCollections();          
+          this.programConfig['collections'] = this.getCollections();
           _.forEach(this.collectionListForm.value.pcollections, item => {
             this.programData['collection_ids'].push(item.id);
           });
@@ -1000,7 +1012,7 @@ showTexbooklist(showTextBookSelector = true) {
           if (!this.editPublished) {
             _.forEach(this.collections, item => {
               const draftCollections = _.get(this.programDetails, 'config.collections');
-              const cindex = this.collections.findIndex(x => x.id === item.identifier);              
+              const cindex = this.collections.findIndex(x => x.id === item.identifier);
               if (!_.isEmpty(draftCollections)) {
                 const index = draftCollections.findIndex(x => x.id === item.identifier);
                 if (index !== -1) {
@@ -1038,7 +1050,7 @@ showTexbooklist(showTextBookSelector = true) {
         pcollectionsFormArray.push(new FormControl(collectionId));
         this.tempCollections.push(collection);
 
-        if (!this.textbooks[collectionId]) {          
+        if (!this.textbooks[collectionId]) {
           this.getCollectionHierarchy(collectionId);
         }
       }
@@ -1212,7 +1224,7 @@ showTexbooklist(showTextBookSelector = true) {
 
   public editBlueprint(collection) {
     if(!this.textbooks[collection.identifier]) {
-      this.getCollectionHierarchy(collection.identifier);   
+      this.getCollectionHierarchy(collection.identifier);
     } else {
       this.choosedTextBook = this.textbooks[collection.identifier];
       this.initEditBlueprintForm(this.choosedTextBook);
@@ -1220,12 +1232,19 @@ showTexbooklist(showTextBookSelector = true) {
     this.editBlueprintFlag = true;
   }
 
-  public onChangeBlueprint() {
+  public totalQuestions() {
     let revisedTotalCount = 0;
     _.forEach(Object.keys(this.localBlueprint.questionTypes), (type: any) => {
-      revisedTotalCount = revisedTotalCount + this.localBlueprint.questionTypes[type]
+      revisedTotalCount = revisedTotalCount + parseInt(this.localBlueprint.questionTypes[type]);
     });
     this.localBlueprint.totalQuestions  = revisedTotalCount;
+    return revisedTotalCount;
+  }
+
+  public onChangeTopics() {    
+    this.blueprintTemplate.properties.forEach( (property) => {
+      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
+    })
   }
 
   public mapBlueprintToId() {
@@ -1236,44 +1255,46 @@ showTexbooklist(showTextBookSelector = true) {
     else {
       this.toasterService.error(this.resource.messages.emsg.blueprintViolation);
     }
-    
+
   }
 
-  initEditBlueprintForm(collection) { 
+  initEditBlueprintForm(collection) {
    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
    let blueprint = {};
     this.blueprintTemplate.properties.forEach( (property) => {
-      if(!property.default) {         
-        if(property.code === 'topics') property.options = this.initTopicOptions;        
+      if(!property.default) {
+        if(property.code === 'topics') property.options = this.initTopicOptions;
         else if(property.code === 'learningOutcomes') property.options = this.initLearningOutcomeOptions;
-        blueprint[property.code] = [];              
+        blueprint[property.code] = [];
       }
-      if(property.children) {    
-        blueprint[property.code] = {};    
+      if(property.children) {
+        blueprint[property.code] = {};
         property.children.forEach((nestedProperty) => {
-          blueprint[property.code][nestedProperty.code] = property.default;          
+          blueprint[property.code][nestedProperty.code] = property.default;
         })
       }
-    })    
+    })
     if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
       this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code]
     }
-    else this.localBlueprint = blueprint; 
+    else this.localBlueprint = blueprint;
 
   }
 
   isBlueprintValid() {
-    let validity = true;
+    let validity = true, totalQuestions = this.localBlueprint.totalQuestions;  
     _.forEach(this.blueprintTemplate.properties, (prop) => {
       let val = this.localBlueprint[prop.code]
       if(prop.required) {
         if(!val) validity = false;
-        else if(Array.isArray(val) && !val.length) {
-          validity = false;
-        } 
+        else if(Array.isArray(val)) {
+          if(!val.length) validity = false;
+        }
         else if(typeof val === 'object') {
           if(_.reduce(val, (result, child, key) => {
-            result = result + child;
+            if(isNaN(parseFloat(child))) validity = false;
+            else if(parseFloat(child) < 0) validity = false;
+            result = result + parseInt(child);
             return result;
           }, 0) === 0) {
             validity = false;
@@ -1281,12 +1302,16 @@ showTexbooklist(showTextBookSelector = true) {
         }
       }
       if(prop.code === 'totalMarks') {
-        if(val) {
-          console.log(isNaN(val))
-          if(isNaN(val) && isNaN(parseFloat(val))) validity = false;
-        } 
+        if(val) {          
+          if(isNaN(parseFloat(val))) validity = false;
+          else if(parseFloat(val) < 0) validity = false;
+        }
       }
     })
+    if(!totalQuestions) validity = false;
+    else {
+      if(isNaN(totalQuestions) && isNaN(parseFloat(totalQuestions))) validity = false;
+    }
     return validity;
   }
 
@@ -1331,7 +1356,7 @@ showTexbooklist(showTextBookSelector = true) {
         }
       }
 
-      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);    
+      const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
       this.tempCollections[cindex]['selected'] = 0;
       this.tempCollections[cindex]['total']    = content.children.length;
       this.tempCollections[cindex]['contentTypeUnit'] = this.blueprintTemplate ? 'Section' : 'Chapter';

@@ -10,8 +10,8 @@ jobs:
           command: /bin/bash -x build.sh ${CIRCLE_SHA1} test
   test-cases:
     working_directory: ~/portal/src/app/client
-    docker:
-      - image: sunbird/build:player_v1.1
+    machine:
+      image: ubuntu-1604:202101-01
     steps:
       - checkout:
           path: ~/portal

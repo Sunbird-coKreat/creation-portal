@@ -3,7 +3,7 @@ sessionStorage.setItem("rootTenantLogo", "vidyadaan");
 $(document).ready(function () {
   sessionStorage.setItem("tenantSlug", "vidyadaan");
   sessionStorage.setItem("rootTenantLogo", "vidyadaan");
-  
+
   $(".readMore").on('click',function(){
     if(!($(".more").is(":visible"))){
       $(".more").show();
@@ -33,6 +33,8 @@ function getEnvironment(env, slug){
     case "vdn.diksha.gov.in": return "https://vdn.diksha.gov.in/" + slug + "/contribute"; break;
     case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/" + slug + "/contribute"; break;
     case "diksha.gov.in": return "https://vdn.diksha.gov.in/" + slug + "/contribute"; break;
+    case 'dockstaging.sunbirded.org': return "https://dockstaging.sunbirded.org'/" + slug + "/contribute"; break;
+    case 'staging.sunbirded.org': return "https://dockstaging.sunbirded.org'/" + slug + "/contribute"; break;
     default: return  slug + "/contribute"; break;
   }
 }
@@ -109,21 +111,22 @@ function getLogoEnvironment(env){
     case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
     case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
     case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
+    case 'dockstaging.sunbirded.org': return 'https://staging.sunbirded.org'; break;
     default: return 'https://dev.sunbirded.org';
   }
 }
-  
-  var $videoSrc;  
+
+  var $videoSrc;
   $('.video-btn').click(function() {
       $videoSrc = $(this).data( "src" );
       $('#vidyaDaanVideoModal').modal("show");
   });
-  
+
   $('#vidyaDaanVideoModal').on('shown.bs.modal', function (e) {
-    $("#vidyaDaanVideoModal video").attr('src',$videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0" ); 
+    $("#vidyaDaanVideoModal video").attr('src',$videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0" );
   })
-    
+
   $('#vidyaDaanVideoModal').on('hide.bs.modal', function (e) {
-      $("#vidyaDaanVideoModal video").attr('src',''); 
-  }) 
+      $("#vidyaDaanVideoModal video").attr('src','');
+  })
 });

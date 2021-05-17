@@ -147,6 +147,7 @@ function getLocals(req) {
   locals.deviceId = '';
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;
   locals.slug = slug || '';
+  locals.enableQuestionSetEditor = envHelper.DOCK_QUESTIONSET_ENABLE;
   return locals
 }
 
