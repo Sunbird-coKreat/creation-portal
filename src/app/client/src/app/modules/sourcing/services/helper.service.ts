@@ -623,7 +623,7 @@ export class HelperService {
           formFieldCategory.defaultValue = requiredData;
         }
         if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
-          if (_.has(sessionContext, formFieldCategory.code)) {
+          if (_.has(sessionContext.collectionTargetFrameworkData, formFieldCategory.code)) {
             formFieldCategory.defaultValue = sessionContext.collectionTargetFrameworkData[formFieldCategory.code];
           }
         }
