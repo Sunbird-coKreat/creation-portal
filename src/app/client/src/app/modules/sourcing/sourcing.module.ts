@@ -34,8 +34,12 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { NgInviewModule } from 'angular-inport';
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { CollectionEditorLibraryModule } from '@project-sunbird/sunbird-collection-editor';
+import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
+import { QumlPlayerService } from './services/quml-player/quml-player.service';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+
+
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
@@ -55,6 +59,7 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
     ReactiveFormsModule, FormsModule, SharedModule,
     InfiniteScrollModule,
     SharedFeatureModule,
+    QumlLibraryModule,
     PlayerHelperModule,
     TelemetryModule,
     SlickModule.forRoot(),
@@ -68,7 +73,10 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
     CollectionEditorLibraryModule,
     CarouselModule.forRoot()
   ],
-  providers: [CollectionHierarchyService],
+  providers: [
+    { provide: QuestionCursor, useClass: QumlPlayerService },
+    { provide: EditorCursor, useExisting: QumlPlayerService },
+    CollectionHierarchyService],
   exports: [ SanitizeHtmlPipe ]
 })
 export class SourcingModule { }
