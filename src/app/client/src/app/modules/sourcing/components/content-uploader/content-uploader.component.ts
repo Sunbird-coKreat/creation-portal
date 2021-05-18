@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService, ServerResponse } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
@@ -156,6 +156,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
+    const targetFWId = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+    if (targetFWId) {
+      if (!_.isUndefined(targetFWId)) {
+        this.frameworkService.getFrameworkCategories(targetFWId).subscribe(
+          (targetFrameworkData: ServerResponse) => {
+            this.sessionContext.targetFrameworkData = targetFrameworkData.result.framework;
+          },
+          err => {
+            console.log('err', err);
+          });
+      }
+    }
    }
 
    setTelemetryStartData() {
@@ -821,7 +833,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData, this.formstatus || {})) {
       console.log(this.formData.formInputData);
       // tslint:disable-next-line:max-line-length
       const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);

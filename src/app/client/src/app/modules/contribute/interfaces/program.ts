@@ -34,4 +34,5 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   targetCollectionPrimaryCategory?: any;
   targetCollectionMimetype?: any;
   targetCollectionObjectType?: any;
+  collectionTargetFrameworkData?: any;
 }

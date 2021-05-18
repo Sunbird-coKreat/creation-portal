@@ -8,6 +8,7 @@ import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
 import { isUndefined } from 'lodash';
+import { targetFWformConfiguration } from './targetFWForm';
 
 @Injectable({
   providedIn: 'root'
@@ -524,80 +525,95 @@ export class HelperService {
   }
 
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
-    const categoryMasterList = sessionContext.frameworkData;
-    let { gradeLevel, subject} = sessionContext;
-    let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
-    let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
-    _.forEach(categoryMasterList, (category) => {     
-      if(category.code === 'gradeLevel') {
-        const terms = category.terms;
-        if(terms) {
-          gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
-        }
-      }
-
-      if(category.code === 'subject') {
-        const terms = category.terms;
-        if(terms) {
-          subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
-        }
-      }
-      _.forEach(formFieldProperties, (formFieldCategory) => {
-        if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
-          formFieldCategory.range = category.terms;
-        }        
-
-        if(formFieldCategory.code === 'topic') {
-          if(!formFieldCategory.range) formFieldCategory.range = [];
-          if(!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {            
-            _.forEach(gradeLevelTerms, (term) => {
-              if(term.associations) {
-              gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations, 
-                _.filter(term.associations, (association) => association.category === 'topic'))
-              }
-            })
-            _.forEach(subjectTerms, (term) => {      
-              if(term.associations) {       
-              subjectTopicAssociations = _.concat(subjectTopicAssociations, 
-                _.filter(term.associations, (association) => association.category === 'topic'))
-              }              
-            })            
-            formFieldCategory.range = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );            
+    let categoryMasterList;
+    if (!_.isUndefined(sessionContext.collectionTargetFrameworkData.targetFWIds) && !_.isEmpty(sessionContext.targetFrameworkData)) {
+       categoryMasterList = sessionContext.targetFrameworkData;
+       _.forEach(categoryMasterList.categories, (frameworkCategories) => {
+        _.forEach(formFieldProperties, (field) => {
+          if (frameworkCategories.code === field.sourceCategory) {
+              field.terms = frameworkCategories.terms;
           }
-          topicTerms = _.filter(sessionContext.topicList, (t) => _.find(formFieldCategory.range, { name: t.name }))          
-        }
-
-        if (formFieldCategory.code === 'learningOutcome') {
-          const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
-          if (topicTerm && topicTerm.associations) {
-            formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
-          }
-          else {
-            if(topicTerms) {
-              _.forEach(topicTerms, (term) => {
-                if(term.associations) {
-                  formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
-                }
-              })              
-            }           
-          }
-        }             
-        if (formFieldCategory.code === 'additionalCategories') {
-          console.log(this.cacheService.get(this.userService.hashTagId));
-          // tslint:disable-next-line:max-line-length
-          formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
-            return {name: data};
-          });
-        }
-        if(formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
-          categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
-        }
-        if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
-          const licenseRange = this.getAvailableLicences()
-          formFieldCategory.range = _.map(licenseRange, 'name');
-        }
+        });
       });
-    });
+    } else {
+       categoryMasterList = sessionContext.frameworkData;
+       let { gradeLevel, subject} = sessionContext;
+       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
+       let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
+       _.forEach(categoryMasterList, (category) => {
+
+         if (category.code === 'gradeLevel') {
+           const terms = category.terms;
+           if (terms) {
+             gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
+           }
+         }
+
+         if (category.code === 'subject') {
+           const terms = category.terms;
+           if (terms) {
+             subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
+           }
+         }
+         _.forEach(formFieldProperties, (formFieldCategory) => {
+           if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
+             formFieldCategory.range = category.terms;
+           }
+
+           if(formFieldCategory.code === 'topic') {
+             if (!formFieldCategory.range) { formFieldCategory.range = []; }
+             if (!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {
+               _.forEach(gradeLevelTerms, (term) => {
+                 if (term.associations) {
+                 gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations,
+                   _.filter(term.associations, (association) => association.category === 'topic'));
+                 }
+               });
+               _.forEach(subjectTerms, (term) => {
+                 if (term.associations) {
+                 subjectTopicAssociations = _.concat(subjectTopicAssociations,
+                   _.filter(term.associations, (association) => association.category === 'topic'));
+                 }
+               });
+               // tslint:disable-next-line:max-line-length
+               formFieldCategory.range = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );
+             }
+             topicTerms = _.filter(sessionContext.topicList, (t) => _.find(formFieldCategory.range, { name: t.name }));
+           }
+
+           if (formFieldCategory.code === 'learningOutcome') {
+             const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
+             if (topicTerm && topicTerm.associations) {
+               formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
+             } else {
+               if (topicTerms) {
+                 _.forEach(topicTerms, (term) => {
+                   if (term.associations) {
+                     // tslint:disable-next-line:max-line-length
+                     formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+                   }
+                 });
+               }
+             }
+           }
+           if (formFieldCategory.code === 'additionalCategories') {
+             console.log(this.cacheService.get(this.userService.hashTagId));
+             // tslint:disable-next-line:max-line-length
+             formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
+               return {name: data};
+             });
+           }
+           if (formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
+             // tslint:disable-next-line:no-unused-expression
+             categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
+           }
+           if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
+             const licenseRange = this.getAvailableLicences();
+             formFieldCategory.range = _.map(licenseRange, 'name');
+           }
+         });
+       });
+    }
 
     // set default values in the form
     if (contentMetadata) {
@@ -605,6 +621,11 @@ export class HelperService {
         const requiredData = _.get(contentMetadata, formFieldCategory.code);
         if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
           formFieldCategory.defaultValue = requiredData;
+        }
+        if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
+          if (_.has(sessionContext, formFieldCategory.code)) {
+            formFieldCategory.defaultValue = sessionContext.collectionTargetFrameworkData[formFieldCategory.code];
+          }
         }
         if (formFieldCategory.inputType === 'checkbox' && requiredData) {
           formFieldCategory.defaultValue = requiredData;
@@ -615,7 +636,7 @@ export class HelperService {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
           formFieldCategory.defaultValue = contentMetadata.creator || creator;
-        }        
+        }
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
           formFieldCategory.defaultValue = _.first(requiredData) || '';
         }
@@ -630,7 +651,12 @@ export class HelperService {
     return [categoryMasterList, sortedFormFields];
   }
 
-  validateForm(formFieldProperties, formInputData) {
+  validateForm(formFieldProperties, formInputData, formStatus?) {
+    let sbValidField = false;
+    if (_.isEmpty(formStatus) || formStatus.isValid == true) {
+      sbValidField = true;
+    }
+
     const requiredFields = _.map(_.filter(formFieldProperties, { 'required': true }), field => field.code );
     const textFields = _.filter(formFieldProperties, {'inputType': 'text', 'editable': true});
 
@@ -645,7 +671,7 @@ export class HelperService {
       }
     });
 
-    return _.includes(validFields, false) ? false : true;
+    return (_.includes(validFields, false) ? false : true) && sbValidField;
   }
 
   contentMetadataUpdate(role, req, contentId): Observable<any> {
@@ -686,7 +712,7 @@ export class HelperService {
       'placeholder': 'Name'
     }];
     _.forEach(formFields, formField => {
-      if(_.has(formField, 'validations')) {
+      if (_.has(formField, 'validations')) {
         _.forEach(formField.validations, validation => {
             if (validation['type'] === 'maxlength') {
               formField[validation['type']] = validation['value']
@@ -720,7 +746,7 @@ export class HelperService {
       const oldContentTypes = _.keys(mapping);
       if (!_.isEmpty(nomContentTypes) && _.includes(oldContentTypes,  _.nth(nomContentTypes, 0))) {
         // means the nomination is has old contnet types and not the content categories
-        let nomContentCategories = _.map(nomContentTypes, (contentType) => {
+        const nomContentCategories = _.map(nomContentTypes, (contentType) => {
             return mapping[contentType];
         });
         return _.uniq(nomContentCategories);
