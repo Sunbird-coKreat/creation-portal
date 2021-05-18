@@ -13,16 +13,16 @@ let envVariables = {
 
   // Application Start-up - Hosts and PORT Configuration
   PORTAL_PORT: env.sunbird_port || 3000,
-  LEARNER_URL: env.sunbird_learner_player_url || 'https://dev.sunbirded.org/api/',
-  CONTENT_URL: env.sunbird_content_player_url || 'https://dock.sunbirded.org/api/',
-  CONTENT_PROXY_URL: env.sunbird_content_proxy_url || 'https://dock.sunbirded.org',
+  LEARNER_URL: env.sunbird_learner_player_url || 'https://staging.open-sunbird.org/api/',
+  CONTENT_URL: env.sunbird_content_player_url || 'https://staging.open-sunbird.org/api/',
+  CONTENT_PROXY_URL: env.sunbird_content_proxy_url || 'https://staging.open-sunbird.org',
   PORTAL_REALM: env.sunbird_portal_realm || 'sunbird',
-  PORTAL_AUTH_SERVER_URL: env.sunbird_portal_auth_server_url || 'https://dev.sunbirded.org/auth',
+  PORTAL_AUTH_SERVER_URL: env.sunbird_portal_auth_server_url || 'https://staging.open-sunbird.org/auth',
   PORTAL_AUTH_SERVER_CLIENT: env.sunbird_portal_auth_server_client || 'portal',
-  PORTAL_API_AUTH_TOKEN: env.dock_api_auth_token || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJiZDExNjYzN2Y5YjU0MWJiYjU3NDY3MTA2Yjk1YzllYSJ9.Bb8ThNzcBvhouPdtRa_UXnZgi3m2zZN5Skhke1_YlM0',
-  SUNBIRD_PORTAL_API_AUTH_TOKEN: env.sunbird_api_auth_token ||  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIzZGNjMzY3OWIwYTE0NmU2YWYyZjlmZDA5NWU5NTlkNCJ9.0NZhX5sqUNy-GZUya90aQFkr5ZNiqfOuELYz_IvoyS8',
-  PORTAL_ECHO_API_URL: env.sunbird_echo_api_url || 'https://dev.sunbirded.org/api/echo/',
-  CONFIG_URL: env.sunbird_config_service_url || 'https://dev.sunbirded.org/api/config/',
+  PORTAL_API_AUTH_TOKEN: env.dock_api_auth_token,
+  SUNBIRD_PORTAL_API_AUTH_TOKEN: env.sunbird_api_auth_token,
+  PORTAL_ECHO_API_URL: env.sunbird_echo_api_url || 'https://staging.open-sunbird.org/api/echo/',
+  CONFIG_URL: env.sunbird_config_service_url || 'https://staging.open-sunbird.org/api/config/',
   EKSTEP_ENV: env.ekstep_env || 'qa',
   DEVICE_REGISTER_API: process.env.sunbird_device_register_api || 'https://api.open-sunbird.org/v3/device/register/',
   DEVICE_PROFILE_API: process.env.sunbird_device_profile_api || 'https://staging.open-sunbird.org/api/v3/device/profile/',
@@ -37,14 +37,15 @@ let envVariables = {
   CONFIG_SERVICE_ENABLED: env.config_service_enabled || false,
   CRYPTO_ENCRYPTION_KEY: env.crypto_encryption_key || '030702bc8696b8ee2aa71b9f13e4251e',
   LOG_FINGERPRINT_DETAILS: env.sunbird_log_fingerprint_details || 'true',
-  SUNBIRD_PORTAL_BASE_URL: env.sunbird_portal_base_url || 'https://dock.sunbirded.org',
+  SUNBIRD_PORTAL_BASE_URL: env.sunbird_portal_base_url,
   DOCK_CHANNEL: env.dock_channel || 'sunbird',
   sunbird_device_api: env.sunbird_device_api || 'https://staging.ntp.net.in/api/',
   dock_api_call_log_status: env.dock_api_call_log_status || false,
   SUNBIRD_PORTAL_URL: env.sunbird_portal_url,
   SUNBIRD_LEARNER_URL: env.sunbird_learner_url,
-  DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url || 'https://dev.sunbirded.org',
+  DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url,
   DOCK_QUESTIONSET_ENABLE: env.dock_questionSet_enable || 'true',
+
 
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
@@ -63,8 +64,8 @@ let envVariables = {
   KEY_CLOAK_PUBLIC: env.sunbird_keycloak_public || 'true',
   KEY_CLOAK_REALM: env.sunbird_keycloak_realm || 'sunbird',
   KEYCLOAK_GOOGLE_CLIENT: {
-    clientId: env.sunbird_google_keycloak_client_id || 'google-auth',
-    secret: env.sunbird_google_keycloak_secret || '8486df4b-2ec0-4249-92d8-5f3a7064cd07'
+    clientId: env.sunbird_google_keycloak_client_id,
+    secret: env.sunbird_google_keycloak_secret
   },
   KEYCLOAK_GOOGLE_ANDROID_CLIENT: {
     clientId: env.sunbird_google_android_keycloak_client_id,
@@ -85,10 +86,10 @@ let envVariables = {
 
   // Social login Configuration
   GOOGLE_OAUTH_CONFIG: {
-    clientId: env.sunbird_google_oauth_clientId || '671624305038-e8pbpmidst6lf0j5qplp6g6odan3lbf5.apps.googleusercontent.com' || '903729999899-7vcrph3vro36ot43j1od8u6he9jjend0.apps.googleusercontent.com',
-    clientSecret: env.sunbird_google_oauth_clientSecret || 'mDO2MM68iW23f47ZFtvREld9' || 'BAEAYRv7voTByz5rOKkbIE3u'
+    clientId: env.sunbird_google_oauth_clientId,
+    clientSecret: env.sunbird_google_oauth_clientSecret
   },
-  sunbird_google_captcha_site_key: env.sunbird_google_captcha_site_key || '6Ldcf4EUAAAAAMrKQSviNtEzMretoDgeAUxqJv7d',
+  sunbird_google_captcha_site_key: env.sunbird_google_captcha_site_key,
   google_captcha_private_key: env.google_captcha_private_key,
 
 
@@ -104,8 +105,8 @@ let envVariables = {
   PORTAL_CASSANDRA_CONSISTENCY_LEVEL: env.sunbird_cassandra_consistency_level || 'one',
   PORTAL_CASSANDRA_REPLICATION_STRATEGY: env.sunbird_cassandra_replication_strategy || '{"class":"SimpleStrategy","replication_factor":1}',
   sunbird_azure_report_container_name: env.sunbird_azure_report_container_name || 'reports',
-  sunbird_azure_account_name: env.sunbird_azure_account_name || 'sunbirddev',
-  sunbird_azure_account_key: 'k8NzvVqH0WSwCARJZo2h6G28AT2775MbrhMi9Akt4HNdYH009WVWmjjs31L08VEMnvRxas1DU7UM3/KtuMxpVg==',
+  sunbird_azure_account_name: env.sunbird_azure_account_name,
+  sunbird_azure_account_key: env.sunbird_azure_account_key,
   sunbird_portal_cdn_blob_url: env.sunbird_portal_cdn_blob_url || '',
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
 
@@ -120,7 +121,7 @@ let envVariables = {
   content_Service_Local_BaseUrl: env.sunbird_content_service_local_base_url || 'http://content-service:5000',
   CONTENT_SERVICE_UPSTREAM_URL: env.sunbird_content_service_upstream_url || 'http://localhost:5000/',
   LEARNER_SERVICE_UPSTREAM_URL: env.sunbird_learner_service_upstream_url || 'http://localhost:9000/',
-  DATASERVICE_URL: env.sunbird_dataservice_url || 'https://dock.sunbirded.org/api/',
+  DATASERVICE_URL: env.sunbird_dataservice_url || 'https://staging.open-sunbird.org/api/',
   PORTAL_EXT_PLUGIN_URL: process.env.sunbird_ext_plugin_url || 'http://player_player:3000/plugin/',
   kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'http://content-service:9000/',
   kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url,
