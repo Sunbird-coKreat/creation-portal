@@ -999,6 +999,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userProfile.lastName)) {
         creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
       }
+      let targetFWIds = {};
+      if (_.has(this.collection, 'targetFWIds') && !_.isUndefined(this.collection.targetFWIds)) {
+        targetFWIds = {targetFWIds: this.collection.targetFWIds};
+      }
+
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       let option = {
         url: `content/v3/create`,
@@ -1020,7 +1025,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               ...(this.sessionContext.nominationDetails &&
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              ...(_.pickBy(sharedMetaData, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity)),
+              ...(_.pickBy(targetFWIds, _.identity))
             }
           }
         }
@@ -1045,7 +1051,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else {
         createRes = this.actionService.post(option);
       }
-    
+
       createRes.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',

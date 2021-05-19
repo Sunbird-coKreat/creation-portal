@@ -526,8 +526,9 @@ export class HelperService {
 
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
-    if (!_.isUndefined(sessionContext.collectionTargetFrameworkData.targetFWIds) && !_.isEmpty(sessionContext.targetFrameworkData)) {
-       categoryMasterList = sessionContext.targetFrameworkData;
+    // tslint:disable-next-line:max-line-length
+    if (!_.isUndefined(sessionContext.collectionTargetFrameworkData.targetFWIds) && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.collectionTargetFrameworkData.targetFWIds])) {
+       categoryMasterList = this.frameworkService.frameworkData[sessionContext.collectionTargetFrameworkData.targetFWIds];
        _.forEach(categoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
           if (frameworkCategories.code === field.sourceCategory) {

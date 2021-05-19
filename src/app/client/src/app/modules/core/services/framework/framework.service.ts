@@ -124,4 +124,13 @@ export class FrameworkService {
     return _.get(this._channelData, 'defaultLicense');
   }
 
+  public get frameworkData(): any {
+    console.log('rajnishD get this._frameworkData', this._frameworkData);
+    return this._frameworkData;
+  }
+
+  public set frameworkData(framework) {
+    this._frameworkData[framework.frameworkId] = framework.frameworkData;
+    console.log('rajnishD set this._frameworkData', this._frameworkData);
+  }
 }
