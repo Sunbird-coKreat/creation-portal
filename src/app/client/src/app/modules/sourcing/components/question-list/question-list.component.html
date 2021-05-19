@@ -334,9 +334,10 @@
     <!--/Header-->
 
     <!--Content-->
-    <div class="sb-modal-content o-y-visible pb-8" *ngIf="formFieldProperties && categoryMasterList">
+    <div class="sb-modal-content o-y-visible pb-8 sb-edit-form" *ngIf="formFieldProperties && categoryMasterList">
       <app-data-form
         #formData
+        (formStatus)="formStatusEventListener($event)"
         [formFieldProperties]="formFieldProperties"
         [categoryMasterList]="categoryMasterList">
       </app-data-form>
@@ -345,7 +346,7 @@
 
     <!--Actions-->
     <div class="sb-modal-actions">
-        <button [disabled]="!editableFields.length" class="sb-btn sb-btn-normal sb-btn-primary" (click)="handleCallback();">{{requiredAction === 'editForm' ? 'Save' : 'Submit' }}</button>
+        <button [disabled]="!editableFields.length || formstatus?.isValid == false" class="sb-btn sb-btn-normal sb-btn-primary" (click)="handleCallback();">{{requiredAction === 'editForm' ? 'Save' : 'Submit' }}</button>
     </div>
     <!--/Actions-->
 </sui-modal>

@@ -72,6 +72,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public contentComment: string;
   public showReviewModal: boolean;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
 
   constructor(
     private resourceService: ResourceService,
@@ -132,6 +133,22 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.contentStatusNotify(action);
     });
     this.helperService.initialize(this.programContext);
+    if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        const unlistedframeworkIds = [];
+        const existingFWIs = _.keys(this.frameworkService.frameworkData);
+        _.forEach(targetFWIds, (value) => {
+          if (!_.includes(existingFWIs, value)) {
+            unlistedframeworkIds.push(value);
+          }
+        });
+
+        if (!_.isEmpty(unlistedframeworkIds)) {
+          this.frameworkService.addUnlistedFrameworks(unlistedframeworkIds);
+        }
+      }
+    }
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {
@@ -330,9 +347,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
       this.fetchFormconfiguration();
-     this.handleActionButtons();
+      this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentData.objectType);
+
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.contentData.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.contentData.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    // this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   handleContentStatusText() {
@@ -738,5 +769,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     this.onComponentDestroy$.next();
     this.onComponentDestroy$.complete();
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
   }
 }
