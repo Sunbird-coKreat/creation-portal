@@ -721,6 +721,16 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
       telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')
     };
+    if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+      this.sessionContext.collectionTargetFrameworkData = {
+        targetFWIds : _.get(collection, 'targetFWIds'),
+        subjectIds: _.get(collection, 'subjectIds'),
+        targetBoardIds: _.get(collection, 'targetBoardIds'),
+        targetMediumIds: _.get(collection, 'targetMediumIds'),
+        targetGradeLevelIds: _.get(collection, 'targetGradeLevelIds'),
+        targetSubjectIds: _.get(collection, 'targetSubjectIds'),
+      }
+    }
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});

@@ -799,3 +799,14 @@ app-question-set-editor{
     z-index: 99  !important;
   }
 }
+.sb-edit-form {
+  label{
+  padding: 10px 0 !important;
+  }
+  .sb-checkbox {
+    padding: 0 !important;
+    label {
+      padding: 0 25px !important;
+    }
+  }
+}
