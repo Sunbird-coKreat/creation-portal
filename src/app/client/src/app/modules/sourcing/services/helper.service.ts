@@ -246,7 +246,6 @@ export class HelperService {
           ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
 
           const reqFormat = {
-            source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
             metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
                         ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
                         ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType']),
@@ -258,6 +257,7 @@ export class HelperService {
               }
             ]
           };
+
           const reqOption = {
             url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
             data: {
@@ -272,6 +272,7 @@ export class HelperService {
             reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
             reqOption.data.request['questionset'] = {};
             reqOption.data.request['questionset'] = reqOption.data.request.content;
+            _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
             delete reqOption.data.request.content;
           } 
           this.learnerService.post(reqOption).subscribe((res: any) => {
