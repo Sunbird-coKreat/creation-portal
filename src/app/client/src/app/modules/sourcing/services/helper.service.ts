@@ -246,6 +246,7 @@ export class HelperService {
           ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
 
           const reqFormat = {
+            source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
             metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
                         ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
                         ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType']),
