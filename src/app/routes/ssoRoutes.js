@@ -421,10 +421,12 @@ module.exports = (app) => {
     await ssoValidations(req, res)
   })
 
-  app.get('/v1/sourcing/sso/success/redirect', (req, res) => {
+  app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
     logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
-    let userObj = decrypt(req.query.obj)
-    console.log('decrypt OBJ --- ', userObj);
+    console.log('req.query.obj ', req.query.obj);
+    let userId = req.query.obj;
+    // let userObj = decrypt(req.query.obj)
+    await createSession(userId, 'portal', req, res);
   });
 
 };
