@@ -8,7 +8,6 @@ import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
 import { isUndefined } from 'lodash';
-import { targetFWformConfiguration } from './targetFWForm';
 
 @Injectable({
   providedIn: 'root'

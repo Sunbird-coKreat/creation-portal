@@ -124,14 +124,13 @@ export class FrameworkService {
     return _.get(this._channelData, 'defaultLicense');
   }
 
+  apiErrorHandling(err, errorInfo) {
+    this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
+  }
+
   public get frameworkData(): any {
     return this._frameworkData;
   }
-
-  // public set frameworkData(framework) {
-  //   this._frameworkData[framework.frameworkId] = framework.frameworkData;
-  //   console.log('rajnishD set this._frameworkData', this._frameworkData);
-  // }
 
   public addUnlistedFrameworks(unlistedframeworkIds) {
     const frameWork = this._frameworkData;
@@ -145,6 +144,8 @@ export class FrameworkService {
           },
           err => {
             console.log('err', err);
+            const errInfo = { errorMsg: 'Something went wrong' };
+            this.apiErrorHandling(err, errInfo);
           });
       }
     });

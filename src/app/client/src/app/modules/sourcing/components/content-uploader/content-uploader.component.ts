@@ -156,9 +156,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
-    // const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
-    const targetFWIds = ['nit_tpd', 'nit_k-12'];
-    if (targetFWIds) {
+    const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+    if (!_.isUndefined(targetFWIds)) {
       const unlistedframeworkIds = [];
       const existingFWIs = _.keys(this.frameworkService.frameworkData);
       _.forEach(targetFWIds, (value) => {
