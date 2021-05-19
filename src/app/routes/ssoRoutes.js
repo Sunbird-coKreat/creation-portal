@@ -423,9 +423,8 @@ module.exports = (app) => {
 
   app.get('/v1/sourcing/sso/success/redirect', (req, res) => {
     logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
-    logger.info({msg: 'sourcing req'})
-    console.log('sourcing req ', req);
-    console.log('sourcing res ', res);
+    let userObj = decrypt(req.query.obj)
+    console.log('decrypt OBJ --- ', userObj);
   });
 
 };
