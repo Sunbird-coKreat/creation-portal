@@ -231,7 +231,8 @@ export class QuestionSetEditorComponent implements OnInit {
         cloudStorageUrls : this.userService.cloudStorageUrls
       },
       config: {
-        mode: this.getEditorMode()
+        mode: this.getEditorMode(),
+        setDefaultCopyRight: false
       }
     };
     if (this.showQuestionEditor) {
