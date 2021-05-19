@@ -156,39 +156,22 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
-    // const targetFWId = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+    // const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
     const targetFWIds = ['nit_tpd', 'nit_k-12'];
     if (targetFWIds) {
       const unlistedframeworkIds = [];
-      _.forEach(this.frameworkService.frameworkData, (item, key) => {
-        _.forEach(targetFWIds, (value) => {
-          if (key !== value) {
-            unlistedframeworkIds.push(value);
+      const existingFWIs = _.keys(this.frameworkService.frameworkData);
+      _.forEach(targetFWIds, (value) => {
+        if (!_.includes(existingFWIs, value)) {
+          unlistedframeworkIds.push(value);
         }
-        });
       });
-      console.log('rajnish unlistedframeworkIds', unlistedframeworkIds);
 
       if (!_.isEmpty(unlistedframeworkIds)) {
-        this.addUnlistedFrameworks(unlistedframeworkIds);
+        this.frameworkService.addUnlistedFrameworks(unlistedframeworkIds);
       }
     }
    }
-
-   public addUnlistedFrameworks(unlistedframeworkIds) {
-    _.forEach(unlistedframeworkIds, (value) => {
-      if (!_.isUndefined(value)) {
-        this.frameworkService.getFrameworkCategories(value).subscribe(
-          (targetFrameworkData: ServerResponse) => {
-            const otherFrameworkData = targetFrameworkData.result.framework;
-            this.frameworkService.frameworkData({frameworkId: value, frameworkData: otherFrameworkData});
-          },
-          err => {
-            console.log('err', err);
-          });
-      }
-    });
-  }
 
    setTelemetryStartData() {
     const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'},

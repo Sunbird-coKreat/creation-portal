@@ -125,12 +125,28 @@ export class FrameworkService {
   }
 
   public get frameworkData(): any {
-    console.log('rajnishD get this._frameworkData', this._frameworkData);
     return this._frameworkData;
   }
 
-  public set frameworkData(framework) {
-    this._frameworkData[framework.frameworkId] = framework.frameworkData;
-    console.log('rajnishD set this._frameworkData', this._frameworkData);
+  // public set frameworkData(framework) {
+  //   this._frameworkData[framework.frameworkId] = framework.frameworkData;
+  //   console.log('rajnishD set this._frameworkData', this._frameworkData);
+  // }
+
+  public addUnlistedFrameworks(unlistedframeworkIds) {
+    const frameWork = this._frameworkData;
+    _.forEach(unlistedframeworkIds, (value) => {
+      if (!_.isUndefined(value)) {
+        this.getFrameworkCategories(value).subscribe(
+          (targetFrameworkData: ServerResponse) => {
+            const otherFrameworkData = targetFrameworkData.result.framework;
+            frameWork[value] = otherFrameworkData;
+            this._frameworkData = frameWork ;
+          },
+          err => {
+            console.log('err', err);
+          });
+      }
+    });
   }
 }
