@@ -1138,7 +1138,4 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.formstatus = event;
   }
 }
-function frameworkId(targetFWId: any, frameworkId: any) {
-  throw new Error('Function not implemented.');
-}
 
