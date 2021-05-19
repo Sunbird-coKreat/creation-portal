@@ -1138,4 +1138,3 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.formstatus = event;
   }
 }
-
