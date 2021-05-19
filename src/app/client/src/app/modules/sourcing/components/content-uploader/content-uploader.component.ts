@@ -521,6 +521,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
+      let targetFWIds = {};
+      if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+        targetFWIds = {targetFWIds: this.sessionContext.collectionTargetFrameworkData.targetFWIds};
+      }
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
@@ -539,7 +543,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'programId': this.sessionContext.programId,
               'unitIdentifiers': [this.unitIdentifier],
-              ...(_.pickBy(sharedMetaData, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity)),
+              ...(_.pickBy(targetFWIds, _.identity))
             }
           }
         }
