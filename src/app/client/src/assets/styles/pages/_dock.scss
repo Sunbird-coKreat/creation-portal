@@ -810,3 +810,21 @@ app-question-set-editor{
     }
   }
 }
+
+// styling for edit details topic select popup
+.dimmable.o-y-hide.dimmed{
+  .ui.dimmer.modals{
+    z-index: 9999 !important
+  }
+}
+.sb-modal-dropdown-web{
+  ul{
+    z-index: 99999  !important;
+    padding-left: 10px !important;
+  }
+}
+.list-border{
+  ul{
+    padding-left: 0px !important;
+  }
+}

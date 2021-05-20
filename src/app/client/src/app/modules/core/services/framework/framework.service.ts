@@ -124,4 +124,30 @@ export class FrameworkService {
     return _.get(this._channelData, 'defaultLicense');
   }
 
+  apiErrorHandling(err, errorInfo) {
+    this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
+  }
+
+  public get frameworkData(): any {
+    return this._frameworkData;
+  }
+
+  public addUnlistedFrameworks(unlistedframeworkIds) {
+    const frameWork = this._frameworkData;
+    _.forEach(unlistedframeworkIds, (value) => {
+      if (!_.isUndefined(value)) {
+        this.getFrameworkCategories(value).subscribe(
+          (targetFrameworkData: ServerResponse) => {
+            const otherFrameworkData = targetFrameworkData.result.framework;
+            frameWork[value] = otherFrameworkData;
+            this._frameworkData = frameWork ;
+          },
+          err => {
+            console.log('err', err);
+            const errInfo = { errorMsg: 'Something went wrong' };
+            this.apiErrorHandling(err, errInfo);
+          });
+      }
+    });
+  }
 }

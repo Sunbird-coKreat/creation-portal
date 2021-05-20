@@ -156,16 +156,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
-    const targetFWId = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
-    if (targetFWId) {
-      if (!_.isUndefined(targetFWId)) {
-        this.frameworkService.getFrameworkCategories(targetFWId).subscribe(
-          (targetFrameworkData: ServerResponse) => {
-            this.sessionContext.targetFrameworkData = targetFrameworkData.result.framework;
-          },
-          err => {
-            console.log('err', err);
-          });
+    if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        this.helperService.setTargetFrameWorkData(targetFWIds);
       }
     }
    }
@@ -521,6 +515,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
+      let targetFWIds = {};
+      if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+        targetFWIds = {targetFWIds: this.sessionContext.collectionTargetFrameworkData.targetFWIds};
+      }
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       const option = {
         url: `content/v3/create`,
@@ -539,7 +537,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
               'programId': this.sessionContext.programId,
               'unitIdentifiers': [this.unitIdentifier],
-              ...(_.pickBy(sharedMetaData, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity)),
+              ...(_.pickBy(targetFWIds, _.identity))
             }
           }
         }

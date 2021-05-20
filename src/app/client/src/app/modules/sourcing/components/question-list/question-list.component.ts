@@ -2,10 +2,10 @@
 import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy, AfterViewInit} from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ToasterService, ResourceService, NavigationHelperService, ServerResponse } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
-import { tap, map, catchError, mergeMap, first, filter, takeUntil, take } from 'rxjs/operators';
+import { tap, map, catchError, mergeMap, first, filter, takeUntil, take, switchMap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { of, forkJoin, throwError, Subject } from 'rxjs';
@@ -94,6 +94,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -143,6 +144,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
+    if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        this.helperService.setTargetFrameWorkData(targetFWIds);
+      }
+    }
   }
 
   setTelemetryStartData() {
@@ -243,7 +250,20 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.resourceDetails.objectType);
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.resourceDetails.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.resourceDetails.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    // this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.resourceDetails.objectType);
   }
 
   public preprareTelemetryEvents() {
@@ -442,7 +462,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData, this.formstatus || {})) {
       console.log(this.formData.formInputData);
       // tslint:disable-next-line:max-line-length
       const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
@@ -1078,7 +1098,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepareQuestionReqBody() {
-
+    let targetFWIds = {};
+      if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+        targetFWIds = {targetFWIds: this.sessionContext.collectionTargetFrameworkData.targetFWIds};
+      }
    // tslint:disable-next-line:prefer-const
     let finalBody = {
       'request': {
@@ -1105,7 +1128,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
             'body': '',
             'media': [],
             'author' : this.getUserName(),
-            'status' : 'Draft'
+            'status' : 'Draft',
+            ...(_.pickBy(targetFWIds, _.identity))
           }
         }
       }
@@ -1376,5 +1400,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const afterUpdateMetaData = this.questionCreationChild.getMetaData();
     afterUpdateMetaData['name'] = _.trim(this.resourceName);
     return this.isMetadataOverridden = this.helperService.isMetaDataModified(beforeUpdateMetaData, afterUpdateMetaData);
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
   }
 }
