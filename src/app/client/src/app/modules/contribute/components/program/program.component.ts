@@ -725,11 +725,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sessionContext.collectionTargetFrameworkData = {
         targetFWIds : _.get(collection, 'targetFWIds'),
         subjectIds: _.get(collection, 'subjectIds'),
+        topicsIds: _.get(collection, 'topicsIds'),
         targetBoardIds: _.get(collection, 'targetBoardIds'),
         targetMediumIds: _.get(collection, 'targetMediumIds'),
         targetGradeLevelIds: _.get(collection, 'targetGradeLevelIds'),
-        targetSubjectIds: _.get(collection, 'targetSubjectIds'),
-      }
+        targetSubjectIds: _.get(collection, 'targetSubjectIds')
+      };
     }
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
