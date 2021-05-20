@@ -623,7 +623,8 @@ export class HelperService {
           formFieldCategory.defaultValue = requiredData;
         }
         if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
-          if (_.has(sessionContext.collectionTargetFrameworkData, formFieldCategory.code)) {
+          // tslint:disable-next-line:max-line-length
+          if (_.has(sessionContext.collectionTargetFrameworkData, formFieldCategory.code) && !_.isUndefined(sessionContext.collectionTargetFrameworkData, formFieldCategory.code)) {
             formFieldCategory.defaultValue = sessionContext.collectionTargetFrameworkData[formFieldCategory.code];
           }
         }
