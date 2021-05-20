@@ -67,18 +67,18 @@ export class DataFormComponent implements OnInit {
 
   ngOnInit() {
     this.formFieldProperties.forEach(formProperty => {
-      if(formProperty.code == 'name') {
+      if (formProperty.code === 'name') {
         formProperty.validations = [
-          { type: "maxLength", value: "50", message: "Input is Exceeded"},
+          { type: 'maxLength', value: '50', message: 'Input is Exceeded'},
           {
-            type: "required", message: "Name is required"
+            type: 'required', message: 'Name is required'
           }
       ];
       }
-      if(formProperty.code == 'additionalCategories') {
+      if (formProperty.code === 'additionalCategories') {
         formProperty.inputType = 'nestedselect';
       }
-      if(formProperty.code == 'contentPolicyCheck') {
+      if (formProperty.code === 'contentPolicyCheck') {
         formProperty.dataType = 'boolean';
       }
     });
@@ -263,7 +263,7 @@ export class DataFormComponent implements OnInit {
   valueChanges(event) {
     _.forEach(this.formFieldProperties, (field) => {
       _.forEach(event, (eventValue, eventKey) => {
-          if (field['code'] == eventKey) {
+          if (field['code'] === eventKey) {
             field['defaultValue'] = eventValue;
             this.formInputData[field.code] = field.defaultValue;
           }
