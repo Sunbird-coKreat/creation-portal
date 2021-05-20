@@ -535,7 +535,7 @@ export class HelperService {
           }
         });
       });
-    } else {
+    } if (sessionContext.frameworkData) {
        categoryMasterList = sessionContext.frameworkData;
        let { gradeLevel, subject} = sessionContext;
        let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
@@ -838,5 +838,19 @@ export class HelperService {
       data: requestBody
     };
     return this.actionService.patch(option);
+  }
+
+  setTargetFrameWorkData(targetFWIds) {
+    const unlistedframeworkIds = [];
+    const existingFWIs = _.keys(this.frameworkService.frameworkData);
+    _.forEach(targetFWIds, (value) => {
+      if (!_.includes(existingFWIs, value)) {
+        unlistedframeworkIds.push(value);
+      }
+    });
+
+    if (!_.isEmpty(unlistedframeworkIds)) {
+      this.frameworkService.addUnlistedFrameworks(unlistedframeworkIds);
+    }
   }
 }
