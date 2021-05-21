@@ -71,68 +71,13 @@ export class QuestionSetEditorComponent implements OnInit {
     });
   }
 
-  // private setEditorContext() {
-  //   this.editorConfig = {
-  //     context: {
-  //       user: {
-  //         id: this.userService.userid,
-  //         name : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
-  //         this.userProfile.firstName,
-  //         orgIds: this.userProfile.organisationIds,
-  //         organisations: this.userService.orgIdNameMap
-  //       },
-  //       identifier: this.editorParams.questionSetId,
-  //       mode: 'edit',
-  //       authToken: '',
-  //       sid: this.userService.sessionId,
-  //       did: this.deviceId,
-  //       uid: this.userService.userid,
-  //       channel: this.userService.channel,
-  //       pdata: {
-  //         id: this.userService.appId,
-  //         ver: this.portalVersion,
-  //         pid: this.configService.appConfig.TELEMETRY.PID
-  //       },
-  //       contextRollUp: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
-  //       tags: this.userService.dims,
-  //       cdata: [],
-  //       timeDiff: this.userService.getServerTimeDiff,
-  //       objectRollup: {},
-  //       host: '',
-  //       defaultLicense: this.frameworkService.getDefaultLicense(),
-  //       endpoint: '/data/v3/telemetry',
-  //       userData: {
-  //         firstName: '',
-  //         lastName: ''
-  //       },
-  //       env: 'question_set',
-  //       framework: 'ekstep_ncert_k-12',
-  //       aws_s3_urls : this.userService.cloudStorageUrls ||
-  //       ['https://s3.ap-south-1.amazonaws.com/ekstep-public-qa/', 'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/',
-  //       'https://dockstorage.blob.core.windows.net/sunbird-content-dock/']
-  //     }
-  //   };
-  //   if (!_.isUndefined(this.userService.userProfile.firstName) && !_.isNull(this.userService.userProfile.firstName)) {
-  //     this.editorConfig.context.userData.firstName = this.userService.userProfile.firstName;
-  //   }
-  //   if (!_.isUndefined(this.userService.userProfile.lastName) && !_.isNull(this.userService.userProfile.lastName)) {
-  //     this.editorConfig.context.userData.lastName = this.userService.userProfile.lastName;
-  //   }
-  //   this.showLoader = false;
-  // }
-
-
   private getCollectionDetails() {
-    const options: any = { params: {} };
-    options.params.mode = 'edit';
-    const option = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${this.editorParams.questionSetId}`,
-      params: options
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${this.editorParams.questionSetId}?mode=edit`
     };
-    return this.contentService.get(option).pipe(map((response: any) => {return response}));
+    return this.contentService.get(req).pipe(map((response: any) => {return response}));
   }
   
-
   getFrameWorkDetails() {
     if (this.programContext.rootorg_id) {
       this.helperService.fetchChannelData(this.programContext.rootorg_id);
