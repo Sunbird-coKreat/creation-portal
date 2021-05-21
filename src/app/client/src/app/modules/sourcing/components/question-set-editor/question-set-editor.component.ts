@@ -228,7 +228,13 @@ export class QuestionSetEditorComponent implements OnInit {
           isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
         },
         channelData: this.frameworkService['_channelData'],
-        cloudStorageUrls : this.userService.cloudStorageUrls
+        cloudStorageUrls : this.userService.cloudStorageUrls,
+        labels: {
+          submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
+          publish_collection_btn_label: this.resourceService.frmelmnts.btn.submitForApproval,
+          sourcing_approve_collection_btn_label: this.resourceService.frmelmnts.btn.publishToConsume,
+          reject_collection_btn_label: this.resourceService.frmelmnts.btn.requestChanges,
+        }
       },
       config: {
         mode: this.getEditorMode(),
