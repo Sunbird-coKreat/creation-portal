@@ -730,18 +730,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.sessionContext.targetCollectionFrameworksData = {};
     if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
-      _.forEach(OrgAndTargetFrameworkCategories.orgFrameworkCategories, (value) => {
-        if (_.has(collection, value) && !_.isUndefined(_.get(collection, value))) {
-          this.sessionContext.targetCollectionFrameworksData[value] = _.get(collection, value);
-        }
-      });
+      this.sessionContext.targetCollectionFrameworksData = _.pick(collection, OrgAndTargetFrameworkCategories.orgFrameworkCategories);
     }
     if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
-      _.forEach(OrgAndTargetFrameworkCategories.targetFrameworkCategories, (value) => {
-        if (_.has(collection, value) && !_.isUndefined(_.get(collection, value))) {
-          this.sessionContext.targetCollectionFrameworksData[value] = _.get(collection, value);
-        }
-      });
+        this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
+          _.pick(collection, OrgAndTargetFrameworkCategories.targetFrameworkCategories));
     }
 
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
