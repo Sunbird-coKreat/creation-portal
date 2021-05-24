@@ -158,7 +158,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      */
     this.levelOneChapterList.push({
       identifier: 'all',
-      name: _.get(this.resourceService, 'frmelmnts.lbl.allChapters')
+      name: _.get(this.resourceService, this.blueprintTemplate ? 'frmelmnts.lbl.allSections' : 'frmelmnts.lbl.allChapters')
     });
     this.selectedChapterOption = 'all';
     const mvcStageData = this.programsService.getMvcStageData();

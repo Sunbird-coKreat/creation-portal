@@ -156,8 +156,8 @@
           </div>
           <div class="d-flex flex-dc" [class.filters-section]="!!sourcingOrgReviewer && !sampleContent">
             <div class="sb-textbook-allchapters sb-field">
-              <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
-              <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts.lbl.allChapters}}" [isSearchable]=true labelField="name"
+              <label class="fsmall font-weight-normal">{{blueprintTemplate ? resourceService.frmelmnts.lbl.selectSections : resourceService.frmelmnts.lbl.selectChapters}}</label>
+              <sui-select class="selection w-100" placeholder="{{blueprintTemplate ? resourceService.frmelmnts.lbl.allSections : resourceService.frmelmnts.lbl.allChapters}}" [isSearchable]=true labelField="name"
                 valueField="identifier" [(ngModel)]="selectedChapterOption"
                 (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter>
                 <sui-select-option *ngFor="let option of selectdChapter.filteredOptions" [value]="option">

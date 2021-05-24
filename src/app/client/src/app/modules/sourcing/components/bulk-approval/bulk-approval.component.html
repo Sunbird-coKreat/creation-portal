@@ -29,7 +29,7 @@
     {{resourceService.frmelmnts.lbl.bulkApprove}} 
   </div>
   <div class="sb-modal-content">
-      <h6 *ngIf = "bulkApprovalComfirmation" class="sb-color-gray-400">{{resourceService.frmelmnts.lbl.areYouSureBulkApproveContentTextbook}}</h6>
+      <h6 *ngIf = "bulkApprovalComfirmation" class="sb-color-gray-400">{{resourceService.frmelmnts.lbl.areYouSureBulkApproveContentTextbook | interpolate:'{collection}':collectionPrimaryCategory}}</h6>
         <div *ngIf="!bulkApprovalComfirmation" class="d-flex p-30 sb-bg-color-primary-0">
           <div class="p-10 sb-bulk-upload">
             <img *ngIf="bulkApprove && bulkApprove.status === 'completed'" src="/assets/images/bulkuploadfile.png" alt="">
