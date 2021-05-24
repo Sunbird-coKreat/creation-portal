@@ -526,8 +526,8 @@ export class HelperService {
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
     // tslint:disable-next-line:max-line-length
-    if (_.has(sessionContext.collectionTargetFrameworkData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.collectionTargetFrameworkData.targetFWIds])) {
-       categoryMasterList = this.frameworkService.frameworkData[sessionContext.collectionTargetFrameworkData.targetFWIds];
+    if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
+       categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
        _.forEach(categoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
           if (frameworkCategories.code === field.sourceCategory) {
@@ -537,10 +537,24 @@ export class HelperService {
       });
     } if (sessionContext.frameworkData) {
        categoryMasterList = sessionContext.frameworkData;
-       let { gradeLevel, subject} = sessionContext;
-       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
+       let { gradeLevel, subject, board, medium } = sessionContext;
+       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [], boardTerms = [], mediumTerms = [];
        let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
        _.forEach(categoryMasterList, (category) => {
+
+        if (category.code === 'board') {
+          const terms = category.terms;
+          if (terms) {
+            boardTerms =  _.concat(boardTerms, _.filter(terms,  (t)  => _.includes(board, t.name)));
+          }
+        }
+
+        if (category.code === 'medium') {
+          const terms = category.terms;
+          if (terms) {
+            mediumTerms =  _.concat(mediumTerms, _.filter(terms,  (t)  => _.includes(medium, t.name)));
+          }
+        }
 
          if (category.code === 'gradeLevel') {
            const terms = category.terms;
@@ -624,8 +638,8 @@ export class HelperService {
         }
         if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
           // tslint:disable-next-line:max-line-length
-          if (_.has(sessionContext.collectionTargetFrameworkData, formFieldCategory.code) && !_.isUndefined(sessionContext.collectionTargetFrameworkData, formFieldCategory.code)) {
-            formFieldCategory.defaultValue = sessionContext.collectionTargetFrameworkData[formFieldCategory.code];
+          if (_.has(sessionContext.targetCollectionFrameworksData, formFieldCategory.code) && !_.isUndefined(sessionContext.targetCollectionFrameworksData, formFieldCategory.code)) {
+            formFieldCategory.defaultValue = sessionContext.targetCollectionFrameworksData[formFieldCategory.code];
           }
         }
         if (formFieldCategory.inputType === 'checkbox' && requiredData) {

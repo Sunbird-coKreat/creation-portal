@@ -18,6 +18,7 @@ export class FrameworkService {
   private _channelData: any = {};
   private _frameworkData$ = new BehaviorSubject<Framework>(undefined);
   private _channelData$ = new BehaviorSubject<any>(undefined);
+  public _orgAndTargetFrameworkCategories: any;
   public readonly frameworkData$: Observable<Framework> = this._frameworkData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   public readonly channelData$: Observable<any> = this._channelData$
@@ -149,5 +150,21 @@ export class FrameworkService {
           });
       }
     });
+  }
+
+  public get orgAndTargetFrameworkCategories(): any {
+    return this._orgAndTargetFrameworkCategories;
+  }
+
+  public setOrgAndTargetFrameworkCategories() {
+    const orgFrameworkCategories = ['framework', 'boardIds', 'gradeLevelIds', 'mediumIds', 'subjectIds', 'topicIds'];
+    // tslint:disable-next-line:max-line-length
+    const targetFrameworkCategories = ['targetFWIds', 'targetBoardIds', 'targetGradeLevelIds', 'targetMediumIds', 'targetSubjectIds', 'targetTopicIds'];
+
+    const orgAndTargetFrameworkCategories = _.union(orgFrameworkCategories, targetFrameworkCategories);
+    this._orgAndTargetFrameworkCategories = {
+      'orgFrameworkCategories': orgFrameworkCategories,
+      'targetFrameworkCategories': targetFrameworkCategories
+    };
   }
 }
