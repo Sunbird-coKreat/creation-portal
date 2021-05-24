@@ -1243,7 +1243,7 @@ showTexbooklist(showTextBookSelector = true) {
 
   public onChangeTopics() {    
     this.blueprintTemplate.properties.forEach( (property) => {
-      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
+      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics, this.initLearningOutcomeOptions);
     })
   }
 

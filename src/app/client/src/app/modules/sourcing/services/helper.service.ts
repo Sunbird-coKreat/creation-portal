@@ -498,10 +498,12 @@ export class HelperService {
   }
 
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
-    const categoryMasterList = sessionContext.frameworkData;
-    let { gradeLevel, subject} = sessionContext;
+    let { frameworkData: categoryMasterList, gradeLevel, subject} = sessionContext;
     let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
     let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
+    let learningOutcomeOptions = [];
+    let tempTopics = [];
+
     _.forEach(categoryMasterList, (category) => {     
       if(category.code === 'gradeLevel') {
         const terms = category.terms;
@@ -536,25 +538,30 @@ export class HelperService {
                 _.filter(term.associations, (association) => association.category === 'topic'))
               }              
             })            
-            formFieldCategory.range = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );            
+            tempTopics = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );            
           }
-          topicTerms = _.filter(sessionContext.topicList, (t) => _.find(formFieldCategory.range, { name: t.name }))          
+          topicTerms = _.filter(sessionContext.topicList, (t) => _.find(tempTopics, { name: t.name }))
+          formFieldCategory.range = topicTerms;
+          categoryMasterList[formFieldCategory.code] = _.map(formFieldCategory.range, (t) => t.name);
         }
 
         if (formFieldCategory.code === 'learningOutcome') {
           const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
           if (topicTerm && topicTerm.associations) {
-            formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
+            learningOutcomeOptions = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
           }
           else {
             if(topicTerms) {
               _.forEach(topicTerms, (term) => {
                 if(term.associations) {
-                  formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+                  learningOutcomeOptions = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
                 }
               })              
             }           
           }
+          learningOutcomeOptions = _.uniqBy(learningOutcomeOptions, 'code');
+          formFieldCategory.range = learningOutcomeOptions;
+          categoryMasterList[formFieldCategory.code] = _.map(formFieldCategory.range, (t) => t.name);
         }             
         if (formFieldCategory.code === 'additionalCategories') {
           console.log(this.cacheService.get(this.userService.hashTagId));

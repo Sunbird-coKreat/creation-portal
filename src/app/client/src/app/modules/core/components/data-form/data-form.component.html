@@ -15,7 +15,7 @@
       <label>{{field.label}}</label><span class="sb-color-red" *ngIf="(field.required == true)">*</span><i *ngIf="field.tooltip" class="info circle link icon pull-right" [popupPlacement]="'left'" suiPopup popupText="{{field.tooltip}}"></i>
       <div class="sb-field">
         <sui-select id={{field.code}}  name={{field.code}} class="selection" [(ngModel)]="formInputData[field.code]" (ngModelChange)="updateForm({index:i, field:field, value:formInputData[field.code],formData:formInputData})"
-        [isDisabled]="!field.editable">
+        [isDisabled]="!field.editable" [isSearchable]="field.searchable">
           <sui-select-option *ngFor="let option of categoryList[field.code]" [value]="option.name"></sui-select-option>
         </sui-select>
       </div>
@@ -26,7 +26,7 @@
         <sui-multi-select id={{field.code}} name={{field.code}} class="selection" [(ngModel)]="formInputData[field.code]" 
         labelField="name" valueField="name" [isDisabled]="!field.editable"
         (ngModelChange)="updateForm({index:i, field:field, value:formInputData[field.code],formData:formInputData})"
-        [options]="categoryList[field.code]" #multiSelect>
+        [options]="categoryList[field.code]" [isSearchable]="field.searchable" #multiSelect>
           <sui-select-option *ngFor="let option of multiSelect.filteredOptions" [value]="option"> </sui-select-option>
         </sui-multi-select>
       </div>

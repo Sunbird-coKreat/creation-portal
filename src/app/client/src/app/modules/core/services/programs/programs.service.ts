@@ -903,7 +903,7 @@ export class ProgramsService extends DataService implements CanActivate {
         return [topicTerms, tempLearningOutcomeOptions];
     }
   
-  filterBlueprintMetadata(selectedTopics) {
+  filterBlueprintMetadata(selectedTopics, allOptions) {
     let tempLearningOutcomeOptions = [];
     if(selectedTopics) {
       _.forEach(selectedTopics, (term) => {
@@ -913,7 +913,7 @@ export class ProgramsService extends DataService implements CanActivate {
           });
       }
       tempLearningOutcomeOptions = _.uniqBy(tempLearningOutcomeOptions, 'code');
-      return tempLearningOutcomeOptions;
+      return tempLearningOutcomeOptions.length > 0 ? tempLearningOutcomeOptions : allOptions;
   }
 
   getNominationList(reqFilters) {

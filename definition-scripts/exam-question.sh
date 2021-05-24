@@ -61,6 +61,9 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "code": "topic",
               "dataType": "list",
               "description": "",
+              "depends": [
+                "learningOutcome"
+              ],
               "editable": true,
               "index": 2,
               "inputType": "multiSelect",
@@ -69,6 +72,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "placeholder": "Select chapter",
               "renderingHints": {},
               "required": false,
+              "searchable": true,
               "visible": true
             },
             {
@@ -83,6 +87,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
               "placeholder": "Select competency",
               "renderingHints": {},
               "required": false,
+              "searchable": true,
               "visible": true
             },
             {
