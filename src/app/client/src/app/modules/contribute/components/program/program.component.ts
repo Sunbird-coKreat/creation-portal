@@ -721,17 +721,29 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
       telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')
     };
-    if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
-      this.sessionContext.collectionTargetFrameworkData = {
-        targetFWIds : _.get(collection, 'targetFWIds'),
-        subjectIds: _.get(collection, 'subjectIds'),
-        topicsIds: _.get(collection, 'topicsIds'),
-        targetBoardIds: _.get(collection, 'targetBoardIds'),
-        targetMediumIds: _.get(collection, 'targetMediumIds'),
-        targetGradeLevelIds: _.get(collection, 'targetGradeLevelIds'),
-        targetSubjectIds: _.get(collection, 'targetSubjectIds')
-      };
+
+    let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+      this.frameworkService.setOrgAndTargetFrameworkCategories();
+      OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
     }
+
+    this.sessionContext.targetCollectionFrameworksData = {};
+    if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
+      _.forEach(OrgAndTargetFrameworkCategories.orgFrameworkCategories, (value) => {
+        if (_.has(collection, value) && !_.isUndefined(_.get(collection, value))) {
+          this.sessionContext.targetCollectionFrameworksData[value] = _.get(collection, value);
+        }
+      });
+    }
+    if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+      _.forEach(OrgAndTargetFrameworkCategories.targetFrameworkCategories, (value) => {
+        if (_.has(collection, value) && !_.isUndefined(_.get(collection, value))) {
+          this.sessionContext.targetCollectionFrameworksData[value] = _.get(collection, value);
+        }
+      });
+    }
+
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -753,6 +765,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
+
     this.showChapterList = true;
     this.programsService.clearMvcStageData();
     this.programStageService.addStage('chapterListComponent');
