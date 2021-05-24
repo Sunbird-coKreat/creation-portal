@@ -157,7 +157,6 @@ export class FrameworkService {
   }
 
   public setOrgAndTargetFrameworkCategories() {
-    console.log('rajnish rajnish rajnish');
     const orgFrameworkCategories = ['framework', 'boardIds', 'gradeLevelIds', 'mediumIds', 'subjectIds', 'topicIds'];
     // tslint:disable-next-line:max-line-length
     const targetFrameworkCategories = ['targetFWIds', 'targetBoardIds', 'targetGradeLevelIds', 'targetMediumIds', 'targetSubjectIds', 'targetTopicIds'];
