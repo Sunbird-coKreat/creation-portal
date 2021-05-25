@@ -27,9 +27,8 @@ export class ContentDataFormComponent implements OnInit {
 
   setFormConfig() {
     _.forEach(this.formFieldProperties, (field) => {
-      if (field.defaultValue) {
-        field['default'] = field.defaultValue;
-        this.formInputData[field.code] = field.defaultValue;
+      if (field.default) {
+        this.formInputData[field.code] = field.default;
       }
     });
   }
@@ -47,9 +46,6 @@ export class ContentDataFormComponent implements OnInit {
       if (formProperty.code === 'additionalCategories') {
         formProperty.inputType = 'nestedselect';
       }
-      if (formProperty.code === 'contentPolicyCheck') {
-        formProperty.dataType = 'boolean';
-      }
     });
     this.setFormConfig();
   }
@@ -58,16 +54,11 @@ export class ContentDataFormComponent implements OnInit {
     _.forEach(this.formFieldProperties, (field) => {
       _.forEach(event, (eventValue, eventKey) => {
           if (field['code'] === eventKey) {
-            field['defaultValue'] = eventValue;
-            this.formInputData[field.code] = field.defaultValue;
+            this.formInputData[field.code] = eventValue;
           }
       });
     });
-    // todo : remove this console log later
     console.log('formInputData', this.formInputData);
-  }
-
-  outputData($event) {
   }
 
   onStatusChanges(event) {

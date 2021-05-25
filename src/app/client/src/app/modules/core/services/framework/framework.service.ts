@@ -5,7 +5,7 @@ import {
   ConfigService, ToasterService, ResourceService, ServerResponse, Framework, FrameworkData,
   BrowserCacheTtlService
 } from '@sunbird/shared';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { skipWhile, mergeMap } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
@@ -18,7 +18,11 @@ export class FrameworkService {
   private _channelData: any = {};
   private _frameworkData$ = new BehaviorSubject<Framework>(undefined);
   private _channelData$ = new BehaviorSubject<any>(undefined);
-  public _orgAndTargetFrameworkCategories: any;
+  private _orgAndTargetFrameworkCategories: any;
+  public orgFrameworkCategories: any;
+  // tslint:disable-next-line:max-line-length
+  public targetFrameworkCategories: any;
+
   public readonly frameworkData$: Observable<Framework> = this._frameworkData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   public readonly channelData$: Observable<any> = this._channelData$
@@ -78,6 +82,8 @@ export class FrameworkService {
                 this._frameworkData$.next({ err: err, frameworkdata: null });
               });
         }
+
+    this.getMasterCategories();
   }
 
   public getChannelData(channelId) {
@@ -157,14 +163,127 @@ export class FrameworkService {
   }
 
   public setOrgAndTargetFrameworkCategories() {
-    const orgFrameworkCategories = ['framework', 'boardIds', 'gradeLevelIds', 'mediumIds', 'subjectIds', 'topicIds'];
     // tslint:disable-next-line:max-line-length
-    const targetFrameworkCategories = ['targetFWIds', 'targetBoardIds', 'targetGradeLevelIds', 'targetMediumIds', 'targetSubjectIds', 'targetTopicIds'];
-
-    const orgAndTargetFrameworkCategories = _.union(orgFrameworkCategories, targetFrameworkCategories);
     this._orgAndTargetFrameworkCategories = {
-      'orgFrameworkCategories': orgFrameworkCategories,
-      'targetFrameworkCategories': targetFrameworkCategories
+      'orgFrameworkCategories': this.orgFrameworkCategories,
+      'targetFrameworkCategories': this.targetFrameworkCategories
     };
+  }
+
+
+  public getMasterCategories() {
+    const option =  {
+      url: this.configService.urlConFig.URLS.COMPOSITE.SEARCH,
+      data: {
+        'request' : {
+        'filters': {
+            'objectType': 'Category',
+            'status': ['Live']
+        },
+        'exists': ['orgIdFieldName', 'targetIdFieldName'],
+        'fields': ['code', 'identifier', 'orgIdFieldName', 'targetIdFieldName'],
+        'limits': 300
+      }
+    }
+    };
+
+    // this.publicDataService.post(option).subscribe((data: ServerResponse) => {
+    //   console.log(data);
+    // });
+
+    const response$ = of({
+      'id': 'api.v1.search',
+      'ver': '1.0',
+      'ts': '2021-05-24T13:59:48.420Z',
+      'params': {
+          'resmsgid': '4d613840-bc98-11eb-8f0d-5b69b763f5d8',
+          'msgid': '4d5f6380-bc98-11eb-a92c-2b2f306434f8',
+          'status': 'successful',
+          'err': null,
+          'errmsg': null
+      },
+      'responseCode': 'OK',
+      'result': {
+          'Category': [
+              {
+                  'identifier': 'board',
+                  'code': 'board',
+                  'targetIdFieldName': 'targetBoardIds',
+                  'orgIdFieldName': 'boardIds',
+                  'objectType': 'Category'
+              },
+              {
+                  'identifier': 'learningOutcome',
+                  'code': 'learningOutcome',
+                  'targetIdFieldName': 'targetLearningOutcomeIds',
+                  'orgIdFieldName': 'learningOutcomeIds',
+                  'objectType': 'Category'
+              },
+              {
+                  'identifier': 'gradeLevel',
+                  'code': 'gradeLevel',
+                  'targetIdFieldName': 'targetGradeLevelIds',
+                  'orgIdFieldName': 'gradeLevelIds',
+                  'objectType': 'Category'
+              },
+              {
+                  'identifier': 'medium',
+                  'code': 'medium',
+                  'targetIdFieldName': 'targetMediumIds',
+                  'orgIdFieldName': 'mediumIds',
+                  'objectType': 'Category'
+              },
+              {
+                  'identifier': 'purpose',
+                  'code': 'purpose',
+                  'targetIdFieldName': 'targetPurposeIds',
+                  'orgIdFieldName': 'purposeIds',
+                  'objectType': 'Category'
+              },
+              {
+                  'identifier': 'subject',
+                  'code': 'subject',
+                  'targetIdFieldName': 'targetSubjectIds',
+                  'orgIdFieldName': 'subjectIds',
+                  'objectType': 'Category'
+              },
+              {
+                  'identifier': 'topic',
+                  'code': 'topic',
+                  'targetIdFieldName': 'targetTopicIds',
+                  'orgIdFieldName': 'topicIds',
+                  'objectType': 'Category'
+              }
+          ],
+          'count': 7
+      }
+  });
+
+  response$.subscribe((data: ServerResponse) => {
+    const result = _.get(data, 'result.Category');
+      this.orgFrameworkCategories = _.sortBy(_.map(result, category => {
+        return {
+          code: category.code,
+          orgIdFieldName: category.orgIdFieldName
+        };
+      }), 'code');
+      this.orgFrameworkCategories.unshift({
+        code: 'framework',
+        orgIdFieldName: 'framework'
+      });
+
+      this.targetFrameworkCategories = _.sortBy(_.map(result, category => {
+        return {
+          code: category.code,
+          targetIdFieldName: category.targetIdFieldName
+        };
+      }), 'code');
+      this.targetFrameworkCategories.unshift({
+        code: 'targetFWIds',
+        targetIdFieldName: 'targetFWIds'
+      });
+
+      this.setOrgAndTargetFrameworkCategories();
+    });
   }
 }

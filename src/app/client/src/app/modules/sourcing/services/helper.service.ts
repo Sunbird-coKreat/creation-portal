@@ -301,7 +301,7 @@ export class HelperService {
             reqOption.data.request['questionset'] = {};
             reqOption.data.request['questionset'] = reqOption.data.request.content;
             delete reqOption.data.request.content;
-          } 
+          }
           this.learnerService.post(reqOption).subscribe((res: any) => {
             if (res && res.result) {
               const me = this;
@@ -525,36 +525,37 @@ export class HelperService {
 
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
+    let targetCategoryMasterList;
     // tslint:disable-next-line:max-line-length
     if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
-       categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
-       _.forEach(categoryMasterList.categories, (frameworkCategories) => {
+      targetCategoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
+       _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
-          if (frameworkCategories.code === field.sourceCategory) {
+          if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target')) {
               field.terms = frameworkCategories.terms;
           }
         });
       });
-    } if (sessionContext.frameworkData) {
+    }
+
+    // tslint:disable-next-line:max-line-length
+    if (_.has(sessionContext.targetCollectionFrameworksData, 'framework') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework])) {
+      categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework];
+      _.forEach(categoryMasterList.categories, (frameworkCategories) => {
+       _.forEach(formFieldProperties, (field) => {
+         if (frameworkCategories.code === field.sourceCategory && !_.includes(field.code, 'target')) {
+             field.terms = frameworkCategories.terms;
+         }
+       });
+     });
+    }
+
+    if (sessionContext.frameworkData) {
        categoryMasterList = sessionContext.frameworkData;
-       let { gradeLevel, subject, board, medium } = sessionContext;
-       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [], boardTerms = [], mediumTerms = [];
+       let { gradeLevel, subject } = sessionContext;
+       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
        let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
        _.forEach(categoryMasterList, (category) => {
-
-        if (category.code === 'board') {
-          const terms = category.terms;
-          if (terms) {
-            boardTerms =  _.concat(boardTerms, _.filter(terms,  (t)  => _.includes(board, t.name)));
-          }
-        }
-
-        if (category.code === 'medium') {
-          const terms = category.terms;
-          if (terms) {
-            mediumTerms =  _.concat(mediumTerms, _.filter(terms,  (t)  => _.includes(medium, t.name)));
-          }
-        }
 
          if (category.code === 'gradeLevel') {
            const terms = category.terms;
@@ -604,7 +605,7 @@ export class HelperService {
                  _.forEach(topicTerms, (term) => {
                    if (term.associations) {
                      // tslint:disable-next-line:max-line-length
-                     formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+                     formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) => learningOutcome));
                    }
                  });
                }
@@ -634,31 +635,31 @@ export class HelperService {
       _.forEach(formFieldProperties, (formFieldCategory) => {
         const requiredData = _.get(contentMetadata, formFieldCategory.code);
         if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
-          formFieldCategory.defaultValue = requiredData;
+          formFieldCategory.default = requiredData;
         }
         if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
           // tslint:disable-next-line:max-line-length
           if (_.has(sessionContext.targetCollectionFrameworksData, formFieldCategory.code) && !_.isUndefined(sessionContext.targetCollectionFrameworksData, formFieldCategory.code)) {
-            formFieldCategory.defaultValue = sessionContext.targetCollectionFrameworksData[formFieldCategory.code];
+            formFieldCategory.default = sessionContext.targetCollectionFrameworksData[formFieldCategory.code];
           }
         }
         if (formFieldCategory.inputType === 'checkbox' && requiredData) {
-          formFieldCategory.defaultValue = requiredData;
+          formFieldCategory.default = requiredData;
         }
         if (formFieldCategory.code === 'author' && !requiredData) {
           let creator = this.userService.userProfile.firstName;
           if (!_.isEmpty(this.userService.userProfile.lastName)) {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
-          formFieldCategory.defaultValue = contentMetadata.creator || creator;
+          formFieldCategory.default = contentMetadata.creator || creator;
         }
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
-          formFieldCategory.defaultValue = _.first(requiredData) || '';
+          formFieldCategory.default = _.first(requiredData) || '';
         }
         // tslint:disable-next-line:max-line-length
         if (formFieldCategory.code === 'additionalCategories' && formFieldCategory.inputType === 'multiSelect' && contentMetadata.primaryCategory === 'eTextbook' &&
             contentMetadata.status === 'Draft' && _.isEmpty(contentMetadata.additionalCategories)) {
-          formFieldCategory.defaultValue = ['Textbook'];
+          formFieldCategory.default = ['Textbook'];
         }
       });
     }
@@ -714,27 +715,25 @@ export class HelperService {
       'code': 'contentPolicyCheck',
       'editable': true,
       'displayProperty': 'Editable',
-      'dataType': 'text',
+      'dataType': 'boolean',
       'renderingHints': {
-        'semanticColumnWidth': 'twelve'
       },
-      'description': 'Name',
-      'index': formFields ? (formFields.length + 1) : 20,
+      'description': 'Content PolicyCheck',
       'label': 'Content PolicyCheck',
       'required': true,
       'name': 'contentPolicyCheck',
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
-    _.forEach(formFields, formField => {
-      if (_.has(formField, 'validations')) {
-        _.forEach(formField.validations, validation => {
-            if (validation['type'] === 'maxlength') {
-              formField[validation['type']] = validation['value']
-            }
-        });
-       }
-    });
+    // _.forEach(formFields, formField => {
+    //   if (_.has(formField, 'validations')) {
+    //     _.forEach(formField.validations, validation => {
+    //         if (validation['type'] === 'maxlength') {
+    //           formField[validation['type']] = validation['value']
+    //         }
+    //     });
+    //    }
+    // });
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
 
@@ -866,6 +865,77 @@ export class HelperService {
 
     if (!_.isEmpty(unlistedframeworkIds)) {
       this.frameworkService.addUnlistedFrameworks(unlistedframeworkIds);
+    }
+  }
+
+  getFormattedFrameworkMeta(row, targetCollectionFrameworksData) {
+    const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
+    const targetFrameworkUserInput = _.pick(row, _.map(this.frameworkService.targetFrameworkCategories, 'targetIdFieldName'));
+    const framework = _.get(targetCollectionFrameworksData, 'framework');
+    const targetFWIds = _.get(targetCollectionFrameworksData, 'targetFWIds');
+
+    _.forEach(organisationFrameworkUserInput, (value, key) => {
+      const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
+        'orgIdFieldName': key
+      }), 'code');
+
+      organisationFrameworkUserInput[key] = this.hasEmptyElement(value) ? _.get(targetCollectionFrameworksData, key) || [] :
+      this.convertNameToIdentifier(framework, value, key, code, targetCollectionFrameworksData);
+
+    });
+
+    _.forEach(targetFrameworkUserInput, (value, key) => {
+      const code = _.get(_.find(this.frameworkService.targetFrameworkCategories, {
+        'targetIdFieldName': key
+      }), 'code');
+      targetFrameworkUserInput[key] = this.hasEmptyElement(value) ?
+      _.get(targetCollectionFrameworksData, key) || [] :
+      this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData);
+    });
+
+    return {...organisationFrameworkUserInput, ...targetFrameworkUserInput};
+  }
+
+/**
+ *
+ *
+ * @param {*} framework - target collection's framework
+ * @param {*} value - user input in the CSV row
+ * @param {*} key - CSV cell identifier
+ * @param {*} code - corresponding system level code for `key`
+ * @param {*} collectionMeta - target collection metadata
+ * @returns - returns user input in the framework_code_value format.
+ * @memberof HelperService
+ */
+
+convertNameToIdentifier(framework, value, key, code, collectionMeta) {
+    if (_.isArray(value)) {
+      if (value.length === 1) {
+        return _.map(value, item => {
+          return !_.isEmpty(item) ?
+            `${framework}_${code.toLowerCase()}_${item.split(' ').join('-').toLowerCase()}` :
+            _.get(collectionMeta, key) ;
+        });
+      } else {
+        return _.map(value, item => {
+          return !_.isEmpty(item) ? `${framework}_${code.toLowerCase()}_${item.split(' ').join('-').toLowerCase()}` : '';
+        });
+      }
+    } else {
+      return `${framework}_${code.toLowerCase()}_${value.split(' ').join('-').toLowerCase()}`;
+    }
+  }
+
+
+  hasEmptyElement(value) {
+    if (_.isArray(value)) { // [""]
+      if (value.length === 1 && _.isEmpty(_.first(value))) { // [""]
+        return true;
+      } else if (value.length === 1 &&  !_.isEmpty(_.first(value))) { // ["Something"]
+        return false;
+      }
+    } else if (_.isEmpty(value)) { // []
+      return true;
     }
   }
 }
