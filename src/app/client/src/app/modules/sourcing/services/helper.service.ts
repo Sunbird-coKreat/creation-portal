@@ -725,15 +725,6 @@ export class HelperService {
       'inputType': 'checkbox',
       'placeholder': 'Name'
     }];
-    // _.forEach(formFields, formField => {
-    //   if (_.has(formField, 'validations')) {
-    //     _.forEach(formField.validations, validation => {
-    //         if (validation['type'] === 'maxlength') {
-    //           formField[validation['type']] = validation['value']
-    //         }
-    //     });
-    //    }
-    // });
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
 
@@ -893,7 +884,7 @@ export class HelperService {
       this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData);
     });
 
-    return {...organisationFrameworkUserInput, ...targetFrameworkUserInput};
+    return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
   }
 
 /**
