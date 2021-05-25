@@ -526,12 +526,14 @@ export class HelperService {
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
     let targetCategoryMasterList;
+    const nonFrameworkFields = ['topic', 'learningOutcome', 'additionalCategories', 'bloomsLevel', 'license'];
     // tslint:disable-next-line:max-line-length
     if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
       targetCategoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
        _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
-          if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target')) {
+          // tslint:disable-next-line:max-line-length
+          if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
               field.terms = frameworkCategories.terms;
           }
         });
@@ -543,7 +545,8 @@ export class HelperService {
       categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework];
       _.forEach(categoryMasterList.categories, (frameworkCategories) => {
        _.forEach(formFieldProperties, (field) => {
-         if (frameworkCategories.code === field.sourceCategory && !_.includes(field.code, 'target')) {
+         // tslint:disable-next-line:max-line-length
+         if ((frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
              field.terms = frameworkCategories.terms;
          }
        });
@@ -571,11 +574,11 @@ export class HelperService {
            }
          }
          _.forEach(formFieldProperties, (formFieldCategory) => {
-           if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
-             formFieldCategory.range = category.terms;
-           }
+          //  if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
+          //    formFieldCategory.range = category.terms;
+          //  }
 
-           if(formFieldCategory.code === 'topic') {
+           if (formFieldCategory.code === 'topic') {
              if (!formFieldCategory.range) { formFieldCategory.range = []; }
              if (!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {
                _.forEach(gradeLevelTerms, (term) => {

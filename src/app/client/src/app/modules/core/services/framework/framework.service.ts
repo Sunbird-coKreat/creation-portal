@@ -187,79 +187,9 @@ export class FrameworkService {
     }
     };
 
-    // this.publicDataService.post(option).subscribe((data: ServerResponse) => {
-    //   console.log(data);
-    // });
+   const frameworkCategories$ =  this.learnerService.post(option);
 
-    const response$ = of({
-      'id': 'api.v1.search',
-      'ver': '1.0',
-      'ts': '2021-05-24T13:59:48.420Z',
-      'params': {
-          'resmsgid': '4d613840-bc98-11eb-8f0d-5b69b763f5d8',
-          'msgid': '4d5f6380-bc98-11eb-a92c-2b2f306434f8',
-          'status': 'successful',
-          'err': null,
-          'errmsg': null
-      },
-      'responseCode': 'OK',
-      'result': {
-          'Category': [
-              {
-                  'identifier': 'board',
-                  'code': 'board',
-                  'targetIdFieldName': 'targetBoardIds',
-                  'orgIdFieldName': 'boardIds',
-                  'objectType': 'Category'
-              },
-              {
-                  'identifier': 'learningOutcome',
-                  'code': 'learningOutcome',
-                  'targetIdFieldName': 'targetLearningOutcomeIds',
-                  'orgIdFieldName': 'learningOutcomeIds',
-                  'objectType': 'Category'
-              },
-              {
-                  'identifier': 'gradeLevel',
-                  'code': 'gradeLevel',
-                  'targetIdFieldName': 'targetGradeLevelIds',
-                  'orgIdFieldName': 'gradeLevelIds',
-                  'objectType': 'Category'
-              },
-              {
-                  'identifier': 'medium',
-                  'code': 'medium',
-                  'targetIdFieldName': 'targetMediumIds',
-                  'orgIdFieldName': 'mediumIds',
-                  'objectType': 'Category'
-              },
-              {
-                  'identifier': 'purpose',
-                  'code': 'purpose',
-                  'targetIdFieldName': 'targetPurposeIds',
-                  'orgIdFieldName': 'purposeIds',
-                  'objectType': 'Category'
-              },
-              {
-                  'identifier': 'subject',
-                  'code': 'subject',
-                  'targetIdFieldName': 'targetSubjectIds',
-                  'orgIdFieldName': 'subjectIds',
-                  'objectType': 'Category'
-              },
-              {
-                  'identifier': 'topic',
-                  'code': 'topic',
-                  'targetIdFieldName': 'targetTopicIds',
-                  'orgIdFieldName': 'topicIds',
-                  'objectType': 'Category'
-              }
-          ],
-          'count': 7
-      }
-  });
-
-  response$.subscribe((data: ServerResponse) => {
+  frameworkCategories$.subscribe((data: ServerResponse) => {
     const result = _.get(data, 'result.Category');
       this.orgFrameworkCategories = _.sortBy(_.map(result, category => {
         return {
