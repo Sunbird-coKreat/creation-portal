@@ -909,7 +909,7 @@ export class HelperService {
       this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData);
     });
 
-    return {...organisationFrameworkUserInput, ...targetFrameworkUserInput};
+    return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
   }
 
 /**
