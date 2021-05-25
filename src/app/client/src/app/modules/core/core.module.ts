@@ -20,6 +20,7 @@ import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CommonFormElementsModule } from 'common-form-elements';
+import { ContentDataFormComponent } from './components/content-data-form/content-data-form.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -38,9 +39,9 @@ import { CommonFormElementsModule } from 'common-form-elements';
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
     BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
     ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
-    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent],
+    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent, ContentDataFormComponent],
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
-    DataDrivenFilterComponent, SortByComponent, FlagContentComponent, DataFormComponent,
+    DataDrivenFilterComponent, SortByComponent, FlagContentComponent, DataFormComponent, ContentDataFormComponent,
     TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
   providers: [
     {
