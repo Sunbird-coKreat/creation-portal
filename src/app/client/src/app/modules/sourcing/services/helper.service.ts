@@ -726,7 +726,7 @@ export class HelperService {
       'required': true,
       'name': 'contentPolicyCheck',
       'inputType': 'checkbox',
-      'placeholder': 'Name'
+      'placeholder': 'Content PolicyCheck'
     }];
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
