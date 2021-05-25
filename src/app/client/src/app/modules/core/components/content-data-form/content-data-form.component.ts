@@ -50,6 +50,9 @@ export class ContentDataFormComponent implements OnInit {
     this.setFormConfig();
   }
 
+  outputData(event) {
+  }
+
   valueChanges(event) {
     _.forEach(this.formFieldProperties, (field) => {
       _.forEach(event, (eventValue, eventKey) => {

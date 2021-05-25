@@ -516,8 +516,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
 
-      // const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      const sharedMetaData = this.sessionContext.targetCollectionFrameworksData;
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+      _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
       const option = {
         url: `content/v3/create`,
         data: {

@@ -1098,10 +1098,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepareQuestionReqBody() {
-    let targetFWIds = {};
-      if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
-        targetFWIds = {targetFWIds: this.sessionContext.collectionTargetFrameworkData.targetFWIds};
-      }
    // tslint:disable-next-line:prefer-const
     let finalBody = {
       'request': {
@@ -1128,8 +1124,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
             'body': '',
             'media': [],
             'author' : this.getUserName(),
-            'status' : 'Draft',
-            ...(_.pickBy(targetFWIds, _.identity))
+            'status' : 'Draft'
           }
         }
       }
@@ -1141,6 +1136,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       finalBody.request.assessment_item.metadata = _.assign(finalBody.request.assessment_item.metadata, this.getReferenceQuestionBody());
     }
+    _.merge(finalBody.request.assessment_item.metadata, this.sessionContext.targetCollectionFrameworksData);
     return finalBody;
   }
 
