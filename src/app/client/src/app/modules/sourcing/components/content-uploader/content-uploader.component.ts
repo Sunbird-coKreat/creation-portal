@@ -19,6 +19,7 @@ import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/tel
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
 import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
