@@ -15,7 +15,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 
@@ -33,7 +33,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
 
   public sessionContext: any;
   public programContext: any;

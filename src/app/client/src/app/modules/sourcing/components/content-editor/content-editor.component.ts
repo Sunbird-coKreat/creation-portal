@@ -13,7 +13,7 @@ import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { NgForm } from '@angular/forms';
 jQuery.fn.iziModal = iziModal;
 
@@ -24,7 +24,7 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;

@@ -12,7 +12,7 @@ import { AvatarModule } from 'ngx-avatar';
 import {
   MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
-  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent
+  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent, ContentDataFormComponent
 } from './components';
 import { ManageModule } from '../manage/manage.module';
 import { AuthGuard } from './guard/auth-gard.service';
@@ -20,7 +20,6 @@ import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CommonFormElementsModule } from 'common-form-elements';
-import { ContentDataFormComponent } from './components/content-data-form/content-data-form.component';
 @NgModule({
   imports: [
     CommonModule,

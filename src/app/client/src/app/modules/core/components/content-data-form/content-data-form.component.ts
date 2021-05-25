@@ -54,7 +54,9 @@ export class ContentDataFormComponent implements OnInit {
     _.forEach(this.formFieldProperties, (field) => {
       _.forEach(event, (eventValue, eventKey) => {
           if (field['code'] === eventKey) {
-            this.formInputData[field.code] = eventValue;
+            if (eventValue !== '') {
+              this.formInputData[field.code] = eventValue;
+            }
           }
       });
     });

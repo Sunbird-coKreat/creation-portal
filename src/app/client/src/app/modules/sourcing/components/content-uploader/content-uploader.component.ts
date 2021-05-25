@@ -18,7 +18,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
@@ -28,7 +27,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
