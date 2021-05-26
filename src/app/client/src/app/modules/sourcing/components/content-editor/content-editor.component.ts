@@ -430,7 +430,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   showEditDetailsForm() {
     // tslint:disable-next-line:max-line-length
-    this.formFieldProperties = this.helperService.initializeSbFormFields(this.sessionContext, this.formFieldProperties, this.contentData);
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentData);
     this.showEditMetaForm = true;
   }
 

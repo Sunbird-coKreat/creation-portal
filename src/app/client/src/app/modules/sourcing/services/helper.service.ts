@@ -629,7 +629,7 @@ export class HelperService {
     return [categoryMasterList, sortedFormFields];
   }
 
-  initializeSbFormFields(sessionContext, formFieldProperties, contentMetadata) {
+  initializeFormFields(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
     let targetCategoryMasterList;
     const nonFrameworkFields = ['topic', 'learningOutcome', 'additionalCategories', 'bloomsLevel', 'license'];

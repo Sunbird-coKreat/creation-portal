@@ -286,7 +286,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   showEditDetailsForm() {
       // tslint:disable-next-line:max-line-length
-    this.formFieldProperties = this.helperService.initializeSbFormFields(this.sessionContext, this.formFieldProperties, this.contentMetaData);
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentMetaData);
     this.showEditMetaForm = true;
   }
 
