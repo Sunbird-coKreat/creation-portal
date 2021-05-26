@@ -270,8 +270,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentMetaData);
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
+    }
+  }
+
+  showEditDetailsForm() {
+      // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeSbFormFields(this.sessionContext, this.formFieldProperties, this.contentMetaData);
     this.showEditMetaForm = true;
   }
 

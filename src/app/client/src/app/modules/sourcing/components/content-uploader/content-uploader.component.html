@@ -300,12 +300,11 @@
     <!--/Header-->
 
     <!--Content-->
-    <div class="sb-modal-content o-y-visible pb-8 sb-edit-form" *ngIf="formFieldProperties && categoryMasterList">
+    <div class="sb-modal-content o-y-visible pb-8 sb-edit-form" *ngIf="formFieldProperties">
       <app-content-data-form
         #formData
         (formStatus)="formStatusEventListener($event)"
-        [formFieldProperties]="formFieldProperties" 
-        [categoryMasterList]="categoryMasterList">
+        [formFieldProperties]="formFieldProperties">
       </app-content-data-form>
     </div>
     <!--/Content-->

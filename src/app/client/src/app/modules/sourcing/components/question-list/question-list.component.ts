@@ -418,11 +418,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
-    if(this.formFieldProperties["bloomsLevel"] && !this.categoryMasterList["bloomsLevel"]) {
-      this.categoryMasterList["bloomsLevel"] = this.formFieldProperties["bloomsLevel"].range;
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
     }
+  }
+
+  showEditDetailsForm() {
+     // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeSbFormFields(this.sessionContext, this.formFieldProperties, this.resourceDetails);
     this.showEditMetaForm = true;
   }
 
