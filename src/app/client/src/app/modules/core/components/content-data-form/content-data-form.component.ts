@@ -9,7 +9,6 @@ import * as _ from 'lodash-es';
 })
 export class ContentDataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
-  @Input() categoryMasterList: any;
   @Output() formStatus = new EventEmitter<any>();
 
   /**
