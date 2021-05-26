@@ -4,8 +4,7 @@ import * as _ from 'lodash-es';
 @Component({
   selector: 'app-content-data-form',
   templateUrl: './content-data-form.component.html',
-  styleUrls: ['./content-data-form.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./content-data-form.component.scss']
 })
 export class ContentDataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
@@ -15,13 +14,8 @@ export class ContentDataFormComponent implements OnInit {
    * formInputData is to take input data's from form
    */
   public formInputData = {};
-  /**
-   * categoryList is category list of dropdown values
-   */
-  public categoryList: {};
 
   constructor() {
-    this.categoryList = {};
   }
 
   setFormConfig() {
