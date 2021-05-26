@@ -78,8 +78,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       const isCollectionFolder = this.helperService.checkIfCollectionFolder(obj);
       if ( isMainCollection || isCollectionFolder) {
         const unit = _.pick(obj, ['identifier', 'origin']);
-        if (isMainCollection) 
-        {
+        if (isMainCollection) {
           const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
           if (originUnit) {
             this.folderData.push({identifier: obj.identifier, origin: obj.origin});
