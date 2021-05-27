@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
@@ -27,7 +27,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
@@ -270,8 +270,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentMetaData);
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
+    }
+  }
+
+  showEditDetailsForm() {
+      // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentMetaData);
     this.showEditMetaForm = true;
   }
 
@@ -516,8 +531,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
 
-      // const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      const sharedMetaData = this.sessionContext.targetCollectionFrameworksData;
+      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+      _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
       const option = {
         url: `content/v3/create`,
         data: {

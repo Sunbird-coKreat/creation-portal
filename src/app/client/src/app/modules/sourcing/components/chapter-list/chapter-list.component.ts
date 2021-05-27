@@ -999,12 +999,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userProfile.lastName)) {
         creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
       }
-      let targetFWIds = {};
+
+      let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+      if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+        this.frameworkService.setOrgAndTargetFrameworkCategories();
+        OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+      }
+
+      let targetCollectionFrameworksData = {};
+      if (_.has(this.collection, 'framework') && !_.isUndefined(this.collection.framework)) {
+        targetCollectionFrameworksData = _.pick(this.collection,
+          _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+      }
       if (_.has(this.collection, 'targetFWIds') && !_.isUndefined(this.collection.targetFWIds)) {
-        targetFWIds = {targetFWIds: this.collection.targetFWIds};
+        targetCollectionFrameworksData = _.assign(targetCollectionFrameworksData,
+            _.pick(this.collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
       }
 
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+      _.merge(sharedMetaData, targetCollectionFrameworksData);
       let option = {
         url: `content/v3/create`,
         header: {
@@ -1025,8 +1038,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               ...(this.sessionContext.nominationDetails &&
                 this.sessionContext.nominationDetails.organisation_id &&
                 {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              ...(_.pickBy(sharedMetaData, _.identity)),
-              ...(_.pickBy(targetFWIds, _.identity))
+              ...(_.pickBy(sharedMetaData, _.identity))
             }
           }
         }

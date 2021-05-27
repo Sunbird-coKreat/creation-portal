@@ -12,7 +12,7 @@ import { AvatarModule } from 'ngx-avatar';
 import {
   MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
-  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent
+  LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent, ContentDataFormComponent
 } from './components';
 import { ManageModule } from '../manage/manage.module';
 import { AuthGuard } from './guard/auth-gard.service';
@@ -38,9 +38,9 @@ import { CommonFormElementsModule } from 'common-form-elements';
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
     BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
     ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
-    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent],
+    ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent, ContentDataFormComponent],
   exports: [MainHeaderComponent, MainFooterComponent, PermissionDirective, BodyScrollDirective,
-    DataDrivenFilterComponent, SortByComponent, FlagContentComponent, DataFormComponent,
+    DataDrivenFilterComponent, SortByComponent, FlagContentComponent, DataFormComponent, ContentDataFormComponent,
     TelemetryModule, LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent],
   providers: [
     {

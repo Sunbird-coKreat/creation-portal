@@ -524,14 +524,122 @@ export class HelperService {
   }
 
   initializeMetadataForm(sessionContext, formFieldProperties, contentMetadata) {
+    const categoryMasterList = sessionContext.frameworkData;
+    let { gradeLevel, subject} = sessionContext;
+    let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
+    let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
+    _.forEach(categoryMasterList, (category) => {     
+      if(category.code === 'gradeLevel') {
+        const terms = category.terms;
+        if(terms) {
+          gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
+        }
+      }
+
+      if(category.code === 'subject') {
+        const terms = category.terms;
+        if(terms) {
+          subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
+        }
+      }
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
+          formFieldCategory.range = category.terms;
+        }        
+
+        if(formFieldCategory.code === 'topic') {
+          if(!formFieldCategory.range) formFieldCategory.range = [];
+          if(!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {            
+            _.forEach(gradeLevelTerms, (term) => {
+              if(term.associations) {
+              gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations, 
+                _.filter(term.associations, (association) => association.category === 'topic'))
+              }
+            })
+            _.forEach(subjectTerms, (term) => {      
+              if(term.associations) {       
+              subjectTopicAssociations = _.concat(subjectTopicAssociations, 
+                _.filter(term.associations, (association) => association.category === 'topic'))
+              }              
+            })            
+            formFieldCategory.range = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );            
+          }
+          topicTerms = _.filter(sessionContext.topicList, (t) => _.find(formFieldCategory.range, { name: t.name }))          
+        }
+
+        if (formFieldCategory.code === 'learningOutcome') {
+          const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
+          if (topicTerm && topicTerm.associations) {
+            formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
+          }
+          else {
+            if(topicTerms) {
+              _.forEach(topicTerms, (term) => {
+                if(term.associations) {
+                  formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) =>learningOutcome));
+                }
+              })              
+            }           
+          }
+        }             
+        if (formFieldCategory.code === 'additionalCategories') {
+          console.log(this.cacheService.get(this.userService.hashTagId));
+          // tslint:disable-next-line:max-line-length
+          formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
+            return {name: data};
+          });
+        }
+        if(formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
+          categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
+        }
+        if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
+          formFieldCategory.range = this.getAvailableLicences();
+        }
+      });
+    });
+
+    // set default values in the form
+    if (contentMetadata) {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        const requiredData = _.get(contentMetadata, formFieldCategory.code);
+        if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
+          formFieldCategory.defaultValue = requiredData;
+        }
+        if (formFieldCategory.inputType === 'checkbox' && requiredData) {
+          formFieldCategory.defaultValue = requiredData;
+        }
+        if (formFieldCategory.code === 'author' && !requiredData) {
+          let creator = this.userService.userProfile.firstName;
+          if (!_.isEmpty(this.userService.userProfile.lastName)) {
+            creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+          }
+          formFieldCategory.defaultValue = contentMetadata.creator || creator;
+        }        
+        if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
+          formFieldCategory.defaultValue = _.first(requiredData) || '';
+        }
+        // tslint:disable-next-line:max-line-length
+        if (formFieldCategory.code === 'additionalCategories' && formFieldCategory.inputType === 'multiSelect' && contentMetadata.primaryCategory === 'eTextbook' &&
+            contentMetadata.status === 'Draft' && _.isEmpty(contentMetadata.additionalCategories)) {
+          formFieldCategory.defaultValue = ['Textbook'];
+        }
+      });
+    }
+    const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
+    return [categoryMasterList, sortedFormFields];
+  }
+
+  initializeFormFields(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
     let targetCategoryMasterList;
+    const nonFrameworkFields = ['topic', 'learningOutcome', 'additionalCategories', 'bloomsLevel', 'license'];
     // tslint:disable-next-line:max-line-length
     if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
       targetCategoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
        _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
-          if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target')) {
+          // tslint:disable-next-line:max-line-length
+          if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
               field.terms = frameworkCategories.terms;
           }
         });
@@ -543,7 +651,8 @@ export class HelperService {
       categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework];
       _.forEach(categoryMasterList.categories, (frameworkCategories) => {
        _.forEach(formFieldProperties, (field) => {
-         if (frameworkCategories.code === field.sourceCategory && !_.includes(field.code, 'target')) {
+         // tslint:disable-next-line:max-line-length
+         if ((frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
              field.terms = frameworkCategories.terms;
          }
        });
@@ -552,24 +661,10 @@ export class HelperService {
 
     if (sessionContext.frameworkData) {
        categoryMasterList = sessionContext.frameworkData;
-       let { gradeLevel, subject, board, medium } = sessionContext;
-       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [], boardTerms = [], mediumTerms = [];
+       let { gradeLevel, subject } = sessionContext;
+       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
        let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
        _.forEach(categoryMasterList, (category) => {
-
-        if (category.code === 'board') {
-          const terms = category.terms;
-          if (terms) {
-            boardTerms =  _.concat(boardTerms, _.filter(terms,  (t)  => _.includes(board, t.name)));
-          }
-        }
-
-        if (category.code === 'medium') {
-          const terms = category.terms;
-          if (terms) {
-            mediumTerms =  _.concat(mediumTerms, _.filter(terms,  (t)  => _.includes(medium, t.name)));
-          }
-        }
 
          if (category.code === 'gradeLevel') {
            const terms = category.terms;
@@ -585,11 +680,7 @@ export class HelperService {
            }
          }
          _.forEach(formFieldProperties, (formFieldCategory) => {
-           if (category.code === formFieldCategory.code && category.code !== 'learningOutcome' && category.code !== 'topic') {
-             formFieldCategory.range = category.terms;
-           }
-
-           if(formFieldCategory.code === 'topic') {
+           if (formFieldCategory.code === 'topic') {
              if (!formFieldCategory.range) { formFieldCategory.range = []; }
              if (!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {
                _.forEach(gradeLevelTerms, (term) => {
@@ -636,9 +727,11 @@ export class HelperService {
              // tslint:disable-next-line:no-unused-expression
              categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
            }
-           if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
-             const licenseRange = this.getAvailableLicences();
-             formFieldCategory.range = _.map(licenseRange, 'name');
+           if (formFieldCategory.code === 'license') {
+             const license = this.getAvailableLicences();
+             if (license) {
+              formFieldCategory.range = _.map(license, 'name');
+             }
            }
          });
        });
@@ -649,41 +742,40 @@ export class HelperService {
       _.forEach(formFieldProperties, (formFieldCategory) => {
         const requiredData = _.get(contentMetadata, formFieldCategory.code);
         if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
-          formFieldCategory.defaultValue = requiredData;
+          formFieldCategory.default = requiredData;
         }
         if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
           // tslint:disable-next-line:max-line-length
           if (_.has(sessionContext.targetCollectionFrameworksData, formFieldCategory.code) && !_.isUndefined(sessionContext.targetCollectionFrameworksData, formFieldCategory.code)) {
-            formFieldCategory.defaultValue = sessionContext.targetCollectionFrameworksData[formFieldCategory.code];
+            formFieldCategory.default = sessionContext.targetCollectionFrameworksData[formFieldCategory.code];
           }
         }
         if (formFieldCategory.inputType === 'checkbox' && requiredData) {
-          formFieldCategory.defaultValue = requiredData;
+          formFieldCategory.default = requiredData;
         }
         if (formFieldCategory.code === 'author' && !requiredData) {
           let creator = this.userService.userProfile.firstName;
           if (!_.isEmpty(this.userService.userProfile.lastName)) {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
-          formFieldCategory.defaultValue = contentMetadata.creator || creator;
+          formFieldCategory.default = contentMetadata.creator || creator;
         }
         if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
-          formFieldCategory.defaultValue = _.first(requiredData) || '';
+          formFieldCategory.default = _.first(requiredData) || '';
         }
         // tslint:disable-next-line:max-line-length
         if (formFieldCategory.code === 'additionalCategories' && formFieldCategory.inputType === 'multiSelect' && contentMetadata.primaryCategory === 'eTextbook' &&
             contentMetadata.status === 'Draft' && _.isEmpty(contentMetadata.additionalCategories)) {
-          formFieldCategory.defaultValue = ['Textbook'];
+          formFieldCategory.default = ['Textbook'];
         }
       });
     }
-    const sortedFormFields = _.sortBy(_.uniqBy(formFieldProperties, 'code'), 'index');
-    return [categoryMasterList, sortedFormFields];
+    return formFieldProperties;
   }
 
   validateForm(formFieldProperties, formInputData, formStatus?) {
     let sbValidField = false;
-    if (_.isEmpty(formStatus) || formStatus.isValid == true) {
+    if (_.isEmpty(formStatus) || formStatus.isValid === true) {
       sbValidField = true;
     }
 
@@ -729,27 +821,16 @@ export class HelperService {
       'code': 'contentPolicyCheck',
       'editable': true,
       'displayProperty': 'Editable',
-      'dataType': 'text',
+      'dataType': 'boolean',
       'renderingHints': {
-        'semanticColumnWidth': 'twelve'
       },
-      'description': 'Name',
-      'index': formFields ? (formFields.length + 1) : 20,
+      'description': 'Content PolicyCheck',
       'label': 'Content PolicyCheck',
       'required': true,
       'name': 'contentPolicyCheck',
       'inputType': 'checkbox',
-      'placeholder': 'Name'
+      'placeholder': 'Content PolicyCheck'
     }];
-    _.forEach(formFields, formField => {
-      if (_.has(formField, 'validations')) {
-        _.forEach(formField.validations, validation => {
-            if (validation['type'] === 'maxlength') {
-              formField[validation['type']] = validation['value']
-            }
-        });
-       }
-    });
     return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
   }
 
@@ -953,5 +1034,32 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
     } else if (_.isEmpty(value)) { // []
       return true;
     }
+  }
+
+  checkErrorCondition(targetCollectionFormData, formFieldProperties) {
+    let errorCondition = false;
+    // When target collection will not have framework/targetFWIds but form config will have corresponding fields
+    if (!_.has(targetCollectionFormData, 'targetFWIds')) {
+      _.forEach(formFieldProperties, (formFields) => {
+        if (_.includes(formFields.code, 'target')) {
+          errorCondition = true;
+        }
+      });
+    }
+    if (!_.has(targetCollectionFormData, 'framework')) {
+      _.forEach(formFieldProperties, (formFields) => {
+        if (!_.includes(formFields.code, 'target') && _.includes(formFields.code, 'Ids')) {
+          errorCondition = true;
+        }
+      });
+    }
+
+    // If form config will have framework fields
+    _.forEach(formFieldProperties, (formFields) => {
+      if ((formFields.code).toLowerCase() === 'framework' || (formFields.code).toLowerCase() === 'targetfwids') {
+        errorCondition = true;
+      }
+    });
+    return errorCondition;
   }
 }
