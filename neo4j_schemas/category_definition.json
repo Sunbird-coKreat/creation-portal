@@ -180,6 +180,54 @@
           "defaultValue": "",
           "renderingHints": "",
           "indexed": true
+        },
+        {
+            "propertyName": "orgIdFieldName",
+            "title": "OrgIdFieldName",
+            "description": "Org Id FieldName for Category",
+            "category": "General",
+            "dataType": "Text",
+            "required": true,
+            "displayProperty": "Editable",
+            "defaultValue": "",
+            "renderingHints": "{'inputType': 'text', 'order': 4}",
+            "indexed": true
+        },
+        {
+            "propertyName": "targetIdFieldName",
+            "title": "TargetIdFieldName",
+            "description": "TargetId FieldName for Category",
+            "category": "General",
+            "dataType": "Text",
+            "required": true,
+            "displayProperty": "Editable",
+            "defaultValue": "",
+            "renderingHints": "{'inputType': 'text', 'order': 4}",
+            "indexed": true
+        },
+        {
+            "propertyName": "searchIdFieldName",
+            "title": "SearchIdFieldName",
+            "description": "SearchId FieldName for Category",
+            "category": "General",
+            "dataType": "Text",
+            "required": true,
+            "displayProperty": "Editable",
+            "defaultValue": "",
+            "renderingHints": "{'inputType': 'text', 'order': 4}",
+            "indexed": true
+        },
+        {
+            "propertyName": "searchLabelFieldName",
+            "title": "SearchLabelFieldName",
+            "description": "SearchLabel FieldName for Category",
+            "category": "General",
+            "dataType": "Text",
+            "required": true,
+            "displayProperty": "Editable",
+            "defaultValue": "",
+            "renderingHints": "{'inputType': 'text', 'order': 4}",
+            "indexed": true
         }
       ],
       "inRelations":[],

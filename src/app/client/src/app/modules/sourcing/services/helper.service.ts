@@ -286,6 +286,7 @@ export class HelperService {
               }
             ]
           };
+
           const reqOption = {
             url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
             data: {
@@ -300,6 +301,7 @@ export class HelperService {
             reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
             reqOption.data.request['questionset'] = {};
             reqOption.data.request['questionset'] = reqOption.data.request.content;
+            _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
             delete reqOption.data.request.content;
           }
           this.learnerService.post(reqOption).subscribe((res: any) => {

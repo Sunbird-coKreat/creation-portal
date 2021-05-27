@@ -326,6 +326,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         apply: 0
       };
       _.forEach(this.localBlueprint.questionTypes, (value, key) => {
+        value = parseInt(value);
         this.localBlueprint.count.total = this.localBlueprint.count.total + value;
         if(key === "LA" || key === "SA" || key === "VSA") {
           if(key === "LA") this.localBlueprint.count.la = this.localBlueprint.count.la + value;
@@ -341,6 +342,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
       })
       _.forEach(this.localBlueprint.learningLevels, (value, key) => {
+        value = parseInt(value);
         if(key === "apply") {
           this.localBlueprint.count.apply = this.localBlueprint.count.apply + value;
         }
@@ -380,8 +382,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   printPreview(): void {
+    this.toasterService.info(this.resourceService.messages.imsg.m0076 || 'Generating PDF. Please wait...')
     let identifier = this.collectionData.identifier;
-    this.programsService.generateCollectionPDF(identifier).subscribe((res) => {
+    this.programsService.generateCollectionPDF(identifier).subscribe((res) => {      
       if(res.responseCode === 'OK') {
         this.pdfData = res.result.base64string;
         const byteCharacters = atob(this.pdfData);
@@ -1032,6 +1035,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               'createdBy': this.userService.userid,
               'primaryCategory': this.templateDetails.name,
               'creator': creator,
+              'author': creator,
               'programId': this.sessionContext.programId,
               'collectionId': this.sessionContext.collection,
               'unitIdentifiers': [this.unitIdentifier],
