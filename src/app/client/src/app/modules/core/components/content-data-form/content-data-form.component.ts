@@ -28,23 +28,7 @@ export class ContentDataFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.formFieldProperties.forEach(formProperty => {
-      if (formProperty.code === 'name') {
-        formProperty.validations = [
-          { type: 'maxLength', value: '50', message: 'Input is Exceeded'},
-          {
-            type: 'required', message: 'Name is required'
-          }
-      ];
-      }
-      if (formProperty.code === 'additionalCategories') {
-        formProperty.inputType = 'nestedselect';
-      }
-    });
     this.setFormConfig();
-  }
-
-  outputData(event) {
   }
 
   valueChanges(event) {
@@ -57,7 +41,6 @@ export class ContentDataFormComponent implements OnInit {
           }
       });
     });
-    console.log('formInputData', this.formInputData);
   }
 
   onStatusChanges(event) {
