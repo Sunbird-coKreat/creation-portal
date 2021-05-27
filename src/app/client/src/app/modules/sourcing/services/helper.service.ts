@@ -23,6 +23,7 @@ export class HelperService {
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
+  public errorCondition = false;
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
@@ -1039,61 +1040,62 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
   }
 
   checkErrorCondition(targetCollectionFrameworksData, formFieldProperties) {
-    let errorCondition = false;
     const orgFrameworkFields = _.map(this.frameworkService.orgAndTargetFrameworkCategories.orgFrameworkCategories, 'code');
     const targetFrameworkFields = _.map(this.frameworkService.orgAndTargetFrameworkCategories.targetFrameworkCategories, 'code');
     const frameworksFields = _.uniq(_.concat(orgFrameworkFields, targetFrameworkFields));
     _.forEach(formFieldProperties, (formFields) => {
       if (_.has(formFields, 'sourceCategory') && !_.includes(frameworksFields, formFields.sourceCategory)) {
-        errorCondition = true;
+        this.errorCondition = true;
         return false;
       }
     });
 
-    if (_.has(targetCollectionFrameworksData, 'framework')) {
+    if (_.has(targetCollectionFrameworksData, 'framework') && this.errorCondition === false) {
       const frameworkCategories = this.frameworkService.frameworkData[targetCollectionFrameworksData.framework];
       _.forEach(formFieldProperties, (formFields) => {
         // tslint:disable-next-line:max-line-length
         if (_.has(formFields, 'sourceCategory') && !_.includes(formFields, 'target') && !_.includes(_.map(frameworkCategories.categories, 'code'), formFields.sourceCategory)) {
-          errorCondition = true;
+          this.errorCondition = true;
           return false;
         }
       });
     }
 
-    if (_.has(targetCollectionFrameworksData, 'targetFWIds')) {
+    if (_.has(targetCollectionFrameworksData, 'targetFWIds') && this.errorCondition === false) {
       const targetFrameworkCategories = this.frameworkService.frameworkData[targetCollectionFrameworksData.targetFWIds];
       _.forEach(formFieldProperties, (formFields) => {
         // tslint:disable-next-line:max-line-length
         if (_.has(formFields, 'sourceCategory') && _.includes(formFields, 'target') && !_.includes(_.map(targetFrameworkCategories.categories, 'code'), formFields.sourceCategory)) {
-          errorCondition = true;
+          this.errorCondition = true;
           return false;
         }
       });
     }
 
     // When target collection will not have framework/targetFWIds but form config will have corresponding fields
-    if (!_.has(targetCollectionFrameworksData, 'targetFWIds')) {
+    if (!_.has(targetCollectionFrameworksData, 'targetFWIds') && this.errorCondition === false) {
       _.forEach(formFieldProperties, (formFields) => {
         if (_.includes(formFields.code, 'target') && _.has(formFields.sourceCategory)) {
-          errorCondition = true;
+          this.errorCondition = true;
         }
       });
     }
-    if (!_.has(targetCollectionFrameworksData, 'framework')) {
+    if (!_.has(targetCollectionFrameworksData, 'framework') && this.errorCondition === false) {
       _.forEach(formFieldProperties, (formFields) => {
         if (!_.includes(formFields.code, 'target') && _.has(formFields.sourceCategory)) {
-          errorCondition = true;
+          this.errorCondition = true;
         }
       });
     }
 
     // If form config will have framework fields
-    _.forEach(formFieldProperties, (formFields) => {
-      if ((formFields.code).toLowerCase() === 'framework' || (formFields.code).toLowerCase() === 'targetfwids') {
-        errorCondition = true;
-      }
-    });
-    return errorCondition;
+    if (this.errorCondition === false) {
+      _.forEach(formFieldProperties, (formFields) => {
+        if ((formFields.code).toLowerCase() === 'framework' || (formFields.code).toLowerCase() === 'targetfwids') {
+          this.errorCondition = true;
+        }
+      });
+    }
+    return this.errorCondition;
   }
 }
