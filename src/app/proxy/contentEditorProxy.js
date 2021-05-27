@@ -78,7 +78,8 @@ module.exports = function (app) {
       '/action/questionset/v1/publish/*',
       '/action/question/v1/create',
       '/action/question/v1/review/*',
-      '/action/question/v1/publish/*'
+      '/action/question/v1/publish/*',
+      '/action/questionset/v1/reject/*'
     ],
       proxy(contentURL, {
         limit: reqDataLimitOfContentUpload,
@@ -125,7 +126,6 @@ module.exports = function (app) {
     }
   }))
 
-// Proxy for content create ,update & review Start
   app.use([
     '/action/content/v3/update/*'
   ],

@@ -113,7 +113,7 @@ export class NotificationService {
         const url = window.location.origin;
         let body = configuration.value;
         body = _.replace(body, '$url', url);
-        body = _.replace(body, '$projectName', nomination.programData.name);
+        body = _.replace(body, '$projectName', _.truncate(nomination.programData.name, {length: 25}));
 
         const request = {
           mode: 'sms',
@@ -248,8 +248,8 @@ export class NotificationService {
         const url = window.location.origin;
         let body = configuration.value;
         body = _.replace(body, '$url', url);
-        body = _.replace(body, '$contentName', notificationData.content.name);
-        body = _.replace(body, '$projectName', notificationData.program.name);
+        body = _.replace(body, '$contentName', _.truncate(notificationData.content.name, {length: 25}));
+        body = _.replace(body, '$projectName', _.truncate(notificationData.program.name, {length: 25}));
 
         const request = {
           mode: 'sms',

@@ -814,18 +814,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.programData['nomination_enddate']) {
       this.programData['nomination_enddate']= null;
+    } else {
+      this.programData['nomination_enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['shortlisting_enddate']) {
       this.programData['shortlisting_enddate'] = null;
+    } else {
+      this.programData['shortlisting_enddate'].setHours(23,59,59);
     }
 
-    if (!this.programData['program_end_date']) {
-      this.programData['program_end_date'] = null;
+    if (!this.programData['enddate']) {
+      this.programData['enddate'] = null;
+    } else {
+      this.programData['enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['content_submission_enddate']) {
       this.programData['content_submission_enddate'] = null;
+    } else {
+      this.programData['content_submission_enddate'].setHours(23,59,59);
     }
 
     if (!this.programConfig['blueprintMap']) {
@@ -895,7 +903,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (_.includes(invalidValues, prgData.shortlisting_enddate)) {
         prgData['shortlisting_enddate'] = null;
-      }
+      } 
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
@@ -909,6 +917,22 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
+
+      if (prgData['nomination_enddate']) {
+        prgData['nomination_enddate'].setHours(23,59,59);
+      }
+
+      if (prgData['shortlisting_enddate']) {
+        prgData['shortlisting_enddate'].setHours(23,59,59);
+      } 
+
+      if (prgData['enddate']) {
+        prgData['enddate'].setHours(23,59,59);
+      }
+
+      if (prgData['content_submission_enddate']) {
+        prgData['content_submission_enddate'].setHours(23,59,59);
+      } 
 
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
@@ -1208,12 +1232,19 @@ showTexbooklist(showTextBookSelector = true) {
     this.editBlueprintFlag = true;
   }
 
-  public onChangeBlueprint() {
+  public totalQuestions() {
     let revisedTotalCount = 0;
     _.forEach(Object.keys(this.localBlueprint.questionTypes), (type: any) => {
-      revisedTotalCount = revisedTotalCount + this.localBlueprint.questionTypes[type]
+      revisedTotalCount = revisedTotalCount + parseInt(this.localBlueprint.questionTypes[type]);
     });
     this.localBlueprint.totalQuestions  = revisedTotalCount;
+    return revisedTotalCount;
+  }
+
+  public onChangeTopics() {    
+    this.blueprintTemplate.properties.forEach( (property) => {
+      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
+    })
   }
 
   public mapBlueprintToId() {
@@ -1251,17 +1282,19 @@ showTexbooklist(showTextBookSelector = true) {
   }
 
   isBlueprintValid() {
-    let validity = true;
+    let validity = true, totalQuestions = this.localBlueprint.totalQuestions;  
     _.forEach(this.blueprintTemplate.properties, (prop) => {
       let val = this.localBlueprint[prop.code]
       if(prop.required) {
         if(!val) validity = false;
-        else if(Array.isArray(val) && !val.length) {
-          validity = false;
+        else if(Array.isArray(val)) {
+          if(!val.length) validity = false;
         }
         else if(typeof val === 'object') {
           if(_.reduce(val, (result, child, key) => {
-            result = result + child;
+            if(isNaN(parseFloat(child))) validity = false;
+            else if(parseFloat(child) < 0) validity = false;
+            result = result + parseInt(child);
             return result;
           }, 0) === 0) {
             validity = false;
@@ -1269,12 +1302,16 @@ showTexbooklist(showTextBookSelector = true) {
         }
       }
       if(prop.code === 'totalMarks') {
-        if(val) {
-          console.log(isNaN(val))
-          if(isNaN(val) && isNaN(parseFloat(val))) validity = false;
+        if(val) {          
+          if(isNaN(parseFloat(val))) validity = false;
+          else if(parseFloat(val) < 0) validity = false;
         }
       }
     })
+    if(!totalQuestions) validity = false;
+    else {
+      if(isNaN(totalQuestions) && isNaN(parseFloat(totalQuestions))) validity = false;
+    }
     return validity;
   }
 

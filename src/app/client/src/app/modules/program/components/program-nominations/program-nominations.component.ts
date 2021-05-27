@@ -452,7 +452,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     .subscribe(
       (response) => {
         if (response && response.result && response.result.count) {
-          const contents = _.get(response.result, 'content');
+          const contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
           this.setNominationSampleCounts(contents);
         }
 

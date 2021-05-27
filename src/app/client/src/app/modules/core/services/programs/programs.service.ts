@@ -67,7 +67,7 @@ export class ProgramsService extends DataService implements CanActivate {
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
     }
-    
+
   /**
    * initializes the service is the user is logged in;
    */
@@ -898,9 +898,23 @@ export class ProgramsService extends DataService implements CanActivate {
               }
             });
         }
+        tempLearningOutcomeOptions = _.uniqBy(tempLearningOutcomeOptions, 'code');
 
-        return [tempTopicOptions, tempLearningOutcomeOptions];
+        return [topicTerms, tempLearningOutcomeOptions];
     }
+  
+  filterBlueprintMetadata(selectedTopics) {
+    let tempLearningOutcomeOptions = [];
+    if(selectedTopics) {
+      _.forEach(selectedTopics, (term) => {
+        if(term.associations) {
+          tempLearningOutcomeOptions = _.concat(tempLearningOutcomeOptions || [], _.map(term.associations, (learningOutcome) => learningOutcome));
+            }
+          });
+      }
+      tempLearningOutcomeOptions = _.uniqBy(tempLearningOutcomeOptions, 'code');
+      return tempLearningOutcomeOptions;
+  }
 
   getNominationList(reqFilters) {
     const req = {
@@ -1179,6 +1193,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getContentOriginEnvironment() {
     switch(window.location.hostname) {
       case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
+      case 'dockstaging.sunbirded.org': return 'https://staging.sunbirded.org'; break;
       case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
       default: return  'https://dev.sunbirded.org'; break;
@@ -1331,16 +1346,16 @@ export class ProgramsService extends DataService implements CanActivate {
       targetPrimaryCategories = _.filter(nomination.targetprimarycategories, (nomCat) => {
         let cat = _.find(projectPrimaryCategories, { 'identifier': nomCat.identifier });
         if (cat) {
-          return cat;        
+          return cat;
         }
       });
     } else if (nomination && !_.isEmpty(nomination.content_types)) {
       targetPrimaryCategories = _.filter(projectPrimaryCategories, (cat) => {
         if (_.includes(nomination.content_types, cat.name)) {
-          return cat;        
-        } 
+          return cat;
+        }
       });
-    } 
+    }
     return targetPrimaryCategories;
   }
 }

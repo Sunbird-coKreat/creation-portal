@@ -1880,10 +1880,10 @@ if (typeof document != 'undefined') {
 /**
  * Telemetry V3 Library
  * @author Manjunath Davanam <manjunathd@ilimi.in>
- * @author Akash Gupta <Akash.Gupta@tarento.com> 
+ * @author Akash Gupta <Akash.Gupta@tarento.com>
  */
 
-// To support for node server environment 
+// To support for node server environment
 if (typeof require === "function") {
   var Ajv = require('ajv')
 }
@@ -1954,7 +1954,7 @@ var Telemetry = (function () {
   }
 
   /**
-   * Which is used to start and initialize the telemetry event. 
+   * Which is used to start and initialize the telemetry event.
    * If the telemetry is already initialzed then it will trigger only start event.
    * @param  {object} config     [Telemetry lib configurations]
    * @param  {string} contentId  [Content Identifier]
@@ -2153,8 +2153,8 @@ var Telemetry = (function () {
   }
 
   /**
-   * Which is used to know the whether telemetry is initialized or not. 
-   * @return {Boolean} 
+   * Which is used to know the whether telemetry is initialized or not.
+   * @return {Boolean}
    */
   this.telemetry.isInitialized = function () {
     return Telemetry.initialized;
@@ -2264,7 +2264,7 @@ var Telemetry = (function () {
 
   /**
    * Which is used to get set Actor id as device id if actor id is 'anonymous'
-   * @param  {string} actorId 
+   * @param  {string} actorId
    * @param  {string} deviceId    [DeviceId]
    * @return {string} [actor id based on value of the actor came from input]
    */
@@ -2284,7 +2284,7 @@ var Telemetry = (function () {
    */
   instance.getEvent = function (eventId, data) {
     telemetryInstance.telemetryEnvelop.eid = eventId;
-    // timeDiff (in sec) is diff of server date and local date 
+    // timeDiff (in sec) is diff of server date and local date
     telemetryInstance.telemetryEnvelop.ets = (new Date()).getTime() + ((Telemetry.config.timeDiff * 1000) || 0);
     telemetryInstance.telemetryEnvelop.ver = Telemetry._version;
     telemetryInstance.telemetryEnvelop.mid = '';
@@ -2315,7 +2315,7 @@ var Telemetry = (function () {
 
   /**
    * Which is used to get the current updated global context value.
-   * @return {object} 
+   * @return {object}
    */
   instance.getGlobalContext = function () {
     return telemetryInstance._globalContext;
@@ -2323,7 +2323,7 @@ var Telemetry = (function () {
 
   /**
    * Which is used to get the current global object value.
-   * @return {object} 
+   * @return {object}
    */
   instance.getGlobalObject = function () {
     return telemetryInstance._globalObject;
@@ -2348,7 +2348,7 @@ var Telemetry = (function () {
   /**
    * Which is used to get the value of 'context','actor','object'
    * @param  {string} key [ Name of object which we is need to get ]
-   * @return {object}     
+   * @return {object}
    */
   instance.getUpdatedValue = function (key) {
     switch (key.toLowerCase()) {
@@ -2474,6 +2474,8 @@ if (typeof module != 'undefined') {
     pdataId = "prod.vidyadaan.portal";
   } else if (window.location.origin.indexOf("dock.preprod.ntp.net.in") >= 0) {
     pdataId = "preprod.dock.portal";
+  } else if (window.location.origin.indexOf("dockstaging.sunbirded.org") >= 0) {
+    pdataId = "staging.sunbirded.org";
   } else {
     pdataId = "dev.dock.portal";
   }
@@ -2483,7 +2485,9 @@ if (typeof module != 'undefined') {
     uri = 'https://dock.preprod.ntp.net.in';
   }else if(window.location.hostname == 'vdn.diksha.gov.in'){
     uri = 'https://vdn.diksha.gov.in';
-  }else {
+  } else if (window.location.hostname == "dockstaging.sunbirded.org") {
+    pdataId = "staging.sunbirded.org";
+  } else {
     uri = 'https://dock.sunbirded.org';
   }
   window.__landing_page_config = {
