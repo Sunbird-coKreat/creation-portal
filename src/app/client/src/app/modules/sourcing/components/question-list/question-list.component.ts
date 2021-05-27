@@ -15,7 +15,7 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 
@@ -33,7 +33,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
 
   public sessionContext: any;
   public programContext: any;
@@ -418,11 +418,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
-    if(this.formFieldProperties["bloomsLevel"] && !this.categoryMasterList["bloomsLevel"]) {
-      this.categoryMasterList["bloomsLevel"] = this.formFieldProperties["bloomsLevel"].range;
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
     }
+  }
+
+  showEditDetailsForm() {
+     // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.resourceDetails);
     this.showEditMetaForm = true;
   }
 
@@ -1098,10 +1110,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepareQuestionReqBody() {
-    let targetFWIds = {};
-      if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
-        targetFWIds = {targetFWIds: this.sessionContext.collectionTargetFrameworkData.targetFWIds};
-      }
    // tslint:disable-next-line:prefer-const
     let finalBody = {
       'request': {
@@ -1128,8 +1136,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
             'body': '',
             'media': [],
             'author' : this.getUserName(),
-            'status' : 'Draft',
-            ...(_.pickBy(targetFWIds, _.identity))
+            'status' : 'Draft'
           }
         }
       }
@@ -1141,6 +1148,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       finalBody.request.assessment_item.metadata = _.assign(finalBody.request.assessment_item.metadata, this.getReferenceQuestionBody());
     }
+    _.merge(finalBody.request.assessment_item.metadata, this.sessionContext.targetCollectionFrameworksData);
     return finalBody;
   }
 

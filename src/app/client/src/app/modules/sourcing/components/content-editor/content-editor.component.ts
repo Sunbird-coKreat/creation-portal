@@ -13,7 +13,7 @@ import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { NgForm } from '@angular/forms';
 jQuery.fn.iziModal = iziModal;
 
@@ -24,7 +24,7 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
@@ -414,8 +414,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentData);
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
+    }
+  }
+
+  showEditDetailsForm() {
+    // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentData);
     this.showEditMetaForm = true;
   }
 
