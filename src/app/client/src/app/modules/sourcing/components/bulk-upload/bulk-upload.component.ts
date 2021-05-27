@@ -42,6 +42,7 @@ export class BulkUploadComponent implements OnInit {
   public licenses: Array<any> = [];
   public unitGroup: any;
   public uploadCsvConfig: any;
+  public allowedDynamicColumns: any;
   public contents: Array<any> = [];
   public completionPercentage = 0;
   public showBulkUploadModal: boolean = false;
@@ -416,7 +417,7 @@ export class BulkUploadComponent implements OnInit {
     }
 
     this.bulkUploadState = 3;
-    const csvValidator = new CSVFileValidator(this.uploadCsvConfig);
+    const csvValidator = new CSVFileValidator(this.uploadCsvConfig, this.allowedDynamicColumns);
     csvValidator.validate(file).then((csvData: CSVFileValidatorResponse) => {
       if (this.bulkUploadValidationError) {
         this.uploader.reset();
@@ -496,9 +497,7 @@ export class BulkUploadComponent implements OnInit {
       };
     });
 
-    headers = _.concat(headers, orgFrameworkCategories, targetFrameworkCategories);
-    console.log(headers);
-
+    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories]; // []
     const validateRow = (row, rowIndex) => {
       if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
         const name = headers.find((r) => r.inputName === 'level1').name || '';

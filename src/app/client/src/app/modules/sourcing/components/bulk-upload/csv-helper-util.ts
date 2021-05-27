@@ -10,13 +10,16 @@ export default class CSVFileValidator {
     private csvFile = null;
     private csvData = null;
     private config = null;
+    private allowedDynamicColumns = null;
     private response: CSVFileValidatorResponse;
 
     /**
      * @param {Object} config
      */
-    constructor(config) {
+    constructor(config, allowedDynamicColumns) {
+
         this.config = config;
+        this.allowedDynamicColumns = allowedDynamicColumns;
     }
 
     /**
@@ -165,7 +168,7 @@ export default class CSVFileValidator {
                 if (valueConfig.optional) {
                     rowData[valueConfig.inputName] = columnValue;
                 }
-                
+
                 // Url validation
                 if (valueConfig.isUrl) {
                     const urlPattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
@@ -234,6 +237,11 @@ export default class CSVFileValidator {
             Papa.parse(this.csvFile, {
                 complete: (results) => {
                     this.csvData = results.data;
+                    const dynamicHeaders = !_.isEmpty(this.allowedDynamicColumns) ? // 10
+                    [...this.config.headers, ..._.filter(this.allowedDynamicColumns, columns => {
+                        return _.includes(_.first(this.csvData), columns.name);
+                    })] : [...this.config.headers];
+                    this.config.headers = _.uniqBy(dynamicHeaders, 'inputName');
                     resolve(this.prepareDataAndValidateFile());
                 },
                 error: (error, file) => {
