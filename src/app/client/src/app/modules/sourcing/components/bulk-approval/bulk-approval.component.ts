@@ -74,15 +74,24 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   approvalPendingContents(hierarchy) {
     _.forEach(hierarchy, obj => {
-      if (this.helperService.checkIfMainCollection(obj) || this.helperService.checkIfCollectionFolder(obj)) {
+      const isMainCollection = this.helperService.checkIfMainCollection(obj);
+      const isCollectionFolder = this.helperService.checkIfCollectionFolder(obj);
+      if ( isMainCollection || isCollectionFolder) {
         const unit = _.pick(obj, ['identifier', 'origin']);
-        const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
-        if (originUnit) {
-          this.folderData.push({identifier: obj.identifier, origin: obj.origin});
+        if (isMainCollection) {
+          const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
+          if (originUnit) {
+            this.folderData.push({identifier: obj.identifier, origin: obj.origin});
+          }
+        }
+        if (isCollectionFolder) {
+         const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin);
+          if (originUnit) {
+            this.folderData.push({identifier: obj.identifier, origin: obj.origin});
+           }
         }
       }
-      if (!this.helperService.checkIfMainCollection(obj) && !this.helperService.checkIfCollectionFolder(obj) &&
-        obj.status === 'Live' && this.checkApprovalPending(obj)) {
+      if (!isMainCollection && !isCollectionFolder && obj.status === 'Live' && this.checkApprovalPending(obj)) {
           const content = _.pick(obj, ['name', 'code', 'mimeType', 'framework', 'contentType', 'identifier', 'parent']);
           const unitData = _.find(this.folderData, data => data.identifier === content.parent);
           if (unitData) {
