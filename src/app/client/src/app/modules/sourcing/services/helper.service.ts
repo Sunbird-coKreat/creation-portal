@@ -1054,7 +1054,7 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
       const frameworkCategories = this.frameworkService.frameworkData[targetCollectionFrameworksData.framework];
       _.forEach(formFieldProperties, (formFields) => {
         // tslint:disable-next-line:max-line-length
-        if (_.has(formFields, 'sourceCategory') && !_.includes(formFields, 'target') && !_.includes(_.keys(frameworkCategories.categories), formFields.code)) {
+        if (_.has(formFields, 'sourceCategory') && !_.includes(formFields, 'target') && !_.includes(_.map(frameworkCategories, 'code'), formFields.sourceCategory)) {
           errorCondition = true;
           return false;
         }
@@ -1065,7 +1065,7 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
       const targetFrameworkCategories = this.frameworkService.frameworkData[targetCollectionFrameworksData.targetFWIds];
       _.forEach(formFieldProperties, (formFields) => {
         // tslint:disable-next-line:max-line-length
-        if (_.has(formFields, 'sourceCategory') && _.includes(formFields, 'target') && !_.includes(_.keys(targetFrameworkCategories.categories), formFields.code)) {
+        if (_.has(formFields, 'sourceCategory') && _.includes(formFields, 'target') && !_.includes(_.map(targetFrameworkCategories, 'code'), formFields.sourceCategory)) {
           errorCondition = true;
           return false;
         }
