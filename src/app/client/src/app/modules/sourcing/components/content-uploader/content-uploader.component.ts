@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService, ServerResponse } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
-import { throwError, Observable, Subject } from 'rxjs';
+import { catchError, map, filter, take, takeUntil, switchMap } from 'rxjs/operators';
+import { throwError, Observable, Subject, of } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -18,7 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
@@ -27,7 +27,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
@@ -113,6 +113,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public contentEditRole: string;
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -155,6 +156,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
+    if (_.has(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.targetCollectionFrameworksData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        this.helperService.setTargetFrameWorkData(targetFWIds);
+      }
+    }
    }
 
    setTelemetryStartData() {
@@ -263,8 +270,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentMetaData);
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
+    }
+  }
+
+  showEditDetailsForm() {
+      // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentMetaData);
     this.showEditMetaForm = true;
   }
 
@@ -508,7 +530,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (!_.isEmpty(this.userService.userProfile.lastName)) {
         creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
       }
+
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+      _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
       const option = {
         url: `content/v3/create`,
         data: {
@@ -794,7 +818,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
+
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.contentMetaData.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.contentMetaData.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    // this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   changePolicyCheckValue (event) {
@@ -806,7 +844,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
+    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData, this.formstatus || {})) {
       console.log(this.formData.formInputData);
       // tslint:disable-next-line:max-line-length
       const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
@@ -1096,5 +1134,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   hasRole(role) {
     return this.sessionContext.currentRoles.includes(role);
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
   }
 }

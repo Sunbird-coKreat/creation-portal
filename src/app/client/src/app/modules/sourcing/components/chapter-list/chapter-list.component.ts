@@ -1002,7 +1002,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userProfile.lastName)) {
         creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
       }
+
+      let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+      if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+        this.frameworkService.setOrgAndTargetFrameworkCategories();
+        OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+      }
+
+      let targetCollectionFrameworksData = {};
+      if (_.has(this.collection, 'framework') && !_.isUndefined(this.collection.framework)) {
+        targetCollectionFrameworksData = _.pick(this.collection,
+          _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+      }
+      if (_.has(this.collection, 'targetFWIds') && !_.isUndefined(this.collection.targetFWIds)) {
+        targetCollectionFrameworksData = _.assign(targetCollectionFrameworksData,
+            _.pick(this.collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
+      }
+
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+      _.merge(sharedMetaData, targetCollectionFrameworksData);
       let option = {
         url: `content/v3/create`,
         header: {
@@ -1049,7 +1067,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else {
         createRes = this.actionService.post(option);
       }
-    
+
       createRes.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',

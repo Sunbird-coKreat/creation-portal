@@ -804,3 +804,33 @@ app-question-set-editor{
     color: #fff !important;
   }
 }
+
+.sb-edit-form {
+  label{
+  padding: 10px 0 !important;
+  }
+  .sb-checkbox {
+    padding: 0 !important;
+    label {
+      padding: 0 25px !important;
+    }
+  }
+}
+
+// styling for edit details topic select popup
+.dimmable.o-y-hide.dimmed{
+  .ui.dimmer.modals{
+    z-index: 9999 !important
+  }
+}
+.sb-modal-dropdown-web{
+  ul{
+    z-index: 99999  !important;
+    padding-left: 10px !important;
+  }
+}
+.list-border{
+  ul{
+    padding-left: 0px !important;
+  }
+}

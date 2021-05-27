@@ -714,10 +714,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
+    this.sessionContext.targetCollectionMimetype = _.get(collection, 'mimeType');
+    this.sessionContext.targetCollectionObjectType = _.get(collection, 'objectType');
     this.sessionContext.telemetryPageDetails = {
       telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
       telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')
     };
+
+    this.setFrameworkCategories(collection);
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -739,9 +744,29 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
+
     this.showChapterList = true;
     this.programsService.clearMvcStageData();
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  setFrameworkCategories(collection) {
+    let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+      this.frameworkService.setOrgAndTargetFrameworkCategories();
+      OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    }
+
+    this.sessionContext.targetCollectionFrameworksData = {};
+    if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
+      this.sessionContext.targetCollectionFrameworksData = _.pick(collection,
+        _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+    }
+    if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+        this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
+          _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
+    }
+
   }
 
   getSharedContextObjectProperty(property) {

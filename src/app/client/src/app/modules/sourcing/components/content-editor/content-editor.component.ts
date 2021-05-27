@@ -13,7 +13,7 @@ import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
+import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { NgForm } from '@angular/forms';
 jQuery.fn.iziModal = iziModal;
 
@@ -24,7 +24,7 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
+  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
@@ -72,6 +72,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public contentComment: string;
   public showReviewModal: boolean;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
 
   constructor(
     private resourceService: ResourceService,
@@ -132,6 +133,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.contentStatusNotify(action);
     });
     this.helperService.initialize(this.programContext);
+    if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        this.helperService.setTargetFrameWorkData(targetFWIds);
+      }
+    }
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {
@@ -330,9 +337,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
       this.fetchFormconfiguration();
-     this.handleActionButtons();
+      this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentData.objectType);
+
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.contentData.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.contentData.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    // this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   handleContentStatusText() {
@@ -393,8 +414,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.checkErrorCondition();
+  }
+
+  checkErrorCondition() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentData);
+    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
+    }
+  }
+
+  showEditDetailsForm() {
+    // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentData);
     this.showEditMetaForm = true;
   }
 
@@ -738,5 +774,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     this.onComponentDestroy$.next();
     this.onComponentDestroy$.complete();
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
   }
 }
