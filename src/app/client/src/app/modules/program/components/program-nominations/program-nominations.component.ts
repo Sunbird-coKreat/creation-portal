@@ -957,6 +957,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
     };
     this.programStageService.addStage('chapterListComponent');
+    this.setFrameworkCategories(collection);
   }
 
   getSharedContextObjectProperty(property) {
@@ -1257,5 +1258,24 @@ chapterLevelReportHeaders() {
     ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
   ];
   return headers;
+}
+
+setFrameworkCategories(collection) {
+  let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+  if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+    this.frameworkService.setOrgAndTargetFrameworkCategories();
+    OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+  }
+
+  this.sessionContext.targetCollectionFrameworksData = {};
+  if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
+    this.sessionContext.targetCollectionFrameworksData = _.pick(collection,
+      _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+  }
+  if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+      this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
+        _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
+  }
+
 }
 }
