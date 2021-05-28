@@ -43,7 +43,7 @@
     "@project-sunbird/ckeditor-build-classic": "0.0.4",
     "@project-sunbird/client-services": "^3.6.11",
     "@project-sunbird/common-consumption-v8": "3.6.4",
-    "@project-sunbird/sunbird-collection-editor": "^4.0.5",
+    "@project-sunbird/sunbird-collection-editor": "^4.0.9",
     "@project-sunbird/sunbird-pdf-player-v8": "3.8.1",
     "@project-sunbird/sunbird-quml-player-v8": "^3.9.27",
     "@project-sunbird/sunbird-video-player-v8": "3.7.5",
