@@ -156,8 +156,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
-    if (_.has(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds')) {
-      const targetFWIds = this.sessionContext.targetCollectionFrameworksData.targetFWIds;
+    const targetFWIds = _.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds');
+    if (targetFWIds) {
       if (!_.isUndefined(targetFWIds)) {
         this.helperService.setTargetFrameWorkData(targetFWIds);
       }
@@ -270,12 +270,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
-    this.checkErrorCondition();
+    this.validateFormConfiguration();
   }
 
-  checkErrorCondition() {
+  validateFormConfiguration() {
     // tslint:disable-next-line:max-line-length
-    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    const errorCondition = this.helperService.validateFormConfiguration(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
     if (errorCondition === true) {
       this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
       this.showEditMetaForm = false;

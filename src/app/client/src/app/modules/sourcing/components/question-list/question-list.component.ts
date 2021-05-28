@@ -418,12 +418,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
-    this.checkErrorCondition();
+    this.validateFormConfiguration();
   }
 
-  checkErrorCondition() {
+  validateFormConfiguration() {
     // tslint:disable-next-line:max-line-length
-    const errorCondition = this.helperService.checkErrorCondition(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    const errorCondition = this.helperService.validateFormConfiguration(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
     if (errorCondition === true) {
       this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
       this.showEditMetaForm = false;
