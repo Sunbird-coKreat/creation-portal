@@ -69,8 +69,9 @@ export class ProjectFilterComponent implements OnInit {
     let programs = this.programs;
 
     _.map(programs, (program) => {
+      const programContentTypes = program.targetprimarycategories ? _.map(program.targetprimarycategories, 'name') : program.content_types;
       this.currentFilters['contentTypes'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['contentTypes'],
-        program.content_types ))));
+      programContentTypes ))));
     });
     this.currentFilters['contentTypes'] = this.sortFilters(this.currentFilters['contentTypes']);
   }
