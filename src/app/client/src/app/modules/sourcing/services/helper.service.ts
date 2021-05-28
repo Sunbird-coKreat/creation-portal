@@ -1055,7 +1055,7 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
         invalidFormConfig = true;
         return false;
       } else if (_.has(targetCollectionFrameworksData, 'framework') && _.has(field, 'sourceCategory')
-      && !_.includes(field.code, 'target' && !_.includes(_.map(framework.categories, 'code'), field.sourceCategory)) ) {
+      && !_.includes(field.code, 'target') && !_.includes(_.map(framework.categories, 'code'), field.sourceCategory)) {
         invalidFormConfig = true;
         return false;
       } else if (_.has(targetCollectionFrameworksData, 'targetFWIds') && _.has(field, 'sourceCategory')
