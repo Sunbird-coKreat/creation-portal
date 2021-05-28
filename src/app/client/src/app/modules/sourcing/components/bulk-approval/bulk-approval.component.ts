@@ -76,7 +76,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     _.forEach(hierarchy, obj => {
       const isMainCollection = this.helperService.checkIfMainCollection(obj);
       const isCollectionFolder = this.helperService.checkIfCollectionFolder(obj);
-      if ( isMainCollection || isCollectionFolder) {
+      if (isMainCollection || isCollectionFolder) {
         const unit = _.pick(obj, ['identifier', 'origin']);
         if (isMainCollection) {
           const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
@@ -85,20 +85,21 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
           }
         }
         if (isCollectionFolder) {
-         const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin);
+          const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin);
           if (originUnit) {
             this.folderData.push({identifier: obj.identifier, origin: obj.origin});
-           }
+          }
         }
       }
+
       if (!isMainCollection && !isCollectionFolder && obj.status === 'Live' && this.checkApprovalPending(obj)) {
           const content = _.pick(obj, ['name', 'code', 'mimeType', 'framework', 'contentType', 'identifier', 'parent']);
           const unitData = _.find(this.folderData, data => data.identifier === content.parent);
           if (unitData) {
             content['originUnitId'] = unitData.origin;
-          }
-          if (!_.find(this.approvalPending, cont => cont.identifier === content.identifier)) {
-            this.approvalPending.push(content);
+            if (!_.find(this.approvalPending, cont => cont.identifier === content.identifier)) {
+              this.approvalPending.push(content);
+            }
           }
       }
       if (obj.children && obj.children.length) {
@@ -120,7 +121,9 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   checkOriginFolderStatus(hierarchy) {
     _.forEach(hierarchy, obj => {
-      if (this.helperService.checkIfMainCollection(obj) || this.helperService.checkIfCollectionFolder(obj)) {
+      const isMainCollection = this.helperService.checkIfMainCollection(obj);
+      const isCollectionFolder = this.helperService.checkIfCollectionFolder(obj);
+      if (isMainCollection || isCollectionFolder) {
         this.originFolderData.push({identifier: obj.identifier, status: obj.status});
       }
       if (obj.children && obj.children.length) {
