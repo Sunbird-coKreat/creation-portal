@@ -50,7 +50,6 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.checkBulkApproveHistory();
     this.checkOriginFolderStatus([this.originalCollectionData]);
-    console.log(this.originFolderData);
     this.approvalPendingContents([this.storedCollectionData]);
     this.initialized = true;
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
@@ -140,7 +139,6 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   sendContentForBulkApproval() {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
-    console.log(this.approvalPending);
     const contents = _.compact(_.map(this.approvalPending, contnet => {
       if (contnet.originUnitId) {
         const reqFormat = {
@@ -159,7 +157,6 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
         return reqFormat;
       }
     }));
-    console.log('contents', contents);
     if (contents && contents.length) {
       const data = {
         request: {
