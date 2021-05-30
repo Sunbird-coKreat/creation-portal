@@ -459,20 +459,24 @@ export class HelperService {
       case 'CONTRIBUTOR':
         editableFields.push('name');
       _.forEach(formFields, (field) => {
-        editableFields.push(field.code);
+        if (_.has(field, 'sourceCategory')) {
+          editableFields.push(field.sourceCategory);
+        } else {
+          editableFields.push(field.code);
+        }
       });
       break;
       case 'REVIEWER':
         if (!contentMetaData.sourceURL) {
-          const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
-          if (nameFieldConfig && nameFieldConfig.editable === true) {
-            editableFields.push(nameFieldConfig.code);
-          }
+          // tslint:disable-next-line:max-line-length
+          const editablefieldConfiguration = _.filter(this.programsService.overrideMetaData, {editable: true});
+
           _.forEach(formFields, (field) => {
-            const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
-            if (fieldConfig && fieldConfig.editable === true) {
-              editableFields.push(fieldConfig.code);
-            }
+            _.forEach(editablefieldConfiguration, (fieldConfig) => {
+              if ((field.code === fieldConfig.code || field.sourceCategory === fieldConfig.code) && fieldConfig.editable === true) {
+                editableFields.push(fieldConfig.code);
+              }
+            });
           });
         }
       break;
@@ -500,6 +504,19 @@ export class HelperService {
       }
     });
     return _.pickBy(_.assign({}, trimmedValue), _.identity);
+  }
+
+  getFormattedFormData(formInputData) {
+    // tslint:disable-next-line:only-arrow-functions
+    const formattedInputData = _.pickBy(formInputData, function(value, key) {
+        return !(value === undefined || (_.isArray(value) && value.length === 0) || value === '' || value === null);
+    });
+  _.forEach(formattedInputData, (value, key) => {
+    if ((_.isString(value) && !_.isEmpty(value))) {
+      value = _.trim(value);
+    }
+  });
+  return formattedInputData;
   }
 
   isMetaDataModified(metaBeforeUpdate, metaAfterUpdate) {
@@ -638,7 +655,7 @@ export class HelperService {
     // tslint:disable-next-line:max-line-length
     if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
       targetCategoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
-       _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
+      _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
           // tslint:disable-next-line:max-line-length
           if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
@@ -775,7 +792,7 @@ export class HelperService {
     return formFieldProperties;
   }
 
-  validateForm(formFieldProperties, formInputData, formStatus?) {
+  validateForm(formFieldProperties, formInputData, formStatus) {
     let sbValidField = false;
     if (_.isEmpty(formStatus) || formStatus.isValid === true) {
       sbValidField = true;

@@ -10,37 +10,16 @@ import * as _ from 'lodash-es';
 export class ContentDataFormComponent implements OnInit {
   @Input() formFieldProperties: any;
   @Output() formStatus = new EventEmitter<any>();
-
-  /**
-   * formInputData is to take input data's from form
-   */
-  public formInputData = {};
+  @Output() formInputData = new EventEmitter<any>();
 
   constructor() {
   }
 
-  setFormConfig() {
-    _.forEach(this.formFieldProperties, (field) => {
-      if (field.default) {
-        this.formInputData[field.code] = field.default;
-      }
-    });
-  }
-
   ngOnInit() {
-    this.setFormConfig();
   }
 
   valueChanges(event) {
-    _.forEach(this.formFieldProperties, (field) => {
-      _.forEach(event, (eventValue, eventKey) => {
-          if (field['code'] === eventKey) {
-            if (eventValue !== '') {
-              this.formInputData[field.code] = eventValue;
-            }
-          }
-      });
-    });
+    this.formInputData.emit(event);
   }
 
   onStatusChanges(event) {

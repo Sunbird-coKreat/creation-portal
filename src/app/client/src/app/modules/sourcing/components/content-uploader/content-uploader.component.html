@@ -304,6 +304,7 @@
       <app-content-data-form
         #formData
         (formStatus)="formStatusEventListener($event)"
+        (formInputData)="getFormData($event)"
         [formFieldProperties]="formFieldProperties">
       </app-content-data-form>
     </div>
