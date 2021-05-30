@@ -512,7 +512,7 @@ export class HelperService {
         return !(value === undefined || (_.isArray(value) && value.length === 0) || value === '' || value === null);
     });
   _.forEach(formattedInputData, (value, key) => {
-    if ((_.isString(value) && !_.isEmpty(value))) {
+    if (_.isString(value) && !_.isEmpty(value)) {
       value = _.trim(value);
     }
   });
