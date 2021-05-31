@@ -459,11 +459,7 @@ export class HelperService {
       case 'CONTRIBUTOR':
         editableFields.push('name');
       _.forEach(formFields, (field) => {
-        if (_.has(field, 'sourceCategory')) {
-          editableFields.push(field.sourceCategory);
-        } else {
-          editableFields.push(field.code);
-        }
+        editableFields.push(field.code);
       });
       break;
       case 'REVIEWER':
@@ -473,8 +469,10 @@ export class HelperService {
 
           _.forEach(formFields, (field) => {
             _.forEach(editablefieldConfiguration, (fieldConfig) => {
-              if ((field.code === fieldConfig.code || field.sourceCategory === fieldConfig.code) && fieldConfig.editable === true) {
-                editableFields.push(fieldConfig.code);
+              if (_.has(field, 'sourceCategory') && field.sourceCategory === fieldConfig.code && fieldConfig.editable === true) {
+                editableFields.push(field.code);
+              } else if (!_.has(field, 'sourceCategory') && field.code === fieldConfig.code && fieldConfig.editable === true) {
+                editableFields.push(field.code);
               }
             });
           });
@@ -485,7 +483,11 @@ export class HelperService {
   }
 
   getFormattedData(formValue, formFields) {
-    const trimmedValue = _.mapValues(formValue, (value) => {
+    // tslint:disable-next-line:only-arrow-functions
+    const truthyformValue = _.pickBy(formValue, function(value, key) {
+      return !(value === undefined || (_.isArray(value) && value.length === 0) || value === '' || value === null);
+    });
+    const trimmedValue = _.mapValues(truthyformValue, (value) => {
       if (_.isString(value)) {
         return _.trim(value);
       } else {
@@ -504,19 +506,6 @@ export class HelperService {
       }
     });
     return _.pickBy(_.assign({}, trimmedValue), _.identity);
-  }
-
-  getFormattedFormData(formInputData) {
-    // tslint:disable-next-line:only-arrow-functions
-    const formattedInputData = _.pickBy(formInputData, function(value, key) {
-        return !(value === undefined || (_.isArray(value) && value.length === 0) || value === '' || value === null);
-    });
-  _.forEach(formattedInputData, (value, key) => {
-    if (_.isString(value) && !_.isEmpty(value)) {
-      value = _.trim(value);
-    }
-  });
-  return formattedInputData;
   }
 
   isMetaDataModified(metaBeforeUpdate, metaAfterUpdate) {
@@ -736,7 +725,7 @@ export class HelperService {
              }
            }
            if (formFieldCategory.code === 'additionalCategories') {
-             console.log(this.cacheService.get(this.userService.hashTagId));
+            //  console.log(this.cacheService.get(this.userService.hashTagId));
              // tslint:disable-next-line:max-line-length
              formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
                return {name: data};
@@ -797,7 +786,7 @@ export class HelperService {
     if (_.isEmpty(formStatus) || formStatus.isValid === true) {
       sbValidField = true;
     }
-
+    /*
     const requiredFields = _.map(_.filter(formFieldProperties, { 'required': true }), field => field.code );
     const textFields = _.filter(formFieldProperties, {'inputType': 'text', 'editable': true});
 
@@ -813,6 +802,8 @@ export class HelperService {
     });
 
     return (_.includes(validFields, false) ? false : true) && sbValidField;
+    */
+    return sbValidField;
   }
 
   contentMetadataUpdate(role, req, contentId): Observable<any> {

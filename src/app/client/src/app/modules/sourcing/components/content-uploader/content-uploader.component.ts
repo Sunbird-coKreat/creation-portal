@@ -254,10 +254,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
-      if (field.editable && !_.has(field, 'sourceCategory') && !_.includes(this.editableFields, field.code)) {
-        field['editable'] = false;
-      }
-      if (field.editable  && _.has(field, 'sourceCategory') && !_.includes(this.editableFields, field.sourceCategory)) {
+      if(field.editable && !_.includes(this.editableFields, field.code)) {
         field['editable'] = false;
       }
     });
@@ -850,10 +847,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   saveMetadataForm(cb?) {
     if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
       console.log(this.formInputData);
-
       // tslint:disable-next-line:max-line-length
-      // const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
-      const formattedData = this.helperService.getFormattedFormData(this.formInputData);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.contentMetaData.versionKey,
