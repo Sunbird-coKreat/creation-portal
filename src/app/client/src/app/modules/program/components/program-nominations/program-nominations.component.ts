@@ -1276,6 +1276,5 @@ setFrameworkCategories(collection) {
       this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
         _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
   }
-
 }
 }
