@@ -827,21 +827,7 @@ export class HelperService {
 
   getFormConfiguration() {
     const formFields = _.cloneDeep(this.selectedCategoryMetaData);
-    const contentPolicyCheck = [{
-      'code': 'contentPolicyCheck',
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'boolean',
-      'renderingHints': {
-      },
-      'description': 'Content PolicyCheck',
-      'label': 'Content PolicyCheck',
-      'required': true,
-      'name': 'contentPolicyCheck',
-      'inputType': 'checkbox',
-      'placeholder': 'Content PolicyCheck'
-    }];
-    return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
+    return formFields;
   }
 
   mapContentTypesToCategories(nomContentTypes) {

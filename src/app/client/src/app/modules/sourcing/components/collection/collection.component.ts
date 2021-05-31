@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
+import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService,
+  FrameworkService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -85,7 +86,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
-    private programsService: ProgramsService, private toasterService: ToasterService) {
+    private programsService: ProgramsService, private toasterService: ToasterService,
+    public frameworkService: FrameworkService) {
      }
 
   ngOnInit() {
@@ -602,6 +604,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   uploadSampleContent(event, collection) {
+    if (_.has(collection, 'identifier')) {
+      this.setFrameworkCategories(collection.identifier);
+    }
     this.uploadSampleClicked = true;
     if (!this.selectedContentTypes.length) {
         this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
@@ -650,6 +655,45 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sourcingService.apiErrorHandling(error, errInfo);
         });
     }
+  }
+
+  setFrameworkCategories(collectionId) {
+    this.getCollectionHierarchy(collectionId).subscribe((res) => {
+      if (res.result) {
+        const collection = res.result.content;
+         let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+        if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+          this.frameworkService.setOrgAndTargetFrameworkCategories();
+          OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+        }
+
+        this.sessionContext.targetCollectionFrameworksData = {};
+        if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
+          this.sessionContext.targetCollectionFrameworksData = _.pick(collection,
+            _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+        }
+        if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+            this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
+              _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
+        }
+      }
+    },
+    err => {
+      const errInfo = { errorMsg: 'Unable to fetch collection details' };
+      this.apiErrorHandling(err, errInfo);
+    });
+  }
+
+  apiErrorHandling(err, errorInfo) {
+    this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
+  }
+
+  getCollectionHierarchy(collectionId) {
+    const req = {
+      url: 'content/v3/hierarchy/' + collectionId,
+      param: { 'mode': 'edit' }
+    };
+    return this.actionService.get(req);
   }
 
   gotoChapterView(collection) {

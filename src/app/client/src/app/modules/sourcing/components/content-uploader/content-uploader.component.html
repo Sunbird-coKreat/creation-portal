@@ -292,7 +292,7 @@
 
 <!--  edit metadata --> 
 
-<sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+<sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'"
     class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false">
     <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
     <!--Header-->
