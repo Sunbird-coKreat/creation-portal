@@ -27,7 +27,6 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  // @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
@@ -254,7 +253,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
-      if(field.editable && !_.includes(this.editableFields, field.code)) {
+      if (field.editable && !_.includes(this.editableFields, field.code)) {
         field['editable'] = false;
       }
     });
