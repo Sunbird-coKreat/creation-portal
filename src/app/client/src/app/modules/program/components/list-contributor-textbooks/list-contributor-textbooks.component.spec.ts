@@ -15,6 +15,7 @@ import * as SpecData from './list-contributor-textbooks.spec.data';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { throwError } from 'rxjs';
 import { UserService, ProgramsService} from '@sunbird/core';
+import { HelperService } from '../../../sourcing/services/helper.service';
 describe('ListContributorTextbooksComponent', () => {
   let component: ListContributorTextbooksComponent;
   let fixture: ComponentFixture<ListContributorTextbooksComponent>;
@@ -75,7 +76,8 @@ const errorInitiate = false;
           },
           {provide: APP_BASE_HREF, useValue: '/'},
           DatePipe,
-          CollectionHierarchyService
+          CollectionHierarchyService,
+          HelperService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     })
@@ -99,6 +101,15 @@ const errorInitiate = false;
     component.fetchProgramDetails();
     expect(component.programDetails).toBe(SpecData.programDetailsTargetCollection);
     expect(component.targetCollections).toEqual('Question papers');
+  });
+
+  it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
+    const collection = {};
+    const  helperService  = TestBed.get(HelperService);
+    spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
+    spyOn(component, 'setFrameworkCategories').and.callThrough();
+    component.setFrameworkCategories(collection);
+    expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
   });
 
 });
