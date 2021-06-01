@@ -658,7 +658,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setFrameworkCategories(collectionId) {
-    this.getCollectionHierarchy(collectionId).subscribe((res) => {
+    this.collectionHierarchyService.getCollectionHierarchyDetails(collectionId).subscribe((res) => {
       if (res.result) {
         const collection = res.result.content;
          let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
@@ -686,14 +686,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   apiErrorHandling(err, errorInfo) {
     this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
-  }
-
-  getCollectionHierarchy(collectionId) {
-    const req = {
-      url: 'content/v3/hierarchy/' + collectionId,
-      param: { 'mode': 'edit' }
-    };
-    return this.actionService.get(req);
   }
 
   gotoChapterView(collection) {
