@@ -319,6 +319,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     };
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
     this.sessionContext.currentRoles = ['REVIEWER'] ;
     const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
     this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;

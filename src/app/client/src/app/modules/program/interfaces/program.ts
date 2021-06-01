@@ -33,6 +33,7 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   telemetryPageDetails?: any;
   questionSetEditorDetails?: any;
   targetCollectionFrameworksData?: any;
+  targetCollectionPrimaryCategory?: any;
 }
 
 export interface IPagination {

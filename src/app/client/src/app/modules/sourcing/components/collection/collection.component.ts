@@ -662,6 +662,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.collectionHierarchyService.getCollectionHierarchyDetails(collectionId).subscribe((res) => {
       if (res.result) {
         const collection = res.result.content;
+        this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
         this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
       }
     },

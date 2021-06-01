@@ -932,6 +932,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
     this.sessionContext.telemetryPageDetails = {
       telemetryPageId : this.config.telemetryLabels.pageId.sourcing.projectTargetCollection,
       telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
