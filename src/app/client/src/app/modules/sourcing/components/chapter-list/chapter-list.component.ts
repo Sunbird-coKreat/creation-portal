@@ -1003,25 +1003,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
       }
 
-      let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
-      if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
-        this.frameworkService.setOrgAndTargetFrameworkCategories();
-        OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
-      }
-
       let targetCollectionFrameworksData = {};
-      if (_.has(this.collection, 'framework') && !_.isUndefined(this.collection.framework)) {
-        targetCollectionFrameworksData = _.pick(this.collection,
-          _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
-      }
-      if (_.has(this.collection, 'targetFWIds') && !_.isUndefined(this.collection.targetFWIds)) {
-        targetCollectionFrameworksData = _.assign(targetCollectionFrameworksData,
-            _.pick(this.collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
-      }
+      targetCollectionFrameworksData = this.helperService.setFrameworkCategories(this.collection);
 
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
       _.merge(sharedMetaData, targetCollectionFrameworksData);
-      let option = {
+      const option = {
         url: `content/v3/create`,
         header: {
           'X-Channel-Id': this.programContext.rootorg_id
