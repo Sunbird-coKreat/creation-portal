@@ -13,6 +13,7 @@ import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { isEmpty } from 'lodash';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-collection',
@@ -87,7 +88,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
     private programsService: ProgramsService, private toasterService: ToasterService,
-    public frameworkService: FrameworkService) {
+    public frameworkService: FrameworkService, private helperService: HelperService) {
      }
 
   ngOnInit() {
@@ -661,21 +662,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.collectionHierarchyService.getCollectionHierarchyDetails(collectionId).subscribe((res) => {
       if (res.result) {
         const collection = res.result.content;
-         let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
-        if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
-          this.frameworkService.setOrgAndTargetFrameworkCategories();
-          OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
-        }
-
-        this.sessionContext.targetCollectionFrameworksData = {};
-        if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
-          this.sessionContext.targetCollectionFrameworksData = _.pick(collection,
-            _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
-        }
-        if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
-            this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
-              _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
-        }
+        this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
       }
     },
     err => {

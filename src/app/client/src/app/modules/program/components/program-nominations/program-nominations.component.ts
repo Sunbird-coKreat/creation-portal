@@ -17,6 +17,7 @@ import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-program-nominations',
@@ -110,7 +111,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
-     public telemetryService: TelemetryService) {
+     public telemetryService: TelemetryService, private helperService: HelperService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -1261,20 +1262,6 @@ chapterLevelReportHeaders() {
 }
 
 setFrameworkCategories(collection) {
-  let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
-  if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
-    this.frameworkService.setOrgAndTargetFrameworkCategories();
-    OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
-  }
-
-  this.sessionContext.targetCollectionFrameworksData = {};
-  if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
-    this.sessionContext.targetCollectionFrameworksData = _.pick(collection,
-      _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
-  }
-  if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
-      this.sessionContext.targetCollectionFrameworksData = _.assign(this.sessionContext.targetCollectionFrameworksData,
-        _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
-  }
+  this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
 }
 }

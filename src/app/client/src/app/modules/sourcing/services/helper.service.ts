@@ -1069,4 +1069,23 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
     });
     return invalidFormConfig;
   }
+
+  setFrameworkCategories(collection) {
+    let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+      this.frameworkService.setOrgAndTargetFrameworkCategories();
+      OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    }
+
+    let targetCollectionFrameworksData = {};
+    if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
+          targetCollectionFrameworksData = _.pick(collection,
+        _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+    }
+    if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+        targetCollectionFrameworksData = _.assign(targetCollectionFrameworksData,
+          _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
+    }
+    return  targetCollectionFrameworksData;
+  }
 }
