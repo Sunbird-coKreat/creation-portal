@@ -24,7 +24,6 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
@@ -73,6 +72,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public showReviewModal: boolean;
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
+  public formInputData: any;
 
   constructor(
     private resourceService: ResourceService,
@@ -573,10 +573,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
-      console.log(this.formData.formInputData);
+    if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
+      console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
-      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.contentData.versionKey,
@@ -778,5 +778,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   formStatusEventListener(event) {
     this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 }

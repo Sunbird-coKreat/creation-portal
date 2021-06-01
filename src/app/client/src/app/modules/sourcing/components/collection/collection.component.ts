@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
 import { ConfigService, UtilService, ResourceService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService  } from '@sunbird/core';
+import { PublicDataService, ContentService, UserService, ProgramsService, LearnerService, ActionService,
+  FrameworkService  } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
@@ -12,6 +13,7 @@ import { InitialState } from '../../interfaces';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
 import { isEmpty } from 'lodash';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-collection',
@@ -85,7 +87,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     public utilService: UtilService, public contentService: ContentService,
     private activatedRoute: ActivatedRoute, private router: Router, public learnerService: LearnerService,
-    private programsService: ProgramsService, private toasterService: ToasterService) {
+    private programsService: ProgramsService, private toasterService: ToasterService,
+    public frameworkService: FrameworkService, private helperService: HelperService) {
      }
 
   ngOnInit() {
@@ -602,6 +605,9 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   uploadSampleContent(event, collection) {
+    if (_.has(collection, 'identifier')) {
+      this.setFrameworkCategories(collection.identifier);
+    }
     this.uploadSampleClicked = true;
     if (!this.selectedContentTypes.length) {
         this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
@@ -650,6 +656,23 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sourcingService.apiErrorHandling(error, errInfo);
         });
     }
+  }
+
+  setFrameworkCategories(collectionId) {
+    this.collectionHierarchyService.getCollectionHierarchyDetails(collectionId).subscribe((res) => {
+      if (res.result) {
+        const collection = res.result.content;
+        this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
+      }
+    },
+    err => {
+      const errInfo = { errorMsg: 'Unable to fetch collection details' };
+      this.apiErrorHandling(err, errInfo);
+    });
+  }
+
+  apiErrorHandling(err, errorInfo) {
+    this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
   }
 
   gotoChapterView(collection) {

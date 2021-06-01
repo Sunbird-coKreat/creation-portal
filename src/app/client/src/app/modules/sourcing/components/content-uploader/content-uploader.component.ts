@@ -27,7 +27,6 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   styleUrls: ['./content-uploader.component.scss']
 })
 export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
   @ViewChild('modal', {static: false}) modal;
   // @ViewChild('editmodal') editmodal;
   @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
@@ -114,6 +113,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
+  public formInputData: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -844,10 +844,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData, this.formstatus || {})) {
-      console.log(this.formData.formInputData);
+    if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
+      console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
-      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.contentMetaData.versionKey,
@@ -1138,5 +1138,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   formStatusEventListener(event) {
     this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 }
