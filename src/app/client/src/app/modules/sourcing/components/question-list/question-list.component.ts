@@ -33,7 +33,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
-  @ViewChild('formData', {static: false}) formData: ContentDataFormComponent;
 
   public sessionContext: any;
   public programContext: any;
@@ -95,6 +94,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
+  private formInputData: any;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -474,10 +474,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData, this.formstatus || {})) {
-      console.log(this.formData.formInputData);
+    if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
+      console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
-      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.existingContentVersionKey,
@@ -1412,5 +1412,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   formStatusEventListener(event) {
     this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 }

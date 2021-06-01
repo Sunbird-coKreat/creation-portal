@@ -464,15 +464,17 @@ export class HelperService {
       break;
       case 'REVIEWER':
         if (!contentMetaData.sourceURL) {
-          const nameFieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === 'name');
-          if (nameFieldConfig && nameFieldConfig.editable === true) {
-            editableFields.push(nameFieldConfig.code);
-          }
+          // tslint:disable-next-line:max-line-length
+          const editablefieldConfiguration = _.filter(this.programsService.overrideMetaData, {editable: true});
+
           _.forEach(formFields, (field) => {
-            const fieldConfig = _.find(this.programsService.overrideMetaData, (item) => item.code === field.code);
-            if (fieldConfig && fieldConfig.editable === true) {
-              editableFields.push(fieldConfig.code);
-            }
+            _.forEach(editablefieldConfiguration, (fieldConfig) => {
+              if (_.has(field, 'sourceCategory') && field.sourceCategory === fieldConfig.code && fieldConfig.editable === true) {
+                editableFields.push(field.code);
+              } else if (!_.has(field, 'sourceCategory') && field.code === fieldConfig.code && fieldConfig.editable === true) {
+                editableFields.push(field.code);
+              }
+            });
           });
         }
       break;
@@ -481,7 +483,11 @@ export class HelperService {
   }
 
   getFormattedData(formValue, formFields) {
-    const trimmedValue = _.mapValues(formValue, (value) => {
+    // tslint:disable-next-line:only-arrow-functions
+    const truthyformValue = _.pickBy(formValue, function(value, key) {
+      return !(value === undefined || (_.isArray(value) && value.length === 0) || value === '' || value === null);
+    });
+    const trimmedValue = _.mapValues(truthyformValue, (value) => {
       if (_.isString(value)) {
         return _.trim(value);
       } else {
@@ -638,7 +644,7 @@ export class HelperService {
     // tslint:disable-next-line:max-line-length
     if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
       targetCategoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
-       _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
+      _.forEach(targetCategoryMasterList.categories, (frameworkCategories) => {
         _.forEach(formFieldProperties, (field) => {
           // tslint:disable-next-line:max-line-length
           if (frameworkCategories.code === field.sourceCategory && _.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
@@ -719,7 +725,7 @@ export class HelperService {
              }
            }
            if (formFieldCategory.code === 'additionalCategories') {
-             console.log(this.cacheService.get(this.userService.hashTagId));
+            //  console.log(this.cacheService.get(this.userService.hashTagId));
              // tslint:disable-next-line:max-line-length
              formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
                return {name: data};
@@ -775,12 +781,12 @@ export class HelperService {
     return formFieldProperties;
   }
 
-  validateForm(formFieldProperties, formInputData, formStatus?) {
+  validateForm(formFieldProperties, formInputData, formStatus) {
     let sbValidField = false;
     if (_.isEmpty(formStatus) || formStatus.isValid === true) {
       sbValidField = true;
     }
-
+    /*
     const requiredFields = _.map(_.filter(formFieldProperties, { 'required': true }), field => field.code );
     const textFields = _.filter(formFieldProperties, {'inputType': 'text', 'editable': true});
 
@@ -796,6 +802,8 @@ export class HelperService {
     });
 
     return (_.includes(validFields, false) ? false : true) && sbValidField;
+    */
+    return sbValidField;
   }
 
   contentMetadataUpdate(role, req, contentId): Observable<any> {
@@ -819,21 +827,7 @@ export class HelperService {
 
   getFormConfiguration() {
     const formFields = _.cloneDeep(this.selectedCategoryMetaData);
-    const contentPolicyCheck = [{
-      'code': 'contentPolicyCheck',
-      'editable': true,
-      'displayProperty': 'Editable',
-      'dataType': 'boolean',
-      'renderingHints': {
-      },
-      'description': 'Content PolicyCheck',
-      'label': 'Content PolicyCheck',
-      'required': true,
-      'name': 'contentPolicyCheck',
-      'inputType': 'checkbox',
-      'placeholder': 'Content PolicyCheck'
-    }];
-    return formFields && formFields.length ? [...formFields, ...contentPolicyCheck] : [];
+    return formFields;
   }
 
   mapContentTypesToCategories(nomContentTypes) {
@@ -1074,5 +1068,24 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
       }
     });
     return invalidFormConfig;
+  }
+
+  setFrameworkCategories(collection) {
+    let OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    if (_.isUndefined(OrgAndTargetFrameworkCategories)) {
+      this.frameworkService.setOrgAndTargetFrameworkCategories();
+      OrgAndTargetFrameworkCategories = this.frameworkService.orgAndTargetFrameworkCategories;
+    }
+
+    let targetCollectionFrameworksData = {};
+    if (_.has(collection, 'framework') && !_.isUndefined(collection.framework)) {
+          targetCollectionFrameworksData = _.pick(collection,
+        _.map(OrgAndTargetFrameworkCategories.orgFrameworkCategories, 'orgIdFieldName'));
+    }
+    if (_.has(collection, 'targetFWIds') && !_.isUndefined(collection.targetFWIds)) {
+        targetCollectionFrameworksData = _.assign(targetCollectionFrameworksData,
+          _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
+    }
+    return  targetCollectionFrameworksData;
   }
 }

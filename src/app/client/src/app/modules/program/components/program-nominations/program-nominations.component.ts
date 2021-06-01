@@ -17,6 +17,7 @@ import { isDefined } from '@angular/compiler/src/util';
 import { isUndefined, isNullOrUndefined } from 'util';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-program-nominations',
@@ -110,7 +111,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
-     public telemetryService: TelemetryService) {
+     public telemetryService: TelemetryService, private helperService: HelperService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -957,6 +958,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
     };
     this.programStageService.addStage('chapterListComponent');
+    this.setFrameworkCategories(collection);
   }
 
   getSharedContextObjectProperty(property) {
@@ -1257,5 +1259,9 @@ chapterLevelReportHeaders() {
     ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
   ];
   return headers;
+}
+
+setFrameworkCategories(collection) {
+  this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
 }
 }

@@ -31,7 +31,8 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   currentOrgRole?: string;
   nominationDetails?: any;
   telemetryPageDetails?: any;
-  questionSetEditorDetails?:any;
+  questionSetEditorDetails?: any;
+  targetCollectionFrameworksData?: any;
 }
 
 export interface IPagination {

@@ -310,6 +310,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
 
   viewContribution(collection) {
+    this.setFrameworkCategories(collection);
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.telemetryPageDetails = {
@@ -343,6 +344,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       }
     };
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  setFrameworkCategories(collection) {
+    this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
   }
 
   getSharedContextObjectProperty(property) {
