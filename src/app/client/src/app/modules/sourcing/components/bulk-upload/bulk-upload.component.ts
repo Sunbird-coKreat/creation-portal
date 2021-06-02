@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { UserService, ProgramsService, ActionService } from '@sunbird/core';
+import { UserService, ProgramsService, ActionService, FrameworkService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, IUserProfile } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
@@ -42,6 +42,7 @@ export class BulkUploadComponent implements OnInit {
   public licenses: Array<any> = [];
   public unitGroup: any;
   public uploadCsvConfig: any;
+  public allowedDynamicColumns: any;
   public contents: Array<any> = [];
   public completionPercentage = 0;
   public showBulkUploadModal: boolean = false;
@@ -77,6 +78,7 @@ export class BulkUploadComponent implements OnInit {
     private programsService: ProgramsService,
     private helperService: HelperService,
     public actionService: ActionService,
+    public frameworkService: FrameworkService,
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
@@ -419,7 +421,7 @@ export class BulkUploadComponent implements OnInit {
     }
 
     this.bulkUploadState = 3;
-    const csvValidator = new CSVFileValidator(this.uploadCsvConfig);
+    const csvValidator = new CSVFileValidator(this.uploadCsvConfig, this.allowedDynamicColumns);
     csvValidator.validate(file).then((csvData: CSVFileValidatorResponse) => {
       if (this.bulkUploadValidationError) {
         this.uploader.reset();
@@ -459,7 +461,7 @@ export class BulkUploadComponent implements OnInit {
     const contentTypes = this.contentTypes;//_.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
 
-    const headers = [
+    let headers = [
       { name: 'Name of the Content', inputName: 'name', maxLength: 50, required: true, requiredError, headerError, maxLengthError },
       { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
       { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
@@ -479,6 +481,27 @@ export class BulkUploadComponent implements OnInit {
       { name: 'Level 4 Textbook Unit', inputName: 'level4', headerError },
     ];
 
+     const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
+       _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+       return {
+         name: `Org_FW_${category.code}`,
+         inputName: category.orgIdFieldName,
+         isArray: true,
+         headerError
+       };
+     }) : [];
+
+     const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
+       _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
+      return {
+        name: `Target_FW_${category.code}`,
+        inputName: category.targetIdFieldName,
+        isArray: true,
+        headerError
+      };
+    }) : [];
+
+    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
     const validateRow = (row, rowIndex) => {
       if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
         const name = headers.find((r) => r.inputName === 'level1').name || '';
@@ -656,6 +679,9 @@ export class BulkUploadComponent implements OnInit {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});
     const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
+
+    const frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
+    console.log(frameworkMetaData);
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -678,7 +704,8 @@ export class BulkUploadComponent implements OnInit {
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
-        ...(_.pickBy(sharedMetaData, _.identity))
+        ...(_.pickBy(sharedMetaData, _.identity)),
+        ...(_.pickBy(frameworkMetaData, i => !_.isEmpty(i)))
       },
       collection: [{
         identifier: collectionId,

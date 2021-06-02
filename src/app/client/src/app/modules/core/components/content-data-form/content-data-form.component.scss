@@ -1,0 +1,29 @@
+.dynamic-form {
+    label {
+        font-weight: 600 !important;
+    }
+    .required {
+      label {
+        &:after {
+          content: '*';
+          margin: -0.2em 0 0 0.2em;
+          color: #db2828;
+        }
+      }
+    }
+    sb-dynamic-checkbox label:after
+    {
+      color:#fff !important;
+      width:0.5rem!important;
+      height:0.5rem !important;
+      top:2.5px !important;
+    }
+}
+
+.dynamic-form .label-html div {
+  font-size:0.785rem !important;
+  line-height:1.4 !important;
+  .font-italic{
+    font-size:0.785rem !important;
+  }
+}
