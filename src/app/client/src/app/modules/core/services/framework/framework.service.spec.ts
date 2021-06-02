@@ -91,6 +91,31 @@ describe('FrameworkService', () => {
       expect(data.err).toBeDefined();
     });
   });
+
+  it ('#orgAndTargetFrameworkCategories should be set', () => {
+    frameworkService._orgAndTargetFrameworkCategories = mockFrameworkData._orgAndTargetFrameworkCategories;
+    expect(frameworkService._orgAndTargetFrameworkCategories).toBeDefined();
+  });
+
+  it ('#setOrgAndTargetFrameworkCategories set _orgAndTargetFrameworkCategories value', () => {
+    frameworkService.orgFrameworkCategories =  mockFrameworkData._orgAndTargetFrameworkCategories.orgFrameworkCategories;
+    frameworkService.targetFrameworkCategories = mockFrameworkData._orgAndTargetFrameworkCategories.targetFrameworkCategories;
+    spyOn(frameworkService, 'setOrgAndTargetFrameworkCategories').and.callThrough();
+    frameworkService.setOrgAndTargetFrameworkCategories();
+    expect(frameworkService._orgAndTargetFrameworkCategories).toBeDefined();
+  });
+
+  it ('#addUnlistedFrameworks should call #getFrameworkCategories()', () => {
+    const frameworkData = {result: {
+      framework: []
+    }};
+    frameworkService._frameworkData = [];
+    spyOn(frameworkService, 'getFrameworkCategories').and.returnValue(of(frameworkData));
+    spyOn(frameworkService, 'addUnlistedFrameworks').and.callThrough();
+    frameworkService.addUnlistedFrameworks('k12');
+    expect(frameworkService.getFrameworkCategories).toHaveBeenCalled();
+  });
+
 });
 
 
