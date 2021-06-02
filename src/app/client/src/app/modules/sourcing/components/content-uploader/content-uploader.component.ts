@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService, ServerResponse } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, filter, take, takeUntil, switchMap } from 'rxjs/operators';
-import { throwError, Observable, Subject, of } from 'rxjs';
+import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
+import { throwError, Observable, Subject } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -18,7 +18,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
-import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
@@ -832,7 +831,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
-    // this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   changePolicyCheckValue (event) {

@@ -11,16 +11,13 @@
         }
       }
     }
-}
-
-.dynamic-form{
-  sb-dynamic-checkbox label:after
-  {
+    sb-dynamic-checkbox label:after
+    {
       color:#fff !important;
       width:0.5rem!important;
       height:0.5rem !important;
       top:2.5px !important;
-  }
+    }
 }
 
 .dynamic-form .label-html div {

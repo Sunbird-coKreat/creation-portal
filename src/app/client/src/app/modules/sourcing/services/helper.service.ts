@@ -58,7 +58,6 @@ export class HelperService {
             const contentCategoryDefinition$ = this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType);
             return contentCategoryDefinition$.pipe(
               map(data => _.get(data, 'result.objectCategoryDefinition.forms.update.properties')));
-            // return of(this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType));
           }
           return of(targetCollectionFormData);
         })

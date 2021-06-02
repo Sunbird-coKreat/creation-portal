@@ -1,5 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnChanges, ViewEncapsulation } from '@angular/core';
-import * as _ from 'lodash-es';
+import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-content-data-form',
@@ -7,16 +6,10 @@ import * as _ from 'lodash-es';
   styleUrls: ['./content-data-form.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class ContentDataFormComponent implements OnInit {
+export class ContentDataFormComponent {
   @Input() formFieldProperties: any;
   @Output() formStatus = new EventEmitter<any>();
   @Output() formInputData = new EventEmitter<any>();
-
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
 
   valueChanges(event) {
     this.formInputData.emit(event);
