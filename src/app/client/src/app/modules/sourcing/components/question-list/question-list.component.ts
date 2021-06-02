@@ -2,10 +2,10 @@
 import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy, AfterViewInit} from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigService, ToasterService, ResourceService, NavigationHelperService, ServerResponse } from '@sunbird/shared';
+import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
-import { tap, map, catchError, mergeMap, first, filter, takeUntil, take, switchMap } from 'rxjs/operators';
+import { tap, map, catchError, mergeMap, first, filter, takeUntil, take } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { of, forkJoin, throwError, Subject } from 'rxjs';
@@ -263,7 +263,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
-    // this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.resourceDetails.objectType);
   }
 
   public preprareTelemetryEvents() {
