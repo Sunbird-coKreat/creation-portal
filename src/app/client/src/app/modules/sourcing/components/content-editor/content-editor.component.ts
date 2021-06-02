@@ -6,14 +6,13 @@ import { UserService, TenantService, FrameworkService, PlayerService, Notificati
   ActionService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
-import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
-import { combineLatest, of, throwError, Subscription, Subject } from 'rxjs';
-import { map, mergeMap, tap, delay, first, filter, takeUntil, take } from 'rxjs/operators';
+import { TelemetryService } from '@sunbird/telemetry';
+import { of, Subject } from 'rxjs';
+import { tap, delay, first, filter, takeUntil, take } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 import { NgForm } from '@angular/forms';
 jQuery.fn.iziModal = iziModal;
 
@@ -24,7 +23,6 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
@@ -72,6 +70,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public contentComment: string;
   public showReviewModal: boolean;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
+  public formInputData: any;
 
   constructor(
     private resourceService: ResourceService,
@@ -132,6 +132,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.contentStatusNotify(action);
     });
     this.helperService.initialize(this.programContext);
+    if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        this.helperService.setTargetFrameWorkData(targetFWIds);
+      }
+    }
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {
@@ -330,9 +336,22 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
       this.fetchFormconfiguration();
-     this.handleActionButtons();
+      this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.contentData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentData.objectType);
+
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.contentData.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.contentData.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
   }
 
   handleContentStatusText() {
@@ -393,8 +412,23 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.validateFormConfiguration();
+  }
+
+  validateFormConfiguration() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.contentData);
+    const errorCondition = this.helperService.validateFormConfiguration(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
+    }
+  }
+
+  showEditDetailsForm() {
+    // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.contentData);
     this.showEditMetaForm = true;
   }
 
@@ -537,10 +571,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
-      console.log(this.formData.formInputData);
+    if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
+      console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
-      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.contentData.versionKey,
@@ -738,5 +772,13 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     this.onComponentDestroy$.next();
     this.onComponentDestroy$.complete();
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 }

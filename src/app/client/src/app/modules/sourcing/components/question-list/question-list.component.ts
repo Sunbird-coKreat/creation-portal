@@ -15,7 +15,6 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ProgramStageService } from '../../../program/services';
 import { ProgramTelemetryService } from '../../../program/services';
-import { DataFormComponent } from '../../../core/components/data-form/data-form.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
 
@@ -33,7 +32,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('FormControl', {static: false}) FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
-  @ViewChild('formData', {static: false}) formData: DataFormComponent;
 
   public sessionContext: any;
   public programContext: any;
@@ -94,6 +92,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public telemetryEnd: IEndEventInput;
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
+  public formstatus: any;
+  public formInputData: any;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -143,6 +143,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
     this.helperService.initialize(this.programContext);
+    if (_.has(this.sessionContext.collectionTargetFrameworkData, 'targetFWIds')) {
+      const targetFWIds = this.sessionContext.collectionTargetFrameworkData.targetFWIds;
+      if (!_.isUndefined(targetFWIds)) {
+        this.helperService.setTargetFrameWorkData(targetFWIds);
+      }
+    }
   }
 
   setTelemetryStartData() {
@@ -243,7 +249,19 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
-    this.helperService.getCategoryMetaData(this.resourceDetails.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.resourceDetails.objectType);
+    const targetCollectionMeta = {
+      primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
+      channelId: this.userService.rootOrgId,
+      objectType: 'Collection'
+    };
+
+    const assetMeta = {
+      primaryCategory: this.resourceDetails.primaryCategory,
+      channelId: _.get(this.programContext, 'rootorg_id'),
+      objectType: this.resourceDetails.objectType
+    };
+
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
   }
 
   public preprareTelemetryEvents() {
@@ -398,11 +416,23 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.requiredAction === 'editForm') {
       this.formFieldProperties = _.filter(this.formFieldProperties, val => val.code !== 'contentPolicyCheck');
     }
+    this.validateFormConfiguration();
+  }
+
+  validateFormConfiguration() {
     // tslint:disable-next-line:max-line-length
-    [this.categoryMasterList, this.formFieldProperties] = this.helperService.initializeMetadataForm(this.sessionContext, this.formFieldProperties, this.resourceDetails);
-    if(this.formFieldProperties["bloomsLevel"] && !this.categoryMasterList["bloomsLevel"]) {
-      this.categoryMasterList["bloomsLevel"] = this.formFieldProperties["bloomsLevel"].range;
+    const errorCondition = this.helperService.validateFormConfiguration(this.sessionContext.targetCollectionFrameworksData, this.formFieldProperties);
+    if (errorCondition === true) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      this.showEditMetaForm = false;
+    } else {
+      this.showEditDetailsForm();
     }
+  }
+
+  showEditDetailsForm() {
+     // tslint:disable-next-line:max-line-length
+    this.formFieldProperties = this.helperService.initializeFormFields(this.sessionContext, this.formFieldProperties, this.resourceDetails);
     this.showEditMetaForm = true;
   }
 
@@ -442,10 +472,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formData.formInputData || {})) {
-      console.log(this.formData.formInputData);
+    if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
+      console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
-      const formattedData = this.helperService.getFormattedData(_.pick(this.formData.formInputData, this.editableFields), this.formFieldProperties);
+      const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
         'content': {
           'versionKey': this.existingContentVersionKey,
@@ -1078,7 +1108,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   prepareQuestionReqBody() {
-
    // tslint:disable-next-line:prefer-const
     let finalBody = {
       'request': {
@@ -1117,6 +1146,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       finalBody.request.assessment_item.metadata = _.assign(finalBody.request.assessment_item.metadata, this.getReferenceQuestionBody());
     }
+    _.merge(finalBody.request.assessment_item.metadata, this.sessionContext.targetCollectionFrameworksData);
     return finalBody;
   }
 
@@ -1376,5 +1406,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const afterUpdateMetaData = this.questionCreationChild.getMetaData();
     afterUpdateMetaData['name'] = _.trim(this.resourceName);
     return this.isMetadataOverridden = this.helperService.isMetaDataModified(beforeUpdateMetaData, afterUpdateMetaData);
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 }
