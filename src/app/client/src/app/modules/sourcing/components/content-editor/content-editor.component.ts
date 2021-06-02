@@ -6,14 +6,13 @@ import { UserService, TenantService, FrameworkService, PlayerService, Notificati
   ActionService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
-import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
-import { combineLatest, of, throwError, Subscription, Subject } from 'rxjs';
-import { map, mergeMap, tap, delay, first, filter, takeUntil, take } from 'rxjs/operators';
+import { TelemetryService } from '@sunbird/telemetry';
+import { of, Subject } from 'rxjs';
+import { tap, delay, first, filter, takeUntil, take } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
-import {ContentDataFormComponent} from '../../../core/components/content-data-form/content-data-form.component';
 import { NgForm } from '@angular/forms';
 jQuery.fn.iziModal = iziModal;
 
@@ -353,7 +352,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
-    // this.helperService.getCategoryMetaData(this.contentMetaData.primaryCategory, _.get(this.programContext, 'rootorg_id'), this.contentMetaData.objectType);
   }
 
   handleContentStatusText() {
