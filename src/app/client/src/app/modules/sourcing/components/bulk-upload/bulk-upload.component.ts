@@ -481,7 +481,7 @@ export class BulkUploadComponent implements OnInit {
       { name: 'Level 4 Textbook Unit', inputName: 'level4', headerError },
     ];
 
-     const orgFrameworkCategories = _.map(
+     const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
        return {
          name: `Org_FW_${category.code}`,
@@ -489,9 +489,9 @@ export class BulkUploadComponent implements OnInit {
          isArray: true,
          headerError
        };
-     });
+     }) : [];
 
-     const targetFrameworkCategories = _.map(
+     const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
        _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
       return {
         name: `Target_FW_${category.code}`,
@@ -499,9 +499,9 @@ export class BulkUploadComponent implements OnInit {
         isArray: true,
         headerError
       };
-    });
+    }) : [];
 
-    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories]; // []
+    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
     const validateRow = (row, rowIndex) => {
       if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
         const name = headers.find((r) => r.inputName === 'level1').name || '';
