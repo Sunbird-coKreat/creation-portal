@@ -571,7 +571,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   saveMetadataForm(cb?) {
-    if (this.helperService.validateForm(this.formFieldProperties, this.formInputData, this.formstatus)) {
+    if (this.helperService.validateForm(this.formstatus)) {
       console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
       const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);

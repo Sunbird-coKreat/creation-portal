@@ -780,28 +780,11 @@ export class HelperService {
     return formFieldProperties;
   }
 
-  validateForm(formFieldProperties, formInputData, formStatus) {
+  validateForm(formStatus) {
     let sbValidField = false;
     if (_.isEmpty(formStatus) || formStatus.isValid === true) {
       sbValidField = true;
     }
-    /*
-    const requiredFields = _.map(_.filter(formFieldProperties, { 'required': true }), field => field.code );
-    const textFields = _.filter(formFieldProperties, {'inputType': 'text', 'editable': true});
-
-    const validFields = _.map(requiredFields, field => {
-      if (_.find(formFieldProperties, val => val.code === field && val.inputType === 'checkbox') && _.get(formInputData, field)) {
-        return true;
-      // tslint:disable-next-line:max-line-length
-      } else if (_.isEmpty(_.get(formInputData, field)) || (_.find(textFields, data => data.code === field) && _.trim(formInputData[field]).length === 0)) {
-        return false;
-      } else {
-        return true;
-      }
-    });
-
-    return (_.includes(validFields, false) ? false : true) && sbValidField;
-    */
     return sbValidField;
   }
 
@@ -1037,7 +1020,6 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
     const orgFrameworkFields = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'orgFrameworkCategories'), 'orgIdFieldName');
     // tslint:disable-next-line:max-line-length
     const targetFrameworkFields = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'targetFrameworkCategories'), 'targetIdFieldName');
-    const frameworksFields = _.uniq(_.concat(orgFrameworkFields, targetFrameworkFields));
     const masterCategoryList = [...orgFrameworkFields, ...targetFrameworkFields];
     const framework = this.frameworkService.frameworkData[targetCollectionFrameworksData.framework];
 
