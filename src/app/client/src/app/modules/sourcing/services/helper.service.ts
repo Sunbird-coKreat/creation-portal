@@ -597,7 +597,7 @@ export class HelperService {
           });
         }
         if(formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
-          categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
+          categoryMasterList[formFieldCategory.code] = formFieldCategory.range;
         }
         if (formFieldCategory.code === 'license' && this.getAvailableLicences()) {
           formFieldCategory.range = this.getAvailableLicences();
@@ -732,7 +732,7 @@ export class HelperService {
            }
            if (formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
              // tslint:disable-next-line:no-unused-expression
-             categoryMasterList[formFieldCategory.code] === formFieldCategory.range;
+             categoryMasterList[formFieldCategory.code] = formFieldCategory.range;
            }
            if (formFieldCategory.code === 'license') {
              const license = this.getAvailableLicences();
