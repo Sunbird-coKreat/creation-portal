@@ -25,6 +25,7 @@ import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import * as _ from 'lodash-es';
 
 // Following describe method is for 'PREVIEW' scenario
 xdescribe('ContentUploaderComponent', () => {
@@ -310,8 +311,8 @@ describe('ContentUploaderComponent', () => {
   });
 
   it ('#showEditDetailsForm() should call helperService.initializeFormFields', () => {
-     const sampleFieldArray = [{code: 'name', name: 'name' }];
-     const sampleFieldArrayWithData = {code: 'name', name: 'name', default: 'test content'};
+    const sampleFieldArray = [{code: 'name', name: 'name' }];
+    const sampleFieldArrayWithData = [{code: 'name', name: 'name', default: 'test content'}];
     component.formFieldProperties = sampleFieldArray;
     component.contentMetaData = {name: 'test content'};
     const  helperService  = TestBed.get(HelperService);
@@ -322,6 +323,21 @@ describe('ContentUploaderComponent', () => {
     expect(component.formFieldProperties).toBe(sampleFieldArrayWithData);
     expect(component.showEditMetaForm).toBeTruthy();
   });
+
+  it ('#formStatusEventListener() should set formstatus value', () => {
+    const statusEvent = {isValid: true};
+    spyOn(component, 'formStatusEventListener').and.callThrough();
+    component.formStatusEventListener(statusEvent);
+    expect(component.formstatus).toBe(statusEvent);
+  });
+
+  it ('#getFormData() should set formInputData value', () => {
+    const formInput = {name: 'test content'};
+    spyOn(component, 'formStatusEventListener').and.callThrough();
+    component.getFormData(formInput);
+    expect(component.formInputData).toBe(formInput);
+  });
+
 });
 
 // Following describe method is for 'REVIEWER' role scenario

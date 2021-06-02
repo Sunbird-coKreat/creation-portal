@@ -94,7 +94,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public pageStartTime;
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
-  private formInputData: any;
+  public formInputData: any;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
