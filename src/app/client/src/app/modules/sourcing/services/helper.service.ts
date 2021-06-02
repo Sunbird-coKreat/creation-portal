@@ -808,8 +808,7 @@ export class HelperService {
   }
 
   getFormConfiguration() {
-    const formFields = _.cloneDeep(this.selectedCategoryMetaData);
-    return formFields;
+    return _.cloneDeep(this.selectedCategoryMetaData);
   }
 
   mapContentTypesToCategories(nomContentTypes) {
