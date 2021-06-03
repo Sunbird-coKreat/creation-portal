@@ -11,6 +11,7 @@ import { SourcingService } from '../../services';
 
 import * as _ from 'lodash-es';
 import { map} from 'rxjs/operators';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-question-set-editor',
@@ -52,16 +53,16 @@ export class QuestionSetEditorComponent implements OnInit {
 
   ngOnInit() {
     this.questionSetEditorInput = this.questionSetEditorComponentInput;
-    this.sessionContext  = _.get(this.questionSetEditorInput, 'sessionContext');
+    this.sessionContext  = _.get(this.questionSetEditorComponentInput, 'sessionContext');
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
-    this.programContext = _.get(this.questionSetEditorInput, 'programContext');
-    this.unitIdentifier  = _.get(this.questionSetEditorInput, 'unitIdentifier');
+    this.programContext = _.get(this.questionSetEditorComponentInput, 'programContext');
+    this.unitIdentifier  = _.get(this.questionSetEditorComponentInput, 'unitIdentifier');
 
     // this.telemetryPageId = _.get(this.questionSetEditorInput, 'telemetryPageDetails.telemetryPageId');
     // this.templateDetails  = _.get(this.questionSetEditorInput, 'templateDetails');
     // 
     this.editorParams = {
-      questionSetId: _.get(this.questionSetEditorInput, 'contentId'),
+      questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
     };
     this.userProfile = this.userService.userProfile;
     this.getCollectionDetails().subscribe(data => {
@@ -183,13 +184,19 @@ export class QuestionSetEditorComponent implements OnInit {
       },
       config: {
         mode: this.getEditorMode(),
-        setDefaultCopyRight: false
+        setDefaultCopyRight: false,
+        showOriginPreviewUrl: false, 
+        showSourcingStatus: false, 
+        showCorrectionComments: false
       }
     };
     if (this.showQuestionEditor) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
     }
     this.editorConfig.config = _.assign(this.editorConfig.config, this.hierarchyConfig);
+    this.getCorrectionComments();
+    this.getDikshaPreviewUrl();
+    this.getStatustoShow();
   }
 
   private getEditorMode() {
@@ -210,6 +217,62 @@ export class QuestionSetEditorComponent implements OnInit {
     }
 
     return 'read';
+  }
+
+  getCorrectionComments() {
+      const contentComment = this.helperService.getContentCorrectionComments(this.collectionDetails, this.sessionContext);
+      this.editorConfig.config.showCorrectionComments = (contentComment) ? true : false;
+      this.editorConfig.context.correctionComments = contentComment;
+  }
+
+  getDikshaPreviewUrl() {
+    const sourcingReviewStatus = _.get(this.questionSetEditorComponentInput, 'sourcingStatus') || '';
+    if (sourcingReviewStatus === 'Approved') {
+      this.editorConfig.config.showOriginPreviewUrl = true;
+      if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.editorParams.questionSetId])) {
+        this.editorConfig.context.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.editorParams.questionSetId].identifier);
+      }
+    }
+  }
+
+  getStatustoShow() {
+      const resourceStatus = this.collectionDetails.status;
+      const sourcingReviewStatus = _.get(this.questionSetEditorComponentInput, 'sourcingStatus') || '';
+
+      let resourceStatusText = '';
+      let resourceStatusClass = '';
+      if (resourceStatus === 'Review') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+        resourceStatusClass = 'sb-color-primary';
+      } else if (resourceStatus === 'Draft' && this.collectionDetails.prevStatus === 'Review') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+        resourceStatusClass = 'sb-color-error';
+      } else if (resourceStatus === 'Draft' && this.collectionDetails.prevStatus === 'Live') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
+        resourceStatusClass = 'sb-color-error';
+      } else if (resourceStatus === 'Live' && _.isEmpty(sourcingReviewStatus)) {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+        resourceStatusClass = 'sb-color-warning';
+      } else if (sourcingReviewStatus === 'Rejected') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+        resourceStatusClass = 'sb-color-error';
+      } else if (sourcingReviewStatus === 'Approved') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+        resourceStatusClass = 'sb-color-success';
+      } else if (resourceStatus === 'Failed') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+        resourceStatusClass = 'sb-color-error';
+      } else if (resourceStatus === 'Processing') {
+        resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+        resourceStatusClass = '';
+      } else {
+        resourceStatusText = resourceStatus;
+        resourceStatusClass = 'sb-color-gray-300';
+      }
+
+      this.editorConfig.config.showSourcingStatus = true;
+      this.editorConfig.context.sourcingResourceStatus= resourceStatusText;
+      this.editorConfig.context.sourcingResourceStatusClass = resourceStatusClass;
   }
 
   canSourcingReviewerPerformActions() {
@@ -245,7 +308,6 @@ export class QuestionSetEditorComponent implements OnInit {
   }
 
   editorEventListener(event) {
-   console.log(event);
    switch (event.action) {
     case "submitContent" : 
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content

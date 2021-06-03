@@ -768,6 +768,23 @@ export class HelperService {
     }
   }
 
+  getContentCorrectionComments(contentMetaData, sessionContext) {
+    const id = _.get(contentMetaData, 'identifier');
+    let contentComment = '';
+    const sourcingRejectedComments = _.get(sessionContext, 'hierarchyObj.sourcingRejectedComments')
+    if (id && contentMetaData.status === "Draft" && contentMetaData.prevStatus  === "Review") {
+      // if the contributing org reviewer has requested for changes
+      contentComment = _.get(contentMetaData, 'rejectComment');
+    } else if (id && !_.isEmpty(_.get(contentMetaData, 'requestChanges')) &&
+    ((contentMetaData.status === "Draft" && contentMetaData.prevStatus === "Live") || contentMetaData.status === "Live")) {
+      // if the souring org reviewer has requested for changes
+      contentComment = _.get(contentMetaData, 'requestChanges');
+    } else  if (id && contentMetaData.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
+        contentComment = _.get(sourcingRejectedComments, id);
+    }
+    return contentComment;
+  }
+
   updateQuestionSetStatus(questionsetId, status, comment?) {
     const requestBody = {
       request: {
