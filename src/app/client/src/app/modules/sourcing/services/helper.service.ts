@@ -639,7 +639,7 @@ export class HelperService {
   initializeFormFields(sessionContext, formFieldProperties, contentMetadata) {
     let categoryMasterList;
     let targetCategoryMasterList;
-    const nonFrameworkFields = ['topic', 'learningOutcome', 'additionalCategories', 'bloomsLevel', 'license'];
+    const nonFrameworkFields = ['additionalCategories', 'license'];
     // tslint:disable-next-line:max-line-length
     if (_.has(sessionContext.targetCollectionFrameworksData, 'targetFWIds') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds])) {
       targetCategoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.targetFWIds];
@@ -668,71 +668,19 @@ export class HelperService {
 
     if (sessionContext.frameworkData) {
        categoryMasterList = sessionContext.frameworkData;
-       let { gradeLevel, subject } = sessionContext;
-       let gradeLevelTerms = [], subjectTerms = [], topicTerms = [];
-       let gradeLevelTopicAssociations = [], subjectTopicAssociations = [];
        _.forEach(categoryMasterList, (category) => {
-
-         if (category.code === 'gradeLevel') {
-           const terms = category.terms;
-           if (terms) {
-             gradeLevelTerms =  _.concat(gradeLevelTerms, _.filter(terms,  (t)  => _.includes(gradeLevel, t.name)));
-           }
-         }
-
-         if (category.code === 'subject') {
-           const terms = category.terms;
-           if (terms) {
-             subjectTerms =  _.concat(subjectTerms, _.filter(terms,  (t)  => _.includes(subject, t.name)));
-           }
-         }
          _.forEach(formFieldProperties, (formFieldCategory) => {
-           if (formFieldCategory.code === 'topic') {
-             if (!formFieldCategory.range) { formFieldCategory.range = []; }
-             if (!gradeLevelTopicAssociations.length && !subjectTopicAssociations.length && gradeLevelTerms.length && subjectTerms.length) {
-               _.forEach(gradeLevelTerms, (term) => {
-                 if (term.associations) {
-                 gradeLevelTopicAssociations = _.concat(gradeLevelTopicAssociations,
-                   _.filter(term.associations, (association) => association.category === 'topic'));
-                 }
-               });
-               _.forEach(subjectTerms, (term) => {
-                 if (term.associations) {
-                 subjectTopicAssociations = _.concat(subjectTopicAssociations,
-                   _.filter(term.associations, (association) => association.category === 'topic'));
-                 }
-               });
-               // tslint:disable-next-line:max-line-length
-               formFieldCategory.range = _.intersectionWith(gradeLevelTopicAssociations, subjectTopicAssociations, (a, o) =>  a.name === o.name );
-             }
-             topicTerms = _.filter(sessionContext.topicList, (t) => _.find(formFieldCategory.range, { name: t.name }));
+
+          if (formFieldCategory.code === category.code) {
+            formFieldCategory.terms = category.terms;
            }
 
-           if (formFieldCategory.code === 'learningOutcome') {
-             const topicTerm = _.find(sessionContext.topicList, { name: _.first(sessionContext.topic) });
-             if (topicTerm && topicTerm.associations) {
-               formFieldCategory.range = _.map(topicTerm.associations, (learningOutcome) =>  learningOutcome);
-             } else {
-               if (topicTerms) {
-                 _.forEach(topicTerms, (term) => {
-                   if (term.associations) {
-                     // tslint:disable-next-line:max-line-length
-                     formFieldCategory.range = _.concat(formFieldCategory.range || [], _.map(term.associations, (learningOutcome) => learningOutcome));
-                   }
-                 });
-               }
-             }
-           }
            if (formFieldCategory.code === 'additionalCategories') {
             //  console.log(this.cacheService.get(this.userService.hashTagId));
              // tslint:disable-next-line:max-line-length
              formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
                return {name: data};
              });
-           }
-           if (formFieldCategory.code === 'bloomsLevel' && !categoryMasterList[formFieldCategory.code]) {
-             // tslint:disable-next-line:no-unused-expression
-             categoryMasterList[formFieldCategory.code] = formFieldCategory.range;
            }
            if (formFieldCategory.code === 'license') {
              const license = this.getAvailableLicences();
