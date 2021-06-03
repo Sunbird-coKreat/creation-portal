@@ -114,6 +114,10 @@
   <% if (enableQuestionSetEditor) { %>
     <input type="hidden" id="enableQuestionSetEditor" value="<%=enableQuestionSetEditor%>" />
   <% } %>
+
+  <% if (smsUrl) { %>
+    <input type="hidden" id="smsUrl" value="<%=smsUrl%>" />
+  <% } %>
   <app-root></app-root>
 </body>
 

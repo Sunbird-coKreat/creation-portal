@@ -11,12 +11,15 @@ import { ContentService } from '../content/content.service';
   providedIn: 'root'
 })
 export class NotificationService {
-
+  private smsURL: string;
   constructor(private resourceService: ResourceService,
     private learnerService: LearnerService,
     private programsService: ProgramsService,
     private config: ConfigService,
-    private contentService: ContentService) { }
+    private contentService: ContentService) {
+      this.smsURL = (<HTMLInputElement>document.getElementById('smsUrl'))
+      ? (<HTMLInputElement>document.getElementById('smsUrl')).value : window.location.origin;
+     }
 
   sendNotification(reqData) {
     const option = {
@@ -110,9 +113,8 @@ export class NotificationService {
         if (_.isEmpty(configuration)) {
           return throwError('Failed to get the sms template');
         }
-        const url = window.location.origin;
         let body = configuration.value;
-        body = _.replace(body, '$url', url);
+        body = _.replace(body, '$url', this.smsURL);
         body = _.replace(body, '$projectName', _.truncate(nomination.programData.name, {length: 25}));
 
         const request = {
@@ -245,9 +247,8 @@ export class NotificationService {
         if (_.isEmpty(configuration)) {
           return throwError('Failed to get the sms template');
         }
-        const url = window.location.origin;
         let body = configuration.value;
-        body = _.replace(body, '$url', url);
+        body = _.replace(body, '$url', this.smsURL);
         body = _.replace(body, '$contentName', _.truncate(notificationData.content.name, {length: 25}));
         body = _.replace(body, '$projectName', _.truncate(notificationData.program.name, {length: 25}));
 
