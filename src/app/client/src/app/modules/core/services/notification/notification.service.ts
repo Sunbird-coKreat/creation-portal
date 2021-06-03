@@ -17,8 +17,8 @@ export class NotificationService {
     private programsService: ProgramsService,
     private config: ConfigService,
     private contentService: ContentService) {
-      this.smsURL = (<HTMLInputElement>document.getElementById('smsUrl'))
-      ? (<HTMLInputElement>document.getElementById('smsUrl')).value : window.location.origin;
+      this.smsURL = (<HTMLInputElement>document.getElementById('dockSmsUrl'))
+      ? (<HTMLInputElement>document.getElementById('dockSmsUrl')).value : window.location.origin;
      }
 
   sendNotification(reqData) {
