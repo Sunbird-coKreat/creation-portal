@@ -662,34 +662,19 @@ export class HelperService {
          if ((frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
              field.terms = frameworkCategories.terms;
          }
+         if (field.code === 'additionalCategories' && _.includes(nonFrameworkFields, field.code)) {
+            field.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
+            return {name: data};
+          });
+         }
+         if (field.code === 'license') {
+           const license = this.getAvailableLicences();
+           if (license) {
+            field.range = _.map(license, 'name');
+           }
+         }
        });
      });
-    }
-
-    if (sessionContext.frameworkData) {
-       categoryMasterList = sessionContext.frameworkData;
-       _.forEach(categoryMasterList, (category) => {
-         _.forEach(formFieldProperties, (formFieldCategory) => {
-
-          if (formFieldCategory.code === category.code) {
-            formFieldCategory.terms = category.terms;
-           }
-
-           if (formFieldCategory.code === 'additionalCategories') {
-            //  console.log(this.cacheService.get(this.userService.hashTagId));
-             // tslint:disable-next-line:max-line-length
-             formFieldCategory.range = _.map(_.get(this.getProgramLevelChannelData(), 'contentAdditionalCategories'), data => {
-               return {name: data};
-             });
-           }
-           if (formFieldCategory.code === 'license') {
-             const license = this.getAvailableLicences();
-             if (license) {
-              formFieldCategory.range = _.map(license, 'name');
-             }
-           }
-         });
-       });
     }
 
     // set default values in the form
@@ -705,23 +690,12 @@ export class HelperService {
             formFieldCategory.default = sessionContext.targetCollectionFrameworksData[formFieldCategory.code];
           }
         }
-        if (formFieldCategory.inputType === 'checkbox' && requiredData) {
-          formFieldCategory.default = requiredData;
-        }
         if (formFieldCategory.code === 'author' && !requiredData) {
           let creator = this.userService.userProfile.firstName;
           if (!_.isEmpty(this.userService.userProfile.lastName)) {
             creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
           }
           formFieldCategory.default = contentMetadata.creator || creator;
-        }
-        if (formFieldCategory.code === 'learningOutcome' && formFieldCategory.inputType === 'select' && _.isArray(requiredData)) {
-          formFieldCategory.default = _.first(requiredData) || '';
-        }
-        // tslint:disable-next-line:max-line-length
-        if (formFieldCategory.code === 'additionalCategories' && formFieldCategory.inputType === 'multiSelect' && contentMetadata.primaryCategory === 'eTextbook' &&
-            contentMetadata.status === 'Draft' && _.isEmpty(contentMetadata.additionalCategories)) {
-          formFieldCategory.default = ['Textbook'];
         }
       });
     }
@@ -964,37 +938,53 @@ convertNameToIdentifier(framework, value, key, code, collectionMeta) {
   validateFormConfiguration(targetCollectionFrameworksData, formFieldProperties) {
     let invalidFormConfig = false;
     // tslint:disable-next-line:max-line-length
-    const orgFrameworkFields = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'orgFrameworkCategories'), 'orgIdFieldName');
+    const orgFrameworkFieldIds = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'orgFrameworkCategories'), 'orgIdFieldName');
+    const orgFrameworkFieldCodes = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'orgFrameworkCategories'), 'code');
     // tslint:disable-next-line:max-line-length
-    const targetFrameworkFields = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'targetFrameworkCategories'), 'targetIdFieldName');
-    const masterCategoryList = [...orgFrameworkFields, ...targetFrameworkFields];
+    const targetFrameworkFieldIds = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'targetFrameworkCategories'), 'targetIdFieldName');
+    // tslint:disable-next-line:max-line-length
+    const targetFrameworkFieldCodes = _.map(_.get(this.frameworkService.orgAndTargetFrameworkCategories, 'targetFrameworkCategories'), 'code');
+    const masterCategoryIds = [...orgFrameworkFieldIds, ...targetFrameworkFieldIds];
+    const masterCategoryCodes = [...orgFrameworkFieldCodes, ...targetFrameworkFieldCodes];
     const framework = this.frameworkService.frameworkData[targetCollectionFrameworksData.framework];
 
     const targetFramework = this.frameworkService.frameworkData[_.first(targetCollectionFrameworksData.targetFWIds)];
 
     _.forEach(formFieldProperties, field => {
-      if (!_.isEmpty(masterCategoryList) && _.has(field, 'sourceCategory') && !_.includes(masterCategoryList, field.code)) {
-        invalidFormConfig = true;
-        return false;
-      } else if (_.has(targetCollectionFrameworksData, 'framework') && _.has(field, 'sourceCategory')
-      && !_.includes(field.code, 'target') && !_.includes(_.map(framework.categories, 'code'), field.sourceCategory)) {
-        invalidFormConfig = true;
-        return false;
-      } else if (_.has(targetCollectionFrameworksData, 'targetFWIds') && _.has(field, 'sourceCategory')
-      && _.includes(field.code, 'target') && !_.includes(_.map(targetFramework.categories, 'code'), field.sourceCategory)) {
-        invalidFormConfig = true;
-        return false;
-      } else if (!_.has(targetCollectionFrameworksData, 'framework') && _.includes(orgFrameworkFields, field.code)) {
-        invalidFormConfig = true;
-        return false;
-      } else if (!_.has(targetCollectionFrameworksData, 'targetFWIds') && _.includes(targetFrameworkFields, field.code)) {
-        invalidFormConfig = true;
-        return false;
-      } else if ((field.code).toLowerCase() === 'framework' || (field.code).toLowerCase() === 'targetfwids') {
-        invalidFormConfig = true;
-        return false;
-      }
-    });
+          if (_.has(targetCollectionFrameworksData, 'framework') && !_.has(field, 'sourceCategory')
+           && _.includes(masterCategoryCodes, field.code)
+           && !_.includes(_.map(framework.categories, 'code'), field.code)) { // board,medium,gradeLevel,...
+            console.error(field, 'field is not in framework: ', targetCollectionFrameworksData.framework);
+            invalidFormConfig = true;
+            return false;
+          } else if (_.has(targetCollectionFrameworksData, 'framework') && _.has(field, 'sourceCategory')
+            && !_.includes(field.code, 'target') && _.includes(masterCategoryIds, field.code)
+            && !_.includes(_.map(framework.categories, 'code'), field.sourceCategory)) { // boardIds, mediumIds, ...
+              console.error(field, 'is not in framework: ', targetCollectionFrameworksData.framework);
+              invalidFormConfig = true;
+              return false;
+          } else if (_.has(targetCollectionFrameworksData, 'targetFWIds') && _.has(field, 'sourceCategory')
+            && _.includes(field.code, 'target') && _.includes(masterCategoryIds, field.code)
+            && !_.includes(_.map(targetFramework.categories, 'code'), field.sourceCategory)) {
+              console.error(field, 'is not in targetframework: ', targetCollectionFrameworksData.targetFWIds);
+              invalidFormConfig = true;
+              return false;
+          } else if (!_.has(targetCollectionFrameworksData, 'framework') && !_.has(field, 'sourceCategory')
+          && (_.includes(orgFrameworkFieldIds, field.code) || _.includes(orgFrameworkFieldCodes, field.code))) {
+            console.error('collection does not have framework but form config have framework fields');
+            invalidFormConfig = true;
+            return false;
+          } else if (!_.has(targetCollectionFrameworksData, 'targetFWIds') && _.has(field, 'sourceCategory')
+          && (_.includes(targetFrameworkFieldIds, field.code)  || _.includes(targetFrameworkFieldCodes, field.code))) {
+            console.error('collection does not have targetFramework but form config have targetFramework fields');
+            invalidFormConfig = true;
+            return false;
+          } else if ((field.code).toLowerCase() === 'framework' || (field.code).toLowerCase() === 'targetfwids') {
+            console.error('form config should not field.code as framework / targetFwIds');
+            invalidFormConfig = true;
+            return false;
+          }
+       });
     return invalidFormConfig;
   }
 
