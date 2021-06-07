@@ -805,6 +805,9 @@ app-question-set-editor{
    padding: 10px 0 !important;
    font-size: 12px!important;
   }
+  sb-dynamic-checkbox{
+    grid-column-start: span 2;
+  }
   .sb-checkbox {
     padding: 0 !important;
     label {
@@ -840,9 +843,19 @@ app-question-set-editor{
   }
 }
 .sb-edit-form{
+  .sb-dropdown{
+    margin: 1rem 0 !important;
+  }
+  .treepicker-parent{
+    .list-border{
+      height: 38px !important;
+      padding: 1rem !important;
+    }
+  }
   .sb-textbox{
     font-size: .785rem!important;
     padding-left: 5px !important;
+    padding: 10px 9px !important;
   }
   .sb-dropdown-select{
       overflow: hidden;
@@ -884,9 +897,7 @@ app-question-set-editor{
       }
     }
   }
-  sb-dynamic-textbox:first-child .sb-input{
-    margin-top: 0 !important;
-  }
+  
   .sb-textbox[disabled='true']{
     border: .5px solid #b3b1b1;
     color: #aaa;
