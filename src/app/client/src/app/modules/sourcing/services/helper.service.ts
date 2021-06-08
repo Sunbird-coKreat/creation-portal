@@ -228,7 +228,7 @@ export class HelperService {
 
 
   publishContentToDiksha(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
-    const channel =  _.get(contentMetaData, 'channel');
+    const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
     if (_.isString(channel)) {
       contentMetaData['createdFor'] = [channel];
     } else if (_.isArray(channel)) {
