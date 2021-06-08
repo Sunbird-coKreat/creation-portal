@@ -141,11 +141,17 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
     const contents = _.compact(_.map(this.approvalPending, contnet => {
       if (contnet.originUnitId) {
+        const channel =  _.get(this.storedCollectionData.originData, 'channel');
+        if (_.isString(channel)) {
+          contnet['createdFor'] = [channel];
+        } else if (_.isArray(channel)) {
+          contnet['createdFor'] = channel;
+        }
         const reqFormat = {
           source: `${baseUrl}/api/content/v1/read/${contnet.identifier}`,
           metadata: {..._.pick(this.storedCollectionData, ['framework']),
                        ..._.pick(_.get(this.storedCollectionData, 'originData'), ['channel']),
-                        ..._.pick(contnet, ['name', 'code', 'mimeType', 'contentType']),
+                        ..._.pick(contnet, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
                           ...{lastPublishedBy: this.userService.userProfile.userId}},
           collection: [
             {
