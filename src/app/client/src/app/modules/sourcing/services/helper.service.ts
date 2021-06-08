@@ -255,6 +255,12 @@ export class HelperService {
 
 
   publishContentToDiksha(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
+    const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
+    if (_.isString(channel)) {
+      contentMetaData['createdFor'] = [channel];
+    } else if (_.isArray(channel)) {
+      contentMetaData['createdFor'] = channel;
+    }
     const option = {
       url: 'content/v3/read/' + collectionId,
       param: { 'mode': 'edit', 'fields': 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
@@ -276,7 +282,7 @@ export class HelperService {
             source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
             metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
                         ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
-                        ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType']),
+                        ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
                           ...{'lastPublishedBy': this.userService.userProfile.userId}},
             collection: [
               {
