@@ -106,12 +106,6 @@ hr {
     &.warning .status__label:before {
       background-color: var(--red-100);
     }
-
-    &.completed .status__label:before {
-      // background-color:var(--secondary-200);
-      // border: 0.25rem solid var(--gray-0);
-    }
-
     .status__label {
       font-size: 0.75rem;
       white-space: normal;
@@ -802,5 +796,26 @@ app-question-set-editor{
 .footer{
   label{
     color: #fff !important;
+  }
+}
+.sb-table-horizontalscroll{
+  thead{
+    tr{
+      display: block;
+      th{
+        width: 200px;
+      }
+    }
+  }
+  tbody{
+    display: block;
+    max-height: 400px !important;
+    overflow-y: auto !important;
+    tr{
+      display: block;
+      td{
+        width: 200px;
+      }
+    }
   }
 }
