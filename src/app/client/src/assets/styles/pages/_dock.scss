@@ -798,24 +798,3 @@ app-question-set-editor{
     color: #fff !important;
   }
 }
-.sb-table-horizontalscroll{
-  thead{
-    tr{
-      display: block;
-      th{
-        width: 200px;
-      }
-    }
-  }
-  tbody{
-    display: block;
-    max-height: 400px !important;
-    overflow-y: auto !important;
-    tr{
-      display: block;
-      td{
-        width: 200px;
-      }
-    }
-  }
-}
