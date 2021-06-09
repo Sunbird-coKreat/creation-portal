@@ -45,6 +45,8 @@ let envVariables = {
   SUNBIRD_LEARNER_URL: env.sunbird_learner_url,
   DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url,
   DOCK_QUESTIONSET_ENABLE: env.dock_questionSet_enable || 'true',
+  DOCK_SMS_URL: env.dock_sms_url || 'https://vdn.diksha.gov.in',
+
 
 
   // TTL and Intervals

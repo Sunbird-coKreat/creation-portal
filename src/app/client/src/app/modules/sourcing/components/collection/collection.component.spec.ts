@@ -17,6 +17,7 @@ import { of, throwError } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
 import {APP_BASE_HREF, DatePipe} from '@angular/common';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 const programDetailsTargetCollection = {
   'target_collection_category': [
@@ -103,7 +104,8 @@ describe('CollectionComponent', () => {
         {provide: APP_BASE_HREF, useValue: '/'},
         CollectionHierarchyService,
         DatePipe,
-        NavigationHelperService
+        NavigationHelperService,
+        HelperService
       ]
     })
     .compileComponents();
@@ -245,6 +247,34 @@ describe('CollectionComponent', () => {
     spyOn(service, 'setTargetCollectionName').and.callThrough();
     component.setTargetCollectionValue();
     expect(service.setTargetCollectionName).toHaveBeenCalled();
+  });
+
+  it ('#setFrameworkCategories() should call collectionHierarchyService.getCollectionHierarchyDetails', () => {
+    spyOn(component, 'setFrameworkCategories').and.callThrough();
+    spyOn(collectionHierarchyService, 'getCollectionHierarchyDetails').and.callThrough();
+    component.setFrameworkCategories('do_12345');
+    expect(collectionHierarchyService.getCollectionHierarchyDetails).toHaveBeenCalledWith('do_12345');
+  });
+
+  it ('#setFrameworkCategories() should set sessionContext values', () => {
+    const collectionData = {
+        result: {
+          content: {
+            primaryCategory: 'Digital Textbook',
+            name: 'test content'
+          }
+        }
+      };
+    const frameworkData = {framework: 'cbse_framework'};
+    const  helperService  = TestBed.get(HelperService);
+    spyOn(collectionHierarchyService, 'getCollectionHierarchyDetails').and.returnValue(of(collectionData));
+    spyOn(helperService, 'setFrameworkCategories').and.returnValue(frameworkData);
+    spyOn(component, 'setFrameworkCategories').and.callThrough();
+    component.setFrameworkCategories('do_12345');
+    expect(collectionHierarchyService.getCollectionHierarchyDetails).toHaveBeenCalledWith('do_12345');
+    expect(component.sessionContext.targetCollectionPrimaryCategory).toEqual('Digital Textbook');
+    expect(helperService.setFrameworkCategories).toHaveBeenCalledWith(collectionData.result.content);
+    expect(component.sessionContext.targetCollectionFrameworksData).toBe(frameworkData);
   });
 
 });

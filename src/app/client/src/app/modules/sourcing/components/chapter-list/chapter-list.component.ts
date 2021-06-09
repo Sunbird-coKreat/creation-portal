@@ -1002,8 +1002,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       if (!_.isEmpty(this.userProfile.lastName)) {
         creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
       }
+
+      let targetCollectionFrameworksData = {};
+      targetCollectionFrameworksData = this.helperService.setFrameworkCategories(this.collection);
+
       const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      let option = {
+      _.merge(sharedMetaData, targetCollectionFrameworksData);
+      const option = {
         url: `content/v3/create`,
         header: {
           'X-Channel-Id': this.programContext.rootorg_id
@@ -1049,7 +1054,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else {
         createRes = this.actionService.post(option);
       }
-    
+
       createRes.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',

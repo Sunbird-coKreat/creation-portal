@@ -25,7 +25,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { programSession } from './data';
-
+import { HelperService } from '../../../sourcing/services/helper.service';
 const userServiceStub = {
   get() {
     if (errorInitiate) {
@@ -153,7 +153,8 @@ describe('ProgramComponent', () => {
         {
           provide: ResourceService,
           useValue: resourceServiceStub
-        }
+        },
+        HelperService
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
@@ -322,5 +323,14 @@ describe('ProgramComponent', () => {
     spyOn(programsService, 'setTargetCollectionName').and.callThrough();
     component.setTargetCollectionValue();
     expect(programsService.setTargetCollectionName).toHaveBeenCalled();
+  });
+
+  it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
+    const collection = {};
+    const  helperService  = TestBed.get(HelperService);
+    spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
+    spyOn(component, 'setFrameworkCategories').and.callThrough();
+    component.setFrameworkCategories(collection);
+    expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
   });
 });
