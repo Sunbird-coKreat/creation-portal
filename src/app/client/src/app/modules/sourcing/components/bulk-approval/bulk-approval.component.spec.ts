@@ -40,8 +40,14 @@ describe('BulkApprovalComponent', () => {
   it('#ngOnChanges() should call ngOnChanges', () => {
     component.initialized = true;
     component.approvalPending = [];
+    component.storedCollectionData = [{name: 'dummy'}]
     spyOn(component, 'approvalPendingContents');
     component.ngOnChanges();
     expect(component.showBulkApprovalButton).toBeDefined();
+  });
+  it('#bulkApproval() should call bulkApproval', () => {
+    spyOn(component, 'sendContentForBulkApproval');
+    component.bulkApproval();
+    expect(component.sendContentForBulkApproval).toHaveBeenCalled();
   });
 });
