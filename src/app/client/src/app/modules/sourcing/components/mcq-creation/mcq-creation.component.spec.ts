@@ -13,12 +13,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SanitizeHtmlPipe } from '../../pipe/sanitize-html.pipe';
-import { UserService, ActionService, ProgramsService } from '@sunbird/core';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
-import { SourcingService } from '../../services';
-import { HelperService } from '../../services/helper.service';
-import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, NgForm, FormGroup } from '@angular/forms';
 
 describe('McqCreationComponent', () => {
     let component: McqCreationComponent;
@@ -47,6 +43,12 @@ describe('McqCreationComponent', () => {
     it('should create McqCreationComponent', () => {
         expect(component).toBeTruthy();
     });
+    it('should create McqCreationComponent', () => {
+        spyOn(component, 'handleEditorError').and.callThrough();
+        component.handleEditorError(true);
+        expect(component.handleEditorError).toHaveBeenCalled();
+        expect(component.isEditorThrowingError).toBe(true);
+    });
     it('#videoDataOutput() should call videoDataOutput and event data is empty', () => {
         const event = '';
         spyOn(component, 'deleteSolution');
@@ -67,5 +69,42 @@ describe('McqCreationComponent', () => {
         const event = { name: 'event name', identifier: '1234', thumbnail: 'sample data' };
         component.videoDataOutput(event);
         expect(component.videoSolutionData).toBeDefined();
+    });
+    it('#deleteSolution() should call deleteSolution and set showSolutionDropDown value', () => {
+        component.deleteSolution();
+        expect(component.showSolutionDropDown).toBeTruthy();
+    });
+    it('#closeRequestChangeModal() should call closeRequestChangeModal', () => {
+        component.questionMetaData = {
+            data: {
+                rejectComment: 'reject'
+            }
+        };
+        spyOn(component, 'closeRequestChangeModal').and.callThrough();
+        component.closeRequestChangeModal();
+        expect(component.showRequestChangesPopup).toBeFalsy();
+        expect(component.rejectComment).toBeDefined();
+    });
+    it('#onFormValueChange should call onFormValueChange and emit event', () => {
+        spyOn(component.questionFormChangeStatus, 'emit');
+        spyOn(component, 'onFormValueChange').and.callThrough();
+        component.onFormValueChange(true);
+        expect(component.questionFormChangeStatus.emit).toHaveBeenCalledWith({'status': false});
+    });
+    it('#getMedia() should call getMedia', () => {
+        const mediaArr = [{id: '100'}, {id: '101'}];
+        component.mediaArr = mediaArr;
+        const media = {id: '100'};
+        spyOn(component, 'getMedia').and.callThrough();
+        component.getMedia(media);
+        expect(component.mediaArr).toEqual(mediaArr);
+    });
+    it('#getMedia() should call getMedia', () => {
+        const mediaArr = [{id: '100'}, {id: '101'}];
+        component.mediaArr = mediaArr;
+        const media = {id: '103'};
+        spyOn(component, 'getMedia').and.callThrough();
+        component.getMedia(media);
+        expect(component.mediaArr.length).toEqual(3);
     });
 });
