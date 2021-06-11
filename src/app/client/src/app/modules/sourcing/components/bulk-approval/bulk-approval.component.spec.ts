@@ -9,7 +9,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CacheService } from 'ng2-cache-service';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 
-xdescribe('BulkApprovalComponent', () => {
+describe('BulkApprovalComponent', () => {
   let component: BulkApprovalComponent;
   let fixture: ComponentFixture<BulkApprovalComponent>;
 
@@ -31,10 +31,17 @@ xdescribe('BulkApprovalComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BulkApprovalComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('#ngOnChanges() should call ngOnChanges', () => {
+    component.initialized = true;
+    component.approvalPending = [];
+    spyOn(component, 'approvalPendingContents');
+    component.ngOnChanges();
+    expect(component.showBulkApprovalButton).toBeDefined();
   });
 });
