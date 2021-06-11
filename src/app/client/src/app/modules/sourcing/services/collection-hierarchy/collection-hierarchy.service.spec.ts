@@ -8,7 +8,7 @@ import { TelemetryService } from '@sunbird/telemetry';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { CacheService } from 'ng2-cache-service';
 import { ActionService, PlayerService, FrameworkService, UserService, LearnerService } from '@sunbird/core';
-import {  userProfile, addParticipentResponseSample, mockError, mockData} from './collection-hierarchy.service.data';
+import {  userProfile, addParticipentResponseSample, mockError, mockData} from './collection-hierarchy.service.spec.data';
 import { of as observableOf, throwError as observableError } from 'rxjs';
 describe('CollectionHierarchyService', () => {
 let collectionHierarchyService;
