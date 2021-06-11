@@ -46,6 +46,7 @@ describe('BulkApprovalComponent', () => {
     component.ngOnDestroy();
     expect(component['modal'].deny).toHaveBeenCalled();
   });
+
   it('#getTelemetryInteractObject() should call getTelemetryInteractObject', () => {
     component.sessionContext = {
       collection: 'do_1131700101604311041350'
