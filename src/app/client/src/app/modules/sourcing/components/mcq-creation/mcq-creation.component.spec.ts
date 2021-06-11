@@ -89,20 +89,20 @@ describe('McqCreationComponent', () => {
         spyOn(component.questionFormChangeStatus, 'emit');
         spyOn(component, 'onFormValueChange').and.callThrough();
         component.onFormValueChange(true);
-        expect(component.questionFormChangeStatus.emit).toHaveBeenCalledWith({'status': false});
+        expect(component.questionFormChangeStatus.emit).toHaveBeenCalledWith({ 'status': false });
     });
     it('#getMedia() should call getMedia', () => {
-        const mediaArr = [{id: '100'}, {id: '101'}];
+        const mediaArr = [{ id: '100' }, { id: '101' }];
         component.mediaArr = mediaArr;
-        const media = {id: '100'};
+        const media = { id: '100' };
         spyOn(component, 'getMedia').and.callThrough();
         component.getMedia(media);
         expect(component.mediaArr).toEqual(mediaArr);
     });
     it('#getMedia() should call getMedia', () => {
-        const mediaArr = [{id: '100'}, {id: '101'}];
+        const mediaArr = [{ id: '100' }, { id: '101' }];
         component.mediaArr = mediaArr;
-        const media = {id: '103'};
+        const media = { id: '103' };
         spyOn(component, 'getMedia').and.callThrough();
         component.getMedia(media);
         expect(component.mediaArr.length).toEqual(3);
