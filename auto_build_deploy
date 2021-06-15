@@ -34,7 +34,7 @@ node('build-slave') {
         currentBuild.result = "SUCCESS" 
         slack_notify(currentBuild.result, tag_name)
         email_notify()
-        auto_build_deploy_player()
+        auto_build_deploy()
     }
     catch (err) {
         currentBuild.result = "FAILURE"
