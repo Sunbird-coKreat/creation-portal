@@ -80,6 +80,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notificationData: Array<any>;
   public showGlobalNotification: boolean;
   public notification: any;
+  public createProject: boolean;
 
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
