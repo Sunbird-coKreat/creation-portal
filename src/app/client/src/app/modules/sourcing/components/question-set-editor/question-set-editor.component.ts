@@ -66,7 +66,7 @@ export class QuestionSetEditorComponent implements OnInit {
     };
     this.userProfile = this.userService.userProfile;
     this.getCollectionDetails().subscribe(data => {
-      this.collectionDetails = data.result.content;
+      this.collectionDetails = data.result.questionset;
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
       this.getFrameWorkDetails();
     });
@@ -74,7 +74,7 @@ export class QuestionSetEditorComponent implements OnInit {
 
   private getCollectionDetails() {
     const req = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${this.editorParams.questionSetId}?mode=edit`
+      url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${this.editorParams.questionSetId}?mode=edit`
     };
     return this.contentService.get(req).pipe(map((response: any) => {return response}));
   }
