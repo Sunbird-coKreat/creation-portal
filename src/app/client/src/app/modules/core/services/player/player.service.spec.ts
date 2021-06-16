@@ -31,8 +31,8 @@ describe('PlayerService', () => {
   });
 
   it('should return content details', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const contentService = TestBed.inject(ContentService);
+    const playerService = TestBed.get(PlayerService);
+    const contentService = TestBed.get(ContentService);
     spyOn(contentService, 'get').and.returnValue(observableOf(serverRes));
     playerService.getContent(serverRes.result.content.identifier).subscribe((data) => {
       expect(data).toBeTruthy();
@@ -44,8 +44,8 @@ describe('PlayerService', () => {
     expect(playerService).toBeTruthy();
   });
   it('should return player config without with courseId', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.get(PlayerService);
+    const userService = TestBed.get(UserService);
     userService._sessionId = 'd5773f35773feab';
     userService._userId = 'd5773f35773feab';
     userService._channel = 'd5773f35773feab';
@@ -64,8 +64,8 @@ describe('PlayerService', () => {
     expect(playerConfig.context.sid).toContain('d5773f35773feab');
   });
   it('should return player config with courseId', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.get(PlayerService);
+    const userService = TestBed.get(UserService);
     userService._sessionId = 'd5773f35773feab';
     userService._userId = 'd5773f35773feab';
     userService._channel = 'd5773f35773feab';

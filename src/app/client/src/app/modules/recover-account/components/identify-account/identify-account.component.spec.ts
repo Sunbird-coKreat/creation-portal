@@ -79,9 +79,9 @@ xdescribe('IdentifyAccountComponent', () => {
   });
 
   it('should move forward to the next step', () => {
-    const recoverAccountService = TestBed.inject(RecoverAccountService);
-    const telemetryService = TestBed.inject(TelemetryService);
-    const recaptchaService = TestBed.inject(RecaptchaService);
+    const recoverAccountService = TestBed.get(RecoverAccountService);
+    const telemetryService = TestBed.get(TelemetryService);
+    const recaptchaService = TestBed.get(RecaptchaService);
     spyOn(recaptchaService, 'validateRecaptcha').and.returnValue(of(identifyAcountMockResponse.recaptchaResponse));
     spyOn(recoverAccountService, 'fuzzyUserSearch').and.returnValue(of(identifyAcountMockResponse.fuzzySuccessResponseWithCount));
     spyOn(component, 'navigateToNextStep').and.callThrough();
@@ -90,8 +90,8 @@ xdescribe('IdentifyAccountComponent', () => {
   });
 
   it('should not move forward to the next step', () => {
-    const recoverAccountService = TestBed.inject(RecoverAccountService);
-    const recaptchaService = TestBed.inject(RecaptchaService);
+    const recoverAccountService = TestBed.get(RecoverAccountService);
+    const recaptchaService = TestBed.get(RecaptchaService);
     spyOn(recoverAccountService, 'fuzzyUserSearch').and.returnValue(of(identifyAcountMockResponse.fuzzySuccessResponseWithoutCount));
     spyOn(recaptchaService, 'validateRecaptcha').and.returnValue(of(identifyAcountMockResponse.recaptchaResponse));
     component.handleNext('mockcaptchaResponse');
@@ -100,9 +100,9 @@ xdescribe('IdentifyAccountComponent', () => {
   });
 
   it('should fail recaptcha validation failed', () => {
-    const recoverAccountService = TestBed.inject(RecoverAccountService);
-    const recaptchaService = TestBed.inject(RecaptchaService);
-    const telemetryService = TestBed.inject(TelemetryService);
+    const recoverAccountService = TestBed.get(RecoverAccountService);
+    const recaptchaService = TestBed.get(RecaptchaService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'generateErrorEvent');
     spyOn(recoverAccountService, 'fuzzyUserSearch').and.returnValue(of(identifyAcountMockResponse.fuzzySuccessResponseWithoutCount));
     spyOn(recaptchaService, 'validateRecaptcha').and.returnValue(throwError(identifyAcountMockResponse.recaptchaErrorResponse));
@@ -111,8 +111,8 @@ xdescribe('IdentifyAccountComponent', () => {
   });
 
   it('should throw error if form fields are partially matched', () => {
-    const recoverAccountService = TestBed.inject(RecoverAccountService);
-    const recaptchaService = TestBed.inject(RecaptchaService);
+    const recoverAccountService = TestBed.get(RecoverAccountService);
+    const recaptchaService = TestBed.get(RecaptchaService);
     spyOn(recoverAccountService, 'fuzzyUserSearch').and.callFake(() =>
       throwError(identifyAcountMockResponse.fuzzySearchErrorResponsePartial));
     spyOn(component, 'handleError').and.callThrough();
@@ -123,8 +123,8 @@ xdescribe('IdentifyAccountComponent', () => {
   });
 
   it('should throw error if form fields are not matched', () => {
-    const recoverAccountService = TestBed.inject(RecoverAccountService);
-    const recaptchaService = TestBed.inject(RecaptchaService);
+    const recoverAccountService = TestBed.get(RecoverAccountService);
+    const recaptchaService = TestBed.get(RecaptchaService);
     spyOn(recoverAccountService, 'fuzzyUserSearch').and.callFake(() =>
       throwError(identifyAcountMockResponse.fuzzySearchErrorResponse));
     spyOn(recaptchaService, 'validateRecaptcha').and.returnValue(of(identifyAcountMockResponse.recaptchaResponse));

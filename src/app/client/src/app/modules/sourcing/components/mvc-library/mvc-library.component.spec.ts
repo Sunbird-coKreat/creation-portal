@@ -65,8 +65,8 @@ describe('MvcLibraryComponent', () => {
   });
 
   it('#initialize() should set collection and program details data', () => {
-    const actionService: ActionService = TestBed.inject(ActionService);
-    const programService: ActionService = TestBed.inject(ProgramsService);
+    const actionService: ActionService = TestBed.get(ActionService);
+    const programService: ActionService = TestBed.get(ProgramsService);
     spyOn(component, 'getCollectionHierarchy').and.callThrough();
     spyOn(component, 'getProgramDetails').and.callThrough();
     spyOn(component, 'getUnitWithChildren').and.callThrough();
@@ -82,9 +82,9 @@ describe('MvcLibraryComponent', () => {
   });
 
   xit('#initialize() should throw error message when collection hierarchy API failed', () => {
-    const actionService: ActionService = TestBed.inject(ActionService);
+    const actionService: ActionService = TestBed.get(ActionService);
     spyOn(actionService, 'get').and.returnValue(observableThrowError({}));
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callThrough();
     component.initialize();
     expect(component.showLoader).toBe(false);
@@ -92,7 +92,7 @@ describe('MvcLibraryComponent', () => {
   });
 
   xit('#getCollectionHierarchy() should return expected collection data', () => {
-    const actionService: ActionService = TestBed.inject(ActionService);
+    const actionService: ActionService = TestBed.get(ActionService);
     spyOn(actionService, 'get').and.returnValue(observableOf(mockMvcLibraryData.collectionHierarchyReadSuccess));
     component.getCollectionHierarchy('do_1130307931241103361441').subscribe((res: any) => {
         expect(res).toEqual(mockMvcLibraryData.collectionHierarchyReadSuccess.result.content, 'expected collection hierarchy');
@@ -100,7 +100,7 @@ describe('MvcLibraryComponent', () => {
   });
 
   it('#getProgramDetails() should return expected program details', () => {
-    const programService: ProgramsService = TestBed.inject(ProgramsService);
+    const programService: ProgramsService = TestBed.get(ProgramsService);
     spyOn(programService, 'get').and.returnValue(observableOf(mockMvcLibraryData.programReadSuccess));
     component.programId = '60ad12d0-b07c-11ea-92c9-6f8fff7dce02s';
     component.getProgramDetails().subscribe((res: any) => {
@@ -109,7 +109,7 @@ describe('MvcLibraryComponent', () => {
   });
 
   xit('#fetchContentList() should return expected content list', () => {
-    const contentService: ContentService = TestBed.inject(ContentService);
+    const contentService: ContentService = TestBed.get(ContentService);
     spyOn(contentService, 'post').and.returnValue(observableOf(mockMvcLibraryData.mvcSearchSuccess));
     spyOn(component, 'openFilter').and.callThrough();
     component.fetchContentList();
@@ -119,7 +119,7 @@ describe('MvcLibraryComponent', () => {
   });
 
   xit('#fetchContentList() should show filter when content list empty', () => {
-    const contentService: ContentService = TestBed.inject(ContentService);
+    const contentService: ContentService = TestBed.get(ContentService);
     spyOn(contentService, 'post').and.returnValue(observableOf({result : { content: []}}));
     spyOn(component, 'openFilter').and.callThrough();
     component.fetchContentList();
@@ -129,8 +129,8 @@ describe('MvcLibraryComponent', () => {
   });
 
   xit('#fetchContentList() should throw error message when API failed', () => {
-    const contentService: ContentService = TestBed.inject(ContentService);
-    const toasterService = TestBed.inject(ToasterService);
+    const contentService: ContentService = TestBed.get(ContentService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(contentService, 'post').and.returnValue(observableThrowError({}));
     spyOn(toasterService, 'error').and.callThrough();
     component.fetchContentList();

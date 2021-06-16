@@ -103,8 +103,8 @@ describe('UpdateContactComponent', () => {
   it('should not throw error and not generate otp as root org id is different', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableOf(mockUpdateContactData.userData));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() => observableOf(mockUpdateContactData.nonCustOrgDetails));
     component.onFormUpdate();
@@ -116,8 +116,8 @@ describe('UpdateContactComponent', () => {
   it('should not generate otp as user account blocked', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableThrowError(mockUpdateContactData.blockedUserError));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() => observableOf(mockUpdateContactData.nonCustOrgDetails));
     component.onFormUpdate();
@@ -129,9 +129,9 @@ describe('UpdateContactComponent', () => {
   it('should generate otp as user not found', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const otpService = TestBed.inject(OtpService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const otpService = TestBed.get(OtpService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableThrowError(mockUpdateContactData.serverError));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
       observableOf(mockUpdateContactData.nonCustOrgDetails));
@@ -145,10 +145,10 @@ describe('UpdateContactComponent', () => {
   it('should not generate otp and throw error as phone is in use', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const otpService = TestBed.inject(OtpService);
-    const toasterService = TestBed.inject(ToasterService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const otpService = TestBed.get(OtpService);
+    const toasterService = TestBed.get(ToasterService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableThrowError(mockUpdateContactData.serverError));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
       observableOf(mockUpdateContactData.nonCustOrgDetails));
@@ -163,10 +163,10 @@ describe('UpdateContactComponent', () => {
   it('should not generate otp and throw error as email is in use', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const otpService = TestBed.inject(OtpService);
-    const toasterService = TestBed.inject(ToasterService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const otpService = TestBed.get(OtpService);
+    const toasterService = TestBed.get(ToasterService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableThrowError(mockUpdateContactData.serverError));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
       observableOf(mockUpdateContactData.nonCustOrgDetails));
@@ -181,10 +181,10 @@ describe('UpdateContactComponent', () => {
   it('should not generate otp and throw error as rate limit has exceed', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const otpService = TestBed.inject(OtpService);
-    const toasterService = TestBed.inject(ToasterService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const otpService = TestBed.get(OtpService);
+    const toasterService = TestBed.get(ToasterService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableThrowError(mockUpdateContactData.serverError));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
       observableOf(mockUpdateContactData.nonCustOrgDetails));
@@ -199,10 +199,10 @@ describe('UpdateContactComponent', () => {
   it('should not generate otp and throw error as server error', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const otpService = TestBed.inject(OtpService);
-    const toasterService = TestBed.inject(ToasterService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const userService = TestBed.get(UserService);
+    const otpService = TestBed.get(OtpService);
+    const toasterService = TestBed.get(ToasterService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableThrowError(mockUpdateContactData.serverError));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
       observableOf(mockUpdateContactData.nonCustOrgDetails));
@@ -217,9 +217,9 @@ describe('UpdateContactComponent', () => {
   it('should generate otp as user org id is same for email id', () => {
     component.contactForm.type = 'email';
     component.contactForm.value = 'test@gmail.com';
-    const userService = TestBed.inject(UserService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
-    const otpService = TestBed.inject(OtpService);
+    const userService = TestBed.get(UserService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
+    const otpService = TestBed.get(OtpService);
     spyOn(userService, 'getUserByKey').and.callFake(() => observableOf(mockUpdateContactData.userData));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
       observableOf(mockUpdateContactData.custOrgDetails));
@@ -235,9 +235,9 @@ describe('UpdateContactComponent', () => {
   it('should generate otp as user org id is same for phone number', () => {
     component.contactForm.type = 'phone';
     component.contactForm.value = '7896541257';
-    const userService = TestBed.inject(UserService);
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
-    const otpService = TestBed.inject(OtpService);
+    const userService = TestBed.get(UserService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
+    const otpService = TestBed.get(OtpService);
     spyOn(userService, 'getUserByKey').and.callFake(() =>
       observableOf(mockUpdateContactData.userData));
     spyOn(orgDetailsService, 'getCustodianOrg').and.callFake(() =>
@@ -260,7 +260,7 @@ describe('UpdateContactComponent', () => {
   });
 
   it('should toggle tnc checkboc if already false', () => {
-    const telemetryService = TestBed.inject(TelemetryService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'interact');
     component.toggleTncCheckBox({target: {checked: true}});
     expect(component.contactForm.tncAccepted).toEqual(true);
@@ -268,7 +268,7 @@ describe('UpdateContactComponent', () => {
   });
 
   it('should toggle tnc checkboc', () => {
-    const telemetryService = TestBed.inject(TelemetryService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'interact');
     component.toggleTncCheckBox({target: {checked: false}});
     expect(component.contactForm.tncAccepted).toEqual(false);
@@ -277,8 +277,8 @@ describe('UpdateContactComponent', () => {
 
 
   it('should fetch tnc configuration', () => {
-    const signupService = TestBed.inject(SignupService);
-    const telemetryService = TestBed.inject(TelemetryService);
+    const signupService = TestBed.get(SignupService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'log');
     spyOn(signupService, 'getTncConfig').and.returnValue(observableOf(mockUpdateContactData.tncConfig));
     component.fetchTncConfiguration();
@@ -288,9 +288,9 @@ describe('UpdateContactComponent', () => {
   });
 
   it('should not fetch tnc configuration and throw error', () => {
-    const signupService = TestBed.inject(SignupService);
-    const toasterService = TestBed.inject(ToasterService);
-    const telemetryService = TestBed.inject(TelemetryService);
+    const signupService = TestBed.get(SignupService);
+    const toasterService = TestBed.get(ToasterService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'log');
     spyOn(toasterService, 'error').and.callThrough();
     spyOn(signupService, 'getTncConfig').and.returnValue(observableThrowError(mockUpdateContactData.tncConfig));
@@ -300,9 +300,9 @@ describe('UpdateContactComponent', () => {
   });
 
   it('should fetch tnc configuration and throw error as cannot parse data', () => {
-    const signupService = TestBed.inject(SignupService);
+    const signupService = TestBed.get(SignupService);
     spyOn(signupService, 'getTncConfig').and.returnValue(observableOf(mockUpdateContactData.tncConfigIncorrectData));
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callThrough();
     component.fetchTncConfiguration();
     expect(toasterService.error).toHaveBeenCalledWith(mockUpdateContactData.resourceBundle.messages.fmsg.m0004);

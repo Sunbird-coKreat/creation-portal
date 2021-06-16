@@ -76,10 +76,10 @@ describe('ProfilePageComponent', () => {
   });
 
   it('should call user service', () => {
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.frelmnts = resourceBundle.frmelmnts;
     resourceService.messages = resourceBundle.messages;
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     userService._userData$.next({ err: null, userProfile: Response.userData });
     spyOn(component, 'getOrgDetails').and.callThrough();
     spyOn(component, 'getContribution').and.callThrough();
@@ -93,14 +93,14 @@ describe('ProfilePageComponent', () => {
   });
 
   it('should call search service to get my contributions data', () => {
-    const searchService = TestBed.inject(SearchService);
+    const searchService = TestBed.get(SearchService);
     spyOn(searchService, 'searchContentByUserId').and.returnValue(observableOf(Response.success));
     component.getContribution();
     expect(component.contributions).toBeDefined();
   });
 
   it('should not call user search service when my contributions data count is zero', () => {
-    const searchService = TestBed.inject(SearchService);
+    const searchService = TestBed.get(SearchService);
     searchService._searchedContentList = Response.zeroData.result;
     const response = searchService.searchedContentList;
     component.getContribution();
@@ -110,7 +110,7 @@ describe('ProfilePageComponent', () => {
   });
 
   it('should call play content when clicked on one of my contributions', () => {
-    const playerService = TestBed.inject(PlayerService);
+    const playerService = TestBed.get(PlayerService);
     const event = { data: { metaData: { identifier: 'do_11262255104183500812' } } };
     spyOn(playerService, 'playContent').and.callFake(() => observableOf(Response.event.data.metaData));
     component.openContent(event);
@@ -118,8 +118,8 @@ describe('ProfilePageComponent', () => {
   });
 
   it('should call course service to get attended training data', () => {
-    const courseService = TestBed.inject(CoursesService);
-    const learnerService = TestBed.inject(LearnerService);
+    const courseService = TestBed.get(CoursesService);
+    const learnerService = TestBed.get(LearnerService);
     courseService._enrolledCourseData$.next({ err: null, enrolledCourses: Response.courseSuccess.result.courses});
     courseService.initialize();
     component.getTrainingAttended();
@@ -127,10 +127,10 @@ describe('ProfilePageComponent', () => {
   });
 
   it('should display root org location if org location is empty', () => {
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.frelmnts = resourceBundle.frmelmnts;
     resourceService.messages = resourceBundle.messages;
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     userService._userData$.next({ err: null, userProfile: Response.userData });
     spyOn(component, 'getOrgDetails').and.callThrough();
     component.ngOnInit();

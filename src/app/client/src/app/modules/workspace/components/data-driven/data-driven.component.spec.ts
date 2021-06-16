@@ -74,15 +74,15 @@ describe('DataDrivenComponent', () => {
     componentParent = fixtureParent.componentInstance;
     fixtureChild = TestBed.createComponent(DefaultTemplateComponent);
     componentChild = fixtureChild.componentInstance;
-    // navigationHelperService = TestBed.inject('NavigationHelperService');
+    // navigationHelperService = TestBed.get('NavigationHelperService');
     fixtureParent.detectChanges();
   });
 
   it('should fetch framework details', () => {
-    const service = TestBed.inject(FrameworkService);
-    const cacheService = TestBed.inject(CacheService);
-    const contentService = TestBed.inject(ContentService);
-    const formService = TestBed.inject(FormService);
+    const service = TestBed.get(FrameworkService);
+    const cacheService = TestBed.get(CacheService);
+    const contentService = TestBed.get(ContentService);
+    const formService = TestBed.get(FormService);
     const formServiceInputParams = {
       formType: 'textbook',
       formAction: 'textbook',
@@ -100,9 +100,9 @@ describe('DataDrivenComponent', () => {
     formService.getFormConfig(formServiceInputParams);
   });
   it('should throw error', () => {
-    const service = TestBed.inject(FrameworkService);
-    const cacheService = TestBed.inject(CacheService);
-    const contentService = TestBed.inject(ContentService);
+    const service = TestBed.get(FrameworkService);
+    const cacheService = TestBed.get(CacheService);
+    const contentService = TestBed.get(ContentService);
     service._frameWorkData$ = mockFrameworkData.frameworkError;
     service._frameworkData$.next({
       err: mockFrameworkData.frameworkError.err,
@@ -114,10 +114,10 @@ describe('DataDrivenComponent', () => {
   it('should router to collection editor ', () => {
     const state = 'draft';
     const type = 'TextBook';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     componentChild.formInputData = { name: 'abcd', board: 'NCERT' };
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
@@ -135,9 +135,9 @@ describe('DataDrivenComponent', () => {
   it('should not router to collection editor ', () => {
     const state = 'draft';
     const type = 'TextBook';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
     componentChild.formInputData = { name: 'abcd', board: 'NCERT' };
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
@@ -145,7 +145,7 @@ describe('DataDrivenComponent', () => {
     userService._userData$.next({ err: null, userProfile: mockFrameworkData.userMockData });
     userService._userProfile = {};
     spyOn(componentParent, 'createContent').and.callThrough();
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     spyOn(workSpaceService, 'lockContent').and.returnValue(observableOf({}));
     componentParent.generateData(componentParent.formData.formInputData);
     spyOn(editorService, 'create').and.returnValue(observableOf(mockFrameworkData.createCollectionData));
@@ -155,16 +155,16 @@ describe('DataDrivenComponent', () => {
   });
   it('should router to contentEditor editor ', () => {
     const state = 'draft';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
     componentChild.formInputData = { name: 'abcd', board: 'NCERT' };
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
     componentParent.contentType = 'studymaterial';
     userService._userData$.next({ err: null, userProfile: mockFrameworkData.userMockData });
     userService._userProfile = {};
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     spyOn(workSpaceService, 'lockContent').and.returnValue(observableOf({}));
     spyOn(editorService, 'create').and.returnValue(observableOf(mockFrameworkData.createCollectionData));
     componentParent.createContent();
@@ -173,16 +173,16 @@ describe('DataDrivenComponent', () => {
   });
   it('should router to contentEditor editor ', () => {
     const state = 'draft';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
     componentChild.formInputData = { name: 'testAssessment'};
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
     componentParent.contentType = 'assessment';
     userService._userData$.next({ err: null, userProfile: mockFrameworkData.userMockData });
     userService._userProfile = {};
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     spyOn(workSpaceService, 'lockContent').and.returnValue(observableOf({}));
     spyOn(editorService, 'create').and.returnValue(observableOf(mockFrameworkData.createCollectionData));
     componentParent.createContent();
@@ -191,9 +191,9 @@ describe('DataDrivenComponent', () => {
   });
   it('should not router to contentEditor editer ', () => {
     const state = 'draft';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
     componentChild.formInputData = { name: 'abcd', board: 'NCERT' };
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
@@ -201,7 +201,7 @@ describe('DataDrivenComponent', () => {
     userService._userData$.next({ err: null, userProfile: mockFrameworkData.userMockData });
     userService._userProfile = {};
     spyOn(componentParent, 'createContent').and.callThrough();
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     spyOn(workSpaceService, 'lockContent').and.returnValue(observableOf({}));
     componentParent.generateData(componentParent.formData.formInputData);
     spyOn(editorService, 'create').and.returnValue(observableOf(mockFrameworkData.createCollectionData));
@@ -212,14 +212,14 @@ describe('DataDrivenComponent', () => {
   it('should call getFormConfig', () => {
     componentParent.formFieldProperties = mockFrameworkData.formSuccess;
     componentParent.categoryMasterList = mockFrameworkData.frameworkSuccess;
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     userService._userProfile = {};
     spyOn(componentParent, 'getFormConfig').and.callThrough();
     componentParent.getFormConfig();
     expect(componentParent.getFormConfig).toHaveBeenCalled();
   });
   it('should call getFormConfig api', () => {
-    const formService = TestBed.inject(FormService);
+    const formService = TestBed.get(FormService);
     componentParent.formFieldProperties = mockFrameworkData.formSuccess;
     spyOn(formService, 'getFormConfig').and.returnValue(observableOf(mockFrameworkData.formSuccess));
     spyOn(componentParent, 'getFormConfig').and.callThrough();
@@ -227,15 +227,15 @@ describe('DataDrivenComponent', () => {
     expect(componentParent.getFormConfig).toHaveBeenCalled();
   });
   it('test to navigate back to content create page if previous url is not from content create page', () => {
-    const router = TestBed.inject(Router);
-    const navigationHelperService = TestBed.inject(NavigationHelperService);
+    const router = TestBed.get(Router);
+    const navigationHelperService = TestBed.get(NavigationHelperService);
     spyOn(navigationHelperService, 'getPreviousUrl').and.returnValue(mockFrameworkData.redirectUrlTrueCase);
     componentParent.checkForPreviousRouteForRedirect();
     expect(router.navigate).toHaveBeenCalledWith(['/workspace/content/create']);
   });
   it('test to not to navigate to content create page if previous url is from content create page', () => {
-    const router = TestBed.inject(Router);
-    const navigationHelperService = TestBed.inject(NavigationHelperService);
+    const router = TestBed.get(Router);
+    const navigationHelperService = TestBed.get(NavigationHelperService);
     spyOn(navigationHelperService, 'getPreviousUrl').and.returnValue(mockFrameworkData.redirectUrlFalseCase);
     spyOn(componentParent, 'redirect');
     componentParent.checkForPreviousRouteForRedirect();
@@ -243,7 +243,7 @@ describe('DataDrivenComponent', () => {
   });
 
   it('test to navigate to create ', () => {
-    const router = TestBed.inject(Router);
+    const router = TestBed.get(Router);
     spyOn(componentParent, 'goToCreate').and.callThrough();
     componentParent.goToCreate();
     expect(router.navigate).toHaveBeenCalledWith(['/workspace/content/create']);
@@ -251,11 +251,11 @@ describe('DataDrivenComponent', () => {
 
   it('should thow  editor service api error when contentType is studymaterial  ', () => {
     const state = 'draft';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
-    const toasterService = TestBed.inject(ToasterService);
-    const resourceService = TestBed.inject(ResourceService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
     componentChild.formInputData = { name: 'abcd', board: 'NCERT' };
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
@@ -263,7 +263,7 @@ describe('DataDrivenComponent', () => {
     userService._userData$.next({ err: null, userProfile: mockFrameworkData.userMockData });
     userService._userProfile = {};
     spyOn(componentParent, 'createContent').and.callThrough();
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     spyOn(workSpaceService, 'lockContent').and.returnValue(observableOf({}));
     componentParent.generateData(componentParent.formData.formInputData);
     spyOn(editorService, 'create').and.callFake(() => observableThrowError({}));
@@ -275,18 +275,18 @@ describe('DataDrivenComponent', () => {
   it('should thow  editor service api error when contentType is not studymaterial  ', () => {
     const state = 'draft';
     const type = 'TextBook';
-    const router = TestBed.inject(Router);
-    const userService = TestBed.inject(UserService);
-    const editorService = TestBed.inject(EditorService);
-    const toasterService = TestBed.inject(ToasterService);
-    const resourceService = TestBed.inject(ResourceService);
+    const router = TestBed.get(Router);
+    const userService = TestBed.get(UserService);
+    const editorService = TestBed.get(EditorService);
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
     componentChild.formInputData = { name: 'abcd', board: 'NCERT' };
     componentParent.formData = componentChild;
     componentParent.framework = 'NCERT';
     componentParent.contentType = 'textbook';
     userService._userData$.next({ err: null, userProfile: mockFrameworkData.userMockData });
     userService._userProfile = {};
-    const workSpaceService = TestBed.inject(WorkSpaceService);
+    const workSpaceService = TestBed.get(WorkSpaceService);
     spyOn(workSpaceService, 'lockContent').and.returnValue(observableOf({}));
     spyOn(componentParent, 'createContent').and.callThrough();
     componentParent.generateData(componentParent.formData.formInputData);
@@ -300,9 +300,9 @@ describe('DataDrivenComponent', () => {
     expect(componentParent.description).toBe('Enter description for TextBook');
   });
   it('should call system get api and return the course framework Id ', () => {
-    const frameworkService = TestBed.inject(FrameworkService);
+    const frameworkService = TestBed.get(FrameworkService);
     componentParent.contentType = 'course';
-    const formService = TestBed.inject(FormService);
+    const formService = TestBed.get(FormService);
     spyOn(frameworkService, 'getCourseFramework').and.returnValue(observableOf(mockFrameworkData.courseFramework));
     componentParent.ngOnInit();
     expect(componentParent.framework).toEqual('TPD');

@@ -55,7 +55,7 @@ describe('OtpPopupComponent', () => {
   xit('call verifyOTP and get success', () => {
     component.otpData = { 'wrongOtpMessage': 'test' };
     component.ngOnInit();
-    const otpService = TestBed.inject(OtpService);
+    const otpService = TestBed.get(OtpService);
     spyOn(otpService, 'verifyOTP').and.returnValue(observableOf(testData.verifyOtpSuccess));
     component.verifyOTP();
     expect(component.infoMessage).toEqual('');
@@ -65,7 +65,7 @@ describe('OtpPopupComponent', () => {
   xit('call verifyOTP and get error', () => {
     component.otpData = { 'wrongOtpMessage': 'test' };
     component.ngOnInit();
-    const otpService = TestBed.inject(OtpService);
+    const otpService = TestBed.get(OtpService);
     spyOn(otpService, 'verifyOTP').and.returnValue(observableThrowError(testData.verifyOtpError));
     component.verifyOTP();
     expect(component.enableSubmitBtn).toBeTruthy();
@@ -74,8 +74,8 @@ describe('OtpPopupComponent', () => {
   it('call resendOTP and get success', () => {
     component.otpData = { 'type': 'email', 'value': 'abc@gmail.com' };
     component.ngOnInit();
-    const otpService = TestBed.inject(OtpService);
-    const resourceService = TestBed.inject(ResourceService);
+    const otpService = TestBed.get(OtpService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.frmelmnts = testData.resourceBundle.frmelmnts;
     spyOn(otpService, 'generateOTP').and.returnValue(observableOf(testData.resendOtpSuccess));
     component.resendOTP();
@@ -85,8 +85,8 @@ describe('OtpPopupComponent', () => {
   it('call resendOTP and get error', () => {
     component.otpData = { 'type': 'email', 'value': 'abc@gmail.com' };
     component.ngOnInit();
-    const otpService = TestBed.inject(OtpService);
-    const resourceService = TestBed.inject(ResourceService);
+    const otpService = TestBed.get(OtpService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = testData.resourceBundle.messages;
     spyOn(otpService, 'generateOTP').and.returnValue(observableThrowError(testData.resendOtpError));
     component.resendOTP();

@@ -77,8 +77,8 @@ describe('UnEnrollBatchComponent', () => {
     fixture = TestBed.createComponent(UnEnrollBatchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    courseBatchService = TestBed.inject(CourseBatchService);
-    toasterService = TestBed.inject(ToasterService);
+    courseBatchService = TestBed.get(CourseBatchService);
+    toasterService = TestBed.get(ToasterService);
   });
 
   it('should fetch batch details with batch Id', () => {

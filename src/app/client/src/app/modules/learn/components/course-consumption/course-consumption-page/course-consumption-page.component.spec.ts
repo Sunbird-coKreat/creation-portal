@@ -81,13 +81,13 @@
 //   beforeEach(() => {
 //     fixture = TestBed.createComponent(CourseConsumptionPageComponent);
 //     component = fixture.componentInstance;
-//     activatedRouteStub = TestBed.inject(ActivatedRoute);
-//     courseService = TestBed.inject(CoursesService);
-//     toasterService = TestBed.inject(ToasterService);
-//     courseConsumptionService = TestBed.inject(CourseConsumptionService);
-//     courseBatchService = TestBed.inject(CourseBatchService);
-//     learnerService = TestBed.inject(LearnerService);
-//     navigationHelperService = TestBed.inject(NavigationHelperService);
+//     activatedRouteStub = TestBed.get(ActivatedRoute);
+//     courseService = TestBed.get(CoursesService);
+//     toasterService = TestBed.get(ToasterService);
+//     courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     courseBatchService = TestBed.get(CourseBatchService);
+//     learnerService = TestBed.get(LearnerService);
+//     navigationHelperService = TestBed.get(NavigationHelperService);
 //     spyOn(navigationHelperService, 'navigateToResource').and.returnValue('');
 //     spyOn(toasterService, 'error').and.returnValue('');
 //     activatedRouteStub.snapshot.firstChild.params = { courseId: 'do_212347136096788480178', batchId: 'do_112498388508524544160'};

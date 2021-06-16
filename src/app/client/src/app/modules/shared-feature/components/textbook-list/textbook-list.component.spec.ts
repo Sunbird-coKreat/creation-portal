@@ -59,8 +59,8 @@ describe('TextbookListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TextbookListComponent);
     component = fixture.componentInstance;
-    programsService = TestBed.inject(ProgramsService);
-    collectionHierarchyService = TestBed.inject(CollectionHierarchyService);
+    programsService = TestBed.get(ProgramsService);
+    collectionHierarchyService = TestBed.get(CollectionHierarchyService);
 
     // fixture.detectChanges();
   });
@@ -70,7 +70,7 @@ describe('TextbookListComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should set targetCollection values', () => {
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
     component.programDetails = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -80,7 +80,7 @@ describe('TextbookListComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
     component.programDetails = undefined;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -90,7 +90,7 @@ describe('TextbookListComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     component.programDetails = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     spyOn(service, 'setTargetCollectionName').and.callThrough();

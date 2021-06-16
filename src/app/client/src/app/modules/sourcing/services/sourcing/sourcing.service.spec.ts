@@ -28,9 +28,9 @@ describe('SourcingService', () => {
       imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
       providers: [ActionService, TelemetryService, ToasterService, HttpClient]
     });
-    sourcingService = TestBed.inject(SourcingService);
-    actionService   = TestBed.inject(ActionService);
-    contentService  = TestBed.inject(ContentService);
+    sourcingService = TestBed.get(SourcingService);
+    actionService   = TestBed.get(ActionService);
+    contentService  = TestBed.get(ContentService);
   });
 
   it('should be created', () => {
@@ -38,7 +38,7 @@ describe('SourcingService', () => {
   });
 
   it('#postCertData() should call httpClient.post()', () => {
-    const httpClient = TestBed.inject(HttpClient);
+    const httpClient = TestBed.get(HttpClient);
     spyOn(httpClient, 'post').and.returnValue(observableOf({}));
     spyOn(sourcingService, 'postCertData').and.callThrough();
     sourcingService.postCertData('dummy', 'dummy', 'abcd1234', '123456789');
@@ -92,8 +92,8 @@ describe('SourcingService', () => {
       errorMsg: 'Something went wrong',
       telemetryPageId: 'dummyPage'
     };
-    const  toasterService  = TestBed.inject(ToasterService);
-    const telemetryService = TestBed.inject(TelemetryService);
+    const  toasterService  = TestBed.get(ToasterService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(toasterService, 'error').and.callThrough();
     spyOn(telemetryService, 'error').and.callThrough();
     spyOn(sourcingService, 'apiErrorHandling').and.callThrough();

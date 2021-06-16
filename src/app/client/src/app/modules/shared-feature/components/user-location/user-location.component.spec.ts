@@ -48,7 +48,7 @@ describe('UserLocationComponent', () => {
     fixture = TestBed.createComponent(UserLocationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    configService = TestBed.inject(ConfigService);
+    configService = TestBed.get(ConfigService);
   });
 
   it('should create user-location component', () => {

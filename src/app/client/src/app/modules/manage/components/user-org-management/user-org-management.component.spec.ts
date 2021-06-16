@@ -136,7 +136,7 @@ describe('UserOrgManagementComponent', () => {
   });
 
   it('should fetch user json', () => {
-    const manageService = TestBed.inject(ManageService);
+    const manageService = TestBed.get(ManageService);
     spyOn(manageService, 'getData').and.returnValue(of({ result: mockManageData.userSummary }));
     component.slug = 'sunbird';
     component.userJSON = 'user.json';
@@ -145,7 +145,7 @@ describe('UserOrgManagementComponent', () => {
   });
 
   it('should fetch geo json', () => {
-    const manageService = TestBed.inject(ManageService);
+    const manageService = TestBed.get(ManageService);
     spyOn(manageService, 'getData').and.returnValue(of({ result: mockManageData.userSummary }));
     component.slug = 'sunbird';
     component.userJSON = 'user.json';
@@ -154,7 +154,7 @@ describe('UserOrgManagementComponent', () => {
   });
 
   it('should fetch user summary', () => {
-    const manageService = TestBed.inject(ManageService);
+    const manageService = TestBed.get(ManageService);
     spyOn(manageService, 'getData').and.returnValue(of({ result: mockManageData.userSummary }));
     component.slug = 'sunbird';
     component.userJSON = 'user.json';
@@ -163,7 +163,7 @@ describe('UserOrgManagementComponent', () => {
   });
 
   it('should fetch geo summary', () => {
-    const manageService = TestBed.inject(ManageService);
+    const manageService = TestBed.get(ManageService);
     spyOn(manageService, 'getData').and.returnValue(of({ result: mockManageData.userSummary }));
     component.slug = 'sunbird';
     component.userJSON = 'user.json';
@@ -172,7 +172,7 @@ describe('UserOrgManagementComponent', () => {
   });
 
   it('should download csv file', () => {
-    const manageService = TestBed.inject(ManageService);
+    const manageService = TestBed.get(ManageService);
     spyOn(manageService, 'getData').and.returnValue(of({
       result: {
         signedUrl: 'a'

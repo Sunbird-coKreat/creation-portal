@@ -38,14 +38,14 @@
 //   beforeEach(() => {
 //     fixture = TestBed.createComponent(ProfileFrameworkPopupComponent);
 //     component = fixture.componentInstance;
-//     channelService = TestBed.inject(ChannelService);
-//     formService = TestBed.inject(FormService);
-//     cacheService = TestBed.inject(CacheService);
-//     userService = TestBed.inject(UserService);
-//     publicDataService = TestBed.inject(PublicDataService);
-//     orgDetailsService = TestBed.inject(OrgDetailsService);
-//     toasterService = TestBed.inject(ToasterService);
-//     router = TestBed.inject(Router);
+//     channelService = TestBed.get(ChannelService);
+//     formService = TestBed.get(FormService);
+//     cacheService = TestBed.get(CacheService);
+//     userService = TestBed.get(UserService);
+//     publicDataService = TestBed.get(PublicDataService);
+//     orgDetailsService = TestBed.get(OrgDetailsService);
+//     toasterService = TestBed.get(ToasterService);
+//     router = TestBed.get(Router);
 //     makeChannelReadSuc = true, makeFrameworkReadSuc = true, makeFormReadSuc  = true, makeCustOrgSuc = true, makeCustOrgFrameWorkSuc = true;
 //     mockFormFields = [], mockCustodianOrg = '', mockFrameworkCategories = [], mockHashTagId = '', mockFrameworkId = '',
 //     mockCustOrgFrameWorks = [];

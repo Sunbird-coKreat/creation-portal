@@ -22,8 +22,8 @@ describe('OrgDetailsService', () => {
   });
 
   it('Get a channel id', () => {
-    const service = TestBed.inject(OrgDetailsService);
-    const contentService = TestBed.inject(ContentService);
+    const service = TestBed.get(OrgDetailsService);
+    const contentService = TestBed.get(ContentService);
     spyOn(contentService, 'post').and.callFake(() => observableOf(serverRes.successData));
     service.getOrgDetails('ap').subscribe(
       apiResponse => {
@@ -32,8 +32,8 @@ describe('OrgDetailsService', () => {
     );
   });
   it('Get a org details', () => {
-    const service = TestBed.inject(OrgDetailsService);
-    const contentService = TestBed.inject(ContentService);
+    const service = TestBed.get(OrgDetailsService);
+    const contentService = TestBed.get(ContentService);
     spyOn(contentService, 'post').and.callFake(() => observableOf(serverRes.orgDetails));
     service.searchOrg().subscribe(
       apiResponse => {

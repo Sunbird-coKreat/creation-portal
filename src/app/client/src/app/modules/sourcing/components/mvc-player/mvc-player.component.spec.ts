@@ -80,7 +80,7 @@ describe('MvcPlayerComponent', () => {
   });
 
   it ('#getConfigByContent() should call playerservice getConfigByContent()', () => {
-    const playerService: PlayerService = TestBed.inject(PlayerService);
+    const playerService: PlayerService = TestBed.get(PlayerService);
     spyOn(component, 'getConfigByContent').and.callThrough();
     spyOn(playerService, 'getConfigByContent').and.callFake(() => {
       return from([]);

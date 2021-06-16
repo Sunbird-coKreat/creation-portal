@@ -68,11 +68,11 @@
 //   beforeEach(() => {
 //     fixture = TestBed.createComponent(ExploreContentComponent);
 //     component = fixture.componentInstance;
-//     toasterService = TestBed.inject(ToasterService);
-//     userService = TestBed.inject(UserService);
-//     searchService = TestBed.inject(SearchService);
-//     orgDetailsService = TestBed.inject(OrgDetailsService);
-//     activatedRoute = TestBed.inject(ActivatedRoute);
+//     toasterService = TestBed.get(ToasterService);
+//     userService = TestBed.get(UserService);
+//     searchService = TestBed.get(SearchService);
+//     orgDetailsService = TestBed.get(OrgDetailsService);
+//     activatedRoute = TestBed.get(ActivatedRoute);
 //     sendOrgDetails = true;
 //     sendSearchResult = true;
 //     spyOn(orgDetailsService, 'getOrgDetails').and.callFake((options) => {
@@ -185,7 +185,7 @@
 //   });
 
 //   it('should call updateDownloadStatus when updateCardData is called' , () => {
-//     const playerService = TestBed.inject(PublicPlayerService);
+//     const playerService = TestBed.get(PublicPlayerService);
 //     spyOn(playerService, 'updateDownloadStatus');
 //     component.contentList = Response.successData.result.content;
 //     component.updateCardData(Response.download_list);

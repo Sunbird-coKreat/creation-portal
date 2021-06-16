@@ -115,7 +115,7 @@ describe('OrgUserListComponent', () => {
   it ('#updateUserRole() should call programsService.updateUserRole()', () => {
     const osid = '12345';
     const role = 'dummy';
-    const programsService = TestBed.inject(ProgramsService);
+    const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'updateUserRole').and.callThrough();
     component.updateUserRole(osid, role);
     expect(programsService.updateUserRole).toHaveBeenCalledWith(osid, [role]);
@@ -123,7 +123,7 @@ describe('OrgUserListComponent', () => {
 
 
   xit('#getContributionOrgUsers() should call registeryService.getcontributingOrgUsersDetails()', () => {
-    const  registryService  = TestBed.inject(RegistryService);
+    const  registryService  = TestBed.get(RegistryService);
     spyOn(registryService, 'getcontributingOrgUsersDetails').and.callFake(() => observableOf({}));
     component.getContributionOrgUsers();
     expect(registryService.getcontributingOrgUsersDetails).toHaveBeenCalled();
@@ -146,7 +146,7 @@ describe('OrgUserListComponent', () => {
   xit('get the user list when there is a search input', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = 'jnc68';
-    const  registryService  = TestBed.inject(RegistryService);
+    const  registryService  = TestBed.get(RegistryService);
     const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput)
     expect(component.sortUsersList).toHaveBeenCalledWith(userList);
     });
@@ -154,7 +154,7 @@ describe('OrgUserListComponent', () => {
   xit('call the sortUsersList method when there is input', () => {
       component.pageLimit = 1;
       component.searchInput = 'jnc68';
-      const  programsService  = TestBed.inject(ProgramsService);
+      const  programsService  = TestBed.get(ProgramsService);
       component.sortUsersList(userDetail.result.response.content);
       const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'asc')
       expect(component.paginatedContributorOrgUsers).toBe(sortedList);
@@ -165,7 +165,7 @@ describe('OrgUserListComponent', () => {
   xit('call the sortUsersList method when there is empty input', () => {
      component.pageLimit = 1;
      component.searchInput = '';
-     const  programsService  = TestBed.inject(ProgramsService);
+     const  programsService  = TestBed.get(ProgramsService);
      component.sortUsersList(userDetail.result.response.content);
      const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'asc')
      expect(component.paginatedContributorOrgUsers).toBe(sortedList);
@@ -176,7 +176,7 @@ describe('OrgUserListComponent', () => {
   xit('call the sortUsersList method when there is input from user', () => {
     // component.pageLimit = 1;
     // component.searchInput = '';
-    const  programsService  = TestBed.inject(ProgramsService);
+    const  programsService  = TestBed.get(ProgramsService);
     component.sortUsersList(userDetail.result.response.content);
     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
     expect(component.paginatedContributorOrgUsers).toBe(sortedList);
@@ -186,7 +186,7 @@ describe('OrgUserListComponent', () => {
 
     xit('call the sortUsersList method and put user to initial org list', () => {
     component.isInitialSourcingOrgUser = true;
-    const  programsService  = TestBed.inject(ProgramsService);
+    const  programsService  = TestBed.get(ProgramsService);
     component.sortUsersList(userDetail.result.response.content);
     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
     expect(component.paginatedContributorOrgUsers).toBe(sortedList);

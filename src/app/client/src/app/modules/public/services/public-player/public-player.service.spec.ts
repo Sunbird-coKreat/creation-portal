@@ -18,8 +18,8 @@ describe('PublicPlayerService', () => {
   });
 
   it('should return content details', () => {
-    const playerService = TestBed.inject(PublicPlayerService);
-    const contentService = TestBed.inject(ContentService);
+    const playerService = TestBed.get(PublicPlayerService);
+    const contentService = TestBed.get(ContentService);
     spyOn(contentService, 'get').and.returnValue(observableOf(serverRes.successResult));
     playerService.getContent();
     playerService.getContent(serverRes.successResult.result.content.identifier).subscribe((data) => {
@@ -32,8 +32,8 @@ describe('PublicPlayerService', () => {
     expect(playerService).toBeTruthy();
   });
   it('should return player config without courseId', () => {
-    const playerService = TestBed.inject(PublicPlayerService);
-    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.get(PublicPlayerService);
+    const userService = TestBed.get(UserService);
     userService._anonymousSid = UUID.UUID();
     userService._userId = 'anonymous';
     userService._channel = 'in.ekstep';
@@ -48,8 +48,8 @@ describe('PublicPlayerService', () => {
   });
 
   it('should call player updateDownloadStatus()', () => {
-    const playerService = TestBed.inject(PublicPlayerService);
-    const resourceService = TestBed.inject(ResourceService);
+    const playerService = TestBed.get(PublicPlayerService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = serverRes.resourceServiceMockData.messages;
     playerService.updateDownloadStatus(serverRes.download_list, serverRes.successResult.result.content);
     expect(serverRes.successResult.result.content.downloadStatus).toBe(resourceService.messages.stmsg.m0143);

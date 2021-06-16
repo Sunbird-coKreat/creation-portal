@@ -67,7 +67,7 @@ describe('PublicCollectionPlayerComponent', () => {
     fixture.detectChanges();
   });
   it('should create', () => {
-    const windowScrollService = TestBed.inject(WindowScrollService);
+    const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     expect(component).toBeTruthy();
     expect(component.showPlayer).toBeFalsy();
@@ -78,8 +78,8 @@ describe('PublicCollectionPlayerComponent', () => {
     });
   });
   it('should get content based on route/query params', () => {
-    const playerService = TestBed.inject(PublicPlayerService);
-    const windowScrollService = TestBed.inject(WindowScrollService);
+    const playerService = TestBed.get(PublicPlayerService);
+    const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     spyOn(playerService, 'getCollectionHierarchy').and.returnValue(observableOf(CollectionHierarchyGetMockResponse));
     component.ngOnInit();
@@ -87,7 +87,7 @@ describe('PublicCollectionPlayerComponent', () => {
     expect(component.loader).toBeFalsy();
   });
   it('should call setInteractEventData method', () => {
-    const windowScrollService = TestBed.inject(WindowScrollService);
+    const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     const edata = {
       id: '',
@@ -103,10 +103,10 @@ describe('PublicCollectionPlayerComponent', () => {
     expect(component.closeCollectionPlayerInteractEdata).toBeDefined();
   });
   it('should call closeContentPlayer method', fakeAsync(() => {
-    const windowScrollService = TestBed.inject(WindowScrollService);
+    const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
-    const router = TestBed.inject(Router);
-    const route = TestBed.inject(ActivatedRoute);
+    const router = TestBed.get(Router);
+    const route = TestBed.get(ActivatedRoute);
     const navigation = {
       queryParams: {
         dialCode: '61U24C'
@@ -120,7 +120,7 @@ describe('PublicCollectionPlayerComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith([], navigation);
   }));
   it('should call playContent method', () => {
-    const windowScrollService = TestBed.inject(WindowScrollService);
+    const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     const content = {
       id: 'do_112474267785674752118',
@@ -131,7 +131,7 @@ describe('PublicCollectionPlayerComponent', () => {
     expect(component.contentTitle).toEqual(content.title);
   });
   it('should call onPlayContent method', () => {
-    const windowScrollService = TestBed.inject(WindowScrollService);
+    const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     const content = { id: 'do_112474267785674752118', title: 'Test' };
     component.collectionTreeNodes = collectionTree;
@@ -154,7 +154,7 @@ describe('PublicCollectionPlayerComponent', () => {
       url: '/play/collection/do_11287198635947622412',
     };
    spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl);
-    const router = TestBed.inject(Router);
+    const router = TestBed.get(Router);
     expect(router.navigate).toBeDefined(['/']);
   });
 
@@ -165,7 +165,7 @@ describe('PublicCollectionPlayerComponent', () => {
       queryParams: { key: 'collection' }
     };
     spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl);
-    const router = TestBed.inject(Router);
+    const router = TestBed.get(Router);
     expect(router.navigate).toBeDefined([previousUrl.searchUrl, previousUrl.queryParams]);
   });
   it('should call closeCollectionPlayer method and navigate to previous url ', () => {
@@ -174,7 +174,7 @@ describe('PublicCollectionPlayerComponent', () => {
       otherUrl: '/browse/play/collection/do_3123405048187617282365',
     };
     spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl);
-    const router = TestBed.inject(Router);
+    const router = TestBed.get(Router);
     expect(router.navigate).toBeDefined([previousUrl.otherUrl]);
   });
 });

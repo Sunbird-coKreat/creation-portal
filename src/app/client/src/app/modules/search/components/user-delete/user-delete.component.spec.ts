@@ -86,13 +86,13 @@ describe('UserDeleteComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should throw error when searchService api is not called', () => {
-    const searchService = TestBed.inject(UserSearchService);
+    const searchService = TestBed.get(UserSearchService);
     spyOn(searchService, 'getUserById').and.callFake(() => observableThrowError({}));
     fixture.detectChanges();
   });
   it('should call UserSearchService api for deleteUser', () => {
-    const searchService = TestBed.inject(UserSearchService);
-    const learnerService = TestBed.inject(LearnerService);
+    const searchService = TestBed.get(UserSearchService);
+    const learnerService = TestBed.get(LearnerService);
     const option = { userId: '6d4da241-a31b-4041-bbdb-dd3a898b3f85'};
     component.deleteUser();
     searchService.deleteUser(option.userId).subscribe(

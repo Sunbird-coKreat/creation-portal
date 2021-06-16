@@ -20,7 +20,7 @@ describe('TenantService', () => {
   });
 
   it('Should make get API call and set tenant data', () => {
-    const service = TestBed.inject(TenantService);
+    const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(response.success));
     service.getTenantInfo('Sunbird');
     service.tenantData$.subscribe(
@@ -30,7 +30,7 @@ describe('TenantService', () => {
   });
 
   it('Should return default data when get API call is triggered with wrong orgSlug value', () => {
-    const service = TestBed.inject(TenantService);
+    const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(response.success));
     service.getTenantInfo('test');
     service.tenantData$.subscribe(
@@ -40,7 +40,7 @@ describe('TenantService', () => {
   });
 
   it('Should emit error on get api failure', () => {
-    const service = TestBed.inject(TenantService);
+    const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(response.failure));
     service.getTenantInfo('Sunbird');
     service.tenantData$.subscribe(

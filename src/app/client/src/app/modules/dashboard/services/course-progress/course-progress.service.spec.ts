@@ -16,8 +16,8 @@ xdescribe('CourseProgressService', () => {
   });
 
   it('should call batch API', () => {
-    const courseProgressService = TestBed.inject(CourseProgressService);
-    const learnerService = TestBed.inject(LearnerService);
+    const courseProgressService = TestBed.get(CourseProgressService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(testData.mockRes.getMyBatchesList));
     const params = {
       data: {
@@ -38,8 +38,8 @@ xdescribe('CourseProgressService', () => {
   });
 
   it('should call get Dashboard API', () => {
-    const courseProgressService = TestBed.inject(CourseProgressService);
-    const learnerService = TestBed.inject(LearnerService);
+    const courseProgressService = TestBed.get(CourseProgressService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(testData.mockRes.courseProgressData.getBatchDetails));
     const params = {
       data: {
@@ -57,8 +57,8 @@ xdescribe('CourseProgressService', () => {
   });
 
   it('should call Download API', () => {
-    const courseProgressService = TestBed.inject(CourseProgressService);
-    const learnerService = TestBed.inject(LearnerService);
+    const courseProgressService = TestBed.get(CourseProgressService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(testData.mockRes.downloadDashboardReport.getSuccessData));
     const params = {
       data: {

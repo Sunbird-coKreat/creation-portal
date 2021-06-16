@@ -66,10 +66,10 @@ describe('ExploreComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ExploreComponent);
     component = fixture.componentInstance;
-    toasterService = TestBed.inject(ToasterService);
-    userService = TestBed.inject(UserService);
-    pageApiService = TestBed.inject(PageApiService);
-    orgDetailsService = TestBed.inject(OrgDetailsService);
+    toasterService = TestBed.get(ToasterService);
+    userService = TestBed.get(UserService);
+    pageApiService = TestBed.get(PageApiService);
+    orgDetailsService = TestBed.get(OrgDetailsService);
     sendOrgDetails = true;
     sendPageApi = true;
     spyOn(orgDetailsService, 'getOrgDetails').and.callFake((options) => {
@@ -154,7 +154,7 @@ describe('ExploreComponent', () => {
     expect(component.baseUrl).toEqual('/learn/course/0122838911932661768');
   });
   it('should call playcontent when user is loggedIn', () => {
-    const playerService = TestBed.inject(PublicPlayerService);
+    const playerService = TestBed.get(PublicPlayerService);
     const event = { data: { metaData: { batchId: '0122838911932661768' } } };
     spyOn(component, 'playContent').and.callThrough();
     spyOn(playerService, 'playContent').and.callThrough();
@@ -165,7 +165,7 @@ describe('ExploreComponent', () => {
   });
 
   it('should call updateDownloadStatus when updateCardData is called' , () => {
-    const playerService = TestBed.inject(PublicPlayerService);
+    const playerService = TestBed.get(PublicPlayerService);
     spyOn(playerService, 'updateDownloadStatus').and.callFake(() => {});
     component.pageSections = mockPageSection;
     component.updateCardData(Response.download_list);

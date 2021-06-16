@@ -86,12 +86,12 @@ describe('CreateBatchComponent', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
   it('should fetch batch details and show update Form model', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const courseConsumptionService = TestBed.get(CourseConsumptionService);
     spyOn(courseBatchService, 'getUserList').and.returnValue(observableOf(getUserList));
     spyOn(courseConsumptionService, 'getCourseHierarchy').and.
     returnValue(observableOf({createdBy: 'b2479136-8608-41c0-b3b1-283f38c338ed'}));
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
     fixture.detectChanges();
@@ -103,17 +103,17 @@ describe('CreateBatchComponent', () => {
     expect(component.showCreateModal).toBeTruthy();
   });
   it('should create batch and show success message if api return success', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const courseConsumptionService = TestBed.inject(CourseConsumptionService);
-    const toasterService = TestBed.inject(ToasterService);
-    const userService = TestBed.inject(UserService);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const courseConsumptionService = TestBed.get(CourseConsumptionService);
+    const toasterService = TestBed.get(ToasterService);
+    const userService = TestBed.get(UserService);
     userService._userProfile = { organisationIds: [] };
     spyOn(courseBatchService, 'getUserList').and.returnValue(observableOf(getUserList));
     spyOn(courseConsumptionService, 'getCourseHierarchy').and.
     returnValue(observableOf({createdBy: 'b2479136-8608-41c0-b3b1-283f38c338ed'}));
     spyOn(courseBatchService, 'createBatch').and.returnValue(observableOf(updateBatchDetails));
     spyOn(toasterService, 'success');
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
     fixture.detectChanges();
@@ -124,17 +124,17 @@ describe('CreateBatchComponent', () => {
     expect(toasterService.success).toHaveBeenCalledWith('success');
   });
   it('should create batch and show error message if api fails', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const courseConsumptionService = TestBed.inject(CourseConsumptionService);
-    const toasterService = TestBed.inject(ToasterService);
-    const userService = TestBed.inject(UserService);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const courseConsumptionService = TestBed.get(CourseConsumptionService);
+    const toasterService = TestBed.get(ToasterService);
+    const userService = TestBed.get(UserService);
     userService._userProfile = { organisationIds: [] };
     spyOn(courseBatchService, 'getUserList').and.returnValue(observableOf(getUserList));
     spyOn(courseConsumptionService, 'getCourseHierarchy').and.
     returnValue(observableOf({createdBy: 'b2479136-8608-41c0-b3b1-283f38c338ed'}));
     spyOn(courseBatchService, 'createBatch').and.returnValue(observableThrowError(updateBatchDetails));
     spyOn(toasterService, 'error');
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
     fixture.detectChanges();
@@ -146,17 +146,17 @@ describe('CreateBatchComponent', () => {
   });
 
   it('should create batch with enrollment date and return success message ', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const courseConsumptionService = TestBed.inject(CourseConsumptionService);
-    const toasterService = TestBed.inject(ToasterService);
-    const userService = TestBed.inject(UserService);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const courseConsumptionService = TestBed.get(CourseConsumptionService);
+    const toasterService = TestBed.get(ToasterService);
+    const userService = TestBed.get(UserService);
     userService._userProfile = { organisationIds: [] };
     spyOn(courseBatchService, 'getUserList').and.returnValue(observableOf(getUserList));
     spyOn(courseConsumptionService, 'getCourseHierarchy').and.
     returnValue(observableOf({createdBy: 'b2479136-8608-41c0-b3b1-283f38c338ed'}));
     spyOn(courseBatchService, 'createBatch').and.returnValue(observableOf(updateBatchDetails));
     spyOn(toasterService, 'success');
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
     fixture.detectChanges();

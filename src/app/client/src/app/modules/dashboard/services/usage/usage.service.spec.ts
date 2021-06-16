@@ -19,8 +19,8 @@ describe('UsageService', () => {
 
   describe('getData method ', () => {
     it('should call the api', () => {
-      const http = TestBed.inject(HttpClient);
-      const usageService = TestBed.inject(UsageService);
+      const http = TestBed.get(HttpClient);
+      const usageService = TestBed.get(UsageService);
       spyOn(http, 'get').and.returnValue(of({ test: 'ok' }));
       usageService.getData('https://dev.sunbirded.org/explore');
       expect(http.get).toHaveBeenCalled();
@@ -29,8 +29,8 @@ describe('UsageService', () => {
     });
 
     it('should return data  if response do contain result key', () => {
-      const http = TestBed.inject(HttpClient);
-      const usageService = TestBed.inject(UsageService);
+      const http = TestBed.get(HttpClient);
+      const usageService = TestBed.get(UsageService);
       spyOn(http, 'get').and.returnValue(of({ result: '123' }));
       const result = usageService.getData('https://dev.sunbirded.org/explore');
       expect(http.get).toHaveBeenCalled();
@@ -44,8 +44,8 @@ describe('UsageService', () => {
     });
 
     it('should return data as it is if response do not contain result key', () => {
-      const http = TestBed.inject(HttpClient);
-      const usageService = TestBed.inject(UsageService);
+      const http = TestBed.get(HttpClient);
+      const usageService = TestBed.get(UsageService);
       spyOn(http, 'get').and.returnValue(of({ data: '123' }));
       const result = usageService.getData('https://dev.sunbirded.org/explore');
       expect(http.get).toHaveBeenCalled();

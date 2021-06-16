@@ -69,8 +69,8 @@ describe('OrgSearchComponent', () => {
   });
 
   it('should call search api and get success', () => {
-    const searchService = TestBed.inject(SearchService);
-    const learnerService = TestBed.inject(LearnerService);
+    const searchService = TestBed.get(SearchService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(searchService, 'orgSearch').and.callFake(() => observableOf(Response.successData));
     component.populateOrgSearch();
     fixture.detectChanges();
@@ -81,8 +81,8 @@ describe('OrgSearchComponent', () => {
   });
 
   it('should call search api and get success with empty result', () => {
-    const searchService = TestBed.inject(SearchService);
-    const learnerService = TestBed.inject(LearnerService);
+    const searchService = TestBed.get(SearchService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(searchService, 'orgSearch').and.callFake(() => observableOf(Response.emptySuccessData));
     component.populateOrgSearch();
     fixture.detectChanges();
@@ -91,7 +91,7 @@ describe('OrgSearchComponent', () => {
   });
 
   it('should throw error when searchService api is not called and check all variables after error', () => {
-    const searchService = TestBed.inject(SearchService);
+    const searchService = TestBed.get(SearchService);
     spyOn(searchService, 'orgSearch').and.callFake(() => observableThrowError({}));
     component.populateOrgSearch();
     fixture.detectChanges();
@@ -134,7 +134,7 @@ describe('OrgSearchComponent', () => {
   }));
 
   it('should call orgsearch with rootorgid', inject([SearchService], (searchService) => {
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     userService._userData$.next({ err: null, userProfile: Response.userMockData });
     userService._userProfile = Response.userMockData;
     spyOn(searchService, 'orgSearch').and.callFake(() => observableOf(Response.successData));

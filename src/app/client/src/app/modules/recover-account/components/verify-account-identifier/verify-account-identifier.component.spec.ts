@@ -63,7 +63,7 @@ describe('VerifyAccountIdentifierComponent', () => {
   });
 
   it('should create', () => {
-    const recoverAccountService = TestBed.inject(RecoverAccountService);
+    const recoverAccountService = TestBed.get(RecoverAccountService);
     recoverAccountService.fuzzySearchResults = [{}];
     recoverAccountService.selectedAccountIdentifier = {
       id: '123'

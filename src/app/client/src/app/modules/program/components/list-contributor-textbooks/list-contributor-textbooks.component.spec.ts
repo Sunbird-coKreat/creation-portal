@@ -94,7 +94,7 @@ const errorInitiate = false;
     expect(component).toBeTruthy();
   });
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-    const  programsService  = TestBed.inject(ProgramsService);
+    const  programsService  = TestBed.get(ProgramsService);
     component.targetCollections = 'Question papers';
     component.programDetails = SpecData.programDetailsTargetCollection;
     spyOn(programsService, 'setTargetCollectionName').and.returnValue('Question papers');
@@ -105,7 +105,7 @@ const errorInitiate = false;
 
   it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
     const collection = {};
-    const  helperService  = TestBed.inject(HelperService);
+    const  helperService  = TestBed.get(HelperService);
     spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
     spyOn(component, 'setFrameworkCategories').and.callThrough();
     component.setFrameworkCategories(collection);

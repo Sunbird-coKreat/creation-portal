@@ -49,7 +49,7 @@ snapshot: {
     component = fixture.componentInstance;
   });
   it('should call get content', () => {
-    const playerService = TestBed.inject(PlayerService);
+    const playerService = TestBed.get(PlayerService);
     playerService.collectionData = Response.contentData;
     component.getContentData();
     component.contentData = Response.contentData;
@@ -57,7 +57,7 @@ snapshot: {
     expect(component.contentData.name).toEqual('TextBook3-CollectionParentLive');
   });
   it('should call getContent api when data is not present ', () => {
-    const playerService = TestBed.inject(PlayerService);
+    const playerService = TestBed.get(PlayerService);
     playerService.contentData = {};
     spyOn(playerService, 'getContent').and.callFake(() => observableOf(Response.successContentData));
     component.getContentData();
@@ -68,9 +68,9 @@ snapshot: {
     expect(component.contentData.versionKey).toEqual('1496989757647');
   });
   it('should call flag api', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const contentService = TestBed.inject(ContentService);
-    const resourceService = TestBed.inject(ResourceService);
+    const playerService = TestBed.get(PlayerService);
+    const contentService = TestBed.get(ContentService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = Response.resourceBundle.messages;
     const modal = '';
     const requestData = {
@@ -83,10 +83,10 @@ snapshot: {
    expect(component.showLoader).toBeFalsy();
   });
   xit('should  throw error when call flag api', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const contentService = TestBed.inject(ContentService);
-    const toasterService = TestBed.inject(ToasterService);
-    const resourceService = TestBed.inject(ResourceService);
+    const playerService = TestBed.get(PlayerService);
+    const contentService = TestBed.get(ContentService);
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = Response.resourceBundle.messages;
     const requestData = {
       flaggedBy: 'Cretation User',
@@ -100,14 +100,14 @@ snapshot: {
    expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.fmsg.m0050);
   });
   xit('should call getCollectionHierarchy ', () => {
-    const playerService = TestBed.inject(PlayerService);
+    const playerService = TestBed.get(PlayerService);
     playerService.contentData = {};
     spyOn(playerService, 'getCollectionHierarchy').and.callFake(() => observableOf(Response.collectionData));
    component.getCollectionHierarchy();
    expect(component.contentData).toBeDefined();
   });
   xit('should call getCollectionHierarchy when data is already present', () => {
-    const playerService = TestBed.inject(PlayerService);
+    const playerService = TestBed.get(PlayerService);
     playerService.collectionData = Response.collectionData;
    component.getCollectionHierarchy();
    component.contentData =  playerService.collectionData;

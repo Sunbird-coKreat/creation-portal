@@ -105,7 +105,7 @@ describe('UpdateUserDetailsComponent', () => {
 
   it('should show validation error for name', () => {
     component.userProfile = testData.userData;
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'getState');
     spyOn(component, 'onStateChange');
     spyOn(component, 'enableSubmitButton');
@@ -117,7 +117,7 @@ describe('UpdateUserDetailsComponent', () => {
 
   it('should call get state and get success', () => {
     component.userProfile = testData.userData;
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'getState').and.callThrough();
     spyOn(profileService, 'getUserLocation').and.returnValue(observableOf(testData.getStateSuccess));
     component.ngOnInit();
@@ -126,11 +126,11 @@ describe('UpdateUserDetailsComponent', () => {
 
   xit('should call get state and get error', () => {
     component.userProfile = testData.userData;
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'getState').and.callThrough();
     spyOn(component, 'closeModal').and.callThrough();
     spyOn(profileService, 'getUserLocation').and.returnValue(observableThrowError(testData.getStateError));
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callThrough();
     component.ngOnInit();
     expect(component.closeModal).toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe('UpdateUserDetailsComponent', () => {
 
   xit('should call get district and get success', () => {
     component.userProfile = testData.userData;
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'getDistrict').and.callThrough();
     spyOn(profileService, 'getUserLocation').and.returnValue(observableOf(testData.getDistrictSuccess));
     component.ngOnInit();
@@ -148,11 +148,11 @@ describe('UpdateUserDetailsComponent', () => {
 
   xit('should call get district and get error', () => {
     component.userProfile = testData.userData;
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'getDistrict').and.callThrough();
     spyOn(component, 'closeModal').and.callThrough();
     spyOn(profileService, 'getUserLocation').and.returnValue(observableThrowError(testData.getDistrictError));
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callThrough();
     component.ngOnInit();
     expect(component.closeModal).toHaveBeenCalled();

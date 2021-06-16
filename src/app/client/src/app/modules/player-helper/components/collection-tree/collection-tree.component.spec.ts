@@ -95,9 +95,9 @@ describe('CollectionTreeComponent', () => {
   });
 
   it('should show custom comming soon message if data doesnt exists', () => {
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     component.nodes = nodes;
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     spyOn(orgDetailsService, 'getCommingSoonMessage').and.returnValue(observableOf(commonMessageApiResp));
     orgDetailsService._rootOrgId = 'b00bc992ef25f1a9a8d63291e20efc8d';
     component.ngOnInit();
@@ -106,7 +106,7 @@ describe('CollectionTreeComponent', () => {
 
   it('should show default comming soon message if custom comming soon doesnt exists', () => {
     component.nodes = nodes;
-    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const orgDetailsService = TestBed.get(OrgDetailsService);
     orgDetailsService._rootOrgId = 'org_002';
     spyOn(orgDetailsService, 'getCommingSoonMessage').and.returnValue(observableOf({}));
     component.ngOnInit();

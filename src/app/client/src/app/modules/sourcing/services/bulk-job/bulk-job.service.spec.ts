@@ -18,7 +18,7 @@ describe('BulkJobService', () => {
   }));
 
   it('should be created', () => {
-    const service: BulkJobService = TestBed.inject(BulkJobService);
+    const service: BulkJobService = TestBed.get(BulkJobService);
     expect(service).toBeTruthy();
   });
 });

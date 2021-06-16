@@ -68,7 +68,7 @@ describe('AccountRecoveryInfoComponent', () => {
   it('should add/update email id for account recovery identifier', () => {
     component.enableSubmitButton = false;
     component.contactType = 'emailId';
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'closeModal').and.callThrough();
     spyOn(profileService, 'updateProfile').and.returnValue(observableOf({}));
     component.updateRecoveryId();
@@ -78,7 +78,7 @@ describe('AccountRecoveryInfoComponent', () => {
   it('should add/update phone no. for account recovery identifier', () => {
     component.enableSubmitButton = false;
     component.contactType = 'phoneNo';
-    const profileService = TestBed.inject(ProfileService);
+    const profileService = TestBed.get(ProfileService);
     spyOn(component, 'closeModal').and.callThrough();
     spyOn(profileService, 'updateProfile').and.returnValue(observableOf({}));
     component.onItemChange();

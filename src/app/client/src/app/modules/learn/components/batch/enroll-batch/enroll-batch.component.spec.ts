@@ -77,10 +77,10 @@ describe('EnrollBatchComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EnrollBatchComponent);
     component = fixture.componentInstance;
-    courseBatchService = TestBed.inject(CourseBatchService);
-    toasterService = TestBed.inject(ToasterService);
-    coursesService = TestBed.inject(CoursesService);
-    router = TestBed.inject(Router);
+    courseBatchService = TestBed.get(CourseBatchService);
+    toasterService = TestBed.get(ToasterService);
+    coursesService = TestBed.get(CoursesService);
+    router = TestBed.get(Router);
   });
 
   it('should fetch details using the batch id', () => {

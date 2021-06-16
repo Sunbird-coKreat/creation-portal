@@ -13,7 +13,7 @@ xdescribe('Session Expiry Interceptor', () => {
     const mockUrl = '/data';
     let userService: UserService;
     const makeApiCall = () => {
-        const http = TestBed.inject(HttpClient);
+        const http = TestBed.get(HttpClient);
         return http.get(mockUrl);
     };
 
@@ -26,9 +26,9 @@ xdescribe('Session Expiry Interceptor', () => {
                 multi: true,
             }]
         });
-        sessionExpiryInterceptor = TestBed.inject(SessionExpiryInterceptor);
-        httpMock = TestBed.inject(HttpTestingController);
-        userService = TestBed.inject(UserService);
+        sessionExpiryInterceptor = TestBed.get(SessionExpiryInterceptor);
+        httpMock = TestBed.get(HttpTestingController);
+        userService = TestBed.get(UserService);
     });
 
     it('should intercept any api call', () => {

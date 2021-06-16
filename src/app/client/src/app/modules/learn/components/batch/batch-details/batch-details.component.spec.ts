@@ -53,7 +53,7 @@ describe('BatchDetailsComponent', () => {
     component = fixture.componentInstance;
   });
   it('should fetch only open batch of course if course is not enrolled and user is not mentor', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
+    const courseBatchService = TestBed.get(CourseBatchService);
     component.enrolledCourse = false;
     component.courseId = 'do_1125083286221291521153';
     component.courseHierarchy = {identifier: '01250836468775321655', pkgVersion: '1'} ;
@@ -76,11 +76,11 @@ describe('BatchDetailsComponent', () => {
     expect(component.courseBatchService.getAllBatchDetails).toHaveBeenCalledWith(searchParams);
   });
   it('should throw error when fetching all batch details fails', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
+    const courseBatchService = TestBed.get(CourseBatchService);
     component.enrolledCourse = false;
     component.courseId = 'do_1125083286221291521153';
     component.courseHierarchy = {identifier: '01250836468775321655', pkgVersion: '1'} ;
-    const resourceService = TestBed.inject(ResourceService);
+    const resourceService = TestBed.get(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
     spyOn(courseBatchService, 'getAllBatchDetails').and.returnValue(observableThrowError(allBatchDetails));
@@ -97,8 +97,8 @@ describe('BatchDetailsComponent', () => {
     expect(component.showError).toBeTruthy();
   });
   it('should fetch all batch of course if course is not enrolled and user is mentor', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const permissionService = TestBed.inject(PermissionService);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const permissionService = TestBed.get(PermissionService);
     component.enrolledCourse = false;
     component.courseId = 'do_1125083286221291521153';
     component.courseHierarchy = {identifier: '01250836468775321655', pkgVersion: '1'} ;
@@ -122,22 +122,22 @@ describe('BatchDetailsComponent', () => {
     expect(component.courseBatchService.getAllBatchDetails).toHaveBeenCalledWith(searchParams);
   });
   it('should navigate to update batch route', () => {
-      const courseBatchService = TestBed.inject(CourseBatchService);
-      const route = TestBed.inject(Router);
+      const courseBatchService = TestBed.get(CourseBatchService);
+      const route = TestBed.get(Router);
       spyOn(courseBatchService, 'setUpdateBatchDetails');
       component.batchUpdate({identifier: '123'});
       expect(route.navigate).toHaveBeenCalledWith(['update/batch', '123'], {relativeTo: component.activatedRoute});
   });
   it('should navigate to enroll route', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const route = TestBed.inject(Router);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const route = TestBed.get(Router);
     spyOn(courseBatchService, 'setEnrollToBatchDetails');
     component.enrollBatch({identifier: '123'});
     expect(route.navigate).toHaveBeenCalledWith(['enroll/batch', '123'], {relativeTo: component.activatedRoute});
   });
   it('should navigate to create batch', () => {
-    const courseBatchService = TestBed.inject(CourseBatchService);
-    const route = TestBed.inject(Router);
+    const courseBatchService = TestBed.get(CourseBatchService);
+    const route = TestBed.get(Router);
     component.createBatch();
     expect(route.navigate).toHaveBeenCalledWith(['create/batch'], {relativeTo: component.activatedRoute});
   });

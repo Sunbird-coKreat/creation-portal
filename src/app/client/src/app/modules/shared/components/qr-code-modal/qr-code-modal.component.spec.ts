@@ -35,7 +35,7 @@ describe('QrCodeModalComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(QrCodeModalComponent);
     component = fixture.componentInstance;
-    const resourceService: any = TestBed.inject(ResourceService);
+    const resourceService: any = TestBed.get(ResourceService);
     resourceService._instance = 'sunbird';
   });
 

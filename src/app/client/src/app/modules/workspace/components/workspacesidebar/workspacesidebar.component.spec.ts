@@ -24,7 +24,7 @@ describe('WorkspacesidebarComponent', () => {
   });
 
   it('should set the role for content  ', () => {
-   const configService = TestBed.inject(ConfigService);
+   const configService = TestBed.get(ConfigService);
     component.draftRole = configService.rolesConfig.workSpaceRole.draftRole;
     component.inreviewRole = configService.rolesConfig.workSpaceRole.inreviewRole;
     component.publishedRole = configService.rolesConfig.workSpaceRole.publishedRole;

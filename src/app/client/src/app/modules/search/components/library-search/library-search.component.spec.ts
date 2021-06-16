@@ -57,10 +57,10 @@ describe('LibrarySearchComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LibrarySearchComponent);
     component = fixture.componentInstance;
-    toasterService = TestBed.inject(ToasterService);
-    userService = TestBed.inject(UserService);
-    searchService = TestBed.inject(SearchService);
-    activatedRoute = TestBed.inject(ActivatedRoute);
+    toasterService = TestBed.get(ToasterService);
+    userService = TestBed.get(UserService);
+    searchService = TestBed.get(SearchService);
+    activatedRoute = TestBed.get(ActivatedRoute);
     sendSearchResult = true;
     spyOn(searchService, 'contentSearch').and.callFake((options) => {
       if (sendSearchResult) {

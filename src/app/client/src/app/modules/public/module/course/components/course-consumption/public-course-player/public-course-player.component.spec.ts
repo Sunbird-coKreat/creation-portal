@@ -67,10 +67,10 @@
 //   beforeEach(() => {
 //     fixture = TestBed.createComponent(PublicCoursePlayerComponent);
 //     component = fixture.componentInstance;
-//     activatedRouteStub = TestBed.inject(ActivatedRoute);
-//     courseService = TestBed.inject(CoursesService);
-//     toasterService = TestBed.inject(ToasterService);
-//     courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     activatedRouteStub = TestBed.get(ActivatedRoute);
+//     courseService = TestBed.get(CoursesService);
+//     toasterService = TestBed.get(ToasterService);
+//     courseConsumptionService = TestBed.get(CourseConsumptionService);
 //     spyOn(toasterService, 'error').and.returnValue('');
 //   });
 //   it('should fetch course details on page load', () => {

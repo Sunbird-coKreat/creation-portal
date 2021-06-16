@@ -12,7 +12,7 @@ describe('EnrollContributorService', () => {
       imports:[HttpClientTestingModule,RouterTestingModule],
       providers:[ConfigService]
     });
-    service = TestBed.inject(EnrollContributorService);
+    service = TestBed.get(EnrollContributorService);
   });
 
   it('should be created', () => {

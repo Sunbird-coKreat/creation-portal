@@ -92,7 +92,7 @@ describe('UserEditComponent', () => {
   });
 
   it('should fetch logged in user details on component init', () => {
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     (userService as any)._userData$.next({ err: null, userProfile: Response.userData.result.response });
     const getLoggedInUserDetailsSpy = spyOn(component, 'getLoggedInUserDetails').and.callThrough();
     const getAllRolesSpy = spyOn(component, 'getAllRoles');
@@ -106,8 +106,8 @@ describe('UserEditComponent', () => {
   });
 
   it('should redirect when fetching logged in user details fails', () => {
-    const userService = TestBed.inject(UserService);
-    const toasterService = TestBed.inject(ToasterService);
+    const userService = TestBed.get(UserService);
+    const toasterService = TestBed.get(ToasterService);
     (userService as any)._userData$.next({ err: 'ok', userProfile: null });
     const getLoggedInUserDetailsSpy = spyOn(component, 'getLoggedInUserDetails').and.callThrough();
     const getAllRolesSpy = spyOn(component, 'getAllRoles');
@@ -125,8 +125,8 @@ describe('UserEditComponent', () => {
   });
 
   it('should call ngOnInit method to get all roles', () => {
-    const userService = TestBed.inject(UserService);
-    const searchService = TestBed.inject(UserSearchService);
+    const userService = TestBed.get(UserService);
+    const searchService = TestBed.get(UserSearchService);
     const searchServiceSpy = spyOn(searchService, 'getUserById').and.returnValue(observableOf(Response.successData));
     (userService as any)._userData$.next({ err: null, userProfile: Response.userData.result.response });
     component.ngOnInit();
@@ -147,7 +147,7 @@ describe('UserEditComponent', () => {
   });
 
   xit('should call search api for populateOrgName', () => {
-    const searchService = TestBed.inject(SearchService);
+    const searchService = TestBed.get(SearchService);
     const options = {
       orgid: [
         '0123164136298905609',
@@ -165,7 +165,7 @@ describe('UserEditComponent', () => {
     fixture.detectChanges();
   });
   it('should call search api', () => {
-    const searchService = TestBed.inject(UserSearchService);
+    const searchService = TestBed.get(UserSearchService);
     spyOn(searchService, 'getUserById').and.returnValue(observableOf(Response.successData));
     component.populateUserDetails();
     component.selectedOrgId = Response.successData.result.response.organisations[0].organisationId;
@@ -173,13 +173,13 @@ describe('UserEditComponent', () => {
     expect(component.userDetails).toBeDefined();
   });
   it('should throw error when searchService api is not called', () => {
-    const searchService = TestBed.inject(UserSearchService);
+    const searchService = TestBed.get(UserSearchService);
     spyOn(searchService, 'getUserById').and.callFake(() => observableThrowError({}));
     component.populateUserDetails();
     expect(component.userDetails).toBeUndefined();
   });
   it('should call UserSearchService api for deleteUser', () => {
-    const searchService = TestBed.inject(UserSearchService);
+    const searchService = TestBed.get(UserSearchService);
     const option = { userId: '6d4da241-a31b-4041-bbdb-dd3a898b3f85' };
     searchService.deleteUser(option.userId).subscribe(
       apiResponse => {
@@ -214,8 +214,8 @@ describe('UserEditComponent', () => {
     expect(component.selectedOrgUserRolesNew).not.toEqual('CONTENT_CREATOR');
   });
   xit('should call updateRoles and make api call', () => {
-    const userSearchService = TestBed.inject(UserSearchService);
-    const toasterService = TestBed.inject(ToasterService);
+    const userSearchService = TestBed.get(UserSearchService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(userSearchService, 'updateRoles').and.callFake(() => observableOf(Response.rolesSuccessData));
     const roles = ['BOOK_CREATOR', 'ANNOUNCEMENT_SENDER', 'OFFICIAL_TEXTBOOK_BADGE_ISSUER', 'PUBLIC'];
     component.allRoles = [];
@@ -227,8 +227,8 @@ describe('UserEditComponent', () => {
     expect(toasterService.success).toHaveBeenCalledWith(resourceBundle.messages.smsg.m0028);
   });
   xit('should call updateRoles method and make api call and return error', () => {
-    const userSearchService = TestBed.inject(UserSearchService);
-    const toasterService = TestBed.inject(ToasterService);
+    const userSearchService = TestBed.get(UserSearchService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(userSearchService, 'updateRoles').and.callFake(() => observableThrowError(Response.rolesFailureData));
     const roles = ['BOOK_CREATOR', 'ANNOUNCEMENT_SENDER', 'OFFICIAL_TEXTBOOK_BADGE_ISSUER', 'PUBLIC'];
     component.allRoles = [];
@@ -240,8 +240,8 @@ describe('UserEditComponent', () => {
     expect(toasterService.error).toHaveBeenCalledWith(resourceBundle.messages.emsg.m0005);
   });
   it('should not  show user name in modal header', () => {
-    const searchService = TestBed.inject(UserSearchService);
-    const userService = TestBed.inject(UserService);
+    const searchService = TestBed.get(UserSearchService);
+    const userService = TestBed.get(UserService);
     spyOn(searchService, 'getUserById').and.returnValue(observableOf(Response.successData));
     component.populateUserDetails();
     component.selectedOrgId = Response.successData.result.response.organisations[0].organisationId;
@@ -253,7 +253,7 @@ describe('UserEditComponent', () => {
   });
 
   it('should show roles from all the organizations' , () => {
-    const searchService = TestBed.inject(UserSearchService);
+    const searchService = TestBed.get(UserSearchService);
     spyOn(searchService, 'getUserById').and.returnValue(observableOf(Response.successData));
     component.populateUserDetails();
     expect(component.selectedOrgUserRoles).toContain('ORG_ADMIN');

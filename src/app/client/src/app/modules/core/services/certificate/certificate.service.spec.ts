@@ -13,14 +13,14 @@ describe('CertificateService', () => {
   }));
 
   it('should be created', () => {
-    const service: CertificateService = TestBed.inject(CertificateService);
+    const service: CertificateService = TestBed.get(CertificateService);
     expect(service).toBeTruthy();
   });
 
   it('should call validateCertificate API', inject([],
     () => {
-      const certificateService = TestBed.inject(CertificateService);
-      const learnerService = TestBed.inject(LearnerService);
+      const certificateService = TestBed.get(CertificateService);
+      const learnerService = TestBed.get(LearnerService);
       const params = {'request': { 'certId': '123456', 'accessCode': 'QWERTY', 'verifySignature': 'true' }};
       spyOn(learnerService, 'post').and.returnValue(observableOf(mockResponseData.validateCertificateCodeData));
       certificateService.validateCertificate(params);

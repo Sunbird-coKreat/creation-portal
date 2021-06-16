@@ -145,8 +145,8 @@ describe('ProgramNominationsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ProgramNominationsComponent);
     component = fixture.componentInstance;
-    programsService = TestBed.inject(ProgramsService);
-    collectionHierarchyService = TestBed.inject(CollectionHierarchyService);
+    programsService = TestBed.get(ProgramsService);
+    collectionHierarchyService = TestBed.get(CollectionHierarchyService);
 
     // fixture.detectChanges();
   });
@@ -237,14 +237,14 @@ describe('ProgramNominationsComponent', () => {
   xit('get the user list when there is a search input', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = 'jnc68';
-    const  registryService  = TestBed.inject(RegistryService);
+    const  registryService  = TestBed.get(RegistryService);
     const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput);
     expect(component.sortUsersList).toHaveBeenCalledWith(userList);
     });
  xit('call the sortUsersList method when there is input', () => {
     component.pageLimit = 1;
     component.searchInput = 'jnc68';
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     component.sortUsersList(userDetail.result.response.content);
     const sortedList = service.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
     expect(component.paginatedSourcingUsers).toBe(sortedList);
@@ -254,7 +254,7 @@ describe('ProgramNominationsComponent', () => {
   xit('call the sortUsersList method when there is empty input', () => {
      component.pageLimit = 1;
      component.searchInput = '';
-     const  service  = TestBed.inject(ProgramsService);
+     const  service  = TestBed.get(ProgramsService);
      component.sortUsersList(userDetail.result.response.content);
      const sortedList = service.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
      expect(component.paginatedSourcingUsers).toBe(sortedList);
@@ -262,7 +262,7 @@ describe('ProgramNominationsComponent', () => {
      expect(component.sourcingOrgUserCnt).toBe(userDetail.result.response.content.length);
     });
     it ('#setTargetCollectionValue() should set targetCollection values', () => {
-      const  service  = TestBed.inject(ProgramsService);
+      const  service  = TestBed.get(ProgramsService);
       spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
       component.programDetails = SpecData.programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -271,7 +271,7 @@ describe('ProgramNominationsComponent', () => {
       expect(component.targetCollections).not.toBeUndefined();
     });
     it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-      const  service  = TestBed.inject(ProgramsService);
+      const  service  = TestBed.get(ProgramsService);
       spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
       component.programDetails = undefined;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -280,7 +280,7 @@ describe('ProgramNominationsComponent', () => {
       expect(component.targetCollections).toBeUndefined();
       });
     it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-      const  service  = TestBed.inject(ProgramsService);
+      const  service  = TestBed.get(ProgramsService);
       component.programDetails = SpecData.programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       spyOn(service, 'setTargetCollectionName').and.callThrough();
@@ -289,7 +289,7 @@ describe('ProgramNominationsComponent', () => {
     });
     it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
       const collection = {};
-      const  helperService  = TestBed.inject(HelperService);
+      const  helperService  = TestBed.get(HelperService);
       spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
       spyOn(component, 'setFrameworkCategories').and.callThrough();
       component.setFrameworkCategories(collection);

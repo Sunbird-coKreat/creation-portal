@@ -22,7 +22,7 @@ describe('CopyContentService', () => {
 
   it('should make copy api call and get success response', inject([CopyContentService, ContentService],
     (service: CopyContentService, contentService: ContentService) => {
-      const userService = TestBed.inject(UserService);
+      const userService = TestBed.get(UserService);
       userService._userProfile = testData.mockRes.userData;
       spyOn(contentService, 'post').and.callFake(() => observableOf(testData.mockRes.successResponse));
       service.copyContent(testData.mockRes.contentData).subscribe(

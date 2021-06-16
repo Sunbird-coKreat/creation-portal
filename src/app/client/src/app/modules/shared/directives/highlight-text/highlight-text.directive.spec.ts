@@ -17,7 +17,7 @@ describe('HighlightTextDirective', () => {
         { provide: ElementRef, useValue: elementRefStub }
       ]
     });
-    highlightTextDirective = TestBed.inject(HighlightTextDirective);
+    highlightTextDirective = TestBed.get(HighlightTextDirective);
   });
 
   it('can load instance', () => {

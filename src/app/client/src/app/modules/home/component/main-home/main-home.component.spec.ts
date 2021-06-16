@@ -74,9 +74,9 @@ class ActivatedRouteStub {
       });
   }));
   it('should subscribe to course service', () => {
-    const courseService = TestBed.inject(CoursesService);
-    const learnerService = TestBed.inject(LearnerService);
-    const toasterService = TestBed.inject(ToasterService);
+    const courseService = TestBed.get(CoursesService);
+    const learnerService = TestBed.get(LearnerService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     courseService._enrolledCourseData$.next({ err: null, enrolledCourses: testData.courseSuccess});
     courseService.initialize();
@@ -85,9 +85,9 @@ class ActivatedRouteStub {
     expect(component.toDoList).toBeDefined();
   });
   it('should subscribe to course service throw error', () => {
-    const courseService = TestBed.inject(CoursesService);
-    const learnerService = TestBed.inject(LearnerService);
-    const toasterService = TestBed.inject(ToasterService);
+    const courseService = TestBed.get(CoursesService);
+    const learnerService = TestBed.get(LearnerService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     courseService._enrolledCourseData$.next({ err: testData.courseError, enrolledCourses: null});
     courseService.initialize();
@@ -96,8 +96,8 @@ class ActivatedRouteStub {
     expect(component.showLoader).toBeFalsy();
   });
   it('should call playcontent', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const toasterService = TestBed.inject(ToasterService);
+    const playerService = TestBed.get(PlayerService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     spyOn(playerService, 'playContent').and.callFake(() => {
       return;
@@ -106,15 +106,15 @@ class ActivatedRouteStub {
     expect(playerService.playContent).toHaveBeenCalled();
   });
   it('should call playcontent', () => {
-    const playerService = TestBed.inject(PlayerService);
-    const toasterService = TestBed.inject(ToasterService);
+    const playerService = TestBed.get(PlayerService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     spyOn(playerService, 'playContent').and.callThrough();
     component.playContent(testData.metaData);
     expect(playerService.playContent).toHaveBeenCalled();
   });
   it('should call inview method for visits data', fakeAsync(() => {
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     spyOn(component, 'inview').and.callThrough();
     component.ngOnInit();
@@ -125,7 +125,7 @@ class ActivatedRouteStub {
     expect(component.inviewLogs).toBeDefined();
   }));
   it('should call inviewChange method for visits data', fakeAsync(() => {
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     spyOn(component, 'inviewChange').and.callThrough();
     component.ngOnInit();
@@ -136,7 +136,7 @@ class ActivatedRouteStub {
     expect(component.inviewLogs).toBeDefined();
   }));
   it('should call announcemnetInview method for visits data', fakeAsync(() => {
-    const toasterService = TestBed.inject(ToasterService);
+    const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => 'error');
     spyOn(component, 'anouncementInview').and.callThrough();
     component.ngOnInit();

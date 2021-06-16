@@ -120,8 +120,8 @@ describe('CollectionComponent', () => {
     component.collectionComponentConfig = collectionComponentInput.config;
     component.programContext = collectionComponentInput.programContext;
     component.collectionsWithCardImage = collectionWithCard;
-    programsService = TestBed.inject(ProgramsService);
-    collectionHierarchyService = TestBed.inject(CollectionHierarchyService);
+    programsService = TestBed.get(ProgramsService);
+    collectionHierarchyService = TestBed.get(CollectionHierarchyService);
     // fixture.detectChanges();
   });
 
@@ -221,7 +221,7 @@ describe('CollectionComponent', () => {
    });
 
    it ('#setTargetCollectionValue() should set targetCollection values', () => {
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
     component.programContext = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -231,7 +231,7 @@ describe('CollectionComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
     component.programContext = undefined;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -241,7 +241,7 @@ describe('CollectionComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-    const  service  = TestBed.inject(ProgramsService);
+    const  service  = TestBed.get(ProgramsService);
     component.programContext = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     spyOn(service, 'setTargetCollectionName').and.callThrough();
@@ -266,7 +266,7 @@ describe('CollectionComponent', () => {
         }
       };
     const frameworkData = {framework: 'cbse_framework'};
-    const  helperService  = TestBed.inject(HelperService);
+    const  helperService  = TestBed.get(HelperService);
     spyOn(collectionHierarchyService, 'getCollectionHierarchyDetails').and.returnValue(of(collectionData));
     spyOn(helperService, 'setFrameworkCategories').and.returnValue(frameworkData);
     spyOn(component, 'setFrameworkCategories').and.callThrough();

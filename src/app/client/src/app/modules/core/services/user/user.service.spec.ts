@@ -17,15 +17,15 @@ describe('userService', () => {
     });
   });
   xit('should fetch user profile details', inject([UserService], (service: UserService) => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableOf(mockUserData.success));
     userService.initialize(true);
     expect(userService._userProfile).toBeDefined();
   }));
   it('should emit user profile data on success', inject([UserService], (service: UserService) => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableOf(mockUserData.success));
     userService.initialize(true);
     userService.userData$.subscribe(userData => {
@@ -33,8 +33,8 @@ describe('userService', () => {
     });
   }));
   it('should emit error on api failure', inject([UserService], (service: UserService) => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableThrowError(mockUserData.error));
     userService.initialize(true);
     userService.userData$.subscribe(userData => {
@@ -42,31 +42,31 @@ describe('userService', () => {
     });
   }));
   xit('should return userProfile when userProfile get method is called', inject([UserService], (service: UserService) => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableOf(mockUserData.success));
     userService.initialize(true);
     const userProfile = userService.userProfile;
     expect(userProfile).toBeDefined();
   }));
   xit('should set rootOrgAdmin to true', inject([UserService], (service: UserService) => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableOf(mockUserData.rootOrgSuccess));
     userService.initialize(true);
     expect(userService._userProfile.rootOrgAdmin).toBeTruthy();
   }));
   xit('should set rootOrgAdmin to false', inject([UserService], (service: UserService) => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableOf(mockUserData.success));
     userService.initialize(true);
     expect(userService._userProfile.rootOrgAdmin).toBeFalsy();
   }));
 
   it('should fetch userFeed Data', () => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(mockUserData.feedSuccessResponse);
     userService.getFeedData();
     const url = {url : 'user/v1/feed/' + userService.userId};
@@ -74,8 +74,8 @@ describe('userService', () => {
   });
 
   it('should migrate custodian user', () => {
-    const userService = TestBed.inject(UserService);
-    const learnerService = TestBed.inject(LearnerService);
+    const userService = TestBed.get(UserService);
+    const learnerService = TestBed.get(LearnerService);
     const params = {
       'request' : {
         'userId': '12345',

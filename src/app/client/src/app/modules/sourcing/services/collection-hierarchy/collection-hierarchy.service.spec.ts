@@ -47,7 +47,7 @@ const errorInitiate = false;
         LearnerService
       ]
     });
-    collectionHierarchyService = TestBed.inject(CollectionHierarchyService);
+    collectionHierarchyService = TestBed.get(CollectionHierarchyService);
   });
 
   it('should be created', () => {
@@ -55,7 +55,7 @@ const errorInitiate = false;
   });
 
   it('#removeResourceToHierarchy() should call actionService.delete()', () => {
-    const  actionService  = TestBed.inject(ActionService);
+    const  actionService  = TestBed.get(ActionService);
     spyOn(actionService, 'delete').and.returnValue(observableOf({}));
     spyOn(collectionHierarchyService, 'removeResourceToHierarchy').and.callThrough();
     collectionHierarchyService.removeResourceToHierarchy('do_12345', 'do_12345', 'do_12345');
@@ -63,7 +63,7 @@ const errorInitiate = false;
   });
 
   it('#addResourceToHierarchy() should call actionService.patch()', () => {
-    const  actionService  = TestBed.inject(ActionService);
+    const  actionService  = TestBed.get(ActionService);
     spyOn(actionService, 'patch').and.returnValue(observableOf({}));
     spyOn(collectionHierarchyService, 'addResourceToHierarchy').and.callThrough();
     collectionHierarchyService.addResourceToHierarchy('do_12345', 'do_12345', 'do_12345');
@@ -71,7 +71,7 @@ const errorInitiate = false;
   });
 
   it('#getCollectionWithProgramId() should call actionService.post()', () => {
-    const  actionService  = TestBed.inject(ActionService);
+    const  actionService  = TestBed.get(ActionService);
     spyOn(actionService, 'post').and.returnValue(observableOf({}));
     spyOn(collectionHierarchyService, 'getCollectionWithProgramId').and.callThrough();
     collectionHierarchyService.getCollectionWithProgramId('123456789', null);
@@ -79,7 +79,7 @@ const errorInitiate = false;
   });
 
   it('#getCollectionHierarchy() should call actionService.get()', () => {
-    const  actionService  = TestBed.inject(ActionService);
+    const  actionService  = TestBed.get(ActionService);
     spyOn(actionService, 'get').and.returnValue({});
     spyOn(collectionHierarchyService, 'getCollectionHierarchy').and.callThrough();
     collectionHierarchyService.getCollectionHierarchy(['do_12345']);
@@ -91,7 +91,7 @@ const errorInitiate = false;
   });
 
   it('#getCollectionHierarchyDetails() should call actionService.get()', () => {
-    const  actionService  = TestBed.inject(ActionService);
+    const  actionService  = TestBed.get(ActionService);
     spyOn(actionService, 'get').and.returnValue({});
     spyOn(collectionHierarchyService, 'getCollectionHierarchyDetails').and.callThrough();
     collectionHierarchyService.getCollectionHierarchyDetails('do_12345');
@@ -148,7 +148,7 @@ const errorInitiate = false;
   });
 
   it('#getContentAggregation() should call actionService.post()', () => {
-    const  actionService  = TestBed.inject(ActionService);
+    const  actionService  = TestBed.get(ActionService);
     spyOn(actionService, 'post').and.returnValue(observableOf({}));
     spyOn(collectionHierarchyService, 'getContentAggregation').and.callThrough();
     collectionHierarchyService.getContentAggregation('123456789');
@@ -197,8 +197,8 @@ const errorInitiate = false;
 
   it('#apiErrorHandling() should call toasterService.error() and telemetryService.error()', () => {
     const errorInfo = {errorMsg: 'Something went wrong'};
-    const  toasterService  = TestBed.inject(ToasterService);
-    const telemetryService = TestBed.inject(TelemetryService);
+    const  toasterService  = TestBed.get(ToasterService);
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(toasterService, 'error').and.callThrough();
     spyOn(telemetryService, 'error').and.callThrough();
     spyOn(collectionHierarchyService, 'apiErrorHandling').and.callThrough();
@@ -226,7 +226,7 @@ const errorInitiate = false;
   });
 
   it('#getOriginForApprovedContents() should call learnerService.post()', () => {
-    const  learnerService  = TestBed.inject(LearnerService);
+    const  learnerService  = TestBed.get(LearnerService);
     spyOn(learnerService, 'post').and.returnValue(observableOf({}));
     spyOn(collectionHierarchyService, 'getOriginForApprovedContents').and.callThrough();
     collectionHierarchyService.getOriginForApprovedContents('do_12345');

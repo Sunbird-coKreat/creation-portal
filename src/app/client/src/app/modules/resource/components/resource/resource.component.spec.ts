@@ -48,10 +48,10 @@ describe('ResourceComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ResourceComponent);
     component = fixture.componentInstance;
-    toasterService = TestBed.inject(ToasterService);
-    userService = TestBed.inject(UserService);
-    resourceService = TestBed.inject(ResourceService);
-    pageApiService = TestBed.inject(PageApiService);
+    toasterService = TestBed.get(ToasterService);
+    userService = TestBed.get(UserService);
+    resourceService = TestBed.get(ResourceService);
+    pageApiService = TestBed.get(PageApiService);
     sendPageApi = true;
     spyOn(pageApiService, 'getPageData').and.callFake((options) => {
       if (sendPageApi) {

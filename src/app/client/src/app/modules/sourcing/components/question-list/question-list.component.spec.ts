@@ -279,7 +279,7 @@ describe('QuestionListComponent', () => {
 
   it ('#validateFormConfiguration() should call helperService.validateFormConfiguration', () => {
     component.formFieldProperties = [{code: 'name', name: 'name' }];
-    const  helperService  = TestBed.inject(HelperService);
+    const  helperService  = TestBed.get(HelperService);
     spyOn(component, 'validateFormConfiguration').and.callThrough();
     spyOn(helperService, 'initializeFormFields').and.returnValue([{code: 'name'}]);
     spyOn(component, 'showEditDetailsForm').and.callThrough();
@@ -294,7 +294,7 @@ describe('QuestionListComponent', () => {
      const sampleFieldArrayWithData = [{code: 'name', name: 'name', default: 'test content'}];
     component.formFieldProperties = sampleFieldArray;
     component.resourceDetails = {name: 'test content'};
-    const  helperService  = TestBed.inject(HelperService);
+    const  helperService  = TestBed.get(HelperService);
     spyOn(helperService, 'initializeFormFields').and.returnValue(sampleFieldArrayWithData);
     spyOn(component, 'showEditDetailsForm').and.callThrough();
     component.showEditDetailsForm();

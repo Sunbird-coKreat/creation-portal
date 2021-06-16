@@ -10,7 +10,7 @@ xdescribe('TextbookListService', () => {
     TestBed.configureTestingModule({
       imports:[RouterTestingModule,HttpClientTestingModule]
     });
-    service = TestBed.inject(TextbookListService);
+    service = TestBed.get(TextbookListService);
   });
 
   it('should be created', () => {

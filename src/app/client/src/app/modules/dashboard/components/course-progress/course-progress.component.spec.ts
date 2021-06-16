@@ -212,7 +212,7 @@ describe('CourseProgressComponent', () => {
 
   it('should download course progress report on click of progress report', fakeAsync(() => {
     component.queryParams = { batchIdentifier: '0124963192947507200' };
-    const usageService = TestBed.inject(UsageService);
+    const usageService = TestBed.get(UsageService);
     spyOn(usageService, 'getData').and.returnValue(observableOf(testData.mockUserData.courseProgressReportMock));
     spyOn<any>(component, 'downloadCourseReport').and.callThrough();
     spyOn(window, 'open');
@@ -226,7 +226,7 @@ describe('CourseProgressComponent', () => {
 
   it('should show toaster error message when download course progress report fails', inject([ToasterService], (toasterService) => {
     component.queryParams = { batchIdentifier: '0124963192947507200' };
-    const usageService = TestBed.inject(UsageService);
+    const usageService = TestBed.get(UsageService);
     spyOn(usageService, 'getData').and.returnValue(observableThrowError(''));
     spyOn(toasterService, 'error');
     spyOn<any>(component, 'downloadCourseReport').and.callThrough();
@@ -236,7 +236,7 @@ describe('CourseProgressComponent', () => {
 
   xit('should download assessment report on click of score report', fakeAsync(inject([ToasterService], (toasterService) => {
     component.queryParams = { batchIdentifier: '0124963192947507200' };
-    const courseProgressService = TestBed.inject(CourseProgressService);
+    const courseProgressService = TestBed.get(CourseProgressService);
     spyOn(toasterService, 'error');
     spyOn(courseProgressService, 'downloadDashboardData').and.returnValue(observableOf(testData.mockUserData.assessmentReportDownloadMock));
     spyOn<any>(component, 'downloadCourseReport').and.callThrough();

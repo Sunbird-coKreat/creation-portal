@@ -57,31 +57,31 @@ xdescribe('MainFooterComponent', () => {
     });
 
     it('should redirect to diksha app with UTM params if dialcode avaiable', () => {
-        TestBed.inject(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = true;
+        TestBed.get(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = true;
         fixture.detectChanges();
         const spy = spyOn(component, 'redirect');
         component.redirectToDikshaApp();
         expect(spy).toHaveBeenCalledWith('https://play.google.com/store/apps/details?id=in.gov.diksha.app&referrer=utm_source=' +
-        TestBed.inject(ResourceService).instance + '-sunbird&utm_medium=paytm&utm_campaign=dial&utm_term=EJ23P');
+        TestBed.get(ResourceService).instance + '-sunbird&utm_medium=paytm&utm_campaign=dial&utm_term=EJ23P');
 
     });
 
     it('should redirect to diksha app with UTM params if dialcode is not avaiable', () => {
-        TestBed.inject(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = true;
-        TestBed.inject(ActivatedRoute).queryParams = of({ dialCode: '' });
+        TestBed.get(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = true;
+        TestBed.get(ActivatedRoute).queryParams = of({ dialCode: '' });
         fixture.detectChanges();
         const spy = spyOn(component, 'redirect');
         component.redirectToDikshaApp();
         expect(spy).toHaveBeenCalledWith('https://play.google.com/store/apps/details?id=in.gov.diksha.app&referrer=utm_source=' +
-        TestBed.inject(ResourceService).instance + '-sunbird&utm_medium=get&utm_campaign=redirection');
+        TestBed.get(ResourceService).instance + '-sunbird&utm_medium=get&utm_campaign=redirection');
     });
 
     it('should redirect to diksha app without UTM params if not avaiable', () => {
-        TestBed.inject(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = false;
+        TestBed.get(ActivatedRoute).firstChild.firstChild.snapshot.data.sendUtmParams = false;
         fixture.detectChanges();
         const spy = spyOn(component, 'redirect');
         component.redirectToDikshaApp();
         expect(spy).toHaveBeenCalledWith('https://play.google.com/store/apps/details?id=in.gov.diksha.app&referrer=utm_source=' +
-        TestBed.inject(ResourceService).instance + '-sunbird&utm_medium=');
+        TestBed.get(ResourceService).instance + '-sunbird&utm_medium=');
     });
 });

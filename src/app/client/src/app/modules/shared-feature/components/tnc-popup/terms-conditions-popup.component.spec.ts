@@ -68,8 +68,8 @@ xdescribe('TermsAndConditionsPopupComponent', () => {
 
   it('should get the user data', () => {
     component.tncUrl = '';
-    const userService = TestBed.inject(UserService);
-    const tenantService = TestBed.inject(TenantService);
+    const userService = TestBed.get(UserService);
+    const tenantService = TestBed.get(TenantService);
     userService._userProfile = { 'organisations': ['01229679766115942443'],
     'tncLatestVersionUrl' : 'https://preprodall.blob.core.net/termsandcond/demo.html'
   };
@@ -80,10 +80,10 @@ xdescribe('TermsAndConditionsPopupComponent', () => {
 
   it('should get error toast message if user data gives error', () => {
     component.tncUrl = '';
-    const userService = TestBed.inject(UserService);
-    const tenantService = TestBed.inject(TenantService);
-    const toasterService = TestBed.inject(ToasterService);
-    const resourceService = TestBed.inject(ResourceService);
+    const userService = TestBed.get(UserService);
+    const tenantService = TestBed.get(TenantService);
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
     spyOn(toasterService, 'error').and.callThrough();
     userService._userProfile = { 'organisations': ['01229679766115942443'] };
     userService._userData$.next({ err: 'error', userProfile: mockUserData });
@@ -102,7 +102,7 @@ xdescribe('TermsAndConditionsPopupComponent', () => {
 
   it('should call acceptTermsAndConditions api', () => {
     component.disableContinueBtn = true;
-    const userService = TestBed.inject(UserService);
+    const userService = TestBed.get(UserService);
     userService._userProfile = { 'organisations': ['01229679766115942443'] };
     userService._userData$.next({ err: null, userProfile: mockUserData });
     spyOn(userService, 'acceptTermsAndConditions').and.returnValue(observableOf({}));
@@ -113,9 +113,9 @@ xdescribe('TermsAndConditionsPopupComponent', () => {
 
   it('should not call acceptTermsAndConditions api', () => {
     component.disableContinueBtn = true;
-    const userService = TestBed.inject(UserService);
-    const resourceService = TestBed.inject(ResourceService);
-    const toasterService = TestBed.inject(ToasterService);
+    const userService = TestBed.get(UserService);
+    const resourceService = TestBed.get(ResourceService);
+    const toasterService = TestBed.get(ToasterService);
     userService._userProfile = { 'organisations': ['01229679766115942443'] };
     userService._userData$.next({ err: null, userProfile: mockUserData });
     spyOn(toasterService, 'error').and.callThrough();
