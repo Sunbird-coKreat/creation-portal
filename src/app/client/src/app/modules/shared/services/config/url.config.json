@@ -97,6 +97,9 @@
       "HIERARCHY_ADD": "content/v3/hierarchy/add",
       "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
     },
+    "QUESTIONSET" : {
+      "GET": "questionset/v1/read"
+    },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",
       "ORG_CONSUMPTION": "dashboard/v1/consumption/org",
