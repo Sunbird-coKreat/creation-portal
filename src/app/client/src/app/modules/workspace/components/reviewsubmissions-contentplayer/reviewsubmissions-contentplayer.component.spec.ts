@@ -53,8 +53,8 @@ describe('ReviewsubmissionsContentplayerComponent', () => {
   });
 
   it('should throw error if content api throws error', () => {
-    const playerService = TestBed.get(PlayerService);
-    const resourceService = TestBed.get(ResourceService);
+    const playerService = TestBed.inject(PlayerService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceBundle.messages;
     resourceService.frmelmnts = resourceBundle.frmelmnts;
     spyOn(playerService, 'getContent').and.returnValue(observableThrowError(testData.errorRes));
@@ -65,9 +65,9 @@ describe('ReviewsubmissionsContentplayerComponent', () => {
   });
 
   it('should call  content api and return content data', () => {
-    const playerService = TestBed.get(PlayerService);
-    const userService = TestBed.get(UserService);
-    const resourceService = TestBed.get(ResourceService);
+    const playerService = TestBed.inject(PlayerService);
+    const userService = TestBed.inject(UserService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceBundle.messages;
     resourceService.frmelmnts = resourceBundle.frmelmnts;
     spyOn(playerService, 'getContent').and.returnValue(observableOf(testData.sucessRes));

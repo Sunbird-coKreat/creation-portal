@@ -15,8 +15,8 @@ describe('ProfileService', () => {
     });
   });
   it('should call getSkills method', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const profileService = TestBed.get(ProfileService);
+    const learnerService = TestBed.inject(LearnerService);
+    const profileService = TestBed.inject(ProfileService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(mockRes.successData));
     profileService.getSkills().subscribe(apiResponse => {
       expect(apiResponse.responseCode).toBe('OK');
@@ -24,8 +24,8 @@ describe('ProfileService', () => {
     });
   });
   it('should call add method', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const profileService = TestBed.get(ProfileService);
+    const learnerService = TestBed.inject(LearnerService);
+    const profileService = TestBed.inject(ProfileService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(mockRes.successData));
     const request = {
       'skillName': ['skills'],
@@ -37,8 +37,8 @@ describe('ProfileService', () => {
     });
   });
   it('should call uploadMedia method', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const profileService = TestBed.get(ProfileService);
+    const learnerService = TestBed.inject(LearnerService);
+    const profileService = TestBed.inject(ProfileService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(mockRes.successData));
     const request = new FormData;
     profileService.uploadMedia(request).subscribe(apiResponse => {
@@ -47,8 +47,8 @@ describe('ProfileService', () => {
     });
   });
   it('should call updateAvatar method', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const profileService = TestBed.get(ProfileService);
+    const learnerService = TestBed.inject(LearnerService);
+    const profileService = TestBed.inject(ProfileService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(mockRes.successData));
     const request = new FormData;
     profileService.updateAvatar(request).subscribe(apiResponse => {
@@ -57,8 +57,8 @@ describe('ProfileService', () => {
     });
   });
   it('should call updateProfile method', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const profileService = TestBed.get(ProfileService);
+    const learnerService = TestBed.inject(LearnerService);
+    const profileService = TestBed.inject(ProfileService);
     spyOn(learnerService, 'patch').and.returnValue(observableOf(mockRes.successData));
     const request = {
       profileSummary: 'summary'
@@ -69,8 +69,8 @@ describe('ProfileService', () => {
     });
   });
   it('should call updateProfileFieldVisibility method', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const profileService = TestBed.get(ProfileService);
+    const learnerService = TestBed.inject(LearnerService);
+    const profileService = TestBed.inject(ProfileService);
     spyOn(learnerService, 'post').and.returnValue(observableOf(mockRes.successData));
     const request = {
       private: ['address'],

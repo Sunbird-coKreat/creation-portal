@@ -23,8 +23,8 @@ describe('Redirect Router tests', () => {
       ],
       declarations: [RedirectComponent]
     });
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
+    router = TestBed.inject(Router);
+    location = TestBed.inject(Location);
     router.initialNavigation();
   });
 
@@ -40,7 +40,7 @@ describe('Redirect Router tests', () => {
   );
 
   it('can navigate to [/learn/redirect] (async)', async(() => {
-    TestBed.get(Router)
+    TestBed.inject(Router)
       .navigate(['/learn/redirect'])
       .then(() => {
         expect(location.path()).toBe('/learn/redirect');

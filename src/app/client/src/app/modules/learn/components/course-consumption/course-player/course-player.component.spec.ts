@@ -79,10 +79,10 @@
 //   });
 
 //   it('should fetch courseHierarchy from courseConsumptionService', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const windowScrollService = TestBed.get(WindowScrollService);
-//     const courseBatchService = TestBed.get(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
 //     spyOn(courseBatchService, 'getEnrolledBatchDetails').and.returnValue(of(enrolledBatch.result.response));
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
@@ -96,13 +96,13 @@
 //   });
 
 //   it('should set enrolledCourse to true if batchId is provided by activatedRoute', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
 //     spyOn(courseBatchService, 'getEnrolledBatchDetails').and.returnValue(of(enrolledBatch.result.response));
 //     spyOn(windowScrollService, 'smoothScroll');
@@ -112,12 +112,12 @@
 //   });
 
 //   it('should get content state if course is enrolled', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
-//     const courseBatchService = TestBed.get(CourseBatchService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
 //     spyOn(courseBatchService, 'getEnrolledBatchDetails').and.returnValue(of(enrolledBatch.result.response));
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(courseConsumptionService, 'getCourseHierarchy').and.returnValue(of(CourseHierarchyGetMockResponse.result.content));
@@ -129,12 +129,12 @@
 //   });
 
 //   it('should not play the content obtained from url if enrolled course and course is flagged', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
-//     const courseBatchService = TestBed.get(CourseBatchService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
 //     spyOn(courseBatchService, 'getEnrolledBatchDetails').and.returnValue(of(enrolledBatch.result.response));
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
@@ -150,12 +150,12 @@
 //     expect(component.enableContentPlayer).toBeFalsy();
 //   });
 //   it('should play the content obtained from url if enrolled course and should set prev and next playable content', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
-//     const courseBatchService = TestBed.get(CourseBatchService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
 //     spyOn(courseBatchService, 'getEnrolledBatchDetails').and.returnValue(of(enrolledBatch.result.response));
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
@@ -173,13 +173,13 @@
 //   });
 
 //   it('should play content if course status is unlisted', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
 //     activatedRouteStub.changeParams({ courseId: 'do_212347136096788480178', courseStatus: 'Unlisted' });
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
 //     spyOn(courseConsumptionService, 'getCourseHierarchy').and.returnValue(of(CourseHierarchyGetMockResponse.result.content));
@@ -193,13 +193,13 @@
 //   });
 
 //   it('should not play content if course is not enrolled', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
 //     activatedRouteStub.changeParams({ courseId: 'do_212347136096788480178' });
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
 //     spyOn(courseConsumptionService, 'getCourseHierarchy').and.returnValue(of(CourseHierarchyGetMockResponse.result.content));
@@ -213,15 +213,15 @@
 //   });
 
 //   it('should play content for course creator', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
-//     const userService = TestBed.get(UserService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
+//     const userService = TestBed.inject(UserService);
 //     userService._userid = 'testUser';
 //     activatedRouteStub.changeParams({ courseId: 'do_212347136096788480178' });
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
 //     spyOn(courseConsumptionService, 'getCourseHierarchy').and.returnValue(of(CourseHierarchyGetMockResponse.result.content));
@@ -234,15 +234,15 @@
 //     expect(component.enableContentPlayer).toBeTruthy();
 //   });
 //   it('should not play content if his not course creator', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
-//     const userService = TestBed.get(UserService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
+//     const userService = TestBed.inject(UserService);
 //     userService._userid = 'testUser2';
 //     activatedRouteStub.changeParams({ courseId: 'do_212347136096788480178' });
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
 //     spyOn(courseConsumptionService, 'getCourseHierarchy').and.returnValue(of(CourseHierarchyGetMockResponse.result.content));
@@ -255,15 +255,15 @@
 //     expect(component.enableContentPlayer).toBeFalsy();
 //   });
 //   it('should play content for course mentor', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
-//     const userService = TestBed.get(UserService);
-//     const permissionService = TestBed.get(PermissionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
+//     const userService = TestBed.inject(UserService);
+//     const permissionService = TestBed.inject(PermissionService);
 //     activatedRouteStub.changeParams({ courseId: 'do_212347136096788480178' });
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
 //     spyOn(permissionService, 'checkRolesPermissions').and.returnValue(true);
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
@@ -279,15 +279,15 @@
 //     expect(component.enableContentPlayer).toBeTruthy();
 //   });
 //   it('should not play content if not course mentor', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
-//     const userService = TestBed.get(UserService);
-//     const permissionService = TestBed.get(PermissionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
+//     const userService = TestBed.inject(UserService);
+//     const permissionService = TestBed.inject(PermissionService);
 //     activatedRouteStub.changeParams({ courseId: 'do_212347136096788480178' });
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
 //     spyOn(permissionService, 'checkRolesPermissions').and.returnValue(false);
 //     spyOn(windowScrollService, 'smoothScroll');
 //     spyOn(component, 'closeContentPlayer').and.returnValue(undefined);
@@ -303,12 +303,12 @@
 //     expect(component.enableContentPlayer).toBeFalsy();
 //   });
 //   it('should not play the content enrolled batch status is 0', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-//     const windowScrollService = TestBed.get(WindowScrollService);
-//     const courseBatchService = TestBed.get(CourseBatchService);
+//     const windowScrollService = TestBed.inject(WindowScrollService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
 //     enrolledBatch.result.response.status = 0;
 //     spyOn(courseBatchService, 'getEnrolledBatchDetails').and.returnValue(of(enrolledBatch.result.response));
 //     spyOn(windowScrollService, 'smoothScroll');
@@ -324,9 +324,9 @@
 //     enrolledBatch.result.response.status = 1;
 //   });
 //   it('should not display error message if content id is not available in queryparams', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
 //     spyOn(courseConsumptionService, 'getCourseHierarchy').and.returnValue(of(CourseHierarchyGetMockResponse.result.content));
 //     activatedRouteStub.queryParams = of({});
 //     activatedRouteStub.changeParams({ courseStatus: 'Unlisted' });
@@ -337,7 +337,7 @@
 //     expect(component.courseStatus).toEqual('Unlisted');
 //   });
 //   it('should make update contentState api call if the content is youTube and progress is greater than 20%', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'video/x-youtube'}};
 //     const telemetryEvent = { detail: {
 //       telemetryData: { eid: 'END',
@@ -353,7 +353,7 @@
 //     expect(courseConsumptionService.updateContentsState).toHaveBeenCalled();
 //   });
 //   it('should make update contentState api call if the content is video/mp4 and progress is greater than 20%', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'video/mp4'}};
 //     const telemetryEvent = { detail: {
 //       telemetryData: { eid: 'END',
@@ -368,7 +368,7 @@
 //     expect(courseConsumptionService.updateContentsState).toHaveBeenCalled();
 //   });
 //   it('should not make update contentState api call if the content is youTube and progress is greater than 20%', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'video/x-youtube'}};
 //     const telemetryEvent = { detail: {
 //       telemetryData: { eid: 'END',
@@ -383,7 +383,7 @@
 //     expect(courseConsumptionService.updateContentsState).not.toHaveBeenCalled();
 //   });
 //   it('should not make update contentState api call if the content is video/mp4 and progress is greater than 20%', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'video/mp4'}};
 //     const telemetryEvent = { detail: {
 //       telemetryData: { eid: 'END',
@@ -398,7 +398,7 @@
 //     expect(courseConsumptionService.updateContentsState).not.toHaveBeenCalled();
 //   });
 //   it('should make update contentState api call if the content is html and progress is greater than 0%', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'application/vnd.ekstep.html-archive'}};
 //     const telemetryEvent = { detail: {
 //       telemetryData: { eid: 'END',
@@ -414,7 +414,7 @@
 //     expect(courseConsumptionService.updateContentsState).toHaveBeenCalled();
 //   });
 //   it('should make update contentState api call if the content is h5p and progress is greater than 0%', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'application/vnd.ekstep.h5p-archive'}};
 //     const telemetryEvent = { detail: {
 //       telemetryData: { eid: 'END',
@@ -431,7 +431,7 @@
 //   });
 //   it('should make update contentState api call if the the content is not(html,h5p,video/youtub) and progress is equal to 100',
 //   () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'application/vnd.ekstep.eclm-archive'}};
 //     const playerDestroyData = { contentId: '123'};
 //     const telemetryEvent = { detail: {
@@ -449,7 +449,7 @@
 //   });
 //   it('should not make update contentState api call if the the content is not(html,h5p,video/youtub) and progress is equal to 100',
 //   () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     const contentData = {model: { mimeType: 'application/vnd.ekstep.eclm-archive'}};
 //     const playerDestroyData = { contentId: '123'};
 //     const telemetryEvent = { detail: {

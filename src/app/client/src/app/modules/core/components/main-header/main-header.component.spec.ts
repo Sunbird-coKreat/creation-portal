@@ -40,8 +40,8 @@ describe('MainHeaderComponent', () => {
 
   xit('should subscribe to user service', () => {
     spyOn(document, 'getElementById').and.returnValue('true');
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
     userService._authenticated = true;
     spyOn(learnerService, 'getWithHeaders').and.returnValue(observableOf(mockUserData.success));
     userService.initialize(true);
@@ -51,7 +51,7 @@ describe('MainHeaderComponent', () => {
 
   it('Should subscribe to tenant service and update logo and tenant name', () => {
     spyOn(document, 'getElementById').and.returnValue('true');
-    const service = TestBed.get(TenantService);
+    const service = TestBed.inject(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(mockUserData.tenantSuccess));
     service.getTenantInfo('Sunbird');
     component.ngOnInit();
@@ -68,7 +68,7 @@ describe('MainHeaderComponent', () => {
 
   xit('Should update the logo on initialization', () => {
     spyOn(document, 'getElementById').and.returnValue('true');
-    const service = TestBed.get(TenantService);
+    const service = TestBed.inject(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(mockUserData.tenantSuccess));
     service.getTenantInfo('Sunbird');
     component.ngOnInit();
@@ -83,8 +83,8 @@ describe('MainHeaderComponent', () => {
   });
 
   it('Should call getCacheLanguage if user is not login and cache exits', () => {
-    const userService = TestBed.get(UserService);
-    const cacheService = TestBed.get(CacheService);
+    const userService = TestBed.inject(UserService);
+    const cacheService = TestBed.inject(CacheService);
     cacheService.set('portalLanguage', 'hi', { maxAge: 10 * 60 });
     userService._authenticated = false;
     component.ngOnInit();
@@ -92,8 +92,8 @@ describe('MainHeaderComponent', () => {
   });
 
   it('Should call getCacheLanguage if user is not login and cache not exits', () => {
-    const userService = TestBed.get(UserService);
-    const cacheService = TestBed.get(CacheService);
+    const userService = TestBed.inject(UserService);
+    const cacheService = TestBed.inject(CacheService);
     cacheService.set('portalLanguage', null);
     userService._authenticated = false;
     component.ngOnInit();

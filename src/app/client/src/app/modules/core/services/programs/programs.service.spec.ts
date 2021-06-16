@@ -26,8 +26,8 @@ describe('ProgramsService', () => {
     let orgDetailsService: OrgDetailsService;
 
     beforeEach(() => {
-      userService = TestBed.get(UserService);
-      orgDetailsService = TestBed.get(OrgDetailsService);
+      userService = TestBed.inject(UserService);
+      orgDetailsService = TestBed.inject(OrgDetailsService);
     });
 
     // it('should return false if user belongs to custodian org', inject([ProgramsService], (programsService) => {

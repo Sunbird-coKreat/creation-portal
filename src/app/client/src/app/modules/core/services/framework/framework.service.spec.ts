@@ -18,9 +18,9 @@ describe('FrameworkService', () => {
       imports: [HttpClientTestingModule, SharedModule.forRoot(), RouterTestingModule,CoreModule],
       providers: [CacheService]
     });
-    userService = TestBed.get(UserService);
-    publicDataService = TestBed.get(PublicDataService);
-    frameworkService = TestBed.get(FrameworkService);
+    userService = TestBed.inject(UserService);
+    publicDataService = TestBed.inject(PublicDataService);
+    frameworkService = TestBed.inject(FrameworkService);
     spyOn(publicDataService, 'get').and.callFake((options) => {
       if (options.url === 'channel/v1/read/' + mockHashTagId && makeChannelReadSuc) {
         return of({result: {channel: {defaultFramework: mockFrameworkInput}}});

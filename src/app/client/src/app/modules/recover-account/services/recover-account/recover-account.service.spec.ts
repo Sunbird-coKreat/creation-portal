@@ -14,14 +14,14 @@ describe('RecoverAccountService', () => {
     });
   });
   it('should be created', () => {
-    const service: RecoverAccountService = TestBed.get(RecoverAccountService);
+    const service: RecoverAccountService = TestBed.inject(RecoverAccountService);
     expect(service).toBeTruthy();
   });
 
   it('should call resetPassword API', inject([],
     () => {
-      const certificateService = TestBed.get(RecoverAccountService);
-      const learnerService = TestBed.get(LearnerService);
+      const certificateService = TestBed.inject(RecoverAccountService);
+      const learnerService = TestBed.inject(LearnerService);
       const params = { 'request': { 'type': 'user', 'key': 'testKey', 'userId': 'testUserId' } };
       spyOn(learnerService, 'post').and.returnValue(observableOf({}));
       certificateService.resetPassword(params);
@@ -31,8 +31,8 @@ describe('RecoverAccountService', () => {
 
   it('should call generateOTP API', inject([],
     () => {
-      const certificateService = TestBed.get(RecoverAccountService);
-      const learnerService = TestBed.get(LearnerService);
+      const certificateService = TestBed.inject(RecoverAccountService);
+      const learnerService = TestBed.inject(LearnerService);
       const params = { 'request': { 'type': 'user', 'key': 'testKey', 'userId': 'testUserId' } };
       spyOn(learnerService, 'post').and.returnValue(observableOf({}));
       certificateService.generateOTP(params);
@@ -42,8 +42,8 @@ describe('RecoverAccountService', () => {
 
   it('should call verifyOTP API', inject([],
     () => {
-      const certificateService = TestBed.get(RecoverAccountService);
-      const learnerService = TestBed.get(LearnerService);
+      const certificateService = TestBed.inject(RecoverAccountService);
+      const learnerService = TestBed.inject(LearnerService);
       const params = { 'request': { 'type': 'user', 'key': 'testKey', 'userId': 'testUserId' } };
       spyOn(learnerService, 'post').and.returnValue(observableOf({}));
       certificateService.verifyOTP(params);
@@ -53,8 +53,8 @@ describe('RecoverAccountService', () => {
 
   it('should call fuzzyUserSearch API', inject([],
     () => {
-      const certificateService = TestBed.get(RecoverAccountService);
-      const learnerService = TestBed.get(LearnerService);
+      const certificateService = TestBed.inject(RecoverAccountService);
+      const learnerService = TestBed.inject(LearnerService);
       const params = {
         'request': {
           'filters': {

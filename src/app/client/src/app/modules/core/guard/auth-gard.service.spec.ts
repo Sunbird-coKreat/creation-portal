@@ -37,7 +37,7 @@ xdescribe('AuthGardService', () => {
         });
     });
     it('be able to hit route when user is logged in', () => {
-        const authservice = TestBed.get(AuthGuard);
+        const authservice = TestBed.inject(AuthGuard);
         const snapshotroute = {
             url: [
                 {
@@ -51,15 +51,15 @@ xdescribe('AuthGardService', () => {
     });
 
     it('canLoad should return false if user not logged in', () => {
-        const userService = TestBed.get(UserService);
-        const authservice = TestBed.get(AuthGuard);
+        const userService = TestBed.inject(UserService);
+        const authservice = TestBed.inject(AuthGuard);
         spyOnProperty(userService, 'loggedIn', 'get').and.returnValue(false);
         expect(authservice.canLoad()).toBeFalsy();
     });
 
     it('canLoad should return true if user is logged in', () => {
-        const userService = TestBed.get(UserService);
-        const authservice = TestBed.get(AuthGuard);
+        const userService = TestBed.inject(UserService);
+        const authservice = TestBed.inject(AuthGuard);
         spyOnProperty(userService, 'loggedIn', 'get').and.returnValue(true);
         expect(authservice.canLoad()).toBeTruthy();
     });

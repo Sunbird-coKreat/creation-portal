@@ -71,10 +71,10 @@ describe('PublicContentPlayerComponent', () => {
   });
 
   it('should config content player if content status is "Live"', () => {
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
-    const playerService = TestBed.get(PublicPlayerService);
-    const resourceService = TestBed.get(ResourceService);
+    const playerService = TestBed.inject(PublicPlayerService);
+    const resourceService = TestBed.inject(ResourceService);
     serverRes.result.result.content.status = 'Live';
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -83,10 +83,10 @@ describe('PublicContentPlayerComponent', () => {
     expect(component.playerConfig).toBeTruthy();
   });
   it('should throw error if content api throws error', () => {
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
-    const playerService = TestBed.get(PublicPlayerService);
-    const resourceService = TestBed.get(ResourceService);
+    const playerService = TestBed.inject(PublicPlayerService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
     spyOn(playerService, 'getContent').and.returnValue(observableThrowError(serverRes.failureResult));
@@ -96,7 +96,7 @@ describe('PublicContentPlayerComponent', () => {
     expect(component.errorMessage).toBe(resourceService.messages.stmsg.m0009);
   });
   it('should call tryAgain method', () => {
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     spyOn(component, 'tryAgain').and.callThrough();
     spyOn(component, 'getContent').and.callThrough();
@@ -111,7 +111,7 @@ describe('PublicContentPlayerComponent', () => {
     expect(component.unsubscribe$.complete).toHaveBeenCalled();
   });
   it('sets the badges data  after making api call and pass input to content-badges component', () => {
-    const playerService = TestBed.get(PublicPlayerService);
+    const playerService = TestBed.inject(PublicPlayerService);
     spyOn(playerService, 'getContent').and.returnValue(observableOf(serverRes.result));
     component.ngOnInit();
     expect(component.badgeData).toBeDefined();
@@ -126,7 +126,7 @@ describe('PublicContentPlayerComponent', () => {
   it('should redirect to flattened dial code on click of close button', fakeAsync(() => {
     component.dialCode = '6466X';
     component.close();
-    const router = TestBed.get(Router);
+    const router = TestBed.inject(Router);
     tick(101);
     expect(router.navigate).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledTimes(1);

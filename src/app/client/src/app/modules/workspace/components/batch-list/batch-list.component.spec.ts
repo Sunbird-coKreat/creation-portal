@@ -91,8 +91,8 @@ describe('BatchListComponent', () => {
   });
 
   it('should call  batch search api and returns result count more than 1', inject([SearchService], (searchService) => {
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userSuccess.success));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;
@@ -104,8 +104,8 @@ describe('BatchListComponent', () => {
   }));
 
   it('should call  batch search api and returns result count 0', inject([SearchService], (searchService) => {
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userSuccess.success));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;
@@ -117,8 +117,8 @@ describe('BatchListComponent', () => {
   }));
   // if  search api's throw's error
   it('should throw error', inject([SearchService], (searchService) => {
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userSuccess.success));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;
@@ -131,8 +131,8 @@ describe('BatchListComponent', () => {
 
   it('should call setpage method and set proper page number', inject([Router],
     (route) => {
-      const userService = TestBed.get(UserService);
-      const learnerService = TestBed.get(LearnerService);
+      const userService = TestBed.inject(UserService);
+      const learnerService = TestBed.inject(LearnerService);
       route.url = '/workspace/content/batches/view-all/Ongoing-Batches/1?status=0';
       spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userSuccess.success));
       userService._userProfile = testData.userSuccess.success;
@@ -146,8 +146,8 @@ describe('BatchListComponent', () => {
     }));
 
   it('should call  user search api and returns result count more than 1', inject([SearchService], (searchService) => {
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userlist));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;
@@ -172,8 +172,8 @@ describe('BatchListComponent', () => {
   }));
 
   it('should call  user search api and throws error ', inject([SearchService], (searchService) => {
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userlist));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;
@@ -200,10 +200,10 @@ describe('BatchListComponent', () => {
 
 
   it('should call  user search api and returns result count zero', inject([SearchService], (searchService) => {
-    const userService = TestBed.get(UserService);
-    const learnerService = TestBed.get(LearnerService);
-    const toasterService = TestBed.get(ToasterService);
-    const resourceService = TestBed.get(ResourceService);
+    const userService = TestBed.inject(UserService);
+    const learnerService = TestBed.inject(LearnerService);
+    const toasterService = TestBed.inject(ToasterService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceBundle.messages;
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userlist));
     userService._userProfile = testData.userSuccess.success;
@@ -228,9 +228,9 @@ describe('BatchListComponent', () => {
     component.UserList(req);
   }));
   it('should call inview method for visits data', () => {
-    const userService = TestBed.get(UserService);
+    const userService = TestBed.inject(UserService);
     component.telemetryImpression = testData.telemetryData;
-    const learnerService = TestBed.get(LearnerService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userlist));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;
@@ -241,10 +241,10 @@ describe('BatchListComponent', () => {
     expect(component.inviewLogs).toBeDefined();
   });
   it('should call onCardClick method for navigation', () => {
-    const userService = TestBed.get(UserService);
-    const router = TestBed.get(Router);
+    const userService = TestBed.inject(UserService);
+    const router = TestBed.inject(Router);
     component.telemetryImpression = testData.telemetryData;
-    const learnerService = TestBed.get(LearnerService);
+    const learnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'get').and.returnValue(observableOf(testData.userlist));
     userService._userProfile = testData.userSuccess.success;
     userService._userProfile.roleOrgMap = roleOrgMap;

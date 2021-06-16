@@ -90,9 +90,9 @@ describe('ProgramHeaderComponent', () => {
 
     fixture = TestBed.createComponent(ProgramHeaderComponent);
     de = fixture.debugElement;
-    programStageService = TestBed.get(ProgramStageService);
-    configService = TestBed.get(ConfigService);
-    telemetryService = TestBed.get(TelemetryService);
+    programStageService = TestBed.inject(ProgramStageService);
+    configService = TestBed.inject(ConfigService);
+    telemetryService = TestBed.inject(TelemetryService);
     component = fixture.componentInstance;
     component.headerComponentInput = mockRes.inputData;
   });

@@ -6,6 +6,7 @@ import {
   IInteractEventInput, IShareEventInput, IErrorEventInput, IEndEventInput, ILogEventInput, ITelemetryContext, IFeedBackEventInput
 } from './../../interfaces/telemetry';
 import { environment } from '@sunbird/environment';
+declare const EkTelemetry;
 
 export const TELEMETRY_PROVIDER = new InjectionToken('telemetryProvider');
 /**

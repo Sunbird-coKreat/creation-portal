@@ -54,8 +54,8 @@ describe('CourseConsumptionService', () => {
   }));
 
   it('should not call api to get course herierachy if data exists', () => {
-    const service = TestBed.get(CourseConsumptionService);
-    const playerService = TestBed.get(PlayerService);
+    const service = TestBed.inject(CourseConsumptionService);
+    const playerService = TestBed.inject(PlayerService);
     service.courseHierarchy = courseHierarchyGetMockResponse.result.content;
     spyOn(service, 'getCourseHierarchy').and.callThrough();
     spyOn(playerService, 'getCollectionHierarchy').and.returnValue(observableOf(courseHierarchyGetMockResponse));
@@ -64,8 +64,8 @@ describe('CourseConsumptionService', () => {
   });
 
   it('should call api to get course herierachy if data not exists', () => {
-    const service = TestBed.get(CourseConsumptionService);
-    const playerService = TestBed.get(PlayerService);
+    const service = TestBed.inject(CourseConsumptionService);
+    const playerService = TestBed.inject(PlayerService);
     spyOn(service, 'getCourseHierarchy').and.callThrough();
     spyOn(playerService, 'getCollectionHierarchy').and.returnValue(observableOf(courseHierarchyGetMockResponse));
     service.getCourseHierarchy('do_212347136096788480178');

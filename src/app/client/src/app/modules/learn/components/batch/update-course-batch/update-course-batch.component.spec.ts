@@ -82,8 +82,8 @@
 //   });
 
 //   it('should fetch batch details and show update Form model', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     spyOn(courseBatchService, 'getUserList').and.callFake((request) => {
 //       if (request) {
 //         return observableOf(getUserDetails);
@@ -107,12 +107,12 @@
 //     expect(component.selectedMentors.length).toBe(6);
 //   });
 //   it('should navigate to parent page if fetching batch details fails', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const userService = TestBed.get(UserService);
-//     const activatedRoute = TestBed.get(ActivatedRoute);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const userService = TestBed.inject(UserService);
+//     const activatedRoute = TestBed.inject(ActivatedRoute);
 //     userService._userid = 'b2479136-8608-41c0-b3b1-283f38c338d';
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -126,12 +126,12 @@
 //     expect(component.router.navigate).toHaveBeenCalledWith(['./'], {relativeTo: activatedRoute.parent});
 //   });
 //   it('should navigate to parent page if fetching user details fails', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const activatedRoute = TestBed.get(ActivatedRoute);
-//     const userService = TestBed.get(UserService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const activatedRoute = TestBed.inject(ActivatedRoute);
+//     const userService = TestBed.inject(UserService);
 //     userService._userid = 'b2479136-8608-41c0-b3b1-283f38c338d';
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -154,11 +154,11 @@
 //     expect(component.router.navigate).toHaveBeenCalledWith(['./'], {relativeTo: activatedRoute.parent});
 //   });
 //   it('should update batch and show success message if api return success', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const userService = TestBed.get(UserService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const userService = TestBed.inject(UserService);
 //     userService._userProfile = { organisationIds: [] };
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -183,11 +183,11 @@
 //     expect(toasterService.success).toHaveBeenCalledWith('success');
 //   });
 //   it('should update batch and show error message if api fails', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const userService = TestBed.get(UserService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const userService = TestBed.inject(UserService);
 //     userService._userProfile = { organisationIds: [] };
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -226,8 +226,8 @@
 //     expect(component.selectedParticipants.length).toBe(1);
 //   });
 //   it('should call resetForm method  and reset the form except start date', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
 //     spyOn(courseBatchService, 'getUserList').and.callFake((request) => {
 //       if (request) {
 //         return observableOf(getUserDetails);
@@ -251,11 +251,11 @@
 //   });
 
 //   it('should update batch if batch has enrollmentend date and show success message', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const userService = TestBed.get(UserService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const userService = TestBed.inject(UserService);
 //     userService._userProfile = { organisationIds: [] };
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -283,11 +283,11 @@
 //   });
 
 //  it('should update batch min enrollmentend date should be todays date and show success message', () => {
-//     const courseBatchService = TestBed.get(CourseBatchService);
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const userService = TestBed.get(UserService);
+//     const courseBatchService = TestBed.inject(CourseBatchService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const userService = TestBed.inject(UserService);
 //     userService._userProfile = { organisationIds: [] };
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;

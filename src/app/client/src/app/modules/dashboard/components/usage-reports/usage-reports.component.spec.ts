@@ -50,7 +50,7 @@ describe('UsageReportsComponent', () => {
     expect(component.isTableDataLoaded).toEqual(false);
   });
   it('makes expected calls of ngOnInit and render the report ', () => {
-    const usageService = TestBed.get(UsageService);
+    const usageService = TestBed.inject(UsageService);
     component.slug = 'sunbird';
     spyOn(document, 'getElementById').and.returnValue('sunbird');
     spyOn(component, 'renderReport').and.callThrough();
@@ -63,8 +63,8 @@ describe('UsageReportsComponent', () => {
     expect(component.chartData.length).toBe(6);
   });
   it('should call downloadCSV method ', () => {
-    const usageService = TestBed.get(UsageService);
-    const toasterService = TestBed.get(ToasterService);
+    const usageService = TestBed.inject(UsageService);
+    const toasterService = TestBed.inject(ToasterService);
     component.slug = 'sunbird';
     spyOn(document, 'getElementById').and.returnValue('sunbird');
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockChartData.configData));

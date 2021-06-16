@@ -69,9 +69,9 @@
 
 //   it(`should enable resume button if course is not flagged, batch status is not "0" and
 //   courseProgressData obtained from courseProgressService`, () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const courseProgressService = TestBed.get(CourseProgressService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const courseProgressService = TestBed.inject(CourseProgressService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
 //     component.courseHierarchy = CourseHierarchyGetMockResponse.result.content;
@@ -86,9 +86,9 @@
 //   });
 
 //    it('should not enable resume button if course is flagged and courseProgressData obtained from courseProgressService', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const courseProgressService = TestBed.get(CourseProgressService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const courseProgressService = TestBed.inject(CourseProgressService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
 //     component.courseHierarchy = CourseHierarchyGetMockResponseFlagged.result.content;
@@ -102,10 +102,10 @@
 //   });
 
 //    it('should not enable resume button if batchId is not present', () => {
-//     const courseConsumptionService = TestBed.get(CourseConsumptionService);
-//     const courseProgressService = TestBed.get(CourseProgressService);
-//     const resourceService = TestBed.get(ResourceService);
-//     const activatedRouteStub = TestBed.get(ActivatedRoute);
+//     const courseConsumptionService = TestBed.inject(CourseConsumptionService);
+//     const courseProgressService = TestBed.inject(CourseProgressService);
+//     const resourceService = TestBed.inject(ResourceService);
+//     const activatedRouteStub = TestBed.inject(ActivatedRoute);
 //     activatedRouteStub.changeFirstChildParams({courseId: 'do_212347136096788480178'});
 //     resourceService.messages = resourceServiceMockData.messages;
 //     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;

@@ -31,8 +31,8 @@ describe('ContentRatingComponent', () => {
     expect(component).toBeTruthy();
   });
   xit('should call submit and generate the feedback event ', () => {
-    const telemetryService = TestBed.get(TelemetryService);
-    const toasterService = TestBed.get(ToasterService);
+    const telemetryService = TestBed.inject(TelemetryService);
+    const toasterService = TestBed.inject(ToasterService);
     spyOn(component, 'submit').and.callThrough();
     spyOn(telemetryService, 'feedback').and.callThrough();
     component.contentRating = 4;

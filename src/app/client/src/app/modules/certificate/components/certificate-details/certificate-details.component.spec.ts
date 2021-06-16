@@ -62,7 +62,7 @@ xdescribe('CertificateDetailsComponent', () => {
 
   it('should verify the certificate', () => {
     component.loader = true;
-    const certificateService = TestBed.get(CertificateService);
+    const certificateService = TestBed.inject(CertificateService);
     spyOn(certificateService, 'validateCertificate').and.returnValue(observableOf(validateCertMockResponse.successResponse));
     const certData = validateCertMockResponse.successResponse;
     component.certificateVerify();
@@ -74,7 +74,7 @@ xdescribe('CertificateDetailsComponent', () => {
 
   it('should not verify the certificate', () => {
     component.loader = true;
-    const certificateService = TestBed.get(CertificateService);
+    const certificateService = TestBed.inject(CertificateService);
     spyOn(certificateService, 'validateCertificate').and.callFake(() => observableThrowError(validateCertMockResponse.errorRespone));
     const certData = validateCertMockResponse.errorRespone;
     component.certificateVerify();
@@ -84,7 +84,7 @@ xdescribe('CertificateDetailsComponent', () => {
   });
 
   it('should get content id', () => {
-    const playerService = TestBed.get(PublicPlayerService);
+    const playerService = TestBed.inject(PublicPlayerService);
     spyOn(playerService, 'getCollectionHierarchy').and.returnValue(observableOf(validateCertMockResponse.getCourseIdResponse));
     component.watchVideoLink = validateCertMockResponse.getCourseIdResponse.result.content.certVideoUrl;
     component.getCourseVideoUrl('do_1126972203209768961327');
@@ -93,7 +93,7 @@ xdescribe('CertificateDetailsComponent', () => {
 
   it('should play the content', () => {
     component.showVideoThumbnail = false;
-    const playerService = TestBed.get(PublicPlayerService);
+    const playerService = TestBed.inject(PublicPlayerService);
     spyOn(playerService, 'getContent').and.returnValue(observableOf(validateCertMockResponse.getContentResponse));
     component.playContent('do_112831862871203840114');
   });

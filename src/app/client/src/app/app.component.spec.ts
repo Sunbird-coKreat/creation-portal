@@ -67,11 +67,11 @@ describe('AppComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
-    const navigationHelperService = TestBed.get(NavigationHelperService);
-    telemetryService = TestBed.get(TelemetryService);
-    configService = TestBed.get(ConfigService);
-    userService = TestBed.get(UserService);
-    resourceService = TestBed.get(ResourceService);
+    const navigationHelperService = TestBed.inject(NavigationHelperService);
+    telemetryService = TestBed.inject(TelemetryService);
+    configService = TestBed.inject(ConfigService);
+    userService = TestBed.inject(UserService);
+    resourceService = TestBed.inject(ResourceService);
     spyOn(navigationHelperService, 'initialize').and.callFake(() => {});
     spyOn(telemetryService, 'initialize');
     spyOn(telemetryService, 'getDeviceId').and.callFake((cb) => cb('123'));
@@ -96,9 +96,9 @@ afterEach(() => {
   jasmine.clock().uninstall();
 });
   it('should config telemetry service for login Session', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const publicDataService = TestBed.get(PublicDataService);
-    const tenantService = TestBed.get(TenantService);
+    const learnerService = TestBed.inject(LearnerService);
+    const publicDataService = TestBed.inject(PublicDataService);
+    const tenantService = TestBed.inject(TenantService);
     userService._authenticated = true;
     spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));
     spyOn(publicDataService, 'post').and.returnValue(of({result: { response: { content: 'data'} } }));
@@ -171,10 +171,10 @@ afterEach(() => {
     expect(telemetryService.initialize).toHaveBeenCalledTimes(0);
   });
   it('should not call register Device api for login Session', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const publicDataService = TestBed.get(PublicDataService);
-    const tenantService = TestBed.get(TenantService);
-    const deviceRegisterService = TestBed.get(DeviceRegisterService);
+    const learnerService = TestBed.inject(LearnerService);
+    const publicDataService = TestBed.inject(PublicDataService);
+    const tenantService = TestBed.inject(TenantService);
+    const deviceRegisterService = TestBed.inject(DeviceRegisterService);
     userService._authenticated = true;
     spyOn(deviceRegisterService, 'initialize');
     spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));
@@ -185,9 +185,9 @@ afterEach(() => {
   });
 const maockOrgDetails = { result: { response: { content: [{hashTagId: '1235654', rootOrgId: '1235654'}] }}};
   it('should config telemetry service for Anonymous Session', () => {
-    const orgDetailsService = TestBed.get(OrgDetailsService);
-    const publicDataService = TestBed.get(PublicDataService);
-    const tenantService = TestBed.get(TenantService);
+    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const publicDataService = TestBed.inject(PublicDataService);
+    const tenantService = TestBed.inject(TenantService);
     spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));
     spyOn(publicDataService, 'post').and.returnValue(of(maockOrgDetails));
     orgDetailsService.orgDetails = {hashTagId: '1235654', rootOrgId: '1235654'};
@@ -219,10 +219,10 @@ const maockOrgDetails = { result: { response: { content: [{hashTagId: '1235654',
     expect(telemetryService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({userOrgDetails: config.userOrgDetails}));
   });
   it('should not call register Device api for Anonymous Session', () => {
-    const orgDetailsService = TestBed.get(OrgDetailsService);
-    const publicDataService = TestBed.get(PublicDataService);
-    const tenantService = TestBed.get(TenantService);
-    const deviceRegisterService = TestBed.get(DeviceRegisterService);
+    const orgDetailsService = TestBed.inject(OrgDetailsService);
+    const publicDataService = TestBed.inject(PublicDataService);
+    const tenantService = TestBed.inject(TenantService);
+    const deviceRegisterService = TestBed.inject(DeviceRegisterService);
     spyOn(deviceRegisterService, 'initialize');
     spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));
     spyOn(publicDataService, 'post').and.returnValue(of({}));
@@ -232,9 +232,9 @@ const maockOrgDetails = { result: { response: { content: [{hashTagId: '1235654',
   });
 
   it('should check framework key is in user read api and open the popup  ', () => {
-    const learnerService = TestBed.get(LearnerService);
-    const publicDataService = TestBed.get(PublicDataService);
-    const tenantService = TestBed.get(TenantService);
+    const learnerService = TestBed.inject(LearnerService);
+    const publicDataService = TestBed.inject(PublicDataService);
+    const tenantService = TestBed.inject(TenantService);
     userService._authenticated = true;
     component.showFrameWorkPopUp = true;
     spyOn(tenantService, 'get').and.returnValue(of(mockData.tenantResponse));

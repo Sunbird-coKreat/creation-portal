@@ -177,8 +177,8 @@ describe('ProgramComponent', () => {
 
   it('#ngOnInit() should call toaster.error when program is null', () => {
     component.programId = null;
-    const toasterService = TestBed.get(ToasterService);
-    const resourceService = TestBed.get(ResourceService);
+    const toasterService = TestBed.inject(ToasterService);
+    const resourceService = TestBed.inject(ResourceService);
     spyOn(component, 'getPageId').and.callThrough();
     spyOn(toasterService, 'error').and.callThrough();
     spyOn(component, 'ngOnInit').and.callThrough();
@@ -212,7 +212,7 @@ describe('ProgramComponent', () => {
     component.programDetails = {
       config: { framework: 'NCFCOPY'}
     }
-    const frameworkService = TestBed.get(FrameworkService);
+    const frameworkService = TestBed.inject(FrameworkService);
     spyOn(frameworkService, 'initialize').and.callThrough();
     spyOn(component, 'fetchFrameWorkDetails').and.callThrough();
     component.fetchFrameWorkDetails();
@@ -257,7 +257,7 @@ describe('ProgramComponent', () => {
     component.searchInput = 'jnc68';
     component.initialSourcingOrgUser = ['dummyUser'];
     const sortUsersListData = ['user1', 'user2', 'user3'];
-    const  registryService  = TestBed.get(RegistryService);
+    const  registryService  = TestBed.inject(RegistryService);
     spyOn(component, 'sortUsersList');
     spyOn(registryService, 'getSearchedUserList').and.returnValue(sortUsersListData);
     spyOn(component, 'getUserDetailsBySearch').and.callThrough();
@@ -272,7 +272,7 @@ describe('ProgramComponent', () => {
    component.sortColumnOrgUsers = 'projectselectedRole';
    component.directionOrgUsers = 'desc';
    component.OrgUsersCnt = 0;
-   const  programsService  = TestBed.get(ProgramsService);
+   const  programsService  = TestBed.inject(ProgramsService);
    spyOn(component, 'sortUsersList').and.callThrough();
    spyOn(programsService, 'sortCollection').and.returnValue(usersListDesc);
    component.sortUsersList(usersList);
@@ -287,7 +287,7 @@ describe('ProgramComponent', () => {
     const usersListDesc = ['user3', 'user2', 'user1'];
     const chunkList = [ ['user3'], ['user2'], ['user1']];
     component.isInitialSourcingOrgUser = true;
-    const  programsService  = TestBed.get(ProgramsService);
+    const  programsService  = TestBed.inject(ProgramsService);
     spyOn(component, 'sortUsersList').and.callThrough();
     spyOn(programsService, 'sortCollection').and.returnValue(usersListDesc);
     component.sortUsersList(usersList, true);
@@ -297,7 +297,7 @@ describe('ProgramComponent', () => {
     });
 
     it ('#setTargetCollectionValue() should set targetCollection values', () => {
-      const  programsService  = TestBed.get(ProgramsService);
+      const  programsService  = TestBed.inject(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
       component.programDetails = programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -307,7 +307,7 @@ describe('ProgramComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-    const  programsService  = TestBed.get(ProgramsService);
+    const  programsService  = TestBed.inject(ProgramsService);
     spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
     component.programDetails = undefined;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -317,7 +317,7 @@ describe('ProgramComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-    const  programsService  = TestBed.get(ProgramsService);
+    const  programsService  = TestBed.inject(ProgramsService);
     component.programDetails = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     spyOn(programsService, 'setTargetCollectionName').and.callThrough();
@@ -327,7 +327,7 @@ describe('ProgramComponent', () => {
 
   it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
     const collection = {};
-    const  helperService  = TestBed.get(HelperService);
+    const  helperService  = TestBed.inject(HelperService);
     spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
     spyOn(component, 'setFrameworkCategories').and.callThrough();
     component.setFrameworkCategories(collection);

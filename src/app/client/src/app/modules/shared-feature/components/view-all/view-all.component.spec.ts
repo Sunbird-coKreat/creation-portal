@@ -61,10 +61,10 @@
 //   });
 
 //   it('should call ngOninit when content is present', () => {
-//     const courseService = TestBed.get(CoursesService);
-//     const learnerService = TestBed.get(LearnerService);
-//     const searchService = TestBed.get(SearchService);
-//     const route = TestBed.get(Router);
+//     const courseService = TestBed.inject(CoursesService);
+//     const learnerService = TestBed.inject(LearnerService);
+//     const searchService = TestBed.inject(SearchService);
+//     const route = TestBed.inject(Router);
 //     route.url = 'learn/view-all/LatestCourses/1?contentType: course';
 //     const queryParams = { contentType: ['Course'], objectType: ['Content'], status: ['Live'],
 //     defaultSortBy: JSON.stringify({lastPublishedOn: 'desc'})};
@@ -100,13 +100,13 @@
 //     expect(component.totalCount).toEqual(1);
 //   });
 //   it('should call ngOninit when error', () => {
-//     const courseService = TestBed.get(CoursesService);
-//     const learnerService = TestBed.get(LearnerService);
-//     const searchService = TestBed.get(SearchService);
-//     const toasterService = TestBed.get(ToasterService);
-//     const resourceService = TestBed.get(ResourceService);
+//     const courseService = TestBed.inject(CoursesService);
+//     const learnerService = TestBed.inject(LearnerService);
+//     const searchService = TestBed.inject(SearchService);
+//     const toasterService = TestBed.inject(ToasterService);
+//     const resourceService = TestBed.inject(ResourceService);
 //     resourceService.messages = resourceBundle.messages;
-//     const route = TestBed.get(Router);
+//     const route = TestBed.inject(Router);
 //     route.url = 'learn/view-all/LatestCourses/1?contentType: course';
 //     const queryParams = { contentType: ['Course'], objectType: ['Content'], status: ['Live'],
 //     defaultSortBy: JSON.stringify({lastPublishedOn: 'desc'})};
@@ -143,8 +143,8 @@
 //     expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.fmsg.m0051);
 //   });
 //   it('should call playcontent with batchId', () => {
-//     const playerService = TestBed.get(PlayerService);
-//     const route = TestBed.get(Router);
+//     const playerService = TestBed.inject(PlayerService);
+//     const route = TestBed.inject(Router);
 //     route.url = '/learn/view-all/LatestCourses/1?contentType: course';
 //     const event = { data: { metaData: { batchId: '0122838911932661768' } } };
 //     spyOn(playerService, 'playContent').and.callFake(() => observableOf(event.data.metaData));
@@ -152,17 +152,17 @@
 //     expect(playerService.playContent).toHaveBeenCalled();
 //   });
 //   it('should call playcontent without batchId', () => {
-//     const route = TestBed.get(Router);
+//     const route = TestBed.inject(Router);
 //     route.url = '/learn/view-all/LatestCourses/1?contentType: course';
-//     const playerService = TestBed.get(PlayerService);
+//     const playerService = TestBed.inject(PlayerService);
 //     const event = { data: { metaData: { contentType: 'story' } } };
 //     spyOn(playerService, 'playContent').and.callFake(() => observableOf(event.data.metaData));
 //     component.playContent(event);
 //     expect(playerService.playContent).toHaveBeenCalled();
 //   });
 //   it('should call navigateToPage method', () => {
-//     const configService = TestBed.get(ConfigService);
-//     const route = TestBed.get(Router);
+//     const configService = TestBed.inject(ConfigService);
+//     const route = TestBed.inject(Router);
 //     route.url = 'learn/view-all/LatestCourses/1?contentType: course';
 //     component.queryParams = { contentType: ['Course'], objectType: ['Content'], status: ['Live'],
 //     defaultSortBy: JSON.stringify({lastPublishedOn: 'desc'})};
@@ -178,7 +178,7 @@
 //   });
 
 //   it('should call updateDownloadStatus when updateCardData is called' , () => {
-//     const playerService = TestBed.get(PublicPlayerService);
+//     const playerService = TestBed.inject(PublicPlayerService);
 //     spyOn(playerService, 'updateDownloadStatus');
 //     component.searchList = Response.successData.result.content;
 //     component.updateCardData(Response.download_list);

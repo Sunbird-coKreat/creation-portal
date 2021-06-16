@@ -79,10 +79,10 @@ describe('ContentPlayerComponent', () => {
   });
 
   it('should config content player if content status is "Live"', () => {
-    const userService = TestBed.get(UserService);
-    const playerService = TestBed.get(PlayerService);
-    const resourceService = TestBed.get(ResourceService);
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.inject(PlayerService);
+    const resourceService = TestBed.inject(ResourceService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     serverRes.result.content.status = 'Live';
     resourceService.messages = resourceServiceMockData.messages;
@@ -94,10 +94,10 @@ describe('ContentPlayerComponent', () => {
     expect(component.playerConfig).toBeTruthy();
   });
   xit('should config player if content status is "Unlisted"', () => {
-    const userService = TestBed.get(UserService);
-    const playerService = TestBed.get(PlayerService);
-    const resourceService = TestBed.get(ResourceService);
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.inject(PlayerService);
+    const resourceService = TestBed.inject(ResourceService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     serverRes.result.content.status = 'Unlisted';
     resourceService.messages = resourceServiceMockData.messages;
@@ -109,16 +109,16 @@ describe('ContentPlayerComponent', () => {
     expect(component.playerConfig).toBeTruthy();
   });
   xit('should not config player if content status is not "Live" or "Unlisted"', () => {
-    const userService = TestBed.get(UserService);
-    const playerService = TestBed.get(PlayerService);
-    const resourceService = TestBed.get(ResourceService);
-    const toasterService = TestBed.get(ToasterService);
-    const navigationHelperService = TestBed.get(NavigationHelperService);
+    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.inject(PlayerService);
+    const resourceService = TestBed.inject(ResourceService);
+    const toasterService = TestBed.inject(ToasterService);
+    const navigationHelperService = TestBed.inject(NavigationHelperService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-    const router = TestBed.get(Router);
+    const router = TestBed.inject(Router);
     serverRes.result.content.status = 'Draft';
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     spyOn(toasterService, 'warning').and.callThrough();
     spyOn(playerService, 'getContent').and.returnValue(observableOf(serverRes));
@@ -129,12 +129,12 @@ describe('ContentPlayerComponent', () => {
     expect(component.toasterService.warning).toHaveBeenCalledWith(resourceService.messages.imsg.m0027);
   });
   xit('should throw error if content api throws error', () => {
-    const userService = TestBed.get(UserService);
-    const playerService = TestBed.get(PlayerService);
-    const resourceService = TestBed.get(ResourceService);
+    const userService = TestBed.inject(UserService);
+    const playerService = TestBed.inject(PlayerService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     spyOn(playerService, 'getContent').and.returnValue(observableThrowError(serverRes));
     userService._userData$.next({ err: null, userProfile: mockUserData });

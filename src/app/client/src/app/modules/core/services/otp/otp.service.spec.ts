@@ -16,8 +16,8 @@ describe('OtpService', () => {
 
   it('should call generate API', inject([],
     () => {
-      const learnerService = TestBed.get(LearnerService);
-      const otpService = TestBed.get(OtpService);
+      const learnerService = TestBed.inject(LearnerService);
+      const otpService = TestBed.inject(OtpService);
       const params = { 'request': { 'key': '7088283838', 'type': 'phone' } };
       spyOn(learnerService, 'post').and.returnValue(observableOf(testData.generateOtpData));
       otpService.generateOTP(params);
@@ -27,8 +27,8 @@ describe('OtpService', () => {
 
   it('should call verifyOTP API', inject([],
     () => {
-      const learnerService = TestBed.get(LearnerService);
-      const otpService = TestBed.get(OtpService);
+      const learnerService = TestBed.inject(LearnerService);
+      const otpService = TestBed.inject(OtpService);
       const params = { 'request': { 'key': '7088283838', 'type': 'phone', 'otp': '238798' } };
       spyOn(learnerService, 'post').and.returnValue(observableOf(testData.verifyOtpData));
       otpService.verifyOTP(params);

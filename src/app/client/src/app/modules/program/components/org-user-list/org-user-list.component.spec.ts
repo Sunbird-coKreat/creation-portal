@@ -42,14 +42,14 @@ xdescribe('OrgUserListComponent', () => {
   it('get the user list when there is a search input', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = 'jnc68';
-    const  registryService  = TestBed.get(RegistryService);
+    const  registryService  = TestBed.inject(RegistryService);
     const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput)
     expect(component.sortUsersList).toHaveBeenCalledWith(userList);
     });
  it('call the sortUsersList method when there is input', () => {
     component.pageLimit = 1;
     component.searchInput = 'jnc68';
-    const  programsService  = TestBed.get(ProgramsService);
+    const  programsService  = TestBed.inject(ProgramsService);
     component.sortUsersList(userDetail.result.response.content);
     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
     expect(component.paginatedContributorOrgUsers).toBe(sortedList);
@@ -59,7 +59,7 @@ xdescribe('OrgUserListComponent', () => {
   it('call the sortUsersList method when there is empty input', () => {
      component.pageLimit = 1;
      component.searchInput = '';
-     const  programsService  = TestBed.get(ProgramsService);
+     const  programsService  = TestBed.inject(ProgramsService);
      component.sortUsersList(userDetail.result.response.content);
      const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
      expect(component.paginatedContributorOrgUsers).toBe(sortedList);

@@ -59,7 +59,7 @@ describe('AllMyContentFilterComponent', () => {
      expect(route.navigate).toHaveBeenCalledWith(['workspace/content/allcontent', 1], {queryParams: queryParams});
   }));
   it('should call handleSearch method and naviagate with search query after 1s', fakeAsync(() => {
-    const route = TestBed.get(Router);
+    const route = TestBed.inject(Router);
     component.query = 'text';
     spyOn(component, 'handleSearch').and.callThrough();
     component.handleSearch();
@@ -69,7 +69,7 @@ describe('AllMyContentFilterComponent', () => {
     fixture.detectChanges();
 }));
 it('should call handleSearch method when key is empty and remove key from queryparam', fakeAsync(() => {
-    const route = TestBed.get(Router);
+    const route = TestBed.inject(Router);
     spyOn(component, 'handleSearch').and.callThrough();
     component.query = '';
     component.handleSearch();
@@ -78,7 +78,7 @@ it('should call handleSearch method when key is empty and remove key from queryp
     expect(route.navigate).toHaveBeenCalledWith(['workspace/content/allcontent', 1], {queryParams: queryParams});
 }));
 it('should call keyup method sets the modelChanged value', () => {
-  const route = TestBed.get(Router);
+  const route = TestBed.inject(Router);
   inputEl.triggerEventHandler('keydown', {});
   spyOn(component, 'keyup').and.callThrough();
   component.keyup('text');

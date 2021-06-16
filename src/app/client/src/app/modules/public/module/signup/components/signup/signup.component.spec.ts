@@ -253,9 +253,9 @@ describe('SignUpComponent', () => {
   });
 
   it('should fetch tnc configuration', () => {
-    const signupService = TestBed.get(SignupService);
+    const signupService = TestBed.inject(SignupService);
     spyOn(signupService, 'getTncConfig').and.returnValue(observableOf(SignUpComponentMockData.tncConfig));
-    const telemetryService = TestBed.get(TelemetryService);
+    const telemetryService = TestBed.inject(TelemetryService);
     spyOn(telemetryService, 'log');
     component.ngOnInit();
     expect(component.tncLatestVersion).toEqual('v4');
@@ -264,9 +264,9 @@ describe('SignUpComponent', () => {
   });
 
   xit('should not fetch tnc configuration and throw error', () => {
-    const signupService = TestBed.get(SignupService);
-    const toasterService = TestBed.get(ToasterService);
-    const telemetryService = TestBed.get(TelemetryService);
+    const signupService = TestBed.inject(SignupService);
+    const toasterService = TestBed.inject(ToasterService);
+    const telemetryService = TestBed.inject(TelemetryService);
     spyOn(telemetryService, 'log');
     spyOn(toasterService, 'error').and.callThrough();
     spyOn(signupService, 'getTncConfig').and.returnValue(observableThrowError(SignUpComponentMockData.tncConfig));
@@ -276,16 +276,16 @@ describe('SignUpComponent', () => {
   });
 
   it('should fetch tnc configuration and throw error as cannot parse data', () => {
-    const signupService = TestBed.get(SignupService);
+    const signupService = TestBed.inject(SignupService);
     spyOn(signupService, 'getTncConfig').and.returnValue(observableOf(SignUpComponentMockData.tncConfigIncorrectData));
-    const toasterService = TestBed.get(ToasterService);
+    const toasterService = TestBed.inject(ToasterService);
     spyOn(toasterService, 'error').and.callThrough();
     component.ngOnInit();
     expect(toasterService.error).toHaveBeenCalledWith(resourceBundle.messages.fmsg.m0004);
   });
 
   xit('should init instance with sunbird', () => {
-    const signupService = TestBed.get(SignupService);
+    const signupService = TestBed.inject(SignupService);
     spyOn(signupService, 'getTncConfig').and.returnValue(observableOf(SignUpComponentMockData.tncConfig));
     spyOn(component, 'getCacheLanguage');
     spyOn(component, 'initializeFormFields');
@@ -307,7 +307,7 @@ describe('SignUpComponent', () => {
     const phone = component.signUpForm.controls['phone'];
     contactType.setValue('phone');
     phone.setValue('959562561');
-    const signupService = TestBed.get(SignupService);
+    const signupService = TestBed.inject(SignupService);
     spyOn(signupService, 'checkUserExists').and.returnValue(observableOf({
       'responseCode': 'OK', 'result': {'exists': false}
     }));
@@ -322,7 +322,7 @@ describe('SignUpComponent', () => {
     const phone = component.signUpForm.controls['phone'];
     contactType.setValue('phone');
     phone.setValue('959562561');
-    const signupService = TestBed.get(SignupService);
+    const signupService = TestBed.inject(SignupService);
     spyOn(signupService, 'checkUserExists').and.returnValue(observableOf({
       'responseCode': 'OK', 'result': {'exists': true}
     }));
@@ -337,7 +337,7 @@ describe('SignUpComponent', () => {
     const phone = component.signUpForm.controls['phone'];
     contactType.setValue('phone');
     phone.setValue('959562561');
-    const signupService = TestBed.get(SignupService);
+    const signupService = TestBed.inject(SignupService);
     spyOn(signupService, 'checkUserExists').and.returnValue(observableThrowError({
       'responseCode': '500', 'params': {'status': 500, 'type': 'INTERNAL_SERVER_ERROR'}
     }));
@@ -347,14 +347,14 @@ describe('SignUpComponent', () => {
   });
 
   it('should toggle tnc checkboc', () => {
-    const telemetryService = TestBed.get(TelemetryService);
+    const telemetryService = TestBed.inject(TelemetryService);
     spyOn(telemetryService, 'interact');
     component.generateTelemetry({target: {checked: false}});
     expect(telemetryService.interact).toHaveBeenCalledWith(SignUpComponentMockData.interactEDataUnSelected);
   });
 
   it('should toggle tnc checkboc if already false', () => {
-    const telemetryService = TestBed.get(TelemetryService);
+    const telemetryService = TestBed.inject(TelemetryService);
     spyOn(telemetryService, 'interact');
     component.generateTelemetry({target: {checked: true}});
     expect(telemetryService.interact).toHaveBeenCalledWith(SignUpComponentMockData.interactEDataSelected);

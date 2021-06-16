@@ -36,13 +36,13 @@ describe('HelperService', () => {
         {provide: ResourceService, useValue: resourceBundle}
       ]
     });
-    helperService = TestBed.get(HelperService);
-    actionService = TestBed.get(ActionService);
-    contentService = TestBed.get(ContentService);
-    programsService = TestBed.get(ProgramsService);
-    frameworkService =  TestBed.get(FrameworkService);
-    toasterService = TestBed.get(ToasterService);
-    publicDataService = TestBed.get(PublicDataService);
+    helperService = TestBed.inject(HelperService);
+    actionService = TestBed.inject(ActionService);
+    contentService = TestBed.inject(ContentService);
+    programsService = TestBed.inject(ProgramsService);
+    frameworkService =  TestBed.inject(FrameworkService);
+    toasterService = TestBed.inject(ToasterService);
+    publicDataService = TestBed.inject(PublicDataService);
   });
 
   it('should be created', () => {

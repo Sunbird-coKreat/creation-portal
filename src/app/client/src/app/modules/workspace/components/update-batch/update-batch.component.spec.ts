@@ -80,7 +80,7 @@ describe('UpdateBatchComponent', () => {
   });
 
   it('should fetch batch details and show update Form model', () => {
-    const batchService = TestBed.get(BatchService);
+    const batchService = TestBed.inject(BatchService);
     spyOn(batchService, 'getUserList').and.callFake((request) => {
       if (request) {
         return observableOf(getUserDetails);
@@ -102,11 +102,11 @@ describe('UpdateBatchComponent', () => {
     expect(component.selectedMentors.length).toBe(6);
   });
   it('should navigate to parent page if fetching batch details fails', () => {
-    const batchService = TestBed.get(BatchService);
-    const resourceService = TestBed.get(ResourceService);
-    const toasterService = TestBed.get(ToasterService);
-    const userService = TestBed.get(UserService);
-    const activatedRoute = TestBed.get(ActivatedRoute);
+    const batchService = TestBed.inject(BatchService);
+    const resourceService = TestBed.inject(ResourceService);
+    const toasterService = TestBed.inject(ToasterService);
+    const userService = TestBed.inject(UserService);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
     userService._userid = 'b2479136-8608-41c0-b3b1-283f38c338d';
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -118,11 +118,11 @@ describe('UpdateBatchComponent', () => {
     expect(component.router.navigate).toHaveBeenCalled();
   });
   it('should navigate to parent page if fetching user details fails', () => {
-    const batchService = TestBed.get(BatchService);
-    const resourceService = TestBed.get(ResourceService);
-    const toasterService = TestBed.get(ToasterService);
-    const activatedRoute = TestBed.get(ActivatedRoute);
-    const userService = TestBed.get(UserService);
+    const batchService = TestBed.inject(BatchService);
+    const resourceService = TestBed.inject(ResourceService);
+    const toasterService = TestBed.inject(ToasterService);
+    const activatedRoute = TestBed.inject(ActivatedRoute);
+    const userService = TestBed.inject(UserService);
     userService._userid = 'b2479136-8608-41c0-b3b1-283f38c338d';
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -146,10 +146,10 @@ describe('UpdateBatchComponent', () => {
     expect(component.router.navigate).toHaveBeenCalled();
   });
   it('should update batch and show success message if api return success', () => {
-    const batchService = TestBed.get(BatchService);
-    const toasterService = TestBed.get(ToasterService);
-    const resourceService = TestBed.get(ResourceService);
-    const userService = TestBed.get(UserService);
+    const batchService = TestBed.inject(BatchService);
+    const toasterService = TestBed.inject(ToasterService);
+    const resourceService = TestBed.inject(ResourceService);
+    const userService = TestBed.inject(UserService);
     userService._userProfile = { organisationIds: [] };
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;
@@ -171,10 +171,10 @@ describe('UpdateBatchComponent', () => {
     expect(toasterService.success).toHaveBeenCalledWith('success');
   });
   it('should update batch and show error message if api fails', () => {
-    const batchService = TestBed.get(BatchService);
-    const toasterService = TestBed.get(ToasterService);
-    const resourceService = TestBed.get(ResourceService);
-    const userService = TestBed.get(UserService);
+    const batchService = TestBed.inject(BatchService);
+    const toasterService = TestBed.inject(ToasterService);
+    const resourceService = TestBed.inject(ResourceService);
+    const userService = TestBed.inject(UserService);
     userService._userProfile = { organisationIds: [] };
     resourceService.messages = resourceServiceMockData.messages;
     resourceService.frmelmnts = resourceServiceMockData.frmelmnts;

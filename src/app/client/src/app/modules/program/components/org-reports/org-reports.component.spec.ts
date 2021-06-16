@@ -73,7 +73,7 @@ describe('OrgReportsComponent', () => {
   });
 
   it('should call #downloadReport() method', () => {
-    const usageService = TestBed.get(UsageService);
+    const usageService = TestBed.inject(UsageService);
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockData.reportReadSuccess));
     spyOn(window, 'open');
     component.downloadReport('TextbookLevel', true);
@@ -82,9 +82,9 @@ describe('OrgReportsComponent', () => {
   });
 
   it('should throw error when it fails to download', () => {
-    const usageService = TestBed.get(UsageService);
-    const toasterService = TestBed.get(ToasterService);
-    const resourceService = TestBed.get(ResourceService);
+    const usageService = TestBed.inject(UsageService);
+    const toasterService = TestBed.inject(ToasterService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceBundle.messages;
     spyOn(usageService, 'getData').and.returnValue(observableThrowError({}));
     spyOn(toasterService, 'error').and.callThrough();
@@ -93,12 +93,12 @@ describe('OrgReportsComponent', () => {
   });
 
   it('should throw error when data not available', () => {
-    const usageService = TestBed.get(UsageService);
-    const toasterService = TestBed.get(ToasterService);
+    const usageService = TestBed.inject(UsageService);
+    const toasterService = TestBed.inject(ToasterService);
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockData.reportReadFailed));
     spyOn(toasterService, 'error').and.callThrough();
     component.downloadReport('TextbookLevel', true);
-    const resourceService = TestBed.get(ResourceService);
+    const resourceService = TestBed.inject(ResourceService);
     resourceService.messages = resourceBundle.messages;
     expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.emsg.m0076);
   });

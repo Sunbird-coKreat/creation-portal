@@ -61,11 +61,11 @@ describe('PublicCourseConsumptionPageComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PublicCourseConsumptionPageComponent);
     component = fixture.componentInstance;
-    activatedRouteStub = TestBed.get(ActivatedRoute);
-    courseService = TestBed.get(CoursesService);
-    toasterService = TestBed.get(ToasterService);
-    courseConsumptionService = TestBed.get(CourseConsumptionService);
-    navigationHelperService = TestBed.get(NavigationHelperService);
+    activatedRouteStub = TestBed.inject(ActivatedRoute);
+    courseService = TestBed.inject(CoursesService);
+    toasterService = TestBed.inject(ToasterService);
+    courseConsumptionService = TestBed.inject(CourseConsumptionService);
+    navigationHelperService = TestBed.inject(NavigationHelperService);
     spyOn(navigationHelperService, 'navigateToResource').and.returnValue('');
     spyOn(toasterService, 'error').and.returnValue('');
   });

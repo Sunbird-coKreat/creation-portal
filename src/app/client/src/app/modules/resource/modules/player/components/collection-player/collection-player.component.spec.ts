@@ -86,7 +86,7 @@ describe('CollectionPlayerComponent', () => {
   });
 
   it('should call playContent method', () => {
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     const content = {
       id: 'do_112474267785674752118',
@@ -97,8 +97,8 @@ describe('CollectionPlayerComponent', () => {
     expect(component.contentTitle).toEqual(content.title);
   });
   it('should get content based on route/query params', () => {
-    const playerService: PlayerService = TestBed.get(PlayerService);
-    const windowScrollService = TestBed.get(WindowScrollService);
+    const playerService: PlayerService = TestBed.inject(PlayerService);
+    const windowScrollService = TestBed.inject(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');
     spyOn(playerService, 'getCollectionHierarchy').and
       .returnValue(observableOf(CollectionHierarchyGetMockResponse));
@@ -111,7 +111,7 @@ describe('CollectionPlayerComponent', () => {
   xit('should show service unavailable message on API server error', () => {});
 
   it('should redirect to previous URL', () => {
-    const navigationHelperService = TestBed.get(NavigationHelperService);
+    const navigationHelperService = TestBed.inject(NavigationHelperService);
     spyOn(navigationHelperService, 'navigateToPreviousUrl').and.callThrough();
     spyOnProperty(history, 'state', 'get').and.returnValues({'action': 'dialcode', 'navigationId': 3});
     component.closeCollectionPlayer();
@@ -119,7 +119,7 @@ describe('CollectionPlayerComponent', () => {
   });
 
   it('should redirect to /resource page', () => {
-    const navigationHelperService = TestBed.get(NavigationHelperService);
+    const navigationHelperService = TestBed.inject(NavigationHelperService);
     spyOn(navigationHelperService, 'navigateToResource').and.callThrough();
     spyOnProperty(history, 'state', 'get').and.returnValues({'action': 'fakeaction', 'navigationId': 3});
     component.closeCollectionPlayer();

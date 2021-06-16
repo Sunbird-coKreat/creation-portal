@@ -81,7 +81,7 @@ xdescribe('DashboardComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
-    const navigationHelperService = TestBed.get(NavigationHelperService);
+    const navigationHelperService = TestBed.inject(NavigationHelperService);
     component.dashboardComponentInput = {sessionContext: sessionContext};
     component.dashboardComponentInput = {programContext: programContext};
     fixture.detectChanges();

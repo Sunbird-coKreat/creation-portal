@@ -60,8 +60,8 @@ describe('LanguageDropdownComponent', () => {
     });
 
     it('On language change', () => {
-        const utilService = TestBed.get(UtilService);
-        const cacheService = TestBed.get(CacheService);
+        const utilService = TestBed.inject(UtilService);
+        const cacheService = TestBed.inject(CacheService);
         spyOn(utilService, 'emitLanguageChangeEvent');
         cacheService.set('portalLanguage', 'en', { maxAge: 10 * 60 });
         component.onLanguageChange('en');

@@ -338,7 +338,7 @@ describe('ChapterListComponent', () => {
 
     xit('should updateAccordianView after successful removal of content', () => {
       component.unitIdentifier = 'do_0000000000';
-      ResourceServiceMock = TestBed.get(ResourceService);
+      ResourceServiceMock = TestBed.inject(ResourceService);
       ResourceServiceMock.messages = {smsg: {m0064: 'Content is successfully removed'}};
       spyOn(component, 'updateAccordianView');
       component.removeResourceFromHierarchy();
@@ -360,7 +360,7 @@ describe('ChapterListComponent', () => {
     });
 
     it ('#setTargetCollectionValue() should set targetCollection values', () => {
-      const  service  = TestBed.get(ProgramsService);
+      const  service  = TestBed.inject(ProgramsService);
       spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
       component.programContext = programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -369,7 +369,7 @@ describe('ChapterListComponent', () => {
     });
 
     it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-      const  programsService  = TestBed.get(ProgramsService);
+      const  programsService  = TestBed.inject(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
       component.programContext = undefined;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
@@ -379,7 +379,7 @@ describe('ChapterListComponent', () => {
 
 
     it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-      const  programsService  = TestBed.get(ProgramsService);
+      const  programsService  = TestBed.inject(ProgramsService);
       component.programContext = programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       spyOn(programsService, 'setTargetCollectionName').and.callThrough();

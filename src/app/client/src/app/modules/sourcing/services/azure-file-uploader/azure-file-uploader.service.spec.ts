@@ -10,7 +10,7 @@ xdescribe('AzureFileUploaderService', () => {
   }));
 
   it('should be created', () => {
-    const service: AzureFileUploaderService = TestBed.get(AzureFileUploaderService);
+    const service: AzureFileUploaderService = TestBed.inject(AzureFileUploaderService);
     expect(service).toBeTruthy();
   });
 });
