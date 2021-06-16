@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContentUploaderComponent } from './content-uploader.component';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';

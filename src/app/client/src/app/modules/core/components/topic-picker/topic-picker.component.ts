@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs';
 import { ResourceService } from '@sunbird/shared';
 import * as  treePicker from './../../../../../assets/libs/semantic-ui-tree-picker/semantic-ui-tree-picker';
 import { tap } from 'rxjs/operators';
-declare const $: any;
 $.fn.treePicker = treePicker;
 interface TopicTreeNode {
   id: string;
@@ -78,7 +77,7 @@ export class TopicPickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initTopicPicker(this.formatTopics(this.formTopic.range));
   }
   private initTopicPicker(data: Array<TopicTreeNode>) {
-    (<any>jQuery('.topic-picker-selector')).treePicker({
+    jQuery('.topic-picker-selector').treePicker({
       data: data,
       name: this.resourceService.frmelmnts.lbl.topics,
       noDataMessage: this.resourceService.messages.fmsg.m0089,

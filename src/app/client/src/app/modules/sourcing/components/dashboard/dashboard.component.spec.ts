@@ -7,7 +7,7 @@ import { CacheService } from 'ng2-cache-service';
 import { SourcingService } from '../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { DashboardComponent } from './dashboard.component';
 import { FormsModule } from '@angular/forms';
 import { AppLoaderComponent } from '../../../shared/components/app-loader/app-loader.component';

@@ -5,7 +5,7 @@ import { WorkspaceModule } from '@sunbird/workspace';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { SearchService, ContentService } from '@sunbird/core';
 import { UserService, LearnerService, CoursesService, PermissionService } from '@sunbird/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';

@@ -7,7 +7,7 @@ import { CollectionPlayerComponent } from './collection-player.component';
 import { PlayerService, CoreModule } from '@sunbird/core';
 import { ActivatedRoute } from '@angular/router';
 import { WindowScrollService, SharedModule, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CollectionHierarchyGetMockResponse } from './collection-player.spec.data';

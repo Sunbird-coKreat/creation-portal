@@ -12,7 +12,7 @@ import { UsageService } from '@sunbird/dashboard';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { DatePipe } from '@angular/common';
 import * as _ from 'lodash-es';
 

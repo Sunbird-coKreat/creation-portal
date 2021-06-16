@@ -4,7 +4,7 @@
 // import { RouterTestingModule } from '@angular/router/testing';
 // import { LearnModule, UpdateCourseBatchComponent, CourseBatchService, CourseConsumptionService} from '@sunbird/learn';
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
-// import { SuiModule } from 'ng2-semantic-ui';
+// import { SuiModule } from 'ng2-semantic-ui-v9';
 // import { async, ComponentFixture, TestBed, tick , fakeAsync } from '@angular/core/testing';
 // import {SharedModule, ResourceService, ToasterService} from '@sunbird/shared';
 // import {CoreModule} from '@sunbird/core';

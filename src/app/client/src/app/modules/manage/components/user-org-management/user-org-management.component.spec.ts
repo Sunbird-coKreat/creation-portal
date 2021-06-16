@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { UserUploadComponent } from '../user-upload/user-upload.component';
 import { UserService } from '../../../core/services/user/user.service';
 import { ManageService } from '../../services/manage/manage.service';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { ActivatedRoute } from '@angular/router';
 import { ResourceService, SharedModule, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryModule } from '@sunbird/telemetry';

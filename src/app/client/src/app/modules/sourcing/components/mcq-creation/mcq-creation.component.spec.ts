@@ -4,7 +4,7 @@ import { McqCreationComponent } from './mcq-creation.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProgramTelemetryService } from '../../../program/services';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import {
     SharedModule, ResourceService, IUserProfile, NavigationHelperService,
     ConfigService, BrowserCacheTtlService, ToasterService

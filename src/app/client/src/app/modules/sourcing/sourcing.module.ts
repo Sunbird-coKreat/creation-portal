@@ -5,7 +5,7 @@ import { SanitizeHtmlPipe } from './pipe/sanitize-html.pipe';
 import { QuestionListComponent,
   QuestionCreationComponent, ChapterListComponent, McqCreationComponent, McqTemplateSelectionComponent,
   CkeditorToolComponent, QuestionPreviewComponent, BulkUploadComponent } from './components';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SharedModule } from '@sunbird/shared';
 import { QuestionCreationHeaderComponent } from './components/question-creation-header/question-creation-header.component';

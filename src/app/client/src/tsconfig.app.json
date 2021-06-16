@@ -68,6 +68,6 @@
   ],
   "include": [
     "src/**/*.d.ts",
-    "typings.d.ts"
+    "./*.d.ts"
   ]
 }

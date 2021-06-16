@@ -9,7 +9,7 @@ import * as SpecData from './program-nominations.spec.data';
 import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 import { ProgramNominationsComponent } from './program-nominations.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

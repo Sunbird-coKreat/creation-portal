@@ -1,12 +1,12 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { QuestionListComponent } from './question-list.component';
 import { By } from '@angular/platform-browser';
-import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui';
+import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui-v9';
 import { TelemetryModule, TelemetryInteractDirective } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import {
