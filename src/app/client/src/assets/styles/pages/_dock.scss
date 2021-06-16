@@ -942,16 +942,17 @@ app-question-set-editor{
       }
       .font-italic{
         display: inline-block;
-        padding-left: 30px;
+        padding-left: 20px;
         margin-top: -13px;
       }
     }
   }
 }
 .sb-modal-content.sb-edit-form{
-  .dynamic-form sb-dynamic-checkbox label:after{
-    margin: -.2em 0rem 0 1.5em;
+  .dynamic-form sb-dynamic-checkbox.required .font-italic:before{
+    margin: -0.2em 0.3rem 0 0em;
     color: #db2828 !important;
     opacity: 1;
+    content: '*';
   }
 }
