@@ -168,7 +168,7 @@ export class HelperService {
   publishQuestionSet(contentId, userId) {
     const requestBody = {
       request: {
-        content: {
+        questionset: {
           lastPublishedBy: userId
         }
       }
