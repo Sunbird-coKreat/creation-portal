@@ -15,7 +15,7 @@ import { Subject, combineLatest } from 'rxjs';
 })
 export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('createBatchModel', {static: false}) private createBatchModel;
+  @ViewChild('createBatchModel') private createBatchModel;
 
   private userSearchTime: any;
 

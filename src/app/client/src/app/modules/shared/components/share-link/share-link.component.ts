@@ -39,7 +39,7 @@ export class ShareLinkComponent implements OnInit {
   /**
   *Element Ref  for copyLinkButton;
   */
-  @ViewChild('copyLinkButton', {static: false}) copyLinkButton: ElementRef;
+  @ViewChild('copyLinkButton') copyLinkButton: ElementRef;
   /**
   *Element Ref  for copyLinkData;
   */

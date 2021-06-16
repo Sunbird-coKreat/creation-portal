@@ -24,7 +24,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'play', loadChildren: './modules/player/player.module#PlayerModule'
+    path: 'play', loadChildren: () => import('./modules/player/player.module').then(m => m.PlayerModule)
   }
 ];
 

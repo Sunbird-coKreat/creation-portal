@@ -21,7 +21,7 @@ import { IInteractEventInput, IImpressionEventInput, IInteractEventObject } from
 })
 export class DraftComponent extends WorkSpace implements OnInit, AfterViewInit {
 
-    @ViewChild('modalTemplate', {static: false})
+    @ViewChild('modalTemplate')
     public modalTemplate: ModalTemplate<{ data: string }, string, string>;
     /**
      * state for content editior

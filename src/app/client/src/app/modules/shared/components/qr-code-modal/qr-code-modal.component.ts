@@ -11,7 +11,7 @@ import { environment } from '@sunbird/environment';
 })
 export class QrCodeModalComponent implements OnInit {
   isOffline: boolean = environment.isOffline;
-  @ViewChild('modal', {static: false}) modal;
+  @ViewChild('modal') modal;
   @Output() closeQrModal = new EventEmitter<any>();
   instance: string;
   public submitDialCodeInteractEdata: IInteractEventEdata;

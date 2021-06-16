@@ -14,7 +14,7 @@ import * as moment from 'moment';
 })
 export class BatchInfoComponent implements OnInit, OnDestroy {
 
-  @ViewChild('modal', {static: false}) modal;
+  @ViewChild('modal') modal;
   @Input() enrolledBatchInfo: any;
   @Output() modelClose = new EventEmitter;
   public userDetails = {};

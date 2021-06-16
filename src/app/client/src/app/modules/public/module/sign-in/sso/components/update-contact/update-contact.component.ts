@@ -17,7 +17,7 @@ import { TelemetryService } from '@sunbird/telemetry';
   styleUrls: ['./update-contact.component.scss']
 })
 export class UpdateContactComponent implements OnInit, AfterViewInit {
-  @ViewChild('contactDetailsForm', {static: false}) private contactDetailsForm;
+  @ViewChild('contactDetailsForm') private contactDetailsForm;
   public telemetryImpression;
   public tenantInfo: any = {};
   public showOtpComp = false;

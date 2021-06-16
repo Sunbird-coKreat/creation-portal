@@ -72,7 +72,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   userPreferences: any = {};
   setPreferences = {};
   prefernceForm: FormGroup;
-  @ViewChild('prefModal', {static: false}) prefModal;
+  @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
@@ -93,7 +93,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   searchLimitCount: any;
   isContributingOrgAdmin: any;
   visitedTab = [];
-  @ViewChild('userRemoveRoleModal', {static: false}) userRemoveRoleModal;
+  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;

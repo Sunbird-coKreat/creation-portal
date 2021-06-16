@@ -28,7 +28,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit, OnDestroy {
-  @ViewChild('frameWorkPopUp', {static: false}) frameWorkPopUp;
+  @ViewChild('frameWorkPopUp') frameWorkPopUp;
   /**
    * user profile details.
    */

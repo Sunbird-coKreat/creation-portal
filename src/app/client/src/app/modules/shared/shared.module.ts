@@ -46,7 +46,7 @@ import { HighlightTextDirective } from './directives/highlight-text/highlight-te
     HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent]
 })
 export class SharedModule {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<SharedModule> {
     return {
       ngModule: SharedModule,
       providers: [ResourceService, ConfigService, ToasterService, PaginationService, RecaptchaService,
