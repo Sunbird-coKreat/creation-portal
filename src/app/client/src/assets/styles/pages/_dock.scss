@@ -921,7 +921,10 @@ app-question-set-editor{
 .sb-modal-content{
   .sb-search-box{
     .sb-search-input{
-      padding-left: 10px !important;
+      padding-left: 30px !important;
+    }
+    .sb-search-input::placeholder{
+      padding-left: 8px !important;
     }
   }
   .dynamic-form{
