@@ -3,7 +3,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
 --data-raw '{
 	"request": {
 		"objectCategoryDefinition": {
-			"categoryId": "obj-cat:question-paper_all",
+			"categoryId": "obj-cat:question-paper_{{rootOrgId}}",
 			"targetObjectType": "Collection",
 			"objectMetadata": {
 				"config": {},
@@ -321,10 +321,13 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
 							},
-							"validations": {
-								"type": "pattern",
-								"value": "[0-9]*"
-							},
+						 "validations": [
+                {
+                   "type": "pattern",
+                    "value": "[0-9]*",
+                    "message": "Input should be numeric"
+                }
+              ],
 							"required": true
 						},
 						{
