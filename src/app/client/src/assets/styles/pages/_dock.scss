@@ -921,7 +921,10 @@ app-question-set-editor{
 .sb-modal-content{
   .sb-search-box{
     .sb-search-input{
-      padding-left: 10px !important;
+      padding-left: 28px !important;
+    }
+    .sb-search-input::placeholder{
+      padding-left: 8px !important;
     }
   }
   .dynamic-form{
@@ -945,4 +948,11 @@ app-question-set-editor{
     }
   }
 }
-
+.sb-modal-content.sb-edit-form{
+  .dynamic-form sb-dynamic-checkbox.required .font-italic:before{
+    margin: -0.2em 0.3rem 0 0em;
+    color: #db2828 !important;
+    opacity: 1;
+    content: '*';
+  }
+}
