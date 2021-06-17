@@ -2486,7 +2486,7 @@ if (typeof module != 'undefined') {
   }else if(window.location.hostname == 'vdn.diksha.gov.in'){
     uri = 'https://vdn.diksha.gov.in';
   } else if (window.location.hostname == "dockstaging.sunbirded.org") {
-    pdataId = "staging.sunbirded.org";
+    uri = 'https://dockstaging.sunbirded.org';
   } else {
     uri = 'https://dock.sunbirded.org';
   }

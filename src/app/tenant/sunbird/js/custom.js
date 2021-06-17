@@ -33,8 +33,8 @@ function getEnvironment(env, slug){
     case "vdn.diksha.gov.in": return "https://vdn.diksha.gov.in/" + slug + "/contribute"; break;
     case "preprod.ntp.net.in": return "https://dock.preprod.ntp.net.in/" + slug + "/contribute"; break;
     case "diksha.gov.in": return "https://vdn.diksha.gov.in/" + slug + "/contribute"; break;
-    case 'dockstaging.sunbirded.org': return "https://dockstaging.sunbirded.org'/" + slug + "/contribute"; break;
-    case 'staging.sunbirded.org': return "https://dockstaging.sunbirded.org'/" + slug + "/contribute"; break;
+    case 'dockstaging.sunbirded.org': return "https://dockstaging.sunbirded.org/" + slug + "/contribute"; break;
+    case 'staging.sunbirded.org': return "https://dockstaging.sunbirded.org/" + slug + "/contribute"; break;
     default: return  slug + "/contribute"; break;
   }
 }

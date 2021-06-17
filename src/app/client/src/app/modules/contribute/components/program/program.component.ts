@@ -714,10 +714,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
+    this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
+    this.sessionContext.targetCollectionMimetype = _.get(collection, 'mimeType');
+    this.sessionContext.targetCollectionObjectType = _.get(collection, 'objectType');
     this.sessionContext.telemetryPageDetails = {
       telemetryPageId : this.configService.telemetryLabels.pageId.contribute.projectTargetCollection,
       telemetryInteractCdata: this.getTelemetryInteractCdata(collection.identifier, 'linked_collection')
     };
+
+    this.setFrameworkCategories(collection);
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -739,9 +744,14 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
+
     this.showChapterList = true;
     this.programsService.clearMvcStageData();
     this.programStageService.addStage('chapterListComponent');
+  }
+
+  setFrameworkCategories(collection) {
+    this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
   }
 
   getSharedContextObjectProperty(property) {

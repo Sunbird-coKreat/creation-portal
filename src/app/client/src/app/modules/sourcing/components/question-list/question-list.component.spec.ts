@@ -47,7 +47,7 @@ describe('QuestionListComponent', () => {
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService,
       TelemetryService, PlayerService, ResourceService, DatePipe,
       CacheService, BrowserCacheTtlService, NavigationHelperService,
-      { provide: HelperService },
+      HelperService,
       {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}},
       DeviceDetectorService, { provide: UserService, useValue: UserServiceStub }]
     })
@@ -57,6 +57,9 @@ describe('QuestionListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(QuestionListComponent);
     component = fixture.debugElement.componentInstance;
+    component.sessionContext = {targetCollectionFrameworksData: {
+      framework: 'cbse_framework'
+    }};
     // fixture.autoDetectChanges();
   });
 
@@ -272,5 +275,45 @@ describe('QuestionListComponent', () => {
     spyOn(component, 'createItemSet');
     component.createItemSet('do_124678');
     expect(component.createItemSet).toHaveBeenCalled();
+  });
+
+  it ('#validateFormConfiguration() should call helperService.validateFormConfiguration', () => {
+    component.formFieldProperties = [{code: 'name', name: 'name' }];
+    const  helperService  = TestBed.get(HelperService);
+    spyOn(component, 'validateFormConfiguration').and.callThrough();
+    spyOn(helperService, 'initializeFormFields').and.returnValue([{code: 'name'}]);
+    spyOn(component, 'showEditDetailsForm').and.callThrough();
+    spyOn(helperService, 'validateFormConfiguration').and.returnValue(false);
+    component.validateFormConfiguration();
+    expect(helperService.validateFormConfiguration).toHaveBeenCalled();
+    expect(component.showEditDetailsForm).toHaveBeenCalled();
+  });
+
+  it ('#showEditDetailsForm() should call helperService.initializeFormFields', () => {
+     const sampleFieldArray = [{code: 'name', name: 'name' }];
+     const sampleFieldArrayWithData = [{code: 'name', name: 'name', default: 'test content'}];
+    component.formFieldProperties = sampleFieldArray;
+    component.resourceDetails = {name: 'test content'};
+    const  helperService  = TestBed.get(HelperService);
+    spyOn(helperService, 'initializeFormFields').and.returnValue(sampleFieldArrayWithData);
+    spyOn(component, 'showEditDetailsForm').and.callThrough();
+    component.showEditDetailsForm();
+    expect(helperService.initializeFormFields).toHaveBeenCalled();
+    expect(component.formFieldProperties).toBe(sampleFieldArrayWithData);
+    expect(component.showEditMetaForm).toBeTruthy();
+  });
+
+  it ('#formStatusEventListener() should set formstatus value', () => {
+    const statusEvent = {isValid: true};
+    spyOn(component, 'formStatusEventListener').and.callThrough();
+    component.formStatusEventListener(statusEvent);
+    expect(component.formstatus).toBe(statusEvent);
+  });
+
+  it ('#getFormData() should set formInputData value', () => {
+    const formInput = {name: 'test content'};
+    spyOn(component, 'formStatusEventListener').and.callThrough();
+    component.getFormData(formInput);
+    expect(component.formInputData).toBe(formInput);
   });
 });
