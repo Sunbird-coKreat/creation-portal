@@ -843,6 +843,23 @@ app-question-set-editor{
   }
 }
 .sb-edit-form{
+  .sb-textarea-container{
+    margin: 1rem 0;
+  }
+  .sb-textarea{
+    border: .5px solid #333 !important;
+    border-radius: 0 !important;
+    height: 2.3rem;
+    margin-top: 10px;
+    padding-top: .5rem !important;
+    font-size: 0.785rem !important;
+    line-height: 1.2rem;
+    &::placeholder{
+      line-height: 1rem !important;
+      color: #333 !important;
+      font-size: 0.785rem !important;
+    }
+  }
   .sb-dropdown{
     margin: 1rem 0 !important;
   }
@@ -954,5 +971,14 @@ app-question-set-editor{
     color: #db2828 !important;
     opacity: 1;
     content: '*';
+  }
+}
+
+.sb-modal{
+  &.overflow-modal{
+    .sb-textbox[disabled="true"]{
+      opacity: 0.3 !important;
+      font-weight: 500 !important;
+    }
   }
 }
