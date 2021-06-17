@@ -117,6 +117,9 @@
     "publishComment": {
       "type": "string"
     },
+    "rejectComment": {
+      "type": "string"
+    },
     "compatibilityLevel": {
       "type": "number",
       "default": 5

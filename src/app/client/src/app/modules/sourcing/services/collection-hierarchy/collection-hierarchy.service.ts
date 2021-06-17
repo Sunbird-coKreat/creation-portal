@@ -91,6 +91,14 @@ export class CollectionHierarchyService {
     return forkJoin(hierarchyRequest);
   }
 
+  getCollectionHierarchyDetails(collectionId) {
+    const req = {
+      url: 'content/v3/hierarchy/' + collectionId,
+      param: { 'mode': 'edit' }
+    };
+    return this.actionService.get(req);
+  }
+
   getCollectionWithProgramId(programId, primaryCategory, preferencefilters?) {
     const httpOptions: HttpOptions = {
       headers: {

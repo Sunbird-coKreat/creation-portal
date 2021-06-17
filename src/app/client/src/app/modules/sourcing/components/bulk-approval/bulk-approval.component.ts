@@ -75,22 +75,32 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   approvalPendingContents(hierarchy) {
     _.forEach(hierarchy, obj => {
-      if (this.helperService.checkIfMainCollection(obj) || this.helperService.checkIfCollectionFolder(obj)) {
+      const isMainCollection = this.helperService.checkIfMainCollection(obj);
+      const isCollectionFolder = this.helperService.checkIfCollectionFolder(obj);
+      if (isMainCollection || isCollectionFolder) {
         const unit = _.pick(obj, ['identifier', 'origin']);
-        const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
-        if (originUnit) {
-          this.folderData.push({identifier: obj.identifier, origin: obj.origin});
+        if (isMainCollection) {
+          const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin && o.status === 'Draft');
+          if (originUnit) {
+            this.folderData.push({identifier: obj.identifier, origin: obj.origin});
+          }
+        }
+        if (isCollectionFolder) {
+          const originUnit = _.find(this.originFolderData, o => o.identifier === unit.origin);
+          if (originUnit) {
+            this.folderData.push({identifier: obj.identifier, origin: obj.origin});
+          }
         }
       }
-      if (!this.helperService.checkIfMainCollection(obj) && !this.helperService.checkIfCollectionFolder(obj) &&
-        obj.status === 'Live' && this.checkApprovalPending(obj)) {
+
+      if (!isMainCollection && !isCollectionFolder && obj.status === 'Live' && this.checkApprovalPending(obj)) {
           const content = _.pick(obj, ['name', 'code', 'mimeType', 'framework', 'contentType', 'identifier', 'parent']);
           const unitData = _.find(this.folderData, data => data.identifier === content.parent);
           if (unitData) {
             content['originUnitId'] = unitData.origin;
-          }
-          if (!_.find(this.approvalPending, cont => cont.identifier === content.identifier)) {
-            this.approvalPending.push(content);
+            if (!_.find(this.approvalPending, cont => cont.identifier === content.identifier)) {
+              this.approvalPending.push(content);
+            }
           }
       }
       if (obj.children && obj.children.length) {
@@ -112,7 +122,9 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   checkOriginFolderStatus(hierarchy) {
     _.forEach(hierarchy, obj => {
-      if (this.helperService.checkIfMainCollection(obj) || this.helperService.checkIfCollectionFolder(obj)) {
+      const isMainCollection = this.helperService.checkIfMainCollection(obj);
+      const isCollectionFolder = this.helperService.checkIfCollectionFolder(obj);
+      if (isMainCollection || isCollectionFolder) {
         this.originFolderData.push({identifier: obj.identifier, status: obj.status});
       }
       if (obj.children && obj.children.length) {
@@ -132,23 +144,28 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     const questionSets = [];
     const temp = _.compact(_.map(this.approvalPending, item => {
       if (item.originUnitId) {
+        const channel =  _.get(this.storedCollectionData.originData, 'channel');
+        if (_.isString(channel)) {
+          item['createdFor'] = [channel];
+        } else if (_.isArray(channel)) {
+          item['createdFor'] = channel;
+        }
         const reqFormat = {};
         reqFormat['metadata'] = {..._.pick(this.storedCollectionData, ['framework']),
                         ..._.pick(_.get(this.storedCollectionData, 'originData'), ['channel']),
-                          ..._.pick(item, ['name', 'code', 'mimeType', 'contentType']),
+                          ..._.pick(item, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
                             ...{lastPublishedBy: this.userService.userProfile.userId}},
         reqFormat['collection'] =  [
           {
             identifier: this.storedCollectionData.origin,
             unitId: item.originUnitId
           }
-        ]
-          
+        ];
+
         if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
           reqFormat['source'] = `${baseUrl}/api/questionset/v1/read/${item.identifier}`;
           questionSets.push(reqFormat);
-        } 
-        else {
+        } else {
           reqFormat['source'] = `${baseUrl}/api/content/v1/read/${item.identifier}`;
           contents.push(reqFormat);
         }
@@ -169,12 +186,11 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       this.learnerService.post(reqOption).subscribe((res: any) => {
         if (res && res.result && res.result.processId) {
           this.processId = res.result.processId;
-         
           if (questionSets && questionSets.length) {
             reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
             reqOption.data.request['processId'] = this.processId;
             reqOption.data.request['questionset'] = {};
-            reqOption.data.request['questionset'] = [...questionSets]
+            reqOption.data.request['questionset'] = [...questionSets];
             delete reqOption.data.request.content;
 
           this.learnerService.post(reqOption).subscribe((res: any) => {

@@ -74,7 +74,7 @@ import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml
     CarouselModule.forRoot()
   ],
   providers: [
-    { provide: QuestionCursor, useClass: QumlPlayerService },
+    { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
   exports: [ SanitizeHtmlPipe ]

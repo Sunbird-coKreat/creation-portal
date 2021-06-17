@@ -18,6 +18,11 @@ export class FrameworkService {
   private _channelData: any = {};
   private _frameworkData$ = new BehaviorSubject<Framework>(undefined);
   private _channelData$ = new BehaviorSubject<any>(undefined);
+  private _orgAndTargetFrameworkCategories: any;
+  public orgFrameworkCategories: any;
+  // tslint:disable-next-line:max-line-length
+  public targetFrameworkCategories: any;
+
   public readonly frameworkData$: Observable<Framework> = this._frameworkData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   public readonly channelData$: Observable<any> = this._channelData$
@@ -77,6 +82,8 @@ export class FrameworkService {
                 this._frameworkData$.next({ err: err, frameworkdata: null });
               });
         }
+
+    this.getMasterCategories();
   }
 
   public getChannelData(channelId) {
@@ -124,4 +131,89 @@ export class FrameworkService {
     return _.get(this._channelData, 'defaultLicense');
   }
 
+  apiErrorHandling(err, errorInfo) {
+    this.toasterService.error(_.get(err, 'error.params.errmsg') || errorInfo.errorMsg);
+  }
+
+  public get frameworkData(): any {
+    return this._frameworkData;
+  }
+
+  public addUnlistedFrameworks(unlistedframeworkIds) {
+    const frameWork = this._frameworkData;
+    _.forEach(unlistedframeworkIds, (value) => {
+      if (!_.isUndefined(value)) {
+        this.getFrameworkCategories(value).subscribe(
+          (targetFrameworkData: ServerResponse) => {
+            const otherFrameworkData = targetFrameworkData.result.framework;
+            frameWork[value] = otherFrameworkData;
+            this._frameworkData = frameWork ;
+          },
+          err => {
+            console.log('err', err);
+            const errInfo = { errorMsg: 'Something went wrong' };
+            this.apiErrorHandling(err, errInfo);
+          });
+      }
+    });
+  }
+
+  public get orgAndTargetFrameworkCategories(): any {
+    return this._orgAndTargetFrameworkCategories;
+  }
+
+  public setOrgAndTargetFrameworkCategories() {
+    // tslint:disable-next-line:max-line-length
+    this._orgAndTargetFrameworkCategories = {
+      'orgFrameworkCategories': this.orgFrameworkCategories,
+      'targetFrameworkCategories': this.targetFrameworkCategories
+    };
+  }
+
+
+  public getMasterCategories() {
+    const option =  {
+      url: this.configService.urlConFig.URLS.COMPOSITE.SEARCH,
+      data: {
+        'request' : {
+        'filters': {
+            'objectType': 'Category',
+            'status': ['Live']
+        },
+        'exists': ['orgIdFieldName', 'targetIdFieldName'],
+        'fields': ['code', 'identifier', 'orgIdFieldName', 'targetIdFieldName'],
+        'limits': 300
+      }
+    }
+    };
+
+   const frameworkCategories$ =  this.learnerService.post(option);
+
+  frameworkCategories$.subscribe((data: ServerResponse) => {
+    const result = _.get(data, 'result.Category');
+      this.orgFrameworkCategories = _.sortBy(_.map(result, category => {
+        return {
+          code: category.code,
+          orgIdFieldName: category.orgIdFieldName
+        };
+      }), 'code');
+      this.orgFrameworkCategories.unshift({
+        code: 'framework',
+        orgIdFieldName: 'framework'
+      });
+
+      this.targetFrameworkCategories = _.sortBy(_.map(result, category => {
+        return {
+          code: category.code,
+          targetIdFieldName: category.targetIdFieldName
+        };
+      }), 'code');
+      this.targetFrameworkCategories.unshift({
+        code: 'targetFWIds',
+        targetIdFieldName: 'targetFWIds'
+      });
+
+      this.setOrgAndTargetFrameworkCategories();
+    });
+  }
 }

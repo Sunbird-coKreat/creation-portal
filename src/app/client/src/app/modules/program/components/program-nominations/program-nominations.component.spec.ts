@@ -19,6 +19,7 @@ import { DatePipe } from '@angular/common';
 import { CollectionHierarchyService } from '../../../sourcing';
 import { ContributorProfilePopupComponent } from '../contributor-profile-popup/contributor-profile-popup.component';
 import { convertToParamMap } from '@angular/router';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 const errorInitiate = false;
 const userServiceStub = {
@@ -135,7 +136,8 @@ describe('ProgramNominationsComponent', () => {
         },
         DatePipe,
         ResourceService,
-        CollectionHierarchyService
+        CollectionHierarchyService,
+        HelperService
       ]
     }).compileComponents();
   }));
@@ -284,5 +286,13 @@ describe('ProgramNominationsComponent', () => {
       spyOn(service, 'setTargetCollectionName').and.callThrough();
       component.setTargetCollectionValue();
       expect(service.setTargetCollectionName).toHaveBeenCalled();
+    });
+    it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
+      const collection = {};
+      const  helperService  = TestBed.get(HelperService);
+      spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
+      spyOn(component, 'setFrameworkCategories').and.callThrough();
+      component.setFrameworkCategories(collection);
+      expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
     });
 });
