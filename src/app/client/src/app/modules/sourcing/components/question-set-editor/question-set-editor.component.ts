@@ -171,6 +171,8 @@ export class QuestionSetEditorComponent implements OnInit {
           organisations: this.userService.orgIdNameMap,
           name : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
           this.userProfile.firstName,
+          fullName: !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
+          this.userProfile.firstName,
           isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
         },
         channelData: this.frameworkService['_channelData'],
