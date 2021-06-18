@@ -20,6 +20,7 @@ export class HelperService {
   private _channelData: any;
   private _categoryMetaData: any;
   private _categoryMetaData$ = new Subject<any>();
+  public flattenedFrameworkCategories = {};
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
@@ -893,6 +894,25 @@ export class HelperService {
     const framework = _.get(targetCollectionFrameworksData, 'framework');
     const targetFWIds = _.get(targetCollectionFrameworksData, 'targetFWIds');
 
+    this.flattenedFrameworkCategories[framework] = {};
+    // tslint:disable-next-line:max-line-length
+    const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
+    _.forEach(orgFrameworkCategories, item => {
+      const terms = _.get(item, 'terms');
+      this.flattenedFrameworkCategories[framework][item.code] = terms || [];
+    });
+
+    if (framework !== _.first(targetFWIds) && !_.isEmpty(_.first(targetFWIds))) {
+      const targetFWId = _.first(targetFWIds);
+      this.flattenedFrameworkCategories[targetFWId] = {};
+      const targetFrameworkCategories = _.get(this.frameworkService.frameworkData[_.first(targetFWIds)], 'categories');
+      // tslint:disable-next-line:max-line-length
+      _.forEach(targetFrameworkCategories, item => {
+        const terms = _.get(item, 'terms');
+        this.flattenedFrameworkCategories[_.first(targetFWIds)][item.code] = terms || [];
+      });
+    }
+
     _.forEach(organisationFrameworkUserInput, (value, key) => {
       const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
         'orgIdFieldName': key
@@ -927,22 +947,10 @@ export class HelperService {
  * @memberof HelperService
  */
 
-convertNameToIdentifier(framework, value, key, code, collectionMeta) {
-    if (_.isArray(value)) {
-      if (value.length === 1) {
-        return _.map(value, item => {
-          return !_.isEmpty(item) ?
-            `${framework}_${code.toLowerCase()}_${item.split(' ').join('-').toLowerCase()}` :
-            _.get(collectionMeta, key) ;
-        });
-      } else {
-        return _.map(value, item => {
-          return !_.isEmpty(item) ? `${framework}_${code.toLowerCase()}_${item.split(' ').join('-').toLowerCase()}` : '';
-        });
-      }
-    } else {
-      return `${framework}_${code.toLowerCase()}_${value.split(' ').join('-').toLowerCase()}`;
-    }
+  convertNameToIdentifier(framework, value, key, code, collectionMeta) {
+    const filteredTermsByName = _.filter(_.get(this.flattenedFrameworkCategories[framework], code), i => _.includes(value, i.name));
+    const uniqByName = _.uniqBy(filteredTermsByName, 'name');
+    return _.map(uniqByName, 'identifier');
   }
 
 
