@@ -29,7 +29,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
 						},
 						"printable": {
 							"type": "boolean",
-							"default": false
+							"default": true
 						}
 					}
 				}
