@@ -208,7 +208,7 @@ export class BulkUploadComponent implements OnInit {
       this.process.overall_stats.upload_pending = 0;
 
       if (_.get(searchResponse, 'result.count', 0) > 0) {
-        this.contents = _.get(searchResponse, 'result.content');
+        this.contents = _.compact(_.concat(_.get(searchResponse.result, 'QuestionSet'), _.get(searchResponse.result, 'content')));
         let status = this.stageStatus;
         if (status === 'review') {
           status = 'Review';
