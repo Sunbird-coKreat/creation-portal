@@ -393,6 +393,8 @@ hr {
 }
 
 .sb-list-circle {
+  word-break: break-all;
+  line-height: 1.4;
   li {
     list-style-type: disc;
     font-size: 0.8rem;
@@ -843,6 +845,23 @@ app-question-set-editor{
   }
 }
 .sb-edit-form{
+  .sb-textarea-container{
+    margin: 1rem 0;
+  }
+  .sb-textarea{
+    border: .5px solid #333 !important;
+    border-radius: 0 !important;
+    height: 2.3rem;
+    margin-top: 10px;
+    padding-top: .5rem !important;
+    font-size: 0.785rem !important;
+    line-height: 1.2rem;
+    &::placeholder{
+      line-height: 1rem !important;
+      color: #333 !important;
+      font-size: 0.785rem !important;
+    }
+  }
   .sb-dropdown{
     margin: 1rem 0 !important;
   }
@@ -921,7 +940,10 @@ app-question-set-editor{
 .sb-modal-content{
   .sb-search-box{
     .sb-search-input{
-      padding-left: 10px !important;
+      padding-left: 28px !important;
+    }
+    .sb-search-input::placeholder{
+      padding-left: 8px !important;
     }
   }
   .dynamic-form{
@@ -945,4 +967,20 @@ app-question-set-editor{
     }
   }
 }
+.sb-modal-content.sb-edit-form{
+  .dynamic-form sb-dynamic-checkbox.required .font-italic:before{
+    margin: -0.2em 0.3rem 0 0em;
+    color: #db2828 !important;
+    opacity: 1;
+    content: '*';
+  }
+}
 
+.sb-modal{
+  &.overflow-modal{
+    .sb-textbox[disabled="true"]{
+      opacity: 0.3 !important;
+      font-weight: 500 !important;
+    }
+  }
+}
