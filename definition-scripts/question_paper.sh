@@ -324,7 +324,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
 						 "validations": [
                 {
                    "type": "pattern",
-                    "value": "[0-9]*",
+                    "value": "(([0-9]+)([.]){0,1}([0-9]+))",
                     "message": "Input should be numeric"
                 }
               ],
