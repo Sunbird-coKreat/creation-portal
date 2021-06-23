@@ -1156,7 +1156,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
     }, {});
     const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
-    data = _.assign(data, ...(_.pickBy(sharedMetaData, _.identity)));
+    data = _.assign(data, _.pickBy(sharedMetaData, _.identity));
     if (!_.isEmpty(data['subject'])) {
       data['subject'] = data['subject'][0];
     }
