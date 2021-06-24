@@ -205,7 +205,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
           (prefres) => {
             let preffilter = {};
-            if (prefres.result !== null || prefres.result !== undefined) {
+            if (prefres.result !== undefined || prefres.result !== null) {
               this.userPreferences = prefres.result;
               preffilter = _.get(this.userPreferences, 'sourcing_preference');
             }

@@ -10,7 +10,7 @@ import { ResourceService, ToasterService } from '@sunbird/shared';
 })
 export class OnboardPopupComponent implements OnInit, OnDestroy {
 
-  @ViewChild('modal') private modal;
+  @ViewChild('modal') public modal;
   @Input() programDetails: any;
   @Output() updateEvent = new EventEmitter<any>();
   selectedOption: any = {};
