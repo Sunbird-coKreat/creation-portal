@@ -13,8 +13,6 @@ import { ProgramStageService } from '../../services/program-stage/program-stage.
 import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { DatePipe } from '@angular/common';
 import { forkJoin, of } from 'rxjs';
-import { isDefined } from '@angular/compiler/src/util';
-import { isUndefined, isNullOrUndefined } from 'util';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
@@ -207,7 +205,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
           (prefres) => {
             let preffilter = {};
-            if (!isNullOrUndefined(prefres.result)) {
+            if (prefres.result !== null || prefres.result !== undefined) {
               this.userPreferences = prefres.result;
               preffilter = _.get(this.userPreferences, 'sourcing_preference');
             }
@@ -724,7 +722,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
           (prefres) => {
             let preffilter = {};
-            if (!isNullOrUndefined(prefres.result)) {
+            if (prefres.result !== null || prefres.result !== undefined) {
               this.userPreferences = prefres.result;
               preffilter = _.get(this.userPreferences, 'sourcing_preference');
             }
@@ -841,7 +839,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   getProgramRoleMapping(user) {
     const newRole = user.newRole;
     let progRoleMapping = this.programDetails.rolemapping;
-    if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
+    if ((progRoleMapping === null || progRoleMapping === undefined) && newRole !== 'NONE') {
       progRoleMapping = {};
       progRoleMapping[newRole] = [];
     }
