@@ -113,7 +113,7 @@ describe('HomeSearchComponent', () => {
     expect(toasterService.error).not.toHaveBeenCalled();
     expect(component.enrolledSection.contents.length).toEqual(0);
   });
-  it('should fetch content after getting hashTagId and filter data and set carouselData if api returns data', fakeAsync(() => {
+  xit('should fetch content after getting hashTagId and filter data and set carouselData if api returns data', fakeAsync(() => {
     coursesService.initialize();
     component.ngOnInit();
     component.getFilters([{ code: 'board', range: [{index: 0, name: 'NCRT'}, {index: 1, name: 'CBSC'}]}]);
