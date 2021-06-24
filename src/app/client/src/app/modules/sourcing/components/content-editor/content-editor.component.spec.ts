@@ -4,7 +4,7 @@ import { ContentEditorComponent } from './content-editor.component';
 import { contentEditorComponentInput, playerConfig } from './content-editor.spec.data';
 import { ActionService, PlayerService, FrameworkService, UserService } from '@sunbird/core';
 import { PlayerHelperModule } from '@sunbird/player-helper';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TelemetryModule } from '@sunbird/telemetry';

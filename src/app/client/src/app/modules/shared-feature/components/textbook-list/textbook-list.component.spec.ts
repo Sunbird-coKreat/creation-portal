@@ -1,7 +1,7 @@
 import { CollectionHierarchyService } from './../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TextbookListComponent } from './textbook-list.component';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CoreModule, ProgramsService, UserService } from '@sunbird/core';

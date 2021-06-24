@@ -32,7 +32,7 @@ export class CertificateDetailsComponent implements OnInit {
   courseName: string;
   issuedOn: string;
   watchVideoLink: string;
-  @ViewChild('codeInputField', {static: false}) codeInputField: ElementRef;
+  @ViewChild('codeInputField') codeInputField: ElementRef;
 
   constructor(
     public activatedRoute: ActivatedRoute,

@@ -3,40 +3,40 @@ import { ErrorPageComponent, AuthGuard } from '@sunbird/core';
 import { RouterModule, Routes } from '@angular/router';
 const appRoutes: Routes = [
   {
-    path: 'resources', loadChildren: 'app/modules/resource/resource.module#ResourceModule'
+    path: 'resources', loadChildren: () => import('app/modules/resource/resource.module').then(m => m.ResourceModule)
   },
   {
-    path: 'search', loadChildren: 'app/modules/search/search.module#SearchModule'
+    path: 'search', loadChildren: () => import('app/modules/search/search.module').then(m => m.SearchModule)
   },
   {
-    path: 'sourcing', loadChildren: 'app/modules/program/program.module#ProgramModule'
+    path: 'sourcing', loadChildren: () => import('app/modules/program/program.module').then(m => m.ProgramModule)
   },
   {
-    path: 'contribute', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
+    path: 'contribute', loadChildren: () => import('app/modules/contribute/contribute.module').then(m => m.ContributeModule)
   },
   {
-    path: 'dashBoard', loadChildren: 'app/modules/dashboard/dashboard.module#DashboardModule'
+    path: 'dashBoard', loadChildren: () => import('app/modules/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
   {
-    path: 'profile', loadChildren: 'app/plugins/profile/profile.module#ProfileModule'
+    path: 'profile', loadChildren: () => import('app/plugins/profile/profile.module').then(m => m.ProfileModule)
   },
   {
-    path: 'certs', loadChildren: 'app/modules/certificate/certificate.module#CertificateModule'
+    path: 'certs', loadChildren: () => import('app/modules/certificate/certificate.module').then(m => m.CertificateModule)
   },
   {
-    path: 'recover', loadChildren: 'app/modules/recover-account/recover-account.module#RecoverAccountModule'
+    path: 'recover', loadChildren: () => import('app/modules/recover-account/recover-account.module').then(m => m.RecoverAccountModule)
   },
   {
-    path: 'accountMerge', loadChildren: 'app/modules/merge-account/merge-account.module#MergeAccountModule'
+    path: 'accountMerge', loadChildren: () => import('app/modules/merge-account/merge-account.module').then(m => m.MergeAccountModule)
   },
   {
-    path: 'contribution-portal', loadChildren: 'app/modules/public/public.module#PublicModule'
+    path: 'contribution-portal', loadChildren: () => import('app/modules/public/public.module').then(m => m.PublicModule)
   },
   {
-    path: 'contribute/join/:orgId', loadChildren: 'app/modules/contribute/contribute.module#ContributeModule'
+    path: 'contribute/join/:orgId', loadChildren: () => import('app/modules/contribute/contribute.module').then(m => m.ContributeModule)
   },
   {
-    path: '', loadChildren: 'app/modules/public/public.module#PublicModule'
+    path: '', loadChildren: () => import('app/modules/public/public.module').then(m => m.PublicModule)
   },
   {
     path: 'error', component: ErrorPageComponent

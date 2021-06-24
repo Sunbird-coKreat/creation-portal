@@ -6,7 +6,7 @@ import { ProgramsService , RegistryService} from '@sunbird/core';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 
 xdescribe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;

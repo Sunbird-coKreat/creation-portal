@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DatePipe, APP_BASE_HREF } from '@angular/common';
 import { DaysToGoPipe, TextbookListComponent } from '../../../shared-feature';
 import { SharedModule, ResourceService } from '@sunbird/shared';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router, ActivatedRoute } from '@angular/router';

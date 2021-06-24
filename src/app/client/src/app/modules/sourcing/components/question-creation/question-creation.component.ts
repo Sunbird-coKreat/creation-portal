@@ -31,8 +31,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   @Input() telemetryEventsInput: any;
   @Input() roles: any;
   @Input() editableFieldsACL: any;
-  @ViewChild('author_names', {static: false}) authorName;
-  @ViewChild('reuestChangeForm', {static: false}) ReuestChangeForm: NgForm;
+  @ViewChild('author_names') authorName;
+  @ViewChild('reuestChangeForm') ReuestChangeForm: NgForm;
 
   public userProfile: IUserProfile;
   public publicDataService: PublicDataService;

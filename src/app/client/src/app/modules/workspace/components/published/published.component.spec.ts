@@ -16,7 +16,7 @@ import * as mockData from './published.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
 describe('PublishedComponent', () => {

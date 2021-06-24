@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { ResourceReorderComponent } from './resource-reorder.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule } from '@angular/forms';

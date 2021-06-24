@@ -16,8 +16,8 @@ import { SourcingService } from '../../services';
   styleUrls: ['./ckeditor-tool.component.scss']
 })
 export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
-  @ViewChild('editor', {static: false}) public editorRef: ElementRef;
-  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
+  @ViewChild('editor') public editorRef: ElementRef;
+  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   @Input() editorConfig: any;
   @Input() editorDataInput: any;
   @Input() editorId: any;

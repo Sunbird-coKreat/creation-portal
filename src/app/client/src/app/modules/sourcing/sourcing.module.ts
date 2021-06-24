@@ -5,7 +5,7 @@ import { SanitizeHtmlPipe } from './pipe/sanitize-html.pipe';
 import { QuestionListComponent,
   QuestionCreationComponent, ChapterListComponent, McqCreationComponent, McqTemplateSelectionComponent,
   CkeditorToolComponent, QuestionPreviewComponent, BulkUploadComponent } from './components';
-import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SharedModule } from '@sunbird/shared';
 import { QuestionCreationHeaderComponent } from './components/question-creation-header/question-creation-header.component';
@@ -34,10 +34,10 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { NgInviewModule } from 'angular-inport';
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
+import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
-import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 
 
 @NgModule({

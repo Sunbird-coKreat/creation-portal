@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DebugElement } from '@angular/core';
-import { SuiPopupModule, SuiModule } from 'ng2-semantic-ui';
+import { SuiPopupModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { MvcFilterComponent } from './mvc-filter.component';
 import { mockMvcFilterData } from './mvc.filter.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
