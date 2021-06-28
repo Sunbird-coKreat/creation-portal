@@ -14,7 +14,7 @@ import { ProgramHeaderComponent } from '../program-header/program-header.compone
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
 let errorInitiate;
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';

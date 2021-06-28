@@ -12,7 +12,7 @@ import { Ibatch, IStatusOption } from './../../interfaces/';
 import { WorkSpaceService } from '../../services';
 import * as _ from 'lodash-es';
 import { IImpressionEventInput } from '@sunbird/telemetry';
-import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
+import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
 
 @Component({
   selector: 'app-all-content',
@@ -21,7 +21,7 @@ import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semanti
 
 export class AllContentComponent extends WorkSpace implements OnInit, AfterViewInit {
 
-  @ViewChild('modalTemplate', {static: false})
+  @ViewChild('modalTemplate')
   public modalTemplate: ModalTemplate<{ data: string }, string, string>;
   /**
      * state for content editior

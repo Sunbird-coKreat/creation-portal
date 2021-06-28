@@ -16,7 +16,7 @@ import { of, Observable } from 'rxjs';
   styleUrls: ['./project-filter.component.scss']
 })
 export class ProjectFilterComponent implements OnInit {
-  @ViewChild('modal', {static: false}) modal;
+  @ViewChild('modal') modal;
   @Input() programs;
   @Input() telemetryPageId;
   @Input() filtersAppliedCount;

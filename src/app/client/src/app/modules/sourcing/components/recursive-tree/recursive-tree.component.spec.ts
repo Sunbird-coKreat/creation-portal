@@ -3,7 +3,7 @@ import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing'
 import { FrameworkService, UserService, ExtPluginService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';

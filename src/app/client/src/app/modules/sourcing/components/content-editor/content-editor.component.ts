@@ -23,7 +23,7 @@ jQuery.fn.iziModal = iziModal;
 })
 export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() contentEditorComponentInput: IContentEditorComponentInput;
-  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
+  @ViewChild('FormControl') FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
   private userProfile: IUserProfile;
   private routeParams: any;

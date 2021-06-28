@@ -6,7 +6,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule } from '@sunbird/shared';
 import { CoreModule } from '@sunbird/core';
 import { PlayerHelperModule } from '@sunbird/player-helper';
-import { SuiModalModule } from 'ng2-semantic-ui';
+import { SuiModalModule } from 'ng2-semantic-ui-v9';
 
 @NgModule({
     imports: [

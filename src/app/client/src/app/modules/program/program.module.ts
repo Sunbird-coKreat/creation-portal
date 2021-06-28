@@ -2,7 +2,7 @@ import { CoreModule } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SuiModule } from 'ng2-semantic-ui/dist';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedFeatureModule } from '@sunbird/shared-feature';

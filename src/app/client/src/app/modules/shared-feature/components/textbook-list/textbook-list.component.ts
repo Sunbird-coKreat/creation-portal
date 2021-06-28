@@ -39,7 +39,7 @@ export class TextbookListComponent implements OnInit {
   public collectionData: any;
   @Output() selectedCollection = new EventEmitter<any>();
   @Output() applyTextbookPreference = new EventEmitter<any>();
-  @ViewChild('prefModal', {static: false}) prefModal;
+  @ViewChild('prefModal') prefModal;
   prefernceForm: FormGroup;
   sbFormBuilder: FormBuilder;
   showTextbookFiltersModal = false;

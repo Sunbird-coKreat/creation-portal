@@ -21,7 +21,7 @@ export class BulkUploadComponent implements OnInit {
   @Input('sharedContext') sharedContext: any;
   @Input('programContext') programContext: any;
   @Input() storedCollectionData;
-  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
+  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
 
   public process: any = {
     process_id: '',

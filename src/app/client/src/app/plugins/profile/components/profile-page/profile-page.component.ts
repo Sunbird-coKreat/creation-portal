@@ -17,8 +17,8 @@ import { CacheService } from 'ng2-cache-service';
 })
 export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  @ViewChild('profileModal', {static: false}) profileModal;
-  @ViewChild('slickModal', {static: false}) slickModal;
+  @ViewChild('profileModal') profileModal;
+  @ViewChild('slickModal') slickModal;
   userProfile: any;
   contributions = [];
   attendedTraining: Array<object>;

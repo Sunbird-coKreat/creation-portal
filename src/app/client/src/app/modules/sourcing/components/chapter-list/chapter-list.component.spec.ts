@@ -8,7 +8,7 @@ import { ToasterService, SharedModule, ResourceService} from '@sunbird/shared';
 import { CoreModule, ActionService, UserService, PublicDataService, ProgramsService } from '@sunbird/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of as observableOf, throwError as observableError, of } from 'rxjs';
-import { SuiModule, SuiTabsModule } from 'ng2-semantic-ui/dist';
+import { SuiModule, SuiTabsModule } from 'ng2-semantic-ui-v9';
 import { ProgramStageService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { DatePipe } from '@angular/common';
