@@ -6,6 +6,7 @@ import { ProgramListComponent } from '../shared-feature/components/program-list/
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
 import * as telemetryLabels from '../shared/services/config/telemetry-label.config.json';
+import { MyContentComponent } from './components/my-content/my-content.component';
 const telemetryPage = telemetryLabels.default;
 
 const routes: Routes = [
@@ -35,6 +36,14 @@ const routes: Routes = [
   path: 'program/:programId', component: ProgramComponent,
   data: {
     telemetry: { env: 'creation-portal', pageid: telemetryPage.pageId.contribute.projectContributions, type: telemetryPage.pageType.list,
+    subtype: telemetryPage.pageSubtype.paginate}
+  },
+},
+
+{
+  path: 'mycontent', component: MyContentComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'creation-portal', pageid: telemetryPage.pageId.contribute.adminMyProjects, type: telemetryPage.pageType.list,
     subtype: telemetryPage.pageSubtype.paginate}
   },
 },
