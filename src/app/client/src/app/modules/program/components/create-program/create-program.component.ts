@@ -487,7 +487,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
     this.programScope['targetPrimaryCategories'] = [];
     const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
-    if (this.enableQuestionSetEditor === 'true') {
+    if (_.toLower(this.enableQuestionSetEditor) === 'true') {
       const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
       this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
       this.programScope['targetPrimaryObjects'] = questionSetCategories;
@@ -903,7 +903,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (_.includes(invalidValues, prgData.shortlisting_enddate)) {
         prgData['shortlisting_enddate'] = null;
-      } 
+      }
 
       prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
@@ -924,7 +924,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (prgData['shortlisting_enddate']) {
         prgData['shortlisting_enddate'].setHours(23,59,59);
-      } 
+      }
 
       if (prgData['enddate']) {
         prgData['enddate'].setHours(23,59,59);
@@ -932,7 +932,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (prgData['content_submission_enddate']) {
         prgData['content_submission_enddate'].setHours(23,59,59);
-      } 
+      }
 
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
@@ -1241,7 +1241,7 @@ showTexbooklist(showTextBookSelector = true) {
     return revisedTotalCount;
   }
 
-  public onChangeTopics() {    
+  public onChangeTopics() {
     this.blueprintTemplate.properties.forEach( (property) => {
       if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
     })
@@ -1282,7 +1282,7 @@ showTexbooklist(showTextBookSelector = true) {
   }
 
   isBlueprintValid() {
-    let validity = true, totalQuestions = this.localBlueprint.totalQuestions;  
+    let validity = true, totalQuestions = this.localBlueprint.totalQuestions;
     _.forEach(this.blueprintTemplate.properties, (prop) => {
       let val = this.localBlueprint[prop.code]
       if(prop.required) {
@@ -1302,7 +1302,7 @@ showTexbooklist(showTextBookSelector = true) {
         }
       }
       if(prop.code === 'totalMarks') {
-        if(val) {          
+        if(val) {
           if(isNaN(parseFloat(val))) validity = false;
           else if(parseFloat(val) < 0) validity = false;
         }

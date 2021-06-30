@@ -46,8 +46,7 @@ let envVariables = {
   DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url,
   DOCK_QUESTIONSET_ENABLE: env.dock_questionSet_enable || 'true',
   DOCK_SMS_URL: env.dock_sms_url || 'https://vdn.diksha.gov.in',
-
-
+  SUNBIRD_PROTO: env.sunbird_base_proto,
 
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,

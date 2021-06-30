@@ -48,7 +48,7 @@ export class BulkJobService {
       data: {
         request: {
           filters: {
-            objectType: 'content',
+            objectType: ['content', 'questionset'],
             processId: processId,
             status: []
           },
