@@ -50,17 +50,20 @@ export class FrameworkService {
       this._channelData$.next({ err: null, channelData: channelData });
       this._channelData = channelData;
     } else if (framework && !_.get(this._frameworkData, framework)) {
-
-        this.getFrameworkCategories(framework).subscribe(
-          (frameworkData: ServerResponse) => {
-            this.setFrameWorkData(frameworkData);
-            const frameWorkName = framework ? framework : 'defaultFramework';
-            this._frameworkData[frameWorkName] = frameworkData.result.framework;
-            this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
-          },
-          err => {
-            this._frameworkData$.next({ err: err, frameworkdata: null });
-          });
+        if (_.isArray(framework)) {
+          this.addUnlistedFrameworks(framework);
+        } else {
+          this.getFrameworkCategories(framework).subscribe(
+            (frameworkData: ServerResponse) => {
+              this.setFrameWorkData(frameworkData);
+              const frameWorkName = framework ? framework : 'defaultFramework';
+              this._frameworkData[frameWorkName] = frameworkData.result.framework;
+              this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
+            },
+            err => {
+              this._frameworkData$.next({ err: err, frameworkdata: null });
+            });
+        }
       } else if (!_.get(this._frameworkData, 'defaultFramework')) {
           this.getDefaultFrameWork(hashTagId ? hashTagId : this.userService.hashTagId)
             .pipe(mergeMap(data => {
