@@ -1,7 +1,7 @@
 import { ProgramsService, EnrollContributorService } from '@sunbird/core';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent } from './components';
+import { ProgramComponent, MyContentComponent } from './components';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { HelpPageComponent } from '../shared-feature/components/help-page/help-page.component';
@@ -26,6 +26,13 @@ const routes: Routes = [
 },
 {
   path: 'myenrollprograms', component: ProgramListComponent, pathMatch: 'full',
+  data: {
+    telemetry: { env: 'creation-portal', pageid: telemetryPage.pageId.contribute.adminMyProjects, type: telemetryPage.pageType.list,
+    subtype: telemetryPage.pageSubtype.paginate}
+  },
+},
+{
+  path: 'mycontent', component: MyContentComponent, pathMatch: 'full',
   data: {
     telemetry: { env: 'creation-portal', pageid: telemetryPage.pageId.contribute.adminMyProjects, type: telemetryPage.pageType.list,
     subtype: telemetryPage.pageSubtype.paginate}
