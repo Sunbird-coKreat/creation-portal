@@ -48,6 +48,9 @@
     "copyright": {
       "type": "string"
     },
+    "copyrightYear" : {
+      "type": "number"
+    },
     "license": {
       "type": "string",
       "default": "CC BY 4.0"
@@ -115,6 +118,9 @@
       "type": "array"
     },
     "publishComment": {
+      "type": "string"
+    },
+    "rejectComment": {
       "type": "string"
     },
     "compatibilityLevel": {

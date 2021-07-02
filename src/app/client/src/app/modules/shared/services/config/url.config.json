@@ -97,6 +97,9 @@
       "HIERARCHY_ADD": "content/v3/hierarchy/add",
       "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
     },
+    "QUESTIONSET" : {
+      "GET": "questionset/v1/read"
+    },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",
       "ORG_CONSUMPTION": "dashboard/v1/consumption/org",
@@ -282,7 +285,7 @@
       "SEARCH": "program/v1/process/search",
       "DOCK_IMPORT": "content/v3/import",
       "DOCK_IMPORT_V1": "content/v1/import",
-      "DOCK_QS_IMPORT_V1": "questionset/v1/import"  
+      "DOCK_QS_IMPORT_V1": "questionset/v1/import"
     },
     "DOCK_TENANT": {
       "LIST": "program/v1/tenant/list"

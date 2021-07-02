@@ -98,6 +98,8 @@ export class BulkUploadComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0');
     this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
+
+    this.checkFrameworkData();
   }
 
   getContentTypes() {
@@ -206,7 +208,7 @@ export class BulkUploadComponent implements OnInit {
       this.process.overall_stats.upload_pending = 0;
 
       if (_.get(searchResponse, 'result.count', 0) > 0) {
-        this.contents = _.get(searchResponse, 'result.content');
+        this.contents = _.compact(_.concat(_.get(searchResponse.result, 'QuestionSet'), _.get(searchResponse.result, 'content')));
         let status = this.stageStatus;
         if (status === 'review') {
           status = 'Review';
@@ -461,7 +463,7 @@ export class BulkUploadComponent implements OnInit {
     const contentTypes = this.contentTypes;//_.union(_.concat(this.contentTypes.map((type) => type.name), this.contentTypes.map((type) => type.value)));
     const licenses = this.licenses.map((license) => license.name);
 
-    let headers = [
+    const headers = [
       { name: 'Name of the Content', inputName: 'name', maxLength: 50, required: true, requiredError, headerError, maxLengthError },
       { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
       { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
@@ -680,8 +682,9 @@ export class BulkUploadComponent implements OnInit {
     }, {});
     const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
 
-    const frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
-    console.log(frameworkMetaData);
+    let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
+    frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+    frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -806,6 +809,22 @@ export class BulkUploadComponent implements OnInit {
     this.bulkUploadState += (action === 'increment') ? 1 : -1;
     if (this.bulkUploadState === 2) {
       this.initiateDocumentUploadModal();
+    }
+  }
+
+  checkFrameworkData() {
+
+    const framework = _.get(this.sessionContext.targetCollectionFrameworksData, 'framework');
+    const targetFWIds = _.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds');
+
+    if (!_.isEmpty(framework) &&
+    _.isEmpty(_.get(this.frameworkService.frameworkData, framework))) {
+      this.frameworkService.addUnlistedFrameworks(_.castArray(framework));
+    }
+
+    if (!_.isEmpty(targetFWIds) &&
+    _.isEmpty(_.get(this.frameworkService.frameworkData, _.first(targetFWIds)))) {
+      this.frameworkService.addUnlistedFrameworks(_.castArray(_.first(targetFWIds)));
     }
   }
 }
