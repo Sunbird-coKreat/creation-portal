@@ -93,15 +93,19 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
       ],
       fontSize: {
         options: [
-          'nine',
-          'eleven',
-          'thirtneen',
-          'fifteen',
-          'seventeen',
-          'nineteen',
-          'twentyone',
-          'twentythree',
-          'twentyfive'
+          'eight',
+          'ten',
+          'twelve',
+          'fourteen',
+          'sixteen',
+          'eighteen',
+          'twenty',
+          'twentytwo',
+          'twentyfour',
+          'twentysix',
+          'twentyeight',
+          'thirty',
+          'thirtysix'
         ]
       },
       image: {
