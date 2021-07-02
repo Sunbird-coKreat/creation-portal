@@ -919,7 +919,7 @@ export class HelperService {
       }), 'code');
 
       organisationFrameworkUserInput[key] = this.hasEmptyElement(value) ? _.get(targetCollectionFrameworksData, key) || [] :
-      this.convertNameToIdentifier(framework, value, key, code, targetCollectionFrameworksData);
+      this.convertNameToIdentifier(framework, value, key, code, targetCollectionFrameworksData, 'identifier');
 
     });
 
@@ -929,7 +929,7 @@ export class HelperService {
       }), 'code');
       targetFrameworkUserInput[key] = this.hasEmptyElement(value) ?
       _.get(targetCollectionFrameworksData, key) || [] :
-      this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData);
+      this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData, 'identifier');
     });
 
     return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
@@ -947,10 +947,10 @@ export class HelperService {
  * @memberof HelperService
  */
 
-  convertNameToIdentifier(framework, value, key, code, collectionMeta) {
+  convertNameToIdentifier(framework, value, key, code, collectionMeta, mapBy) {
     const filteredTermsByName = _.filter(_.get(this.flattenedFrameworkCategories[framework], code), i => _.includes(value, i.name));
     const uniqByName = _.uniqBy(filteredTermsByName, 'name');
-    return _.map(uniqByName, 'identifier');
+    return _.map(uniqByName, mapBy);
   }
 
 
@@ -1036,5 +1036,24 @@ export class HelperService {
           _.pick(collection, _.map(OrgAndTargetFrameworkCategories.targetFrameworkCategories, 'targetIdFieldName')));
     }
     return  targetCollectionFrameworksData;
+  }
+
+  getSourceCategoryValues(row, targetCollectionFrameworksData) {
+    const framework = _.get(targetCollectionFrameworksData, 'framework');
+    const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
+    const userInputKeys = _.keys(organisationFrameworkUserInput);
+    const organisationFrameworkCategories = _.get(this.frameworkService, 'orgFrameworkCategories');
+    const sourceCategoryValues = _.filter(organisationFrameworkCategories, i => {
+      if (_.includes(userInputKeys, i.orgIdFieldName)) {
+        i.value = organisationFrameworkUserInput[i.orgIdFieldName];
+        return i.code;
+      }
+    });
+    const sourceCategoryValuesMap = {};
+    _.forEach(sourceCategoryValues, (category, key) => {
+      // tslint:disable-next-line:max-line-length
+      sourceCategoryValuesMap[category.code] = this.convertNameToIdentifier(framework, category.value, key, category.code, targetCollectionFrameworksData, 'name');
+    });
+    return sourceCategoryValuesMap;
   }
 }
