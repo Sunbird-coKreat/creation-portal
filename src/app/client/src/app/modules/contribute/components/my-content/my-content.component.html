@@ -20,7 +20,7 @@
                 <h3 *ngIf="!_selectedTab" class="fs-1-3 font-weight-bold mb-15">
                     {{resourceService.frmelmnts.lbl.myContent}}</h3>
                 <h3 *ngIf="_selectedTab === 'frameworkTab'" class="fs-1-3 font-weight-bold mb-15">
-                    {{selectedFrameworkType}} Framework</h3>
+                    {{selectedFrameworkType?.key}} Framework</h3>
                 <h3 *ngIf="_selectedTab === 'contentTab'" class="fs-1-3 font-weight-bold mb-15">
                     {{selectedContentDetails?.board}}<span class="dot-separator"></span>
                     {{selectedContentDetails?.medium}}<span class="dot-separator"></span>
@@ -46,15 +46,15 @@
                     class="d-block width-100 font-weight-normal">{{resourceService.frmelmnts.lbl.usageDetails}}</label>
                 <div class="d-flex">
                     <dl class="pr-10">
-                        <dt class="fs-1-286 font-weight-bold py-10">2,45,000</dt>
+                        <dt class="fs-1-286 font-weight-bold py-10">0</dt>
                         <dd>{{resourceService.frmelmnts.lbl.totalPlays}}</dd>
                     </dl>
                     <dl class="pr-10">
-                        <dt class="fs-1-286 font-weight-bold py-10">1,250</dt>
+                        <dt class="fs-1-286 font-weight-bold py-10">0</dt>
                         <dd>{{resourceService.frmelmnts.lbl.averagePlaysPerCount}}</dd>
                     </dl>
                     <dl>
-                        <dt class="fs-1-286 font-weight-bold py-8"><i class="icon star sb-color-yellow fs-0-785"></i>4
+                        <dt class="fs-1-286 font-weight-bold py-8"><i class="icon star sb-color-yellow fs-0-785"></i>0
                         </dt>
                         <dd>{{resourceService.frmelmnts.lbl.averageRating}}</dd>
                     </dl>
@@ -69,7 +69,7 @@
                 <div class="sb-pageSection-header pt-24 d-flex flex-jc-space-between">
                     <div>
                         <h4 class="sb-pageSection-title pr-10"> {{resourceService.frmelmnts.lbl.allContent}}</h4>
-                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">145</span>
+                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                     </div>
                     <button type="button"
                         class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.downloadReport}}</button>
@@ -108,11 +108,11 @@
                             <tbody class="sb-table-body w-100 o-y-auto">
                                 <tr *ngFor="let item of selectedContributionDetails | keyvalue">
                                     <td>
-                                        {{item.value.board}}
+                                        {{item.value.board ? item.value.board : ' - '}}
                                     </td>
-                                    <td>{{item.value.medium}}</td>
-                                    <td>{{item.value.gradeLevel}}</td>
-                                    <td>{{item.value.subject}}</td>
+                                    <td>{{item.value.medium ? item.value.medium : ' - '}}</td>
+                                    <td>{{item.value.gradeLevel ? item.value.gradeLevel: ' - '}}</td>
+                                    <td>{{item.value.subject ? item.value.subject : ' - '}}</td>
                                     <td>
                                         <div class="text-capitalize fs-0-785">
                                             <span
@@ -143,7 +143,7 @@
                     <div>
                         <h4 class="sb-pageSection-title pr-10"> All Content</h4>
                         <span
-                            class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{selectedContentDetails?.contents.length}}</span>
+                            class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                     </div>
                 </div>
                 <div class="sb-pageSection-content">
@@ -183,9 +183,9 @@
                                 <tr *ngFor="let content of selectedContentDetails?.contents">
                                     <td>{{content.name}}</td>
                                     <td>{{content.creator}}</td>
-                                    <td>2260</td>
-                                    <td><i class="icon star sb-color-yellow"></i>4</td>
-                                    <td>Creater Guild</td>
+                                    <td> - </td>
+                                    <td><i class="icon star sb-color-yellow"></i> 0</td>
+                                    <td> - </td>
                                     <td *ngIf="content.isPublished" class="sb-color-success">
                                         {{resourceService.frmelmnts.lbl.published}}</td>
                                     <td *ngIf="!content.isPublished" class="sb-color-error">
@@ -249,9 +249,9 @@
                                         Sample
                                     </td>
                                     <td>Ekta Yadav</td>
-                                    <td>2260</td>
-                                    <td><i class="icon star sb-color-yellow"></i>4</td>
-                                    <td>Creater Guild</td>
+                                    <td> - </td>
+                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
                                 </tr>
@@ -260,9 +260,9 @@
                                         Sample
                                     </td>
                                     <td>Ekta Yadav</td>
-                                    <td>2260</td>
-                                    <td><i class="icon star sb-color-yellow"></i>4</td>
-                                    <td>Creater Guild</td>
+                                    <td> - </td>
+                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
                                 </tr>
@@ -271,9 +271,9 @@
                                         Sample
                                     </td>
                                     <td>Ekta Yadav</td>
-                                    <td>2260</td>
-                                    <td><i class="icon star sb-color-yellow"></i>4</td>
-                                    <td>Creater Guild</td>
+                                    <td> - </td>
+                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
                                 </tr>
@@ -282,9 +282,9 @@
                                         Sample
                                     </td>
                                     <td>Ekta Yadav</td>
-                                    <td>2260</td>
-                                    <td><i class="icon star sb-color-yellow"></i>4</td>
-                                    <td>Creater Guild</td>
+                                    <td> - </td>
+                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
                                 </tr>
@@ -297,7 +297,7 @@
                     <span
                         class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                 </div>
-                <div class="sb-card-bx" *ngFor="let item of contributionDetails | keyvalue">
+                <div class="sb-card-bx" *ngFor="let item of contributionDetails | keyvalue; let i = index">
                     <div class="fs-1-3 font-weight-bold mb-20"> {{item.key}} framework</div>
                     <div class="d-flex">
                         <div class="pr-20 w-40">
@@ -317,14 +317,14 @@
                                 <ng-container *ngFor="let item of item.value.gradeLevel | slice:0:2">
                                     {{ item }},
                                 </ng-container>
-                                <ng-container *ngIf="isExpanded">
+                                <span class="d-none" [attr.id]="'gradeLevelList' + i">
                                     <ng-container *ngFor="let item of item.value.gradeLevel | slice:2">
                                         {{ item }},
                                     </ng-container>
-                                </ng-container>
+                                </span>
                             </div>
-                            <small class="cursor-pointer" (click)="isExpanded = true;"
-                                *ngIf="item.value.gradeLevel.length > 2 && !isExpanded">+{{item.value.gradeLevel.length
+                            <small class="cursor-pointer" [attr.id]="'gradeLevelBtn' + i" (click)="onExpand(i, 'gradeLevel');"
+                                *ngIf="item.value.gradeLevel.length > 2">+{{item.value.gradeLevel.length
                                 - 2}} more</small>
                         </div>
                         <div class="pr-20 w-40">
@@ -334,18 +334,18 @@
                                 <ng-container *ngFor="let item of item.value.subject | slice:0:2">
                                     {{ item }},
                                 </ng-container>
-                                <ng-container *ngIf="isExpanded">
+                                <span class="d-none" [attr.id]="'subjectList' + i">
                                     <ng-container *ngFor="let item of item.value.subject | slice:2">
                                         {{ item }},
                                     </ng-container>
-                                </ng-container>
+                                </span>
                             </div>
-                            <small class="cursor-pointer" (click)="isExpanded = true;"
-                                *ngIf="item.value.subject.length > 2 && !isExpanded">+{{item.value.subject.length - 2}}
-                                more</small>
+                            <small class="cursor-pointer" [attr.id]="'subjectBtn' + i" (click)="onExpand(i, 'subject');"
+                                *ngIf="item.value.subject.length > 2">+{{item.value.subject.length
+                                - 2}} more</small>
                         </div>
                         <div>
-                            <button type="button" (click)="onCardClick(item.key, item.value)"
+                            <button type="button" (click)="onCardClick(item)"
                                 class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.open}}</button>
                         </div>
                     </div>

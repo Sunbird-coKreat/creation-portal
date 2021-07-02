@@ -29,8 +29,10 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public fwIdTypeMap: any = {};
   public publishedContentMap: any = {};
   public _selectedTab: string;
-  public selectedFrameworkType: string;
+  public selectedFrameworkType: any;
   public playerConfig: any;
+  public totalContent: number;
+  public totalPublishedContent: number;
   public contentCountData: any = {
     total: 0,
     published: 0,
@@ -102,17 +104,16 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   initialize() {
     forkJoin([this.getContents(), this.getFrameworks()]).pipe(
       map(([contentRes, frameworkRes]: any) => {
-        this.contents = _.get(contentRes, 'content');
+        this.contents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
         this.framework = _.get(frameworkRes, 'Framework');
-        this.contentCountData.total = _.get(contentRes, 'count') || 0;
+        this.totalContent = _.get(contentRes, 'count') || 0;
         const contentIds = _.map(this.contents, (content => _.get(content, 'identifier')));
         return contentIds;
       }),
       mergeMap(contentIds => this.getOriginForApprovedContents(contentIds).pipe(
-        map(res => {
-          this.publishedContents = _.get(res, 'content');
-          this.contentCountData.published = _.get(res, 'count') || 0;
-          this.contentCountData.notPublished = (this.contentCountData.total - this.contentCountData.published) as Number;
+        map((res: any) => {
+          this.publishedContents = _.compact(_.concat(_.get(res, 'content'), _.get(res, 'QuestionSet')));
+          this.totalPublishedContent = _.get(res, 'count') || 0;
           return this.publishedContents;
         }))))
       .subscribe((data: any) => {
@@ -142,16 +143,19 @@ export class MyContentComponent implements OnInit, AfterViewInit {
           board: this.getUniqValue(obj[value.frameworkType], value, 'board'),
           gradeLevel: this.getUniqValue(obj[value.frameworkType], value, 'gradeLevel'),
           medium: this.getUniqValue(obj[value.frameworkType], value, 'medium'),
-          subject: this.getUniqValue(obj[value.frameworkType], value, 'subject')
+          subject: this.getUniqValue(obj[value.frameworkType], value, 'subject'),
+          published: this.getPublishedContentCount(obj[value.frameworkType], value),
+          notPublished: this.getNotPublishedContentCount(obj[value.frameworkType], value)
         };
       }
     });
     this.contributionDetails = obj;
+    this.setContentCount(this.totalPublishedContent, (this.totalContent - this.totalPublishedContent ));
   }
 
-  onCardClick(key: string, value: any) {
-    this.selectedFrameworkType = key;
-    const filteredContent = _.filter(this.contents, (content) => content.frameworkType === key);
+  onCardClick(selectedCard: any) {
+    this.selectedFrameworkType = selectedCard;
+    const filteredContent = _.filter(this.contents, (content) => content.frameworkType === selectedCard.key);
     const obj = {};
     _.forEach(filteredContent, (content) => {
       const groupKey = content.board + '_' + content.medium + '_' + content.gradeLevel + '_' + content.subject;
@@ -167,30 +171,42 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       };
     });
     this.selectedContributionDetails = obj;
+    this.setContentCount(this.selectedFrameworkType.value.published, this.selectedFrameworkType.value.notPublished);
     this.loadTabComponent('frameworkTab');
   }
 
   onFrameworkClick(selectedIndex: any) {
     this.selectedContentDetails = selectedIndex;
+    this.setContentCount(selectedIndex.published, selectedIndex.notPublished);
     this.loadTabComponent('contentTab');
   }
 
   onPreview(content: any) {
-    console.log(content);
     this.getConfigByContent(content.identifier);
   }
 
   onBack(): void {
     if (this._selectedTab === 'contentTab') {
-      this._selectedTab = 'frameworkTab';
+      this.setContentCount(this.selectedFrameworkType.value.published, this.selectedFrameworkType.value.notPublished);
+      this.loadTabComponent('frameworkTab');
     } else if (this._selectedTab === 'previewTab') {
-      this._selectedTab = 'contentTab';
+      this.setContentCount(this.selectedContentDetails.published, this.selectedContentDetails.notPublished);
+      this.loadTabComponent('contentTab');
     } else {
-      this._selectedTab = null;
+      this.setContentCount(this.totalPublishedContent, (this.totalContent - this.totalPublishedContent ));
+      this.loadTabComponent(null);
     }
   }
 
-  loadTabComponent(tab) {
+  setContentCount(publishedCount: number, notPublishedCount: number) {
+    this.contentCountData = {
+      total: (publishedCount + notPublishedCount),
+      published: publishedCount,
+      notPublished: notPublishedCount
+    };
+  }
+
+  loadTabComponent(tab: any) {
     this._selectedTab = tab;
   }
 
@@ -232,7 +248,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
           },
           'exists': ['programId'],
           'not_exists': ['sampleContent'],
-          'fields': ['name', 'status', 'framework', 'board', 'gradeLevel', 'medium', 'subject', 'creator'],
+          'fields': ['name', 'status', 'framework', 'board', 'gradeLevel', 'medium', 'subject', 'creator', 'mimeType'],
           'limit': 1000
         }
       }
@@ -317,6 +333,13 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       this.playerConfig.context.cdata = this.telemetryInteractCdata;
       this.cd.detectChanges();
     });
+  }
+
+  onExpand(selectedIndex: number, category: string) {
+    const divElement = (<HTMLInputElement>document.getElementById(`${category}List${selectedIndex}`));
+    const btnElement = (<HTMLInputElement>document.getElementById(`${category}Btn${selectedIndex}`));
+    divElement.classList.remove('d-none');
+    btnElement.classList.add('d-none');
   }
 
 }
