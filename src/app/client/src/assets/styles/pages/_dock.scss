@@ -909,17 +909,27 @@ app-question-set-editor{
       font-weight: 500 !important;
     }
     .disabled{
-      opacity: 0.4 !important;
-      color: #aaa !important;
+      opacity: 0.8 !important;
+      color: #999 !important;
       .placeholder{
-        color: #aaa !important;
+        color: #999 !important;
       }
     }
   }
   
   .sb-textbox[disabled='true']{
-    border: .5px solid #b3b1b1;
-    color: #aaa;
+    color: #999;
+    opacity: 0.8 !important;
+    &::placeholder{
+      color: #999 !important;
+    }
+  }
+  textarea[disabled='true']{
+    opacity: 0.8 !important;
+    color: #999 !important;
+    &::placeholder{
+      color: #999 !important;
+    }
   }
   .sb-dropdown{
     select{
@@ -927,8 +937,8 @@ app-question-set-editor{
     }
   }
   select[disabled]{
-    opacity: 0.7 !important;
-    color: #aaa;
+    opacity: 0.8 !important;
+    color: #999;
   }
 }
 .sb-treePicker-selectionSection{
