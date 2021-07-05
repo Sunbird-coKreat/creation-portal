@@ -5,7 +5,7 @@ import { ActionService, UserService, LearnerService, PlayerService } from '@sunb
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { catchError, map, mergeMap } from 'rxjs/operators';
-import { forkJoin, throwError } from 'rxjs';
+import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService } from '../../../sourcing/services';
 
 @Component({
@@ -28,6 +28,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public isExpanded: Boolean = false;
   public fwIdTypeMap: any = {};
   public publishedContentMap: any = {};
+  public userMap: any = {};
   public _selectedTab: string;
   public selectedFrameworkType: any;
   public playerConfig: any;
@@ -111,12 +112,21 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         return contentIds;
       }),
       mergeMap(contentIds => this.getOriginForApprovedContents(contentIds).pipe(
-        map((res: any) => {
-          this.publishedContents = _.compact(_.concat(_.get(res, 'content'), _.get(res, 'QuestionSet')));
-          this.totalPublishedContent = _.get(res, 'count') || 0;
-          return this.publishedContents;
-        }))))
-      .subscribe((data: any) => {
+        map((contentRes: any) => {
+          this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
+          this.totalPublishedContent = _.get(contentRes, 'count') || 0;
+          const userIds =  _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
+          return userIds;
+        }))),
+      mergeMap(userIds => iif(() => !_.isEmpty(userIds),
+          this.getUserProfiles(userIds).pipe(
+            map((userRes: any) => {
+              this.createUserMap(userRes);
+              return userRes;
+          })), of([]))
+      ))
+      .subscribe((response: any) => {
+        console.log('userRes', response);
         this.prepareContributionDetails();
         this.showLoader = false;
       }, (err: any) => {
@@ -124,19 +134,30 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       });
   }
 
+  createUserMap(data): void {
+    const users = _.get(data, 'response.content');
+    _.forEach(users, (value) => {
+      this.userMap[value.identifier] = !_.isEmpty(value.lastName) ? value.firstName + ' ' + value.lastName :
+      value.firstName;
+    });
+  }
+
   prepareContributionDetails() {
     _.forEach(this.framework, (value) => {
       this.fwIdTypeMap[value.identifier] = value.type;
     });
     _.map(this.publishedContents, (value) => {
-      this.publishedContentMap[value.origin] = value.identifier;
-    });
-    _.map(this.contents, (value) => {
-      value.frameworkType = this.fwIdTypeMap[value.framework];
-      value.isPublished = _.has(this.publishedContentMap, value.identifier);
+      this.publishedContentMap[value.origin] = {
+        identifier: value.identifier,
+        userId: value.lastPublishedBy
+       };
     });
     const obj = {};
     _.forEach(this.contents, (value) => {
+      value.lastPublishedId = _.get(this.publishedContentMap[value.identifier], 'userId');
+      value.publishBy = this.userMap[value.lastPublishedId];
+      value.frameworkType = this.fwIdTypeMap[value.framework];
+      value.isPublished = _.has(this.publishedContentMap, value.identifier);
       if (value && !_.isEmpty(value.frameworkType)) {
         obj[value.frameworkType] = obj[value.frameworkType] || {};
         obj[value.frameworkType] = {
@@ -248,7 +269,9 @@ export class MyContentComponent implements OnInit, AfterViewInit {
           },
           'exists': ['programId'],
           'not_exists': ['sampleContent'],
-          'fields': ['name', 'status', 'framework', 'board', 'gradeLevel', 'medium', 'subject', 'creator', 'mimeType'],
+          'fields': [
+            'name', 'status', 'framework', 'board', 'gradeLevel', 'medium',
+            'subject', 'creator', 'mimeType', 'lastPublishedBy'],
           'limit': 1000
         }
       }
@@ -275,8 +298,31 @@ export class MyContentComponent implements OnInit, AfterViewInit {
             origin: contentIds
           },
           exists: ['originData'],
-          fields: ['status', 'origin'],
+          fields: ['status', 'origin', 'lastPublishedBy'],
           limit: 1000
+        }
+      }
+    };
+    return this.learnerService.post(option).pipe(map((res: any) => {
+      return res.result;
+    }), catchError(err => {
+      const errInfo = {
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata: this.telemetryInteractCdata,
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+    }));
+  }
+
+  getUserProfiles(identifier?: any) {
+    const option = {
+      url: 'user/v1/search',
+      data: {
+        request: {
+          filters: {
+            'identifier': identifier
+          }
         }
       }
     };

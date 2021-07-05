@@ -185,7 +185,7 @@
                                     <td>{{content.creator}}</td>
                                     <td> - </td>
                                     <td><i class="icon star sb-color-yellow"></i> 0</td>
-                                    <td> - </td>
+                                    <td> {{content.publishBy ? content.publishBy : ' - '}} </td>
                                     <td *ngIf="content.isPublished" class="sb-color-success">
                                         {{resourceService.frmelmnts.lbl.published}}</td>
                                     <td *ngIf="!content.isPublished" class="sb-color-error">

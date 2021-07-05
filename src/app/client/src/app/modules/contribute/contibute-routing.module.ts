@@ -34,7 +34,7 @@ const routes: Routes = [
 {
   path: 'mycontent', component: MyContentComponent, pathMatch: 'full',
   data: {
-    telemetry: { env: 'creation-portal', pageid: telemetryPage.pageId.contribute.adminMyProjects, type: telemetryPage.pageType.list,
+    telemetry: { env: 'creation-portal', pageid: telemetryPage.pageId.contribute.myContent, type: telemetryPage.pageType.list,
     subtype: telemetryPage.pageSubtype.paginate}
   },
 },
