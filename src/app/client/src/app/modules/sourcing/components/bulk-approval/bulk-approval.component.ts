@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService, LearnerService } from '@sunbird/core';
-import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService, 
+import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService,
   ServerResponse } from '@sunbird/shared';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { HelperService } from '../../services/helper.service';
@@ -297,20 +297,21 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   viewBulkApprovalStatus() {
     if (this.bulkApprove && this.bulkApprove.status === 'processing') {
       this.bulkJobService.searchContentWithProcessId(this.bulkApprove.process_id, this.bulkApprove.type).subscribe((res: any) => {
-        if (res.result && res.result.content && res.result.content.length) {
-          const overallStats = this.bulkApprove && this.bulkApprove.overall_stats;
-          this.dikshaContents = _.get(res, 'result.content');
-
-          overallStats['approve_success'] = _.filter(this.dikshaContents, content => content.status === 'Live').length;
-          // tslint:disable-next-line:max-line-length
-          overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status === 'Failed').length;
-          overallStats['approve_pending'] = overallStats.total - (overallStats['approve_success'] + overallStats['approve_failed']);
-          this.bulkApprove.overall_stats = overallStats;
-          // tslint:disable-next-line:max-line-length
-          this.successPercentage = Math.round((this.bulkApprove.overall_stats.approve_success / this.bulkApprove.overall_stats.total) * 100);
-          this.updateBulkApprovalJob();
-          } else {
-          this.successPercentage = 0;
+        this.successPercentage = 0;
+        if (res.result) {
+          const contents = _.compact(_.concat(_.get(res.result, 'QuestionSet'), _.get(res.result, 'content')));
+          if (contents.length) {
+            const overallStats = this.bulkApprove && this.bulkApprove.overall_stats;
+            this.dikshaContents = contents;
+            overallStats['approve_success'] = _.filter(this.dikshaContents, content => content.status === 'Live').length;
+            // tslint:disable-next-line:max-line-length
+            overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status === 'Failed').length;
+            overallStats['approve_pending'] = overallStats.total - (overallStats['approve_success'] + overallStats['approve_failed']);
+            this.bulkApprove.overall_stats = overallStats;
+            // tslint:disable-next-line:max-line-length
+            this.successPercentage = Math.round((this.bulkApprove.overall_stats.approve_success / this.bulkApprove.overall_stats.total) * 100);
+            this.updateBulkApprovalJob();
+          }
         }
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
