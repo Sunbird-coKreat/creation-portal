@@ -451,6 +451,10 @@ export class HelperService {
     return this.programsService.getContentOriginEnvironment() + '/resources/play/content/' + contentId;
   }
 
+  getQuestionSetOriginUrl(questionsetId) {
+    return this.programsService.getContentOriginEnvironment() + '/resources/play/questionset/' + questionsetId;
+  }
+
   getTextbookDetails(textbookId) {
     const option = {
       url: 'content/v3/read/' + textbookId,

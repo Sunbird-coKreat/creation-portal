@@ -232,7 +232,7 @@ export class QuestionSetEditorComponent implements OnInit {
     if (sourcingReviewStatus === 'Approved') {
       this.editorConfig.config.showOriginPreviewUrl = true;
       if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.editorParams.questionSetId])) {
-        this.editorConfig.context.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.editorParams.questionSetId].identifier);
+        this.editorConfig.context.originPreviewUrl =  this.helperService.getQuestionSetOriginUrl(this.sessionContext.contentOrigins[this.editorParams.questionSetId].identifier);
       }
     }
   }
