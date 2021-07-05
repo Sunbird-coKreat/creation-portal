@@ -6,7 +6,7 @@ import { ConfigService, ResourceService, ToasterService, NavigationHelperService
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
-import { SourcingService } from '../../../sourcing/services';
+import { SourcingService, HelperService } from '../../../sourcing/services';
 
 @Component({
   selector: 'app-my-content',
@@ -41,12 +41,13 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   };
   public selectedContributionDetails: any;
   public selectedContentDetails: any;
+  public slectedContent: any;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private configService: ConfigService,
     private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService,
     private telemetryService: TelemetryService, private toasterService: ToasterService,
     private learnerService: LearnerService, private sourcingService: SourcingService,
-    private playerService: PlayerService, private cd: ChangeDetectorRef) { }
+    private playerService: PlayerService, private cd: ChangeDetectorRef, private helperService: HelperService) { }
 
   ngOnInit(): void {
     this.getPageId();
@@ -89,17 +90,17 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   }
 
   public logTelemetryImpressionEvent(data: any, type: string) {
-    if (this.impressionEventTriggered) { return false; }
-    this.impressionEventTriggered = true;
-    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
-    if (data && !_.isEmpty(data)) {
-      telemetryImpression.edata.visits = _.map(data, (row) => {
-        return { objid: _.toString(row['identifier']), objtype: type };
-      });
-    } else {
-      telemetryImpression.edata.visits = [];
-    }
-    this.telemetryService.impression(telemetryImpression);
+    // if (this.impressionEventTriggered) { return false; }
+    // this.impressionEventTriggered = true;
+    // const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    // if (data && !_.isEmpty(data)) {
+    //   telemetryImpression.edata.visits = _.map(data, (row) => {
+    //     return { objid: _.toString(row['identifier']), objtype: type };
+    //   });
+    // } else {
+    //   telemetryImpression.edata.visits = [];
+    // }
+    // this.telemetryService.impression(telemetryImpression);
   }
 
   initialize() {
@@ -154,6 +155,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     });
     const obj = {};
     _.forEach(this.contents, (value) => {
+      value.origin = _.get(this.publishedContentMap[value.identifier], 'identifier');
       value.lastPublishedId = _.get(this.publishedContentMap[value.identifier], 'userId');
       value.publishBy = this.userMap[value.lastPublishedId];
       value.frameworkType = this.fwIdTypeMap[value.framework];
@@ -203,6 +205,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   }
 
   onPreview(content: any) {
+    this.slectedContent = content;
+    this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
     this.getConfigByContent(content.identifier);
   }
 

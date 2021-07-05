@@ -993,3 +993,30 @@ app-question-set-editor{
     }
   }
 }
+
+.middle-section-set {
+  max-width: 854px;
+  width: 100%;
+  margin: 0 auto;
+  .msg-box {
+    margin: ($base-block-space * 4) auto;
+    &__content {
+      border: 1px dotted #024f9d;
+      &__label {
+        color: #00BD7F;
+        padding-bottom: ($base-block-space * 0.75);
+      }
+      &__error-msg {
+        color: var(--red);
+        padding-bottom: ($base-block-space * 0.75);
+      }
+      &__blank-box {
+        height: 100%;
+        width: 100%;
+        border: calculateRem(1px) dotted #80A7CE;
+        background: #F5F9FC;
+        border-radius: ($base-block-space / 2);
+      }
+    }
+  }
+}
