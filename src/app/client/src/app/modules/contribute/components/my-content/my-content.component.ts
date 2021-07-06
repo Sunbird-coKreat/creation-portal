@@ -1,9 +1,8 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
 import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { IImpressionEventInput } from '@sunbird/telemetry';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
@@ -13,12 +12,11 @@ import { SourcingService, HelperService } from '../../../sourcing/services';
   templateUrl: './my-content.component.html',
   styleUrls: ['./my-content.component.scss']
 })
-export class MyContentComponent implements OnInit, AfterViewInit {
+export class MyContentComponent implements OnInit {
 
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public telemetryImpression: IImpressionEventInput;
   public impressionEventTriggered = false;
   public showLoader = true;
   public contents: any = [];
@@ -60,31 +58,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   getPageId() {
     this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
-  }
-
-  ngAfterViewInit() {
-    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
-    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-    setTimeout(() => {
-      this.telemetryImpression = {
-        context: {
-          env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: this.telemetryInteractCdata || [],
-          pdata: {
-            id: this.userService.appId,
-            ver: version,
-            pid: `${this.configService.appConfig.TELEMETRY.PID}.programs`
-          }
-        },
-        edata: {
-          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
-          pageid: this.getPageId(),
-          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
-          subtype: _.get(this.activatedRoute, 'snapshot.data.telemetry.subtype'),
-          duration: this.navigationHelperService.getPageLoadTime()
-        }
-      };
-    });
   }
 
   initialize() {
