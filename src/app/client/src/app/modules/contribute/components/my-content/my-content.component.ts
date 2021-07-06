@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
+import { IImpressionEventInput, TelemetryService } from '@sunbird/telemetry';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
@@ -19,13 +19,12 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryImpression: IImpressionEventInput;
-  public impressionEventTriggered: Boolean = false;
-  public showLoader: Boolean = true;
+  public impressionEventTriggered = false;
+  public showLoader = true;
   public contents: any = [];
   public publishedContents: any = [];
   public framework: any = [];
   public contributionDetails: any;
-  public isExpanded: Boolean = false;
   public fwIdTypeMap: any = {};
   public publishedContentMap: any = {};
   public userMap: any = {};
@@ -45,7 +44,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private configService: ConfigService,
     private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService,
-    private telemetryService: TelemetryService, private toasterService: ToasterService,
     private learnerService: LearnerService, private sourcingService: SourcingService,
     private playerService: PlayerService, private cd: ChangeDetectorRef, private helperService: HelperService) { }
 
@@ -89,35 +87,19 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  public logTelemetryImpressionEvent(data: any, type: string) {
-    // if (this.impressionEventTriggered) { return false; }
-    // this.impressionEventTriggered = true;
-    // const telemetryImpression = _.cloneDeep(this.telemetryImpression);
-    // if (data && !_.isEmpty(data)) {
-    //   telemetryImpression.edata.visits = _.map(data, (row) => {
-    //     return { objid: _.toString(row['identifier']), objtype: type };
-    //   });
-    // } else {
-    //   telemetryImpression.edata.visits = [];
-    // }
-    // this.telemetryService.impression(telemetryImpression);
-  }
-
   initialize() {
     forkJoin([this.getContents(), this.getFrameworks()]).pipe(
       map(([contentRes, frameworkRes]: any) => {
         this.contents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
         this.framework = _.get(frameworkRes, 'Framework');
         this.totalContent = _.get(contentRes, 'count') || 0;
-        const contentIds = _.map(this.contents, (content => _.get(content, 'identifier')));
-        return contentIds;
+        return _.map(this.contents, (content => _.get(content, 'identifier')));
       }),
       mergeMap(contentIds => this.getOriginForApprovedContents(contentIds).pipe(
         map((contentRes: any) => {
           this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
           this.totalPublishedContent = _.get(contentRes, 'count') || 0;
-          const userIds =  _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
-          return userIds;
+          return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
         }))),
       mergeMap(userIds => iif(() => !_.isEmpty(userIds),
           this.getUserProfiles(userIds).pipe(
@@ -132,6 +114,13 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         this.showLoader = false;
       }, (err: any) => {
         this.showLoader = false;
+        const errInfo = {
+          errorMsg: 'Something went wrong, try again later',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata: this.telemetryInteractCdata,
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
       });
   }
 
@@ -283,14 +272,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
 
     return this.actionService.post(option).pipe(map((res: any) => {
       return res.result;
-    }), catchError(err => {
-      const errInfo = {
-        errorMsg: 'Something went wrong, try again later',
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env,
-      };
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }));
   }
 
@@ -310,14 +291,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     };
     return this.learnerService.post(option).pipe(map((res: any) => {
       return res.result;
-    }), catchError(err => {
-      const errInfo = {
-        errorMsg: 'Something went wrong, try again later',
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env,
-      };
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }));
   }
 
@@ -334,14 +307,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     };
     return this.learnerService.post(option).pipe(map((res: any) => {
       return res.result;
-    }), catchError(err => {
-      const errInfo = {
-        errorMsg: 'Something went wrong, try again later',
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env,
-      };
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }));
   }
 
@@ -361,14 +326,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     };
     return this.learnerService.post(option).pipe(map((res: any) => {
       return res.result;
-    }), catchError(err => {
-      const errInfo = {
-        errorMsg: 'Something went wrong, try again later',
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env,
-      };
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }));
   }
 

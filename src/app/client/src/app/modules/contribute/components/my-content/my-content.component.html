@@ -50,8 +50,8 @@
                             <span class="sb-label sb-label-table sb-color-success">
                                 {{slectedContent.isPublished ? 'Approved' : 'Not Approved'}}
                             </span>
-                            <a id="viewContentOnDiksha" *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
-                            href="{{slectedContent.originPreviewUrl}}" target="_blank">{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+                            <a id="viewContentOnDiksha"  *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+                            href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
                         </div>
                     </div>
                 </div>
@@ -218,11 +218,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div *ngSwitchCase="'previewTab'" class="sb-pageSection sb-bg-color-white my-24 pb-24">
-            <div class="ui container">
-                <app-player class="content-player" [playerConfig]="playerConfig"></app-player>
-            </div>
-        </div> -->
         <div *ngSwitchCase="'previewTab'" class="sb-pageSection sb-bg-color-white mt-24 py-24">
             <div class="middle-section-set">
                 <div class="ui container msg-box">
