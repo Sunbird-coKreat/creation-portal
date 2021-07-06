@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
@@ -38,10 +38,18 @@ export class MyContentComponent implements OnInit {
   public selectedContributionDetails: any;
   public selectedContentDetails: any;
   public slectedContent: any;
+  private playerService: PlayerService;
+  private helperService: HelperService;
+  private configService: ConfigService;
+  private sourcingService: SourcingService;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
-    private userService: UserService, private configService: ConfigService,
-    private activatedRoute: ActivatedRoute, private learnerService: LearnerService, private sourcingService: SourcingService,
-    private playerService: PlayerService, private cd: ChangeDetectorRef, private helperService: HelperService) { }
+    private userService: UserService, private activatedRoute: ActivatedRoute,
+    private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
+      this.playerService = injector.get<PlayerService>(PlayerService);
+      this.helperService = injector.get<HelperService>(HelperService);
+      this.configService = injector.get<ConfigService>(ConfigService);
+      this.sourcingService = injector.get<SourcingService>(SourcingService);
+     }
 
   ngOnInit(): void {
     this.getPageId();
