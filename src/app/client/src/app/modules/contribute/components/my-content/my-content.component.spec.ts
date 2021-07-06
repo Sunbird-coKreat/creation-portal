@@ -61,10 +61,6 @@ describe('MyContentComponent', () => {
     expect(pageId).toEqual('contribution_my_content');
   });
 
-  it('#ngAfterViewInit() should set #telemetryImpression data', () => {
-    component.ngAfterViewInit();
-  });
-
   it('#initialize() should fetch content details when API success', () => {
     spyOn(component, 'getContents').and.returnValue(of(mockData.contentListRes.result));
     spyOn(component, 'getFrameworks').and.returnValue(of(mockData.frameworkListRes.result));
