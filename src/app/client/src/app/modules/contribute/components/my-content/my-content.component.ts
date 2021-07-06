@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import * as _ from 'lodash-es';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
-import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ResourceService } from '@sunbird/shared';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
@@ -17,7 +17,6 @@ export class MyContentComponent implements OnInit {
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public impressionEventTriggered = false;
   public showLoader = true;
   public contents: any = [];
   public publishedContents: any = [];
@@ -41,8 +40,7 @@ export class MyContentComponent implements OnInit {
   public slectedContent: any;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private configService: ConfigService,
-    private activatedRoute: ActivatedRoute, private router: Router, private navigationHelperService: NavigationHelperService,
-    private learnerService: LearnerService, private sourcingService: SourcingService,
+    private activatedRoute: ActivatedRoute, private learnerService: LearnerService, private sourcingService: SourcingService,
     private playerService: PlayerService, private cd: ChangeDetectorRef, private helperService: HelperService) { }
 
   ngOnInit(): void {
@@ -75,14 +73,13 @@ export class MyContentComponent implements OnInit {
           return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
         }))),
       mergeMap(userIds => iif(() => !_.isEmpty(userIds),
-          this.getUserProfiles(userIds).pipe(
-            map((userRes: any) => {
-              this.createUserMap(userRes);
-              return userRes;
+        this.getUserProfiles(userIds).pipe(
+          map((userRes: any) => {
+            this.createUserMap(userRes);
+            return userRes;
           })), of([]))
       ))
       .subscribe((response: any) => {
-        console.log('userRes', response);
         this.prepareContributionDetails();
         this.showLoader = false;
       }, (err: any) => {
@@ -101,7 +98,7 @@ export class MyContentComponent implements OnInit {
     const users = _.get(data, 'response.content');
     _.forEach(users, (value) => {
       this.userMap[value.identifier] = !_.isEmpty(value.lastName) ? value.firstName + ' ' + value.lastName :
-      value.firstName;
+        value.firstName;
     });
   }
 
@@ -113,7 +110,7 @@ export class MyContentComponent implements OnInit {
       this.publishedContentMap[value.origin] = {
         identifier: value.identifier,
         userId: value.lastPublishedBy
-       };
+      };
     });
     const obj = {};
     _.forEach(this.contents, (value) => {
@@ -135,7 +132,7 @@ export class MyContentComponent implements OnInit {
       }
     });
     this.contributionDetails = obj;
-    this.setContentCount(this.totalPublishedContent, (this.totalContent - this.totalPublishedContent ));
+    this.setContentCount(this.totalPublishedContent, (this.totalContent - this.totalPublishedContent));
   }
 
   onCardClick(selectedCard: any) {
@@ -180,7 +177,7 @@ export class MyContentComponent implements OnInit {
       this.setContentCount(this.selectedContentDetails.published, this.selectedContentDetails.notPublished);
       this.loadTabComponent('contentTab');
     } else {
-      this.setContentCount(this.totalPublishedContent, (this.totalContent - this.totalPublishedContent ));
+      this.setContentCount(this.totalPublishedContent, (this.totalContent - this.totalPublishedContent));
       this.loadTabComponent(null);
     }
   }
@@ -225,20 +222,20 @@ export class MyContentComponent implements OnInit {
     const option = {
       url: 'composite/v3/search',
       data: {
-        'request': {
-          'filters': {
-            'objectType': ['content', 'questionset'],
-            'status': ['Live'],
-            'createdBy': this.userService.userid,
-            'mimeType': { '!=': 'application/vnd.ekstep.content-collection' },
-            'contentType': { '!=': 'Asset' }
+        request: {
+          filters: {
+            objectType: ['content', 'questionset'],
+            status: ['Live'],
+            createdBy: this.userService.userid,
+            mimeType: { '!=': 'application/vnd.ekstep.content-collection' },
+            contentType: { '!=': 'Asset' }
           },
-          'exists': ['programId'],
-          'not_exists': ['sampleContent'],
-          'fields': [
+          exists: ['programId'],
+          not_exists: ['sampleContent'],
+          fields: [
             'name', 'status', 'framework', 'board', 'gradeLevel', 'medium',
-            'subject', 'creator', 'mimeType', 'lastPublishedBy'],
-          'limit': 1000
+          'subject', 'creator', 'mimeType', 'lastPublishedBy'],
+          limit: 1000
         }
       }
     };
@@ -273,7 +270,7 @@ export class MyContentComponent implements OnInit {
       data: {
         request: {
           filters: {
-            'identifier': identifier
+            identifier: identifier
           }
         }
       }
@@ -287,13 +284,13 @@ export class MyContentComponent implements OnInit {
     const option = {
       url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
       data: {
-        'request': {
-          'filters': {
-            'objectType': 'framework',
-            'status': ['Live']
+        request: {
+          filters: {
+            objectType: 'framework',
+            status: ['Live']
           },
-          'fields': ['identifier', 'type'],
-          'limit': 1000
+          fields: ['identifier', 'type'],
+          limit: 1000
         }
       }
     };
