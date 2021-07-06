@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/co
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
-import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
-import { IImpressionEventInput, TelemetryService } from '@sunbird/telemetry';
+import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { IImpressionEventInput } from '@sunbird/telemetry';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
