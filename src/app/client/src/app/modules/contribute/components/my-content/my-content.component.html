@@ -8,7 +8,7 @@
         [ngClass]="{'grid' : !_selectedTab}">
         ​<div *ngIf="_selectedTab">
             <button (click)="onBack();" class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn">
-                <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                <i class="icon-svg icon-svg--xxs icon-back mr-4" aria-hidden="true">
                     <svg class="icon icon-svg--primary">
                         <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
                     </svg>
@@ -71,7 +71,7 @@
                         <dd>{{resourceService.frmelmnts.lbl.averagePlaysPerCount}}</dd>
                     </dl>
                     <dl class="mb-0">
-                        <dt class="fs-1-286 font-weight-bold py-8"><i class="icon star sb-color-yellow fs-0-785"></i>0
+                        <dt class="fs-1-286 font-weight-bold py-8"><i class="icon star sb-color-yellow fs-0-785" aria-hidden="true"></i>0
                         </dt>
                         <dd>{{resourceService.frmelmnts.lbl.averageRating}}</dd>
                     </dl>
@@ -202,7 +202,7 @@
                                     <td>{{content.name}}</td>
                                     <td>{{content.creator}}</td>
                                     <td> - </td>
-                                    <td><i class="icon star sb-color-yellow"></i> 0</td>
+                                    <td><i class="icon star sb-color-yellow" aria-hidden="true"></i> 0</td>
                                     <td> {{content.publishBy ? content.publishBy : ' - '}} </td>
                                     <td *ngIf="content.isPublished" class="sb-color-success">
                                         {{resourceService.frmelmnts.lbl.published}}</td>
@@ -274,7 +274,7 @@
                                     </td>
                                     <td>Ekta Yadav</td>
                                     <td> - </td>
-                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td><i class="icon star sb-color-yellow" aria-hidden="true"></i>0</td>
                                     <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
@@ -285,7 +285,7 @@
                                     </td>
                                     <td>Ekta Yadav</td>
                                     <td> - </td>
-                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td><i class="icon star sb-color-yellow" aria-hidden="true"></i>0</td>
                                     <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
@@ -296,7 +296,7 @@
                                     </td>
                                     <td>Ekta Yadav</td>
                                     <td> - </td>
-                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td><i class="icon star sb-color-yellow" aria-hidden="true"></i>0</td>
                                     <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
@@ -307,7 +307,7 @@
                                     </td>
                                     <td>Ekta Yadav</td>
                                     <td> - </td>
-                                    <td><i class="icon star sb-color-yellow"></i>0</td>
+                                    <td><i class="icon star sb-color-yellow" aria-hidden="true"></i>0</td>
                                     <td> - </td>
                                     <td class="text-center"><button type="button"
                                             class="sb-btn sb-btn-normal sb-btn-outline-primary">open</button></td>
