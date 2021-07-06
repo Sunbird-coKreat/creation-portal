@@ -285,6 +285,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       return res.result;
     }), catchError(err => {
       const errInfo = {
+        errorMsg: 'Something went wrong, try again later',
         telemetryPageId: this.telemetryPageId,
         telemetryCdata: this.telemetryInteractCdata,
         env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -311,6 +312,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       return res.result;
     }), catchError(err => {
       const errInfo = {
+        errorMsg: 'Something went wrong, try again later',
         telemetryPageId: this.telemetryPageId,
         telemetryCdata: this.telemetryInteractCdata,
         env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -334,6 +336,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       return res.result;
     }), catchError(err => {
       const errInfo = {
+        errorMsg: 'Something went wrong, try again later',
         telemetryPageId: this.telemetryPageId,
         telemetryCdata: this.telemetryInteractCdata,
         env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -360,6 +363,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       return res.result;
     }), catchError(err => {
       const errInfo = {
+        errorMsg: 'Something went wrong, try again later',
         telemetryPageId: this.telemetryPageId,
         telemetryCdata: this.telemetryInteractCdata,
         env: this.activatedRoute.snapshot.data.telemetry.env,
