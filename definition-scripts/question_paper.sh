@@ -1,5 +1,6 @@
-curl -L -X POST '{{host}}/object/category/definition/v4/create' \
--H 'Content-Type: application/json' \
+curl --location --request PATCH 'https://dock.sunbirded.org/api/object/category/definition/v1/update/obj-cat:question-paper_collection_{{rootOrgId}}' \
+--header 'Authorization: Bearer {{dockToken}}' \
+--header 'Content-Type: application/json' \
 --data-raw '{
 	"request": {
 		"objectCategoryDefinition": {
