@@ -144,7 +144,7 @@ export class QuestionSetEditorComponent implements OnInit {
     this.editorConfig = {
       context: {
         identifier: this.editorParams.questionSetId,
-        channel: this.userService.channel,
+        channel: this.programContext.rootorg_id,
         authToken: '',
         sid: this.userService.sessionId,
         did: this.deviceId,
