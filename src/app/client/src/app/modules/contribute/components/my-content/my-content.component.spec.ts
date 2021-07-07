@@ -116,12 +116,14 @@ describe('MyContentComponent', () => {
     component.contents = mockData.contentListRes.result.content;
     spyOn(component, 'setContentCount').and.callThrough();
     spyOn(component, 'loadTabComponent').and.callThrough();
-    const data = {key : 'k-12', value: { published: 2, notPublished: 1}};
+    spyOn(component, 'getPublishedContentCount').and.callThrough();
+    const data = {key : 'K-12', value: { published: 2, notPublished: 1}};
     component.onCardClick(data);
     expect(component.selectedFrameworkType).toEqual(data);
     expect(component.selectedContributionDetails).toBeDefined();
     expect(component.setContentCount).toHaveBeenCalled();
     expect(component.loadTabComponent).toHaveBeenCalledWith('frameworkTab');
+    expect(component.getPublishedContentCount).toHaveBeenCalled();
   });
 
   it('#onFrameworkClick() should set #selectedContentDetails data', () => {
@@ -145,14 +147,22 @@ describe('MyContentComponent', () => {
     expect(component.slectedContent).toEqual(data);
   });
 
-  it('#onBack() should load #frameworkTab', () => {
+  it('#onBack() should load framework tab', () => {
     spyOn(component, 'loadTabComponent').and.callThrough();
     spyOn(component, 'setContentCount').and.callThrough();
     component._selectedTab = 'contentTab';
-    component.selectedFrameworkType = {key : 'k-12', value: { published: 2, notPublished: 1}};
+    component.selectedFrameworkType = {key : 'K-12', value: { published: 2, notPublished: 1}};
     component.onBack();
     expect(component.setContentCount).toHaveBeenCalled();
     expect(component.loadTabComponent).toHaveBeenCalledWith('frameworkTab');
+  });
+
+  it('#onBack() should load content tab', () => {
+    spyOn(component, 'loadTabComponent').and.callThrough();
+    component._selectedTab = 'previewTab';
+    component.selectedContentDetails = { published: 2, notPublished: 1};
+    component.onBack();
+    expect(component.loadTabComponent).toHaveBeenCalledWith('contentTab');
   });
 
   it('#setContentCount() should set content count ', () => {
@@ -168,16 +178,22 @@ describe('MyContentComponent', () => {
   it('#getPublishedContentCount() should return expected count ', () => {
     const result = component.getPublishedContentCount({published: 2}, {isPublished: true});
     expect(result).toBe(3);
+    const result1 = component.getPublishedContentCount({}, {isPublished: true});
+    expect(result1).toBe(1);
   });
 
   it('#getNotPublishedContentCount() shoud return expected count', () => {
     const result = component.getNotPublishedContentCount({}, {isPublished: false});
     expect(result).toBe(1);
+    const result1 = component.getNotPublishedContentCount({notPublished: 1}, {isPublished: false});
+    expect(result1).toBe(2);
   });
 
   it('#getUniqValue() shoud return unique category', () => {
-    const result = component.getUniqValue({subject: ['Hindi']}, {subject: ['Hindi']}, 'subject');
-    expect(result).toEqual(['Hindi']);
+    const result = component.getUniqValue({subject: ['Hindi']}, {subject: ['English']}, 'subject');
+    expect(result).toEqual(['Hindi', 'English']);
+    const result1 = component.getUniqValue({}, {subject: ['English']}, 'subject');
+    expect(result1).toEqual(['English']);
   });
 
   it('#getContents() should fetch content details when API success', () => {
