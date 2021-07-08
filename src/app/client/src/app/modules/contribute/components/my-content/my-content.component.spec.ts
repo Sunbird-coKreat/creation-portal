@@ -2,10 +2,11 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
+import * as _ from 'lodash-es';
 import { SharedModule, ToasterService, ConfigService } from '@sunbird/shared';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
-import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
+import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { MyContentComponent } from './my-content.component';
 import { mockData } from './my-content.component.spec.data';
@@ -32,7 +33,7 @@ describe('MyContentComponent', () => {
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
         { provide: UserService, useValue: mockData.userServiceStub },
-        ActionService, LearnerService, SourcingService, ConfigService, HelperService
+        ActionService, LearnerService, SourcingService, ConfigService, HelperService, ProgramsService
       ],
     })
     .compileComponents();
@@ -109,6 +110,13 @@ describe('MyContentComponent', () => {
     expect(component.contributionDetails).toBeDefined();
     expect(component.setContentCount).toHaveBeenCalled();
     expect(component.getUniqValue).toHaveBeenCalled();
+  });
+
+  it('#prepareContributionDetails() should set not contribution details when #contents empty', () => {
+    spyOn(component, 'setContentCount').and.callThrough();
+    component.prepareContributionDetails();
+    expect(component.contributionDetails).not.toBeDefined();
+    expect(component.setContentCount).not.toHaveBeenCalled();
   });
 
 
@@ -196,6 +204,18 @@ describe('MyContentComponent', () => {
     expect(result1).toEqual(['English']);
   });
 
+  it('#sortCollection() should show a sorted contribution table', () => {
+    const programsService: ProgramsService = TestBed.inject(ProgramsService);
+    spyOn(programsService, 'sortCollection').and.callThrough();
+    component._selectedTab = 'frameworkTab';
+    component.selectedContributionDetails = [{name: 'cbse'}, { name: 'xyz'}];
+    component.sortCollection('name');
+    expect(programsService.sortCollection).toHaveBeenCalled();
+    expect(component.direction).toBe('desc');
+    expect(component.sortColumn).toBe('name');
+    expect(component.selectedContributionDetails).toEqual([{name: 'cbse'}, { name: 'xyz'}]);
+  });
+
   it('#getContents() should fetch content details when API success', () => {
     const actionService: ActionService = TestBed.inject(ActionService);
     spyOn(actionService, 'post').and.returnValue(of(mockData.contentListRes));
@@ -203,6 +223,7 @@ describe('MyContentComponent', () => {
       expect(apiResponse.content.length).toBe(2);
     });
   });
+
 
   it('#getOriginForApprovedContents() should fetch published content details when API success', () => {
     const learnerService: LearnerService = TestBed.inject(LearnerService);

@@ -1028,6 +1028,15 @@ export class ProgramsService extends DataService implements CanActivate {
     if (_.isNumber(bColumn)) {
     bColumn = _.toString(bColumn);
     }
+
+    if (_.isBoolean(aColumn)) {
+      aColumn = _.toString(aColumn);
+    }
+
+    if (_.isBoolean(bColumn)) {
+      bColumn = _.toString(bColumn);
+    }
+
     return bColumn.localeCompare(aColumn);
   }
 

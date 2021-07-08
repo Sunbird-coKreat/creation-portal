@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute } from '@angular/router';
-import { ActionService, UserService, LearnerService, PlayerService } from '@sunbird/core';
+import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
 import { ConfigService, ResourceService } from '@sunbird/shared';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
@@ -35,6 +35,8 @@ export class MyContentComponent implements OnInit {
     published: 0,
     notPublished: 0
   };
+  public direction = 'asc';
+  public sortColumn = '';
   public selectedContributionDetails: any;
   public selectedContentDetails: any;
   public slectedContent: any;
@@ -42,6 +44,7 @@ export class MyContentComponent implements OnInit {
   private helperService: HelperService;
   private configService: ConfigService;
   private sourcingService: SourcingService;
+  private programsService: ProgramsService;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
@@ -49,6 +52,7 @@ export class MyContentComponent implements OnInit {
       this.helperService = injector.get<HelperService>(HelperService);
       this.configService = injector.get<ConfigService>(ConfigService);
       this.sourcingService = injector.get<SourcingService>(SourcingService);
+      this.programsService = injector.get<ProgramsService>(ProgramsService);
      }
 
   ngOnInit(): void {
@@ -162,7 +166,7 @@ export class MyContentComponent implements OnInit {
         notPublished: this.getNotPublishedContentCount(obj[groupKey], content)
       };
     });
-    this.selectedContributionDetails = obj;
+    this.selectedContributionDetails = _.map(obj);
     this.setContentCount(this.selectedFrameworkType.value.published, this.selectedFrameworkType.value.notPublished);
     this.loadTabComponent('frameworkTab');
   }
@@ -226,6 +230,23 @@ export class MyContentComponent implements OnInit {
     } else {
       return _.castArray(defaultValue[category]);
     }
+  }
+
+  sortCollection(column) {
+
+    if (this._selectedTab === 'frameworkTab') {
+      this.selectedContributionDetails = this.programsService.sortCollection(this.selectedContributionDetails, column, this.direction);
+    } else if (this._selectedTab === 'contentTab') {
+      // tslint:disable-next-line:max-line-length
+      this.selectedContentDetails.contents = this.programsService.sortCollection(this.selectedContentDetails.contents, column, this.direction);
+    }
+
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
   }
 
   getContents() {
