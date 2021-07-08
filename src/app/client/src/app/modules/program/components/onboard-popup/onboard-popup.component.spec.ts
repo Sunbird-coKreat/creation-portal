@@ -4,11 +4,11 @@ import { BrowserCacheTtlService } from './../../../shared/services/browser-cache
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { OnboardPopupComponent } from './onboard-popup.component';
 import { By } from '@angular/platform-browser';
-import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui';
+import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui-v9';
 import { TelemetryModule, TelemetryInteractDirective } from '@sunbird/telemetry';
 import { ConfigService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import {APP_BASE_HREF} from '@angular/common';
 
 import * as _ from 'lodash-es';

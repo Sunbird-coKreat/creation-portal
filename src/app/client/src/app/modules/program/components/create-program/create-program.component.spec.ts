@@ -20,7 +20,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { Component, ViewChild} from '@angular/core';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 
 describe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;

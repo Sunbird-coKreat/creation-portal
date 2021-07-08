@@ -13,7 +13,6 @@ import { InitialState, ISessionContext, IUserParticipantDetails } from '../../in
 import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
-import { isUndefined, isNullOrUndefined } from 'util';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
@@ -72,7 +71,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   userPreferences: any = {};
   setPreferences = {};
   prefernceForm: FormGroup;
-  @ViewChild('prefModal', {static: false}) prefModal;
+  @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
@@ -93,7 +92,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   searchLimitCount: any;
   isContributingOrgAdmin: any;
   visitedTab = [];
-  @ViewChild('userRemoveRoleModal', {static: false}) userRemoveRoleModal;
+  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
@@ -322,7 +321,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
             (prefres) => {
               let preffilter = {};
-              if (!isNullOrUndefined(prefres.result)) {
+              if (prefres.result !== null || prefres.result !== undefined) {
                 this.userPreferences = prefres.result;
                 preffilter = _.get(this.userPreferences, 'contributor_preference');
               }
@@ -487,7 +486,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   getProgramRoleMapping(user) {
     const newRole = user.projectselectedRole;
     let progRoleMapping = this.nominationDetails.rolemapping;
-    if (isNullOrUndefined(progRoleMapping) && newRole !== 'NONE') {
+    if ((progRoleMapping === null || progRoleMapping === undefined) && newRole !== 'NONE') {
       progRoleMapping = {};
     }
     const programRoleNames = _.keys(progRoleMapping);
@@ -617,7 +616,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     };
-    if (!isUndefined(preferencefilters)) {
+    if (!_.isUndefined(preferencefilters)) {
       if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
       }

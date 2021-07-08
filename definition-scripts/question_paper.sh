@@ -21,7 +21,7 @@ curl -L -X POST '{{host}}/object/category/definition/v4/create' \
 						},
 						"author": {
 							"type": "string",
-							"default": "SCERT Haryana"
+							"default": "SCERT Haryana"
 						},
 						"visibility": {
 							"type": "string",

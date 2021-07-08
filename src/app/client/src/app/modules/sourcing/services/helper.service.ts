@@ -897,6 +897,25 @@ export class HelperService {
     const targetFrameworkUserInput = _.pick(row, _.map(this.frameworkService.targetFrameworkCategories, 'targetIdFieldName'));
     const framework = _.get(targetCollectionFrameworksData, 'framework');
     const targetFWIds = _.get(targetCollectionFrameworksData, 'targetFWIds');
+    this.flattenedFrameworkCategories[framework] = {};
+
+    // tslint:disable-next-line:max-line-length
+    const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
+    _.forEach(orgFrameworkCategories, item => {
+      const terms = _.get(item, 'terms');
+      this.flattenedFrameworkCategories[framework][item.code] = terms || [];
+    });
+
+    if (framework !== _.first(targetFWIds) && !_.isEmpty(_.first(targetFWIds))) {
+      const targetFWId = _.first(targetFWIds);
+      this.flattenedFrameworkCategories[targetFWId] = {};
+      const targetFrameworkCategories = _.get(this.frameworkService.frameworkData[_.first(targetFWIds)], 'categories');
+      // tslint:disable-next-line:max-line-length
+      _.forEach(targetFrameworkCategories, item => {
+        const terms = _.get(item, 'terms');
+        this.flattenedFrameworkCategories[_.first(targetFWIds)][item.code] = terms || [];
+      });
+    }
 
     this.flattenedFrameworkCategories[framework] = {};
     // tslint:disable-next-line:max-line-length
@@ -956,7 +975,6 @@ export class HelperService {
     const uniqByName = _.uniqBy(filteredTermsByName, 'name');
     return _.map(uniqByName, mapBy);
   }
-
 
   hasEmptyElement(value) {
     if (_.isArray(value)) {

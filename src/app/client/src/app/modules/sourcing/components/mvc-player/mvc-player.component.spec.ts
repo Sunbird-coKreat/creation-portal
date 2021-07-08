@@ -5,7 +5,7 @@ import { APP_BASE_HREF } from '@angular/common';
 import * as _ from 'lodash-es';
 import { Observable, of as observableOf,  throwError as observableThrowError, } from 'rxjs';
 import { PlayerService, ActionService, CoreModule } from '@sunbird/core';
-import { SuiModalModule, SuiAccordionModule } from 'ng2-semantic-ui';
+import { SuiModalModule, SuiAccordionModule } from 'ng2-semantic-ui-v9';
 import { ConfigService, SharedModule , ToasterService} from '@sunbird/shared';
 import { SourcingService } from '../../services';
 import { MvcPlayerComponent } from './mvc-player.component';

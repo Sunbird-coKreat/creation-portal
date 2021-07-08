@@ -19,7 +19,7 @@ export class ResourceReorderComponent implements OnInit {
   @Input() programContext;
   @Input() prevUnitSelect;
   @Output() moveEvent = new EventEmitter<any>();
-  @ViewChild('modal', {static: false}) modal;
+  @ViewChild('modal') modal;
   public telemetryPageId: string;
   public collectionUnitsBreadcrumb: any = [];
   public telemetryInteractCdata: any;

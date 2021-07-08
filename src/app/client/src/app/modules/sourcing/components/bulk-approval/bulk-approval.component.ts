@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService, LearnerService } from '@sunbird/core';
-import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService, 
+import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService,
   ServerResponse } from '@sunbird/shared';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { HelperService } from '../../services/helper.service';
@@ -312,7 +312,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
             this.successPercentage = Math.round((this.bulkApprove.overall_stats.approve_success / this.bulkApprove.overall_stats.total) * 100);
             this.updateBulkApprovalJob();
           }
-        } 
+        }
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
       });

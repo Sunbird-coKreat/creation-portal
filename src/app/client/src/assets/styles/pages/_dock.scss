@@ -839,7 +839,7 @@ app-question-set-editor{
 .dynamic-form{
   label{
     font-size: 12px!important;
-  }  
+  }
   [data-title]:hover::before{
     bottom: -22px !important;
   }
@@ -916,7 +916,7 @@ app-question-set-editor{
       }
     }
   }
-  
+
   .sb-textbox[disabled='true']{
     color: #999;
     opacity: 0.8 !important;

@@ -4,7 +4,7 @@ import { McqTemplateSelectionComponent } from './mcq-template-selection.componen
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProgramTelemetryService } from '../../../program/services';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { SharedModule, ResourceService, ConfigService, BrowserCacheTtlService, ToasterService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';

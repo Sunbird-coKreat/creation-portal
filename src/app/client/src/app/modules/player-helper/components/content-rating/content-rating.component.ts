@@ -14,7 +14,7 @@ export class ContentRatingComponent implements OnInit, OnDestroy {
   /**
   *Output for Sharelink;
   */
-  @ViewChild('modal', {static: false}) modal;
+  @ViewChild('modal') modal;
   @Input() contentData?: any;
   public showContentRatingModal = true;
   public resourceService: ResourceService;

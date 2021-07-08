@@ -26,12 +26,12 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 
 export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('questionCreationChild', {static: false}) questionCreationChild;
+  @ViewChild('questionCreationChild') questionCreationChild;
   @Output() changeStage = new EventEmitter<any>();
   @Input() practiceQuestionSetComponentInput: any;
-  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
+  @ViewChild('FormControl') FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
-  @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
+  @ViewChild('resourceTtlTextarea') resourceTtlTextarea: ElementRef;
 
   public sessionContext: any;
   public programContext: any;
@@ -1156,7 +1156,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
     }, {});
     const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
-    data = _.assign(data, ...(_.pickBy(sharedMetaData, _.identity)));
+    data = _.assign(data, _.pickBy(sharedMetaData, _.identity));
     if (!_.isEmpty(data['subject'])) {
       data['subject'] = data['subject'][0];
     }
