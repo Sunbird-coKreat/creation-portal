@@ -74,12 +74,13 @@ export class MyContentComponent implements OnInit {
         this.totalContent = _.get(contentRes, 'count') || 0;
         return _.map(this.contents, (content => _.get(content, 'identifier')));
       }),
-      mergeMap(contentIds => this.getOriginForApprovedContents(contentIds).pipe(
-        map((contentRes: any) => {
-          this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
-          this.totalPublishedContent = _.get(contentRes, 'count') || 0;
-          return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
-        }))),
+      mergeMap(contentIds => iif(() => !_.isEmpty(contentIds),
+        this.getOriginForApprovedContents(contentIds).pipe(
+          map((contentRes: any) => {
+            this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
+            this.totalPublishedContent = _.get(contentRes, 'count') || 0;
+            return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
+          })), of([]))),
       mergeMap(userIds => iif(() => !_.isEmpty(userIds),
         this.getUserProfiles(userIds).pipe(
           map((userRes: any) => {
@@ -111,6 +112,7 @@ export class MyContentComponent implements OnInit {
   }
 
   prepareContributionDetails() {
+    if (_.isEmpty(this.contents)) { return; }
     _.forEach(this.framework, (value) => {
       this.fwIdTypeMap[value.identifier] = value.type;
     });
