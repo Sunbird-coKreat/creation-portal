@@ -680,11 +680,16 @@ export class BulkUploadComponent implements OnInit {
     const reqBody = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});
-    const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
+    let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
 
     let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
     frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
     frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
+
+    if (!_.isEmpty(frameworkMetaData)) {
+      const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
+      sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+    }
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -707,7 +712,7 @@ export class BulkUploadComponent implements OnInit {
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
-        ...(_.pickBy(sharedMetaData, _.identity)),
+        ...(_.pickBy(sharedMetaData, i => !_.isEmpty(i))),
         ...(_.pickBy(frameworkMetaData, i => !_.isEmpty(i)))
       },
       collection: [{
