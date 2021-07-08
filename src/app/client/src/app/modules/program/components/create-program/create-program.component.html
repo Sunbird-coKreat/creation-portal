@@ -226,410 +226,196 @@
 					[ngClass]="{'active' : showTextBookSelector}">
 					<div>
 						<form class="ui form" [formGroup]="collectionListForm" *ngIf="isFormValueSet">
-						<div class="ui grid form">
-							<div class="six wide column">
-								<div class="required field w-100">
-									<label class="d-block">{{resource?.frmelmnts?.lbl?.contentType}}
-										<i class="pull-right question circle link icon pull-right" suiPopup
-											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
-									</label>
-									<sui-multi-select class="w-100" *ngIf="!editPublished; else elseBlock"
-										class="selection" formControlName="targetPrimaryCategories"
-										[options]="programScope.targetPrimaryCategories" [(ngModel)]="selectedTargetCategories"
-										#multiSelect>
-										<sui-select-option *ngFor="let option of programScope.targetPrimaryCategories" [value]="option"
-											appTelemetryInteract
-											[telemetryInteractEdata]="getTelemetryInteractEdata('content_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [option.name]})"
-											[telemetryInteractObject]="telemetryInteractObject"
-											[telemetryInteractCdata]="telemetryInteractCdata"
-											[telemetryInteractPdata]="telemetryInteractPdata">
-										</sui-select-option>
-									</sui-multi-select>
-									<ng-template #elseBlock>
+              <div class="ui grid form">
+                <div class="three wide column">
+                  <div class="required field">
+                    <label class="d-block">{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}
+                      <i class="pull-right question circle link icon pull-right" suiPopup
+                         popupDelay="500" [popupPlacement]="'left'"
+                         popupText="{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}"></i>
+                    </label>
+                    <sui-select formControlName="target_collection_category" class="selecttarget"
+                                placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
+                                (selectedOptionChange)="onChangeTargetCollection()"
+                                [(ngModel)]="selectedTargetCollection" [options]="collectionCategories"
+                                #targetCollections>
+                      <sui-select-option *ngFor="let option of targetCollections.filteredOptions;" [value]="option">
+                      </sui-select-option>
+                    </sui-select>
+                    <div class="ui pointing red basic label below"
+                         *ngIf="collectionListForm.controls['target_collection_category'].errors  && (!collectionListForm.controls['target_collection_category'].pristine || formIsInvalid)">
+                      {{resource?.frmelmnts?.lbl?.targetCollectionRequired}}
+                    </div>
+                  </div>
+                </div>
+                <div class="three wide column">
+                  <div class="required field">
+                    <label class="d-block">{{resource?.frmelmnts?.lbl?.contentType}}
+                      <i class="pull-right question circle link icon pull-right" suiPopup
+                         popupDelay="500" [popupPlacement]="'left'"
+                         popupText="{{resource?.frmelmnts?.lbl?.contentTypesHint}}"></i>
+                    </label>
+                    <sui-multi-select class="w-100" *ngIf="!editPublished; else elseBlock"
+                                      class="selection" formControlName="targetPrimaryCategories"
+                                      [options]="programScope.targetPrimaryCategories"
+                                      [(ngModel)]="selectedTargetCategories"
+                                      #multiSelect>
+                      <sui-select-option *ngFor="let option of programScope.targetPrimaryCategories" [value]="option"
+                                         appTelemetryInteract
+                                         [telemetryInteractEdata]="getTelemetryInteractEdata('content_type', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [option.name]})"
+                                         [telemetryInteractObject]="telemetryInteractObject"
+                                         [telemetryInteractCdata]="telemetryInteractCdata"
+                                         [telemetryInteractPdata]="telemetryInteractPdata">
+                      </sui-select-option>
+                    </sui-multi-select>
+                    <ng-template #elseBlock>
 										<span *ngIf="programDetails.targetprimarycategories !== undefined"
-											class="sb-color-gray-200 fs-0-785">{{programDetails.targetprimarycategories}}</span>
-									</ng-template>
+                          class="sb-color-gray-200 fs-0-785">{{programDetails.targetprimarycategories}}</span>
+                    </ng-template>
 
-									<div class="ui pointing red basic label below "
-										*ngIf="collectionListForm.controls['targetPrimaryCategories'].errors && collectionListForm.controls['targetPrimaryCategories'].errors.required && (!collectionListForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
-										{{resource?.frmelmnts?.lbl?.contentTypesRequired }}
-									</div>
-								</div>
-							</div>
-							<div class="six wide column">
-								<div class="field">
-									<label [ngClass]="(disableUpload) ? 'disabled field':''"
-										class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
-									</label>
-									<button [ngClass]="(disableUpload) ? 'disabled field':''"
-										class="sb-btn sb-btn-primary sb-btn-normal"
-										(click)="initiateDocumentUploadModal()" [disabled]="disableUpload"
-										appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-										[telemetryInteractObject]="telemetryInteractObject"
-										[telemetryInteractCdata]="telemetryInteractCdata"
-										[telemetryInteractPdata]="telemetryInteractPdata">
-										<i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
-									</button>
-									<span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
+                    <div class="ui pointing red basic label below "
+                         *ngIf="collectionListForm.controls['targetPrimaryCategories'].errors && collectionListForm.controls['targetPrimaryCategories'].errors.required && (!collectionListForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
+                      {{resource?.frmelmnts?.lbl?.contentTypesRequired }}
+                    </div>
+                  </div>
+                </div>
+                <div class="three wide column">
+                  <div class="field">
+                    <label [ngClass]="(disableUpload) ? 'disabled field':''"
+                           class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
+                    </label>
+                    <button [ngClass]="(disableUpload) ? 'disabled field':''"
+                            class="sb-btn sb-btn-primary sb-btn-normal"
+                            (click)="initiateDocumentUploadModal()" [disabled]="disableUpload"
+                            appTelemetryInteract
+                            [telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                            [telemetryInteractObject]="telemetryInteractObject"
+                            [telemetryInteractCdata]="telemetryInteractCdata"
+                            [telemetryInteractPdata]="telemetryInteractPdata">
+                      <i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
+                    </button>
+                    <span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
 										<a href="{{uploadedDocument.artifactUrl}}"
-											class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
-											target="_blank">
+                       class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
+                       target="_blank">
 											{{uploadedDocument.name}}
-											<span class="blue-text-color-sunbird"
-												*ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
+                      <span class="blue-text-color-sunbird"
+                            *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
 										</a>
 										<i class="icon remove sb-color-error va-top cursor-pointer"
-											(click)="removeUploadedDocument();"></i>
+                       (click)="removeUploadedDocument();"></i>
 									</span>
-									<!-- Add Else condition-->
-									<ng-template #elseGuideBlock>
+                    <!-- Add Else condition-->
+                    <ng-template #elseGuideBlock>
 										<span *ngIf="guidLinefileName" class="sb-url">
 											<a href="{{programDetails.guidelines_url}}"
-												class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
-												target="_blank">
+                         class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
+                         target="_blank">
 												{{guidLinefileName}}
 											</a>
 											<i *ngIf="!editPublished"
-												class="icon remove sb-color-error va-top cursor-pointer"
-												(click)="removeUploadedDocument();"></i>
+                         class="icon remove sb-color-error va-top cursor-pointer"
+                         (click)="removeUploadedDocument();"></i>
 										</span>
-									</ng-template>
-								</div>
-							</div>
-							<!--div class="twelve wide column sb-field-group">
-								<div class="sb-field-group mb-8">
-									<label
-										class="fs-0-92">{{resource.frmelmnts.lbl.foraTargetCollection}}
-										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
-											popupDelay="500" [popupPlacement]="'right'"
-											popupText="{{resource.frmelmnts.lbl.foraTargetCollection}}"></i>
-									</label>
-									<div class="sb-field mt-4 d-flex">
-										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="yes" [disabled]="true" type="radio" name="openNominations" checked>
-											<label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
-										</div>
-										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="no" [disabled]="true" type="radio">
-											<label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
-										</div>
-									</div>
-								</div>
-							</div-->
-							<div class="six wide column">
-								<div class="required field">
-									<label class="d-block">{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}
-									<i class="pull-right question circle link icon pull-right" suiPopup
-										popupDelay="500" [popupPlacement]="'left'"
-										popupText="{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}"></i>
-								</label>
-								<sui-select formControlName="target_collection_category" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
-								(selectedOptionChange)="onChangeTargetCollection()" [(ngModel)]="selectedTargetCollection" [options]="collectionCategories"  #targetCollections>
-									<sui-select-option  *ngFor="let option of targetCollections.filteredOptions;" [value]="option">
-									</sui-select-option>
-								</sui-select>
-								<div class="ui pointing red basic label below"
-								*ngIf="collectionListForm.controls['target_collection_category'].errors  && (!collectionListForm.controls['target_collection_category'].pristine || formIsInvalid)">
-								{{resource?.frmelmnts?.lbl?.targetCollectionRequired}}
-							</div>
-								</div>
-							</div>
-						</div>
-						<div class="ui grid">
-							<div class="twelve wide column" *ngIf="showProgramScope">
-								<div class="ui grid">
-									<div class="three wide column">
-										<div class="field">
-											<label class="d-block">{{resource?.frmelmnts?.lbl?.medium}}
-												<i class="pull-right question circle link icon pull-right" suiPopup
-													popupDelay="500" [popupPlacement]="'left'"
-													popupText="{{resource?.frmelmnts?.lbl?.selectMedium}}"></i>
-											</label>
-											<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectMedium}}"
-												class="selection p-5" formControlName="medium"
-												[options]="programScope['medium']"
-												[isDisabled]="!programScope['medium']"
-												(ngModelChange)="onMediumChange()" labelField="name" #mediums
-												appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">
-												<sui-select-option *ngFor="let medium of mediums.filteredOptions"
-													[value]="medium" appTelemetryInteract
-													[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [medium.name]})"
-													[telemetryInteractObject]="telemetryInteractObject"
-													[telemetryInteractCdata]="telemetryInteractCdata"
-													[telemetryInteractPdata]="telemetryInteractPdata">
-												</sui-select-option>
-											</sui-multi-select>
+                    </ng-template>
+                  </div>
+                </div>
+                <!--div class="twelve wide column sb-field-group">
+                  <div class="sb-field-group mb-8">
+                    <label
+                      class="fs-0-92">{{resource.frmelmnts.lbl.foraTargetCollection}}
+                      <i class="pull-right question circle link icon pull-right ml-10" suiPopup
+                        popupDelay="500" [popupPlacement]="'right'"
+                        popupText="{{resource.frmelmnts.lbl.foraTargetCollection}}"></i>
+                    </label>
+                    <div class="sb-field mt-4 d-flex">
+                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                        <input id="yes" [disabled]="true" type="radio" name="openNominations" checked>
+                        <label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
+                      </div>
+                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                        <input id="no" [disabled]="true" type="radio">
+                        <label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
+                      </div>
+                    </div>
+                  </div>
+                </div-->
+              </div>
+              <div class="ui grid">
+                <div class="twelve wide column">
+                  <div class="six wide column" *ngIf="tempCollections.length">
+                    {{tempCollections.length + 'Question Papers Added'}}
+                  </div>
+                  <div class="six wide column pull-right">
+                    <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"> <i class="plus icon"></i> Add New</button>
+                    <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="showSubjectModal=!showSubjectModal">
+                      <i class="plus icon"></i> Search & Add
+                    </button>
+                  </div>
+                </div>
 
-											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
-													This field is required
-												</div-->
-										</div>
-									</div>
-									<div class="three wide column">
-										<div class="field">
-											<label class="d-block"> {{resource?.frmelmnts?.lbl?.grade}}
-												<i class="pull-right question circle link icon pull-right" suiPopup
-													popupDelay="500" [popupPlacement]="'left'"
-													popupText="{{resource?.frmelmnts?.lbl?.selectGrade}}"></i>
-											</label>
-											<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectGrade}}"
-												class="selection p-5" formControlName="gradeLevel" labelField="name"
-												(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
-												#graveLevels appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">
-												<sui-select-option
-													*ngFor="let gradeLevel of graveLevels.filteredOptions"
-													[value]="gradeLevel" appTelemetryInteract
-													[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [gradeLevel.name]})"
-													[telemetryInteractObject]="telemetryInteractObject"
-													[telemetryInteractCdata]="telemetryInteractCdata"
-													[telemetryInteractPdata]="telemetryInteractPdata">
-												</sui-select-option>
-											</sui-multi-select>
-											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
-													This field is required
-												</div-->
-										</div>
-									</div>
-									<div class="three wide column">
-										<div class="field">
-											<label class="d-block"> {{resource?.frmelmnts?.lbl?.subject}}
-												<i class="pull-right question circle link icon pull-right" suiPopup
-													popupDelay="500" [popupPlacement]="'left'"
-													popupText="{{resource?.frmelmnts?.lbl?.selectSubject}}"></i>
-											</label>
-											<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectSubject}}"
-												class="selection p-5" formControlName="subject" labelField="name"
-												[hasLabels]="true" [options]="programScope['subject']" valueField="name"
-												#subjects appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">
-												<sui-select-option *ngFor="let subject of subjects.filteredOptions"
-													[value]="subject" appTelemetryInteract
-													[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [subject.name]})"
-													[telemetryInteractObject]="telemetryInteractObject"
-													[telemetryInteractCdata]="telemetryInteractCdata"
-													[telemetryInteractPdata]="telemetryInteractPdata">
-												</sui-select-option>
-											</sui-multi-select>
-											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
-													This field is required
-												</div-->
-										</div>
-									</div>
-									<div class="three wide column pt-30">
-										<div class="field text-right pt-10">
-											<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
-												(click)="resetFilters()" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">
-												{{resource?.frmelmnts?.btn?.reset}}
-											</button>
-											<button class="sb-btn sb-btn-normal sb-btn-primary ml-8"
-												(click)="showTexbooklist()" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-												[telemetryInteractObject]="telemetryInteractObject"
-												[telemetryInteractCdata]="telemetryInteractCdata"
-												[telemetryInteractPdata]="telemetryInteractPdata">
-												{{resource?.frmelmnts?.btn?.apply}}
-											</button>
-										</div>
-									</div>
-								</div>
-
-							</div>
-							<div class="twelve wide column" *ngIf="showProgramScope">
-								<div class="ui grid">
-									<div class="seven wide column">
-										<div class="sb-table-responsive sb-dock-textbook-table">
-											<table class="sb-table sb-table-striped sb-table-sortable"
-												*ngIf="showTextBookSelector">
-												<thead class="sb-table-header sb-table-thead-gray d-block">
-													<tr>
-														<th class="w-5">
-															<!--div class="sb-checkbox sb-checkbox-primary">
-																	<input type="checkbox" id="checkall" name="checkall">
-																	<label for="checkall"></label>
-																</div-->
-														</th>
-														<th class="w-10 text-center cursor-pointer sb-sorting"
-															(click)="sortCollection('name')">
-															{{resource?.frmelmnts?.lbl?.title}} &nbsp;&nbsp;
-															<i class="fa fa-sort" aria-hidden="true"
-																*ngIf="direction === '' || sortColumn !== 'name' "></i>
-															<span *ngIf="sortColumn === 'name'" class="d-inline-block">
-																<i class="fa fa-sort-asc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-																<i class="fa fa-sort-desc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
-															</span>
-														</th>
-														<th class="w-10 text-center cursor-pointer sb-sorting"
-															(click)="sortCollection('medium')">
-															{{resource?.frmelmnts?.lbl?.medium}} &nbsp;&nbsp;
-															<i class="fa fa-sort" aria-hidden="true"
-																*ngIf="direction === '' || sortColumn !== 'medium' "></i>
-															<span *ngIf="sortColumn === 'medium'"
-																class="d-inline-block">
-																<i class="fa fa-sort-asc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-																<i class="fa fa-sort-desc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
-															</span>
-														</th>
-														<th class="w-10 text-center cursor-pointer sb-sorting"
-															(click)="sortCollection('gradeLevel')">
-															{{resource?.frmelmnts?.lbl?.class}} &nbsp;&nbsp;
-															<i class="fa fa-sort" aria-hidden="true"
-																*ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
-															<span *ngIf="sortColumn === 'gradeLevel'"
-																class="d-inline-block">
-																<i class="fa fa-sort-asc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-																<i class="fa fa-sort-desc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
-															</span>
-														</th>
-														<th class="w-10 text-center cursor-pointer sb-sorting"
-															(click)="sortCollection('subject')">
-															{{resource?.frmelmnts?.lbl?.subject}} &nbsp;&nbsp;
-															<i class="fa fa-sort" aria-hidden="true"
-																*ngIf="direction === '' || sortColumn !== 'subject' "></i>
-															<span *ngIf="sortColumn === 'subject'"
-																class="d-inline-block">
-																<i class="fa fa-sort-asc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-																<i class="fa fa-sort-desc" aria-hidden="true"
-																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
-															</span>
-														</th>
-														<th *ngIf="!blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
-														<th *ngIf="blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.sections}}</th>
-													</tr>
-												</thead>
-												<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
-													<tr *ngFor="let data of collections">
-														<td class="collapsing">
-															<div class="sb-checkbox sb-checkbox-primary">
-																<input type="checkbox"
-																	id="checkitem_{{data.identifier}}"
-																	(change)="onCollectionCheck(data, $event.target.checked)"
-																	[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
-																	name="checkitem" appTelemetryInteract
-																	[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [data.identifier]})"
-																	[telemetryInteractObject]="telemetryInteractObject"
-																	[telemetryInteractCdata]="telemetryInteractCdata"
-																	[telemetryInteractPdata]="telemetryInteractPdata">
-																<label for="checkitem_{{data.identifier}}"></label>
-															</div>
-														</td>
-														<td>
-															<div
-																class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold break-word-initial">
-																{{data.name}}
-															</div>
-														</td>
-														<td>
-															<div class="sb__ellipsis sb__ellipsis--three">
-																{{data.medium}}
-															</div>
-														</td>
-														<td>
-															<div class="sb__ellipsis sb__ellipsis--three">
-																{{data.gradeLevel}}
-															</div>
-														</td>
-														<td>
-															<div class="sb__ellipsis sb__ellipsis--three">
-																{{data.subject}}
-															</div>
-														</td>
-														<td>
-															<div class="sb__ellipsis sb__ellipsis--three">
-																{{ data.childNodes ? data.childNodes.length : 0 }}
-															</div>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-									<div class="five wide column">
-										<div class="sb-bg-white b-1-100 br-4 o-y-auto">
-											<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
-												{{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, 'plural'))}}
-											</h5>
-											<hr class="mt-0">
-											<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
-												<div class="sb-program-collection ui container"
-													*ngFor="let tempCollection of tempCollections">
-													<div class="ui grid">
-														<div class="six wide column">
-															<h5
-																class="mx-10 sb-color-gray-400 pb-5 sb__ellipsis sb__ellipsis--three font-weight-bold">
-																{{tempCollection.name}}</h5>
-															<small class="d-flex mx-10 max-content mt-10">
+                <div class="twelve wide column" *ngIf="showProgramScope">
+                  <div class="sb-bg-white b-1-100 br-4 o-y-auto">
+                    <h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize"
+                        *ngIf="resource.frmelmnts.lbl.number">
+                      {{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, 'plural'))}}
+                    </h5>
+                    <hr class="mt-0">
+                    <div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
+                      <div class="sb-program-collection ui container"
+                           *ngFor="let tempCollection of tempCollections">
+                        <div class="ui grid">
+                          <div class="six wide column">
+                            <h5
+                              class="mx-10 sb-color-gray-400 pb-5 sb__ellipsis sb__ellipsis--three font-weight-bold">
+                              {{tempCollection.name}}</h5>
+                            <small class="d-flex mx-10 max-content mt-10">
 																<span
-																	class="sb-maxw-10">{{tempCollection.medium}}</span>
-																<span class="mx-8"
-																	style="border-left: 1px solid var(--gray-200);"></span>
-																<span
-																	class="sb-maxw-10">{{tempCollection.gradeLevel}}</span>
-																<span class="mx-8"
-																	style="border-left: 1px solid var(--gray-200);"></span>
-																<span
-																	class="sb-maxw-5">{{tempCollection.subject}}</span>
-															</small>
-														</div>
-														<div class="four wide column px-0 mt-5">
-															<div class="sb-color-gray-400 fxsmall text-lowercase">
-																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': tempCollection.contentTypeUnit || ''}}
-															</div>
-															<div *ngIf="tempCollection.selected"
-																class="sb-color-primary fxsmall cursor-pointer text-none"
-																(click)="chooseChapters(tempCollection);">
-																<i
-																	class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl.editChapters}}
-															</div>
-															<div *ngIf="blueprintTemplate"
-																class="sb-color-primary fxsmall cursor-pointer text-none"
-																(click)="editBlueprint(tempCollection);">
-																<i
-																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
-															</div>
-														</div>
-														<div class="two wide column text-right cursor-pointer"
-															(click)="onCollectionCheck(tempCollection, false)"
-															appTelemetryInteract
-															[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-															[telemetryInteractObject]="telemetryInteractObject"
-															[telemetryInteractCdata]="telemetryInteractCdata"
-															[telemetryInteractPdata]="telemetryInteractPdata">
-															<i class="close outline icon sb-color-red-100" suiPopup
-																popupHeader="close"></i>
-														</div>
-														<hr class="row p-0 mt-0">
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+                                  class="sb-maxw-10">{{tempCollection.medium}}</span>
+                              <span class="mx-8"
+                                    style="border-left: 1px solid var(--gray-200);"></span>
+                              <span
+                                class="sb-maxw-10">{{tempCollection.gradeLevel}}</span>
+                              <span class="mx-8"
+                                    style="border-left: 1px solid var(--gray-200);"></span>
+                              <span
+                                class="sb-maxw-5">{{tempCollection.subject}}</span>
+                            </small>
+                          </div>
+                          <div class="four wide column px-0 mt-5">
+                            <div class="sb-color-gray-400 fxsmall text-lowercase">
+                              {{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': tempCollection.contentTypeUnit || ''}}
+                            </div>
+                            <div *ngIf="tempCollection.selected"
+                                 class="sb-color-primary fxsmall cursor-pointer text-none"
+                                 (click)="chooseChapters(tempCollection);">
+                              <i
+                                class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl.editChapters}}
+                            </div>
+                            <div *ngIf="blueprintTemplate"
+                                 class="sb-color-primary fxsmall cursor-pointer text-none"
+                                 (click)="editBlueprint(tempCollection);">
+                              <i
+                                class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
+                            </div>
+                          </div>
+                          <div class="two wide column text-right cursor-pointer"
+                               (click)="onCollectionCheck(tempCollection, false)"
+                               appTelemetryInteract
+                               [telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                               [telemetryInteractObject]="telemetryInteractObject"
+                               [telemetryInteractCdata]="telemetryInteractCdata"
+                               [telemetryInteractPdata]="telemetryInteractPdata">
+                            <i class="close outline icon sb-color-red-100" suiPopup
+                               popupHeader="close"></i>
+                          </div>
+                          <hr class="row p-0 mt-0">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 						</form>
 					</div>
 				</div>
@@ -674,6 +460,247 @@
 		</div>
 	</div>
 </div>
+
+<sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="true" (dismissed)="showSubjectModal = false"
+           *ngIf="showSubjectModal" [size]="'large'" [isFullScreen]="false" [mustScroll]="true" #modal>
+  <div class="sb-modal-header">{{'Search & Add' }}</div>
+  <div class="sb-modal-content p-0">
+    <div class="content">
+      <div class="ui grid">
+        <div class="twelve wide column" *ngIf="showProgramScope">
+          <div class="ui grid">
+            <div class="three wide column">
+              <div class="field">
+                <label class="d-block">{{resource?.frmelmnts?.lbl?.medium}}
+                  <i class="pull-right question circle link icon pull-right" suiPopup
+                     popupDelay="500" [popupPlacement]="'left'"
+                     popupText="{{resource?.frmelmnts?.lbl?.selectMedium}}"></i>
+                </label>
+                <sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectMedium}}"
+                                  class="selection p-5" formControlName="medium"
+                                  [options]="programScope['medium']"
+                                  [isDisabled]="!programScope['medium']"
+                                  (ngModelChange)="onMediumChange()" labelField="name" #mediums
+                                  appTelemetryInteract
+                                  [telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                                  [telemetryInteractObject]="telemetryInteractObject"
+                                  [telemetryInteractCdata]="telemetryInteractCdata"
+                                  [telemetryInteractPdata]="telemetryInteractPdata">
+                  <sui-select-option *ngFor="let medium of mediums.filteredOptions"
+                                     [value]="medium" appTelemetryInteract
+                                     [telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [medium.name]})"
+                                     [telemetryInteractObject]="telemetryInteractObject"
+                                     [telemetryInteractCdata]="telemetryInteractCdata"
+                                     [telemetryInteractPdata]="telemetryInteractPdata">
+                  </sui-select-option>
+                </sui-multi-select>
+
+                <!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
+                    This field is required
+                  </div-->
+              </div>
+            </div>
+            <div class="three wide column">
+              <div class="field">
+                <label class="d-block"> {{resource?.frmelmnts?.lbl?.grade}}
+                  <i class="pull-right question circle link icon pull-right" suiPopup
+                     popupDelay="500" [popupPlacement]="'left'"
+                     popupText="{{resource?.frmelmnts?.lbl?.selectGrade}}"></i>
+                </label>
+                <sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectGrade}}"
+                                  class="selection p-5" formControlName="gradeLevel" labelField="name"
+                                  (ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
+                                  #graveLevels appTelemetryInteract
+                                  [telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                                  [telemetryInteractObject]="telemetryInteractObject"
+                                  [telemetryInteractCdata]="telemetryInteractCdata"
+                                  [telemetryInteractPdata]="telemetryInteractPdata">
+                  <sui-select-option
+                    *ngFor="let gradeLevel of graveLevels.filteredOptions"
+                    [value]="gradeLevel" appTelemetryInteract
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [gradeLevel.name]})"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">
+                  </sui-select-option>
+                </sui-multi-select>
+                <!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
+                    This field is required
+                  </div-->
+              </div>
+            </div>
+            <div class="three wide column">
+              <div class="field">
+                <label class="d-block"> {{resource?.frmelmnts?.lbl?.subject}}
+                  <i class="pull-right question circle link icon pull-right" suiPopup
+                     popupDelay="500" [popupPlacement]="'left'"
+                     popupText="{{resource?.frmelmnts?.lbl?.selectSubject}}"></i>
+                </label>
+                <sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectSubject}}"
+                                  class="selection p-5" formControlName="subject" labelField="name"
+                                  [hasLabels]="true" [options]="programScope['subject']" valueField="name"
+                                  #subjects appTelemetryInteract
+                                  [telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                                  [telemetryInteractObject]="telemetryInteractObject"
+                                  [telemetryInteractCdata]="telemetryInteractCdata"
+                                  [telemetryInteractPdata]="telemetryInteractPdata">
+                  <sui-select-option *ngFor="let subject of subjects.filteredOptions"
+                                     [value]="subject" appTelemetryInteract
+                                     [telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [subject.name]})"
+                                     [telemetryInteractObject]="telemetryInteractObject"
+                                     [telemetryInteractCdata]="telemetryInteractCdata"
+                                     [telemetryInteractPdata]="telemetryInteractPdata">
+                  </sui-select-option>
+                </sui-multi-select>
+                <!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
+                    This field is required
+                  </div-->
+              </div>
+            </div>
+            <div class="three wide column pt-30">
+              <div class="field text-right pt-10">
+                <button class="sb-btn sb-btn-normal sb-btn-outline-primary"
+                        (click)="resetFilters()" appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
+                  {{resource?.frmelmnts?.btn?.reset}}
+                </button>
+                <button class="sb-btn sb-btn-normal sb-btn-primary ml-8"
+                        (click)="showTexbooklist()" appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
+                  {{resource?.frmelmnts?.btn?.apply}}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="twelve wide column" *ngIf="showProgramScope">
+          <div class="ui grid">
+            <div class="twelve wide column">
+              <div class="sb-table-responsive sb-dock-textbook-table">
+                <table class="sb-table sb-table-striped sb-table-sortable"
+                       *ngIf="showTextBookSelector">
+                  <thead class="sb-table-header sb-table-thead-gray d-block">
+                  <tr>
+                    <th class="w-5">
+                      <!--div class="sb-checkbox sb-checkbox-primary">
+                          <input type="checkbox" id="checkall" name="checkall">
+                          <label for="checkall"></label>
+                        </div-->
+                    </th>
+                    <th class="w-10 text-center cursor-pointer sb-sorting"
+                        (click)="sortCollection('name')">
+                      {{resource?.frmelmnts?.lbl?.title}} &nbsp;&nbsp;
+                      <i class="fa fa-sort" aria-hidden="true"
+                         *ngIf="direction === '' || sortColumn !== 'name' "></i>
+                      <span *ngIf="sortColumn === 'name'" class="d-inline-block">
+																<i class="fa fa-sort-asc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																<i class="fa fa-sort-desc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+															</span>
+                    </th>
+                    <th class="w-10 text-center cursor-pointer sb-sorting"
+                        (click)="sortCollection('medium')">
+                      {{resource?.frmelmnts?.lbl?.medium}} &nbsp;&nbsp;
+                      <i class="fa fa-sort" aria-hidden="true"
+                         *ngIf="direction === '' || sortColumn !== 'medium' "></i>
+                      <span *ngIf="sortColumn === 'medium'"
+                            class="d-inline-block">
+																<i class="fa fa-sort-asc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																<i class="fa fa-sort-desc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+															</span>
+                    </th>
+                    <th class="w-10 text-center cursor-pointer sb-sorting"
+                        (click)="sortCollection('gradeLevel')">
+                      {{resource?.frmelmnts?.lbl?.class}} &nbsp;&nbsp;
+                      <i class="fa fa-sort" aria-hidden="true"
+                         *ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
+                      <span *ngIf="sortColumn === 'gradeLevel'"
+                            class="d-inline-block">
+																<i class="fa fa-sort-asc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																<i class="fa fa-sort-desc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+															</span>
+                    </th>
+                    <th class="w-10 text-center cursor-pointer sb-sorting"
+                        (click)="sortCollection('subject')">
+                      {{resource?.frmelmnts?.lbl?.subject}} &nbsp;&nbsp;
+                      <i class="fa fa-sort" aria-hidden="true"
+                         *ngIf="direction === '' || sortColumn !== 'subject' "></i>
+                      <span *ngIf="sortColumn === 'subject'"
+                            class="d-inline-block">
+																<i class="fa fa-sort-asc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																<i class="fa fa-sort-desc" aria-hidden="true"
+                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+															</span>
+                    </th>
+                    <th *ngIf="!blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
+                    <th *ngIf="blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.sections}}</th>
+                  </tr>
+                  </thead>
+                  <tbody class="sb-table-body d-block w-100 o-y-auto max-height">
+                  <tr *ngFor="let data of collections">
+                    <td class="collapsing">
+                      <div class="sb-checkbox sb-checkbox-primary">
+                        <input type="checkbox"
+                               id="checkitem_{{data.identifier}}"
+                               (change)="onCollectionCheck(data, $event.target.checked)"
+                               [checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
+                               name="checkitem" appTelemetryInteract
+                               [telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [data.identifier]})"
+                               [telemetryInteractObject]="telemetryInteractObject"
+                               [telemetryInteractCdata]="telemetryInteractCdata"
+                               [telemetryInteractPdata]="telemetryInteractPdata">
+                        <label for="checkitem_{{data.identifier}}"></label>
+                      </div>
+                    </td>
+                    <td>
+                      <div
+                        class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold break-word-initial">
+                        {{data.name}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="sb__ellipsis sb__ellipsis--three">
+                        {{data.medium}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="sb__ellipsis sb__ellipsis--three">
+                        {{data.gradeLevel}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="sb__ellipsis sb__ellipsis--three">
+                        {{data.subject}}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="sb__ellipsis sb__ellipsis--three">
+                        {{ data.childNodes ? data.childNodes.length : 0 }}
+                      </div>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sui-modal>
 
 <sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="true" (dismissed)="showDocumentUploader = false"
 	*ngIf="showDocumentUploader" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
@@ -818,19 +845,19 @@
 	<div class="sb-modal-header">
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
-	<div class="sb-modal-content">		
+	<div class="sb-modal-content">
 		<div class="segment mt-5 pb-30 pt-10">
 			<form class="ui form sb-dock-dropdown">
-				<div class="ui grid">	
+				<div class="ui grid">
 					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
 						<div class="field">
 							<label class="d-inline-block fs-0-925 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
 							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  	autofocus />
 							<sui-multi-select #multiselect *ngIf="property.inputType === 'multiSelect' && !property.children" class="selection p-5 b-100 min-w-0"
 								[isSearchable]=true (selectedOptionsChange)="property.code === 'topics' ? onChangeTopics() : null"
-								name="{{property.code}}"								
+								name="{{property.code}}"
 								[options]="property.options ? property.options : []"
-								[(ngModel)]="localBlueprint[property.code]" 
+								[(ngModel)]="localBlueprint[property.code]"
 								labelField="name"
 								>
 								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
@@ -839,7 +866,7 @@
 								<div *ngFor="let child of property.children" class="pl-10 w-60">
 									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
 									<input #nestedText type="text" class="sb-form-control" name="{{child.code}}" [(ngModel)]="localBlueprint[property.code][child.code]"  />
-									<!-- <sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
+									<!-- <sui-select class="selection p-5 b-100 min-w-0" #nestedSelect
 									name="{{child.code}}"
 									[isSearchable]=false (selectedOptionChange)="onChangeBlueprint()"
 									[options]="property.options ? property.options : []"
@@ -854,9 +881,9 @@
 								name="{{property.code}}"
 								[(ngModel)]="localBlueprint[property.code]">
 								<sui-select-option *ngFor="let option of select.filteredOptions" [value]="option.name ? option.name : option" ></sui-select-option>
-							</sui-select>							
+							</sui-select>
 						</div>
-					</div>	
+					</div>
 					<label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{totalQuestions() || 0}}</label>
 				</div>
 			</form>

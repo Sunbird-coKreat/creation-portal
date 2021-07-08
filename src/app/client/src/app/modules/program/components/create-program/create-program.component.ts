@@ -100,6 +100,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+  public showSubjectModal = false;
 
   constructor(
     public frameworkService: FrameworkService,
