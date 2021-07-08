@@ -68,7 +68,9 @@ export class QuestionSetEditorComponent implements OnInit {
     this.getCollectionDetails().subscribe(data => {
       this.collectionDetails = data.result.questionset;
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
-      this.getFrameWorkDetails();
+      //this.getFrameWorkDetails();
+      this.setEditorConfig();
+      this.showLoader = false;
     });
   }
 
@@ -79,7 +81,7 @@ export class QuestionSetEditorComponent implements OnInit {
     return this.contentService.get(req).pipe(map((response: any) => {return response}));
   }
   
-  getFrameWorkDetails() {
+  /*getFrameWorkDetails() {
     if (this.programContext.rootorg_id) {
       this.helperService.fetchChannelData(this.programContext.rootorg_id);
     }
@@ -113,9 +115,9 @@ export class QuestionSetEditorComponent implements OnInit {
     }, err => {
       this.toasterService.error(this.resourceService.messages.emsg.m0015);
     });
-  }
+  }*/
 
-  getPrimaryCategoryData(childrenData) {
+  /*getPrimaryCategoryData(childrenData) {
     _.forEach(childrenData, (value, key) => {
       if (_.isEmpty(value)) {
         switch (key) {
@@ -136,11 +138,10 @@ export class QuestionSetEditorComponent implements OnInit {
       }
     });
     return childrenData;
-  }
+  }*/
 
   setEditorConfig() {
     // tslint:disable-next-line:max-line-length
-    const additionalCategories = _.merge(this.frameworkService['_channelData'].contentAdditionalCategories, this.frameworkService['_channelData'].collectionAdditionalCategories);
     this.editorConfig = {
       context: {
         identifier: this.editorParams.questionSetId,
@@ -149,7 +150,6 @@ export class QuestionSetEditorComponent implements OnInit {
         sid: this.userService.sessionId,
         did: this.deviceId,
         uid: this.userService.userid,
-        additionalCategories: additionalCategories,
         pdata: {
           id: this.userService.appId,
           ver: this.portalVersion,
@@ -185,6 +185,8 @@ export class QuestionSetEditorComponent implements OnInit {
         }
       },
       config: {
+        primaryCategory: this.collectionDetails.primaryCategory,
+        objectType: "QuestionSet",
         mode: this.getEditorMode(),
         setDefaultCopyRight: false,
         showOriginPreviewUrl: false, 
@@ -195,7 +197,7 @@ export class QuestionSetEditorComponent implements OnInit {
     if (this.showQuestionEditor) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
     }
-    this.editorConfig.config = _.assign(this.editorConfig.config, this.hierarchyConfig);
+    //this.editorConfig.config = _.assign(this.editorConfig.config, this.hierarchyConfig);
     this.getCorrectionComments();
     this.getDikshaPreviewUrl();
     this.getStatustoShow();
