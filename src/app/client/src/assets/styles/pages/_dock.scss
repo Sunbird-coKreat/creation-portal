@@ -819,8 +819,13 @@ app-question-set-editor{
 }
 
 // styling for edit details topic select popup
+.sb-z-index99{
+  sui-modal-dimmer{
+    z-index: 999!important;
+  }
+}
 .dimmable.o-y-hide.dimmed{
-  .ui.dimmer.modals{
+  div.ui.dimmer.modals{
     z-index: 9999 !important
   }
 }
@@ -984,3 +989,4 @@ app-question-set-editor{
     }
   }
 }
+
