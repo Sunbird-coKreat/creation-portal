@@ -66,7 +66,7 @@ export class QuestionSetEditorComponent implements OnInit {
     };
     this.userProfile = this.userService.userProfile;
     this.getCollectionDetails().subscribe(data => {
-      this.collectionDetails = data.result.content;
+      this.collectionDetails = data.result.questionset;
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
       this.getFrameWorkDetails();
     });
@@ -74,7 +74,7 @@ export class QuestionSetEditorComponent implements OnInit {
 
   private getCollectionDetails() {
     const req = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${this.editorParams.questionSetId}?mode=edit`
+      url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${this.editorParams.questionSetId}?mode=edit`
     };
     return this.contentService.get(req).pipe(map((response: any) => {return response}));
   }
@@ -144,7 +144,7 @@ export class QuestionSetEditorComponent implements OnInit {
     this.editorConfig = {
       context: {
         identifier: this.editorParams.questionSetId,
-        channel: this.userService.channel,
+        channel: this.programContext.rootorg_id,
         authToken: '',
         sid: this.userService.sessionId,
         did: this.deviceId,
@@ -169,8 +169,10 @@ export class QuestionSetEditorComponent implements OnInit {
           id: this.userService.userid,
           orgIds: this.userProfile.organisationIds,
           organisations: this.userService.orgIdNameMap,
-          name : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
+          fullName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
           this.userProfile.firstName,
+          firstName: this.userProfile.firstName,
+          lastName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.lastName : '',
           isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
         },
         channelData: this.frameworkService['_channelData'],
@@ -230,7 +232,7 @@ export class QuestionSetEditorComponent implements OnInit {
     if (sourcingReviewStatus === 'Approved') {
       this.editorConfig.config.showOriginPreviewUrl = true;
       if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.editorParams.questionSetId])) {
-        this.editorConfig.context.originPreviewUrl =  this.helperService.getContentOriginUrl(this.sessionContext.contentOrigins[this.editorParams.questionSetId].identifier);
+        this.editorConfig.context.originPreviewUrl =  this.helperService.getQuestionSetOriginUrl(this.sessionContext.contentOrigins[this.editorParams.questionSetId].identifier);
       }
     }
   }

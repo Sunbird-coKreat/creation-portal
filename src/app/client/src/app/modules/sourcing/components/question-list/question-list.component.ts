@@ -251,7 +251,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     const targetCollectionMeta = {
       primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
-      channelId: this.userService.rootOrgId,
+      channelId: _.get(this.programContext, 'rootorg_id'),
       objectType: 'Collection'
     };
 

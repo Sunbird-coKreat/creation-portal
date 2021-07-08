@@ -589,6 +589,14 @@
     },
     "requestChanges": {
       "type": "string"
+    },
+    "posterImage": {
+      "type": "string",
+      "format": "url"
+    },
+    "appIcon": {
+      "type": "string",
+      "format": "url"
     }
   }
 }

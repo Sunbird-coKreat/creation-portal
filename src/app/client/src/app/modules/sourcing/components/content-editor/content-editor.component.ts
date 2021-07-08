@@ -341,7 +341,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
     const targetCollectionMeta = {
       primaryCategory: (this.sessionContext.targetCollectionPrimaryCategory ) || 'Question paper',
-      channelId: this.userService.rootOrgId,
+      channelId: _.get(this.programContext, 'rootorg_id'),
       objectType: 'Collection'
     };
 
