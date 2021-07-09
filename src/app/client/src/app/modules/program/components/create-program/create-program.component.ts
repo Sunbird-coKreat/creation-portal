@@ -2,24 +2,31 @@ import {
   ConfigService, ResourceService, ToasterService, RouterNavigationService,
   ServerResponse, NavigationHelperService
 } from '@sunbird/shared';
-import { FineUploader } from 'fine-uploader';
-import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
-import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import {FineUploader} from 'fine-uploader';
+import {ActionService, FrameworkService, ProgramsService, UserService} from '@sunbird/core';
+import {Observable, Subject, throwError} from 'rxjs';
+import {catchError, first, map} from 'rxjs/operators';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import * as _ from 'lodash-es';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-import { SourcingService } from './../../../sourcing/services';
-import { UserService } from '@sunbird/core';
-import { programConfigObj } from './programconfig';
-import { HttpClient } from '@angular/common/http';
-import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
-import { DeviceDetectorService } from 'ngx-device-detector';
+import {ActivatedRoute, Router} from '@angular/router';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {SourcingService} from './../../../sourcing/services';
+import {programConfigObj} from './programconfig';
+import {HttpClient} from '@angular/common/http';
+import {
+  IEndEventInput,
+  IImpressionEventInput,
+  IInteractEventEdata,
+  IStartEventInput,
+  TelemetryService
+} from '@sunbird/telemetry';
+import {DeviceDetectorService} from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
-import { ProgramTelemetryService } from '../../services';
-import { CacheService } from 'ng2-cache-service';
+import {ProgramTelemetryService} from '../../services';
+import {CacheService} from 'ng2-cache-service';
+import {UUID} from 'angular2-uuid';
+import {IContentEditorComponentInput} from '../../../sourcing/interfaces';
 
 @Component({
   selector: 'app-create-program',
@@ -34,7 +41,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editPublished = false;
-  callTargetCollection =false;
+  callTargetCollection = false;
   public choosedTextBook: any;
   selectChapter = false;
   editBlueprintFlag = false;
@@ -50,7 +57,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   collectionCategories = [];
   showProgramScope: any;
   textbooks: any = {};
-  chaptersSelectionForm : FormGroup;
+  chaptersSelectionForm: FormGroup;
   private userFramework;
   private userBoard;
   frameworkCategories;
@@ -79,7 +86,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public showDocumentUploader = false;
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
-  public showPublishModal= false;
+  public showPublishModal = false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -101,6 +108,57 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
   public showSubjectModal = false;
+  isSearchVisible = false;
+  isAddVisible = false;
+  isQuestionEditorVisible = false;
+  questionSetEditorComponentInput: IContentEditorComponentInput = {
+    contentId: null,
+    action: null,
+    content: null,
+    sessionContext: null,
+    unitIdentifier: null,
+    programContext: null,
+    originCollectionData: null,
+    sourcingStatus: null,
+    selectedSharedContext: null
+  };
+
+  public configs = [{
+    'identifier': 'obj-cat:content-playlist_collection_all',
+    'name': 'Content Playlist',
+    'targetObjectType': 'Collection',
+    'associatedAssetTypes': ['Content'],
+    'contentAdditionMode': ['Search']
+  },
+    {
+      'identifier': 'obj-cat:demo-practice-question-set_questionset_all',
+      'name': 'Demo Practice Question Set',
+      'targetObjectType': 'QuestionSet',
+      'associatedAssetTypes': ['Question', 'QuestionSet'],
+      'contentAdditionMode': ['New']
+    },
+    {
+      'identifier': 'obj-cat:digital-textbook_collection_all',
+      'name': 'Digital Textbook',
+      'targetObjectType': 'Collection',
+      'associatedAssetTypes': ['Content'],
+      'contentAdditionMode': ['Search']
+    },
+    {
+      'identifier': 'obj-cat:professional-development-course_collection_all',
+      'name': 'Course',
+      'targetObjectType': 'Collection',
+      'associatedAssetTypes': ['Content'],
+      'contentAdditionMode': ['Search']
+    },
+    {
+      'identifier': 'obj-cat:question-paper_collection_all',
+      'name': 'Question paper',
+      'targetObjectType': 'Collection',
+      'associatedAssetTypes': ['Content'],
+      'contentAdditionMode': ['Search']
+    }
+  ];
 
   constructor(
     public frameworkService: FrameworkService,
@@ -124,7 +182,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
-      ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'false';
+      ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'true';
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.programConfig = _.cloneDeep(programConfigObj);
@@ -299,6 +357,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
+      // this.onChangeTargetCollection();
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -484,14 +543,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setFrameworkDataToProgram() {
-    this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+    // this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+    const tempCategory = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
     this.programScope['targetPrimaryCategories'] = [];
     const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+
     if (_.toLower(this.enableQuestionSetEditor) === 'true') {
       const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-      this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
+      this.programScope['targetPrimaryCategories'] = _.map(questionSetCategories, 'name');
       this.programScope['targetPrimaryObjects'] = questionSetCategories;
+      this.collectionCategories = _.concat(tempCategory || [], this.programScope['targetPrimaryCategories']);
     }
 
     const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
@@ -953,13 +1015,34 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.validateDates();
   }
-onChangeTargetCollection() {
+
+  onChangeTargetCollection() {
+    this.isSearchVisible = false;
+    this.isAddVisible = true;
+    for (const config of this.configs) {
+      if (config.name === this.selectedTargetCollection) {
+        if (config.contentAdditionMode && config.contentAdditionMode.length) {
+          config.contentAdditionMode.forEach(mode => {
+            if (mode.toLowerCase() === 'search') {
+              this.isSearchVisible = true;
+            }
+            if (mode.toLowerCase() === 'new') {
+              this.isAddVisible = true;
+            }
+          });
+        }
+        // todo update sub cat
+        break;
+      }
+    }
+
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
     this.fetchBlueprintTemplate();
     this.tempCollections = [];
-}
-showTexbooklist(showTextBookSelector = true) {
+  }
+
+  showTexbooklist(showTextBookSelector = true) {
     const primaryCategory = this.collectionListForm.value.target_collection_category;
     if (!primaryCategory) {
       return;
@@ -1604,5 +1687,32 @@ showTexbooklist(showTextBookSelector = true) {
       }
     };
     this.saveProgram(cb);
+  }
+
+  OnAdd() {
+    this.programsService.addQuestionSet({
+      name: 'untitled',
+      code: UUID.UUID(),
+      mimeType: 'application/vnd.sunbird.questionset',
+      primaryCategory: this.selectedTargetCollection
+    }).subscribe(
+      data => {
+        if (data.result && data.result.identifier) {
+          this.isQuestionEditorVisible = true;
+          this.questionSetEditorComponentInput = {
+            contentId: data.result.identifier,
+            action: null,
+            content: null,
+            sessionContext: null,
+            unitIdentifier: null,
+            programContext: this.programConfig,
+            originCollectionData: null,
+            sourcingStatus: 'Demo',
+            selectedSharedContext: null
+          };
+          console.log(this.questionSetEditorComponentInput);
+        }
+      }
+    );
   }
 }
