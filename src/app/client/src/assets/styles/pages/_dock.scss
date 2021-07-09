@@ -1001,3 +1001,10 @@ app-question-set-editor{
   }
 }
 
+.sb-modal{
+  &.ui{
+    &.modal{
+      box-shadow: none;
+    }
+  }
+}
