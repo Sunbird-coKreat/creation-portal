@@ -1,0 +1,48 @@
+<div class="pt-10 fs-0-92 sb-w-85">
+  <label class="fs-0-92 font-weight-bold">{{configService.labelConfig?.lbl?.options}}<span class="sb-required">*</span></label>
+  <label class="fs-0-92 d-inline-block">{{configService.labelConfig?.lbl?.selectLayout}}</label>
+  <i class="icon info circle ml-8" suiPopup popupDelay="500" popupText={{configService.labelConfig?.lbl?.optionsPopupText}}></i>
+  <span class="divider mr-8"></span>
+   <span><button class="sb-btn sb-btn-xs sb-btn-outline-gray mr-5 q-sb-layout-single" [ngClass]="{active: 'mcq-vertical' === templateType}" (click)="setTemplete('mcq-vertical')"><i class="mr-10 h-7"></i> {{configService.labelConfig?.lbl?.vertical}}</button></span>
+   <span><button class="sb-btn sb-btn-xs sb-btn-outline-gray mr-5 q-sb-layout-two" [ngClass]="{active: 'mcq-vertical-split' === templateType}" (click)="setTemplete('mcq-vertical-split')"><i class="mr-10 h-7 w-20"></i>{{configService.labelConfig?.lbl?.grid}}</button></span>
+   <span><button class="sb-btn sb-btn-xs sb-btn-outline-gray q-sb-layout-three" [ngClass]="{active: 'mcq-horizontal' === templateType}" (click)="setTemplete('mcq-horizontal')"> <i class="mr-10 h-7"></i> {{configService.labelConfig?.lbl?.horizontal}}</button></span>
+</div>
+<label *ngIf="showFormError && !editorState.answer" class="ui basic red error label pt-1 mt-10">
+  {{configService.labelConfig?.lbl?.selectOneAns}}</label>
+<div class="d-flex pt-10 flex-dc sb-mcq-form">
+  <div class="d-flex sb-mcq-item" *ngFor="let option of editorState.options; let i = index">
+    <div class="sb-w-85 sb-ckeditor relative mb-15">
+      <button [disabled]="editorState.options.length < 3" class="sb-btn sb-ckeditor-close absolute"
+        (click)="editorState.deleteOption(i);editorDataHandler($event);"
+        libTelemetryInteract
+        [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('delete_option','click','submit',telemetryService.telemetryPageId)">
+        <i class="icon close"></i>
+      </button>
+      <lib-ckeditor-tool (editorDataOutput)="option.body = $event.body; option.length = $event.length; editorDataHandler($event)"
+        [editorDataInput]="option.body" class="ckeditor-tool__option mb-10"
+        [class.mb-5]="showFormError && ([undefined, ''].includes(option.body) || option.length > setCharacterLimit)">
+      </lib-ckeditor-tool>
+      <label *ngIf="
+          showFormError && (option.body === undefined || option.body === '')
+        " class="sb-color-error fs-0-785">{{configService.labelConfig?.lbl?.fillThisOption}}</label>
+      <label *ngIf="option.length > setCharacterLimit" class="ui basic red error label pt-1">
+        {{configService.labelConfig?.lbl?.reduceSize}}</label>
+    </div>
+    <div class="sb-checkbox sb-checkbox-primary pl-10 mt-0 pt-0" [class.selected]="editorState.answer === i.toString()">
+      <input type="radio" id="answer_{{ i + 1 }}" name="example" value="{{ i }}"  (change)="editorDataHandler($event);"
+      [(ngModel)]="editorState.answer" [ngModelOptions]="{ standalone: true }" [checked]="editorState.answer === i.toString()"
+      libTelemetryInteract
+      [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('mark_as_right_anwser','click',undefined,telemetryService.telemetryPageId,{answer:i.toString()})" />
+      <label for="answer_{{ i + 1 }}" class="mr-0 fs-0-785">{{configService.labelConfig?.lbl?.correctAns}}</label>
+    </div>
+  </div>
+  <div class="d-flex">
+    <button *ngIf="editorState.options.length < 4"
+      class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn text-inherit b-0 bg-none no-hover p-0 mb-10"
+      (click)="editorState.addOptions();editorDataHandler($event);"
+      libTelemetryInteract
+      [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('add_option','click','submit',telemetryService.telemetryPageId)" >
+      <i class="plus circle icon fs-1-286 pull-left mr-0" aria-hidden="true"></i><span class="sb-line-height-24">{{configService.labelConfig?.lbl?.addOption}}</span>
+    </button>
+  </div>
+</div>

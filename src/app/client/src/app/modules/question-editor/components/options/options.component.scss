@@ -1,0 +1,130 @@
+.q-sb-layout-single{
+  &:before{
+    content: url("/assets/images/layoutoneicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    border-color: var(--primary-400);
+    background-color: #ffffff;
+    color: var(--primary-400);
+    &:before{
+      content: url("/assets/images/layoutoneicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-two{
+  &:before{
+    content: url("/assets/images/layouttwoicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    border-color: var(--primary-400);
+    background-color: #ffffff;
+    color: var(--primary-400);
+    &:before{
+      content: url("/assets/images/layouttwoicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-three{
+  &:before{
+    content: url("/assets/images/layoutthreeicon.svg");
+    top: -2px;
+    position: relative;
+  }
+  &.active,
+  &:hover
+  {
+    border-color: var(--primary-400);
+    background-color: #ffffff;
+    color: var(--primary-400);
+    &:before{
+      content: url("/assets/images/layoutthreeicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-imgoption{
+  &:before{
+    content: url("/assets/images/imageicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("/assets/images/imageicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-alignleft{
+  &:before{
+    content: url("/assets/images/leftalignicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("/assets/images/leftalignicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-aligncenter{
+  &:before{
+    content: url("/assets/images/middlealignicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+    &:before{
+      content: url("/assets/images/middlealignicon_blue.svg");
+    } 
+  }
+}
+.q-sb-layout-alignright{
+  &:before{
+    content: url("/assets/images/rightalignicon.svg");
+  }
+  &.active,
+  &:hover
+  {
+   
+    &:before{
+      content: url("/assets/images/rightalignicon_blue.svg");
+    } 
+  }
+}
+
+.h-7 {
+  height: 7px;
+}
+.w-20 {
+  width: 20px;
+}
+.b-0 {
+  border: 0 !important;
+}
+
+.sb-line-height-24 {
+  line-height: 24px;
+}
+
+
+.bg-none {
+  background-color: transparent !important;
+
+  &:hover,
+  &:focus {
+    background-color: transparent !important;
+  }
+}
+
+.sb-w-85 div[data-title]:hover::before{
+  left: 0%;
+  top: -122% !important;
+  width: 256px;
+}
+.sb-field-group .sb-left-icon-btn.sb-btn-xs{
+  padding: 0 !important;
+  margin-top: -10px;
+}

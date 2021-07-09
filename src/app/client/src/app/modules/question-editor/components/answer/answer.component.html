@@ -1,0 +1,11 @@
+<div class="sb-field-group mt-15">
+  <label class="fs-0-92">{{configService.labelConfig?.lbl?.answers}}<span class="sb-required">*</span></label><i class="icon info circle ml-2" aria-hidden="true" suiPopup popupDelay="500" popupText={{configService.labelConfig?.lbl?.answersPopupText}}></i>
+  <div class="sb-field">
+    <div class="ckeditor-tool__option mb-5">
+      <lib-ckeditor-tool (editorDataOutput)="editorDataHandler($event)"
+        [editorDataInput]="editorState.answer"></lib-ckeditor-tool>
+    </div>
+    <label *ngIf="showFormError && [undefined, ''].includes(editorState.answer)"
+        class="sb-color-error fs-0-785">{{configService.labelConfig?.lbl?.answersRequired}}</label>
+  </div>
+</div>

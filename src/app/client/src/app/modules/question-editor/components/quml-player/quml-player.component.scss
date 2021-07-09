@@ -1,0 +1,54 @@
+.b-1-100{
+    border: solid 1px #cccccc;
+}
+.preview-modal{
+    .sb-modal-content{
+        height: inherit !important;
+    }
+}
+.potrait-mode{
+    .b-1-100{
+        width: 480px;
+        margin: auto;
+    } 
+    .aspectratio{
+        &[data-ratio="16:9"]{
+            padding-top: calc(100%/(9/16) );
+        }
+    }
+}
+
+.br-2{
+    border-radius: 2px;
+}
+.contentViewerIframeShadow{
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.aspectratio{
+    position: relative;
+    width: 100%;
+    height: 0;
+   &[data-ratio="16:9"]{
+        padding-top: 56.25%;
+    }
+}
+.aspectratio > * {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.content-player{
+    z-index: 11;
+}
+
+.quml-container{
+    .container{
+        width: inherit !important;
+    }
+}
