@@ -11,6 +11,7 @@ const logger = require('sb_logger_util_v2')
 
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
+      console.log(' proxyReqPathResolverMethod (/api/*)', req.originalUrl);
         return require('url').parse(contentProxyUrl + req.originalUrl).path
     }
 
@@ -77,6 +78,7 @@ module.exports = function (app) {
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
           console.log('/api/object  ', require('url').parse(contentProxyUrl + urlParam).path);
+          console.log('/api/object/*,  /api/composite/* ', req.url);
           if (query) {
             return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
           } else {
