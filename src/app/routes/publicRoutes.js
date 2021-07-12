@@ -11,7 +11,7 @@ const logger = require('sb_logger_util_v2')
 
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
-      console.log(' proxyReqPathResolverMethod (/api/*)', req.originalUrl);
+      console.log(' proxyReqPathResolverMethod (/api/*) (req.originalUrl)', req.originalUrl);
         return require('url').parse(contentProxyUrl + req.originalUrl).path
     }
 
