@@ -42,5 +42,7 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
   clearQuestionMap() {
     this.questionMap.clear();
   }
-
+  getQuestionSet(identifier) {
+    return of(identifier);
+}
 }
