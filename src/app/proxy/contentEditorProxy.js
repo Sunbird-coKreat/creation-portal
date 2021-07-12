@@ -289,7 +289,10 @@ module.exports = function (app) {
     preserveHostHdr: true,
     limit: reqDataLimitOfContentUpload,
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-    proxyReqPathResolver: proxyReqPathResolverMethod,
+    proxyReqPathResolver:  function(req) {
+      console.log(`🔶 BLOCK - /action/* - 🌏 URL - ${req.originalUrl} - ↔️  Referer - ${req.headers.referer}`)
+      return require('url').parse(contentProxyUrl + req.originalUrl).path
+    },
     userResDecorator: userResDecorator
   }))
 
