@@ -919,8 +919,8 @@ export class HelperService {
 
     this.flattenedFrameworkCategories[framework] = {};
     // tslint:disable-next-line:max-line-length
-    const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
-    _.forEach(orgFrameworkCategories, item => {
+    const orgFrameworkCategoriesNew = _.get(this.frameworkService.frameworkData[framework], 'categories');
+    _.forEach(orgFrameworkCategoriesNew, item => {
       const terms = _.get(item, 'terms');
       this.flattenedFrameworkCategories[framework][item.code] = terms || [];
     });
