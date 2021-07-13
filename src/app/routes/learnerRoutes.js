@@ -116,6 +116,7 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         let urlParam = req.params['0']
         let query = require('url').parse(req.url).query
+        console.log(' /learner/* =>>>>>>>>', req.url);
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {
