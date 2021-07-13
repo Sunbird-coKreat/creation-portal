@@ -237,6 +237,36 @@ const API_LIST = {
     '/action/framework/v3/read/:frameworkId': {
       checksNeeded: []
     },
+    '/action/questionset/v1/review/:do_id': {
+      checksNeeded: []
+    },
+    '/action/questionset/v1/update/:do_id': {
+      checksNeeded: []
+    },
+    '/action/questionset/v1/publish/:do_id': {
+      checksNeeded: []
+    },
+    '/action/questionset/v1/reject/:do_id': {
+      checksNeeded: []
+    },
+    '/action/questionset/v1/read/:do_id': {
+      checksNeeded: []
+    },
+    '/action/questionset/v1/hierarchy/:do_id': {
+      checksNeeded: []
+    },
+    '/action/question/v1/read/:do_id': {
+      checksNeeded: []
+    },
+    '/action/question/v1/review/:do_id': {
+      checksNeeded: []
+    },
+    '/action/question/v1/publish/:do_id': {
+      checksNeeded: []
+    },
+    '/action/question/v1/update/:do_id': {
+      checksNeeded: []
+    }
   },
   URL_PATTERN: [
     '/content/program/v1/read/:program_id',
@@ -260,6 +290,16 @@ const API_LIST = {
     '/action/itemset/v3/retire/:do_id',
     '/action/questionset/v4/system/update/:do_id',
     '/action/framework/v3/read/:frameworkId',
+    '/action/questionset/v1/review/:do_id',
+    '/action/questionset/v1/update/:do_id',
+    '/action/questionset/v1/publish/:do_id',
+    '/action/questionset/v1/reject/:do_id',
+    '/action/questionset/v1/read/:do_id',
+    '/action/questionset/v1/hierarchy/:do_id',
+    '/action/question/v1/read/:do_id',
+    '/action/question/v1/review/:do_id',
+    '/action/question/v1/publish/:do_id',
+    '/action/question/v1/update/:do_id',
   ]
 }
 module.exports = API_LIST;
