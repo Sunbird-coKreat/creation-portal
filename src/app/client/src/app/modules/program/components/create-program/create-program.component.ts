@@ -1,9 +1,13 @@
 import {
-  ConfigService, ResourceService, ToasterService, RouterNavigationService,
-  ServerResponse, NavigationHelperService
+  ConfigService,
+  IUserProfile,
+  NavigationHelperService,
+  ResourceService,
+  RouterNavigationService,
+  ToasterService
 } from '@sunbird/shared';
 import {FineUploader} from 'fine-uploader';
-import {ActionService, FrameworkService, ProgramsService, UserService} from '@sunbird/core';
+import {ActionService, ContentService, FrameworkService, ProgramsService, UserService} from '@sunbird/core';
 import {Observable, Subject, throwError} from 'rxjs';
 import {catchError, first, map} from 'rxjs/operators';
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
@@ -27,6 +31,7 @@ import {ProgramTelemetryService} from '../../services';
 import {CacheService} from 'ng2-cache-service';
 import {UUID} from 'angular2-uuid';
 import {IContentEditorComponentInput} from '../../../sourcing/interfaces';
+import {HelperService} from "../../../sourcing/services/helper.service";
 
 @Component({
   selector: 'app-create-program',
@@ -63,7 +68,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   frameworkCategories;
   programScope: any = {};
   originalProgramScope: any = {};
-  userprofile;
   public programData: any = {};
   showTextBookSelector = false;
   formIsInvalid = false;
@@ -122,6 +126,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     sourcingStatus: null,
     selectedSharedContext: null
   };
+  public unitFormConfig: any;
+  public rootFormConfig: any;
+  public selectedNodeData: any = {};
+  editorConfig: any;
+  private deviceId: string;
+  private buildNumber: string;
+  private portalVersion: string;
+  private userProfile: IUserProfile;
+  public hierarchyConfig: any;
+  public sessionContext: any;
+  public collectionDetails: any;
+  public showQuestionEditor = false;
+  questionSetId;
 
   public configs = [{
     'identifier': 'obj-cat:content-playlist_collection_all',
@@ -177,14 +194,24 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
+    private helperService: HelperService,
+    private contentService: ContentService,
     public actionService: ActionService, public cacheService: CacheService) {
+
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
+    this.deviceId = deviceId ? deviceId.value : '';
+    this.buildNumber = buildNumber ? buildNumber.value : '1.0';
+    this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+
   }
 
   ngOnInit() {
+    this.userProfile = this.userService.userProfile;
     this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
       ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'true';
     this.programId = this.activatedRoute.snapshot.params.programId;
-    this.userprofile = this.userService.userProfile;
+    // this.userprofile = this.userService.userProfile;
     this.programConfig = _.cloneDeep(programConfigObj);
     this.localBlueprint = {};
     this.localBlueprintMap = {};
@@ -202,6 +229,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
+
     this.pageStartTime = Date.now();
   }
 
@@ -407,8 +435,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         name: fileName,
         mediaType: mediaType,
         mimeType: fileType,
-        createdBy: this.userprofile.userId,
-        creator: `${this.userprofile.firstName} ${this.userprofile.lastName ? this.userprofile.lastName : ''}`,
+        createdBy: this.userProfile.userId,
+        creator: `${this.userProfile.firstName} ${this.userProfile.lastName ? this.userProfile.lastName : ''}`,
         channel: 'sunbird'
       }
     };
@@ -584,8 +612,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (board) {
       if (!_.isEmpty(board.terms[0].name)) {
         this.userBoard = board.terms[0].name;
-      } else if (_.get(this.userprofile.framework, 'board')) {
-        this.userBoard = this.userprofile.framework.board[0];
+      } else if (_.get(this.userProfile.framework, 'board')) {
+        this.userBoard = this.userProfile.framework.board[0];
       }
 
       const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
@@ -660,7 +688,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userProfile.rootOrgId).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
@@ -862,9 +890,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
-    this.programData['rootorg_id'] = this.userprofile.rootOrgId;
-    this.programData['createdby'] = this.userprofile.id;
+    this.programData['sourcing_org_name'] = this.userProfile.rootOrg.orgName;
+    this.programData['rootorg_id'] = this.userProfile.rootOrgId;
+    this.programData['createdby'] = this.userProfile.id;
     this.programData['createdon'] = new Date();
     this.programData['startdate'] = new Date();
     this.programData['slug'] = 'sunbird';
@@ -1054,7 +1082,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           objectType: 'Collection',
           status: ['Draft'],
           primaryCategory: primaryCategory,
-          channel: this.userprofile.rootOrgId,
+          channel: this.userProfile.rootOrgId,
         },
         limit: 1000,
         not_exists: ['programId']
@@ -1690,6 +1718,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   OnAdd() {
+    // this.getFrameWorkDetails();
     this.programsService.addQuestionSet({
       name: 'untitled',
       code: UUID.UUID(),
@@ -1698,7 +1727,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }).subscribe(
       data => {
         if (data.result && data.result.identifier) {
-          this.isQuestionEditorVisible = true;
+          this.questionSetId = data.result.identifier;
+          // this.isQuestionEditorVisible = true;
           this.questionSetEditorComponentInput = {
             contentId: data.result.identifier,
             action: null,
@@ -1710,9 +1740,183 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
             sourcingStatus: 'Demo',
             selectedSharedContext: null
           };
+          this.getCollectionDetails(this.questionSetId).subscribe(d => {
+            this.collectionDetails = d.result.content;
+            this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
+            this.getFrameWorkDetails();
+          });
           console.log(this.questionSetEditorComponentInput);
         }
       }
     );
   }
+
+  private getCollectionDetails(questionSetId) {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${questionSetId}?mode=edit`
+    };
+    return this.contentService.get(req).pipe(map((response: any) => {return response}));
+  }
+
+  getFrameWorkDetails() {
+    if (this.programConfig.rootorg_id) {
+      this.helperService.fetchChannelData(this.programConfig.rootorg_id);
+    }
+    this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.programConfig.rootorg_id, 'QuestionSet')
+      .subscribe(data => {
+        console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxx', data);
+        this.unitFormConfig = _.get(data, 'result.objectCategoryDefinition.forms.unitMetadata.properties');
+        this.rootFormConfig = _.get(data, 'result.objectCategoryDefinition.forms.create.properties');
+        // tslint:disable-next-line:max-line-length
+        if (_.get(data, 'result.objectCategoryDefinition.objectMetadata.config')) {
+          this.hierarchyConfig = _.get(data, 'result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection');
+          if (!_.isEmpty(this.hierarchyConfig.children)) {
+            this.hierarchyConfig.children = this.getPrimaryCategoryData(this.hierarchyConfig.children);
+          }
+          if (!_.isEmpty(this.hierarchyConfig.hierarchy)) {
+            _.forEach(this.hierarchyConfig.hierarchy, (hierarchyValue) => {
+              if (_.get(hierarchyValue, 'children')) {
+                hierarchyValue['children'] = this.getPrimaryCategoryData(_.get(hierarchyValue, 'children'));
+              }
+            });
+          }
+        }
+
+        this.setEditorConfig();
+      }, err => {
+        this.toasterService.error(this.resourceService.messages.emsg.m0015);
+      });
+  }
+
+  getPrimaryCategoryData(childrenData) {
+    _.forEach(childrenData, (value, key) => {
+      if (_.isEmpty(value)) {
+        switch (key) {
+          case 'Question':
+            childrenData[key] = this.frameworkService['_channelData'].questionPrimaryCategories
+              || this.configService.appConfig.WORKSPACE.questionPrimaryCategories;
+            break;
+          case 'Content':
+            childrenData[key] = this.frameworkService['_channelData'].contentPrimaryCategories || [];
+            break;
+          case 'Collection':
+            childrenData[key] = this.frameworkService['_channelData'].collectionPrimaryCategories || [];
+            break;
+          case 'QuestionSet':
+            childrenData[key] = this.frameworkService['_channelData'].questionsetPrimaryCategories || [];
+            break;
+        }
+      }
+    });
+    return childrenData;
+  }
+
+  toolbarEventListener(event) {
+
+  }
+
+  editorEventListener(event) {
+
+  }
+
+  setEditorConfig() {
+    // tslint:disable-next-line:max-line-length
+    const additionalCategories = _.merge(this.frameworkService['_channelData'].contentAdditionalCategories, this.frameworkService['_channelData'].collectionAdditionalCategories);
+    this.editorConfig = {
+      context: {
+        identifier: this.questionSetId,
+        channel: this.userService.channel,
+        authToken: '',
+        sid: this.userService.sessionId,
+        did: this.deviceId,
+        uid: this.userService.userid,
+        additionalCategories: additionalCategories,
+        pdata: {
+          id: this.userService.appId,
+          ver: this.portalVersion,
+          pid: 'sunbird-portal'
+        },
+        actor: {
+          id: this.userService.userid || 'anonymous',
+          type: 'User'
+        },
+        contextRollup: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
+        tags: this.userService.dims,
+        timeDiff: this.userService.getServerTimeDiff,
+        defaultLicense: this.frameworkService.getDefaultLicense(),
+        endpoint: '/data/v3/telemetry',
+        env: 'question_editor',
+        user: {
+          id: this.userService.userid,
+          orgIds: this.userProfile.organisationIds,
+          organisations: this.userService.orgIdNameMap,
+          name : '',
+          isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
+        },
+        channelData: this.frameworkService['_channelData'],
+        cloudStorageUrls : this.userService.cloudStorageUrls,
+        labels: {
+          // submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
+          // publish_collection_btn_label: this.resourceService.frmelmnts.btn.submitForApproval,
+          // sourcing_approve_collection_btn_label: this.resourceService.frmelmnts.btn.publishToConsume,
+          // reject_collection_btn_label: this.resourceService.frmelmnts.btn.requestChanges,
+        }
+      },
+      config: {
+        mode: this.getEditorMode(),
+        setDefaultCopyRight: false,
+        showOriginPreviewUrl: false,
+        showSourcingStatus: false,
+        showCorrectionComments: false
+      }
+    };
+    /*if (this.showQuestionEditor) {
+      this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
+    }*/
+    this.editorConfig.config = _.assign(this.editorConfig.config, this.hierarchyConfig);
+    // this.getCorrectionComments();
+    // this.getDikshaPreviewUrl();
+    // this.getStatustoShow();
+    this.isQuestionEditorVisible = true;
+  }
+
+  private getEditorMode() {
+    const contentStatus = this.collectionDetails.status.toLowerCase();
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programConfig);
+
+    // If loggedin user is a contentCreator and content status is draft
+    if (submissionDateFlag && this.canSubmit()) {
+      return 'edit';
+    }
+
+    if (submissionDateFlag && this.canReviewContent()) {
+      return 'review';
+    }
+
+   /* if (this.canSourcingReviewerPerformActions()) {
+      return 'sourcingReview';
+    }*/
+
+    return 'read';
+  }
+
+  canSubmit() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && resourceStatus === 'draft' && this.userService.userid === this.collectionDetails.createdBy);
+  }
+
+  canReviewContent() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.collectionDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && resourceStatus === 'review' && this.userService.userid !== this.collectionDetails.createdBy);
+  }
+
+
+
+  hasAccessFor(roles: Array<string>) {
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
+  }
+
 }

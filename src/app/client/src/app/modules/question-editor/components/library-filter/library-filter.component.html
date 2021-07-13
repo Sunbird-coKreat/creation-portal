@@ -1,0 +1,40 @@
+<div class="sb-prominent-filter sb-bg-header-blue">
+  <div class="ui container pt-5 pb-20">
+    <div class="d-flex flex-w-wrap flex-jc-space-between flex-ai-center">
+      <div class="sb-search-box small no-btn">
+        <div class="input-div relative">
+          <i class="search icon"></i>
+          <input id="searchInputField" class="sb-search-input" [(ngModel)]="searchQuery" type="text" (keyup.enter)="onQueryEnter($event);" placeholder={{configService.labelConfig?.lbl?.searchLibrary}}
+          libTelemetryInteract
+          [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('search_library','click',undefined, this.telemetryService?.telemetryPageId)"/>
+        </div>
+        <button class="sb-btn sb-btn-normal">{{configService.labelConfig?.lbl?.search}}</button>
+      </div>
+      <div class="fs-0-785 cursor-pointer" (click)="showfilter()"
+        libTelemetryInteract
+        [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('filter_accordion','click',undefined, this.telemetryService?.telemetryPageId)">
+        {{configService.labelConfig?.lbl?.filterText}}
+        <i *ngIf="isFilterShow" class="caret up icon"></i>
+        <i *ngIf="!isFilterShow" class="caret down icon"></i>
+      </div>
+    </div>
+
+    <div class="library-filter pt-16" *ngIf="isFilterShow">
+      <hr class="mb-20">
+      <ng-container *ngIf="filterConfig">
+        <sb-dynamic-form [config]="filterConfig" (initialize)="outputData($event)"
+          (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-dynamic-form>
+      </ng-container>
+      <div class="d-flex flex-as-center pt-10 sb-btn-cover flex-jc-space-end">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-5" (click)="resetFilter();"
+        libTelemetryInteract
+        [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('reset','click','submit', this.telemetryService?.telemetryPageId)"
+        >{{configService.labelConfig?.button_labels?.reset_btn_label}}</button>
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-primary ml-15" (click)="applyFilter();"
+        libTelemetryInteract
+        [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('apply','click','submit', this.telemetryService?.telemetryPageId, {filters: filterValues})"
+        >{{configService.labelConfig?.button_labels?.apply_btn_label}}</button>
+      </div>
+    </div>
+  </div>
+</div>

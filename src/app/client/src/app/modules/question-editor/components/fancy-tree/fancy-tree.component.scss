@@ -1,0 +1,178 @@
+.sb-collectionTree-fancyTreelist {
+    .ui-fancytree {
+      margin-bottom: 1rem !important;
+      &:before {
+        background: none !important;
+      }
+  
+      ul {
+        &::before {
+          background: none !important;
+        }
+      }
+  
+      .fancytree-folder {
+        .fancytree-title {
+          color: var(--primary-color) !important;
+          font-size: 0.9286rem !important;
+          font-weight: 700 !important;
+          padding-left: 5px;
+        }
+        .highlightNode {
+          color: red !important;
+          &::before {
+            color: red !important;
+          }
+        }
+      }
+  
+      li {
+        padding: 0;
+        margin: 0 0 1px 0;
+  
+        .fancytree {
+          &-ico-c{
+            padding-left: 5px !important;
+          }
+          // &-ico-cf{
+          //   padding-left: 25px !important;
+          // }
+          // &-ico-ef{
+          //   padding-left: 25px !important;
+          // }
+          &-expanded {
+            padding: 15px 33px;
+            border: 1px solid transparent;
+            background-color: #fff;
+          }
+          &-active {
+            border: 1px solid #d0e0f3;
+            background-color: var(--primary-0);
+            padding: 15px 33px;
+            border-top: none;
+          }
+        }
+  
+        &:last-child {
+          &:after {
+            display: none;
+          }
+        }
+  
+        ul {
+          padding-top: 1px;
+  
+          li {
+            list-style-type: none;;
+            .fancytree-custom-icon {
+              &::before {
+                // content: url("/assets/images/writing.png");
+                color: var(--primary-color) !important;
+                margin-top: 5px;
+                float: left;
+                margin-left: 11px;
+              }
+  
+              &:last-child {
+                &:after {
+                  display: none;
+                }
+              }
+            }
+  
+            .fancytree-node {
+              padding: 6px 6px 8px 5px;
+              margin-left: 45px;
+              border: 1px solid transparent;
+  
+              &.fancytree-active,
+              &.fancytree-focused,
+              &:hover {
+                border: 1px solid #d0e0f3;
+                background-color: var(--primary-0);
+                border-right: 0;
+              }
+            }
+          }
+        }
+  
+        &::before {
+          background: none !important;
+        }
+  
+        .sb-fancyTree-icon {
+          color: var(--gray-300) !important;
+        }
+  
+        .fancytree-custom-icon {
+          &::before {
+            // content: url("/assets/images/question_collection.svg");
+            color: var(--primary-color) !important;
+            margin-left: 5px;
+          }
+        }
+      }
+  
+      .fa-caret-down {
+        display: block;
+        width: 10px;
+        padding-left: 2px;
+      }
+  
+      .fa-caret-right {
+        display: block;
+        width: 10px;
+        padding-left: 6px;
+      }
+    }
+  
+    .ui-fancytree {
+      padding-right: 0.785rem;
+      // height: calc(100vh - 126px);
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+  }
+  .sb-fixed-with-whitebg {
+    position: fixed;
+    width: 100%;
+    border-top: 1px solid #ddd;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    z-index: 99999;
+    padding: 0 !important;
+    .sb-btn-cover{
+      padding: 0.5rem;
+      border-right: solid 1px #ccc;
+      width: 50%;
+      text-align: center;
+      .sb-btn{
+        &:hover{
+          background: none !important;
+          color:var(--primary-400);
+        }
+      }
+    }
+  }
+  .sb-dotted-dropdown{
+    line-height: 1.4rem;
+    .menu{
+      .item{
+        font-size: 0.785rem !important;
+      }
+    }
+  }
+  .eight.bg-white{
+    border-left: solid 1px var(--gray-100);
+    padding-bottom: 4.5rem !important;
+  }
+  .b-none{
+    border: none !important;
+  }
+  .w-25{
+    width: 25.1%;
+    max-width: 25.1%;
+  }

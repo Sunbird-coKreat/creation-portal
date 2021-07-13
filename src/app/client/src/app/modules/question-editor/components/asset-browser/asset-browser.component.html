@@ -1,0 +1,125 @@
+<sui-modal [isClosable]="true" class="sb-modal overflow-modal" [isInverted]="false" (dismissed)="dismissImagePicker()"
+  *ngIf="showImagePicker" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
+  <div class="sb-modal-header">{{configService.labelConfig?.lbl?.selectImage}}</div>
+  <div class="sb-modal-content p-0">
+    <sui-tabset>
+      <div class="sb-tabset-menu">
+        <a class="sb-item" (activate)="getMyImages(0)" suiTabHeader="1">{{configService.labelConfig?.lbl?.myImages}}</a>
+        <a class="sb-item" (activate)="getAllImages(0)" suiTabHeader="2">{{configService.labelConfig?.lbl?.allImage}}</a>
+      </div>
+      <div class="ui segment sb-tabset-segment m-0 pt-15" infiniteScroll [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="500" [scrollWindow]="false" (scrolled)="lazyloadMyImages()" suiTabContent="1">
+        <div class="ui  pb-16 d-flex pl-0">
+          <div class="sb-search-box small no-btn">
+            <div class="input-div relative">
+              <i class="search icon" aria-hidden="true"></i>
+              <input (change)="searchImages($event, 'myImages')" class="sb-search-input" [(ngModel)]="searchMyInput"
+                type="text" placeholder={{configService.labelConfig?.lbl?.searchPlaceholder}} />
+              <i class="close icon" aria-hidden="true" (click)="searchImages('clearInput', 'myImages')"></i>
+            </div>
+            <button class="sb-btn sb-btn-normal">{{configService.labelConfig?.button_labels?.search_btn_label}}</button>
+          </div>
+          <p class="fs-0-986 ml-auto sb-color-grey" >{{assetsCount}}</p>
+        </div>
+        <div *ngIf="!myAssets?.length && searchMyInput" class="fs-0785 my-10"> {{emptySearchMessage}}  </div>
+        <div class="sb-grid-layout image">
+          <div class="sb-video-content" *ngFor="let data of myAssets">
+            <div class="sb-image-section relative position">
+              <img (click)="addImageInEditor(data.downloadUrl, data.identifier)" alt="" [src]="data.downloadUrl">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ui segment sb-tabset-segment m-0 pt-15" infiniteScroll [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="500" [scrollWindow]="false" (scrolled)="lazyloadAllImages()" suiTabContent="2">
+        <div class="ui  pb-16 d-flex pl-0">
+          <div class="sb-search-box small no-btn">
+            <div class="input-div relative">
+              <i class="search icon" aria-hidden="true"></i>
+              <input (change)="searchImages($event, 'allImages')" class="sb-search-input" [(ngModel)]="searchAllInput"
+                type="text" placeholder={{configService.labelConfig?.lbl?.searchPlaceholder}} />
+              <i class="close icon" aria-hidden="true" (click)="searchImages('clearInput', 'allImages')"></i>
+            </div>
+            <button class="sb-btn sb-btn-normal">{{configService.labelConfig?.button_labels?.search_btn_label}}</button>
+          </div>
+          <p class="fs-0-986 ml-auto sb-color-grey" >{{assetsCount}}</p>
+        </div>
+        <div *ngIf="!allImages?.length && searchAllInput" class="fs-0785"> {{emptySearchMessage}} </div>
+        <div class="sb-grid-layout image">
+          <div class="sb-video-content" *ngFor="let data of allImages">
+            <div class="sb-image-section">
+              <img (click)="addImageInEditor(data.downloadUrl, data.identifier)" alt="" [src]="data.downloadUrl">
+            </div>
+          </div>
+        </div>
+      </div>
+    </sui-tabset>
+  </div>
+  <div class="sb-modal-actions flex-jc-space-end">
+    <button (click)="openImageUploadModal();" class="sb-btn sb-btn-primary sb-btn-normal">{{configService.labelConfig?.lbl?.uploadAndUse}}</button>
+  </div>
+</sui-modal>
+<sui-modal class="sb-modal overflow-modal" [isClosable]="true" [isInverted]="false"
+  (dismissed)="dismissImageUploadModal()" *ngIf="showImageUploadModal" [size]="'large'" [isFullScreen]="false"
+  [mustScroll]="true" appBodyScroll #modal>
+  <div class="sb-modal-header">{{configService.labelConfig?.lbl?.uploadAndUse}}</div>
+  <div class="p-10 sb-bg-white">
+    <div class="d-flex">
+      <div class="w-50">
+        <div class="content">
+          <h6 class="mb-8 fs-normal"> {{configService.labelConfig?.lbl?.chooseOrDragImage}}<span class="red">*</span></h6>
+          <div class="upload-image-modal-section d-flex flex-ai-center flex-jc-center flex-dc">
+            <ng-container>
+              <button class="upload-input-button sb-btn sb-btn-success sb-btn-normal">
+                {{configService.labelConfig?.lbl?.uploadFromComputer}}  
+                <input (change)="uploadImage($event)" type="file" [accept]="acceptImageType" name="assetfile">
+              </button>
+              <div class="py-10 fs-0-785 sb-color-primary" *ngIf="imageUploadLoader"> {{assetName}} </div>
+              <span class="fsmall mt-8">{{configService.labelConfig?.lbl?.upload}}  {{assetConfig.image.accepted}} 
+                ({{configService.labelConfig?.lbl?.maxFileSize}} {{assetConfig.image.size}}{{assetConfig.image.sizeType}})</span>
+              <div *ngIf="showErrorMsg" class="sb-color-error fsmall mt-8">
+                <p>{{errorMsg}}</p>
+              </div>
+            </ng-container>
+          </div>
+          <div class="ui info message sb-info-bx">
+            <ul class="list">
+              <li class="fs-0785"> {{configService.labelConfig?.lbl?.allowedFileTypes}} {{assetConfig.image.accepted}}</li>
+              <li class="fs-0785"> {{configService.labelConfig?.lbl?.maximumAllowedFileSize}} {{assetConfig.image.size}}{{assetConfig.image.sizeType}}</li>
+            </ul>
+          </div>
+          <h6 class="fs-0785">{{configService.labelConfig?.lbl?.copyRightsAndLicense}}<span class="red">*</span></h6>
+          <p class="fsmall mt-8 terms-and-condition">{{termsAndCondition}}</p>
+        </div>
+      </div>
+      <div class="w-50 pl-10 ml-10 b-bl">
+        <div class="ui info message sb-info-bx mb-0">
+          <ul class="list">
+            <li class="fs-0785 font-weight-bold">
+              <i class="icon info circle" aria-hidden="true"></i>
+              {{configService.labelConfig?.lbl?.dropChooseFile}} </li>
+          </ul>
+        </div>
+        <div class="sb-form-fields">
+          <div class="form-container upload-form">
+            <sb-dynamic-form [config]="formConfig" 
+              (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-dynamic-form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-modal-actions flex-jc-space-between p-0">
+      <div>
+        <button (click)="dismissPops(modal);" class="mr-10 sb-btn sb-btn-primary sb-btn-normal">{{configService.labelConfig?.button_labels?.cancel_btn_label}}</button>
+
+        <button (click)="uploadAndUseImage(modal);" [disabled]="!imageFormValid" 
+        [ngClass]="{'sb-btn-primary': imageFormValid, 'sb-btn-disabled': !imageFormValid}"
+        class="sb-btn  sb-btn-normal text-left">{{configService.labelConfig?.button_labels?.upload_use_btn_label}}
+          </button>
+      </div>
+      <div>
+        <button (click)="dismissImageUploadModal();" class=" sb-btn sb-btn-primary sb-btn-normal">{{configService.labelConfig?.button_labels?.back_btn_label}}</button>
+      </div>
+    </div>
+  </div>
+</sui-modal>

@@ -1,0 +1,66 @@
+<sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
+  appBodyScroll (dismissed)="closePopup()" #modal>
+  <div class="sb-modal-header">
+    {{configService.labelConfig?.lbl?.whereDoYouWantToAddThisContent}}
+  </div>
+
+
+  <ng-template #rootNodeTemplateRef let-root>
+    <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion sb-select-content" [closeOthers]="true">
+      <div *ngIf="root.children && root.children.length" class="root__children">
+        <ng-template ngFor [ngForOf]="root.children" [ngForTemplate]="nodeTemplateRef">
+        </ng-template>
+      </div>
+    </sui-accordion>
+  </ng-template>
+
+  <ng-template #nodeTemplateRef let-child>
+    <sui-accordion-panel [isOpen]="child?.children && child?.children.length > 0 ? true : false">
+      <div title class="sb-accordion-title d-flex flex-ai-center mt-0">
+        <div class="item d-flex flex-ai-center cursor-pointer w-100">
+          <label for="{{child?.identifier}}" class="sb-color-primary font-weight-bold">{{child?.name}}</label>
+        </div>
+        <div class="sb-radio-btn-checkbox sb-radio-btn-primary" [ngClass]="{'sb-disabled': child?.showButton}">
+          <input type="radio" disabled="{{child?.showButton}}" id="{{child?.identifier}}" value="{{child?.identifier}}"
+            name="mainUnit" [(ngModel)]="prevUnitSelect" (change)="setCollectionUnitBreadcrumb();" libTelemetryInteract
+            [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata(child?.identifier,'select','radio_button', telemetryService?.telemetryPageId, {key:'dialog_id',value:'add_to'})">
+          <label for="{{child?.identifier}}" class="sb-color-primary font-weight-bold"></label>
+        </div>
+        <div class="chevron-icon">
+          <i class="chevron down icon"></i>
+        </div>
+      </div>
+      <div content class="sb-row-bb" *ngIf="child.children && child.children.length">
+        <div class="item cursor-pointer w-100">
+          <ng-template ngFor [ngForOf]="child.children" [ngForTemplate]="nodeTemplateRef">
+          </ng-template>
+        </div>             
+      </div>
+    </sui-accordion-panel>
+  </ng-template>
+
+  <!-- Selection of Layout in modal -->
+  <div class="sb-modal-content sb-chapterlist-modal scrolling content sb-dock-accordion py-20">
+    <ng-template [ngTemplateOutlet]="rootNodeTemplateRef"
+      [ngTemplateOutletContext]="{ $implicit: { children: collectionUnits } }">
+    </ng-template>
+  </div>
+
+  <div class="sb-modal-actions flex-dr flex-jc-space-between py-10" *ngIf="selectedContentDetails">
+    <div class="ui tiny breadcrumb fxsmall line-height-1-3 w-80 d-flex sb-content-breadcrumb"
+      [style.visibility]="(collectionUnitsBreadcrumb.length > 0? 'visible' : 'hidden')">
+       {{configService.labelConfig?.lbl?.addingTo}}<span class="font-weight-bold px-10  section">{{selectedContentDetails?.name}}</span>
+      <span class="section ml-10" *ngFor="let unit of collectionUnitsBreadcrumb;first as first;last as last;">
+        <i class="right chevron icon divider b-0" [hidden]="first"></i>
+        <span [class.font-weight-bold]="first"> {{ unit }}</span>
+      </span>
+    </div>
+    <div class="w-20 text-right">
+      <button id="addResource" class="sb-btn sb-btn-normal text-inherit sb-btn-primary text-right"
+        (click)="addResource()" libTelemetryInteract
+        [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('add_content','click','submit', telemetryService?.telemetryPageId, {key:'dialog_id',value:'add_to'})">
+        {{configService.labelConfig?.lbl?.addContent}}
+      </button>
+    </div>
+  </div>
+</sui-modal>

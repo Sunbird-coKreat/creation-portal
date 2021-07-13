@@ -1,0 +1,128 @@
+.library-filter {
+    .two-column-grid{
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .list-border.cursor-pointer{
+        margin-top: 12px;
+    }
+    .list-border{
+        background: #ffffff;
+    }
+    sb-dynamic-dropdown{
+        .sb-dropdown-select{
+            margin-top: 0.1rem;
+            padding: 14px 8px !important;
+        }
+    } 
+    .ui{
+      &.modals{
+        z-index: 9999 !important;
+      }
+    }
+}
+.sb-search-box .sb-search-input{
+    padding: 0 3.5rem 0 2rem !important;
+}
+.sb-prominent-filter-field{
+    width: 33.2% !important;
+  } 
+  
+  .sb-prominent-filter {
+      position: relative;
+      top: unset;
+      box-shadow: none;
+      &:nth-child(6){
+        padding-right: 0;
+      }
+      .sb-search-box{
+        width: 36%;
+        border: 1px solid var(--gray-200);
+        .search.icon{
+          &:before{
+            color:#bbb7b2;
+          }
+        }
+        .sb-search-input{
+          padding: 0.5rem;
+        }
+      }
+      .small{
+        max-width: inherit;
+      }
+      .sb-prominent-filter-field {
+        cursor: pointer;
+  
+        &:last-child {
+          text-align: inherit !important;
+          margin: inherit !important;
+        }
+            
+        .ui.selection.dropdown {
+          border-color: #999;
+        }
+  
+        ::ng-deep {
+  
+          .ui {
+            &.selection.dropdown .text {
+              padding-left: 0.7rem;
+              text-transform: none;
+            }
+  
+            &.search {
+              &.dropdown>input.search {
+                left: 0;
+              }
+  
+              &.selection.dropdown>input.search {
+                line-height: 1.21428571em;
+                padding: .67857143em 2.1em .67857143em 1em;
+              }
+            }
+  
+            &.multiple {
+              &.search.dropdown> {
+                input.search {
+                  margin: 0;
+                }
+  
+                .text {
+                  top: 2px;
+                }
+              }
+  
+              &.dropdown {
+                .label {
+                  margin: 0.25rem;
+                  vertical-align: middle;
+                }
+  
+                >.text {
+                  line-height: 1.4rem;
+                  vertical-align: bottom;
+                  padding: 0 0 0 0.7rem;
+                }
+              }
+            }
+          }
+  
+        }
+      }
+    }
+.flex-jc-space-end{
+    justify-content: flex-end !important;
+}
+.multi-select-container{
+  .list-border{
+    height: inherit !important;
+    ul{
+      position: static !important;
+      padding: 0 20px 0 0 !important
+    }
+  }
+}
+.ui{
+  &.modals{
+    z-index: 9999 !important;
+  }
+}

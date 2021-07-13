@@ -77,6 +77,6 @@ import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ SanitizeHtmlPipe ]
+    exports: [SanitizeHtmlPipe, QuestionSetEditorComponent]
 })
 export class SourcingModule { }

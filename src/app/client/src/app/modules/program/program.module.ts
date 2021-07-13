@@ -22,6 +22,7 @@ import { SourcingModule } from '../sourcing/sourcing.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../sourcing';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgReportsComponent } from './components/org-reports/org-reports.component';
+import {QuestionEditorModule} from "../question-editor";
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { OrgReportsComponent } from './components/org-reports/org-reports.compon
     TelemetryModule,
     SourcingModule,
     SharedFeatureModule,
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent])
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent]),
+    QuestionEditorModule
   ],
   exports: [
     ProgramComponent,
