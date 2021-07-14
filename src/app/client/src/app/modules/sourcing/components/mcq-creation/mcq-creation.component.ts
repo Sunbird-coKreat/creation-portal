@@ -277,6 +277,19 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
       }
     }
   }
+
+  validateCurrentQuestion() {
+    const optionValid = _.find(this.mcqForm.options, option =>
+      (option.body === undefined || option.body === '' || option.length > this.setCharacterLimit));
+    if (optionValid || !this.mcqForm.answer || [undefined, ''].includes(this.mcqForm.question)) {
+      this.showFormError = true;
+      this.showPreview = false;
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   handleEditorError(event) {
     this.isEditorThrowingError = event;
   }
