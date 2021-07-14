@@ -994,19 +994,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
 
       if (prgData['nomination_enddate']) {
-        prgData['nomination_enddate'].setHours(23, 59, 59);
+        prgData['nomination_enddate'].setHours(23,59,59);
       }
 
       if (prgData['shortlisting_enddate']) {
-        prgData['shortlisting_enddate'].setHours(23, 59, 59);
+        prgData['shortlisting_enddate'].setHours(23,59,59);
       }
 
       if (prgData['enddate']) {
-        prgData['enddate'].setHours(23, 59, 59);
+        prgData['enddate'].setHours(23,59,59);
       }
 
       if (prgData['content_submission_enddate']) {
-        prgData['content_submission_enddate'].setHours(23, 59, 59);
+        prgData['content_submission_enddate'].setHours(23,59,59);
       }
 
       this.programsService.updateProgram(prgData).subscribe(
@@ -1063,9 +1063,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.collectionListForm.value.pcollections = [];
     this.fetchBlueprintTemplate();
     this.tempCollections = [];
-  }
-
-  showTexbooklist(showTextBookSelector = true) {
+}
+showTexbooklist(showTextBookSelector = true) {
     const primaryCategory = this.collectionListForm.value.target_collection_category;
     if (!primaryCategory) {
       return;
@@ -1133,8 +1132,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.collections = [];
           this.tempSortCollections = [];
           if (!this.filterApplied) {
-            // tslint:disable-next-line: max-line-length
-            this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
+           // tslint:disable-next-line: max-line-length
+           this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
           }
         }
       },
@@ -1176,7 +1175,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     _.forEach(this.collectionListForm.value.pcollections, (identifier) => {
       const obj = {
-        'id': identifier,
+        'id' : identifier,
         'allowed_content_types': [],
         'children': []
       };
@@ -1278,23 +1277,23 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const telemetryCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     const deviceInfo = this.deviceDetectorService.getDeviceInfo();
     setTimeout(() => {
-      this.telemetryStart = {
-        context: {
-          env: this.activatedRoute.snapshot.data.telemetry.env,
-          cdata: telemetryCdata
-        },
-        edata: {
-          type: this.activatedRoute.snapshot.data.telemetry.type || '',
-          pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
-          uaspec: {
-            agent: deviceInfo.browser,
-            ver: deviceInfo.browser_version,
-            system: deviceInfo.os_version,
-            platform: deviceInfo.os,
-            raw: deviceInfo.userAgent
+        this.telemetryStart = {
+          context: {
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            cdata: telemetryCdata
+          },
+          edata: {
+            type: this.activatedRoute.snapshot.data.telemetry.type || '',
+            pageid: this.activatedRoute.snapshot.data.telemetry.pageid || '',
+            uaspec: {
+              agent: deviceInfo.browser,
+              ver: deviceInfo.browser_version,
+              system: deviceInfo.os_version,
+              platform: deviceInfo.os,
+              raw: deviceInfo.userAgent
+            }
           }
-        }
-      };
+        };
     });
   }
 
@@ -1330,7 +1329,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   public editBlueprint(collection) {
-    if (!this.textbooks[collection.identifier]) {
+    if(!this.textbooks[collection.identifier]) {
       this.getCollectionHierarchy(collection.identifier);
     } else {
       this.choosedTextBook = this.textbooks[collection.identifier];
@@ -1344,45 +1343,47 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     _.forEach(Object.keys(this.localBlueprint.questionTypes), (type: any) => {
       revisedTotalCount = revisedTotalCount + parseInt(this.localBlueprint.questionTypes[type]);
     });
-    this.localBlueprint.totalQuestions = revisedTotalCount;
+    this.localBlueprint.totalQuestions  = revisedTotalCount;
     return revisedTotalCount;
   }
 
   public onChangeTopics() {
-    this.blueprintTemplate.properties.forEach((property) => {
-      if (property.code === 'learningOutcomes') property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
+    this.blueprintTemplate.properties.forEach( (property) => {
+      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
     })
   }
 
   public mapBlueprintToId() {
-    if (this.isBlueprintValid()) {
+    if(this.isBlueprintValid()) {
       this.localBlueprintMap[this.choosedTextBook.code] = this.localBlueprint;
       this.editBlueprintFlag = false;
-    } else {
+    }
+    else {
       this.toasterService.error(this.resource.messages.emsg.blueprintViolation);
     }
 
   }
 
   initEditBlueprintForm(collection) {
-    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
-    let blueprint = {};
-    this.blueprintTemplate.properties.forEach((property) => {
-      if (!property.default) {
-        if (property.code === 'topics') property.options = this.initTopicOptions;
-        else if (property.code === 'learningOutcomes') property.options = this.initLearningOutcomeOptions;
+   [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
+   let blueprint = {};
+    this.blueprintTemplate.properties.forEach( (property) => {
+      if(!property.default) {
+        if(property.code === 'topics') property.options = this.initTopicOptions;
+        else if(property.code === 'learningOutcomes') property.options = this.initLearningOutcomeOptions;
         blueprint[property.code] = [];
       }
-      if (property.children) {
+      if(property.children) {
         blueprint[property.code] = {};
         property.children.forEach((nestedProperty) => {
           blueprint[property.code][nestedProperty.code] = property.default;
         })
       }
     })
-    if (this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
+    if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
       this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code]
-    } else this.localBlueprint = blueprint;
+    }
+    else this.localBlueprint = blueprint;
 
   }
 
@@ -1390,14 +1391,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     let validity = true, totalQuestions = this.localBlueprint.totalQuestions;
     _.forEach(this.blueprintTemplate.properties, (prop) => {
       let val = this.localBlueprint[prop.code]
-      if (prop.required) {
-        if (!val) validity = false;
-        else if (Array.isArray(val)) {
-          if (!val.length) validity = false;
-        } else if (typeof val === 'object') {
-          if (_.reduce(val, (result, child, key) => {
-            if (isNaN(parseFloat(child))) validity = false;
-            else if (parseFloat(child) < 0) validity = false;
+      if(prop.required) {
+        if(!val) validity = false;
+        else if(Array.isArray(val)) {
+          if(!val.length) validity = false;
+        }
+        else if(typeof val === 'object') {
+          if(_.reduce(val, (result, child, key) => {
+            if(isNaN(parseFloat(child))) validity = false;
+            else if(parseFloat(child) < 0) validity = false;
             result = result + parseInt(child);
             return result;
           }, 0) === 0) {
@@ -1405,16 +1407,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           }
         }
       }
-      if (prop.code === 'totalMarks') {
-        if (val) {
-          if (isNaN(parseFloat(val))) validity = false;
-          else if (parseFloat(val) < 0) validity = false;
+      if(prop.code === 'totalMarks') {
+        if(val) {
+          if(isNaN(parseFloat(val))) validity = false;
+          else if(parseFloat(val) < 0) validity = false;
         }
       }
     })
-    if (!totalQuestions) validity = false;
+    if(!totalQuestions) validity = false;
     else {
-      if (isNaN(totalQuestions) && isNaN(parseFloat(totalQuestions))) validity = false;
+      if(isNaN(totalQuestions) && isNaN(parseFloat(totalQuestions))) validity = false;
     }
     return validity;
   }
@@ -1437,15 +1439,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public getCollectionHierarchy(identifier: string) {
     const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
     const originUrl = this.programsService.getContentOriginEnvironment();
-    const url = originUrl + hierarchyUrl;
+    const url =  originUrl + hierarchyUrl ;
 
     return this.httpClient.get(url).subscribe(res => {
       const content = _.get(res, 'result.content');
       this.textbooks[identifier] = {};
       const chapter = {
-        'id': identifier,
+        'id' : identifier,
         'children': [],
-        'allowed_content_types': []
+        'allowed_content_types' : []
       };
 
       let dcollection = {};
@@ -1453,7 +1455,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (!this.editPublished) {
         const draftCollections = _.get(this.programDetails, 'config.collections');
         if (!_.isEmpty(draftCollections)) {
-          const dcindex = draftCollections.findIndex(x => x.id === identifier);
+          const dcindex = draftCollections.findIndex(x => x.id ===  identifier);
           if (dcindex !== -1) {
             dcollection = draftCollections[dcindex];
           }
@@ -1462,7 +1464,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === identifier);
       this.tempCollections[cindex]['selected'] = 0;
-      this.tempCollections[cindex]['total'] = content.children.length;
+      this.tempCollections[cindex]['total']    = content.children.length;
       this.tempCollections[cindex]['contentTypeUnit'] = this.blueprintTemplate ? 'Section' : 'Chapter';
 
       _.forEach(content.children, (item) => {
@@ -1477,8 +1479,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
 
         chapter.children.push({
-          'id': item.identifier,
-          'allowed_content_types': []
+          'id' : item.identifier,
+          'allowed_content_types' : []
         });
       });
 
@@ -1497,7 +1499,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     _.forEach(selectedChapters, (item, i) => {
       this.textbooks[identifier].children[i].checked = item.value;
       if (item.value === true) {
-        selectedCount++;
+        selectedCount ++;
       }
     });
 
@@ -1511,12 +1513,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     visibility = true;
 
     _.forEach(collections, collection => {
-      let totalLeaf = 0;
-      let contentTypes = [];
-      let result = this.getContentCountPerFolder(collection, status, false, undefined, createdBy, visibility, totalLeaf, contentTypes);
+       let totalLeaf = 0;
+       let contentTypes = [];
+       let result = this.getContentCountPerFolder(collection , status , false, undefined, createdBy, visibility, totalLeaf, contentTypes);
 
-      let contentTypeDisplayTxt = '';
-      for (const property in result.contentTypes) {
+       let contentTypeDisplayTxt = '';
+       for (const property in result.contentTypes) {
         contentTypeDisplayTxt += `${result.contentTypes[property]}  ${property} `;
       }
 
@@ -1537,9 +1539,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
 
     var counts = {};
-    contentTypes.forEach(function (x) {
-      counts[x] = (counts[x] || 0) + 1;
-    });
+    contentTypes.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
 
     return {"totalLeaf": totalLeaf, "contentTypes": counts};
   }
@@ -1559,63 +1559,63 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   saveAsDraft($event: MouseEvent) {
     this.clearValidations();
     if (this.createProgramForm.valid) {
-      ($event.target as HTMLButtonElement).disabled = true;
-      const cb = (error, resp) => {
-        if (!error && resp) {
-          this.generateTelemetryEndEvent('save');
-          this.toasterService.success(
-            '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
-            this.resource.messages.smsg.program.draft.message);
-          this.router.navigate(['/sourcing']);
-        } else {
-          const errInfo = {
-            errorMsg: this.resource.messages.emsg.m0005,
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata: this.telemetryInteractCdata,
-            env: this.activatedRoute.snapshot.data.telemetry.env,
-          };
-          this.sourcingService.apiErrorHandling(error, errInfo);
-          ($event.target as HTMLButtonElement).disabled = false;
-        }
-      };
-      this.saveProgram(cb);
-    } else if (!this.createProgramForm.valid) {
-      this.formIsInvalid = true;
-      this.validateAllFormFields(this.createProgramForm);
-      return false;
-    }
+        ($event.target as HTMLButtonElement).disabled = true;
+        const cb = (error, resp) => {
+          if (!error && resp) {
+            this.generateTelemetryEndEvent('save');
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
+              this.resource.messages.smsg.program.draft.message);
+            this.router.navigate(['/sourcing']);
+          } else {
+            const errInfo = {
+              errorMsg: this.resource.messages.emsg.m0005,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+            };
+            this.sourcingService.apiErrorHandling(error, errInfo);
+            ($event.target as HTMLButtonElement).disabled = false;
+          }
+        };
+        this.saveProgram(cb);
+      } else if (!this.createProgramForm.valid) {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.createProgramForm);
+        return false;
+      }
   }
 
-  saveAsDraftAndNext($event) {
+  saveAsDraftAndNext ($event) {
     this.clearValidations();
 
     if ((this.createProgramForm.dirty
       || !_.isUndefined(this.uploadedDocument))
       && this.createProgramForm.valid) {
-      ($event.target as HTMLButtonElement).disabled = true;
+        ($event.target as HTMLButtonElement).disabled = true;
 
-      const cb = (error, resp) => {
-        if (!error && resp) {
-          this.showTextBookSelector = true;
-          window.scrollTo(0, 0);
-          this.showTexbooklist();
-          ($event.target as HTMLButtonElement).disabled = false;
-        } else {
-          this.toasterService.error(this.resource.messages.emsg.m0005);
-          ($event.target as HTMLButtonElement).disabled = false;
-        }
-      };
+        const cb = (error, resp) => {
+          if (!error && resp) {
+            this.showTextBookSelector = true;
+            window.scrollTo(0,0);
+            this.showTexbooklist();
+            ($event.target as HTMLButtonElement).disabled = false;
+          } else {
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            ($event.target as HTMLButtonElement).disabled = false;
+          }
+        };
 
-      this.saveProgram(cb);
-    } else if (this.createProgramForm.valid) {
-      this.showTextBookSelector = true;
-      this.showTexbooklist();
-      window.scrollTo(0, 0);
-    } else {
-      this.formIsInvalid = true;
-      this.validateAllFormFields(this.createProgramForm);
-      return false;
-    }
+        this.saveProgram(cb);
+      } else if (this.createProgramForm.valid) {
+        this.showTextBookSelector = true;
+        this.showTexbooklist();
+        window.scrollTo(0,0);
+      } else {
+        this.formIsInvalid = true;
+        this.validateAllFormFields(this.createProgramForm);
+        return false;
+      }
   }
 
   validateFormBeforePublish() {
@@ -1663,36 +1663,36 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
         if (this.isOpenNominations) {
           this.programsService.publishProgram(data).subscribe(res => {
-              this.generateTelemetryEndEvent('publish');
-              this.toasterService.success(
-                '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
-                this.resource.messages.smsg.program.published.message);
-              this.router.navigate(['/sourcing']);
-            },
-            err => {
-              this.disableCreateProgramBtn = false;
-              const errInfo = {
-                errorMsg: this.resource.messages.emsg.m0005,
-                telemetryPageId: this.telemetryPageId,
-                telemetryCdata: this.telemetryInteractCdata,
-                env: this.activatedRoute.snapshot.data.telemetry.env,
-                request: data
-              };
-              this.sourcingService.apiErrorHandling(error, errInfo);
-              console.log(err);
-            });
+            this.generateTelemetryEndEvent('publish');
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
+              this.resource.messages.smsg.program.published.message);
+            this.router.navigate(['/sourcing']);
+          },
+          err => {
+            this.disableCreateProgramBtn = false;
+            const errInfo = {
+              errorMsg: this.resource.messages.emsg.m0005,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+              request: data
+            };
+            this.sourcingService.apiErrorHandling(error, errInfo);
+            console.log(err);
+          });
         } else {
           this.programsService.unlistPublishProgram(data).subscribe(res => {
-              this.toasterService.success(
-                '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
-                this.resource.messages.smsg.program.published.message);
-              this.router.navigate(['/sourcing']);
-            },
-            err => {
-              this.disableCreateProgramBtn = false;
-              this.toasterService.error(this.resource.messages.emsg.m0005);
-              console.log(err);
-            });
+            this.toasterService.success(
+              '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
+              this.resource.messages.smsg.program.published.message);
+            this.router.navigate(['/sourcing']);
+          },
+          err => {
+            this.disableCreateProgramBtn = false;
+            this.toasterService.error(this.resource.messages.emsg.m0005);
+            console.log(err);
+          });
         }
 
       } else {
@@ -1702,8 +1702,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         const errInfo = {
           errorMsg: this.resource.messages.emsg.m0005,
           telemetryPageId: this.telemetryPageId,
-          telemetryCdata: this.telemetryInteractCdata,
-          env: this.activatedRoute.snapshot.data.telemetry.env,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
       }
