@@ -13,7 +13,6 @@
               </lib-fancy-tree>
             </div>
             <!-- Right Player Sections -->
-            {{isCurrentNodeFolder}} ===> {{isCurrentNodeRoot}} ===> {{(unitFormConfig | json)}}
             <div class="eight wide column bg-white pl-40 mb-10 w-73">
               <ng-container *ngIf="(isCurrentNodeFolder === true || isCurrentNodeRoot === true) && unitFormConfig">
                 <lib-meta-form [rootFormConfig]="rootFormConfig" [nodeMetadata]="selectedNodeData" [unitFormConfig]="unitFormConfig"

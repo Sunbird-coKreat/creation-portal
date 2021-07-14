@@ -1,7 +1,7 @@
 <ng-container *ngIf="isQuestionEditorVisible;else programPage">
   <!--<app-question-set-editor [questionSetEditorComponentInput]="questionSetEditorComponentInput">
   </app-question-set-editor>-->
-  <lib-editor [editorConfig]="editorConfig" (editorEmitter)="editorEventListener($event)"></lib-editor>
+  <lib-editor [editorConfig]="editorConfig" (editorEmitter)="editorEventListener($event)" (saveButtonEmitter)="onSave($event)"></lib-editor>
 </ng-container>
 <ng-template #programPage>
   <div class="ui container" [appTelemetryImpression]="telemetryImpression">

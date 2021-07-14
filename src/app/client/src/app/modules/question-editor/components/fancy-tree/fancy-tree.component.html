@@ -22,7 +22,7 @@
     </div>
     {{configService.labelConfig?.button_labels?.add_from_library_btn_label}}
   </button>
-  <button *ngIf="config.objectType === 'QuestionSet'" [disabled]="!visibility?.createNew"
+ <!-- <button *ngIf="config.objectType === 'QuestionSet'" [disabled]="!visibility?.createNew"
     [ngClass]="[!visibility?.createNew ? 'sb-btn-outline-disabled' : '', (visibility?.createNew && buttonLoaders?.addFromLibraryButtonLoader) ? 'sb-btn-loading-spinner sb-btn-outline-disabled': '']"
     type="button" class="sb-btn sb-btn-normal sb-btn-primary mt-10 mr-30" (click)="createNewContent()"
     libTelemetryInteract
@@ -31,5 +31,5 @@
     <div class="sb-loading-spinner" *ngIf="buttonLoaders?.addFromLibraryButtonLoader" role="status" aria-hidden="true">
     </div>
     {{configService.labelConfig?.button_labels?.create_new_btn_label}}
-  </button>
+  </button>-->
 </div>

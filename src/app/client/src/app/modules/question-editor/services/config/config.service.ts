@@ -23,5 +23,8 @@ export class ConfigService {
     if (this.categoryConfig && this.categoryConfig.default) {
       this.categoryConfig = this.categoryConfig.default;
     }
+    if (this.labelConfig && this.labelConfig.default) {
+      this.labelConfig = this.labelConfig.default;
+    }
   }
 }

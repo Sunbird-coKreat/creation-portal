@@ -22,9 +22,9 @@ import { DialcodeService } from '../../services/dialcode/dialcode.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
-
   @Input() editorConfig: IEditorConfig | undefined;
   @Output() editorEmitter = new EventEmitter<any>();
+  @Output() saveButtonEmitter = new EventEmitter<any>();
   @ViewChild('modal') private modal;
   public questionComponentInput: any = {};
   public collectionTreeNodes: any;
@@ -84,7 +84,7 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
         const hierarchyResponse = _.first(response);
         const collection = _.get(hierarchyResponse, `result.${this.configService.categoryConfig[this.editorConfig.config.objectType]}`);
         this.toolbarConfig.title = collection.name;
-        this.organisationFramework = _.get(collection, 'framework') || _.get(this.editorConfig, 'context.framework');
+        this.organisationFramework = _.get(collection, 'framework') || _.get(this.editorConfig, 'context.framework') || this.editorConfig.context.framework;
         this.targetFramework = _.get(collection, 'targetFWIds') ||  _.get(this.editorConfig, 'context.targetFWIds');
         if (this.organisationFramework) {
           this.frameworkService.initialize(this.organisationFramework);
@@ -178,7 +178,7 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
           return { label: framework.name, identifier: framework.identifier };
         });
       }
-debugger;
+
       if (orgFWType && channelFrameworksType && _.isEmpty(difference)) {
         this.frameworkService.frameworkValues = orgFrameworkList;
         this.setEditorForms(categoryDefinitionData);
@@ -211,7 +211,6 @@ debugger;
   }
 
   setEditorForms(categoryDefinitionData) {
-    debugger;
     this.unitFormConfig = _.get(categoryDefinitionData, 'result.objectCategoryDefinition.forms.unitMetadata.properties');
     // tslint:disable-next-line:max-line-length
     this.rootFormConfig = _.get(categoryDefinitionData, 'result.objectCategoryDefinition.forms.create.properties');
@@ -238,6 +237,11 @@ debugger;
       const hierarchyResponse = _.first(responseList);
       this.collectionTreeNodes = {
         data: _.get(hierarchyResponse, `result.${objectType}`)
+      };
+      const tempHierarchy = _.get(hierarchyResponse, `result.${objectType}`) || {};
+      this.editorConfig.config.hierarchy = {
+        ...tempHierarchy,
+        ...this.editorConfig.config.hierarchy
       };
       this.buttonLoaders.showReviewComment = this.showCommentAddedAgainstContent();
       if (_.isEmpty(this.collectionTreeNodes.data.children)) {
@@ -272,6 +276,7 @@ debugger;
         this.saveContent().then((message: string) => {
           this.buttonLoaders.saveAsDraftButtonLoader = false;
           this.toasterService.success(message);
+          this.saveButtonEmitter.emit({type: 'save'});
         }).catch(((error: string) => {
           this.buttonLoaders.saveAsDraftButtonLoader = false;
           this.toasterService.error(error);
