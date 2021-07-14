@@ -22,7 +22,7 @@ curl --location --request PATCH 'https://dock.sunbirded.org/api/object/category/
 						},
 						"author": {
 							"type": "string",
-							"default": "SCERT Haryana"
+							"default": "SCERT UP"
 						},
 						"visibility": {
 							"type": "string",
