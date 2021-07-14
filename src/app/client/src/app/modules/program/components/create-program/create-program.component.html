@@ -1,223 +1,221 @@
 <ng-container *ngIf="isQuestionEditorVisible;else programPage">
-  <!--<app-question-set-editor [questionSetEditorComponentInput]="questionSetEditorComponentInput">
-  </app-question-set-editor>-->
   <lib-editor [editorConfig]="editorConfig" (editorEmitter)="editorEventListener($event)" (saveButtonEmitter)="onSave($event)"></lib-editor>
 </ng-container>
 <ng-template #programPage>
-  <div class="ui container" [appTelemetryImpression]="telemetryImpression">
-    <div class="sb-pageSection mt-24 pb-48">
-      <div class="sb-pageSection-header">
-        <h4 *ngIf="!editPublished; else modifyProject" class="sb-pageSection-title">
-          {{resource?.frmelmnts?.lbl?.createNewProgram}}</h4>
-        <ng-template #modifyProject>
-          <h4 class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.modifyProgram}}</h4>
-        </ng-template>
-      </div>
-      <div class="pb-8">
-        <sui-tabset>
-          <div class="ui pointing secondary menu sb-bg-color-primary-0">
-            <div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
-              {{resource?.frmelmnts?.lbl?.details}}
-            </div>
-            <div class="item" suiTabHeader="2" *ngIf="!editPublished" [isDisabled]="!showTextBookSelector"
-                 [ngClass]="{'active' : showTextBookSelector}">
-              {{resource?.frmelmnts?.lbl?.projectScope}}
-            </div>
-          </div>
-          <div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
-            <form class="ui form sb-dock-radio-disable" [formGroup]="createProgramForm" *ngIf="isFormValueSet">
-              <div class="ui grid">
-                <div class="twelve wide column">
-                  <div class="required field">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.name}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.programNameHint}}"></i>
-                    </label>
-                    <div class="sb-field">
-                      <input autofocus="" formControlName="name"
-                             class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
-                             placeholder="{{resource?.frmelmnts?.lbl?.programNameHint}}">
-                      <div class="ui pointing red basic label below "
-                           *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.programNameRequired }}
-                      </div>
-                      <div class="ui pointing red basic label below"
-                           *ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.characterLengthGreaterHundred}}
-                      </div>
-                      <span
-                        class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{resource?.frmelmnts?.lbl?.nCharactersLeft | interpolate:'{noOfChars}': 100 - (createProgramForm.controls['name'].value.length > 100 ? 100 : createProgramForm.controls['name'].value.length) }}
+<div class="ui container" [appTelemetryImpression]="telemetryImpression">
+	<div class="sb-pageSection mt-24 pb-48">
+		<div class="sb-pageSection-header">
+			<h4 *ngIf="!editPublished; else modifyProject" class="sb-pageSection-title">
+				{{resource?.frmelmnts?.lbl?.createNewProgram}}</h4>
+			<ng-template #modifyProject>
+				<h4 class="sb-pageSection-title">{{resource?.frmelmnts?.lbl?.modifyProgram}}</h4>
+			</ng-template>
+		</div>
+		<div class="pb-8">
+			<sui-tabset>
+				<div class="ui pointing secondary menu sb-bg-color-primary-0">
+					<div class="item" suiTabHeader="1" [ngClass]="{'active' : !showTextBookSelector}">
+						{{resource?.frmelmnts?.lbl?.details}}
+					</div>
+					<div class="item" suiTabHeader="2" *ngIf="!editPublished" [isDisabled]="!showTextBookSelector"
+						[ngClass]="{'active' : showTextBookSelector}">
+						{{resource?.frmelmnts?.lbl?.projectScope}}
+					</div>
+				</div>
+				<div class="ui segment mt-5" suiTabContent="1" [ngClass]="{'active' : !showTextBookSelector}">
+					<form class="ui form sb-dock-radio-disable" [formGroup]="createProgramForm" *ngIf="isFormValueSet">
+						<div class="ui grid">
+							<div class="twelve wide column">
+								<div class="required field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.name}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.programNameHint}}"></i>
+									</label>
+									<div class="sb-field">
+										<input autofocus="" formControlName="name"
+											class="sb-form-control ng-pristine ng-valid ng-touched" type="text"
+											placeholder="{{resource?.frmelmnts?.lbl?.programNameHint}}">
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.required && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.programNameRequired }}
+										</div>
+										<div class="ui pointing red basic label below"
+											*ngIf="createProgramForm.controls['name'].errors && createProgramForm.controls['name'].errors.maxlength && (!createProgramForm.controls['name'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.characterLengthGreaterHundred}}
+										</div>
+										<span
+											class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{resource?.frmelmnts?.lbl?.nCharactersLeft | interpolate:'{noOfChars}': 100 - (createProgramForm.controls['name'].value.length > 100 ? 100 : createProgramForm.controls['name'].value.length) }}
 										</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="twelve wide column">
-                  <div class="required field ">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.description}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.programDescriptionHint}}"></i>
-                    </label>
-                    <div class="sb-field relative">
+									</div>
+								</div>
+							</div>
+							<div class="twelve wide column">
+								<div class="required field ">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.description}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.programDescriptionHint}}"></i>
+									</label>
+									<div class="sb-field relative">
 										<textarea formControlName="description" type="text"
-                              class="wmd-input width-100 sb-form-control"
-                              placeholder="{{resource?.frmelmnts?.lbl?.programDescriptionHint}}"
-                              name="description" required></textarea>
-                      <div class="ui pointing red basic label below "
-                           *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.programDescriptionRequired }}
-                      </div>
-                      <span
-                        class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{resource?.frmelmnts?.lbl?.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (createProgramForm.controls['description'].value.length > 1000 ? 1000 : createProgramForm.controls['description'].value.length) }}
+											class="wmd-input width-100 sb-form-control"
+											placeholder="{{resource?.frmelmnts?.lbl?.programDescriptionHint}}"
+											name="description" required></textarea>
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.required && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.programDescriptionRequired }}
+										</div>
+										<span
+											class="fs-0-785 text-right sb-color-gray-200 d-block py-5 pull-right">{{resource?.frmelmnts?.lbl?.nCharactersLeft | interpolate:'{noOfChars}': 1000 - (createProgramForm.controls['description'].value.length > 1000 ? 1000 : createProgramForm.controls['description'].value.length) }}
 										</span>
-                      <div class="ui pointing red basic label below"
-                           *ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.characterLengthGreaterThousand}}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="twelve wide column sb-field-group pt-0"
-                     [ngClass]="(editPublished) ? 'disabled field':''">
-                  <div class="sb-field-group mb-8">
-                    <label class="fs-0-92">{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominations}}
-                      <i class="pull-right question circle link icon pull-right ml-10" suiPopup
-                         popupDelay="500" [popupPlacement]="'right'"
-                         popupText="{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominationsHint}}"></i>
-                    </label>
-                    <div class="sb-field mt-4 d-flex">
-                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input id="yes" [disabled]="editPublished" type="radio"
-                               name="openNominations" [checked]="isOpenNominations"
-                               (click)="openForNominations(true)" appTelemetryInteract
-                               [telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
-                               [telemetryInteractObject]="telemetryInteractObject"
-                               [telemetryInteractCdata]="telemetryInteractCdata"
-                               [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
-                      </div>
-                      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                        <input id="no" [disabled]="editPublished" type="radio"
-                               name="openNominations" [checked]="!isOpenNominations"
-                               (click)="openForNominations(false)" appTelemetryInteract
-                               [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
-                               [telemetryInteractObject]="telemetryInteractObject"
-                               [telemetryInteractCdata]="telemetryInteractCdata"
-                               [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="twelve wide column" [ngClass]="(editPublished) ? 'disabled field':''">
-                  <div class="sb-checkbox sb-checkbox-primary">
-                    <input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
-                           name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
-                           [checked]="defaultContributeOrgReviewChecked"
-                           (change)="defaultContributeOrgReviewChanged($event)">
-                    <label
-                      for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
-                  </div>
-                  <div
-                    class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
-                    {{resource?.frmelmnts?.lbl?.twoLevelReviewNote}}
-                  </div>
-                </div>
-                <div class="twelve wide tablet three wide computer column"
-                     *ngIf="isOpenNominations === true">
-                  <div class="required field">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.nominationEndDate}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.programNominationEnddateHint}}"></i>
-                    </label>
-                    <div class="ui read-only calendar mb-10 sb-field">
-                      <div class="ui input right icon">
-                        <i class="calendar icon date-calendar"></i>
-                        <input [pickerMinDate]='getMinDate("nomination_enddate")'
-                               formControlName="nomination_enddate"
-                               [pickerMaxDate]='getMaxDate("nomination_enddate")' suiDatepicker
-                               [pickerMode]="'date'">
-                      </div>
-                      <div class="ui pointing red basic label below "
-                           *ngIf="createProgramForm.controls['nomination_enddate'].errors && createProgramForm.controls['nomination_enddate'].errors.required && (!createProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.programNominationEnddateRequired }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="twelve wide tablet three wide computer column"
-                     *ngIf="isOpenNominations === true">
-                  <div class="field">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.nominationShortlistingDate}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.programShortlistingEnddateHint}}"></i>
-                    </label>
-                    <div class="ui read-only calendar mb-10">
-                      <div class="ui input right icon">
-                        <i class="calendar icon date-calendar"></i>
-                        <input [pickerMinDate]='getMinDate("shortlisting_enddate")'
-                               [pickerMaxDate]='getMaxDate("shortlisting_enddate")'
-                               formControlName="shortlisting_enddate" suiDatepicker
-                               [pickerMode]="'date'">
-                      </div>
-                    </div>
-                  </div>
-                </div>
+										<div class="ui pointing red basic label below"
+											*ngIf="createProgramForm.controls['description'].errors && createProgramForm.controls['description'].errors.maxlength && (!createProgramForm.controls['description'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.characterLengthGreaterThousand}}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="twelve wide column sb-field-group pt-0"
+								[ngClass]="(editPublished) ? 'disabled field':''">
+								<div class="sb-field-group mb-8">
+									<label class="fs-0-92">{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominations}}
+										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
+											popupDelay="500" [popupPlacement]="'right'"
+											popupText="{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominationsHint}}"></i>
+									</label>
+									<div class="sb-field mt-4 d-flex">
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+											<input id="yes" [disabled]="editPublished" type="radio"
+												name="openNominations" [checked]="isOpenNominations"
+												(click)="openForNominations(true)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+											<label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
+										</div>
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+											<input id="no" [disabled]="editPublished" type="radio"
+												name="openNominations" [checked]="!isOpenNominations"
+												(click)="openForNominations(false)" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+											<label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="twelve wide column" [ngClass]="(editPublished) ? 'disabled field':''">
+								<div class="sb-checkbox sb-checkbox-primary">
+									<input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
+										name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
+										[checked]="defaultContributeOrgReviewChecked"
+										(change)="defaultContributeOrgReviewChanged($event)">
+									<label
+										for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
+								</div>
+								<div
+									class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
+									{{resource?.frmelmnts?.lbl?.twoLevelReviewNote}}
+								</div>
+							</div>
+							<div class="twelve wide tablet three wide computer column"
+								*ngIf="isOpenNominations === true">
+								<div class="required field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationEndDate}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.programNominationEnddateHint}}"></i>
+									</label>
+									<div class="ui read-only calendar mb-10 sb-field">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='getMinDate("nomination_enddate")'
+												formControlName="nomination_enddate"
+												[pickerMaxDate]='getMaxDate("nomination_enddate")' suiDatepicker
+												[pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['nomination_enddate'].errors && createProgramForm.controls['nomination_enddate'].errors.required && (!createProgramForm.controls['nomination_enddate'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.programNominationEnddateRequired }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="twelve wide tablet three wide computer column"
+								*ngIf="isOpenNominations === true">
+								<div class="field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationShortlistingDate}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.programShortlistingEnddateHint}}"></i>
+									</label>
+									<div class="ui read-only calendar mb-10">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='getMinDate("shortlisting_enddate")'
+												[pickerMaxDate]='getMaxDate("shortlisting_enddate")'
+												formControlName="shortlisting_enddate" suiDatepicker
+												[pickerMode]="'date'">
+										</div>
+									</div>
+								</div>
+							</div>
 
-                <div class="twelve wide tablet three wide computer column">
-                  <div class="required field">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.contributionEndDate}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.programContributionEnddateHint}}"></i>
-                    </label>
-                    <div class="ui read-only calendar mb-10">
-                      <div class="ui input right icon">
-                        <i class="calendar icon date-calendar"></i>
-                        <input [pickerMinDate]='getMinDate("content_submission_enddate")'
-                               [pickerMaxDate]='getMaxDate("content_submission_enddate")'
-                               formControlName="content_submission_enddate" suiDatepicker
-                               [pickerMode]="'date'">
-                      </div>
-                      <div class="ui pointing red basic label below "
-                           *ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.programContributionEndDateRequired }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+							<div class="twelve wide tablet three wide computer column">
+								<div class="required field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.contributionEndDate}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.programContributionEnddateHint}}"></i>
+									</label>
+									<div class="ui read-only calendar mb-10">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='getMinDate("content_submission_enddate")'
+												[pickerMaxDate]='getMaxDate("content_submission_enddate")'
+												formControlName="content_submission_enddate" suiDatepicker
+												[pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['content_submission_enddate'].errors && createProgramForm.controls['content_submission_enddate'].errors.required && (!createProgramForm.controls['content_submission_enddate'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.programContributionEndDateRequired }}
+										</div>
+									</div>
+								</div>
+							</div>
 
-                <div class="twelve wide tablet three wide computer column">
-                  <div class="required field">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.programEndDate}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.programEnddateHint}}"></i>
-                    </label>
-                    <div class="ui read-only calendasr mb-10">
-                      <div class="ui input right icon">
-                        <i class="calendar icon date-calendar"></i>
-                        <input [pickerMinDate]='getMinDate("program_end_date")'
-                               formControlName="program_end_date" suiDatepicker [pickerMode]="'date'">
-                      </div>
-                      <div class="ui pointing red basic label below "
-                           *ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.programEndDateRequired }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="twelve wide column">
-                  <div class="field">
-                    <label class="d-block">{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}
-                      <i class="pull-right question circle link icon pull-right" suiPopup
-                         popupDelay="500" [popupPlacement]="'left'"
-                         popupText="{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}"></i>
-                    </label>
-                    <div class="sb-field relative">
+							<div class="twelve wide tablet three wide computer column">
+								<div class="required field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.programEndDate}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.programEnddateHint}}"></i>
+									</label>
+									<div class="ui read-only calendasr mb-10">
+										<div class="ui input right icon">
+											<i class="calendar icon date-calendar"></i>
+											<input [pickerMinDate]='getMinDate("program_end_date")'
+												formControlName="program_end_date" suiDatepicker [pickerMode]="'date'">
+										</div>
+										<div class="ui pointing red basic label below "
+											*ngIf="createProgramForm.controls['program_end_date'].errors && createProgramForm.controls['program_end_date'].errors.required && (!createProgramForm.controls['program_end_date'].pristine || formIsInvalid)">
+											{{resource?.frmelmnts?.lbl?.programEndDateRequired }}
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="twelve wide column">
+								<div class="field">
+									<label class="d-block">{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}
+										<i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.recongnitionToContributors}}"></i>
+									</label>
+									<div class="sb-field relative">
 										<textarea type="text" formControlName="rewards"
                               class="wmd-input width-100 sb-form-control"
                               placeholder="{{resource?.frmelmnts?.lbl?.programRecognitionHint}}"
@@ -276,52 +274,52 @@
                       </sui-multi-select>
                       <ng-template #elseBlock>
 										<span *ngIf="programDetails.targetprimarycategories !== undefined"
-                          class="sb-color-gray-200 fs-0-785">{{programDetails.targetprimarycategories}}</span>
-                      </ng-template>
+											class="sb-color-gray-200 fs-0-785">{{programDetails.targetprimarycategories}}</span>
+									</ng-template>
 
-                      <div class="ui pointing red basic label below "
-                           *ngIf="collectionListForm.controls['targetPrimaryCategories'].errors && collectionListForm.controls['targetPrimaryCategories'].errors.required && (!collectionListForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
-                        {{resource?.frmelmnts?.lbl?.contentTypesRequired }}
-                      </div>
-                    </div>
-                  </div>
-                  <div class="three wide column">
-                    <div class="field">
-                      <label [ngClass]="(disableUpload) ? 'disabled field':''"
-                             class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
-                      </label>
-                      <button [ngClass]="(disableUpload) ? 'disabled field':''"
-                              class="sb-btn sb-btn-primary sb-btn-normal"
-                              (click)="initiateDocumentUploadModal()" [disabled]="disableUpload"
-                              appTelemetryInteract
-                              [telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-                              [telemetryInteractObject]="telemetryInteractObject"
-                              [telemetryInteractCdata]="telemetryInteractCdata"
-                              [telemetryInteractPdata]="telemetryInteractPdata">
-                        <i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
-                      </button>
-                      <span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
+									<div class="ui pointing red basic label below "
+										*ngIf="collectionListForm.controls['targetPrimaryCategories'].errors && collectionListForm.controls['targetPrimaryCategories'].errors.required && (!collectionListForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
+										{{resource?.frmelmnts?.lbl?.contentTypesRequired }}
+									</div>
+								</div>
+							</div>
+							<div class="three wide column">
+								<div class="field">
+									<label [ngClass]="(disableUpload) ? 'disabled field':''"
+										class="d-block">{{resource?.frmelmnts?.lbl?.uploadGuideline}}
+									</label>
+									<button [ngClass]="(disableUpload) ? 'disabled field':''"
+										class="sb-btn sb-btn-primary sb-btn-normal"
+										(click)="initiateDocumentUploadModal()" [disabled]="disableUpload"
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('guidelines_document', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
+										<i class="upload icon"></i>{{resource?.frmelmnts?.btn?.upload}}
+									</button>
+									<span *ngIf="uploadedDocument; else elseGuideBlock" class="sb-url">
 										<a href="{{uploadedDocument.artifactUrl}}"
-                       class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
-                       target="_blank">
+											class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
+											target="_blank">
 											{{uploadedDocument.name}}
-                      <span class="blue-text-color-sunbird"
-                            *ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
+											<span class="blue-text-color-sunbird"
+												*ngIf="uploadedDocument.name && uploadedDocument.name.length > 70">...</span>
 										</a>
 										<i class="icon remove sb-color-error va-top cursor-pointer"
-                       (click)="removeUploadedDocument();"></i>
+											(click)="removeUploadedDocument();"></i>
 									</span>
-                      <!-- Add Else condition-->
-                      <ng-template #elseGuideBlock>
+									<!-- Add Else condition-->
+									<ng-template #elseGuideBlock>
 										<span *ngIf="guidLinefileName" class="sb-url">
 											<a href="{{programDetails.guidelines_url}}"
-                         class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
-                         target="_blank">
+												class="max-w-90 pull-left text-decor-none sb__ellipsis sb__ellipsis--breakAll"
+												target="_blank">
 												{{guidLinefileName}}
 											</a>
 											<i *ngIf="!editPublished"
-                         class="icon remove sb-color-error va-top cursor-pointer"
-                         (click)="removeUploadedDocument();"></i>
+												class="icon remove sb-color-error va-top cursor-pointer"
+												(click)="removeUploadedDocument();"></i>
 										</span>
                       </ng-template>
                     </div>
@@ -505,153 +503,154 @@
                   </sui-select-option>
                 </sui-multi-select>
 
-                <!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
-                    This field is required
-                  </div-->
-              </div>
-            </div>
-            <div class="three wide column">
-              <div class="field">
-                <label class="d-block"> {{resource?.frmelmnts?.lbl?.grade}}
-                  <i class="pull-right question circle link icon pull-right" suiPopup
-                     popupDelay="500" [popupPlacement]="'left'"
-                     popupText="{{resource?.frmelmnts?.lbl?.selectGrade}}"></i>
-                </label>
-                <sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectGrade}}"
-                                  class="selection p-5" formControlName="gradeLevel" labelField="name"
-                                  (ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
-                                  #graveLevels appTelemetryInteract
-                                  [telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-                                  [telemetryInteractObject]="telemetryInteractObject"
-                                  [telemetryInteractCdata]="telemetryInteractCdata"
-                                  [telemetryInteractPdata]="telemetryInteractPdata">
-                  <sui-select-option
-                    *ngFor="let gradeLevel of graveLevels.filteredOptions"
-                    [value]="gradeLevel" appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [gradeLevel.name]})"
-                    [telemetryInteractObject]="telemetryInteractObject"
-                    [telemetryInteractCdata]="telemetryInteractCdata"
-                    [telemetryInteractPdata]="telemetryInteractPdata">
-                  </sui-select-option>
-                </sui-multi-select>
-                <!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
-                    This field is required
-                  </div-->
-              </div>
-            </div>
-            <div class="three wide column">
-              <div class="field">
-                <label class="d-block"> {{resource?.frmelmnts?.lbl?.subject}}
-                  <i class="pull-right question circle link icon pull-right" suiPopup
-                     popupDelay="500" [popupPlacement]="'left'"
-                     popupText="{{resource?.frmelmnts?.lbl?.selectSubject}}"></i>
-                </label>
-                <sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectSubject}}"
-                                  class="selection p-5" formControlName="subject" labelField="name"
-                                  [hasLabels]="true" [options]="programScope['subject']" valueField="name"
-                                  #subjects appTelemetryInteract
-                                  [telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-                                  [telemetryInteractObject]="telemetryInteractObject"
-                                  [telemetryInteractCdata]="telemetryInteractCdata"
-                                  [telemetryInteractPdata]="telemetryInteractPdata">
-                  <sui-select-option *ngFor="let subject of subjects.filteredOptions"
-                                     [value]="subject" appTelemetryInteract
-                                     [telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [subject.name]})"
-                                     [telemetryInteractObject]="telemetryInteractObject"
-                                     [telemetryInteractCdata]="telemetryInteractCdata"
-                                     [telemetryInteractPdata]="telemetryInteractPdata">
-                  </sui-select-option>
-                </sui-multi-select>
-                <!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
-                    This field is required
-                  </div-->
-              </div>
-            </div>
-            <div class="three wide column pt-30">
-              <div class="field text-right pt-10">
-                <button class="sb-btn sb-btn-normal sb-btn-outline-primary"
-                        (click)="resetFilters()" appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-                        [telemetryInteractObject]="telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                  {{resource?.frmelmnts?.btn?.reset}}
-                </button>
-                <button class="sb-btn sb-btn-normal sb-btn-primary ml-8"
-                        (click)="showTexbooklist()" appTelemetryInteract
-                        [telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
-                        [telemetryInteractObject]="telemetryInteractObject"
-                        [telemetryInteractCdata]="telemetryInteractCdata"
-                        [telemetryInteractPdata]="telemetryInteractPdata">
-                  {{resource?.frmelmnts?.btn?.apply}}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="twelve wide column" *ngIf="showProgramScope">
-          <div class="ui grid">
-            <div class="twelve wide column">
-              <div class="sb-table-responsive sb-dock-textbook-table">
-                <table class="sb-table sb-table-striped sb-table-sortable"
-                       *ngIf="showTextBookSelector">
-                  <thead class="sb-table-header sb-table-thead-gray d-block">
-                  <tr>
-                    <th class="w-5">
-                      <!--div class="sb-checkbox sb-checkbox-primary">
-                          <input type="checkbox" id="checkall" name="checkall">
-                          <label for="checkall"></label>
-                        </div-->
-                    </th>
-                    <th class="w-10 text-center cursor-pointer sb-sorting"
-                        (click)="sortCollection('name')">
-                      {{resource?.frmelmnts?.lbl?.title}} &nbsp;&nbsp;
-                      <i class="fa fa-sort" aria-hidden="true"
-                         *ngIf="direction === '' || sortColumn !== 'name' "></i>
-                      <span *ngIf="sortColumn === 'name'" class="d-inline-block">
+											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
+													This field is required
+												</div-->
+										</div>
+									</div>
+									<div class="three wide column">
+										<div class="field">
+											<label class="d-block"> {{resource?.frmelmnts?.lbl?.grade}}
+												<i class="pull-right question circle link icon pull-right" suiPopup
+													popupDelay="500" [popupPlacement]="'left'"
+													popupText="{{resource?.frmelmnts?.lbl?.selectGrade}}"></i>
+											</label>
+											<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectGrade}}"
+												class="selection p-5" formControlName="gradeLevel" labelField="name"
+												(ngModelChange)="onClassChange()" [options]="programScope['gradeLevel']"
+												#graveLevels appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+												<sui-select-option
+													*ngFor="let gradeLevel of graveLevels.filteredOptions"
+													[value]="gradeLevel" appTelemetryInteract
+													[telemetryInteractEdata]="getTelemetryInteractEdata('grade', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [gradeLevel.name]})"
+													[telemetryInteractObject]="telemetryInteractObject"
+													[telemetryInteractCdata]="telemetryInteractCdata"
+													[telemetryInteractPdata]="telemetryInteractPdata">
+												</sui-select-option>
+											</sui-multi-select>
+											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['gradeLevel'].errors && createProgramForm.controls['gradeLevel'].errors.required && (!createProgramForm.controls['gradeLevel'].pristine || formIsInvalid)">
+													This field is required
+												</div-->
+										</div>
+									</div>
+									<div class="three wide column">
+										<div class="field">
+											<label class="d-block"> {{resource?.frmelmnts?.lbl?.subject}}
+												<i class="pull-right question circle link icon pull-right" suiPopup
+													popupDelay="500" [popupPlacement]="'left'"
+													popupText="{{resource?.frmelmnts?.lbl?.selectSubject}}"></i>
+											</label>
+											<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectSubject}}"
+												class="selection p-5" formControlName="subject" labelField="name"
+												[hasLabels]="true" [options]="programScope['subject']" valueField="name"
+												#subjects appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+												<sui-select-option *ngFor="let subject of subjects.filteredOptions"
+													[value]="subject" appTelemetryInteract
+													[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [subject.name]})"
+													[telemetryInteractObject]="telemetryInteractObject"
+													[telemetryInteractCdata]="telemetryInteractCdata"
+													[telemetryInteractPdata]="telemetryInteractPdata">
+												</sui-select-option>
+											</sui-multi-select>
+											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
+													This field is required
+												</div-->
+										</div>
+									</div>
+									<div class="three wide column pt-30">
+										<div class="field text-right pt-10">
+											<button class="sb-btn sb-btn-normal sb-btn-outline-primary"
+												(click)="resetFilters()" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('reset', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+												{{resource?.frmelmnts?.btn?.reset}}
+											</button>
+											<button class="sb-btn sb-btn-normal sb-btn-primary ml-8"
+												(click)="showTexbooklist()" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('apply', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+												{{resource?.frmelmnts?.btn?.apply}}
+											</button>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="twelve wide column" *ngIf="showProgramScope">
+								<div class="ui grid">
+									<div class="twelve wide column">
+										<div class="sb-table-responsive sb-dock-textbook-table">
+											<table class="sb-table sb-table-striped sb-table-sortable"
+												*ngIf="showTextBookSelector">
+												<thead class="sb-table-header sb-table-thead-gray d-block">
+													<tr>
+														<th class="w-5">
+															<!--div class="sb-checkbox sb-checkbox-primary">
+																	<input type="checkbox" id="checkall" name="checkall">
+																	<label for="checkall"></label>
+																</div-->
+														</th>
+														<th class="w-10 text-center cursor-pointer sb-sorting"
+															(click)="sortCollection('name')">
+															{{resource?.frmelmnts?.lbl?.title}} &nbsp;&nbsp;
+															<i class="fa fa-sort" aria-hidden="true"
+																*ngIf="direction === '' || sortColumn !== 'name' "></i>
+															<span *ngIf="sortColumn === 'name'" class="d-inline-block">
 																<i class="fa fa-sort-asc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
 																<i class="fa fa-sort-desc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
-                    </th>
-                    <th class="w-10 text-center cursor-pointer sb-sorting"
-                        (click)="sortCollection('medium')">
-                      {{resource?.frmelmnts?.lbl?.medium}} &nbsp;&nbsp;
-                      <i class="fa fa-sort" aria-hidden="true"
-                         *ngIf="direction === '' || sortColumn !== 'medium' "></i>
-                      <span *ngIf="sortColumn === 'medium'"
-                            class="d-inline-block">
+														</th>
+														<th class="w-10 text-center cursor-pointer sb-sorting"
+															(click)="sortCollection('medium')">
+															{{resource?.frmelmnts?.lbl?.medium}} &nbsp;&nbsp;
+															<i class="fa fa-sort" aria-hidden="true"
+																*ngIf="direction === '' || sortColumn !== 'medium' "></i>
+															<span *ngIf="sortColumn === 'medium'"
+																class="d-inline-block">
 																<i class="fa fa-sort-asc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
 																<i class="fa fa-sort-desc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
-                    </th>
-                    <th class="w-10 text-center cursor-pointer sb-sorting"
-                        (click)="sortCollection('gradeLevel')">
-                      {{resource?.frmelmnts?.lbl?.class}} &nbsp;&nbsp;
-                      <i class="fa fa-sort" aria-hidden="true"
-                         *ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
-                      <span *ngIf="sortColumn === 'gradeLevel'"
-                            class="d-inline-block">
+														</th>
+														<th class="w-10 text-center cursor-pointer sb-sorting"
+															(click)="sortCollection('gradeLevel')">
+															{{resource?.frmelmnts?.lbl?.class}} &nbsp;&nbsp;
+															<i class="fa fa-sort" aria-hidden="true"
+																*ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
+															<span *ngIf="sortColumn === 'gradeLevel'"
+																class="d-inline-block">
 																<i class="fa fa-sort-asc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
 																<i class="fa fa-sort-desc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
-                    </th>
-                    <th class="w-10 text-center cursor-pointer sb-sorting"
-                        (click)="sortCollection('subject')">
-                      {{resource?.frmelmnts?.lbl?.subject}} &nbsp;&nbsp;
-                      <i class="fa fa-sort" aria-hidden="true"
-                         *ngIf="direction === '' || sortColumn !== 'subject' "></i>
-                      <span *ngIf="sortColumn === 'subject'"
-                            class="d-inline-block">
+														</th>
+														<th class="w-10 text-center cursor-pointer sb-sorting"
+															(click)="sortCollection('subject')">
+															{{resource?.frmelmnts?.lbl?.subject}} &nbsp;&nbsp;
+															<i class="fa fa-sort" aria-hidden="true"
+																*ngIf="direction === '' || sortColumn !== 'subject' "></i>
+															<span *ngIf="sortColumn === 'subject'"
+																class="d-inline-block">
 																<i class="fa fa-sort-asc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
 																<i class="fa fa-sort-desc" aria-hidden="true"
-                                   [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
+																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
                     </th>
                     <th *ngIf="!blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
@@ -790,7 +789,6 @@
 			[ngClass]="{'sb-btn-primary': showAddButton, 'sb-btn-disabled': !showAddButton}">{{resource?.frmelmnts?.btn?.add}}</button>
 	</div>
 </sui-modal>
-
 <sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
