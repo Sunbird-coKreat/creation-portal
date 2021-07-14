@@ -277,7 +277,6 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
       }
     }
   }
-
   handleEditorError(event) {
     this.isEditorThrowingError = event;
   }
