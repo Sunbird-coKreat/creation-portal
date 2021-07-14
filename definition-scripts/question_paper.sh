@@ -16,10 +16,6 @@ curl --location --request PATCH 'https://dock.sunbirded.org/api/object/category/
 								"application/vnd.ekstep.content-collection"
 							]
 						},
-						"appIcon": {
-							"type": "string",
-							"default": "https://sunbirddev.blob.core.windows.net/sunbird-content-dev/content/do_11320764935163904015/artifact/2020101299.png"
-						},
 						"author": {
 							"type": "string",
 							"default": "SCERT UP"
