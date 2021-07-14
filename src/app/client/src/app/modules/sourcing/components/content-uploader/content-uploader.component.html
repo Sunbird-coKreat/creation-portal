@@ -293,7 +293,7 @@
 <!--  edit metadata --> 
 
 <sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'"
-    class="sb-modal" appBodyScroll (dismissed)="showEditMetaForm= false">
+    class="sb-modal sb-z-index99" appBodyScroll (dismissed)="showEditMetaForm= false">
     <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
     <!--Header-->
     <div class="sb-modal-header">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</div>
