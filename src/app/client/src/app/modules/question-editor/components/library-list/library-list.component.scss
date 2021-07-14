@@ -1,0 +1,156 @@
+//Toggle UI
+.sbtoc-container .ui.toggle.checkbox label:before{
+    width: 4rem !important;
+    background: rgba(0,0,0,.15) !important;
+  }
+  .ui.toggle.checkbox input:checked~label:after{
+    left: 3rem !important;
+  }
+  .sbchapter {
+    border-bottom: calculateRem(1px) solid #ddd;
+    padding: calculateRem(16px) calculateRem(16px) calculateRem(8px) calculateRem(16px);
+  
+    h4 {
+      font-size: 10px;
+      line-height: normal;
+      color: var(--gray-800);
+      margin-bottom: calculateRem(8px);
+    }
+  
+    .textbookBtnLink{
+      visibility: hidden;
+    }
+  
+    &__item {
+      background: var(--white);
+      border: calculateRem(1px) solid #ddd;
+      box-shadow: 0 calculateRem(3px) calculateRem(4px) 0 rgba(2, 79, 157, 0.1);
+      // border: calculateRem(0.5px) solid rgba(35, 97, 255, 0.5);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: calculateRem(8px);
+      padding: calculateRem(8px);
+      cursor: pointer;
+      min-height: calculateRem(56px);
+      position: relative;
+  
+      &.active{
+        background: var(--secondary-300);
+        border: 0.0625rem solid var(--gray-100);
+        border-bottom: 0;
+        &.active:last-child{
+          border-bottom: 0.0625rem solid var(--gray-100);
+        }
+        .textbookBtnLink {
+          visibility: visible;
+          right:12px;
+          .sb-btn-link{
+            border-color: var(--secondary-0) !important;
+            background-color: var(--secondary-0) !important;
+          }
+        }
+      }
+      &.selected{
+        background: var(--secondary-300);
+        border: solid 1px var(--primary-600);
+      }
+      &.active.selected{
+        border: solid 1px var(--primary-600) !important;
+      }
+  
+      .btn-addtoLibrary {
+        position: absolute;
+        right: 1px;
+        // visibility: hidden;
+        // background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 8px;
+      }
+  
+      h4 {
+        font-size: 12px;
+        line-height: calculateRem(20px);
+        color: var(--primary-400);
+        margin: 0px;
+        padding: 0px;
+      }
+  
+      .sbchapter__img {
+        width: calculateRem(40px);
+        height: calculateRem(40px);
+        flex: 0 0 calculateRem(40px);
+        overflow: hidden;
+  
+        img {
+          width: 100%;
+        }
+      }
+  
+      &:last-child {
+        margin-bottom: 0px;
+      }
+  
+      &:hover {
+        background: var(--secondary-0);
+      }
+  
+      &:hover {
+        visibility: visible;
+      }
+  
+      &--active {
+        background: var(--primary-100);
+      }
+    }
+  }
+  
+  .sbchapter-open {
+    border-bottom: calculateRem(1px) solid #e0e0e0;
+    padding-bottom: var(--base-block-space);
+  
+    &__title {
+      //@extend .sbaccordion__panel-header__tilte;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--primary-400);
+      margin: 0px;
+      padding: calculateRem(16px);
+      width: 100%;
+    }
+  
+    &__topics {
+      padding: 0;
+    }
+  
+    &__topics__title {
+      font-size: 14px;
+      margin: 0px 0px calculateRem(8px) 0px;
+      color: var(--primary-400);
+      padding: 0px calculateRem(16px);
+    }
+  
+    &__topic {
+      font-size: 12px;
+      padding: calculateRem(8px) calculateRem(32px);
+      margin: 0px;
+      color: var(--primary-400);
+    }
+  
+    &__topic--active {
+      background: var(--primary-100);
+    }
+  
+    &__topic:hover {
+      background: var(--gray-0);
+    }
+  }
+  .sb-library-scroll{
+    max-height: calc(100vh - 72px);
+    overflow: auto;
+  }
+  .textbookBtnLink{
+    right: 0;
+  }

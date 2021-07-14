@@ -902,7 +902,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
         return [topicTerms, tempLearningOutcomeOptions];
     }
-  
+
   filterBlueprintMetadata(selectedTopics) {
     let tempLearningOutcomeOptions = [];
     if(selectedTopics) {
@@ -1357,5 +1357,43 @@ export class ProgramsService extends DataService implements CanActivate {
       });
     }
     return targetPrimaryCategories;
+  }
+
+  addQuestionSet(reqData) {
+    const option = {
+      url: 'questionset/v1/create',
+      header: {
+        'X-Channel-Id': _.get(this.userService, 'userProfile.rootOrgId')
+      },
+      data: {
+        request: {
+          questionset: reqData
+        }
+      }
+    };
+
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status.toLowerCase() !== 'successful') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
+
+  getQuestionConfig() {
+    const requestParam = {
+      url: 'program/v1/configuration/search',
+      header: {
+        'X-Channel-Id': _.get(this.userService, 'userProfile.rootOrgId')
+      },
+      data: {
+        request: {
+          key: 'programTargetObjectMap',
+          status: 'active'
+        }
+      }
+    };
+    return this.post(requestParam);
   }
 }

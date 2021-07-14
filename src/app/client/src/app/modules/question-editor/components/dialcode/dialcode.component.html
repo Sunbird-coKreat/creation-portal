@@ -1,0 +1,58 @@
+<a class="fs-0-785 sb-color-primary font-weight-bold"><i class="icon qrcode"></i>QR Code </a>
+<a class="profile-avtar computer only p-0 pr-10" tabindex="0">
+    <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
+        <i class="icon caret down"></i>
+        <div class="menu" suiDropdownMenu>
+            <a class="item fs-0-785"
+            [ngClass]="(!disableQRGenerateBtn || (qrCodeCount.request > 0 && qrCodeCount.request + 1 <= qrCodeCount.reserve) || isGeneratingQRCodes ) ? 'sb-disabled' : ' '"
+            libTelemetryInteract
+            [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('generate_qr_codes','click','launch', telemetryService.telemetryPageId)">
+                <i class="icon qrcode"></i>
+                <span *ngIf="!isGeneratingQRCodes" class="text" (click)="openRequestPopup();">
+                    Generate {{(qrCodeCount.request > 0 && qrCodeCount.request+1 > qrCodeCount.reserve)? qrCodeCount.request + ' +
+                    1' : (qrCodeCount.reserve > 0) ? qrCodeCount.reserve-1 +' + 1' : '' }} QR Codes
+                </span>
+                <span *ngIf="isGeneratingQRCodes" class="text">Generating {{(qrCodeCount.request > 0 )? qrCodeCount.request-1 + ' +
+                    1' :'' }} QR codes</span> 
+            </a>
+            <div class="ui divider"></div>
+            <a class="item fs-0-785" (click)="downloadQRCodes();" [ngClass]="!disableQRDownloadBtn ? 'sb-disabled' : ''"
+            libTelemetryInteract
+            [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('download_qr_codes','click','launch', telemetryService.telemetryPageId)">
+                <i class="icon download"></i> 
+                Download {{(qrCodeCount.reserve > 1) ? qrCodeCount.reserve-1 + ' +1' : ''}} QR codes
+            </a>
+        </div>
+    </div>
+</a>
+<div class="seperator pr-20"></div>
+
+<sui-modal *ngIf="showQRCodePopup" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+    class="sb-modal bx-none overflow-modal" appBodyScroll (dismissed)="showQRCodePopup = !showQRCodePopup" #modal>
+    <div class="sb-modal-header">
+        {{configService.labelConfig?.lbl?.requestForQrCode}}
+    </div>
+    <div class="sb-modal-content">
+        <div class="d-flex flex-jc-space-between p-20">
+            <div class="sb-field-group w-70">
+                <div class="sb-field">
+                    <input type="number" (keypress)="keyPressNumbers($event)" pattern="[0-9]*" inputmode="numeric" [formControl]="dialcodeControl" 
+                    [ngClass]="dialcodeControl.errors ? 'sb-color-error' : '' " class="sb-form-control p-5 w-100" placeholder="e.g. 45">
+                    <div *ngIf="dialcodeControl.invalid">
+                        <small class="sb-color-error pt-10 d-block" *ngIf="dialcodeControl.errors.max">
+                            {{configService.labelConfig?.lbl?.numberToolarge}}
+                        </small>
+                        <small class="sb-color-error pt-10 d-block" *ngIf="dialcodeControl.errors.minErr">
+                            {{dialcodeControl.errors.minErr}}
+                        </small>
+                        <small class="sb-color-error pt-10 d-block" *ngIf="dialcodeControl.errors.gteErr">
+                            {{dialcodeControl.errors.gteErr}}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <button class="sb-btn sb-btn-normal sb-btn-primary" [ngClass]="dialcodeControl.valid ? '': 'sb-btn-outline-disabled'" 
+            [disabled]="!dialcodeControl.valid" (click)="submitDialcodeForm();" >{{configService.labelConfig?.button_labels?.request_btn_label}}</button>
+        </div>
+    </div>
+</sui-modal>

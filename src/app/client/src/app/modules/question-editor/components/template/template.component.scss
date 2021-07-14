@@ -1,0 +1,55 @@
+.common-contribution-card {
+  box-sizing: border-box;
+  border: 0.5px solid rgba(123, 134, 244, 0.39);
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: none;
+  width: 150px;
+}
+
+.common-contribution-card .content img {
+  width: 64px;
+  height: 64px;
+}
+
+.common-contribution-card .content .content-title {
+  font-size: 12px;
+  vertical-align: middle;
+  line-height: 16px;
+}
+
+.common-contribution-card .content .icon.check {
+  display: none;
+  height: 18px;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  margin: 0;
+  width: 20px;
+  font-size: 18px;
+  color: #00c786;
+  font-size: 20px;
+}
+
+.common-contribution-card:hover .content .icon.check,
+.common-contribution-card.active .content .icon.check {
+  display: block;
+}
+
+.common-contribution-card:hover,
+.common-contribution-card.active {
+  cursor: pointer;
+  z-index: 5;
+  background: white;
+  transform: translateY(-3px);
+  box-shadow: 0 2px 8px 0 rgba(123, 134, 244, 0.31);
+  border: 0.5px solid rgba(208, 208, 208, 0.48);
+}
+
+.common-contribution-card.active .content-title {
+  font-weight: 700;
+}
+
+.fs-16{
+  font-size: 16px !important;
+}

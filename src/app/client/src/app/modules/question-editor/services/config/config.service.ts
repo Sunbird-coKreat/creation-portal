@@ -16,5 +16,15 @@ export class ConfigService {
   editorConfig = (editorConfig as any);
   public sessionContext: Array<string> =  ['board', 'medium', 'gradeLevel', 'subject',
        'topic', 'author', 'channel', 'framework', 'copyright', 'attributions', 'audience',  'license' ];
-  constructor() { }
+  constructor() {
+    if (this.urlConFig && this.urlConFig.default) {
+      this.urlConFig = this.urlConFig.default;
+    }
+    if (this.categoryConfig && this.categoryConfig.default) {
+      this.categoryConfig = this.categoryConfig.default;
+    }
+    if (this.labelConfig && this.labelConfig.default) {
+      this.labelConfig = this.labelConfig.default;
+    }
+  }
 }

@@ -1,0 +1,72 @@
+<div class="add-to-library mb-0">
+  <!-- Blue Header -->
+  <div class="sb-bg-color-primary add-to-library__header">
+    <div class="ui container relative position">
+      <div class="d-flex flex-ai-center">
+        <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0" libTelemetryInteract
+        [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('back','click','launch', telemetryService?.telemetryPageId)"(click)="back();"><i class="arrow left icon fs-1"></i></button>
+        <div class="ml-8 sb-color-white">
+          <div class="d-flex flex-ai-center fsmall">
+            <div class="font-weight-bold fs-1-16">{{configService.labelConfig?.lbl?.addFromLibrary}}</div>
+            <!-- <div class="sb-border-vertical mx-15"></div>
+            <div class="flex flex-wrap">
+              <h5>Chapter 1</h5>
+              <span>Science</span><span class="add-to-library-dot"></span><span>Class 10</span><span
+                class="add-to-library-dot"></span><span>DP-1205</span>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Filter -->
+  <lib-library-filter *ngIf="!showLoader" [filterValues]="defaultFilters" [searchFormConfig]="searchFormConfig" [filterOpenStatus]="isFilterOpen" [targetFrameworkId]="targetFrameworkId" (filterChangeEvent)="onFilterChange($event);"></lib-library-filter>
+  <div class="ui container min-h-500" *ngIf="!showLoader && contentList?.length">
+    <!-- Player Section -->
+    <div class="sb-g add-to-library__toc-player">
+      <!-- Left Sidebar for cards -->
+      <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
+          <lib-library-list (contentChangeEvent)= "onContentChangeEvent($event)" [selectedContent] = "selectedContent"[contentList]="contentList" [showAddedContent]="showAddedContent" (moveEvent)="showResourceTemplate($event)"></lib-library-list>
+      </section>
+      <!-- Right Player Sections -->
+      <section class="sb-g-col-xs-12 sb-g-col-md-8 sb-g-col-lg-8 relative position ml-24">
+          <lib-library-player [contentListDetails]="selectedContent" (moveEvent)="showResourceTemplate($event)"></lib-library-player>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="result-no-found">
+  <div class="ui container" *ngIf="showLoader">
+    <div class="sb-g add-to-library__toc-player ml-30">
+      <!-- Left Sidebar for cards -->
+      <section class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-4">
+        <div class="sbtoc-container pr-8 mt-20">
+          <div class="sbaccordion__panel-content p-16 mb-8 sb-dock-skeleton-bx">
+            <div class="sbchapter__item" *ngFor="let number of [].constructor(4)">
+              <lib-skeleton-loader [width]="'90%'" [height]="'12px'" class="sb-dock-flex-auto"></lib-skeleton-loader>
+              <div>
+                <lib-skeleton-loader [width]="'30%'" [height]="'12px'" class="sb-dock-flex-auto"></lib-skeleton-loader>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+<div *ngIf="showSelectResourceModal">
+  <lib-resource-reorder [prevUnitSelect]= "selectedUnit" [collectionUnits]="collectionHierarchy" [selectedContentDetails]="selectedContent" [collectionId]="collectionId" (moveEvent)="showResourceTemplate($event)"></lib-resource-reorder>
+</div>
+
+<!--empty result -->
+<div class="result-no-found">
+  <div class="ui container" *ngIf="!showLoader && !contentList?.length">
+    <div class="add-to-library__no-result">
+      <h5 class="font-weight-bold">{{configService.labelConfig?.lbl?.noMatchingContent}}</h5>
+      <img alt="No Content available" class="mt-16" src="assets/images/emptyResult.svg">
+      <h6 class="sb-color-gray-300 font-weight-normal mt-8">{{configService.labelConfig?.lbl?.changeFilterMessage}}</h6>
+      <button class="sb-btn sb-btn-secondary sb-btn-normal mt-16" libTelemetryInteract
+      [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('change_filter','click','launch', telemetryService?.telemetryPageId)" (click)="openFilter();">{{configService.labelConfig?.lbl?.changeFilter}}</button>
+    </div>
+  </div>
+</div>

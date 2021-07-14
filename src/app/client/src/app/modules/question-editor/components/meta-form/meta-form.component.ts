@@ -35,11 +35,13 @@ export class MetaFormComponent implements OnInit, OnChanges, OnDestroy {
                }
 
   ngOnChanges() {
+    console.log('zzzzzzzzzz Fetcing meta data On changes');
     this.fetchFrameWorkDetails();
     this.setAppIconData();
   }
 
   ngOnInit() {
+    console.log('zzzzzzzzzz Fetcing meta data');
   }
 
   setAppIconData() {
@@ -99,6 +101,7 @@ export class MetaFormComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   attachDefaultValues() {
+    console.log('Fetching config');
     const metaDataFields = _.get(this.nodeMetadata, 'data.metadata');
     // if (_.isEmpty(metaDataFields)) { return; }
     const isRoot = _.get(metaDataFields, 'data.root');
@@ -231,7 +234,7 @@ export class MetaFormComponent implements OnInit, OnChanges, OnDestroy {
     });
 
     this.formFieldProperties = _.cloneDeep(formConfig);
-    console.log(this.formFieldProperties);
+    console.log('zzz', this.formFieldProperties);
   }
  isReviewMode() {
   return  _.includes(['review', 'read', 'sourcingreview' ], this.editorService.editorMode);
