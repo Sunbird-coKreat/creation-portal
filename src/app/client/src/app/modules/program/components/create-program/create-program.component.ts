@@ -1,34 +1,25 @@
 import {
-  ConfigService,
-  IUserProfile,
-  NavigationHelperService,
-  ResourceService,
-  RouterNavigationService,
-  ToasterService
+  ConfigService, ResourceService, ToasterService, RouterNavigationService,
+  ServerResponse, NavigationHelperService
 } from '@sunbird/shared';
-import {FineUploader} from 'fine-uploader';
-import {ActionService, ContentService, FrameworkService, ProgramsService, UserService} from '@sunbird/core';
-import {Observable, Subject, throwError} from 'rxjs';
-import {catchError, first, map} from 'rxjs/operators';
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { FineUploader } from 'fine-uploader';
+import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
+import { Subscription, Subject, throwError, Observable } from 'rxjs';
+import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {SourcingService} from './../../../sourcing/services';
-import {programConfigObj} from './programconfig';
-import {HttpClient} from '@angular/common/http';
-import {
-  IEndEventInput,
-  IImpressionEventInput,
-  IInteractEventEdata,
-  IStartEventInput,
-  TelemetryService
-} from '@sunbird/telemetry';
-import {DeviceDetectorService} from 'ngx-device-detector';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
+import { SourcingService } from './../../../sourcing/services';
+import { UserService } from '@sunbird/core';
+import { programConfigObj } from './programconfig';
+import { HttpClient } from '@angular/common/http';
+import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
-import {ProgramTelemetryService} from '../../services';
-import {CacheService} from 'ng2-cache-service';
+import { ProgramTelemetryService } from '../../services';
+import { CacheService } from 'ng2-cache-service';
 import {UUID} from 'angular2-uuid';
 import {IContentEditorComponentInput} from '../../../sourcing/interfaces';
 import {HelperService} from '../../../sourcing/services/helper.service';
@@ -46,7 +37,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public guidLinefileName: String;
   public isFormValueSet = false;
   public editPublished = false;
-  callTargetCollection = false;
+  callTargetCollection =false;
   public choosedTextBook: any;
   selectChapter = false;
   editBlueprintFlag = false;
@@ -62,7 +53,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   collectionCategories = [];
   showProgramScope: any;
   textbooks: any = {};
-  chaptersSelectionForm: FormGroup;
+  chaptersSelectionForm : FormGroup;
   private userFramework;
   private userBoard;
   frameworkCategories;
@@ -90,7 +81,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public showDocumentUploader = false;
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
-  public showPublishModal = false;
+  public showPublishModal= false;
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -180,7 +171,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.localBlueprint = {};
     this.localBlueprintMap = {};
     this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.getPageId();
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdfFiles, 'pdf');
@@ -194,7 +185,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
     this.getConfiguration();
-
     this.pageStartTime = Date.now();
   }
 
@@ -285,9 +275,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.isClosable = true;
         const errInfo = {
           errorMsg: ' Unable to create an Asset',
-          telemetryPageId: this.telemetryPageId, telemetryCdata: this.telemetryInteractCdata,
-          env: this.activatedRoute.snapshot.data.telemetry.env, request: req
-        };
+          telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env, request: req
+         };
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       })).subscribe((res) => {
         const contentId = res['result'].node_id;
@@ -299,9 +289,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.sourcingService.generatePreSignedUrl(request, contentId).pipe(catchError(err => {
           const errInfo = {
             errorMsg: 'Unable to get pre_signed_url and Content Creation Failed, Please Try Again',
-            telemetryPageId: this.telemetryPageId, telemetryCdata: this.telemetryInteractCdata,
-            env: this.activatedRoute.snapshot.data.telemetry.env, request: request
-          };
+            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env, request: request};
           this.loading = false;
           this.isClosable = true;
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
@@ -340,9 +329,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.sourcingService.uploadMedia(option, contentId).pipe(catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to update pre_signed_url with Content Id and Content Creation Failed, Please Try Again',
-        telemetryPageId: this.telemetryPageId, telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env, request: option
-      };
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: option };
       this.isClosable = true;
       this.loading = false;
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
@@ -372,10 +360,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }, error => {
       this.showLoader = false;
       const errInfo = {
-        errorMsg: 'Fetching program details failed',
+        errorMsg:  'Fetching program details failed',
         telemetryPageId: this.telemetryPageId,
-        telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
         request: req
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
@@ -389,9 +377,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.sourcingService.getVideo(videoId).pipe(map((data: any) => data.result.content), catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to read the Document, Please Try Again',
-        telemetryPageId: this.telemetryPageId, telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env, request: videoId
-      };
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: videoId };
       this.loading = false;
       this.isClosable = true;
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
@@ -426,9 +413,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return this.programsService.http.put(signedURL, file, config).pipe(catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again',
-        telemetryPageId: this.telemetryPageId, telemetryCdata: this.telemetryInteractCdata,
-        env: this.activatedRoute.snapshot.data.telemetry.env, request: signedURL
-      };
+        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env, request: signedURL };
       this.isClosable = true;
       this.loading = false;
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
@@ -609,7 +595,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         return result;
       }, []));
       const sortedTermsArray = _.map(sortedArray, (name) => {
-        return _.find(element['terms'], {name: name});
+        return _.find(element['terms'], { name: name });
       });
       this.programScope[element['code']] = sortedTermsArray;
       this.originalProgramScope[element['code']] = sortedTermsArray;
@@ -671,7 +657,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   fetchBlueprintTemplate(): void {
     this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userProfile.rootOrgId).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
-      if (templateDetails && templateDetails.forms) {
+      if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
       }
     })
@@ -713,7 +699,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       const obj = {
         name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
         description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
-        nomination_enddate: [null],
+        nomination_enddate : [null],
         // tslint:disable-next-line: max-line-length
         shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : null],
         // tslint:disable-next-line: max-line-length
@@ -723,10 +709,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line: max-line-length
         rewards: [_.get(this.programDetails, 'rewards')],
         // tslint:disable-next-line: max-line-length
-        defaultContributeOrgReview: new FormControl({
-          value: _.get(this.programDetails, 'config.defaultContributeOrgReview'),
-          disabled: this.editPublished
-        })
+        defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editPublished })
       };
 
       if (this.isOpenNominations === true) {
@@ -760,7 +743,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   navigateTo(stepNo) {
-    window.scrollTo(0, 0);
+    window.scrollTo(0,0);
     this.showTextBookSelector = false;
   }
 
@@ -859,14 +842,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (this.userFramework) {
       this.programConfig.framework = this.userFramework;
       // tslint:disable-next-line:max-line-length
-      _.find(_.find(this.programConfig.components, {id: 'ng.sunbird.collection'}).config.filters.implicit, {code: 'framework'}).defaultValue = this.userFramework;
+      _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.userFramework;
     }
     this.programData['target_collection_category'] = [this.collectionListForm.value.target_collection_category];
     // tslint:disable-next-line: max-line-length
-    _.find(_.find(this.programConfig.components, {id: 'ng.sunbird.collection'}).config.filters.implicit, {code: 'board'}).defaultValue = this.userBoard;
+    _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
 
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
-    this.programData['content_types'] = [];
+    this.programData['content_types']  = [];
 
     this.programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
       if (_.includes(this.selectedTargetCategories, o.name)) {
@@ -888,27 +871,27 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programData['nomination_enddate']) {
-      this.programData['nomination_enddate'] = null;
+      this.programData['nomination_enddate']= null;
     } else {
-      this.programData['nomination_enddate'].setHours(23, 59, 59);
+      this.programData['nomination_enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['shortlisting_enddate']) {
       this.programData['shortlisting_enddate'] = null;
     } else {
-      this.programData['shortlisting_enddate'].setHours(23, 59, 59);
+      this.programData['shortlisting_enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['enddate']) {
       this.programData['enddate'] = null;
     } else {
-      this.programData['enddate'].setHours(23, 59, 59);
+      this.programData['enddate'].setHours(23,59,59);
     }
 
     if (!this.programData['content_submission_enddate']) {
       this.programData['content_submission_enddate'] = null;
     } else {
-      this.programData['content_submission_enddate'].setHours(23, 59, 59);
+      this.programData['content_submission_enddate'].setHours(23,59,59);
     }
 
     if (!this.programConfig['blueprintMap']) {
