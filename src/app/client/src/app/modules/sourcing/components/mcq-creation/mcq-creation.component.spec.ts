@@ -15,6 +15,8 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SanitizeHtmlPipe } from '../../pipe/sanitize-html.pipe';
 import * as _ from 'lodash-es';
 import { FormsModule, ReactiveFormsModule, NgForm, FormGroup } from '@angular/forms';
+import { validMcqFormData, invalidMcqFormData } from './mcq-creation.component.spec.data';
+import { McqForm } from './../../class/McqForm';
 
 describe('McqCreationComponent', () => {
     let component: McqCreationComponent;
@@ -106,5 +108,18 @@ describe('McqCreationComponent', () => {
         spyOn(component, 'getMedia').and.callThrough();
         component.getMedia(media);
         expect(component.mediaArr.length).toEqual(3);
+    });
+    it('#validateCurrentQuestion() return true', () => {
+        component.mcqForm = new McqForm(validMcqFormData, {});
+        const isFormValid = component.validateCurrentQuestion();
+        expect(isFormValid).toBeTruthy();
+    });
+
+    it('#validateCurrentQuestion() return false', () => {
+        component.mcqForm = new McqForm(invalidMcqFormData, {});
+        const isFormValid = component.validateCurrentQuestion();
+        expect(component.showFormError).toBeTruthy();
+        expect(component.showPreview).toBeFalsy();
+        expect(isFormValid).toBeFalsy();
     });
 });

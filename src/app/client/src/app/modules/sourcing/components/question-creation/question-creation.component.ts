@@ -333,7 +333,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   validateCurrentQuestion() {
-    if (this.editorState.question === '' || this.editorState.answer === '') {
+    if (_.isEmpty(this.editorState.question) || _.isEmpty(this.editorState.answer)) {
         this.showFormError = true;
         this.showPreview = false;
         return false;
