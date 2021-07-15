@@ -250,10 +250,7 @@ const API_LIST = {
       ]
     },
     '/content/reg/search': {
-      checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [
-        ROLE.PUBLIC
-      ]
+      checksNeeded: []
     },
     '/content/reg/update': {
       checksNeeded: ['ROLE_CHECK'],
@@ -272,6 +269,12 @@ const API_LIST = {
         ]
     },
     '/content/reg/add': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/content/composite/v1/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
