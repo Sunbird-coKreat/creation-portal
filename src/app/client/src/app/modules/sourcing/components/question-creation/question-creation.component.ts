@@ -332,6 +332,16 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     }
   }
 
+  validateCurrentQuestion() {
+    if (_.isEmpty(this.editorState.question) || _.isEmpty(this.editorState.answer)) {
+        this.showFormError = true;
+        this.showPreview = false;
+        return false;
+    } else {
+      return true;
+    }
+  }
+
   /**
    * @param optionalParams  {Array of Objects }  -Key and Value to add in metadata
    */

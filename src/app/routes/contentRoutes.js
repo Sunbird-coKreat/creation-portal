@@ -11,10 +11,10 @@ const logger = require('sb_logger_util_v2')
 var morgan = require('morgan')
 const logApiStatus = envHelper.dock_api_call_log_status
 const programServiceUrl = envHelper.DOCK_PROGRAM_SERVICE_URL
-
+const isAPIWhitelisted = require('../helpers/apiWhiteList');
 
 module.exports = (app) => {
-    // Generate telemetry fot proxy service
+  // Generate telemetry fot proxy service
     app.all('/content/*', telemetryHelper.generateTelemetryForContentService,
         telemetryHelper.generateTelemetryForProxy)
 
@@ -90,7 +90,23 @@ module.exports = (app) => {
         })
     )
 
+    app.post('/content/program/v1/configuration/search',
+        isAPIWhitelisted.isAllowed(),
+        permissionsHelper.checkPermission(),
+        proxy(contentURL, {
+            limit: reqDataLimitOfContentUpload,
+            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+            proxyReqPathResolver: function (req) {
+                console.log(`🔶 BLOCK - /action/* - 🌏 URL - ${req.originalUrl} - ↔️  Referer - ${req.headers.referer}`)
+                let originalUrl = req.originalUrl.replace('/content/', '')
+                return require('url').parse(contentURL + originalUrl).path
+        },
+        userResDecorator: userResDecorator
+        })
+    )
+
     app.all('/content/program/*',
+        isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
         proxy(contentURL, {
             limit: reqDataLimitOfContentUpload,
@@ -140,6 +156,7 @@ module.exports = (app) => {
         healthService.checkDependantServiceHealth(['CONTENT', 'CASSANDRA']),
         proxyUtils.verifyToken(),
         permissionsHelper.checkPermission(),
+        isAPIWhitelisted.isAllowed(),
         proxy(contentURL, {
             limit: reqDataLimitOfContentUpload,
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
@@ -164,5 +181,17 @@ module.exports = (app) => {
                     return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
                 }
             }
-        }))
+        })
+    )
 }
+
+const userResDecorator = (proxyRes, proxyResData, req, res) => {
+    try {
+        const data = JSON.parse(proxyResData.toString('utf8'));
+        if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+        else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+    } catch(err) {
+        console.log('learner api user res decorator json parse error', proxyResData);
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+    }
+  }
