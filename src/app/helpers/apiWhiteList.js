@@ -97,6 +97,154 @@ const isAllowed = () => {
   return _.some(excludePath, (path) => _.includes(REQ_URL, path));
 };
 
+/**
+ * @description
+ * Set of methods which checks for certain condition on URL
+ * @since release-3.1.0
+ */
+ const urlChecks = {
+  /**
+  * @param  {Callback} resolve     - Callback to `isAllowed` function promise object
+  * @param  {Callback} reject      - Callback to `isAllowed` function promise object
+  * @param  {Object} req           - API request object
+  * @param  {Array} rolesForURL    - Array of roles defined for incoming API
+  * @access Private
+  * @description - Function to check session roles and defined roles are having one in common
+  * @since - release-3.1.0
+  */
+ ROLE_CHECK: (resolve, reject, req, rolesForURL, REQ_URL) => {
+   logger.info({
+     msg: 'Portal_API_WHITELIST : Middleware for URL [ ' + REQ_URL + ' ]',
+     reqPath: req.path,
+     matchPattern: REQ_URL,
+     method: req.method,
+     sessionRoles: _.get(req, 'session.roles') || 'no roles in session',
+     rulesForURL: rolesForURL
+   });
+   if (_.includes(rolesForURL, 'ALL') && req.session['roles'].length > 0) {
+     resolve();
+   } else if (_.intersection(rolesForURL, req.session['roles']).length > 0) {
+     resolve();
+   } else {
+     return reject('User doesn\'t have appropriate roles');
+   }
+ },
+ /**
+  * @param  {Callback} resolve     - Callback to `isAllowed` function promise object
+  * @param  {Callback} reject      - Callback to `isAllowed` function promise object
+  * @param  {Object} req           - API request object
+  * @param  {Array} checksParams   - Rules object for `OWNER_CHECK`
+  * @access Private
+  * @description - Function to execute different rules defined in checksParams object for key `checks`
+  * @since - release-3.1.0
+  */
+ OWNER_CHECK: async (resolve, reject, req, checksParams, REQ_URL) => {
+   if (_.get(checksParams, 'checks')) {
+     let ownerChecks = [];
+     checksParams.checks.forEach((ownerCheckObj) => {
+       ownerChecks.push(new Promise((res, rej) => {
+         let _checkFor = _.get(ownerCheckObj, 'entity');
+         if (_checkFor && typeof urlChecks[_checkFor] === 'function') {
+           urlChecks[_checkFor](res, rej, req, ownerCheckObj, REQ_URL);
+         }
+       }));
+     });
+     try {
+       await Promise.all(ownerChecks)
+         .then((pSuccess) => {
+           resolve();
+         })
+         .catch((pError) => {
+           return reject(pError);
+         });
+     } catch (error) {
+       utils.logError(req, error, {});
+       return reject();
+     }
+   } else {
+     return reject('Owner check validation failed.');
+   }
+ },
+ /**
+  * @param  {Callback} resolve      - Callback to `OWNER_CHECK` promise object
+  * @param  {Callback} reject       - Callback to `OWNER_CHECK` promise object
+  * @param  {Object} req            - API request object
+  * @param  {Object} ownerCheckObj  - `OWNER_CHECK` object
+  * @access Private
+  * @description - Function to check session userId for incoming API along with request userId
+  * @since - release-3.1.0
+  */
+ __session__userId: (resolve, reject, req, ownerCheckObj, REQ_URL) => {
+   try {
+     const _sessionUserId = _.get(req, 'session.userId');
+     const _reqUserId = _.get(ownerCheckObj, 'key') ? _.get(req, ownerCheckObj.key) : _.get(req, 'body.request.userId');
+     if (_sessionUserId === _reqUserId) {
+       resolve();
+     } else {
+       return reject('Mismatch in user id verification. Session UserId [ ' + _sessionUserId +
+         ' ] does not match with request body UserId [ ' + _reqUserId + ' ]');
+     }
+   } catch (error) {
+     return reject('User id validation failed.');
+   }
+ },
+ /**
+  * @param  {Callback} resolve      - Callback to `OWNER_CHECK` promise object
+  * @param  {Callback} reject       - Callback to `OWNER_CHECK` promise object
+  * @param  {Object} req            - API request object
+  * @param  {Object} ownerCheckObj  - `OWNER_CHECK` object
+  * @access Private
+  * @description - Function to check session userId is an admin if yes resolve or if
+  *  the session userId is same as that of the request userId then also resolve
+  * @since - release-3.3.0
+  */
+ __adminCheck__userId: (resolve, reject, req, ownerCheckObj, REQ_URL) => {
+   try {
+     const _sessionUserId = _.get(req, 'session.userId');
+     const _reqUserId = _.get(req, 'body.request.userId');
+     const _sessionRole = _.get(req, 'session.roles');
+     if(_sessionRole === ROLE.ORGADMIN || _sessionRole === ROLE.SYSADMIN){
+       resolve();
+     } else{
+       if (_sessionUserId === _reqUserId) {
+         resolve();
+       } else {
+         return reject('Mismatch in user id verification. Session UserId [ ' + _sessionUserId +
+           ' ] is not an admin or does not match with request body UserId [ ' + _reqUserId + ' ]');
+       }
+     }
+   } catch (error) {
+     return reject('User id validation failed.');
+   }
+ },
+ /**
+  * @param  {Callback} resolve      - Callback to `OWNER_CHECK` promise object
+  * @param  {Callback} reject       - Callback to `OWNER_CHECK` promise object
+  * @param  {Object} req            - API request object
+  * @param  {Object} ownerCheckObj  - `OWNER_CHECK` object
+  * @access Private
+  * @description - Function to check session userId for incoming API along with url params userId
+  * @since - release-3.7.0
+  */
+ __urlparams__userId: (resolve, reject, req, ownerCheckObj, REQ_URL) => {
+   try {
+     const _sessionUserId = _.get(req, 'session.userId');
+     const _match = match(REQ_URL);
+     const params = _match(_.get(req, 'path')).params;
+     const _key = _.get(ownerCheckObj, 'key');
+     if (_sessionUserId === _.get(params, _key)) {
+       resolve();
+     } else {
+       return reject('Mismatch in user id verification. Session UserId [ ' + _sessionUserId +
+         ' ] does not match with request body UserId [ ' + _reqUserId + ' ]');
+     }
+     resolve();
+   } catch (error) {
+     return reject('User id validation failed for __urlparams__userId.');
+   }
+ },
+};
+
 
 /**
  * @param  {Object} req             - Request Object
