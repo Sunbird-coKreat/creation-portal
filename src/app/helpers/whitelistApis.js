@@ -406,13 +406,14 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
-    '/learner/user/v1/search': {
-      checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [
-        ROLE.ORG_ADMIN,
-        ROLE.SOURCING_REVIEWER,
-        ROLE.CONTRIBUTE_ORG_ADMIN
-      ]
+    '/learner/user/v1/search': { /* Todo */
+      checksNeeded: []
+      // checksNeeded: ['ROLE_CHECK'],
+      // ROLE_CHECK: [
+      //   ROLE.ORG_ADMIN,
+      //   ROLE.SOURCING_REVIEWER,
+      //   ROLE.CONTRIBUTE_ORG_ADMIN
+      // ]
     },
     // '/learner/portal/user/v1/update': {
     //   checksNeeded: []
