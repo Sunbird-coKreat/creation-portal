@@ -294,6 +294,14 @@ export class QuestionSetEditorComponent implements OnInit {
     && this.programsService.isProjectLive(this.programContext));
   }
 
+  getEditableFields() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+    this.editorConfig.config.editableFields.review = _.map(_.filter(this.programsService.overrideMetaData, {editable: true}), 'code');
+  }
+
+  hasRole(role) {
+    return this.sessionContext.currentRoles.includes(role);
+  }
   canReviewContent() {
     const resourceStatus = this.collectionDetails.status.toLowerCase();
 

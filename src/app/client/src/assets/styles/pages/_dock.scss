@@ -819,8 +819,14 @@ app-question-set-editor{
 }
 
 // styling for edit details topic select popup
+.sb-z-index99{
+  sui-modal-dimmer{
+    z-index: 999!important;
+  }
+}
+
 .dimmable.o-y-hide.dimmed{
-  .ui.dimmer.modals{
+  div.ui.dimmer.modals{
     z-index: 9999 !important
   }
 }
@@ -992,5 +998,27 @@ app-question-set-editor{
       opacity: 0.3 !important;
       font-weight: 500 !important;
     }
+  }
+}
+
+.sb-modal{
+  .ui{
+    &.modal{
+      box-shadow: none;
+    }
+  }
+}
+
+.ui.tree-picker.tree{
+  .node.disabled{
+      opacity: 0.8 !important;
+      color: #999  !important; 
+      cursor: alias !important;
+      span{
+        cursor: alias !important; 
+      }
+      .square{
+        color: #999  !important; 
+      }
   }
 }
