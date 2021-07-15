@@ -45,7 +45,7 @@ const isAllowed = () => {
         } else {
           // If API is not whitelisted
           logger.info({
-            msg: 'Portal_API_WHITELIST: URL not whitelisted',
+            msg: 'SourcingPortal_API_WHITELIST: URL not whitelisted',
             reqPath: req.path,
             reqOriginalUrl: req.originalUrl,
             method: req.method
@@ -114,7 +114,7 @@ const isAllowed = () => {
   */
  ROLE_CHECK: (resolve, reject, req, rolesForURL, REQ_URL) => {
    logger.info({
-     msg: 'Portal_API_WHITELIST : Middleware for URL [ ' + REQ_URL + ' ]',
+     msg: 'SourcingPortal_API_WHITELIST : Middleware for URL [ ' + REQ_URL + ' ]',
      reqPath: req.path,
      matchPattern: REQ_URL,
      method: req.method,
@@ -330,7 +330,7 @@ const apiWhiteListLogger = () => {
       } else {
         // If API is not whitelisted
         logger.info({
-          msg: 'Portal_API_WHITELIST_LOGGER: URL not whitelisted',
+          msg: 'SourcingPortal_API_WHITELIST_LOGGER: URL not whitelisted',
           reqPath: req.path,
           reqOriginalUrl: req.originalUrl,
           method: req.method,
