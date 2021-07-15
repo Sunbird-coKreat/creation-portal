@@ -4,7 +4,7 @@ const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
 const envHelper = require('./environmentVariablesHelper.js')
 const learnerURL = envHelper.LEARNER_URL
-const contentURL = envHelper.CONTENT_PROXY_URL
+const sourcingBaseURL = envHelper.SUNBIRD_PORTAL_BASE_URL
 const enablePermissionCheck = envHelper.ENABLE_PERMISSION_CHECK
 const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const telemetryHelper = require('./telemetryHelper')
@@ -187,7 +187,7 @@ let PERMISSIONS_HELPER = {
     const userRegData = {};
     var userId = reqObj.session.userId
     const option = {
-      url: `${contentURL}/content/reg/search`,
+      url: `${sourcingBaseURL}/content/reg/search`,
       headers: {
         'x-msgid': uuidv1(),
         'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
