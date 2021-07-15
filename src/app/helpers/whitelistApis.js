@@ -280,6 +280,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/content/object/category/definition/v1/read': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/action/content/v3/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -398,6 +404,14 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
+      ]
+    },
+    '/learner/user/v1/search': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_REVIEWER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
     // '/learner/portal/user/v1/update': {
