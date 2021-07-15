@@ -171,19 +171,19 @@ let PERMISSIONS_HELPER = {
     })
   },
 
-getRequest: function(option) {
-    return new Promise(function (success, failure) {
-      request(option, function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                success(body);
-            } else {
-                failure(error);
-            }
-        });
-    });
-},
+  getRequest: function(option) {
+      return new Promise(function (success, failure) {
+        request(option, function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                  success(body);
+              } else {
+                  failure(error);
+              }
+          });
+      });
+  },
 
-getSourcingUserRoles: function(reqObj, callback) {
+  getSourcingUserRoles: function(reqObj, callback) {
     const userRegData = {};
     var userId = reqObj.session.userId
     const option = {
@@ -205,6 +205,8 @@ getSourcingUserRoles: function(reqObj, callback) {
 
     module.exports.getRequest(option)
       .then(function (userSearchResponse) {
+        console.log('----------------------------------------')
+        console.log(`⚠️ userSearchResponse - ${JSON.stringify(userSearchResponse)}` )
         if (userSearchResponse.result.User.length) {
           userRegData['User'] = userSearchResponse.result.User[0];
           option.body['request'] = {
@@ -219,6 +221,7 @@ getSourcingUserRoles: function(reqObj, callback) {
           return null;
         }
       }).then((userOrgSearchResponse) => {
+        console.log(`⚠️ userOrgSearchResponse - ${JSON.stringify(userOrgSearchResponse)}` )
         if (userOrgSearchResponse && userOrgSearchResponse.result.User_Org.length) {
           const userOrg = _.find(userOrgSearchResponse.result.User_Org, function(o) { return o.roles.includes('user') || o.roles.includes('admin') });
           if (userOrg) {
@@ -238,11 +241,12 @@ getSourcingUserRoles: function(reqObj, callback) {
           return null
         }
       }).then(orgSearchResponse => {
+        console.log(`⚠️ orgSearchResponse - ${JSON.stringify(orgSearchResponse)}` )
         if (orgSearchResponse && orgSearchResponse.result.Org.length) {
           userRegData['Org'] = orgSearchResponse.result.Org[0];
         }
-        logger.info({msg: 'getSourcingUserRoles registry obj', userRegData: userRegData});
         module.exports.setSourcingUserSessionData(reqObj, userRegData, callback)
+        logger.info({msg: 'getSourcingUserRoles registry obj', userRegData: userRegData});
       }).catch(error => {
         console.log(error)
         callback(error, null)
@@ -252,6 +256,7 @@ getSourcingUserRoles: function(reqObj, callback) {
   setSourcingUserSessionData (reqObj, userRegData, callback) {
     try {
       const userLevelKeys = _.keys(userRegData);
+      console.log(`🔆 userLevelKeys ${userLevelKeys}`)
       const isOrgCreated = (_.has(userRegData, 'User_Org') && _.has(userRegData, 'Org'))
       if(userLevelKeys.length === 1 && _.first(userLevelKeys, 'User')) {
         reqObj.session.roles.push('INDIVIDUAL_USER')
@@ -267,7 +272,7 @@ getSourcingUserRoles: function(reqObj, callback) {
         ) {
           reqObj.session.roles.push('CONTRIBUTE_ORG_USER')
       }
-
+      console.log(`🔆 Session Roles ${reqObj.session.roles}`)
       reqObj.session.save(function (error) {
         if (error) {
           callback(error, null)
