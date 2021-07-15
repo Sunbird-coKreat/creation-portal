@@ -241,14 +241,15 @@ getSourcingUserRoles: function(reqObj, callback) {
         if (orgSearchResponse && orgSearchResponse.result.Org.length) {
           userRegData['Org'] = orgSearchResponse.result.Org[0];
         }
-        console.log(`USERREGDATA ${userRegData}`)
-        module.exports.setDockUserSessionData(reqObj, userRegData, callback)
+        logger.info({msg: 'getSourcingUserRoles registry obj', userRegData: userRegData});
+        module.exports.setSourcingUserSessionData(reqObj, userRegData, callback)
       }).catch(error => {
         console.log(error)
+        callback(error, null)
       })
   },
 
-  setDockUserSessionData (reqObj, userRegData, callback) {
+  setSourcingUserSessionData (reqObj, userRegData, callback) {
     try {
       const userLevelKeys = _.keys(userRegData);
       const isOrgCreated = (_.has(userRegData, 'User_Org') && _.has(userRegData, 'Org'))
@@ -275,8 +276,8 @@ getSourcingUserRoles: function(reqObj, callback) {
         }
       });
       } catch(error) {
-        logger.error({msg: 'setUserSessionData :: Error while saving user session data', err: error});
-        console.log(error)
+        logger.error({msg: 'setSourcingUserSessionData :: Error while saving user session data', err: error});
+        callback(error, null)
     }
   },
 
