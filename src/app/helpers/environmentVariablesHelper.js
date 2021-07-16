@@ -48,7 +48,7 @@ let envVariables = {
   DOCK_QUESTIONSET_ENABLE: env.dock_questionSet_enable || 'true',
   DOCK_SMS_URL: env.dock_sms_url || 'https://vdn.diksha.gov.in',
   SUNBIRD_PROTO: env.sunbird_base_proto,
-  OPENSABER_SERVICE_URL: env.opensaber_service_url,
+  OPENSABER_SERVICE_URL: env.opensaber_service_url || 'http://opensaber-service:8080',
 
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
