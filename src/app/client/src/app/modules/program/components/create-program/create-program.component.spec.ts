@@ -2,25 +2,22 @@ import { TelemetryService } from './../../../telemetry/services/telemetry/teleme
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule, ResourceService, ConfigService , ToasterService} from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CoreModule } from '@sunbird/core';
+import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { CoreModule, UserService } from '@sunbird/core';
 import { CreateProgramComponent } from './create-program.component';
 import { CacheService } from 'ng2-cache-service';
-import * as mockData from './create-program.spec.data';
 import { DatePipe } from '@angular/common';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormGroupName, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
-import { UserService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import * as moment from 'moment';
-import * as alphaNumSort from 'alphanum-sort';
 import { Component, ViewChild} from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui-v9';
+import { mockProgramDetails } from './create-program.component.spec.data';
 
 describe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;
@@ -57,7 +54,7 @@ describe('CreateProgramComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateProgramComponent);
+  fixture = TestBed.createComponent(CreateProgramComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -78,6 +75,12 @@ describe('CreateProgramComponent', () => {
     component.initiateUploadModal();
     expect(component.initiateUploadModal).toHaveBeenCalled();
   });
+  it('#getAcceptType() should return accept type', ()=> {
+    const typeList = "pdf";
+    const type = "pdf";
+    const result =  component.getAcceptType(typeList, type);
+    expect(result).toEqual("pdf/pdf");
+  });
   it('Should call the uploadContent method', () => {
     spyOn(component, 'uploadContent');
     component.uploadContent();
@@ -88,11 +91,18 @@ describe('CreateProgramComponent', () => {
     component.uploadDocument();
     expect(component.uploadDocument).toHaveBeenCalled();
   });
-  it('Should call the updateContentWithURL method', () => {
+  it('Should call the #uploadMedia() and getUploadVideo () methods', () => {
     const url = './test.pdf';
-    spyOn(component, 'updateContentWithURL');
+    const sourcingService: SourcingService = TestBed.inject(SourcingService);
+    spyOn(component, 'getUploadVideo');
+    spyOn(sourcingService, 'uploadMedia').and.returnValue(of({
+      result : {
+        node_id: 123
+      }
+    }));
     component.updateContentWithURL(url, 'mimeType/pdf', 'do_1129159525832540161668');
-    expect(component.updateContentWithURL).toHaveBeenCalled();
+    expect(sourcingService.uploadMedia).toHaveBeenCalled();
+    expect(component.getUploadVideo).toHaveBeenCalledWith(123);
   });
   it('Should call the fetchFrameWorkDetails method', () => {
     spyOn(component, 'fetchFrameWorkDetails');
@@ -150,4 +160,11 @@ describe('CreateProgramComponent', () => {
     expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one collection');
     expect(component.disableCreateProgramBtn).toBeFalsy();
   });
+  it('#getProgramDetails() it should return program details on API success', inject([ProgramsService], (service: ProgramsService) => {
+    spyOn(component, 'initializeFormFields');
+    spyOn(service, 'get').and.returnValue(of(mockProgramDetails));
+    component.getProgramDetails();
+    expect(service.get).toHaveBeenCalled();
+    expect(component.initializeFormFields).toHaveBeenCalled();
+  }))
 });
