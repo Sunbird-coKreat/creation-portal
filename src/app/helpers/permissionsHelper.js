@@ -187,7 +187,7 @@ let PERMISSIONS_HELPER = {
     const userRegData = {};
     var userId = reqObj.session.userId
     const option = {
-      url: `${openSaberServiceUrl}/reg/search`,
+      url: `${openSaberServiceUrl}/search`,
       headers: {
         'x-msgid': uuidv1(),
         'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
