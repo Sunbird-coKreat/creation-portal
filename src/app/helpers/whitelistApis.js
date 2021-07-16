@@ -286,6 +286,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/content/content/v1/read/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/action/content/v3/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -437,6 +443,26 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
+      ]
+    },
+    '/learner/user/v1/notification/email': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
+    'learner/content/v1/import': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
       ]
     },
     '/action/content/v3/update/:do_id': {
@@ -655,6 +681,12 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
+    '/content/questionset/v1/read/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/content/data/v1/telemetry': {
       checksNeeded: []
     }
@@ -691,6 +723,8 @@ const API_LIST = {
     '/action/question/v1/review/:do_id',
     '/action/question/v1/publish/:do_id',
     '/action/question/v1/update/:do_id',
+    '/content/content/v1/read/:do_id',
+    '/content/questionset/v1/read/:do_id'
   ]
 }
 module.exports = API_LIST;

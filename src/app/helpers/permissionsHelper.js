@@ -4,7 +4,7 @@ const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
 const envHelper = require('./environmentVariablesHelper.js')
 const learnerURL = envHelper.LEARNER_URL
-const sourcingBaseURL = envHelper.SUNBIRD_PORTAL_BASE_URL
+const sourcingBaseURL = envHelper.DOCK_PROGRAM_SERVICE_URL
 const enablePermissionCheck = envHelper.ENABLE_PERMISSION_CHECK
 const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const telemetryHelper = require('./telemetryHelper')
@@ -205,7 +205,6 @@ let PERMISSIONS_HELPER = {
 
     module.exports.getRequest(option)
       .then(function (userSearchResponse) {
-        console.log('----------------------------------------')
         console.log(`⚠️ userSearchResponse - ${JSON.stringify(userSearchResponse)}` )
         if (userSearchResponse.result.User.length) {
           userRegData['User'] = userSearchResponse.result.User[0];
