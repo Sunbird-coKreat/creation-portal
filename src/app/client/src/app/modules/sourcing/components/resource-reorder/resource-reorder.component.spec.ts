@@ -117,10 +117,14 @@ describe('ResourceReorderComponent', () => {
   });
 
   it('#addResource() calls #collectionHierarchyService.addResourceToHierarchy() with expected parameters', () => {
-    component.sessionContext = { collection: testData.addResourceData.collectionId};
+    component.sessionContext = { collection: testData.addResourceData.collectionId, selectedMvcContentDetails: {name: 'abcd'}};
     component.prevUnitSelect = testData.addResourceData.unitIdentifier;
     component.contentId = testData.addResourceData.contentId;
+    component.collectionUnitsBreadcrumb = ['abcd'];
     spyOn(component, 'addResource').and.callThrough();
+    component['modal'] = {
+      deny: jasmine.createSpy('deny')
+    };
     component.addResource();
     expect(component.addResource).toHaveBeenCalled();
     expect(hierarchyServiceStub.addResourceToHierarchy).toHaveBeenCalledWith(
@@ -128,6 +132,7 @@ describe('ResourceReorderComponent', () => {
       testData.addResourceData.unitIdentifier,
       testData.addResourceData.contentId
     );
+    expect(component['modal'].deny).toHaveBeenCalled();
   });
 
   xit('#getParents() call #getParentsHelper() with expected parameters', () => {
