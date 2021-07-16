@@ -208,11 +208,11 @@ let PERMISSIONS_HELPER = {
         console.log(`⚠️ userSearchResponse - ${JSON.stringify(userSearchResponse)}` )
         const User = _.get(userSearchResponse, 'result.User');
         if (!_.isEmpty(User) && User.length) {
-          userRegData['User'] = userSearchResponse.result.User[0];
+          userRegData['User'] = User[0];
           option.body['request'] = {
             entityType: ['User_Org'],
             filters: {
-              userId: {eq: userSearchResponse.result.User[0].osid}
+              userId: {eq: User[0].osid}
             }
           };
           return module.exports.getRequest(option);
