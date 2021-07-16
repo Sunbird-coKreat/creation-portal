@@ -260,9 +260,9 @@ let PERMISSIONS_HELPER = {
       const isOrgCreated = (_.has(userRegData, 'User_Org') && _.has(userRegData, 'Org'))
       if(userLevelKeys.length === 1 && _.first(userLevelKeys, 'User')) {
         reqObj.session.roles.push('INDIVIDUAL_USER')
-      } else if (isOrgCreated && _.includes(userRegData['User_Org'], 'admin') && _.includes(reqObj.session.roles, 'ORG_ADMIN')) {
+      } else if (isOrgCreated && _.includes(_.get(userRegData, 'User_Org.roles'), 'admin') && _.includes(reqObj.session.roles, 'ORG_ADMIN')) {
         reqObj.session.roles.push('CONTRIBUTE_ORG_ADMIN')
-      } else if (isOrgCreated && _.includes(userRegData['User_Org'], 'admin') && !_.includes(reqObj.session.roles, 'ORG_ADMIN')) {
+      } else if (isOrgCreated && _.includes(_.get(userRegData, 'User_Org.roles'), 'admin') && !_.includes(reqObj.session.roles, 'ORG_ADMIN')) {
         reqObj.session.roles.push('CONTRIBUTE_ORG_ADMIN')
       } else if(isOrgCreated && _.includes(userRegData['Org'].type, 'sourcing')) {
         reqObj.session.roles.push('SOURCING_USER')
