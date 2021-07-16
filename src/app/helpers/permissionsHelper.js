@@ -206,12 +206,13 @@ let PERMISSIONS_HELPER = {
     module.exports.getRequest(option)
       .then(function (userSearchResponse) {
         console.log(`⚠️ userSearchResponse - ${JSON.stringify(userSearchResponse)}` )
-        if (userSearchResponse.result.User.length) {
-          userRegData['User'] = userSearchResponse.result.User[0];
+        const User = _.get(userSearchResponse, 'result.User');
+        if (!_.isEmpty(User) && User.length) {
+          userRegData['User'] = User[0];
           option.body['request'] = {
             entityType: ['User_Org'],
             filters: {
-              userId: {eq: userSearchResponse.result.User[0].osid}
+              userId: {eq: User[0].osid}
             }
           };
           return module.exports.getRequest(option);
