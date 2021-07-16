@@ -130,6 +130,7 @@ module.exports = (app) => {
     )
 
     app.all('/content/reg/*',
+        isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
         proxy(contentURL, {
             limit: reqDataLimitOfContentUpload,
@@ -154,9 +155,9 @@ module.exports = (app) => {
 
     app.all('/content/*',
         healthService.checkDependantServiceHealth(['CONTENT', 'CASSANDRA']),
+        isAPIWhitelisted.isAllowed(),
         proxyUtils.verifyToken(),
         permissionsHelper.checkPermission(),
-        isAPIWhitelisted.isAllowed(),
         proxy(contentURL, {
             limit: reqDataLimitOfContentUpload,
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
