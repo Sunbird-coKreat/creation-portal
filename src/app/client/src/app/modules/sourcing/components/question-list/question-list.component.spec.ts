@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { QuestionListComponent } from './question-list.component';
+import { McqCreationComponent } from '../mcq-creation/mcq-creation.component';
 import { By } from '@angular/platform-browser';
 import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui-v9';
 import { TelemetryModule, TelemetryInteractDirective } from '@sunbird/telemetry';
@@ -14,7 +15,7 @@ import {
   NavigationHelperService } from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 import { TelemetryService } from '@sunbird/telemetry';
-import { of as observableOf, throwError as observableError } from 'rxjs';
+import { of as observableOf, of, throwError as observableError } from 'rxjs';
 import { ActionService, PlayerService, FrameworkService, UserService } from '@sunbird/core';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -23,6 +24,9 @@ import { HelperService } from '../../services/helper.service';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { McqCreationStubComponent } from '../mcq-creation/mcq-creation-stub.component.spec';
+import { ProgramStageService } from '../../../program/services';
+import { questionData } from './question-list.component.spec.data';
 
 describe('QuestionListComponent', () => {
 
@@ -43,7 +47,7 @@ describe('QuestionListComponent', () => {
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule, SharedModule],
       schemas: [NO_ERRORS_SCHEMA],
-      declarations: [ QuestionListComponent ],
+      declarations: [ QuestionListComponent, McqCreationStubComponent ],
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService,
       TelemetryService, PlayerService, ResourceService, DatePipe,
       CacheService, BrowserCacheTtlService, NavigationHelperService,
@@ -60,6 +64,7 @@ describe('QuestionListComponent', () => {
     component.sessionContext = {targetCollectionFrameworksData: {
       framework: 'cbse_framework'
     }};
+    component.questionCreationChild = TestBed.createComponent(McqCreationStubComponent).componentInstance as McqCreationComponent;
     // fixture.autoDetectChanges();
   });
 
@@ -151,16 +156,26 @@ describe('QuestionListComponent', () => {
     expect(component.getQuestionDetails).toHaveBeenCalled();
   });
 
-  it('should Call createNewQuestion', () => {
-    spyOn(component, 'createNewQuestion');
+  it('should Call createNewQuestion call createDefaultAssessmentItem', async() => {
+    component.questionList = [];
+    component.resourceName = 'abcd';
+    spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(true);
+    spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(true);
+    spyOn(component, 'createDefaultAssessmentItem').and.returnValue(of(questionData));
+    spyOn(component, 'updateItemset').and.returnValue(of({}));
     component.createNewQuestion();
-    expect(component.createNewQuestion).toHaveBeenCalled();
+    expect(component.checkCurrentQuestionStatus).toHaveBeenCalled();
+    expect(component.questionCreationChild.validateCurrentQuestion).toHaveBeenCalled();
+    expect(component.createDefaultAssessmentItem).toHaveBeenCalled();
+    expect(component.updateItemset).toHaveBeenCalled();
   });
 
-  it('should Call handlerContentPreview', () => {
-    spyOn(component, 'handlerContentPreview');
+  xit('should Call handlerContentPreview', () => {
+    spyOn(component.questionCreationChild, 'buttonTypeHandler').and.callFake(() => {});
+    spyOn(component, 'handlerContentPreview').and.callThrough();
     component.handlerContentPreview();
     expect(component.handlerContentPreview).toHaveBeenCalled();
+    expect(component.questionCreationChild.buttonTypeHandler).toHaveBeenCalled();
   });
 
   it('should Call questionStatusHandler', () => {
@@ -316,4 +331,48 @@ describe('QuestionListComponent', () => {
     component.getFormData(formInput);
     expect(component.formInputData).toBe(formInput);
   });
+
+  it ('#handleBack() should call generateTelemetryEndEvent()', () => {
+    const programStageService = TestBed.inject(ProgramStageService);
+    spyOn(programStageService, 'removeLastStage').and.callFake(() =>  {});
+    spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(true);
+    spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(true);
+    spyOn(component, 'generateTelemetryEndEvent').and.callFake(() =>  {});
+    spyOn(component, 'handleBack').and.callThrough();
+    component.handleBack();
+    expect(component.handleBack).toHaveBeenCalled();
+    expect(component.questionCreationChild.validateCurrentQuestion).toHaveBeenCalled();
+    expect(component.checkCurrentQuestionStatus).toHaveBeenCalled();
+    expect(component.generateTelemetryEndEvent).toHaveBeenCalled();
+    expect(programStageService.removeLastStage).toHaveBeenCalled();
+  });
+
+  it ('#handleBack() should not call generateTelemetryEndEvent()', () => {
+    const programStageService = TestBed.inject(ProgramStageService);
+    spyOn(programStageService, 'removeLastStage').and.callFake(() =>  {});
+    spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(false);
+    spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(true);
+    spyOn(component, 'generateTelemetryEndEvent').and.callFake(() =>  {});
+    spyOn(component, 'handleBack').and.callThrough();
+    component.handleBack();
+    expect(component.handleBack).toHaveBeenCalled();
+    expect(component.questionCreationChild.validateCurrentQuestion).toHaveBeenCalled();
+    expect(component.checkCurrentQuestionStatus).not.toHaveBeenCalled();
+    expect(component.generateTelemetryEndEvent).not.toHaveBeenCalled();
+    expect(programStageService.removeLastStage).not.toHaveBeenCalled();
+  });
+
+  it ('#handleQuestionTabChange() should not call validateCurrentQuestion()', () => {
+    component.sessionContext['questionList'] = ['do_123'];
+    spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(false);
+    spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(false);
+    spyOn(component, 'getQuestionDetails').and.callFake(() => {});
+    spyOn(component, 'handleQuestionTabChange').and.callThrough();
+    component.handleQuestionTabChange('do_12345');
+    expect(component.handleQuestionTabChange).toHaveBeenCalled();
+    expect(component.checkCurrentQuestionStatus).toHaveBeenCalled();
+    expect(component.questionCreationChild.validateCurrentQuestion).toHaveBeenCalled();
+    expect(component.getQuestionDetails).not.toHaveBeenCalled();
+  });
+
 });
