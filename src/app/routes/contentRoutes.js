@@ -73,7 +73,6 @@ module.exports = (app) => {
               var originalUrl = req.originalUrl
               originalUrl = originalUrl.replace('/content/', '')
               const URl = require('url').parse(programServiceUrl + originalUrl).path.replace('//', '/');
-              console.log('programServiceUrl  ', URl)
               return URl
             },
             userResDecorator: (proxyRes, proxyResData, req, res) => {
@@ -97,7 +96,6 @@ module.exports = (app) => {
             limit: reqDataLimitOfContentUpload,
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: function (req) {
-                console.log(`🔶 BLOCK - /action/* - 🌏 URL - ${req.originalUrl} - ↔️  Referer - ${req.headers.referer}`)
                 let originalUrl = req.originalUrl.replace('/content/', '')
                 return require('url').parse(contentURL + originalUrl).path
         },
@@ -112,7 +110,6 @@ module.exports = (app) => {
             limit: reqDataLimitOfContentUpload,
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: (req) => {
-                console.log('/content/program/* ====>>', req.originalUrl);
                 return require('url').parse(contentURL + req.originalUrl.replace('/content/', '')).path
             },
             userResDecorator: (proxyRes, proxyResData, req, res) => {
@@ -136,7 +133,6 @@ module.exports = (app) => {
             limit: reqDataLimitOfContentUpload,
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: (req) => {
-                console.log('/content/reg/* =>>>>>>>>', req.originalUrl);
                 return require('url').parse(contentURL + req.originalUrl.replace('/content/', '')).path
             },
             userResDecorator: (proxyRes, proxyResData, req, res) => {
@@ -164,7 +160,6 @@ module.exports = (app) => {
             proxyReqPathResolver: (req) => {
                 let urlParam = req.params['0']
                 let query = require('url').parse(req.url).query
-                console.log(' /content/* =>>>>>>>>', req.url);
                 if (query) {
                     return require('url').parse(contentURL + urlParam + '?' + query).path
                 } else {

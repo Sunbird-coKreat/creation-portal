@@ -6,28 +6,14 @@
  * @version 1.0
  */
 const ROLE = {
-  // CONTENT_CREATOR: 'CONTENT_CREATOR',
-  // CONTENT_REVIEWER: 'CONTENT_REVIEWER',
-  // COURSE_MENTOR: 'COURSE_MENTOR',
-  // COURSE_CREATOR: 'COURSE_CREATOR',
-
-  // BOOK_CREATOR: 'BOOK_CREATOR',
-  // BOOK_REVIEWER: 'BOOK_REVIEWER',
-  // FLAG_REVIEWER: 'FLAG_REVIEWER',
-  // SYSTEM_ADMINISTRATION: 'SYSTEM_ADMINISTRATION',
   ORG_ADMIN: 'ORG_ADMIN',
   SOURCING_REVIEWER: 'SOURCING_REVIEWER',
   SOURCING_USER: 'SOURCING_USER',
-  // ADMIN: 'ADMIN',
   PUBLIC: 'PUBLIC',
   CONTRIBUTE_ORG_ADMIN: 'CONTRIBUTE_ORG_ADMIN',
   CONTRIBUTE_ORG_USER: 'CONTRIBUTE_ORG_USER',
-  // CONTRIBUTE_ORG_REVIEWER: 'CONTRIBUTE_ORG_REVIEWER',
-  // CONTRIBUTE_ORG_CREATOR: 'CONTRIBUTE_ORG_CREATOR',
   INDIVIDUAL_USER: 'INDIVIDUAL_USER',
   ANONYMOUS_USER: 'ANONYMOUS_USER'
-  // TEMP_ROLE: 'TEMP_ROLE', // Use only for deprecated APIs
-  // ALL: 'ALL'  // Use when user does not have PUBLIC role (Case: User bulk upload)
 }
 
 const API_LIST = {
@@ -110,9 +96,6 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    // '/content/program/v1/nomination/remove': {
-    //   checksNeeded: []
-    // },
     '/content/program/v1/nomination/list': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -136,9 +119,6 @@ const API_LIST = {
         ROLE.ORG_ADMIN
       ]
     },
-    // '/content/program/v1/nomination/contentypes/list': {
-    //   checksNeeded: []
-    // },
     '/content/program/v1/health': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -168,18 +148,13 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    // '/content/program/v1/configuration/create': {
-    //   checksNeeded: []
-    // },
+
     '/content/program/v1/configuration/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
-    // '/content/program/v1/configuration/update': {
-    //   checksNeeded: []
-    // },
     '/content/program/v1/content/publish': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -190,9 +165,6 @@ const API_LIST = {
     '/content/program/v1/tenant/list': {
       checksNeeded: [],
     },
-    // '/content/program/v1/sync/registry': {
-    //   checksNeeded: []
-    // },
     '/content/program/v1/preference/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -371,12 +343,6 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    // '/v1/url/fetchmeta': {
-    //   checksNeeded: []
-    // },
-    // '/content/course/v1/search': {
-    //   checksNeeded: []
-    // },
     '/content/program/v1/print/pdf': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -426,9 +392,6 @@ const API_LIST = {
       //   ROLE.CONTRIBUTE_ORG_ADMIN
       // ]
     },
-    // '/learner/portal/user/v1/update': {
-    //   checksNeeded: []
-    // },
     '/signup': {
       checksNeeded: [],
     },

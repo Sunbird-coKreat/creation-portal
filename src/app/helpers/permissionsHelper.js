@@ -205,7 +205,6 @@ let PERMISSIONS_HELPER = {
 
     module.exports.getRequest(option)
       .then(function (userSearchResponse) {
-        console.log(`⚠️ userSearchResponse - ${JSON.stringify(userSearchResponse)}` )
         const User = _.get(userSearchResponse, 'result.User');
         if (!_.isEmpty(User) && User.length) {
           userRegData['User'] = User[0];
@@ -221,7 +220,6 @@ let PERMISSIONS_HELPER = {
           return null;
         }
       }).then((userOrgSearchResponse) => {
-        console.log(`⚠️ userOrgSearchResponse - ${JSON.stringify(userOrgSearchResponse)}` )
         if (userOrgSearchResponse && userOrgSearchResponse.result.User_Org.length) {
           const userOrg = _.find(userOrgSearchResponse.result.User_Org, function(o) { return o.roles.includes('user') || o.roles.includes('admin') });
           if (userOrg) {
@@ -241,7 +239,6 @@ let PERMISSIONS_HELPER = {
           return null
         }
       }).then(orgSearchResponse => {
-        console.log(`⚠️ orgSearchResponse - ${JSON.stringify(orgSearchResponse)}` )
         if (orgSearchResponse && orgSearchResponse.result.Org.length) {
           userRegData['Org'] = orgSearchResponse.result.Org[0];
         }
@@ -256,7 +253,6 @@ let PERMISSIONS_HELPER = {
   setSourcingUserSessionData (reqObj, userRegData, callback) {
     try {
       const userLevelKeys = _.keys(userRegData);
-      console.log(`🔆 userLevelKeys ${userLevelKeys}`)
       const isOrgCreated = (_.has(userRegData, 'User_Org') && _.has(userRegData, 'Org'))
       if(userLevelKeys.length === 1 && _.first(userLevelKeys, 'User')) {
         reqObj.session.roles.push('INDIVIDUAL_USER')
@@ -272,7 +268,6 @@ let PERMISSIONS_HELPER = {
         ) {
           reqObj.session.roles.push('CONTRIBUTE_ORG_USER')
       }
-      console.log(`🔆 Session Roles ${reqObj.session.roles}`)
       reqObj.session.save(function (error) {
         if (error) {
           callback(error, null)

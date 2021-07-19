@@ -48,7 +48,6 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         let urlParam =req.originalUrl.replace('/learner/', '')
         let query = require('url').parse(req.url).query
-        console.log(' /learner/framework/v1/read/:frameworkId/* =>>>>>>>>', req.url);
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {
@@ -164,7 +163,6 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         let urlParam = req.params['0']
         let query = require('url').parse(req.url).query
-        console.log(' /learner/* =>>>>>>>>', req.url);
         if (query) {
           return require('url').parse(learnerURL + urlParam + '?' + query).path
         } else {
