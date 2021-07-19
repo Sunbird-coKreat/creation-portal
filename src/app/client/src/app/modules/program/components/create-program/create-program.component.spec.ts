@@ -109,11 +109,24 @@ describe('CreateProgramComponent', () => {
     component.fetchFrameWorkDetails();
     expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
   });
-  it('Should call the fetchBlueprintTemplate method', () => {
-    spyOn(component, 'fetchBlueprintTemplate');
+  it('Should call the fetchBlueprintTemplate method', inject([ProgramsService], (programsService: ProgramsService) => {
+    component.selectedTargetCollection = 'test';
+    component.userprofile = {
+      rootOrgId: 123
+    };
+    spyOn(programsService, 'getCollectionCategoryDefinition').and.returnValue(of({
+      result: {
+        objectCategoryDefinition: {
+          forms: {
+            blueprintCreate: 'test'
+          }
+        }
+      }
+    }));
     component.fetchBlueprintTemplate();
-    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
-  });
+    expect(component.blueprintTemplate).toEqual('test');
+  }));
+
   it('Should call the setFrameworkDataToProgram method', () => {
     spyOn(component, 'setFrameworkDataToProgram');
     component.setFrameworkDataToProgram();
@@ -166,5 +179,22 @@ describe('CreateProgramComponent', () => {
     component.getProgramDetails();
     expect(service.get).toHaveBeenCalled();
     expect(component.initializeFormFields).toHaveBeenCalled();
-  }))
+  }));
+  it('#resetSorting() it should reset program sorting', ()=> {
+    component.resetSorting();
+    expect(component.sortColumn).toEqual('name');
+    expect(component.direction).toEqual('asc');
+  });
+  it('#navigateTo() it should set #showTextBookSelector = false', ()=> {
+    component.navigateTo(1);
+    expect(component.showTextBookSelector).toEqual(false);
+  });
+  it('#resetFilters() it should reset filter', ()=> {
+    spyOn(component, 'resetSorting');
+    spyOn(component, 'showTexbooklist');
+    component.resetFilters();
+    expect(component.filterApplied).toEqual(false);
+    expect(component.resetSorting).toHaveBeenCalled();
+    expect(component.showTexbooklist).toHaveBeenCalledWith(true);
+  });
 });
