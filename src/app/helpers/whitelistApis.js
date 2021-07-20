@@ -226,7 +226,9 @@ const API_LIST = {
       ROLE_CHECK: [
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
-        ROLE.CONTRIBUTE_ORG_ADMIN
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
       ]
     },
     '/content/reg/update': {
