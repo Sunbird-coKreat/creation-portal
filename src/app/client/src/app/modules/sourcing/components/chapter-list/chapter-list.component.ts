@@ -19,6 +19,7 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { HelperService } from '../../services/helper.service';
 import { HttpClient } from '@angular/common/http';
 import { ProgramTelemetryService } from '../../../program/services';
+import { EditorService } from '../../../question-editor/services/editor/editor.service';
 
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
@@ -26,6 +27,8 @@ interface IDynamicInput {
   practiceQuestionSetComponentInput?: any;
   contentEditorComponentInput?: IContentEditorComponentInput;
   questionSetEditorComponentInput?: any;
+  questionInput?: any;
+  leafFormConfig?: any;
 }
 
 @Component({
@@ -76,6 +79,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public collectionData;
   showLoader = true;
   showError = false;
+  questionComponentEditorConfig: any = {};
+  leafFormConfig: any = {};
   public questionPattern: Array<any> = [];
   public viewBlueprintFlag: boolean;
   public displayPrintPreview: boolean;
@@ -92,6 +97,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
   contentName: string;
+  private deviceId: string;
+  private buildNumber: string;
+  private portalVersion: string;
   public userProfile: any;
   public sampleContent = false;
   public telemetryPageId: string;
@@ -116,7 +124,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     public activeRoute: ActivatedRoute, private ref: ChangeDetectorRef, private httpClient: HttpClient,
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService,
-    private programsService: ProgramsService, public programTelemetryService: ProgramTelemetryService) {
+    private editorService: EditorService, private programsService: ProgramsService, public programTelemetryService: ProgramTelemetryService) {
   }
 
   ngOnInit() {
@@ -128,6 +136,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
+    this.deviceId = deviceId ? deviceId.value : '';
+    this.buildNumber = buildNumber ? buildNumber.value : '1.0';
+    this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    
     this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
@@ -136,9 +151,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       .subscribe((user: any) => {
       if (user && !user.err) {
         this.userProfile = user.userProfile;
+        this.setEditorConfig();
       }
     });
-    // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
+    // this.currentUserID = _.get(this.programContext, 'userDetails.userId');    
     this.roles = _.get(this.chapterListComponentInput, 'roles');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
@@ -153,6 +169,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.fetchFrameWorkDetails();
     }
     this.fetchBlueprintTemplate();
+    this.fetchQuestionSetCategoryDefinition();    
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
@@ -207,6 +224,64 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+  }
+
+  setEditorConfig() {
+    // tslint:disable-next-line:max-line-length
+    const additionalCategories = _.merge(this.frameworkService['_channelData'].contentAdditionalCategories, this.frameworkService['_channelData'].collectionAdditionalCategories);
+    this.questionComponentEditorConfig = {
+      context: {
+        identifier: this.sessionContext.collection,
+        channel: this.userService.channel,
+        authToken: '',
+        sid: this.userService.sessionId,
+        did: this.deviceId,
+        uid: this.userService.userid,
+        additionalCategories: additionalCategories,
+        pdata: {
+          id: this.userService.appId,
+          ver: this.portalVersion,
+          pid: 'sunbird-portal'
+        },
+        actor: {
+          id: this.userService.userid || 'anonymous',
+          type: 'User'
+        },
+        contextRollup: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
+        framework: this.sessionContext.framework,
+        tags: this.userService.dims,
+        timeDiff: this.userService.getServerTimeDiff,
+        defaultLicense: this.frameworkService.getDefaultLicense(),
+        endpoint: '/data/v3/telemetry',
+        env: 'question_editor',
+        user: {
+          id: this.userService.userid,
+          orgIds: this.userProfile.organisationIds,
+          organisations: this.userService.orgIdNameMap,
+          name: '',
+          isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
+        },
+        channelData: this.frameworkService['_channelData'],
+        cloudStorageUrls: this.userService.cloudStorageUrls,
+        labels: {
+          // submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
+          // publish_collection_btn_label: this.resourceService.frmelmnts.btn.submitForApproval,
+          // sourcing_approve_collection_btn_label: this.resourceService.frmelmnts.btn.publishToConsume,
+          // reject_collection_btn_label: this.resourceService.frmelmnts.btn.requestChanges,
+        }
+      },
+      config: {
+        mode: 'edit',
+        setDefaultCopyRight: false,
+        showOriginPreviewUrl: false,
+        showSourcingStatus: false,
+        showCorrectionComments: false
+      }
+    };
+    // if (this.showQuestionEditor) {
+    //   this.questionComponentEditorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
+    // }
+    // this.questionComponentEditorConfig.config = _.assign(this.questionComponentEditorConfig.config, this.hierarchyConfig);    
   }
 
   setUserAccess() {
@@ -367,7 +442,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.currentRootOrgID).subscribe(res => {
+    this.programsService.getCollectionCategoryDefinition(_.get(this.collection, 'primaryCategory', 'Question paper'), this.currentRootOrgID, _.get(this.collection, 'objectType')).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
@@ -380,6 +455,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
     })
   }
+
+  fetchQuestionSetCategoryDefinition(): void {
+    this.programsService.getCollectionCategoryDefinition(_.get(this.collection, 'primaryCategory'), this.currentRootOrgID, _.get(this.collection, 'objectType')).subscribe(res => {
+      let templateDetails = res.result.objectCategoryDefinition;
+      this.leafFormConfig = _.get(templateDetails, 'forms.childMetadata.properties');
+    })
+  }
+
+  
 
   printPreview(): void {
     this.toasterService.info(this.resourceService.messages.imsg.m0076 || 'Generating PDF. Please wait...')
@@ -465,7 +549,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         originCollectionData: this.originalCollectionData,
         sourcingStatus: sourcingStatus,
         selectedSharedContext: this.selectedSharedContext
-      }
+      },
+      questionInput: {
+        questionSetId: this.sessionContext.collection,
+        unitId: this.unitIdentifier,
+        editorConfig: this.questionComponentEditorConfig,        
+        type: _.get(this.templateDetails, 'interactionType', null)
+      },
+      leafFormConfig: this.leafFormConfig
     };
   }
 
@@ -486,7 +577,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
     const instance = this;
     let hierarchy;
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+    let hierarchyUrl = '';
+    if(this.collection && this.collection.mimeType === 'application/vnd.sunbird.questionset') {
+      hierarchyUrl = 'questionset/v1/hierarchy/' + identifier;      
+    }
+    else hierarchyUrl = 'content/v3/hierarchy/' + identifier;
     if (unitIdentifier) {
       hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
     }
@@ -507,16 +602,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }))
       .subscribe((response) => {
-        const children = [];
-        _.forEach(response.result.content.children, (child) => {
+        const children = [];          
+        _.forEach(response.result.content ? response.result.content.children : 
+          (response.result.questionSet && response.result.questionSet.children), (child) => {
           if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
           (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
             children.push(child);
           }
         });
+        if(response.result.questionSet)  response.result.questionSet.children = children;
+        else response.result.content.children = children;
 
-        response.result.content.children = children;
-        this.collectionData = response.result.content;
+        this.collectionData = response.result.content || response.result.questionSet;
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
         if (this.storedCollectionData['channel'] !== this.programContext.rootorg_id) {
           this.storedCollectionData['channel'] = this.programContext.rootorg_id;
@@ -551,14 +648,22 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['apply'] = 0;
         instance.countData['topics'] = 0;
         instance.countData['learningOutcomes'] = 0;
-
-        const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
-        const originUrl = this.programsService.getContentOriginEnvironment();
+        
+        let hierarchyUrl1 = '', originUrl = '';
+        if(this.collectionData.mimeType === 'application/vnd.sunbird.questionset') {
+          hierarchyUrl1 = '/action/questionset/v1/hierarchy/' + this.collectionData.identifier + '?mode=edit';
+          originUrl = this.programsService.getSingleSourcingOriginEnvironment();
+        }
+        else {
+          hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
+          originUrl = this.programsService.getContentOriginEnvironment();
+        }
+        
         const url =  originUrl + hierarchyUrl1 ;
 
         if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
           this.httpClient.get(url).subscribe(async res => {
-            const content = _.get(res, 'result.content');
+            const content = _.has(res, 'result.questionSet') ? _.get(res, 'result.questionSet') : _.get(res, 'result.content');
             this.originalCollectionData = content;
             this.setTreeLeafStatusMessage(identifier, instance);
             resolve('Done');
@@ -670,18 +775,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getTreeChildren(children) {
     return children && children.filter(function (item) {
-      return item.mimeType === 'application/vnd.ekstep.content-collection' && item.visibility === "Parent";
+      return (item.mimeType === 'application/vnd.ekstep.content-collection' || item.mimeType === 'application/vnd.sunbird.questionset') && item.visibility === "Parent";
     });
   }
 
   getTreeLeaf(children) {
     return children && children.filter(function (item) {
-      return item.mimeType !== 'application/vnd.ekstep.content-collection';
+      return !(item.mimeType === 'application/vnd.ekstep.content-collection' || item.mimeType === 'application/vnd.sunbird.questionset');
     });
   }
 
   checkifContent (content) {
-    if (content.mimeType !== 'application/vnd.ekstep.content-collection' && content.visibility !== 'Parent') {
+    if (!(content.mimeType === 'application/vnd.ekstep.content-collection' || content.mimeType === 'application/vnd.sunbird.questionset') && content.visibility !== 'Parent') {
       return true;
     } else {
       return false;
@@ -1051,7 +1156,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         option.data.request['questionset'] = option.data.request.content;
         delete option.data.request.content;
         createRes = this.actionService.post(option);
-      } else {
+      } 
+      else if (_.get(this.templateDetails, 'modeOfCreation') === 'quml') {        
+        this.editorService.selectedChildren = {
+          primaryCategory: _.get(this.templateDetails, 'name'),
+          mimeType:_.first(_.get(this.templateDetails, 'mimeType')),
+          interactionType:  _.get(this.templateDetails, 'interactionType'),
+        };        
+        this.loadQuestionEditor(this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+        return;        
+      }  
+      else {
         createRes = this.actionService.post(option);
       }
 
@@ -1067,8 +1182,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }))
         .subscribe(result => {
           this.contentId = result.identifier;
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
-            .subscribe(() => {
+          let targetCollectionObjecttype = _.get(this.programContext, 'targetcollectionprimarycategories[0].targetObjectType');
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier, targetCollectionObjecttype).subscribe(() => {
               // if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
               //   const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
               //   this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
@@ -1112,6 +1227,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
     //   return false;
     // });
+  }
+
+  loadQuestionEditor(component, componentName) {
+    this.componentLoadHandler("creation", component, componentName);
   }
 
   componentLoadHandler(action, component, componentName, event?) {

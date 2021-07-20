@@ -213,7 +213,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   getCollectionCard() {
     this.searchCollection().subscribe((res) => {
       const { constantData, metaData, dynamicFields } = this.configService.appConfig.LibrarySearch;
-      const filterArr = _.groupBy(res.result.content, 'identifier');
+      const filterArr = _.groupBy(res.result.content || res.result.QuestionSet, 'identifier');
       const filteredTextbook = this.filterTextBook(filterArr);
       const collectionCards = this.utilService.getDataForCard(filteredTextbook, constantData, dynamicFields, metaData);
       this.collectionsWithCardImage = _.forEach(collectionCards, collection => this.addCardImage(collection));
@@ -221,7 +221,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!_.isEmpty(res.result.content)) {
         this.sortColumn = 'name';
         this.direction = 'asc';
-        const collections = res.result.content;
+        const collections = res.result.content || res.result.QuestionSet;
         let sampleValue, organisation_id, createdBy;
         if (!_.isUndefined(this.currentNominationStatus)) {
           // tslint:disable-next-line:max-line-length
@@ -366,7 +366,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {
         request: {
           filters: {
-            objectType: 'collection',
+            objectType: ['collection', 'questionset'],
             programId: this.sessionContext.programId || this.programContext.program_id,
             status: this.sessionContext.collectionStatus || ['Draft', 'Live'],
             primaryCategory: !_.isNull(this.programContext.target_collection_category) ? this.programContext.target_collection_category : 'Digital Textbook'

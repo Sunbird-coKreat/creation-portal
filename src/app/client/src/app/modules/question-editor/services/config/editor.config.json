@@ -1,29 +1,40 @@
 {
-    "rejectCommentsMaxLength": 500,
-    "setDefaultCopyRight": true,
-    "showOriginPreviewUrl": false, 
-    "showSourcingStatus": false, 
-    "showCorrectionComments": false,
-    "assetConfig": {
-        "image": {
-            "size": "1",
-            "sizeType": "MB",
-            "accepted": "png, jpeg"
-          },
-          "video": {
-            "size": "50",
-            "sizeType": "MB",
-            "accepted": "mp4, webm"
-          }
+  "rejectCommentsMaxLength": 500,
+  "setDefaultCopyRight": true,
+  "showOriginPreviewUrl": false,
+  "showSourcingStatus": false,
+  "showCorrectionComments": false,
+  "assetConfig": {
+    "image": {
+      "size": "1",
+      "sizeType": "MB",
+      "accepted": "png, jpeg"
     },
-    "contentPrimaryCategories": ["Course Assessment", "eTextbook", "Explanation Content", "Learning Resource", "Practice Question Set"],
-    "readQuestionFields": "body,primaryCategory,mimeType,qType,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media,",
-    "omitFalseyProperties":["topic", "topicsIds", "targetTopicIds", "keywords"],
-    "questionSet": {
-      "maxQuestionsLimit": "10"
-    },
-    "collection": {
-      "maxContentsLimit": "10"
-    },
-    "showAddCollaborator": false
+    "video": {
+      "size": "50",
+      "sizeType": "MB",
+      "accepted": "mp4, webm"
+    }
+  },
+  "contentPrimaryCategories": [
+    "Course Assessment",
+    "eTextbook",
+    "Explanation Content",
+    "Learning Resource",
+    "Practice Question Set"
+  ],
+  "readQuestionFields": "body,primaryCategory,mimeType,qType,answer,templateId,responseDeclaration,interactionTypes,interactions,name,solutions,editorState,media,",
+  "omitFalseyProperties": [
+    "topic",
+    "topicsIds",
+    "targetTopicIds",
+    "keywords"
+  ],
+  "questionSet": {
+    "maxQuestionsLimit": "10"
+  },
+  "collection": {
+    "maxContentsLimit": "10"
+  },
+  "showAddCollaborator": false
 }

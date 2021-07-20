@@ -92,7 +92,7 @@ export class EditorService {
   }
 
   fetchCollectionHierarchy(collectionId): Observable<any> {
-    const url = this.configService.urlConFig.URLS[this.editorConfig.config.objectType];
+    const url = this.configService.urlConFig.URLS[this.editorConfig.config.objectType || 'QuestionSet'];
     const hierarchyUrl = `${url.HIERARCHY_READ}/${collectionId}`;
     const req = {
       url: hierarchyUrl,

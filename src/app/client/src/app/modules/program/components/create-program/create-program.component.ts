@@ -11,7 +11,8 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
-import { UserService } from '@sunbird/core';
+import { UserService, ContentService } from '@sunbird/core';
+import { IUserProfile } from '@sunbird/shared';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
@@ -1802,8 +1803,7 @@ showTexbooklist(showTextBookSelector = true) {
             }
           },
           ...this.hierarchyConfig.hierarchy,
-        };
-        console.log('xxxxaaaaa', this.hierarchyConfig);
+        };        
 
         this.setEditorConfig();
       }, err => {

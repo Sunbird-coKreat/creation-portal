@@ -5,6 +5,7 @@ import { ContentUploaderComponent } from '../../../sourcing/components/content-u
 import { QuestionListComponent } from '../../../sourcing/components/question-list/question-list.component';
 import { QuestionSetEditorComponent } from '../../../sourcing/components/question-set-editor/question-set-editor.component';
 import { ToasterService } from '@sunbird/shared';
+import { QuestionComponent } from '../../../question-editor/components/question/question.component';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class ProgramComponentsService {
     uploadComponent: ContentUploaderComponent,
     questionSetComponent: QuestionListComponent,
     questionSetEditorComponent: QuestionSetEditorComponent,
-    curiositySetComponent: QuestionListComponent
+    curiositySetComponent: QuestionListComponent,
+    questionComponent: QuestionComponent 
   };
   constructor(public toasterService: ToasterService) {
 

@@ -93,7 +93,7 @@ export class HelperService {
 
   checkIfCollectionFolder(data) {
     // tslint:disable-next-line:max-line-length
-    if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Parent') {
+    if ((data.mimeType === 'application/vnd.ekstep.content-collection' || data.mimeType === 'application/vnd.sunbird.questionset') && data.visibility === 'Parent') {
       return true;
     } else {
       return false;
@@ -102,7 +102,7 @@ export class HelperService {
 
   checkIfMainCollection (data) {
     // tslint:disable-next-line:max-line-length
-    if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Default') {
+    if ((data.mimeType === 'application/vnd.ekstep.content-collection' || data.mimeType === 'application/vnd.sunbird.questionset') && data.visibility === 'Default') {
       return true;
     } else {
       return false;

@@ -24,6 +24,7 @@ import { filter, finalize, take, takeUntil } from 'rxjs/operators';
 export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   QumlPlayerConfig: any = {};
   @Input() questionInput: any;
+  @Input() editorConfig: any;
   @Input() leafFormConfig: any;
   public initialLeafFormConfig: any;
   public childFormData: any;
@@ -55,6 +56,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   questionMetaData: any;
   questionInteractionType;
   questionId;
+  unitId;
   tempQuestionId;
   questionSetId;
   public setCharacterLimit = 160;
@@ -81,14 +83,18 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    const { questionSetId, questionId, type } = this.questionInput;
+    const { questionSetId, unitId, questionId, type } = this.questionInput;
     this.questionInteractionType = type;
+    this.unitId = unitId;
     this.questionId = questionId;
     this.questionSetId = questionSetId;
     this.toolbarConfig = this.editorService.getToolbarConfig();
     this.toolbarConfig.showPreview = false;
     this.solutionUUID = UUID.UUID();
+    this.pageStartTime = Date.now();
+    this.telemetryService.initializeTelemetry(this.questionInput.editorConfig);
     this.telemetryService.telemetryPageId = this.pageId;
+    this.telemetryService.start({ type: 'question-editor', pageid: this.telemetryService.telemetryPageId });    
     this.initialLeafFormConfig = _.cloneDeep(this.leafFormConfig);
     this.initialize();
     this.framework = _.get(this.editorService.editorConfig, 'context.framework');
@@ -123,6 +129,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initialize() {
+    this.editorService.initialize(this.questionInput.editorConfig);
     this.editorService.fetchCollectionHierarchy(this.questionSetId).subscribe((response) => {
       this.questionSetHierarchy = _.get(response, 'result.questionSet');
       const leafFormConfigfields = _.join(_.map(this.leafFormConfig, value => (value.code)), ',');
@@ -136,7 +143,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.questionPrimaryCategory = this.questionMetaData.primaryCategory;
               }
               // tslint:disable-next-line:max-line-length
-              this.questionInteractionType = this.questionMetaData.interactionTypes ? this.questionMetaData.interactionTypes[0] : 'default';
+              this.questionInteractionType = _.get(this.questionMetaData, 'interactionTypes[0]', this.questionInteractionType || 'default');
               if (this.questionInteractionType === 'default') {
                 if (this.questionMetaData.editorState) {
                   this.editorState = this.questionMetaData.editorState;
@@ -145,8 +152,7 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
 
               if (this.questionInteractionType === 'choice') {
                 const responseDeclaration = this.questionMetaData.responseDeclaration;
-                const templateId = this.questionMetaData.templateId;
-                this.questionMetaData.editorState = this.questionMetaData.editorState;
+                const templateId = this.questionMetaData.templateId;                
                 const numberOfOptions = this.questionMetaData.editorState.options.length;
                 const options = _.map(this.questionMetaData.editorState.options, option => ({ body: option.value.body }));
                 const question = this.questionMetaData.editorState.question;
@@ -156,7 +162,8 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.editorState.solutions = this.questionMetaData.editorState.solutions;
               }
               const hierarchyChildren = this.questionSetHierarchy.children ? this.questionSetHierarchy.children : [];
-              this.setQuestionTitle(hierarchyChildren, this.questionId);
+              const unitChildren = _.get(_.find(hierarchyChildren, obj => obj.identifier === this.unitId), 'children', []);
+              this.setQuestionTitle(unitChildren, this.questionId);
               if (!_.isEmpty(this.editorState.solutions)) {
                 this.selectedSolutionType = this.editorState.solutions[0].type;
                 this.solutionUUID = this.editorState.solutions[0].id;
@@ -189,7 +196,8 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tempQuestionId = UUID.UUID();
         this.populateFormData();
         const hierarchyChildren = this.questionSetHierarchy.children ? this.questionSetHierarchy.children : [];
-        this.setQuestionTitle(hierarchyChildren);
+        const unitChildren = _.get(_.find(hierarchyChildren, obj => obj.identifier === this.unitId), 'children', []);
+        this.setQuestionTitle(unitChildren);
         if (this.questionInteractionType === 'default') {
           this.editorState = { question: '', answer: '', solutions: '' };
         }
@@ -588,7 +596,20 @@ export class QuestionComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
   }
+  generateTelemetryEndEvent() {
+    const telemetryEnd = {
+      type: 'question-editor',
+      pageid: this.telemetryService.telemetryPageId,
+      mode: this.editorService.editorMode,
+      duration: _.toString((Date.now() - this.pageStartTime) / 1000)
+    };
+    this.telemetryService.end(telemetryEnd);
+  }
+
   ngOnDestroy() {
+    if (this.telemetryService) {
+      this.generateTelemetryEndEvent();
+    }
     this.onComponentDestroy$.next();
     this.onComponentDestroy$.complete();
     this.editorCursor.clearQuestionMap();

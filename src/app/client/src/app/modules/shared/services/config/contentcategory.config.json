@@ -1,6 +1,6 @@
 {
     "sourcingConfig": {
-        "editor" : [
+        "editor": [
             {
                 "mimetype": "application/vnd.ekstep.ecml-archive",
                 "type": "ecml"
@@ -14,11 +14,15 @@
                 "type": "questionset"
             },
             {
+                "mimetype": "application/vnd.sunbird.question",
+                "type": "quml"
+            },
+            {
                 "mimetype": "application/vnd.ekstep.html-archive",
                 "type": "upload"
             },
             {
-                "mimetype":  "application/vnd.ekstep.h5p-archive",
+                "mimetype": "application/vnd.ekstep.h5p-archive",
                 "type": "upload"
             },
             {
@@ -63,19 +67,19 @@
             }
         ],
         "files": {
-          "application/vnd.ekstep.html-archive": "zip",
-          "application/vnd.ekstep.h5p-archive": "h5p",
-          "application/pdf": "pdf",
-          "video/mp4": "mp4",
-          "video/webm": "webm",
-          "application/epub": "epub",
-          "audio/mp3": "mp3",
-          "audio/mpeg": "mpeg",
-          "audio/ogg": "ogg",
-          "audio/x-wav": "x-wav",
-          "audio/wav": "wav"
+            "application/vnd.ekstep.html-archive": "zip",
+            "application/vnd.ekstep.h5p-archive": "h5p",
+            "application/pdf": "pdf",
+            "video/mp4": "mp4",
+            "video/webm": "webm",
+            "application/epub": "epub",
+            "audio/mp3": "mp3",
+            "audio/mpeg": "mpeg",
+            "audio/ogg": "ogg",
+            "audio/x-wav": "x-wav",
+            "audio/wav": "wav"
         },
-        "asset":{
+        "asset": {
             "imageFiles": "jpeg, png, jpg",
             "videoFiles": "mp4, webm",
             "pdfFiles": "pdf",

@@ -139,7 +139,7 @@ export class TextbookListComponent implements OnInit {
     this.textbookFiltersApplied = false;
   }
 
-  showTexbooklist (data, contentAggregationData) {
+  showTexbooklist (data, contentAggregationData) {    
     if (!_.isEmpty(data)) {
         if (contentAggregationData) {
           this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll(contentAggregationData, data);

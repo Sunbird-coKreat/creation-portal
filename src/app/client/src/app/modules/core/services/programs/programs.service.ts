@@ -979,17 +979,18 @@ export class ProgramsService extends DataService implements CanActivate {
     }
   }
 
-  getCollectionCategoryDefinition(categoryName, rootOrgId) {
+  getCollectionCategoryDefinition(categoryName, rootOrgId, targetObjectType = null) {
     const cacheInd = categoryName + ':' + rootOrgId;
     if (this.cacheService.get(cacheInd)) {
       return  of(this.cacheService.get(cacheInd));
     } else {
+      let objectType = targetObjectType || "Collection";
       const req = {
         url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
         data: {
           request: {
             "objectCategoryDefinition": {
-                "objectType": "Collection",
+                "objectType": objectType,
                 "name": categoryName,
                 "channel": rootOrgId
             },
@@ -1197,6 +1198,16 @@ export class ProgramsService extends DataService implements CanActivate {
       case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
       default: return  'https://dev.sunbirded.org'; break;
+    }
+  }
+
+  getSingleSourcingOriginEnvironment() {
+    switch(window.location.hostname) {
+      case 'dock.sunbirded.org': return 'https://dock.sunbirded.org'; break;
+      case 'dockstaging.sunbirded.org': return 'https://dockstaging.sunbirded.org'; break;
+      case 'vdn.diksha.gov.in': return 'https://vdn.diksha.gov.in'; break;
+      case 'dock.preprod.ntp.net.in': return 'https://dock.preprod.ntp.net.in'; break;
+      default: return  'https://dock.sunbirded.org'; break;
     }
   }
 

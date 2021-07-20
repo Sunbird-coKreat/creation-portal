@@ -26,6 +26,7 @@ import {FancyTreeComponent} from "./components/fancy-tree/fancy-tree.component";
 import {ContentplayerPageComponent} from "./components/contentplayer-page/contentplayer-page.component";
 import {QumlplayerPageComponent} from "./components/qumlplayer-page/qumlplayer-page.component";
 import {CoreModule} from "../core";
+import { DynamicModule } from 'ng-dynamic-component';
 import {TemplateComponent} from "./components/template/template.component";
 import {LibraryComponent} from "./components/library/library.component";
 import {ManageCollaboratorComponent} from "./components/manage-collaborator/manage-collaborator.component";
@@ -76,6 +77,7 @@ import {SkeletonLoaderComponent} from "./components/skeleton-loader/skeleton-loa
     CommonFormElementsModule,
     SuiPopupModule,
     QumlLibraryModule,
+    DynamicModule.withComponents([QuestionComponent]),
     InfiniteScrollModule,
     SuiModule,
     CoreModule,
@@ -85,6 +87,9 @@ import {SkeletonLoaderComponent} from "./components/skeleton-loader/skeleton-loa
   exports: [
     MetaFormComponent,
     EditorComponent
+  ],
+  entryComponents: [
+    QuestionComponent
   ]
 })
 export class QuestionEditorModule {

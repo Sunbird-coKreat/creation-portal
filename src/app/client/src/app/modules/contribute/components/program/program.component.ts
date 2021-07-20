@@ -608,7 +608,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       data: {
         request: {
           filters: {
-            objectType: 'collection',
+            objectType: ['collection', 'questionset'],
             programId: this.activatedRoute.snapshot.params.programId,
             status: ['Draft', 'Live'],
             primaryCategory: !_.isNull(this.programDetails.target_collection_category) ? this.programDetails.target_collection_category : 'Digital Textbook'
@@ -646,7 +646,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   showTexbooklist(res) {
     // tslint:disable-next-line:max-line-length
-    const contributorTextbooks = (res.result.content && res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+    let collections = [];
+    if(!_.isEmpty(res.result.content) && !_.isEmpty(res.result.QuestionSet)) {
+      collections = _.concat(res.result.content, res.result.QuestionSet);
+    } else {
+      collections = !_.isEmpty(res.result.content) ? res.result.content : res.result.QuestionSet;
+    }
+    const contributorTextbooks = (collections.length && this.nominationDetails.collection_ids) ? _.filter(collections, (collection) => {
       return _.includes(this.nominationDetails.collection_ids, collection.identifier);
     }) : [];
     if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
