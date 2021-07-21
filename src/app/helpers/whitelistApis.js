@@ -425,7 +425,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    'learner/content/v1/import': {
+    '/learner/content/v1/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.ORG_ADMIN,
