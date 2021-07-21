@@ -230,6 +230,12 @@
     "topic" : {
       "type": "array"
     },
+    "learningOutcome": {
+      "type": "array",
+      "items": {
+          "type": "string"
+      }
+    },
     "boardIds": {
       "type": "array",
       "items": {

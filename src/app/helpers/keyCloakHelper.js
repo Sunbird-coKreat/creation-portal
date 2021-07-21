@@ -41,6 +41,11 @@ const authenticated = function (request, next) {
   postLoginRequest.push(function (callback) {
     permissionsHelper.getCurrentUserRoles(request, callback)
   });
+
+  postLoginRequest.push(function (callback) {
+    permissionsHelper.getSourcingUserRoles(request, callback)
+  });
+
   console.log('value of updateLoginTimeEnabled-->', envHelper.sunbird_portal_updateLoginTimeEnabled);
   console.log('if condition value-->' + JSON.parse(envHelper.sunbird_portal_updateLoginTimeEnabled || 'false'));
   if (JSON.parse(envHelper.sunbird_portal_updateLoginTimeEnabled || 'false')) {
