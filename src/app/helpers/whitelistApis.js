@@ -433,6 +433,12 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
+    '/learner/questionset/v1/import': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/action/content/v3/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
