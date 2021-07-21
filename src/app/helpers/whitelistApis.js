@@ -438,7 +438,11 @@ const API_LIST = {
     '/learner/questionset/v1/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
-        ROLE.PUBLIC
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
       ]
     },
     '/action/content/v3/update/:do_id': {
