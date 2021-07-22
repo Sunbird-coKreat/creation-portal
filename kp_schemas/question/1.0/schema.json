@@ -105,6 +105,10 @@
       "type": "string",
       "format": "url"
     },
+    "posterImage": {
+      "type": "string",
+      "format": "url"
+    },
     "publishCheckList": {
       "type": "array"
     },
@@ -201,6 +205,12 @@
     },
     "topic": {
       "type": "array"
+    },
+    "learningOutcome": {
+      "type": "array",
+      "items": {
+          "type": "string"
+      }
     },
     "boardIds": {
       "type": "array",
