@@ -12,6 +12,7 @@ const {decrypt} = require('../helpers/crypto');
 const {decodeNChkTime} = require('../helpers/utilityService');
 const _ = require('lodash');
 const logApiStatus = envHelper.dock_api_call_log_status
+const isAPIWhitelisted = require('../helpers/apiWhiteList');
 
 module.exports = function (app) {
 
@@ -37,6 +38,51 @@ module.exports = function (app) {
         }
       }
   }))
+
+  app.get(['/learner/framework/v1/read/:frameworkId'],
+    isAPIWhitelisted.isAllowed(),
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let urlParam =req.originalUrl.replace('/learner/', '')
+        let query = require('url').parse(req.url).query
+        if (query) {
+          return require('url').parse(learnerURL + urlParam + '?' + query).path
+        } else {
+          return require('url').parse(learnerURL + urlParam).path
+        }
+      },
+      userResDecorator: (proxyRes, proxyResData, req, res) => {
+        try {
+            logger.info({msg: '/learner/framework/v1/read/:frameworkId called'});
+            const data = JSON.parse(proxyResData.toString('utf8'));
+            if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+            else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+        } catch(err) {
+          logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+            return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+        }
+      }
+  }))
+
+
+  app.post('/learner/composite/v1/search',
+    isAPIWhitelisted.isAllowed(),
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let originalUrl = req.originalUrl.replace('/learner/', '')
+        return require('url').parse(learnerURL + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+    })
+  )
+
+
   // Generate telemetry fot proxy service
   app.all('/learner/*', telemetryHelper.generateTelemetryForLearnerService,
     telemetryHelper.generateTelemetryForProxy)
@@ -109,6 +155,7 @@ module.exports = function (app) {
 
   app.all('/learner/*',
     healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
+    isAPIWhitelisted.isAllowed(),
     permissionsHelper.checkPermission(),
     proxy(learnerURL, {
       limit: reqDataLimitOfContentUpload,
@@ -211,4 +258,15 @@ function proxyObj (){
       }
     }
   });
+}
+
+const userResDecorator = (proxyRes, proxyResData, req, res) => {
+  try {
+      const data = JSON.parse(proxyResData.toString('utf8'));
+      if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+      else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+  } catch(err) {
+      console.log('learner api user res decorator json parse error', proxyResData);
+      return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+  }
 }

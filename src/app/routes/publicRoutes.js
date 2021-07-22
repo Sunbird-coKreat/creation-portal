@@ -8,9 +8,11 @@ const learnerURL = envHelper.LEARNER_URL
 const reqDataLimitOfContentUpload = '50mb'
 const contentServiceBaseUrl = envHelper.CONTENT_URL
 const logger = require('sb_logger_util_v2')
+const isAPIWhitelisted = require('../helpers/apiWhiteList');
 
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
+      console.log(' proxyReqPathResolverMethod (/api/*) (req.originalUrl)', req.originalUrl);
         return require('url').parse(contentProxyUrl + req.originalUrl).path
     }
 
@@ -41,7 +43,8 @@ module.exports = function (app) {
         })
     )
 
-    app.post('/api/org/v1/search',
+    app.post(['/api/org/v1/search'],
+        isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
         proxy(learnerURL, {
         limit: reqDataLimitOfContentUpload,
@@ -77,6 +80,7 @@ module.exports = function (app) {
           let urlParam = req.originalUrl.replace('/api/', '')
           let query = require('url').parse(req.url).query
           console.log('/api/object  ', require('url').parse(contentProxyUrl + urlParam).path);
+          console.log('/api/object/*,  /api/composite/* ', req.url);
           if (query) {
             return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
           } else {
@@ -150,7 +154,10 @@ module.exports = function (app) {
         })
     )
 
-    app.use('/api/*', permissionsHelper.checkPermission(), proxy(contentProxyUrl, {
+    app.use('/api/*',
+    isAPIWhitelisted.isAllowed(),
+    permissionsHelper.checkPermission(),
+    proxy(contentProxyUrl, {
         proxyReqPathResolver: proxyReqPathResolverMethod
     }))
 }
