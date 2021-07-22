@@ -105,6 +105,10 @@
       "type": "string",
       "format": "url"
     },
+    "posterImage": {
+      "type": "string",
+      "format": "url"
+    },
     "publishCheckList": {
       "type": "array"
     },
