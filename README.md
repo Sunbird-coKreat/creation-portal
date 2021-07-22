@@ -56,10 +56,6 @@ Start the server
   ng build --watch
 ```
 
-The local HTTP server is launched at `http://localhost:3000`
-
-
-
 
 #### Starting up backend app
 
@@ -82,6 +78,9 @@ Start the server
 ```bash
   npm run server
 ```
+
+The local HTTP server is launched at `http://localhost:3000`
+
 
 > #### Note:
 > Expected errors while start up the backend server
