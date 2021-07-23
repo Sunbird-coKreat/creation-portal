@@ -516,7 +516,7 @@
 																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
 														</th>
-														<th *ngIf="!blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.firstLevelFolders}}</th>
+														<th *ngIf="!blueprintTemplate" class="w-10">{{firstLevelFolderLabel}}</th>
 														<th *ngIf="blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.sections}}</th>
 													</tr>
 												</thead>
@@ -596,13 +596,13 @@
 														</div>
 														<div class="four wide column px-0 mt-5">
 															<div class="sb-color-gray-400 fxsmall text-lowercase">
-																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': tempCollection.contentTypeUnit || ''}}
+																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | lowercase}}
 															</div>
 															<div *ngIf="tempCollection.selected"
 																class="sb-color-primary fxsmall cursor-pointer text-none"
 																(click)="chooseChapters(tempCollection);">
 																<i
-																	class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl.editFirstLevelFolders}}
+																	class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl?.editFirstLevelFolders.replace('{FIRST_LEVEL_FOLDER}', firstLevelFolderLabel | titlecase)}}
 															</div>
 															<div *ngIf="blueprintTemplate"
 																class="sb-color-primary fxsmall cursor-pointer text-none"
@@ -757,7 +757,7 @@
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-			{{blueprintTemplate ? resource?.frmelmnts?.lbl?.selectSections : resource?.frmelmnts?.lbl?.selectFirstLevelFolders}}
+			{{blueprintTemplate ? resource?.frmelmnts?.lbl?.selectSections : resource?.frmelmnts?.lbl?.selectFirstLevelFolders.replace('{FIRST_LEVEL_FOLDER}', firstLevelFolderLabel | titlecase)}}
 		</div>
 		<div class="sb-modal-content">
 			<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>

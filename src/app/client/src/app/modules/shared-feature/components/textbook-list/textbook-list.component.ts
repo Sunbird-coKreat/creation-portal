@@ -54,6 +54,8 @@ export class TextbookListComponent implements OnInit {
   public telemetryInteractObject: any;
   public targetCollection: string;
   public targetCollections: string;
+  public objectCategoryDefinition: any;
+  public firstLevelFolderLabel: string;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -106,9 +108,20 @@ export class TextbookListComponent implements OnInit {
 
   setTargetCollectionValue() {
     if (!_.isUndefined(this.programDetails)) {
+      this.getCollectionCategoryDefinition();
       this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
       this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
     }
+  }
+
+  getCollectionCategoryDefinition() {
+    // tslint:disable-next-line:max-line-length
+    this.programsService.getCollectionCategoryDefinition(this.programDetails.target_collection_category[0], this.userService.userProfile.rootOrgId).subscribe(res => {
+      this.objectCategoryDefinition = res.result.objectCategoryDefinition;
+      // tslint:disable-next-line:max-line-length
+      this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
+    });
   }
 
   getTelemetryInteractCdata(id, type) {

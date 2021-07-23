@@ -100,6 +100,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+  public firstLevelFolderLabel: string;
+  public objectCategoryDefinition: any;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -312,6 +314,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         request: req
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
+    });
+  }
+
+  getCollectionCategoryDefinition() {
+    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+      this.objectCategoryDefinition = res.result.objectCategoryDefinition;
+      // tslint:disable-next-line:max-line-length
+      this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
     });
   }
 
@@ -597,12 +608,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
-      let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
-      }
-    })
+    if (this.objectCategoryDefinition && this.objectCategoryDefinition.forms) {
+      this.blueprintTemplate = this.objectCategoryDefinition.forms.blueprintCreate;
+    }
   }
 
   /**
@@ -661,9 +669,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line: max-line-length
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null];
       }
-
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.getCollectionCategoryDefinition();
       this.fetchBlueprintTemplate();
       this.showProgramScope = false;
       this.showTextBookSelector = false;
@@ -953,6 +961,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 onChangeTargetCollection() {
+    this.getCollectionCategoryDefinition();
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
     this.fetchBlueprintTemplate();

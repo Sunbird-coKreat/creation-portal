@@ -79,6 +79,8 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public disableNominate = false;
   public targetCollection: string;
   public targetCollections: string;
+  public objectCategoryDefinition: any;
+  public firstLevelFolderLabel: string;
   constructor(public configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
     private sourcingService: SourcingService, private collectionHierarchyService: CollectionHierarchyService,
@@ -104,6 +106,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.collectionComponentConfig = _.get(this.collectionComponentInput, 'config');
     this.programContext = _.get(this.collectionComponentInput, 'programContext');
     this.setTargetCollectionValue();
+    this.getCollectionCategoryDefinition();
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -388,6 +391,18 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.showError = true;
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }));
+  }
+
+  getCollectionCategoryDefinition() {
+    // tslint:disable-next-line:max-line-length
+    const targetPrimaryCategories = this.programContext.target_collection_category ?  this.programContext.target_collection_category : 'Digital Textbook'; 
+    // tslint:disable-next-line:max-line-length
+    this.programsService.getCollectionCategoryDefinition(targetPrimaryCategories, this.userService.userProfile.rootOrgId).subscribe(res => {
+      this.objectCategoryDefinition = res.result.objectCategoryDefinition;
+      // tslint:disable-next-line:max-line-length
+      this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
+    });
   }
 
   addCardImage(collection) {
