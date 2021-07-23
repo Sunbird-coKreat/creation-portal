@@ -27,6 +27,7 @@ const { frameworkAPI } = require('@project-sunbird/ext-framework-server/api');
 const frameworkConfig = require('./framework.config.js');
 const cookieParser = require('cookie-parser')
 const logger = require('sb_logger_util_v2');
+const { apiWhiteListLogger, isAllowed } = require('./helpers/apiWhiteList');
 let keycloak = getKeyCloakClient({
   'realm': envHelper.PORTAL_REALM,
   'auth-server-url': envHelper.PORTAL_AUTH_SERVER_URL,
@@ -133,6 +134,12 @@ app.use('/resourcebundles/v1', bodyParser.urlencoded({ extended: false }),
 const subApp = express()
 subApp.use(bodyParser.json({ limit: '50mb' }))
 app.use('/plugin', subApp)
+
+// ****** DO NOT MODIFY THIS CODE BLOCK / RE-ORDER ******
+app.all('*', apiWhiteListLogger());
+if (envHelper.PORTAL_API_WHITELIST_CHECK == 'true') {
+  app.all('*', isAllowed());
+}
 
 frameworkAPI.bootstrap(frameworkConfig, subApp).then(data => runApp()).catch(error => runApp())
 
