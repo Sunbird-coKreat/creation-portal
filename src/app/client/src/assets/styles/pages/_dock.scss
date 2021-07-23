@@ -898,12 +898,18 @@ app-question-set-editor{
     font-size: .785rem!important;
     li{
       margin: 0 !important;
-      padding: 0 !important;
+      padding: 7px 0 !important;
+      line-height: 1.5;
+      display: flex;
+      label{
+        padding: 0 !important;
+      }
     }
     input{
       margin-right: 8px;
     }
   }
+  
   .list-border{
     ul{
       font-weight: 500 !important;
