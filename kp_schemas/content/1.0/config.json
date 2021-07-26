@@ -31,11 +31,6 @@
         "primaryKey": ["content_id"]
     },
     "relations": {
-        "concepts": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["Concept"]
-        },
         "questions": {
             "type": "associatedTo",
             "direction": "out",
