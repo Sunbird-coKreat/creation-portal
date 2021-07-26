@@ -296,7 +296,9 @@ export class QuestionSetEditorComponent implements OnInit {
 
   getEditableFields() {
     this.editorConfig.config['editableFields'] = {};
-    this.editorConfig.config.editableFields.orgreview = _.map(_.filter(this.programsService.overrideMetaData, {editable: true}), 'code');
+    const fields = _.map(_.filter(this.programsService.overrideMetaData, {editable: true}), 'code');
+    this.editorConfig.config.editableFields.orgreview = fields;
+    this.editorConfig.config.editableFields.sourcingreview = fields;
   }
 
   hasRole(role) {
