@@ -327,7 +327,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         } else {
           this.firstLevelFolderLabel = _.get(this.resource, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }
-        console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
       });
     }
   }

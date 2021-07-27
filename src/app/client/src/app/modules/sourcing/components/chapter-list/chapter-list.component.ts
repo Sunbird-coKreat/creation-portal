@@ -380,7 +380,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else {
         this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
       }
-      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
     });
   }
 

@@ -125,7 +125,6 @@ export class TextbookListComponent implements OnInit {
       } else {
         this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
       }
-      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
     });
     }
   }
