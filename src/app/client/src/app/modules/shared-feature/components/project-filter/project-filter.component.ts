@@ -67,6 +67,7 @@ export class ProjectFilterComponent implements OnInit {
   }
 
   getContentCategories() {
+    const collectionPrimaryCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     const programs = this.programs;
 
     _.map(programs, (program) => {
@@ -74,7 +75,8 @@ export class ProjectFilterComponent implements OnInit {
       this.currentFilters['contentTypes'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['contentTypes'],
       programContentTypes ))));
     });
-    this.currentFilters['target_collection_category'] = this.sortFilters(['Digital Textbook', 'Course']);
+    // tslint:disable-next-line:max-line-length
+    this.currentFilters['target_collection_category'] = this.sortFilters(collectionPrimaryCategories);
     this.currentFilters['contentTypes'] = this.sortFilters(this.currentFilters['contentTypes']);
   }
   createFilterForm() {
