@@ -115,13 +115,19 @@ export class TextbookListComponent implements OnInit {
   }
 
   getCollectionCategoryDefinition() {
-    // tslint:disable-next-line:max-line-length
+    if (this.programDetails.target_collection_category && this.userService.userProfile.rootOrgId) {
+       // tslint:disable-next-line:max-line-length
     this.programsService.getCollectionCategoryDefinition(this.programDetails.target_collection_category[0], this.userService.userProfile.rootOrgId).subscribe(res => {
       this.objectCategoryDefinition = res.result.objectCategoryDefinition;
-      // tslint:disable-next-line:max-line-length
+      if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+        // tslint:disable-next-line:max-line-length
       this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      } else {
+        this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+      }
       console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
     });
+    }
   }
 
   getTelemetryInteractCdata(id, type) {

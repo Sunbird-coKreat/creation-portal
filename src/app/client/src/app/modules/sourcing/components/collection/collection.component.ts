@@ -400,7 +400,12 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programsService.getCollectionCategoryDefinition(targetPrimaryCategories, this.userService.userProfile.rootOrgId).subscribe(res => {
       this.objectCategoryDefinition = res.result.objectCategoryDefinition;
       // tslint:disable-next-line:max-line-length
+      if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+        // tslint:disable-next-line:max-line-length
       this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      } else {
+        this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+      }
       console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
     });
   }

@@ -108,6 +108,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public hasAccessForBoth: any;
   public targetCollection: string;
   public unsubscribe = new Subject<void>();
+  public firstLevelFolderLabel: string;
+  public objectCategoryDefinition: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -152,13 +154,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
     }
+    this.getCollectionCategoryDefinition();
     this.fetchBlueprintTemplate();
     /**
      * @description : this will fetch question Category configuration based on currently active route
      */
     this.levelOneChapterList.push({
       identifier: 'all',
-      name: _.get(this.resourceService, 'frmelmnts.lbl.allFirstLevelFolders')
+      // tslint:disable-next-line:max-line-length
+      name: this.resourceService.frmelmnts.lbl.allFirstLevelFolders.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel)
     });
     this.selectedChapterOption = 'all';
     const mvcStageData = this.programsService.getMvcStageData();
@@ -366,19 +370,30 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.viewBlueprintDetailsFlag = true;
   }
 
-  fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
-      let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
-        if(this.blueprintTemplate && this.blueprintTemplate.properties) {
-          _.forEach(this.blueprintTemplate.properties, (prop) => {
-            prop.editable = false;
-          })
-        }
-        this.setLocalBlueprint();
+  getCollectionCategoryDefinition() {
+    this.programsService.getCollectionCategoryDefinition(this.collection.primaryCategory, this.programContext.rootorg_id).subscribe(res => {
+      this.objectCategoryDefinition = res.result.objectCategoryDefinition;
+      // tslint:disable-next-line:max-line-length
+      if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+        // tslint:disable-next-line:max-line-length
+      this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      } else {
+        this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
       }
-    })
+      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
+    });
+  }
+
+  fetchBlueprintTemplate(): void {
+    if (this.objectCategoryDefinition && this.objectCategoryDefinition.forms) {
+      this.blueprintTemplate = this.objectCategoryDefinition.forms.blueprintCreate;
+      if (this.blueprintTemplate && this.blueprintTemplate.properties) {
+        _.forEach(this.blueprintTemplate.properties, (prop) => {
+          prop.editable = false;
+        });
+      }
+      this.setLocalBlueprint();
+    }
   }
 
   printPreview(): void {

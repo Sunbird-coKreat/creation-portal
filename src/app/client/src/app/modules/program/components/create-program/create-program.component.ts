@@ -318,12 +318,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getCollectionCategoryDefinition() {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
-      this.objectCategoryDefinition = res.result.objectCategoryDefinition;
-      // tslint:disable-next-line:max-line-length
-      this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
-      console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
-    });
+    if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
+      this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+        this.objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resource, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+        console.log('firstLevelFolderLabel', this.firstLevelFolderLabel);
+      });
+    }
   }
 
 
