@@ -12,7 +12,7 @@ import { ContentService, UserService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import { ProgramStageService } from '../../../program/services';
 import { collectionComponentInput, collectionWithCard, searchCollectionResponse,
-   userProfile, addParticipentResponseSample, } from './collection.component.spec.data';
+   userProfile, addParticipentResponseSample, objectCategoryDefinition } from './collection.component.spec.data';
 import { of, throwError } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
@@ -275,6 +275,29 @@ describe('CollectionComponent', () => {
     expect(component.sessionContext.targetCollectionPrimaryCategory).toEqual('Digital Textbook');
     expect(helperService.setFrameworkCategories).toHaveBeenCalledWith(collectionData.result.content);
     expect(component.sessionContext.targetCollectionFrameworksData).toBe(frameworkData);
+  });
+
+  it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
+    component.programContext = {target_collection_category: 'Course'};
+    component['userService'] = TestBed.inject(UserService);
+    component.objectCategoryDefinition = undefined;
+    component.firstLevelFolderLabel = undefined;
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
+    expect(component.objectCategoryDefinition).toBeDefined();
+    expect(component.firstLevelFolderLabel).toBeDefined();
+  });
+  it('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
+    component.programContext = {target_collection_category: undefined};
+    component['userService'] = TestBed.inject(UserService);
+    component.objectCategoryDefinition = undefined;
+    component.firstLevelFolderLabel = undefined;
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCollectionCategoryDefinition).not.toHaveBeenCalled();
   });
 
 });

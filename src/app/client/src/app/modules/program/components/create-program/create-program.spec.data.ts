@@ -674,3 +674,44 @@ export const contentUploadComponentInput = {
     },
     unitIdentifier: 'do_1127639059664486401136'
   };
+  export const objectCategoryDefinition = {
+    'result': {
+        'objectCategoryDefinition': {
+            'identifier': 'obj-cat:course_collection_01309282781705830427',
+            'objectMetadata': {
+                'config': {
+                    'frameworkMetadata': {
+                        'orgFWType': [
+                            'K-12',
+                            'TPD'
+                        ],
+                        'targetFWType': [
+                            'K-12'
+                        ]
+                    },
+                    'sourcingSettings': {
+                        'collection': {
+                            'maxDepth': 4,
+                            'objectType': 'Collection',
+                            'primaryCategory': 'Course',
+                            'isRoot': true,
+                            'iconClass': 'fa fa-book',
+                            'children': {},
+                            'hierarchy': {
+                                'level1': {
+                                    'name': 'Course Unit',
+                                    'type': 'Unit',
+                                    'mimeType': 'application/vnd.ekstep.content-collection',
+                                    'contentType': 'CourseUnit',
+                                    'primaryCategory': 'Course Unit',
+                                    'iconClass': 'fa fa-folder-o',
+                                    'children': {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+  };

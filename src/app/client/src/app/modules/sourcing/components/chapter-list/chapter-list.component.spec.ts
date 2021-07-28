@@ -15,7 +15,7 @@ import { DatePipe } from '@angular/common';
 
 import {
   chapterListComponentInput, responseSample,
-  fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection
+  fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection, objectCategoryDefinition
 } from './chapter-list.component.spec.data';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -385,5 +385,28 @@ describe('ChapterListComponent', () => {
       spyOn(programsService, 'setTargetCollectionName').and.callThrough();
       component.setTargetCollectionValue();
       expect(programsService.setTargetCollectionName).toHaveBeenCalled();
+    });
+
+    it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
+      component.collection = {primaryCategory: 'Course'};
+      component.programContext = {rootorg_id: '12345'};
+      component.objectCategoryDefinition = undefined;
+      component.firstLevelFolderLabel = undefined;
+      component['programsService'] = TestBed.inject(ProgramsService);
+      spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+      component.getCollectionCategoryDefinition();
+      expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
+      expect(component.objectCategoryDefinition).toBeDefined();
+      expect(component.firstLevelFolderLabel).toBeDefined();
+    });
+    it('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
+      component.collection = {primaryCategory: undefined};
+      component.programContext = {rootorg_id: undefined};
+      component.objectCategoryDefinition = undefined;
+      component.firstLevelFolderLabel = undefined;
+      component['programsService'] = TestBed.inject(ProgramsService);
+      spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+      component.getCollectionCategoryDefinition();
+      expect(component['programsService'].getCollectionCategoryDefinition).not.toHaveBeenCalled();
     });
 });

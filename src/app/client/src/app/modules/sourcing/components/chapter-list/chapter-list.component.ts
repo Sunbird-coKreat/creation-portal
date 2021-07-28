@@ -371,16 +371,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getCollectionCategoryDefinition() {
-    this.programsService.getCollectionCategoryDefinition(this.collection.primaryCategory, this.programContext.rootorg_id).subscribe(res => {
-      this.objectCategoryDefinition = res.result.objectCategoryDefinition;
+    if (this.collection.primaryCategory && this.programContext.rootorg_id) {
       // tslint:disable-next-line:max-line-length
-      if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+      this.programsService.getCollectionCategoryDefinition(this.collection.primaryCategory, this.programContext.rootorg_id).subscribe(res => {
+        this.objectCategoryDefinition = res.result.objectCategoryDefinition;
         // tslint:disable-next-line:max-line-length
-      this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
-      } else {
-        this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
-      }
-    });
+        if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
+    }
   }
 
   fetchBlueprintTemplate(): void {
