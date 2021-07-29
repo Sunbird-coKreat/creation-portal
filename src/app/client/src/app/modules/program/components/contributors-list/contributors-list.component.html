@@ -14,7 +14,7 @@
     <thead class="sb-table-header sb-table-thead-gray">
       <tr>
         <th class="w-10 cursor-pointer sb-sorting" (click)="showFilteredResults()">
-          {{resource?.frmelmnts?.lbl?.user}} &nbsp;&nbsp;
+          {{resource?.frmelmnts?.lbl?.username}} &nbsp;&nbsp;
           <span *ngIf="sortColumn == 'name'" class="d-inline-block">
             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
