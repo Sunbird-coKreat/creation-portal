@@ -289,7 +289,9 @@ module.exports = function (app) {
     preserveHostHdr: true,
     limit: reqDataLimitOfContentUpload,
     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-    proxyReqPathResolver: proxyReqPathResolverMethod,
+    proxyReqPathResolver:  function(req) {
+      return require('url').parse(contentProxyUrl + req.originalUrl).path
+    },
     userResDecorator: userResDecorator
   }))
 
