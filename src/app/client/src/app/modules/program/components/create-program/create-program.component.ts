@@ -101,7 +101,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
   public firstLevelFolderLabel: string;
-  public objectCategoryDefinition: any;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -316,21 +315,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
-
-  getCollectionCategoryDefinition() {
-    if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
-      this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
-        this.objectCategoryDefinition = res.result.objectCategoryDefinition;
-        if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
-          // tslint:disable-next-line:max-line-length
-        this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
-        } else {
-          this.firstLevelFolderLabel = _.get(this.resource, 'frmelmnts.lbl.deafultFirstLevelFolders');
-        }
-      });
-    }
-  }
-
 
   getUploadVideo(videoId) {
     this.loading = false;
@@ -612,9 +596,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
-  fetchBlueprintTemplate(): void {
-    if (this.objectCategoryDefinition && this.objectCategoryDefinition.forms) {
-      this.blueprintTemplate = this.objectCategoryDefinition.forms.blueprintCreate;
+  getCollectionCategoryDefinition() {
+    if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
+      this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
+        }
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resource, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
     }
   }
 
@@ -677,7 +672,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
       this.getCollectionCategoryDefinition();
-      this.fetchBlueprintTemplate();
       this.showProgramScope = false;
       this.showTextBookSelector = false;
     }
@@ -966,10 +960,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.validateDates();
   }
 onChangeTargetCollection() {
-    this.getCollectionCategoryDefinition();
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
-    this.fetchBlueprintTemplate();
+    this.getCollectionCategoryDefinition();
     this.tempCollections = [];
 }
 showTexbooklist(showTextBookSelector = true) {

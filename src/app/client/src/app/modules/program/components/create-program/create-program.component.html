@@ -516,8 +516,7 @@
 																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
 														</th>
-														<th *ngIf="!blueprintTemplate" class="w-10">{{firstLevelFolderLabel}}</th>
-														<th *ngIf="blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.sections}}</th>
+														<th class="w-10">{{firstLevelFolderLabel}}</th>
 													</tr>
 												</thead>
 												<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
@@ -602,7 +601,7 @@
 																class="sb-color-primary fxsmall cursor-pointer text-none"
 																(click)="chooseChapters(tempCollection);">
 																<i
-																	class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl?.editFirstLevelFolders.replace('{FIRST_LEVEL_FOLDER}', firstLevelFolderLabel | titlecase)}}
+																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}
 															</div>
 															<div *ngIf="blueprintTemplate"
 																class="sb-color-primary fxsmall cursor-pointer text-none"
@@ -757,7 +756,7 @@
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-			{{blueprintTemplate ? resource?.frmelmnts?.lbl?.selectSections : resource?.frmelmnts?.lbl?.selectFirstLevelFolders.replace('{FIRST_LEVEL_FOLDER}', firstLevelFolderLabel | titlecase)}}
+			{{resource?.frmelmnts?.lbl?.selectFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}
 		</div>
 		<div class="sb-modal-content">
 			<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>
