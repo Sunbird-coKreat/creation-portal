@@ -81,14 +81,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public disableUpload = false;
   public showPublishModal= false;
   public showContributorsListModal = false;
-  public selectedContributors = {
-    Org:[],
-    User: []
-  };
-  public preSelectedContributors = {
-    Org:[],
-    User: []
-  };
   uploadedDocument;
   showAddButton = false;
   loading = false;
@@ -109,7 +101,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
-
+  public selectedContributors = {
+    Org:[],
+    User: []
+  };
+  public preSelectedContributors = {
+    Org:[],
+    User: []
+  };
+  public selectedContributorsCnt: number = 0;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -664,8 +664,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
       // this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
-      // this.projectType = _.get(this.programDetails, 'type') || 'public';
-      this.projectType = 'restricted';
+      this.projectType = _.get(this.programDetails, 'type') || 'public';
       if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
         this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
         this.editPublished = true;
@@ -716,7 +715,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), orgOsid => {
       return {
         osid: orgOsid,
-        isDisabled: this.editPublished && !temp ? true : false
+        isDisabled: (this.editPublished && !temp) ? true : false
       }
     });
     this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), userOsid => {
@@ -726,7 +725,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
 
-    debugger;
+    this.selectedContributorsCnt = this.preSelectedContributors.Org.length + this.preSelectedContributors.User.length;
   }
 
   saveProgramError(err) {
@@ -857,7 +856,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.programConfig['contributors'] = this.selectedContributors;
+    if (this.projectType === 'restricted') {
+      this.programConfig['contributors'] = this.selectedContributors;
+    }
+
     this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
     this.programData['createdby'] = this.userprofile.id;
@@ -993,6 +995,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (prgData['content_submission_enddate']) {
         prgData['content_submission_enddate'].setHours(23,59,59);
+      }
+
+      if (this.projectType === 'restricted') {
+        prgData['config'] = {
+          contributors: this.selectedContributors
+        };
       }
 
       this.programsService.updateProgram(prgData).subscribe(

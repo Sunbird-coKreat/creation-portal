@@ -22,22 +22,23 @@
         </th>
         <th class="w-5">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.email}}</th>
         <th class="w-5">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.mobile}}</th>
+        <th class="w-5">{{resource?.frmelmnts?.lbl?.createProject?.contributor.cls.type}}</th>
       </tr>
     </thead>
     <tbody class="sb-table-body">
       <tr *ngFor="let org of contributorList; let i = index;">
         <td>
-          <!-- {{selectedContributors['identifier']}} [formControl]="item" -->
-          <div class="sb-checkbox sb-checkbox-primary">
-            <input type="checkbox" value="{{org.osid}}" [(ngModel)]="org.isChecked">
-            <!-- {{selectedContributors['identifier']}} -->
-            <label for="" class="sb__ellipsis sb__ellipsis--three">{{org?.name}}</label>
+          <div [ngClass]="(org.isDisabled) ? 'disabled field':''" class="sb-checkbox sb-checkbox-primary">
+            <input id="{{org.osid}}"
+              [disabled]="org.isDisabled"
+              type="checkbox" value="{{org.osid}}" [(ngModel)]="org.isChecked">
+            <label for="{{org.osid}}" class="sb__ellipsis sb__ellipsis--three">{{org?.name}}</label>
           </div>
-          <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-          </div>
+          <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"></div>
         </td>
         <td><span>{{org?.User?.maskedEmail}}</span></td>
         <td><span>{{org?.User?.maskedPhone}}</span></td>
+        <td><span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.org}}</span></td>
       </tr>
     </tbody>
   </table>

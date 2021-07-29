@@ -116,8 +116,10 @@ export class ContributorsListComponent implements OnInit {
             ...userInfo
           };
           if (!_.isEmpty(_.get(this.preSelectedContributors, 'Org'))) {
-            if (_.find(_.get(this.preSelectedContributors, 'Org'), { 'osid': org.osid })) {
+            let preSelectedOrg = _.find(_.get(this.preSelectedContributors, 'Org'), { 'osid': org.osid });
+            if (preSelectedOrg) {
               org.isChecked = true;
+              org.isDisabled = preSelectedOrg.isDisabled;
             }
           }
           return org;
