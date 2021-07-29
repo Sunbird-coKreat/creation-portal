@@ -295,4 +295,21 @@ describe('ProgramNominationsComponent', () => {
       component.setFrameworkCategories(collection);
       expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
     });
+    it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
+      component['programDetails'] = {target_collection_category: 'Course'};
+      component['userService'] = TestBed.inject(UserService);
+      component.firstLevelFolderLabel = undefined;
+      spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
+      component.getCollectionCategoryDefinition();
+      expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
+      expect(component.firstLevelFolderLabel).toBeDefined();
+    });
+    it('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
+      component['programDetails'] = {target_collection_category: undefined};
+      component['userService'] = TestBed.inject(UserService);
+      component.firstLevelFolderLabel = undefined;
+      spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
+      component.getCollectionCategoryDefinition();
+      expect(component['programsService'].getCollectionCategoryDefinition).not.toHaveBeenCalled();
+    });
 });

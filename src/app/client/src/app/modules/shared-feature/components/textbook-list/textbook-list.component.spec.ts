@@ -103,7 +103,6 @@ describe('TextbookListComponent', () => {
     component['userService'] = TestBed.inject(UserService);
     component.objectCategoryDefinition = undefined;
     component.firstLevelFolderLabel = undefined;
-    component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
     expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
@@ -115,7 +114,6 @@ describe('TextbookListComponent', () => {
     component['userService'] = TestBed.inject(UserService);
     component.objectCategoryDefinition = undefined;
     component.firstLevelFolderLabel = undefined;
-    component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
     expect(component['programsService'].getCollectionCategoryDefinition).not.toHaveBeenCalled();
