@@ -306,7 +306,7 @@ describe('ProgramComponent', () => {
       expect(component.targetCollections).not.toBeUndefined();
   });
 
-  xit ('#setTargetCollectionValue() should not set targetCollection values', () => {
+  it ('#setTargetCollectionValue() should not set targetCollection values', () => {
     const  programsService  = TestBed.get(ProgramsService);
     spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
     component.programDetails = undefined;
