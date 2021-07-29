@@ -75,35 +75,42 @@
 							<div class="twelve wide column sb-field-group pt-0"
 								[ngClass]="(editPublished) ? 'disabled field':''">
 								<div class="sb-field-group mb-8">
-									<label class="fs-0-92">{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominations}}
-										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
-											popupDelay="500" [popupPlacement]="'right'"
-											popupText="{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominationsHint}}"></i>
-									</label>
+									<label class="fs-0-92">{{resource?.frmelmnts?.lbl?.howToGetContributionsToThisProject}}</label>
 									<div class="sb-field mt-4 d-flex">
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="yes" [disabled]="editPublished" type="radio"
-												name="openNominations" [checked]="isOpenNominations"
-												(click)="openForNominations(true)" appTelemetryInteract
+											<input id="public" [disabled]="editPublished" type="radio"
+												name="projectType" [checked]="projectType === 'public'"
+												(click)="setProjectType('public')" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
-											<label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
+											<label for="public">{{resource?.frmelmnts?.lbl?.contributionFromAnyOne}}</label>
 										</div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="no" [disabled]="editPublished" type="radio"
-												name="openNominations" [checked]="!isOpenNominations"
-												(click)="openForNominations(false)" appTelemetryInteract
+											<input id="restricted" [disabled]="editPublished" type="radio"
+												name="projectType" [checked]="projectType === 'restricted'"
+												(click)="setProjectType('restricted')" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
-											<label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
+											<label for="restricted">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
+										</div>
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+											<input id="private" [disabled]="editPublished" type="radio"
+												name="projectType" [checked]="projectType === 'private'"
+												(click)="setProjectType('private')" appTelemetryInteract
+												[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												[telemetryInteractObject]="telemetryInteractObject"
+												[telemetryInteractCdata]="telemetryInteractCdata"
+												[telemetryInteractPdata]="telemetryInteractPdata">
+											<label for="private">{{resource?.frmelmnts?.lbl?.contributionFromYourOrgOnly}}</label>
 										</div>
 									</div>
 								</div>
 							</div>
+							<a *ngIf="projectType === 'restricted'" (click)="openContributorListPopup()">{{resource?.frmelmnts?.lbl?.selectToContributor}}</a>
 							<div class="twelve wide column" [ngClass]="(editPublished) ? 'disabled field':''">
 								<div class="sb-checkbox sb-checkbox-primary">
 									<input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
@@ -119,7 +126,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column"
-								*ngIf="isOpenNominations === true">
+								*ngIf="projectType === 'public'">
 								<div class="required field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -142,7 +149,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column"
-								*ngIf="isOpenNominations === true">
+								*ngIf="projectType === 'public'">
 								<div class="field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationShortlistingDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -818,19 +825,19 @@
 	<div class="sb-modal-header">
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
-	<div class="sb-modal-content">		
+	<div class="sb-modal-content">
 		<div class="segment mt-5 pb-30 pt-10">
 			<form class="ui form sb-dock-dropdown">
-				<div class="ui grid">	
+				<div class="ui grid">
 					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
 						<div class="field">
 							<label class="d-inline-block fs-0-925 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
 							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  	autofocus />
 							<sui-multi-select #multiselect *ngIf="property.inputType === 'multiSelect' && !property.children" class="selection p-5 b-100 min-w-0"
 								[isSearchable]=true (selectedOptionsChange)="property.code === 'topics' ? onChangeTopics() : null"
-								name="{{property.code}}"								
+								name="{{property.code}}"
 								[options]="property.options ? property.options : []"
-								[(ngModel)]="localBlueprint[property.code]" 
+								[(ngModel)]="localBlueprint[property.code]"
 								labelField="name"
 								>
 								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
@@ -839,7 +846,7 @@
 								<div *ngFor="let child of property.children" class="pl-10 w-60">
 									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
 									<input #nestedText type="text" class="sb-form-control" name="{{child.code}}" [(ngModel)]="localBlueprint[property.code][child.code]"  />
-									<!-- <sui-select class="selection p-5 b-100 min-w-0" #nestedSelect 
+									<!-- <sui-select class="selection p-5 b-100 min-w-0" #nestedSelect
 									name="{{child.code}}"
 									[isSearchable]=false (selectedOptionChange)="onChangeBlueprint()"
 									[options]="property.options ? property.options : []"
@@ -854,9 +861,9 @@
 								name="{{property.code}}"
 								[(ngModel)]="localBlueprint[property.code]">
 								<sui-select-option *ngFor="let option of select.filteredOptions" [value]="option.name ? option.name : option" ></sui-select-option>
-							</sui-select>							
+							</sui-select>
 						</div>
-					</div>	
+					</div>
 					<label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{totalQuestions() || 0}}</label>
 				</div>
 			</form>
@@ -888,4 +895,9 @@
 			[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 			[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.no}}</button>
 	</div>
+</sui-modal>
+<div>
+<sui-modal *ngIf="showContributorsListModal"  [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'"
+	class="sb-modal" appBodyScroll (dismissed)="closeContributorListPopup()" #modal>
+	<app-contributors-list [preSelectedContributors]="preSelectedContributors" (onContributorSave)="onContributorSave($event)"></app-contributors-list>
 </sui-modal>

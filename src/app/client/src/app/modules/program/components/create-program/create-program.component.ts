@@ -5,7 +5,7 @@ import {
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
+import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -80,10 +80,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
   public showPublishModal= false;
+  public showContributorsListModal = false;
+  public selectedContributors = {
+    Org:[],
+    User: []
+  };
+  public preSelectedContributors = {
+    Org:[],
+    User: []
+  };
   uploadedDocument;
   showAddButton = false;
   loading = false;
-  isOpenNominations = true;
   isClosable = true;
   uploader;
   acceptPdfType: any;
@@ -91,6 +99,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   showErrorMsg = false;
   assetConfig: any = this.configService.contentCategoryConfig.sourcingConfig.asset;
   localBlueprintMap: any;
+  projectType: String = "public";
   public programConfig: any;
   public localBlueprint: any;
   public blueprintTemplate: any;
@@ -100,6 +109,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+
 
   constructor(
     public frameworkService: FrameworkService,
@@ -366,6 +376,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }), map(data => data));
   }
 
+  onContributorSave(contributors) {
+    this.selectedContributors = contributors;
+    this.closeContributorListPopup();
+    this.setPreSelectedContributors(contributors, true);
+  }
+
   sortCollection(column) {
     this.collections = this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
     this.direction = (this.direction === 'asc' || this.direction === '') ? 'desc' : 'asc';
@@ -549,9 +565,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
   }
 
+/*
   openForNominations(status) {
-    this.isOpenNominations = status;
+    // this.isOpenNominations = status;
     if (status) {
+      this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
+    } else {
+      this.createProgramForm.controls['nomination_enddate'].clearValidators();
+      this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
+      this.createProgramForm.controls['nomination_enddate'].setValue(null);
+      this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
+    }
+    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
+  }
+*/
+
+  setProjectType(type) {
+    this.projectType = type;
+    // this.isOpenNominations = status;
+    if (type === 'public') {
       this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
     } else {
       this.createProgramForm.controls['nomination_enddate'].clearValidators();
@@ -630,8 +663,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       target_collection_category: [null, Validators.required],
     });
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
-      this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
-
+      // this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
+      // this.projectType = _.get(this.programDetails, 'type') || 'public';
+      this.projectType = 'restricted';
       if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
         this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
         this.editPublished = true;
@@ -654,7 +688,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editPublished })
       };
 
-      if (this.isOpenNominations === true) {
+      // if (this.isOpenNominations === true) {
+      if (this.projectType === 'public') {
         // tslint:disable-next-line: max-line-length
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null, Validators.required];
       } else {
@@ -667,10 +702,31 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.fetchBlueprintTemplate();
       this.showProgramScope = false;
       this.showTextBookSelector = false;
+
+      if (!_.isEmpty(_.get(this.programDetails, 'config.contributors'))) {
+        this.setPreSelectedContributors(_.get(this.programDetails, 'config.contributors'));
+      }
     }
 
     this.showLoader = false;
     this.isFormValueSet = true;
+  }
+
+  setPreSelectedContributors(contributors, temp: boolean = false) {
+    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), orgOsid => {
+      return {
+        osid: orgOsid,
+        isDisabled: this.editPublished && !temp ? true : false
+      }
+    });
+    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), userOsid => {
+      return {
+        osid: userOsid,
+        isDisabled: this.editPublished && !temp ? true : false
+      }
+    });
+
+    debugger;
   }
 
   saveProgramError(err) {
@@ -697,7 +753,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const programEndDate = moment(formData.program_end_date);
     const today = moment(moment().format('YYYY-MM-DD'));
 
-    if (this.isOpenNominations) {
+    // if (this.isOpenNominations) {
+    if (this.projectType === 'public') {
       // nomination date should be >= today
       if (!nominationEndDate.isSameOrAfter(today) && !this.editPublished) {
         this.toasterService.error(this.resource.messages.emsg.createProgram.m0001);
@@ -748,7 +805,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setValidations() {
-    this.openForNominations(this.isOpenNominations);
+    // this.openForNominations(this.isOpenNominations);
+    this.setProjectType(this.projectType);
     this.createProgramForm.controls['description'].setValidators(Validators.required);
     this.createProgramForm.controls['description'].updateValueAndValidity();
     this.createProgramForm.controls['program_end_date'].setValidators(Validators.required);
@@ -799,13 +857,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
 
+    this.programConfig['contributors'] = this.selectedContributors;
     this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userprofile.rootOrgId;
     this.programData['createdby'] = this.userprofile.id;
     this.programData['createdon'] = new Date();
     this.programData['startdate'] = new Date();
     this.programData['slug'] = 'sunbird';
-    this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
+    // this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
+    this.programData['type'] = this.projectType;
     this.programData['default_roles'] = ['CONTRIBUTOR'];
     this.programData['enddate'] = this.programData.program_end_date;
     // tslint:disable-next-line: max-line-length
@@ -913,7 +973,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       delete prgData.program_end_date;
       delete prgData.targetPrimaryCategories;
 
-      if (this.isOpenNominations === false) {
+      // if (this.isOpenNominations === false) {
+      if (this.projectType === 'private' || this.projectType === 'restricted') {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
@@ -1555,7 +1616,8 @@ showTexbooklist(showTextBookSelector = true) {
           }
         };
 
-        if (this.isOpenNominations) {
+        // if (this.isOpenNominations) {
+        if (this.projectType === 'public') {
           this.programsService.publishProgram(data).subscribe(res => {
             this.generateTelemetryEndEvent('publish');
             this.toasterService.success(
@@ -1603,5 +1665,13 @@ showTexbooklist(showTextBookSelector = true) {
       }
     };
     this.saveProgram(cb);
+  }
+
+  openContributorListPopup() {
+    this.showContributorsListModal = true;
+  }
+
+  closeContributorListPopup() {
+    this.showContributorsListModal = false;
   }
 }
