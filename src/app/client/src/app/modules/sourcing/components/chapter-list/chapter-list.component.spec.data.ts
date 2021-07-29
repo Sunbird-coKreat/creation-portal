@@ -405,7 +405,28 @@ export const objectCategoryDefinition = {
                       }
                   }
               }
-          }
+          },
+          'forms': {
+            'blueprintCreate': {
+                'templateName': '',
+                'required': [],
+                'properties': [
+                    {
+                        'code': 'topics',
+                        'dataType': 'list',
+                        'description': '',
+                        'editable': true,
+                        'index': 0,
+                        'inputType': 'multiSelect',
+                        'label': 'Chapters',
+                        'name': 'Chapters',
+                        'placeholder': 'Please select chapters',
+                        'renderingHints': {},
+                        'required': true
+                    }
+                ]
+            }
       }
   }
+}
 };

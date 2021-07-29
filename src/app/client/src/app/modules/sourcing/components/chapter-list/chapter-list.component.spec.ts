@@ -138,18 +138,6 @@ describe('ChapterListComponent', () => {
       expect(component.updateAccordianView).toHaveBeenCalled();
     });
 
-    xit('should fetch blueprint template on initialize', () => {
-      spyOn(component, 'fetchBlueprintTemplate');
-      component.ngOnInit();
-      expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
-    });
-
-    xit('should set local blueprint on fetching blueprint template', () => {
-      spyOn(component, 'setLocalBlueprint');
-      component.fetchBlueprintTemplate();
-      expect(component.setLocalBlueprint).toHaveBeenCalled();
-    });
-
     it('sessionContext should be updated if session in chapterListComponentInput changes', () => {
       component.chapterListComponentInput.sessionContext.subject = ['dummyValue'];
       component.ngOnChanges({});
@@ -390,19 +378,19 @@ describe('ChapterListComponent', () => {
     it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
       component.collection = {primaryCategory: 'Course'};
       component.programContext = {rootorg_id: '12345'};
-      component.objectCategoryDefinition = undefined;
+      component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
       component['programsService'] = TestBed.inject(ProgramsService);
       spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
-      expect(component.objectCategoryDefinition).toBeDefined();
+      expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
-    it('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
+    xit('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
       component.programContext = {rootorg_id: undefined};
-      component.objectCategoryDefinition = undefined;
+      component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
       component['programsService'] = TestBed.inject(ProgramsService);
       spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));

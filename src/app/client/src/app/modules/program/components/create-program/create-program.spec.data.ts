@@ -735,4 +735,4 @@ export const contentUploadComponentInput = {
         }
     }
   }
-};
+  };
