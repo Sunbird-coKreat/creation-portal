@@ -360,6 +360,7 @@ describe('ChapterListComponent', () => {
       const  programsService  = TestBed.get(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
       component.programContext = undefined;
+      component.targetCollection = undefined;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).toBeUndefined();
