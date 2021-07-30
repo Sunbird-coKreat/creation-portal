@@ -17,13 +17,16 @@ import { CollectionComponent, DashboardComponent } from '../sourcing';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
+import { PlayerHelperModule } from '@sunbird/player-helper';
+import { MyContentComponent } from './components/my-content/my-content.component';
 
 @NgModule({
   declarations: [
     ProgramComponent,
     OnboardPopupComponent,
     ProgramHeaderComponent,
-    OrgUserListComponent],
+    OrgUserListComponent,
+    MyContentComponent],
   imports: [
     SuiModule,
     CommonModule,
@@ -38,6 +41,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
     TelemetryModule,
     SourcingModule,
     SharedFeatureModule,
+    PlayerHelperModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [

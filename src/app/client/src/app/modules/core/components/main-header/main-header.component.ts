@@ -148,6 +148,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('manageUsers');
     } else if (this.router.isActive('/contribute/help', true) || this.router.isActive('/sourcing/help', true)) {
       this.handleActiveTabState('contributorHelp');
+    } else if (this.router.isActive('/contribute/mycontent', true)) {
+      this.handleActiveTabState('myContent');
     } else if (this.router.isActive('/sourcing/orgreports', true)) {
       this.handleActiveTabState('organisationReports');
     } else {
@@ -380,7 +382,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
        this.handleActiveTabState('manageUsers');
      } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
       this.handleActiveTabState('myPrograms');
-     } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
+    } else if (this.location.path() === '/contribute/mycontent') {
+      this.handleActiveTabState('myContent');
+    } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
       this.handleActiveTabState('contributorHelp');
     } else if (this.location.path() === '/sourcing/orgreports') {
       this.handleActiveTabState('organisationReports');
