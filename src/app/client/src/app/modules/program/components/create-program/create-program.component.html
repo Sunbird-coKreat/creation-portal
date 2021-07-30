@@ -107,17 +107,19 @@
 												<label
 													for="restricted">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
 											</div>
-											<span *ngIf="projectType === 'restricted'">
-												<a *ngIf="selectedContributorsCnt <= 0"
-													class="sb-color-primary cursor-pointer fs-0-785 pl-20"
-													(click)="openContributorListPopup()">{{resource?.frmelmnts?.lbl?.selectToContributor}}</a>
-												<a *ngIf="selectedContributorsCnt > 0"
-													class="cursor-pointer fs-0-785 pl-20"
-													(click)="openContributorListPopup()">
-													<span>{{selectedContributorsCnt}}</span>&nbsp;
-													<span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.added}}</span> (edit icon)
-													<i class="icon edit sb-color-primary cursor-pointer ui fs-0-785 px-5 va-text-sup"
-														data-tooltip="Modify"></i></a>
+											<span *ngIf="projectType === 'restricted'"
+												class="fs-0-785 pl-20 cursor-pointer"
+												(click)="openContributorListPopup()">
+												<span *ngIf="selectedContributorsCnt <= 0"
+													class="sb-color-primary">{{resource?.frmelmnts?.lbl?.selectToContributor}}</span>
+												<div *ngIf="selectedContributorsCnt > 0" class="px-0 d-inline-block">
+													<em><span>{{selectedContributorsCnt}}</span>&nbsp;
+														<span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.added}}</span></em>
+													<div class="sb-dock-icon-tooltip d-inline-block">
+														<i class="icon edit sb-color-primary ui px-5"
+															data-tooltip="Modify"></i>
+													</div>
+												</div>
 											</span>
 										</div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary pr-20"

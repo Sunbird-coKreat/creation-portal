@@ -377,9 +377,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   onContributorSave(contributors) {
-    this.selectedContributors = contributors;
-    this.closeContributorListPopup();
     this.setPreSelectedContributors(contributors, true);
+    this.closeContributorListPopup();
   }
 
   sortCollection(column) {
@@ -712,6 +711,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setPreSelectedContributors(contributors, temp: boolean = false) {
+    this.selectedContributors = contributors;
     this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), orgOsid => {
       return {
         osid: orgOsid,

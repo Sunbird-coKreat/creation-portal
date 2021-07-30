@@ -14,7 +14,7 @@ import { Output, EventEmitter } from '@angular/core';
   styleUrls: ['./contributors-list.component.scss']
 })
 export class ContributorsListComponent implements OnInit {
-  direction = 'asc';
+  direction = '';
   sortColumn = 'name';
   orgList: any;
   contributorList: any;
