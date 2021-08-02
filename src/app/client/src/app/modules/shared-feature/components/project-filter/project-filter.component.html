@@ -94,7 +94,7 @@
           <div class="six wide column py-10">
             <div class="field">
               <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.targetCollection}}</label>
-                <sui-select formControlName="target_collection_category" [(ngModel)]="setPreferences['target_collection_category']"
+                <sui-multi-select formControlName="target_collection_category" [(ngModel)]="setPreferences['target_collection_category']"
                   valueField="code" labelField="name" [options]="currentFilters['target_collection_category']"
                   placeholder="{{resourceService?.frmelmnts?.lbl?.selectTargetCollection}}" class="selection p-5 b-100"
                   #targetCollectionCategories
@@ -104,7 +104,7 @@
                   [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let targetCollectionCategory of targetCollectionCategories.filteredOptions" [value]="targetCollectionCategory">
                 </sui-select-option>
-              </sui-select>
+              </sui-multi-select>
             </div>
           </div>
           <div class="six wide column py-10" *ngIf="showFilters['nomination_date']">
