@@ -8,7 +8,7 @@
       <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="Search..." />
       <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
     </div>
-    <button class="sb-btn sb-btn-normal" (click)="showFilteredResults()">{{resource?.frmelmnts?.lbl?.search}}</button>
+    <button class="sb-btn sb-btn-normal" (click)="search()">{{resource?.frmelmnts?.lbl?.search}}</button>
   </div>
   <table *ngIf="!showLoader" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
     <thead class="sb-table-header sb-table-thead-gray">
@@ -43,7 +43,7 @@
     </tbody>
   </table>
   <div *ngIf="listCnt > 0 && pager.totalPages > 1 && !showLoader"
-    class="sb-pagination-container flex-jc-flex-end pt-16">
+    class="sb-pagination-container flex-jc-flex-start pt-16">
     <div class="sb-pagination">
       <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_fist-page', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"

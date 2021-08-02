@@ -1,3 +1,4 @@
+import { UserService } from './../../../core/services/user/user.service';
 import { style } from '@angular/animations';
 import { map, isEmpty } from 'rxjs/operators';
 import { RegistryService, ProgramsService } from '@sunbird/core';
@@ -17,9 +18,8 @@ export class ContributorsListComponent implements OnInit {
   direction = '';
   sortColumn = 'name';
   orgList: any;
-  contributorList: any;
-  orgListOffset = 0;
-  orgListLimit = 100;
+  contributorList: any = [];
+  paginatedList: any = [];
   public listCnt = 0;
   pager: IPagination;
   pageNumber = 1;
@@ -33,16 +33,18 @@ export class ContributorsListComponent implements OnInit {
     User: []
   };
 
-  constructor(public resource: ResourceService, public registryService: RegistryService, public programsService: ProgramsService, public paginationService: PaginationService, public configService: ConfigService) { }
+  constructor(public resource: ResourceService, public registryService: RegistryService, public programsService: ProgramsService, public paginationService: PaginationService, public configService: ConfigService, public userService: UserService) { }
 
   ngOnInit(): void {
-    this.getOrgList(this.orgListLimit, this.orgListOffset);
+    this.getOrgList();
     this.pageLimit = this.registryService.programUserPageLimit;
+    // this.pageLimit = 20;
+    console.log(this.userService.userProfile);
   }
 
-  getOrgList(limit?, offset?) {
-    this.registryService.getOrgList(limit, offset).subscribe(data => {
-      this.orgList = _.get(data, 'result.Org') || [];
+  getOrgList() {
+    this.registryService.getOrgList().subscribe(data => {
+      this.orgList = _.filter(_.get(data, 'result.Org'), (org) => (org.orgId !== this.userService.rootOrgId && _.includes(org.type, 'contribute')));
       // Org creator user open saber ids
       const orgCreatorOsIds = _.map(this.orgList, (org) => org.createdBy);
       this.getOrgCreatorDikshaIds(orgCreatorOsIds);
@@ -94,8 +96,8 @@ export class ContributorsListComponent implements OnInit {
       return;
     }
     this.pageNumber = page;
-    // this.contributorOrgUsers = this.paginatedContributorOrgUsers[this.pageNumber -1];
-    this.pager = this.paginationService.getPager(this.orgList, this.pageNumber, this.pageLimit);
+    this.contributorList = this.paginatedList[this.pageNumber - 1];
+    this.pager = this.paginationService.getPager(this.listCnt, this.pageNumber, this.pageLimit);
   }
 
   getOrgUsersDetails(orgCreatorDikshaIds) {
@@ -153,6 +155,12 @@ export class ContributorsListComponent implements OnInit {
 
   clearSearch() {
     this.searchInput = '';
+    this.pageNumber = 1;
+    this.showFilteredResults();
+  }
+
+  search() {
+    this.pageNumber = 1;
     this.showFilteredResults();
   }
 
@@ -186,29 +194,11 @@ export class ContributorsListComponent implements OnInit {
 
   applyPagination(list) {
     this.listCnt = list.length;
-    const paginatedList = _.chunk(list, this.pageLimit);
+    this.paginatedList = _.chunk(list, this.pageLimit);
     this.pager = this.paginationService.getPager(this.listCnt, this.searchInput ? 1 : this.pageNumber, this.pageLimit);
-    return this.searchInput ? paginatedList[0] : paginatedList[this.pageNumber - 1];
-    // this.orgUserscnt = usersList.length;
-    // this.allContributorOrgUsers = this.programsService.sortCollection(usersList, this.sortColumn, this.direction);
-    // isUserSearch ? this.allContributorOrgUsers:  this.initialSourcingOrgUser =  this.allContributorOrgUsers
-    // usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
-    // this.paginatedContributorOrgUsers = usersList;
-    // this.contributorOrgUsers = isUserSearch ? usersList[0] : usersList[this.pageNumber-1];
-    // this.logTelemetryImpressionEvent();
-    // this.pager = this.paginationService.getPager(this.orgUserscnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
-
+    return this.searchInput ? this.paginatedList[0] : this.paginatedList[this.pageNumber - 1];
   }
 
-  sortUsersList(usersList, isUserSearch?) {
-    // this.orgUserscnt = usersList.length;
-    // isUserSearch ? this.allContributorOrgUsers:  this.initialSourcingOrgUser =  this.allContributorOrgUsers
-    // usersList = _.chunk(this.allContributorOrgUsers, this.pageLimit);
-    // this.paginatedContributorOrgUsers = usersList;
-    // this.contributorOrgUsers = isUserSearch ? usersList[0] : usersList[this.pageNumber-1];
-    // this.logTelemetryImpressionEvent();
-    // this.pager = this.paginationService.getPager(this.orgUserscnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
-  }
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,
