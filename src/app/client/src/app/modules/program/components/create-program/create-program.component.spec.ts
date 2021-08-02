@@ -126,7 +126,6 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeFormFields).toHaveBeenCalled();
   });
   xit('Should call the onChangeTargetCollection method', () => {
-    // component.callTargetCollection = true;
     component.collectionListForm.value.pcollections = '';
     spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
     spyOn(component, 'showTexbooklist').and.callFake(() => {});
