@@ -79,7 +79,6 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public disableNominate = false;
   public targetCollection: string;
   public targetCollections: string;
-  public objectCategoryDefinition: any;
   public firstLevelFolderLabel: string;
   constructor(public configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
@@ -397,10 +396,10 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.programContext.target_collection_category && this.userService.userProfile.rootOrgId) {
       // tslint:disable-next-line:max-line-length
       this.programsService.getCollectionCategoryDefinition(this.programContext.target_collection_category, this.userService.userProfile.rootOrgId).subscribe(res => {
-        this.objectCategoryDefinition = res.result.objectCategoryDefinition;
-        if (_.has(res.result.objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
-        this.firstLevelFolderLabel = res.result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
         } else {
           this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }

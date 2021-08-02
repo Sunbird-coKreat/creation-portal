@@ -268,7 +268,6 @@ describe('ProgramNominationsComponent', () => {
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).not.toBeUndefined();
-      expect(component.targetCollections).not.toBeUndefined();
     });
     it ('#setTargetCollectionValue() should not set targetCollection values', () => {
       const  service  = TestBed.get(ProgramsService);
@@ -277,7 +276,6 @@ describe('ProgramNominationsComponent', () => {
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).toBeUndefined();
-      expect(component.targetCollections).toBeUndefined();
       });
     it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
       const  service  = TestBed.get(ProgramsService);

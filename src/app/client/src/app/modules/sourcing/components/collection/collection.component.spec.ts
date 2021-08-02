@@ -280,19 +280,16 @@ describe('CollectionComponent', () => {
   it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
     component.programContext = {target_collection_category: 'Course'};
     component['userService'] = TestBed.inject(UserService);
-    component.objectCategoryDefinition = undefined;
     component.firstLevelFolderLabel = undefined;
     component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
     expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
-    expect(component.objectCategoryDefinition).toBeDefined();
     expect(component.firstLevelFolderLabel).toBeDefined();
   });
   it('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
     component.programContext = {target_collection_category: undefined};
     component['userService'] = TestBed.inject(UserService);
-    component.objectCategoryDefinition = undefined;
     component.firstLevelFolderLabel = undefined;
     component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));

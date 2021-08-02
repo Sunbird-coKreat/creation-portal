@@ -100,18 +100,15 @@ describe('TextbookListComponent', () => {
   it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
     component['programDetails'] = {target_collection_category: 'Course'};
     component['userService'] = TestBed.inject(UserService);
-    component.objectCategoryDefinition = undefined;
     component.firstLevelFolderLabel = undefined;
     spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
     expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
-    expect(component.objectCategoryDefinition).toBeDefined();
     expect(component.firstLevelFolderLabel).toBeDefined();
   });
   xit('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
     component.programDetails.target_collection_category = undefined;
     component['userService'] = TestBed.inject(UserService);
-    component.objectCategoryDefinition = undefined;
     component.firstLevelFolderLabel = undefined;
     spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
