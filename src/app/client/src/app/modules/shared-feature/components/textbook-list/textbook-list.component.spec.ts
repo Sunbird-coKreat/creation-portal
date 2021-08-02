@@ -61,7 +61,6 @@ describe('TextbookListComponent', () => {
     component = fixture.componentInstance;
     programsService = TestBed.inject(ProgramsService);
     collectionHierarchyService = TestBed.get(CollectionHierarchyService);
-
     // fixture.detectChanges();
   });
 
