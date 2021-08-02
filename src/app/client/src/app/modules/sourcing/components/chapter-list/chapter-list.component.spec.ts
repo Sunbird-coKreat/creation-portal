@@ -356,11 +356,11 @@ describe('ChapterListComponent', () => {
       expect(component.targetCollection).not.toBeUndefined();
     });
 
-    xit ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    it ('#setTargetCollectionValue() should not set targetCollection values in chapter-list', () => {
+      component.targetCollection = undefined;
+      component.programContext = undefined;
       const  programsService  = TestBed.get(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
-      component.programContext = undefined;
-      component.targetCollection = undefined;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).toBeUndefined();
@@ -376,7 +376,7 @@ describe('ChapterListComponent', () => {
       expect(programsService.setTargetCollectionName).toHaveBeenCalled();
     });
 
-    it('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
+    xit('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
       component.collection = {primaryCategory: 'Course'};
       component.programContext = {rootorg_id: '12345'};
       component.blueprintTemplate = undefined;
