@@ -598,7 +598,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   getCollectionCategoryDefinition() {
     if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
-      this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;

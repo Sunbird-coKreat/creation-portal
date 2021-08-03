@@ -376,26 +376,26 @@ describe('ChapterListComponent', () => {
       expect(programsService.setTargetCollectionName).toHaveBeenCalled();
     });
 
-    xit('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
+    xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: 'Course'};
       component.programContext = {rootorg_id: '12345'};
       component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
       component['programsService'] = TestBed.inject(ProgramsService);
-      spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+      spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
-      expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
+      expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
       expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
-    xit('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
+    xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
       component.programContext = {rootorg_id: undefined};
       component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
       component['programsService'] = TestBed.inject(ProgramsService);
-      spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+      spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
-      expect(component['programsService'].getCollectionCategoryDefinition).not.toHaveBeenCalled();
+      expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
     });
 });

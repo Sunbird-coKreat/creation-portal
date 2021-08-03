@@ -147,26 +147,26 @@ describe('CreateProgramComponent', () => {
     expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one collection');
     expect(component.disableCreateProgramBtn).toBeFalsy();
   });
-  xit('#getCollectionCategoryDefinition() Should call programsService.getCollectionCategoryDefinition() method', () => {
+  xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
     component.selectedTargetCollection = 'Course';
     component.userprofile = {rootOrgId: '12345'};
     component.blueprintTemplate = undefined;
     component.firstLevelFolderLabel = undefined;
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(mockData.objectCategoryDefinition));
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(mockData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
-    expect(component['programsService'].getCollectionCategoryDefinition).toHaveBeenCalled();
+    expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
     expect(component.blueprintTemplate).toBeDefined();
     expect(component.firstLevelFolderLabel).toBeDefined();
   });
-  xit('#getCollectionCategoryDefinition() Should not call programsService.getCollectionCategoryDefinition() method', () => {
+  xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
     component.selectedTargetCollection = undefined;
     component.userprofile = {rootOrgId: undefined};
     component.blueprintTemplate = undefined;
     component.firstLevelFolderLabel = undefined;
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'getCollectionCategoryDefinition').and.returnValue(of(mockData.objectCategoryDefinition));
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(mockData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
-    expect(component['programsService'].getCollectionCategoryDefinition).not.toHaveBeenCalled();
+    expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
   });
 });
