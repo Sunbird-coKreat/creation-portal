@@ -23,8 +23,8 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.textbookLevelContentGaps}}</td>
-                    <td>{{resourceService.frmelmnts.lbl.textbookLevelReportGapDescription}}</td>
+                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.collectionLevelContentGaps}}</td>
+                    <td>{{resourceService.frmelmnts.lbl.collectionLevelReportGapDescription}}</td>
                     <td class="text-center">
                       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('TextbookLevel', true);" 
                       appTelemetryInteract
@@ -34,8 +34,8 @@
                       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
                 </tr>
                 <tr>
-                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.chapterLevelContentGaps}}</td>
-                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportGapDescription}}</td>
+                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.folderLevelContentGaps}}</td>
+                    <td>{{resourceService.frmelmnts.lbl.folderLevelReportGapDescription}}</td>
                     <td class="text-center">
                       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ChapterLevel', true);" 
                       appTelemetryInteract

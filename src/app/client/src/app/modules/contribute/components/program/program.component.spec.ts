@@ -297,23 +297,23 @@ describe('ProgramComponent', () => {
     });
 
     it ('#setTargetCollectionValue() should set targetCollection values', () => {
+      component.targetCollections = undefined;
+      component.programDetails = programDetailsTargetCollection;
       const  programsService  = TestBed.get(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
-      component.programDetails = programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).not.toBeUndefined();
-      expect(component.targetCollections).not.toBeUndefined();
   });
 
   it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    component.targetCollections = undefined;
+    component.programDetails = undefined;
     const  programsService  = TestBed.get(ProgramsService);
     spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
-    component.programDetails = undefined;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     component.setTargetCollectionValue();
     expect(component.targetCollection).toBeUndefined();
-    expect(component.targetCollections).toBeUndefined();
   });
 
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
