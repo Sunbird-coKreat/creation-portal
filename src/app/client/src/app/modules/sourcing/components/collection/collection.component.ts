@@ -79,6 +79,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
   public disableNominate = false;
   public targetCollection: string;
   public targetCollections: string;
+  public firstLevelFolderLabel: string;
   constructor(public configService: ConfigService, public publicDataService: PublicDataService,
     public actionService: ActionService,
     private sourcingService: SourcingService, private collectionHierarchyService: CollectionHierarchyService,
@@ -104,6 +105,7 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
     this.collectionComponentConfig = _.get(this.collectionComponentInput, 'config');
     this.programContext = _.get(this.collectionComponentInput, 'programContext');
     this.setTargetCollectionValue();
+    this.getCollectionCategoryDefinition();
     this.sharedContext = this.collectionComponentInput.programContext.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: this.getSharedContextObjectProperty(context)};
     }, {});
@@ -388,6 +390,21 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
           this.showError = true;
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }));
+  }
+
+  getCollectionCategoryDefinition() {
+    if (this.programContext.target_collection_category && this.userService.userProfile.rootOrgId) {
+      // tslint:disable-next-line:max-line-length
+      this.programsService.getCategoryDefinition(this.programContext.target_collection_category, this.userService.userProfile.rootOrgId).subscribe(res => {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
+    }
   }
 
   addCardImage(collection) {

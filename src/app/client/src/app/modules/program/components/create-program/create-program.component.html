@@ -649,64 +649,164 @@
 																<i class="fa fa-sort-desc" aria-hidden="true"
 																	[ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
 															</span>
-                    </th>
-                    <th *ngIf="!blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.chapters}}</th>
-                    <th *ngIf="blueprintTemplate" class="w-10">{{resource?.frmelmnts?.lbl?.sections}}</th>
-                  </tr>
-                  </thead>
-                  <tbody class="sb-table-body d-block w-100 o-y-auto max-height">
-                  <tr *ngFor="let data of collections">
-                    <td class="collapsing">
-                      <div class="sb-checkbox sb-checkbox-primary">
-                        <input type="checkbox"
-                               id="checkitem_{{data.identifier}}"
-                               (change)="onCollectionCheck(data, $event.target.checked)"
-                               [checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
-                               name="checkitem" appTelemetryInteract
-                               [telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [data.identifier]})"
-                               [telemetryInteractObject]="telemetryInteractObject"
-                               [telemetryInteractCdata]="telemetryInteractCdata"
-                               [telemetryInteractPdata]="telemetryInteractPdata">
-                        <label for="checkitem_{{data.identifier}}"></label>
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold break-word-initial">
-                        {{data.name}}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="sb__ellipsis sb__ellipsis--three">
-                        {{data.medium}}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="sb__ellipsis sb__ellipsis--three">
-                        {{data.gradeLevel}}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="sb__ellipsis sb__ellipsis--three">
-                        {{data.subject}}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="sb__ellipsis sb__ellipsis--three">
-                        {{ data.childNodes ? data.childNodes.length : 0 }}
-                      </div>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</sui-modal>
+														</th>
+														<th class="w-10">{{firstLevelFolderLabel}}</th>
+													</tr>
+												</thead>
+												<tbody class="sb-table-body d-block w-100 o-y-auto max-height">
+													<tr *ngFor="let data of collections">
+														<td class="collapsing">
+															<div class="sb-checkbox sb-checkbox-primary">
+																<input type="checkbox"
+																	id="checkitem_{{data.identifier}}"
+																	(change)="onCollectionCheck(data, $event.target.checked)"
+																	[checked]="collectionListForm.value.pcollections.indexOf(data.identifier) != -1"
+																	name="checkitem" appTelemetryInteract
+																	[telemetryInteractEdata]="getTelemetryInteractEdata('textbook_selection_checkbox', configService.telemetryLabels.eventType.click, undefined, configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [data.identifier]})"
+																	[telemetryInteractObject]="telemetryInteractObject"
+																	[telemetryInteractCdata]="telemetryInteractCdata"
+																	[telemetryInteractPdata]="telemetryInteractPdata">
+																<label for="checkitem_{{data.identifier}}"></label>
+															</div>
+														</td>
+														<td>
+															<div
+																class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold break-word-initial">
+																{{data.name}}
+															</div>
+														</td>
+														<td>
+															<div class="sb__ellipsis sb__ellipsis--three">
+																{{data.medium}}
+															</div>
+														</td>
+														<td>
+															<div class="sb__ellipsis sb__ellipsis--three">
+																{{data.gradeLevel}}
+															</div>
+														</td>
+														<td>
+															<div class="sb__ellipsis sb__ellipsis--three">
+																{{data.subject}}
+															</div>
+														</td>
+														<td>
+															<div class="sb__ellipsis sb__ellipsis--three">
+																{{ data.childNodes ? data.childNodes.length : 0 }}
+															</div>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<div class="five wide column">
+										<div class="sb-bg-white b-1-100 br-4 o-y-auto">
+											<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
+												{{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, 'plural'))}}
+											</h5>
+											<hr class="mt-0">
+											<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
+												<div class="sb-program-collection ui container"
+													*ngFor="let tempCollection of tempCollections">
+													<div class="ui grid">
+														<div class="six wide column">
+															<h5
+																class="mx-10 sb-color-gray-400 pb-5 sb__ellipsis sb__ellipsis--three font-weight-bold">
+																{{tempCollection.name}}</h5>
+															<small class="d-flex mx-10 max-content mt-10">
+																<span
+																	class="sb-maxw-10">{{tempCollection.medium}}</span>
+																<span class="mx-8"
+																	style="border-left: 1px solid var(--gray-200);"></span>
+																<span
+																	class="sb-maxw-10">{{tempCollection.gradeLevel}}</span>
+																<span class="mx-8"
+																	style="border-left: 1px solid var(--gray-200);"></span>
+																<span
+																	class="sb-maxw-5">{{tempCollection.subject}}</span>
+															</small>
+														</div>
+														<div class="four wide column px-0 mt-5">
+															<div class="sb-color-gray-400 fxsmall text-lowercase">
+																{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | lowercase}}
+															</div>
+															<div *ngIf="tempCollection.selected"
+																class="sb-color-primary fxsmall cursor-pointer text-none"
+																(click)="chooseChapters(tempCollection);">
+																<i
+																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}
+															</div>
+															<div *ngIf="blueprintTemplate"
+																class="sb-color-primary fxsmall cursor-pointer text-none"
+																(click)="editBlueprint(tempCollection);">
+																<i
+																	class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
+															</div>
+														</div>
+														<div class="two wide column text-right cursor-pointer"
+															(click)="onCollectionCheck(tempCollection, false)"
+															appTelemetryInteract
+															[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+															[telemetryInteractObject]="telemetryInteractObject"
+															[telemetryInteractCdata]="telemetryInteractCdata"
+															[telemetryInteractPdata]="telemetryInteractPdata">
+															<i class="close outline icon sb-color-red-100" suiPopup
+																popupHeader="close"></i>
+														</div>
+														<hr class="row p-0 mt-0">
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						</form>
+					</div>
+				</div>
+			</sui-tabset>
+		</div>
+		<div class="d-flex flex-jc-space-between" [appTelemetryStart]="telemetryStart">
+			<div>
+				<button *ngIf="showTextBookSelector && !editPublished"
+					class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="navigateTo(1)"
+					appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('previous', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.previous}}</button>
+			</div>
+			<div>
+				<button *ngIf="editPublished" type="button" class="sb-btn sb-btn-normal sb-btn-primary"
+					(click)="updateProgram($event);" appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('update', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.update}}</button>
+				<button *ngIf="!editPublished" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"
+					appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('save_as_draft', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata" [telemetryInteractPdata]="telemetryInteractPdata"
+					(click)="saveAsDraft($event)">{{resource?.frmelmnts?.btn?.saveAsDraft}}</button>
+				<button *ngIf="!showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-primary"
+					(click)="saveAsDraftAndNext($event)" appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('next', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.next}}</button>
+				<button *ngIf="showTextBookSelector && !editPublished" class="sb-btn sb-btn-normal sb-btn-primary"
+					[disabled]="disableCreateProgramBtn" (click)="validateFormBeforePublish()" appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('publish_project', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.publishProject}}</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 <sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="false"  (dismissed)="showDocumentUploader = false"
 	*ngIf="showDocumentUploader" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
@@ -790,7 +890,7 @@
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
 	<form [formGroup]="chaptersSelectionForm" (ngSubmit)="updateSelection(choosedTextBook.identifier)">
 		<div class="sb-modal-header">
-			{{blueprintTemplate ? resource?.frmelmnts?.lbl?.selectSections : resource?.frmelmnts?.lbl?.selectChapters}}
+			{{resource?.frmelmnts?.lbl?.selectFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}
 		</div>
 		<div class="sb-modal-content">
 			<div class="pb-20 pt-5">{{choosedTextBook.name}}</div>

@@ -10,7 +10,7 @@ import * as mockData from './create-program.spec.data';
 import { DatePipe } from '@angular/common';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormGroupName, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -59,7 +59,7 @@ describe('CreateProgramComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateProgramComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
   it('Should call the component initialization', () => {
@@ -99,11 +99,6 @@ describe('CreateProgramComponent', () => {
     component.fetchFrameWorkDetails();
     expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
   });
-  it('Should call the fetchBlueprintTemplate method', () => {
-    spyOn(component, 'fetchBlueprintTemplate');
-    component.fetchBlueprintTemplate();
-    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
-  });
   it('Should call the setFrameworkDataToProgram method', () => {
     spyOn(component, 'setFrameworkDataToProgram');
     component.setFrameworkDataToProgram();
@@ -131,10 +126,12 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeFormFields).toHaveBeenCalled();
   });
   xit('Should call the onChangeTargetCollection method', () => {
-    component.callTargetCollection = true;
+    component.collectionListForm.value.pcollections = '';
+    spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
+    spyOn(component, 'showTexbooklist').and.callFake(() => {});
     component.onChangeTargetCollection();
     expect(component.showTexbooklist).toHaveBeenCalled();
-    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
+    expect(component.getCollectionCategoryDefinition).toHaveBeenCalled();
     expect(component.collectionListForm.value.pcollections).toBeDefined([]);
   });
   xit('Should call the saveAsDraftAndNext method', () => {
@@ -149,5 +146,27 @@ describe('CreateProgramComponent', () => {
     component.validateFormBeforePublish();
     expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one collection');
     expect(component.disableCreateProgramBtn).toBeFalsy();
+  });
+  xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+    component.selectedTargetCollection = 'Course';
+    component.userprofile = {rootOrgId: '12345'};
+    component.blueprintTemplate = undefined;
+    component.firstLevelFolderLabel = undefined;
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(mockData.objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
+    expect(component.blueprintTemplate).toBeDefined();
+    expect(component.firstLevelFolderLabel).toBeDefined();
+  });
+  xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    component.selectedTargetCollection = undefined;
+    component.userprofile = {rootOrgId: undefined};
+    component.blueprintTemplate = undefined;
+    component.firstLevelFolderLabel = undefined;
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(mockData.objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
   });
 });

@@ -54,6 +54,7 @@ export class TextbookListComponent implements OnInit {
   public telemetryInteractObject: any;
   public targetCollection: string;
   public targetCollections: string;
+  public firstLevelFolderLabel: string;
 
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -106,8 +107,25 @@ export class TextbookListComponent implements OnInit {
 
   setTargetCollectionValue() {
     if (!_.isUndefined(this.programDetails)) {
+      this.getCollectionCategoryDefinition();
       this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
       this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
+    }
+  }
+
+  getCollectionCategoryDefinition() {
+    if (this.programDetails.target_collection_category && this.userService.userProfile.rootOrgId) {
+       // tslint:disable-next-line:max-line-length
+    this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
+      this.userService.userProfile.rootOrgId, 'Collection').subscribe(res => {
+      const objectCategoryDefinition = res.result.objectCategoryDefinition;
+      if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+        // tslint:disable-next-line:max-line-length
+      this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+      } else {
+        this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+      }
+    });
     }
   }
 
