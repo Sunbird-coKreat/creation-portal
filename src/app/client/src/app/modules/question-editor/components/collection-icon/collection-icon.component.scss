@@ -1,0 +1,32 @@
+.sb-appicon{
+    height: 110px;
+    width: 120px;
+    border: solid 1px #ccc;
+    padding: 5px;
+}
+
+.sb-centericon{
+    height: 110px;
+    width: 120px;
+    border: solid 1px #ccc;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.addImageText {
+    font-size: 0.8rem !important;
+}
+
+.w-15 {
+    width: 15%;
+    max-width: 15%;
+}
+.app-icon-label {
+    font-size: 12px !important;
+      margin-bottom: 0.5rem !important;
+      color: #121213e0;
+      font-weight: 600;
+}

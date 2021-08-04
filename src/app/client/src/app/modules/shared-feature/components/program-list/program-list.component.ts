@@ -626,7 +626,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getProgramContentTypes(program) {
     if (_.isEmpty(program) || _.isEmpty(program.program_id)) {
-      return false;
+    return false;
     }
     return program.targetprimarycategories ? _.join(_.map(program.targetprimarycategories, 'name'), ', ') : _.join(program.content_types, ', ');
   }

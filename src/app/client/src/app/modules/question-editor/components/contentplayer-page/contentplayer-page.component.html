@@ -1,0 +1,60 @@
+<div class="aspectratio" data-ratio="16:9" #aspectRatio>
+
+<iframe #contentIframe id="contentPlayer" *ngIf="playerType === 'default-player'" class="contentViewerIframeShadow" name="contentPlayer"></iframe>
+
+<sunbird-pdf-player *ngIf="playerType === 'pdf-player'" [playerConfig]="playerConfig"
+    (playerEvent)="eventHandler($event)" (telemetryEvent)="generateContentReadEvent($event, true)"></sunbird-pdf-player>
+
+<sunbird-video-player *ngIf="playerType === 'video-player'" [playerConfig]="playerConfig"
+(playerEvent)="eventHandler($event)" (telemetryEvent)="generateContentReadEvent($event, true)"></sunbird-video-player>
+</div>
+<div class="ui grid text-font pt-15 bg-white mx-0 mb-10">
+    <div class="six wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.name}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.name}}</div>
+        </div>
+    </div>
+    <div class="four wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.board}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.board}}</div>
+        </div>
+    </div>
+    <div class="two wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.medium}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.medium}}</div>
+        </div>
+    </div>
+    <div class="six wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.grade}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.gradeLevel}}</div>
+        </div>
+    </div>
+    <div class="four wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.subject}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.subject}}</div>
+        </div>
+    </div>
+    <div class="two wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.author}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.author}}</div>
+        </div>
+    </div>
+    <div class="six wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.license}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.license}}</div>
+        </div>
+    </div>
+    <div class="four wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.copyRightsAndYear}}</label>
+            <div class="fs-0-92">{{contentDetails?.contentData?.copyright}}</div>
+        </div>
+    </div>
+</div>

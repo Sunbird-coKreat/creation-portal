@@ -1,0 +1,51 @@
+{
+  "URLS": {
+    "QuestionSet": {
+      "HIERARCHY_READ": "questionset/v1/hierarchy",
+      "READ": "questionset/v1/read",
+      "HIERARCHY_UPDATE": "questionset/v1/hierarchy/update",
+      "CONTENT_REVIEW" : "questionset/v1/review/",
+      "CONTENT_REJECT" : "questionset/v1/reject/",
+      "CONTENT_PUBLISH" : "questionset/v1/publish/",
+      "DEFAULT_PARAMS_FIELDS": "instructions"
+    },
+    "Collection": {
+      "HIERARCHY_READ": "content/v3/hierarchy",
+      "HIERARCHY_UPDATE": "content/v3/hierarchy/update",
+      "CONTENT_REVIEW" : "content/v3/review/",
+      "CONTENT_REJECT" : "content/v3/reject/",
+      "CONTENT_PUBLISH" : "content/v3/publish/"
+    },
+    "COMPOSITE": {
+      "SEARCH": "composite/v3/search"
+    },
+    "DIALCODE": {
+      "RESERVE" : "dialcode/v1/reserve/",
+      "PROCESS" : "dialcode/v1/process/status/",
+      "SEARCH"  : "dialcode/v3/search",
+      "LINK" : "collection/v3/dialcode/link/"
+    },
+    "ContentPolicyUrl" : "/term-of-use.html",
+    "assetProxyUrl": "/assets/public/",
+    "getCategoryDefinition": "object/category/definition/v1/read?fields=objectMetadata,forms,name",
+    "CONTENT": {
+    "HIERARCHY_ADD":"content/v3/hierarchy/add",
+    "READ":"content/v3/read/",
+    "CREATE":"content/v3/create",
+    "UPLOAD":"content/v3/upload/",
+    "UPLOAD_URL":"content/v3/upload/url/",
+    "UPDATE_COLLABORATOR":"content/v1/collaborator/update/"
+    },
+    "QUESTION": {
+      "LIST":"question/v1/list",
+      "READ":"question/v1/read/"
+    },
+    "frameworkRead":"framework/v1/read/",
+    "compositSearch":"composite/v3/search",
+    "channelRead":"channel/v1/read/",
+    "telemetry":"/data/v3/telemetry",
+    "USER": {
+      "SEARCH":"user/v1/search"
+    }
+  }
+}

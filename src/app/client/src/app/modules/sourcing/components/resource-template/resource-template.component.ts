@@ -65,6 +65,11 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
         let catEditorConfig = !_.isEmpty(_.get(catMetaData, 'config.sourcingConfig.editor')) ? catMetaData.config.sourcingConfig.editor : [];
         let appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.editor;
+        let interactionType = _.get(catMetaData, 'schema.properties.interactionTypes.items.enum');
+        if(!_.isEmpty(interactionType)) {
+          interactionType = _.first(interactionType);
+          this.selectedtemplateDetails["interactionType"] = interactionType;
+        }
 
         const editorTypes = [];
         let tempEditors = _.map(supportedMimeTypes, (mimetype) => {
@@ -90,8 +95,8 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         } else {
           this.selectedtemplateDetails["modeOfCreation"] = modeOfCreation[0];
           if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
-            this.showModeofCreationModal = false;
-            this.showQuestionTypeModal = true;
+            this.showModeofCreationModal = false;            
+            this.showQuestionTypeModal = true;            
           } else {
             this.submit();
           }
@@ -127,6 +132,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
       case 'questionset':
         this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';
         this.selectedtemplateDetails.mimeType = ['application/vnd.sunbird.questionset'];
+        break;
+      case 'quml':
+        this.selectedtemplateDetails.onClick = 'questionComponent';
+        this.selectedtemplateDetails.mimeType = ['application/vnd.sunbird.question'];
         break;
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';

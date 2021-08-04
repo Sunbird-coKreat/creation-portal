@@ -17,7 +17,9 @@ import { CollectionComponent, DashboardComponent } from '../sourcing';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
-
+import { QuestionEditorModule } from '../question-editor/question-editor.module';
+import { QumlPlayerService } from '../sourcing/services/quml-player/quml-player.service';
+import { EditorCursor } from '../question-editor/collection-editor-cursor.service';
 @NgModule({
   declarations: [
     ProgramComponent,
@@ -38,7 +40,11 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
     TelemetryModule,
     SourcingModule,
     SharedFeatureModule,
-    DynamicModule.withComponents([CollectionComponent, DashboardComponent])
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent]),
+    QuestionEditorModule
+  ],
+  providers: [
+    { provide: EditorCursor, useExisting: QumlPlayerService },
   ],
   exports: [
     ProgramComponent,

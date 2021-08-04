@@ -1,0 +1,52 @@
+<div class="sbtoc-container pr-8 mt-20">
+  <div class="title sb-color-primary font-weight-bold fs-1">
+    Showing ({{contentList?.length}}) most relevant content
+  </div>
+  <div class="d-flex flex-w-wrap flex-jc-space-between flex-ai-baseline mb-15">
+    <div>
+      <small class="sb-color-gray-200 d-block pb-10">{{configService.labelConfig?.lbl?.selectContentToAdd}}</small>
+      <sui-checkbox class="toggle" libTelemetryInteract
+      [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('show_content_added_to_collection','click','launch', telemetryService?.telemetryPageId, {showAddedContent: !showAddedContent})"
+       [(ngModel)]="showAddedContent" (checkChange)="onShowAddedContentChange();"></sui-checkbox>
+        <small class="d-block mt-5 fs-0785"> {{configService.labelConfig?.lbl?.showContentAddedToCollection}}</small>
+    </div>
+    <div class="sb-w-75">
+      <label class="d-block font-weight-normal fs-0785">{{configService.labelConfig?.lbl?.sortBy}}</label>
+      <div (click)="sortContentList();" libTelemetryInteract
+      [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('sort_by','click','launch', telemetryService?.telemetryPageId, {sortContent: !sortContent})"
+       [ngClass]="{'sb-btn-outline-primary': sortContent}" class="sb-btn sb-btn-outline-gray sb-btn-normal ripple">{{configService.labelConfig?.lbl?.sortlabel}}</div>
+</div>
+  </div>
+  <!-- Class separator -->
+  <div class="sb-library-scroll">
+    <div *ngFor="let content of contentList">
+      <div class="sbchapter__item mb-0 d-flex flex-dc" [ngClass]=" {'selected':content.identifier === selectedContent.identifier}"
+       (click)="onContentChange(content)" libTelemetryInteract
+       [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('on_click_content','click','launch', telemetryService?.telemetryPageId)" 
+       [class.d-none]="content.isAdded && !showAddedContent">
+      <!-- <div class="sbchapter__img"><img src="./assets/images/book.png" /></div> -->
+      <h4 class="ml-8 w-80">
+        <div class="sbcard__title mb-0 font-weight-bold ellipsis w-75" popupDelay="1000" suiPopup
+        popupText="{{content.name}}">{{content.name}}</div>
+        <div class="sbchapter__item__title text-left sb__ellipsis sb__ellipsis--two mr-8 sb-color-black">
+         <span *ngIf="content.board"> By {{content.board}} </span>
+        </div>
+      </h4>
+      <div libTelemetryInteract
+      [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('select_content','click','launch', telemetryService?.telemetryPageId)" class="btn-addtoLibrary pt-5 pr-10" *ngIf="content.identifier === selectedContent.identifier && !content.isAdded">
+        <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold text-inherit" (click)="addToLibrary()">
+          <i class="plus square icon mr-4" ></i>{{configService.labelConfig?.lbl?.selectContent}}
+        </button>
+      </div>
+      <div class="textbookBtnLink absolute"  [hidden]="!content.isAdded">
+        <button type="button" class="sb-btn sb-btn-normal sb-btn-link sb-btn-hover-none
+         sb-btn-link-secondary sb-left-icon-btn fs-0-785"><i class="circle check icon"></i>
+         {{configService.labelConfig?.lbl?.addedToCollection}}</button>
+      </div>
+      </div>
+    </div>
+  </div>
+  <h6 class="sb-color-gray-400 font-weight-normal mt-20">{{configService.labelConfig?.lbl?.changingFilters}} </h6>
+  <a class="sb-color-primary cursor-pointer font-weight-bold fs-0-785 text-inherit" (click)="changeFilter()" libTelemetryInteract
+  [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('change_filter','click','launch', telemetryService?.telemetryPageId)">{{configService.labelConfig?.lbl?.ChangeFilters}}</a>
+</div>

@@ -1,0 +1,94 @@
+<div>
+    <div [ngClass]="{'potrait-mode': showPotrait}">
+        <div class="b-1-100 br-2 mt-5" *ngIf="showPlayerPreview">
+            <lib-quml-player [questionSetHierarchy]="hierarchy" [isSingleQuestionPreview]="true" ></lib-quml-player>
+        </div>
+    </div>
+<div class="ui mt-20" *ngIf="(editorService.editorMode === 'edit')">
+    <div class="ui twelve column grid m-0">
+        <div class="nine wide column p-0 text-left">
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="editQuestion();"
+                libTelemetryInteract
+                [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('edit','click','launch', telemetryService.telemetryPageId)">
+                <i class="icon edit"></i>Edit</button>
+            <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-15"
+                (click)="removeQuestion()"><i class="icon trash sb-color-primary" aria-hidden="true" libTelemetryInteract
+                    [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('delete','click','launch', telemetryService.telemetryPageId)"></i>{{configService.labelConfig?.button_labels?.delete_btn_label}}</button>
+        </div>
+        <div class="three wide column p-0 text-right">
+            <span>
+                <button type="button" (click)="switchToLandscapeMode();" class="btn-none">
+                    <i class="tv icon sb-color-primary fs-1-143" [ngClass]="{'opacity-icon': showPotrait}"></i>
+                </button>
+                <span class="fs-1-16 font-weight-normal sb-color-gray-100">|</span>
+                <button type="button" (click)="switchToPotraitMode();" class="w-10 btn-none">
+                    <i class="mobile alternate icon sb-color-primary fs-1-3" [ngClass]="{'opacity-icon': !showPotrait}"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<hr class="my-20">
+<div class="ui grid text-font">
+    <div class="five wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.name}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.name}}</div>
+        </div>
+    </div>
+    <div class="four wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.board}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.board}}</div>
+        </div>
+    </div>
+    <div class="three wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.medium}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.medium}}</div>
+        </div>
+    </div>
+    <div class="five wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.grade}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.gradeLevel}}</div>
+        </div>
+    </div>
+    <div class="four wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.subject}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.subject}}</div>
+        </div>
+    </div>
+    <div class="three wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.attributions}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.attributions}}</div>
+        </div>
+    </div>
+    <div class="five wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.author}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.author}}</div>
+        </div>
+    </div>
+    <div class="four wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.audience}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.audience}}</div>
+        </div>
+    </div>
+    <div class="three wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.copyRight}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.copyright}}</div>
+        </div>
+    </div>
+    <div class="six wide column">
+        <div class="sb-field-group">
+            <label class="sb-color-gray-100">{{configService.labelConfig?.lbl?.licensedBy}}</label>
+            <div class="fs-0-92 text-capitalize">{{questionMetaData?.license}}</div>
+        </div>
+    </div>
+</div>

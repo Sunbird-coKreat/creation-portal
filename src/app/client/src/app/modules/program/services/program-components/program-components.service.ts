@@ -6,6 +6,7 @@ import { QuestionListComponent } from '../../../sourcing/components/question-lis
 import { ContentEditorComponent } from '../../../sourcing/components/content-editor/content-editor.component';
 import { QuestionSetEditorComponent } from '../../../sourcing/components/question-set-editor/question-set-editor.component';
 import { ToasterService } from '@sunbird/shared';
+import { QuestionComponent } from '../../../question-editor/components/question/question.component';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class ProgramComponentsService {
     questionSetComponent: QuestionListComponent,
     curiositySetComponent: QuestionListComponent,
     questionSetEditorComponent: QuestionSetEditorComponent,
+    questionComponent: QuestionComponent,
     editorComponent: ContentEditorComponent
   };
   constructor(public toasterService: ToasterService) {

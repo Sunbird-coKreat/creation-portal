@@ -1,0 +1,4 @@
+<ng-container *ngIf="formFieldProperties">
+  <lib-collection-icon *ngIf="showAppIcon" [appIcon]="appIcon" [appIconConfig]="appIconConfig" (iconEmitter)="appIconDataHandler($event)"></lib-collection-icon>
+  <sb-dynamic-form [config]="formFieldProperties" (initialize)="outputData($event)" (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-dynamic-form>
+</ng-container>

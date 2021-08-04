@@ -1,0 +1,10 @@
+ <div class="aspectratio" data-ratio="16:9">
+     <div class="content-player">
+        <div class="w-100 h-100">
+                <div class="contentViewerIframeShadow">
+                    <quml-player *ngIf="showPreview" [QumlPlayerConfig]="qumlPlayerConfig" (playerEvent)="getPlayerEvents($event)"
+                        (telemetryEvent)="getTelemetryEvents($event)"></quml-player>
+                </div>
+            </div>
+        </div>
+</div>

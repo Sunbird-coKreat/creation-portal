@@ -465,7 +465,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).pipe(
       tap((response: any) => {
         if (response && response.result) {
-          this.programCollections = response.result.content || [];
+          this.programCollections = response.result.content || response.result.QuestionSet || [];
         }
       }),
       catchError(err => {

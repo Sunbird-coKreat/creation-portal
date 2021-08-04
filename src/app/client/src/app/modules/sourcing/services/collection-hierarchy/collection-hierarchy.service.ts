@@ -61,8 +61,26 @@ export class CollectionHierarchyService {
     return {sampleDataCount: self.sampleDataCount, chapterCount: self.chapterCount};
   }
 
-  addResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
-    const req = {
+  addResourceToHierarchy(collection, unitIdentifier, contentId, collectionObjectType = null): Observable<any> {    
+    let req = {
+      url: '',
+      data: {}
+    };
+    if(collectionObjectType === 'QuestionSet') {
+      req = {
+        url: this.configService.urlConFig.URLS.QUESTIONSET.ADD,   
+        data: {
+          'request': {
+            'questionset': {
+              'rootId': collection,
+              'collectionId': unitIdentifier,
+              'children': [contentId]
+            }
+          }
+        }    
+      }
+    }
+    else req = {
       url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_ADD,
       data: {
         'request': {
@@ -72,6 +90,7 @@ export class CollectionHierarchyService {
         }
       }
     };
+  
     return this.actionService.patch(req).pipe(map((data: any) => {
       return data.result;
     }), catchError(err => {
@@ -111,7 +130,7 @@ export class CollectionHierarchyService {
         request: {
           filters: {
             programId: programId,
-            objectType: 'collection',
+            objectType: ['collection', 'questionSet'],
             status: ['Draft'],
             primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           }

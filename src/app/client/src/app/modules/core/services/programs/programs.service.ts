@@ -902,7 +902,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
         return [topicTerms, tempLearningOutcomeOptions];
     }
-  
+
   filterBlueprintMetadata(selectedTopics) {
     let tempLearningOutcomeOptions = [];
     if(selectedTopics) {
@@ -979,17 +979,18 @@ export class ProgramsService extends DataService implements CanActivate {
     }
   }
 
-  getCollectionCategoryDefinition(categoryName, rootOrgId) {
+  getCollectionCategoryDefinition(categoryName, rootOrgId, targetObjectType = null) {
     const cacheInd = categoryName + ':' + rootOrgId;
     if (this.cacheService.get(cacheInd)) {
       return  of(this.cacheService.get(cacheInd));
     } else {
+      let objectType = targetObjectType || "Collection";
       const req = {
         url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
         data: {
           request: {
             "objectCategoryDefinition": {
-                "objectType": "Collection",
+                "objectType": objectType,
                 "name": categoryName,
                 "channel": rootOrgId
             },
@@ -1200,6 +1201,16 @@ export class ProgramsService extends DataService implements CanActivate {
     }
   }
 
+  getSingleSourcingOriginEnvironment() {
+    switch(window.location.hostname) {
+      case 'dock.sunbirded.org': return 'https://dock.sunbirded.org'; break;
+      case 'dockstaging.sunbirded.org': return 'https://dockstaging.sunbirded.org'; break;
+      case 'vdn.diksha.gov.in': return 'https://vdn.diksha.gov.in'; break;
+      case 'dock.preprod.ntp.net.in': return 'https://dock.preprod.ntp.net.in'; break;
+      default: return  'https://dock.sunbirded.org'; break;
+    }
+  }
+
   setMvcStageData(data) {
     this.mvcStageData = data;
   }
@@ -1357,5 +1368,43 @@ export class ProgramsService extends DataService implements CanActivate {
       });
     }
     return targetPrimaryCategories;
+  }
+
+  addQuestionSet(reqData) {
+    const option = {
+      url: 'questionset/v1/create',
+      header: {
+        'X-Channel-Id': _.get(this.userService, 'userProfile.rootOrgId')
+      },
+      data: {
+        request: {
+          questionset: reqData
+        }
+      }
+    };
+
+    return this.contentService.post(option).pipe(
+      mergeMap((data: ServerResponse) => {
+        if (data.params.status.toLowerCase() !== 'successful') {
+          return throwError(data);
+        }
+        return of(data);
+      }));
+  }
+
+  getQuestionConfig() {
+    const requestParam = {
+      url: 'program/v1/configuration/search',
+      header: {
+        'X-Channel-Id': _.get(this.userService, 'userProfile.rootOrgId')
+      },
+      data: {
+        request: {
+          key: 'programTargetObjectMap',
+          status: 'active'
+        }
+      }
+    };
+    return this.post(requestParam);
   }
 }

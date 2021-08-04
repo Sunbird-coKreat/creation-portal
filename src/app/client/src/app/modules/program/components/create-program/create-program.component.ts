@@ -11,7 +11,8 @@ import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
-import { UserService } from '@sunbird/core';
+import { UserService, ContentService } from '@sunbird/core';
+import { IUserProfile } from '@sunbird/shared';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
@@ -20,6 +21,9 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
+import {UUID} from 'angular2-uuid';
+import {IContentEditorComponentInput} from '../../../sourcing/interfaces';
+import {HelperService} from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-create-program',
@@ -56,7 +60,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   frameworkCategories;
   programScope: any = {};
   originalProgramScope: any = {};
-  userprofile;
   public programData: any = {};
   showTextBookSelector = false;
   formIsInvalid = false;
@@ -100,6 +103,35 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+  public showSubjectModal = false;
+  isSearchVisible = false;
+  isAddVisible = false;
+  isQuestionEditorVisible = false;
+  questionSetEditorComponentInput: IContentEditorComponentInput = {
+    contentId: null,
+    action: null,
+    content: null,
+    sessionContext: null,
+    unitIdentifier: null,
+    programContext: null,
+    originCollectionData: null,
+    sourcingStatus: null,
+    selectedSharedContext: null
+  };
+  public unitFormConfig: any;
+  public rootFormConfig: any;
+  public selectedNodeData: any = {};
+  editorConfig: any;
+  private deviceId: string;
+  private buildNumber: string;
+  private portalVersion: string;
+  private userProfile: IUserProfile;
+  public hierarchyConfig: any;
+  public sessionContext: any;
+  public collectionDetails: any;
+  public showQuestionEditor = false;
+  public questionSetId;
+  public questionSetConfig = [];
 
   constructor(
     public frameworkService: FrameworkService,
@@ -118,14 +150,24 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
+    private helperService: HelperService,
+    private contentService: ContentService,
     public actionService: ActionService, public cacheService: CacheService) {
+
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
+    this.deviceId = deviceId ? deviceId.value : '';
+    this.buildNumber = buildNumber ? buildNumber.value : '1.0';
+    this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+
   }
 
   ngOnInit() {
+    this.userProfile = this.userService.userProfile;
     this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
-      ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'false';
+      ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'true';
     this.programId = this.activatedRoute.snapshot.params.programId;
-    this.userprofile = this.userService.userProfile;
+    // this.userprofile = this.userService.userProfile;
     this.programConfig = _.cloneDeep(programConfigObj);
     this.localBlueprint = {};
     this.localBlueprintMap = {};
@@ -143,7 +185,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
+    this.getConfiguration();
     this.pageStartTime = Date.now();
+  }
+
+  getConfiguration() {
+    this.programsService.getQuestionConfig().subscribe(
+      data => {
+        try {
+          this.questionSetConfig = JSON.parse(_.get(data, 'result.configuration.value'));
+        } catch (e) {
+          this.questionSetConfig = [];
+        }
+      }
+    );
   }
 
   initiateDocumentUploadModal() {
@@ -298,6 +353,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
+      this.onTargetSelect();
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -347,8 +403,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         name: fileName,
         mediaType: mediaType,
         mimeType: fileType,
-        createdBy: this.userprofile.userId,
-        creator: `${this.userprofile.firstName} ${this.userprofile.lastName ? this.userprofile.lastName : ''}`,
+        createdBy: this.userProfile.userId,
+        creator: `${this.userProfile.firstName} ${this.userProfile.lastName ? this.userProfile.lastName : ''}`,
         channel: 'sunbird'
       }
     };
@@ -483,19 +539,22 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setFrameworkDataToProgram() {
-    this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+    // this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+    const tempCategory = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
     this.programScope['targetPrimaryCategories'] = [];
     const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+
     if (_.toLower(this.enableQuestionSetEditor) === 'true') {
       const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-      this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
+      this.programScope['targetPrimaryCategories'] = _.map(questionSetCategories, 'name');
       this.programScope['targetPrimaryObjects'] = questionSetCategories;
+      this.collectionCategories = _.concat(tempCategory || [], this.programScope['targetPrimaryCategories']);
     }
 
     const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
     // tslint:disable-next-line:max-line-length
-    this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+    this.programScope['targetPrimaryObjects'] = _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
       if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
         this.programScope['targetPrimaryCategories'].push(o.name);
         return o;
@@ -521,8 +580,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (board) {
       if (!_.isEmpty(board.terms[0].name)) {
         this.userBoard = board.terms[0].name;
-      } else if (_.get(this.userprofile.framework, 'board')) {
-        this.userBoard = this.userprofile.framework.board[0];
+      } else if (_.get(this.userProfile.framework, 'board')) {
+        this.userBoard = this.userProfile.framework.board[0];
       }
 
       const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
@@ -597,7 +656,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
+    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userProfile.rootOrgId).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
@@ -799,9 +858,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
-    this.programData['rootorg_id'] = this.userprofile.rootOrgId;
-    this.programData['createdby'] = this.userprofile.id;
+    this.programData['sourcing_org_name'] = this.userProfile.rootOrg.orgName;
+    this.programData['rootorg_id'] = this.userProfile.rootOrgId;
+    this.programData['createdby'] = this.userProfile.id;
     this.programData['createdon'] = new Date();
     this.programData['startdate'] = new Date();
     this.programData['slug'] = 'sunbird';
@@ -952,7 +1011,38 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.validateDates();
   }
-onChangeTargetCollection() {
+
+  onTargetSelect() {
+    this.isSearchVisible = false;
+    this.isAddVisible = false;
+    this.programScope['targetPrimaryCategories'] = [];
+
+    for (const config of this.questionSetConfig) {
+      if (config.name === this.selectedTargetCollection) {
+        if (config.contentAdditionMode && config.contentAdditionMode.length) {
+          config.contentAdditionMode.forEach(mode => {
+            if (mode.toLowerCase() === 'search') {
+              this.isSearchVisible = true;
+            }
+            if (mode.toLowerCase() === 'new') {
+              this.isAddVisible = true;
+            }
+          });
+        }
+        if (this.programScope['targetPrimaryObjects']) {
+          this.programScope['targetPrimaryObjects'].forEach(obj => {
+            if (config.associatedAssetTypes.indexOf(obj.targetObjectType) !== -1) {
+              this.programScope['targetPrimaryCategories'].push(obj.name);
+            }
+          });
+        }
+        break;
+      }
+    }
+  }
+
+  onChangeTargetCollection() {
+    this.onTargetSelect();
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
     this.fetchBlueprintTemplate();
@@ -970,7 +1060,7 @@ showTexbooklist(showTextBookSelector = true) {
           objectType: 'Collection',
           status: ['Draft'],
           primaryCategory: primaryCategory,
-          channel: this.userprofile.rootOrgId,
+          channel: this.userProfile.rootOrgId,
         },
         limit: 1000,
         not_exists: ['programId']
@@ -1604,4 +1694,232 @@ showTexbooklist(showTextBookSelector = true) {
     };
     this.saveProgram(cb);
   }
+
+  OnAdd() {
+    // this.getFrameWorkDetails();
+    this.programsService.addQuestionSet({
+      name: 'untitled',
+      code: UUID.UUID(),
+      mimeType: 'application/vnd.sunbird.questionset',
+      primaryCategory: this.selectedTargetCollection,
+      framework: this.frameworkService['_channelData'].defaultFramework
+    }).subscribe(
+      data => {
+        if (data.result && data.result.identifier) {
+          this.questionSetId = data.result.identifier;
+          this.questionSetEditorComponentInput = {
+            contentId: this.questionSetId,
+            action: null,
+            content: null,
+            sessionContext: null,
+            unitIdentifier: null,
+            programContext: this.programConfig,
+            originCollectionData: null,
+            sourcingStatus: 'Demo',
+            selectedSharedContext: null
+          };
+          this.getCollectionDetails(this.questionSetId).subscribe(d => {
+            this.collectionDetails = d.result.content;
+            this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
+            this.getFrameWorkDetails();
+          });
+          console.log(this.questionSetEditorComponentInput);
+        }
+      }
+    );
+  }
+
+  private getCollectionDetails(questionSetId) {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${questionSetId}?mode=edit`
+    };
+    return this.contentService.get(req).pipe(map((response: any) => {
+      return response
+    }));
+  }
+
+  getFrameWorkDetails() {
+    if (this.programConfig.rootorg_id) {
+      this.helperService.fetchChannelData(this.programConfig.rootorg_id);
+    }
+    this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.programConfig.rootorg_id, 'QuestionSet')
+      .subscribe(data => {
+        this.unitFormConfig = _.get(data, 'result.objectCategoryDefinition.forms.unitMetadata.properties');
+        this.rootFormConfig = _.get(data, 'result.objectCategoryDefinition.forms.create.properties');
+        // tslint:disable-next-line:max-line-length
+        if (_.get(data, 'result.objectCategoryDefinition.objectMetadata.config')) {
+          this.hierarchyConfig = _.get(data, 'result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection');
+          if (!_.isEmpty(this.hierarchyConfig.children)) {
+            this.hierarchyConfig.children = this.getPrimaryCategoryData(this.hierarchyConfig.children);
+          }
+          if (!_.isEmpty(this.hierarchyConfig.hierarchy)) {
+            _.forEach(this.hierarchyConfig.hierarchy, (hierarchyValue) => {
+              if (_.get(hierarchyValue, 'children')) {
+                hierarchyValue['children'] = this.getPrimaryCategoryData(_.get(hierarchyValue, 'children'));
+              }
+            });
+          }
+        }
+
+        // todo remove assignment
+        this.hierarchyConfig.maxDepth = 1;
+        this.hierarchyConfig.hierarchy = {
+          level1: {
+            name: 'Section',
+            type: 'Unit',
+            mimeType: 'application/vnd.sunbird.questionset',
+            primaryCategory: 'Practice Question Set',
+            iconClass: 'fa fa-folder-o',
+            children: {
+              Question: [
+                'Multiple Choice Question',
+                'Subjective Question'
+              ]
+            }
+          },
+          level2: {
+            name: 'Sub Section',
+            type: 'Unit',
+            mimeType: 'application/vnd.sunbird.questionset',
+            primaryCategory: 'Practice Question Set',
+            iconClass: 'fa fa-folder-o',
+            children: {
+              Question: [
+                'Multiple Choice Question',
+                'Subjective Question'
+              ]
+            }
+          },
+          level3: {
+            name: 'Sub Section',
+            type: 'Unit',
+            mimeType: 'application/vnd.sunbird.questionset',
+            primaryCategory: 'Practice Question Set',
+            iconClass: 'fa fa-folder-o',
+            children: {
+              Question: [
+                'Subjective Question'
+              ]
+            }
+          },
+          ...this.hierarchyConfig.hierarchy,
+        };        
+
+        this.setEditorConfig();
+      }, err => {
+        this.toasterService.error(this.resourceService.messages.emsg.m0015);
+      });
+  }
+
+  getPrimaryCategoryData(childrenData) {
+    _.forEach(childrenData, (value, key) => {
+      if (_.isEmpty(value)) {
+        switch (key) {
+          case 'Question':
+            childrenData[key] = this.frameworkService['_channelData'].questionPrimaryCategories
+              || this.configService.appConfig.WORKSPACE.questionPrimaryCategories;
+            break;
+          case 'Content':
+            childrenData[key] = this.frameworkService['_channelData'].contentPrimaryCategories || [];
+            break;
+          case 'Collection':
+            childrenData[key] = this.frameworkService['_channelData'].collectionPrimaryCategories || [];
+            break;
+          case 'QuestionSet':
+            childrenData[key] = this.frameworkService['_channelData'].questionsetPrimaryCategories || [];
+            break;
+        }
+      }
+    });
+    return childrenData;
+  }
+
+  toolbarEventListener(event) {
+
+  }
+
+  editorEventListener(event) {
+
+  }
+
+  setEditorConfig() {
+    // tslint:disable-next-line:max-line-length
+    const additionalCategories = _.merge(this.frameworkService['_channelData'].contentAdditionalCategories, this.frameworkService['_channelData'].collectionAdditionalCategories);
+    this.editorConfig = {
+      context: {
+        identifier: this.questionSetId,
+        channel: this.userService.channel,
+        authToken: '',
+        sid: this.userService.sessionId,
+        did: this.deviceId,
+        uid: this.userService.userid,
+        additionalCategories: additionalCategories,
+        pdata: {
+          id: this.userService.appId,
+          ver: this.portalVersion,
+          pid: 'sunbird-portal'
+        },
+        actor: {
+          id: this.userService.userid || 'anonymous',
+          type: 'User'
+        },
+        contextRollup: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
+        tags: this.userService.dims,
+        timeDiff: this.userService.getServerTimeDiff,
+        defaultLicense: this.frameworkService.getDefaultLicense(),
+        endpoint: '/data/v3/telemetry',
+        env: 'question_editor',
+        user: {
+          id: this.userService.userid,
+          orgIds: this.userProfile.organisationIds,
+          organisations: this.userService.orgIdNameMap,
+          name: '',
+          isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
+        },
+        channelData: this.frameworkService['_channelData'],
+        cloudStorageUrls: this.userService.cloudStorageUrls,
+        labels: {
+          // submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
+          // publish_collection_btn_label: this.resourceService.frmelmnts.btn.submitForApproval,
+          // sourcing_approve_collection_btn_label: this.resourceService.frmelmnts.btn.publishToConsume,
+          // reject_collection_btn_label: this.resourceService.frmelmnts.btn.requestChanges,
+        }
+      },
+      config: {
+        mode: 'edit',
+        setDefaultCopyRight: false,
+        showOriginPreviewUrl: false,
+        showSourcingStatus: false,
+        showCorrectionComments: false
+      }
+    };
+    if (this.showQuestionEditor) {
+      this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
+    }
+    this.editorConfig.config = _.assign(this.editorConfig.config, this.hierarchyConfig);
+    this.isQuestionEditorVisible = true;
+  }
+
+  canSubmit() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor(['CONTRIBUTOR']) && resourceStatus === 'draft' && this.userService.userid === this.collectionDetails.createdBy);
+  }
+
+  canReviewContent() {
+    const resourceStatus = this.collectionDetails.status.toLowerCase();
+
+    // tslint:disable-next-line:max-line-length
+    return !!(this.router.url.includes('/contribute') && !this.collectionDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && resourceStatus === 'review' && this.userService.userid !== this.collectionDetails.createdBy);
+  }
+
+
+  hasAccessFor(roles: Array<string>) {
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
+  }
+
+  onSave(event) {
+    this.isQuestionEditorVisible = false;
+  }
+
 }
