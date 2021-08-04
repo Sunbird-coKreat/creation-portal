@@ -77,7 +77,7 @@ export class ProgramsService extends DataService implements CanActivate {
     //this.getAllContentCategories().subscribe();
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
-
+    this.actionService.baseUrl = this.config.urlConFig.URLS.ACTION_PREFIX;
     this.userService.userData$.subscribe((user: any) => {
       if (user && !user.err) {
         this.userProfile = user.userProfile;
@@ -1383,7 +1383,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.contentService.post(option).pipe(
+    return this.actionService.post(option).pipe(
       mergeMap((data: ServerResponse) => {
         if (data.params.status.toLowerCase() !== 'successful') {
           return throwError(data);
@@ -1392,7 +1392,10 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
   }
 
-  getQuestionConfig() {
+  getContentAdditionModeConfig() {
+    if(this.cacheService.get('contentAdditionModeConfig')) {
+      return of(this.cacheService.get('contentAditionModeConfig'));
+    }
     const requestParam = {
       url: 'program/v1/configuration/search',
       header: {
@@ -1405,6 +1408,8 @@ export class ProgramsService extends DataService implements CanActivate {
         }
       }
     };
-    return this.post(requestParam);
+    return this.post(requestParam).pipe(tap(data => {
+      this.setSessionCache({name: 'contentAdditionModeConfig',  value: data });
+    }));
   }
 }

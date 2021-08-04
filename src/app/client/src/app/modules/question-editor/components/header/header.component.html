@@ -3,7 +3,7 @@
   <div class="ui container py-15">
     <div class="d-flex flex-ai-center sb-color-white">
       <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold"
-      (click)="buttonEmitter({type: 'backContent'})" libTelemetryInteract
+      (click)="buttonEmitter({type: 'backCollection'})" libTelemetryInteract
       [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('back','click','launch', telemetryService.telemetryPageId)">
         <i class="arrow left icon" aria-hidden="true"></i> {{configService.labelConfig?.button_labels?.back_btn_label}}
       </button>
@@ -54,7 +54,7 @@
 
     <button *ngIf="visibility && visibility?.saveContent" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10"
     [ngClass]="!buttonLoaders?.saveAsDraftButtonLoader ? '': 'sb-btn-loading-spinner sb-btn-outline-disabled'"
-    (click)="buttonEmitter({type:'saveContent'})" libTelemetryInteract
+    (click)="buttonEmitter({type:'saveCollection'})" libTelemetryInteract
     [telemetryInteractEdata]="telemetryService.getTelemetryInteractEdata('save_as_draft','click','submit', telemetryService.telemetryPageId)"
     >
       <i class="{{labelConfigData.save_collection_btn_icon}}" *ngIf="!buttonLoaders?.saveAsDraftButtonLoader"></i>

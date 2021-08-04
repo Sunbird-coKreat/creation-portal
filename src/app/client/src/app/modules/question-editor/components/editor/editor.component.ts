@@ -276,12 +276,23 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.saveContent().then((message: string) => {
           this.buttonLoaders.saveAsDraftButtonLoader = false;
           this.toasterService.success(message);
-          this.saveButtonEmitter.emit({type: 'save'});
+          this.redirectToCreateProgramPage();
         }).catch(((error: string) => {
           this.buttonLoaders.saveAsDraftButtonLoader = false;
           this.toasterService.error(error);
         }));
         break;
+        case 'saveCollection':
+          this.buttonLoaders.saveAsDraftButtonLoader = true;
+          this.saveContent().then((message: string) => {
+            this.buttonLoaders.saveAsDraftButtonLoader = false;
+            this.toasterService.success(message);
+            this.redirectToCreateProgramPage();
+          }).catch(((error: string) => {
+            this.buttonLoaders.saveAsDraftButtonLoader = false;
+            this.toasterService.error(error);
+          }));
+          break;
       case 'previewContent':
         this.previewContent();
         break;
@@ -313,8 +324,11 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
         this.updateToolbarTitle(event);
         break;
       case 'backContent':
-        this.redirectToChapterListTab();
+        this.redirectToCreateProgramPage();
         break;
+        case 'backCollection':
+          this.redirectToCreateProgramPage();
+          break;
       case 'sendForCorrections':
         this.redirectToChapterListTab({ comment: event.comment });
         break;
@@ -344,6 +358,12 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
       close: true, library: 'collection_editor', action: this.actionType, identifier: this.collectionId,
       ...data
     });
+  }
+
+  redirectToCreateProgramPage(data?: any) {
+    this.editorEmitter.emit({
+      close: true, action: this.actionType, identifier: this.collectionId
+    })
   }
 
   updateToolbarTitle(data: any) {

@@ -44,6 +44,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   editBlueprintFlag = false;
   public selectedTargetCategories: any;
   public selectedTargetCollection: any;
+  public selectedTargetCollectionObjects: any = [];
   createProgramForm: FormGroup;
   collectionListForm: FormGroup;
   programDetails: any;
@@ -131,7 +132,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public collectionDetails: any;
   public showQuestionEditor = false;
   public questionSetId;
-  public questionSetConfig = [];
+  public contentAdditionModeConfiguration = [];
 
   constructor(
     public frameworkService: FrameworkService,
@@ -167,14 +168,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
       ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'true';
     this.programId = this.activatedRoute.snapshot.params.programId;
-    // this.userprofile = this.userService.userProfile;
+    // this.userprofile = this.userService.userProfile;    
     this.programConfig = _.cloneDeep(programConfigObj);
     this.localBlueprint = {};
     this.localBlueprintMap = {};
     this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
-    this.getPageId();
+    this.getPageId();    
     this.acceptPdfType = this.getAcceptType(this.assetConfig.pdfFiles, 'pdf');
     // get target collection in dropdown
     if (!_.isEmpty(this.programId)) {
@@ -185,19 +186,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
-    this.getConfiguration();
     this.pageStartTime = Date.now();
   }
 
-  getConfiguration() {
-    this.programsService.getQuestionConfig().subscribe(
-      data => {
-        try {
-          this.questionSetConfig = JSON.parse(_.get(data, 'result.configuration.value'));
-        } catch (e) {
-          this.questionSetConfig = [];
+  getContentAdditionModeConfiguration() {
+    this.programsService.getContentAdditionModeConfig().subscribe(data => {            
+          try {
+            this.contentAdditionModeConfiguration = JSON.parse(_.get(data, 'result.configuration.value'));
+            this.onTargetSelect();
+          } catch (e) {
+            this.contentAdditionModeConfiguration = [];
         }
-      }
+      }      
     );
   }
 
@@ -349,11 +349,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programDetails = _.get(programDetails, 'result');
 
       //this.selectedContentTypes = _.get(this.programDetails, 'content_types');
-      //this.programDetails['content_types'] = _.join(this.selectedContentTypes, ', ');
-
+      //this.programDetails['content_types'] = _.join(this.selectedContentTypes, ', ');      
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
-      this.onTargetSelect();
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -553,8 +551,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
+    const questionCategories = _.get(channeltargetObjectTypeGroup, 'Question');
     // tslint:disable-next-line:max-line-length
     this.programScope['targetPrimaryObjects'] = _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+      if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+        this.programScope['targetPrimaryCategories'].push(o.name);
+        return o;
+      }
+    }));
+
+    this.programScope['targetPrimaryObjects'] = _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(questionCategories, (o) => {
       if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
         this.programScope['targetPrimaryCategories'].push(o.name);
         return o;
@@ -564,6 +570,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
     this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
+    //TODO Set selectedTargetCollectionObject from saved program details
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -606,6 +613,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return item.name === 'Kindergarten';
     });
     this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
+    this.getContentAdditionModeConfiguration();
   }
 
   openForNominations(status) {
@@ -656,7 +664,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userProfile.rootOrgId).subscribe(res => {
+    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userProfile.rootOrgId, _.get(_.first(this.selectedTargetCollectionObjects), 'targetObjectType')).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
@@ -687,10 +695,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       subject: [],
       targetPrimaryCategories: [null, Validators.required],
       target_collection_category: [null, Validators.required],
-    });
+    });    
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
       this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
-
+      this.onTargetSelect();
       if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
         this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
         this.editPublished = true;
@@ -723,7 +731,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      this.fetchBlueprintTemplate();
+      if(this.selectedTargetCollection) this.fetchBlueprintTemplate();
       this.showProgramScope = false;
       this.showTextBookSelector = false;
     }
@@ -857,7 +865,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         return o;
       }
     });
-
+    this.programData['targetcollectionprimarycategories'] = this.selectedTargetCollectionObjects;
     this.programData['sourcing_org_name'] = this.userProfile.rootOrg.orgName;
     this.programData['rootorg_id'] = this.userProfile.rootOrgId;
     this.programData['createdby'] = this.userProfile.id;
@@ -1015,9 +1023,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   onTargetSelect() {
     this.isSearchVisible = false;
     this.isAddVisible = false;
+    this.selectedTargetCollectionObjects = [_.find(this.programScope['targetPrimaryObjects'], obj => obj.name === this.selectedTargetCollection)];
     this.programScope['targetPrimaryCategories'] = [];
 
-    for (const config of this.questionSetConfig) {
+    for (const config of this.contentAdditionModeConfiguration) {
       if (config.name === this.selectedTargetCollection) {
         if (config.contentAdditionMode && config.contentAdditionMode.length) {
           config.contentAdditionMode.forEach(mode => {
@@ -1092,8 +1101,7 @@ showTexbooklist(showTextBookSelector = true) {
       (res) => {
         this.showTextBookSelector = showTextBookSelector;
         if (res.result.count) {
-          this.collections = res.result.content;
-          this.showProgramScope = true;
+          this.collections = res.result.content;          
           this.tempSortCollections = this.collections;
           if (!this.filterApplied) {
             this.sortCollection(this.sortColumn);
@@ -1117,7 +1125,10 @@ showTexbooklist(showTextBookSelector = true) {
           this.tempSortCollections = [];
           if (!this.filterApplied) {
            // tslint:disable-next-line: max-line-length
-           this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
+           if((_.includes(_.get(_.find(this.contentAdditionModeConfiguration, (obj) => obj.name === primaryCategory), 'contentAdditionMode', '[]'), 'New'))) {
+            this.showProgramScope = true;
+           }
+           else this.toasterService.warning(this.resource.messages.smsg.selectDifferentTargetCollection.replace('{TARGET_NAME}', primaryCategory));
           }
         }
       },
@@ -1370,6 +1381,19 @@ showTexbooklist(showTextBookSelector = true) {
     else this.localBlueprint = blueprint;
 
   }
+
+  editorEventListener(event) {
+    switch (event.action) {  
+     case "saveCollection": // saving as draft
+      this.isQuestionEditorVisible = false;      
+      this.tempCollections.push(event.identifier);
+      break;  
+    case "backCollection":
+      this.isQuestionEditorVisible = false;      
+      break;
+    }
+   }
+
 
   isBlueprintValid() {
     let validity = true, totalQuestions = this.localBlueprint.totalQuestions;
@@ -1719,7 +1743,7 @@ showTexbooklist(showTextBookSelector = true) {
             selectedSharedContext: null
           };
           this.getCollectionDetails(this.questionSetId).subscribe(d => {
-            this.collectionDetails = d.result.content;
+            this.collectionDetails = d.result.questionset;
             this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
             this.getFrameWorkDetails();
           });
@@ -1731,7 +1755,7 @@ showTexbooklist(showTextBookSelector = true) {
 
   private getCollectionDetails(questionSetId) {
     const req = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.GET}/${questionSetId}?mode=edit`
+      url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${questionSetId}?mode=edit`
     };
     return this.contentService.get(req).pipe(map((response: any) => {
       return response
@@ -1834,14 +1858,12 @@ showTexbooklist(showTextBookSelector = true) {
     return childrenData;
   }
 
-  toolbarEventListener(event) {
-
+  getUserName(userProfile) {
+    if(_.isEmpty(userProfile.firstName) && _.isEmpty(userProfile.lastName)) 
+      return userProfile.userName;    
+    return _.reduce(_.pick(userProfile, ['firstName', 'lastName']), (result, val, key) =>  { if(val) result = `${result}${val}`; return result }, "");
   }
-
-  editorEventListener(event) {
-
-  }
-
+  
   setEditorConfig() {
     // tslint:disable-next-line:max-line-length
     const additionalCategories = _.merge(this.frameworkService['_channelData'].contentAdditionalCategories, this.frameworkService['_channelData'].collectionAdditionalCategories);
@@ -1873,7 +1895,7 @@ showTexbooklist(showTextBookSelector = true) {
           id: this.userService.userid,
           orgIds: this.userProfile.organisationIds,
           organisations: this.userService.orgIdNameMap,
-          name: '',
+          name: this.getUserName(this.userProfile),
           isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
         },
         channelData: this.frameworkService['_channelData'],
@@ -1887,7 +1909,8 @@ showTexbooklist(showTextBookSelector = true) {
       },
       config: {
         mode: 'edit',
-        setDefaultCopyRight: false,
+        setDefaultCopyRight: true,
+        setDefaultAuthor: true,
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false
@@ -1916,10 +1939,6 @@ showTexbooklist(showTextBookSelector = true) {
 
   hasAccessFor(roles: Array<string>) {
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
-  }
-
-  onSave(event) {
-    this.isQuestionEditorVisible = false;
   }
 
 }
