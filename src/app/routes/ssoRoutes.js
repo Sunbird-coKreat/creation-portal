@@ -420,6 +420,14 @@ module.exports = (app) => {
   app.all('/migrate/user/account', async (req, res) => {
     await ssoValidations(req, res)
   })
+  app.get('/v1/sourcing/sso/success/redirect', (req, res) => {
+    logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
+    console.log('req.query.obj ', req.query.obj);
+    let userId = req.query.obj;
+    // let userObj = decrypt(req.query.obj)
+    await createSession(userId, 'portal', req, res);
+  });
+
 };
 
 const handleProfileUpdateError = (error) => {
