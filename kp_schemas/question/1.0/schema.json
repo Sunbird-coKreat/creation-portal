@@ -354,6 +354,10 @@
     "createdBy": {
       "type": "string"
     },
+    "artifactUrl": {
+      "type": "string",
+      "format": "url"
+    },
     "lastUpdatedOn": {
       "type": "string"
     },
