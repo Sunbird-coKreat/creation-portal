@@ -4,11 +4,11 @@ import { FineUploader } from 'fine-uploader';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, IUserData, IUserProfile, ToasterService } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, ContentService } from '@sunbird/core';
+import { HelperService } from '../../../sourcing/services/helper.service';
 import * as _ from 'lodash-es';
 import { catchError, map} from 'rxjs/operators';
 import { throwError, Observable} from 'rxjs';
 import { SourcingService } from '../../services';
-// import MathText from '../../../../../assets/libs/mathEquation/plugin/mathTextPlugin.js';
 
 @Component({
   selector: 'app-ckeditor-tool',
@@ -51,7 +51,8 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
     toasterService: ToasterService,
     resourceService: ResourceService,
     public actionService: ActionService,
-    private contentService: ContentService
+    private contentService: ContentService,
+    private helperService: HelperService,
   ) {
     this.userService = userService;
     this.configService = configService;
@@ -507,7 +508,7 @@ getAllVideos(offset, query) {
     if (!this.showErrorMsg) {
       this.imageUploadLoader = true;
       // reader.onload = (uploadEvent: any) => {
-      const req = this.generateAssetCreateRequest(fileName, fileType, 'image');
+      const req = this.sourcingService.generateAssetCreateRequest(fileName, fileType, 'image', this.userProfile);
       this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
         this.imageUploadLoader = false;
         const errInfo = { errorMsg: 'Image upload failed' };
@@ -540,7 +541,7 @@ getAllVideos(offset, query) {
     this.loading = true;
     this.showErrorMsg = false;
     if (!this.showErrorMsg) {
-      const req = this.generateAssetCreateRequest(this.uploader.getName(0), this.uploader.getFile(0).type, 'video');
+      const req = this.sourcingService.generateAssetCreateRequest(this.uploader.getName(0), this.uploader.getFile(0).type, 'video', this.userProfile);
       this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
         this.loading = false;
         this.isClosable = true;
@@ -575,20 +576,7 @@ getAllVideos(offset, query) {
       });
     }
   }
-
-  generateAssetCreateRequest(fileName, fileType, mediaType) {
-    return {
-      content: {
-        name: fileName,
-        mediaType: mediaType,
-        mimeType: fileType,
-        createdBy: this.userProfile.userId,
-        creator: `${this.userProfile.firstName} ${this.userProfile.lastName ? this.userProfile.lastName : ''}`,
-        channel: this.editorConfig.channel || 'sunbird'
-      }
-    };
-  }
-
+  
   uploadToBlob(signedURL, file, config): Observable<any> {
     return this.actionService.http.put(signedURL, file, config).pipe(catchError(err => {
       const errInfo = { errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again' };

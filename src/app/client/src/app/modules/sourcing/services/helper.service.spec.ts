@@ -68,7 +68,7 @@ describe('HelperService', () => {
     expect(helperService.selectedCategoryMetaData).toEqual({res: 'dummyData'});
   });
 
-  xit('#getCollectionOrContentCategoryDefinition() should call programsService.getCollectionCategoryDefinition()', () => {
+  xit('#getCollectionOrContentCategoryDefinition() should call programsService.getCategoryDefinition()', () => {
     const targetCollectionMeta = {
       primaryCategory: 'Digital Textbook',
       channelId: '123456789',
@@ -81,11 +81,11 @@ describe('HelperService', () => {
       objectType: 'Content'
     };
 
-    spyOn(programsService, 'getCollectionCategoryDefinition').and.returnValue(observableOf(childMetaFormData));
+    spyOn(programsService, 'getCategoryDefinition').and.returnValue(observableOf(childMetaFormData));
     spyOn(helperService, 'getCollectionOrContentCategoryDefinition').and.callThrough();
     helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
-    expect(programsService.getCollectionCategoryDefinition).toHaveBeenCalledWith(targetCollectionMeta.primaryCategory,
-      targetCollectionMeta.channelId);
+    expect(programsService.getCategoryDefinition).toHaveBeenCalledWith(targetCollectionMeta.primaryCategory,
+      targetCollectionMeta.channelId, 'Collection');
   });
 
   it('#selectedCategoryMetaData should set _categoryMetaData', () => {

@@ -50,7 +50,7 @@ export class HelperService {
 
   getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta) {
     // tslint:disable-next-line:max-line-length
-    const categoryDefinition$ = this.programsService.getCollectionCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId)
+    const categoryDefinition$ = this.programsService.getCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId, 'Collection')
       .pipe(
         switchMap((response: any) => {
           const targetCollectionFormData = _.get(response, 'result.objectCategoryDefinition.forms.childMetadata.properties');

@@ -367,7 +367,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
+    this.programsService.getCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.currentRootOrgID, 'Collection').subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
@@ -551,13 +551,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['apply'] = 0;
         instance.countData['topics'] = 0;
         instance.countData['learningOutcomes'] = 0;
-
-        const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
-        const originUrl = this.programsService.getContentOriginEnvironment();
-        const url =  originUrl + hierarchyUrl1 ;
-
         if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
-          this.httpClient.get(url).subscribe(async res => {
+          this.programsService.getHierarchyFromOrigin(this.collectionData.origin).subscribe(async res => {
             const content = _.get(res, 'result.content');
             this.originalCollectionData = content;
             this.setTreeLeafStatusMessage(identifier, instance);

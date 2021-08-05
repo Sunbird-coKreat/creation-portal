@@ -339,7 +339,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
     this.programsService.getAllProgramsByType(req)
       .subscribe((myProgramsResponse) => {
-        this.programs = _.get(myProgramsResponse, 'result.programs');
+        this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (program: any) => {
+          if (program.program_id) {
+            program.activeDate = this.setProgramActiveDate(program)
+            return program;
+          }
+        });
         this.count = this.programs.length;
         this.tempSortPrograms = this.programs;
         this.logTelemetryImpressionEvent();
@@ -446,8 +451,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
             nomination_status: obj.status,
             nominated_collection_ids: obj.collection_ids,
             nominated_rolemapping: obj.rolemapping,
-            myRole: this.getMyProgramRole(obj)
+            myRole: this.getMyProgramRole(obj),
           });
+          activeDate: this.setProgramActiveDate(obj.program)
+          if (_.get(obj.program, 'activeDate')) {
+              console.log(obj.program);
+          }
           return obj.program;
         }
       });
@@ -546,12 +555,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
-    // tslint:disable-next-line:max-line-length
-    /*if (!_.includes(this.userService.userProfile.userRoles, 'ORG_ADMIN') && _.includes(this.userService.userProfile.userRoles, 'CONTENT_REVIEWER')) {
-
-    }*/
+    
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
-      this.programs = _.get(response, 'result.programs');
+      this.programs = _.map(_.get(response, 'result.programs'), (program: any) => {
+        if (program.program_id) {
+          program.activeDate = this.setProgramActiveDate(program)
+          return program;
+        }
+      });
       this.count = _.get(response, 'result.count');
       this.tempSortPrograms = this.programs;
       this.showLoader = false;
@@ -643,36 +654,28 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     return this.router.navigateByUrl('/sourcing/edit/' + program.program_id);
   }
 
-  isActive(program, name, index) {
-    const date = moment(program[name]);
+  setProgramActiveDate (program) {
+    const nominationDate = moment(program['nomination_enddate']);
+    const shortlistingDate = moment(program['shortlisting_enddate']);
+    const contributionDate = moment(program['content_submission_enddate']);
+    const endDate = moment(program['enddate']);
     const today = moment();
-    const isFutureDate = date.isAfter(today);
 
-    if (!this.activeDates[index]) {
-      this.activeDates[index] = {};
+    if (nominationDate.isAfter(today)) {
+      return 'nomination_enddate';
     }
 
-    if (name === 'nomination_enddate' && isFutureDate) {
-      this.activeDates[index]['nomination_enddate'] = true;
-      return true;
+    if (!nominationDate.isAfter(today) && shortlistingDate.isAfter(today)) {
+      return 'shortlisting_enddate';
     }
 
-    if (!this.activeDates[index]['nomination_enddate'] && name === 'shortlisting_enddate' && isFutureDate) {
-      this.activeDates[index]['shortlisting_enddate'] = true;
-      return true;
+    if (!nominationDate.isAfter(today) && !shortlistingDate.isAfter(today) && contributionDate.isAfter(today)) {
+      return 'content_submission_enddate';
     }
 
-    if (!this.activeDates[index]['nomination_enddate'] && !this.activeDates[index]['shortlisting_enddate']
-      && name === 'content_submission_enddate' && isFutureDate) {
-      this.activeDates[index]['content_submission_enddate'] = true;
-      return true;
-    }
-
-    if (!this.activeDates[index]['nomination_enddate'] && !this.activeDates[index]['shortlisting_enddate'] &&
-      !this.activeDates[index]['content_submission_enddate'] && name === 'content_submission_enddate' && isFutureDate) {
-      this.activeDates[index]['enddate'] = true;
-      return true;
-    }
+    if (!nominationDate.isAfter(today) && !shortlistingDate.isAfter(today) && !contributionDate.isAfter(today) && endDate.isAfter(today)) {
+      return 'enddate';
+    } 
   }
 
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
