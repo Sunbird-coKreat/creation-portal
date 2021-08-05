@@ -180,28 +180,48 @@ const createSSOSession = async (loginId, client_id, req, res) => {
   let grant;
   let keycloakClient = keyCloakClient;
   let scope = 'openid';
-  console.log('before grant', loginId, scope);
-  grant = await keycloakClient.grantManager.obtainDirectly(loginId, undefined, undefined, scope);
-  console.log('after grant', grant);
-  keycloakClient.storeGrant(grant, req, res);
-  console.log('after storeGrant');
-  req.kauth.grant = grant;
-  return new Promise((resolve, reject) => {
-    console.log('after Promise');
-    keycloakClient.authenticated(req, function (error) {
-      console.log('after authenticated');
-      if (error) {
-        logger.info({msg: 'SsoHelper:createSession error creating session', additionalInfo: error});
-        reject('ERROR_CREATING_SSO_SESSION')
-      } else {
-        resolve({
-          access_token: grant.access_token.token,
-          refresh_token: grant.refresh_token.token
-        })
-      }
+  try {
+    console.log('before grant', loginId, scope);
+    grant = await keycloakClient.grantManager.obtainDirectly(loginId, undefined, undefined, scope).catch(handleError);
+    console.log('after grant', grant);
+    keycloakClient.storeGrant(grant, req, res);
+    console.log('after storeGrant');
+    req.kauth.grant = grant;
+    return new Promise((resolve, reject) => {
+      console.log('after Promise');
+      keycloakClient.authenticated(req, function (error) {
+        console.log('after authenticated');
+        if (error) {
+          logger.info({msg: 'SsoHelper:createSession error creating session', additionalInfo: error});
+          reject('ERROR_CREATING_SSO_SESSION')
+        } else {
+          resolve({
+            access_token: grant.access_token.token,
+            refresh_token: grant.refresh_token.token
+          })
+        }
+      });
     });
-  });
+  }catch (e) {
+    handleError(e);
+  }
 }
+
+const handleError = (error) => {
+  logger.error({
+    msg: 'userService: handleError',
+    error: error,
+    params: _.get(error, 'error.params'),
+    message: _.get(error, 'message')
+  });
+  if (_.get(error, 'error.params')) {
+    throw error.error.params;
+  } else if (error instanceof Error) {
+    throw error.message;
+  } else {
+    throw 'unhandled exception while accepting tnc';
+  }
+};
 
 const createSession = async (loginId, client_id, req, res) => {
   let grant;
