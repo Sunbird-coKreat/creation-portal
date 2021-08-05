@@ -1282,6 +1282,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.generateTelemetryEndEvent('back');
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
     }
   }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
+import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService, PermissionService } from '@sunbird/core';
 import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { IContentEditorComponentInput } from '../../interfaces';
@@ -37,7 +37,7 @@ export class QuestionSetEditorComponent implements OnInit {
   public telemetryPageId: string;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
-    private telemetryService: TelemetryService, private configService: ConfigService,
+    private telemetryService: TelemetryService, private configService: ConfigService, private permissionService: PermissionService,
     private frameworkService: FrameworkService, private programsService: ProgramsService, 
     private contentService: ContentService, public toasterService: ToasterService,
     private resourceService: ResourceService, private programStageService: ProgramStageService,
@@ -338,6 +338,10 @@ export class QuestionSetEditorComponent implements OnInit {
       break;
     case "sourcingReject": 
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
+      break;
+      case "backContent": 
+      this.programsService.emitHeaderEvent(true);
+      this.programStageService.removeLastStage();
       break;
     case "saveCollection": // saving as draft
     default: this.programStageService.removeLastStage();
