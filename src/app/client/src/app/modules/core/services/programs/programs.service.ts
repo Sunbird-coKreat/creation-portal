@@ -979,30 +979,6 @@ export class ProgramsService extends DataService implements CanActivate {
     }
   }
 
-  getCollectionCategoryDefinition(categoryName, rootOrgId) {
-    const cacheInd = categoryName + ':' + rootOrgId;
-    if (this.cacheService.get(cacheInd)) {
-      return  of(this.cacheService.get(cacheInd));
-    } else {
-      const req = {
-        url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
-        data: {
-          request: {
-            "objectCategoryDefinition": {
-                "objectType": "Collection",
-                "name": categoryName,
-                "channel": rootOrgId
-            },
-          }
-        }
-      };
-      return this.post(req).pipe(tap(data => {
-        this.setSessionCache({name: cacheInd, value: data})
-      }));
-    }
-
-  }
-
   isNotEmpty(obj, key) {
    if (_.isNil(obj) || _.isNil(obj[key])) {
      return false;
@@ -1357,5 +1333,33 @@ export class ProgramsService extends DataService implements CanActivate {
       });
     }
     return targetPrimaryCategories;
+  }
+
+ /**
+  * Function to get the hierarchy of the collection from origin i.e. Diksha
+  * @param identifier collection id 
+  * @returns API response
+  */
+ getHierarchyFromOrigin(identifier) : Observable<ServerResponse> {
+   const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+   const originUrl = this.getContentOriginEnvironment();
+   const url =  originUrl + hierarchyUrl ;
+   return this.http.get(url).pipe(
+     mergeMap((data: ServerResponse) => {
+       if (data.responseCode !== 'OK') {
+         return throwError(data);
+       }
+       return of(data);
+   }));
+ }
+
+ /**
+   * makes api call to get the program
+   */
+  getProgram(programId): Observable<ServerResponse> {
+    const req = {
+      url: `program/v1/read/${programId}`
+    };
+    return this.get(req);
   }
 }

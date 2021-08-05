@@ -216,5 +216,16 @@ export class SourcingService {
     };
     return this.actionService.get(reqParam);
   }
-
+  generateAssetCreateRequest(fileName, fileType, mediaType, creator) {
+    return {
+      content: {
+        name: fileName,
+        mediaType: mediaType,
+        mimeType: fileType,
+        createdBy: creator.userId,
+        creator: `${creator.firstName} ${creator.lastName ? creator.lastName : ''}`,
+        channel: 'sunbird'
+      }
+    };
+  }
 }
