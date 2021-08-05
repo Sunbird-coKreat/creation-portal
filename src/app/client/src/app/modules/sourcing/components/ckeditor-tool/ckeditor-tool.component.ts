@@ -543,7 +543,8 @@ getAllVideos(offset, query) {
     if (!this.showErrorMsg) {
       this.imageUploadLoader = true;
       // reader.onload = (uploadEvent: any) => {
-        const req = this.sourcingService.generateAssetCreateRequest(fileName, fileType, 'image', this.userProfile);      this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
+      const req = this.sourcingService.generateAssetCreateRequest(fileName, fileType, 'image', this.userProfile);      
+      this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
         this.imageUploadLoader = false;
         const errInfo = { errorMsg: 'Image upload failed' };
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
