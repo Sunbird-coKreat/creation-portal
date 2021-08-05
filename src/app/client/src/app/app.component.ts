@@ -140,7 +140,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.hideHeaderNFooter = _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.data.hideHeaderNFooter') ||
           _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.firstChild.data.hideHeaderNFooter');
       });
-      console.log(this.hideHeaderNFooter, ' this.hideHeaderNFooter');
        this.programsService.getHeaderEmitter()
       .subscribe(status => this.hideHeaderNFooter = !status );
   }
