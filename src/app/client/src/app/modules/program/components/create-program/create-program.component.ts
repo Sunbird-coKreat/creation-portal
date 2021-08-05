@@ -100,6 +100,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+  public firstLevelFolderLabel: string;
 
   constructor(
     public frameworkService: FrameworkService,
@@ -314,7 +315,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
-
 
   getUploadVideo(videoId) {
     this.loading = false;
@@ -596,13 +596,21 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
-  fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
-      let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
-      }
-    })
+  getCollectionCategoryDefinition() {
+    if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
+      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
+        }
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resource, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
+    }
   }
 
   /**
@@ -661,10 +669,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line: max-line-length
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null];
       }
-
       this.createProgramForm = this.sbFormBuilder.group(obj);
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      this.fetchBlueprintTemplate();
+      this.getCollectionCategoryDefinition();
       this.showProgramScope = false;
       this.showTextBookSelector = false;
     }
@@ -955,7 +962,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 onChangeTargetCollection() {
     this.showTexbooklist(true);
     this.collectionListForm.value.pcollections = [];
-    this.fetchBlueprintTemplate();
+    this.getCollectionCategoryDefinition();
     this.tempCollections = [];
 }
 showTexbooklist(showTextBookSelector = true) {

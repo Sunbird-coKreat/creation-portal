@@ -57,6 +57,7 @@ export class ProjectFilterComponent implements OnInit {
       'gradeLevel': [],
       'subject': [],
       'contentTypes': [],
+      'target_collection_category': [],
       'nominations': this.nominationContributionStatus, // adding default values for open, close and any
       'contributions': this.nominationContributionStatus // adding default values for open, close and any
     };
@@ -66,13 +67,16 @@ export class ProjectFilterComponent implements OnInit {
   }
 
   getContentCategories() {
-    let programs = this.programs;
+    const collectionPrimaryCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+    const programs = this.programs;
 
     _.map(programs, (program) => {
       const programContentTypes = program.targetprimarycategories ? _.map(program.targetprimarycategories, 'name') : program.content_types;
       this.currentFilters['contentTypes'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['contentTypes'],
       programContentTypes ))));
     });
+    // tslint:disable-next-line:max-line-length
+    this.currentFilters['target_collection_category'] = this.sortFilters(collectionPrimaryCategories);
     this.currentFilters['contentTypes'] = this.sortFilters(this.currentFilters['contentTypes']);
   }
   createFilterForm() {
@@ -83,7 +87,8 @@ export class ProjectFilterComponent implements OnInit {
       subject: [],
       content_types: [],
       nominations: [],
-      contributions: []
+      contributions: [],
+      target_collection_category: []
     });
     this.filterForm.valueChanges.subscribe(val => {
       this.enableApplyBtn = this.programsService.getFiltersAppliedCount(val); // getting applied filters count
@@ -308,6 +313,8 @@ export class ProjectFilterComponent implements OnInit {
       this.setPreferences['gradeLevel'] = appliedFilters['gradeLevel'] ? appliedFilters['gradeLevel'] : [];
       this.setPreferences['subject'] = appliedFilters['subject'] ? appliedFilters['subject'] : [];
       this.setPreferences['content_types'] = appliedFilters['content_types'] ? appliedFilters['content_types'] : [];
+      this.setPreferences['target_collection_category'] = appliedFilters['target_collection_category'] ?
+      appliedFilters['target_collection_category'] : [];
       this.setPreferences['nomination_date'] = appliedFilters['nomination_date'] ? appliedFilters['nomination_date'] : '';
       this.setPreferences['contribution_date'] = appliedFilters['contribution_date'] ? appliedFilters['contribution_date'] : '';
       this.filterForm.controls['sourcingOrganisations'].setValue(this.setPreferences['rootorg_id']);
@@ -315,6 +322,7 @@ export class ProjectFilterComponent implements OnInit {
       this.filterForm.controls['gradeLevel'].setValue(this.setPreferences['gradeLevel']);
       this.filterForm.controls['subject'].setValue(this.setPreferences['subject']);
       this.filterForm.controls['content_types'].setValue(this.setPreferences['content_types']);
+      this.filterForm.controls['target_collection_category'].setValue(this.setPreferences['target_collection_category']);
       this.filterForm.controls['nominations'].setValue(this.setPreferences['nomination_date']);
       this.filterForm.controls['contributions'].setValue(this.setPreferences['contribution_date']);
     }

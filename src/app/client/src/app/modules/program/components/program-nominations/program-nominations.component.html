@@ -625,8 +625,8 @@
                                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
                                 </tr>
                                 <tr>
-                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName}}</td>
-                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{TARGET_NAME}': targetCollection}}</td>
+                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel}}</td>
+                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
                                         appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('chapter_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"

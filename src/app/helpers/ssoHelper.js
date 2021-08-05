@@ -171,11 +171,16 @@ const createSession = async (loginId, client_id, req, res) => {
     keycloakClient = keycloakTrampolineAndroid;
     scope = 'offline_access';
   }
+  console.log('before grant');
   grant = await keycloakClient.grantManager.obtainDirectly(loginId, undefined, undefined, scope);
+  console.log('after grant', grant);
   keycloakClient.storeGrant(grant, req, res);
+  console.log('after storeGrant');
   req.kauth.grant = grant;
   return new Promise((resolve, reject) => {
+    console.log('after Promise');
     keycloakClient.authenticated(req, function (error) {
+      console.log('after authenticated');
       if (error) {
         logger.info({msg: 'SsoHelper:createSession error creating session', additionalInfo: error});
         reject('ERROR_CREATING_SSO_SESSION')

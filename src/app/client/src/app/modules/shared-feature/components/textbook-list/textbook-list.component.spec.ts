@@ -59,9 +59,8 @@ describe('TextbookListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TextbookListComponent);
     component = fixture.componentInstance;
-    programsService = TestBed.get(ProgramsService);
+    programsService = TestBed.inject(ProgramsService);
     collectionHierarchyService = TestBed.get(CollectionHierarchyService);
-
     // fixture.detectChanges();
   });
 
@@ -70,31 +69,45 @@ describe('TextbookListComponent', () => {
   });
 
   it ('#setTargetCollectionValue() should set targetCollection values', () => {
-    const  service  = TestBed.get(ProgramsService);
-    spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
+    spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
     component.programDetails = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     component.setTargetCollectionValue();
     expect(component.targetCollection).not.toBeUndefined();
-    expect(component.targetCollections).not.toBeUndefined();
   });
 
-  it ('#setTargetCollectionValue() should not set targetCollection values', () => {
-    const  service  = TestBed.get(ProgramsService);
-    spyOn(service, 'setTargetCollectionName').and.returnValue(undefined);
+  xit ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    component.targetCollection = undefined;
     component.programDetails = undefined;
+    spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     component.setTargetCollectionValue();
     expect(component.targetCollection).toBeUndefined();
-    expect(component.targetCollections).toBeUndefined();
   });
 
-  it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-    const  service  = TestBed.get(ProgramsService);
+  xit ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
     component.programDetails = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
-    spyOn(service, 'setTargetCollectionName').and.callThrough();
+    spyOn(programsService, 'setTargetCollectionName').and.callThrough();
     component.setTargetCollectionValue();
-    expect(service.setTargetCollectionName).toHaveBeenCalled();
+    expect(programsService.setTargetCollectionName).toHaveBeenCalled();
+  });
+
+  xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+    component['programDetails'] = {target_collection_category: 'Course'};
+    component['userService'] = TestBed.inject(UserService);
+    component.firstLevelFolderLabel = undefined;
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
+    expect(component.firstLevelFolderLabel).toBeDefined();
+  });
+  xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    component.programDetails.target_collection_category = undefined;
+    component['userService'] = TestBed.inject(UserService);
+    component.firstLevelFolderLabel = undefined;
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
   });
 });

@@ -521,6 +521,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (_.get(appliedfilters, 'content_types') && (_.get(appliedfilters, 'content_types').length)) {
       newFilters['content_types'] = appliedfilters.content_types;
     }
+    if (_.get(appliedfilters, 'target_collection_category') && (_.get(appliedfilters, 'target_collection_category').length)) {
+      newFilters['target_collection_category'] = appliedfilters.target_collection_category;
+    }
     if (_.get(appliedfilters, 'contribution_date') && _.get(appliedfilters, 'contribution_date') !== 'any') {
       newFilters['content_submission_enddate'] = appliedfilters.contribution_date;
     }
