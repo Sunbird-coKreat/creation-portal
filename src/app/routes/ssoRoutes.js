@@ -425,7 +425,7 @@ module.exports = (app) => {
     console.log('req.query.obj ', req.query.obj);
     let userId = req.query.obj;
     // let userObj = decrypt(req.query.obj)
-    response = await createSession(userId, 'portal',req, res);
+    response = await createSSOSession(userId, 'portal',req, res);
   });
 
 };
