@@ -156,8 +156,8 @@
           </div>
           <div class="d-flex flex-dc" [class.filters-section]="!!sourcingOrgReviewer && !sampleContent">
             <div class="sb-textbook-allchapters sb-field">
-              <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectChapters}}</label>
-              <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts.lbl.allChapters}}" [isSearchable]=true labelField="name"
+              <label class="fsmall font-weight-normal">{{resourceService.frmelmnts?.lbl?.selectFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}</label>
+              <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts?.lbl?.allFirstLevelFolders | interpolate: '{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}" [isSearchable]=true labelField="name"
                 valueField="identifier" [(ngModel)]="selectedChapterOption"
                 (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter>
                 <sui-select-option *ngFor="let option of selectdChapter.filteredOptions" [value]="option">
@@ -182,7 +182,7 @@
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
-            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate: '{contentTypeUnit}': (blueprintTemplate ? (resourceService?.frmelmnts?.lbl?.sections) : (resourceService?.frmelmnts?.lbl?.chapters)) | interpolate: '{contentTypeUnit}': blueprintTemplate ? resourceService?.frmelmnts?.lbl?.sections : resourceService?.frmelmnts?.lbl?.chapters | lowercase }} </span>
+            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | interpolate:'{contentTypeUnit}': firstLevelFolderLabel}} </span>
             <div class="d-flex">
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
                 <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>

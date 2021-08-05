@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ListContributorTextbooksComponent } from './list-contributor-textbooks.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DaysToGoPipe } from '@sunbird/shared-feature';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule } from '@sunbird/shared';

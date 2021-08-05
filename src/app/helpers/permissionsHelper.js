@@ -4,10 +4,12 @@ const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
 const envHelper = require('./environmentVariablesHelper.js')
 const learnerURL = envHelper.LEARNER_URL
+const openSaberServiceUrl = envHelper.OPENSABER_SERVICE_URL
 const enablePermissionCheck = envHelper.ENABLE_PERMISSION_CHECK
 const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const telemetryHelper = require('./telemetryHelper')
 const logger = require('sb_logger_util_v2');
+
 let PERMISSIONS_HELPER = {
   ROLES_URLS: {
     'course/create': ['CONTENT_CREATOR', 'CONTENT_CREATION', 'CONTENT_REVIEWER'],
@@ -111,6 +113,9 @@ let PERMISSIONS_HELPER = {
           reqObj.session.rootOrghashTagId = body.result.response.rootOrg.hashTagId
           reqObj.session.rootOrg = body.result.response.rootOrg
         }
+        if (!_.includes(reqObj.session.roles, 'PUBLIC')) {
+          reqObj.session.roles.push('PUBLIC');
+        }
       }
     } catch (e) {
       logger.error({msg: 'error while saving user session data', err: e})
@@ -165,6 +170,117 @@ let PERMISSIONS_HELPER = {
       }
     })
   },
+
+  getRequest: function(option) {
+      return new Promise(function (success, failure) {
+        request(option, function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                  success(body);
+              } else {
+                  failure(error);
+              }
+          });
+      });
+  },
+
+  getSourcingUserRoles: function(reqObj, callback) {
+    const userRegData = {};
+    var userId = reqObj.session.userId
+    const option = {
+      url: `${openSaberServiceUrl}/search`,
+      headers: {
+        'x-msgid': uuidv1(),
+        'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
+        'content-type': 'application/json',
+        'accept': 'application/json',
+        'Authorization': 'Bearer ' + apiAuthToken,
+        'x-authenticated-user-token': reqObj.kauth.grant.access_token.token
+      },
+      method: 'POST',
+      json: true,
+      body: { id: 'open-saber.registry.search', ver: '1.0', ets: '11234', params: { did: '', key: '', msgid: '' } }
+    };
+
+    option.body['request'] = { entityType: ['User'], filters: { userId: {eq: userId} } };
+
+    module.exports.getRequest(option)
+      .then(function (userSearchResponse) {
+        const User = _.get(userSearchResponse, 'result.User');
+        if (!_.isEmpty(User) && User.length) {
+          userRegData['User'] = User[0];
+          option.body['request'] = {
+            entityType: ['User_Org'],
+            filters: {
+              userId: {eq: User[0].osid}
+            }
+          };
+          return module.exports.getRequest(option);
+        }
+        else {
+          return null;
+        }
+      }).then((userOrgSearchResponse) => {
+        if (userOrgSearchResponse && userOrgSearchResponse.result.User_Org.length) {
+          const userOrg = _.find(userOrgSearchResponse.result.User_Org, function(o) { return o.roles.includes('user') || o.roles.includes('admin') });
+          if (userOrg) {
+            userRegData['User_Org'] = userOrg;
+            const orgOsid = userOrg.orgId;
+            option.body['request'] = {
+              entityType: ['Org'],
+              filters: {
+                osid: {or: [orgOsid]}
+              }
+            };
+            return module.exports.getRequest(option)
+          } else {
+            return null
+          }
+        } else {
+          return null
+        }
+      }).then(orgSearchResponse => {
+        if (orgSearchResponse && orgSearchResponse.result.Org.length) {
+          userRegData['Org'] = orgSearchResponse.result.Org[0];
+        }
+        module.exports.setSourcingUserSessionData(reqObj, userRegData, callback)
+        logger.info({msg: 'getSourcingUserRoles registry obj', userRegData: userRegData});
+      }).catch(error => {
+        console.log(error)
+        callback(error, null)
+      })
+  },
+
+  setSourcingUserSessionData (reqObj, userRegData, callback) {
+    try {
+      const userLevelKeys = _.keys(userRegData);
+      const isOrgCreated = (_.has(userRegData, 'User_Org') && _.has(userRegData, 'Org'))
+      if(userLevelKeys.length === 1 && _.first(userLevelKeys, 'User')) {
+        reqObj.session.roles.push('INDIVIDUAL_USER')
+      } else if (isOrgCreated && _.includes(_.get(userRegData, 'User_Org.roles'), 'admin') && _.includes(reqObj.session.roles, 'ORG_ADMIN')) {
+        reqObj.session.roles.push('CONTRIBUTE_ORG_ADMIN')
+      } else if (isOrgCreated && _.includes(_.get(userRegData, 'User_Org.roles'), 'admin') && !_.includes(reqObj.session.roles, 'ORG_ADMIN')) {
+        reqObj.session.roles.push('CONTRIBUTE_ORG_ADMIN')
+      } else if(isOrgCreated && _.includes(userRegData['Org'].type, 'sourcing')) {
+        reqObj.session.roles.push('SOURCING_USER')
+      } else if(isOrgCreated &&
+        (_.includes(userRegData['Org'].type, 'contribute') && !_.includes(userRegData['Org'].type, 'sourcing')) ||
+        !_.get(userRegData, 'Org.type')
+        ) {
+          reqObj.session.roles.push('CONTRIBUTE_ORG_USER')
+      }
+      reqObj.session.save(function (error) {
+        if (error) {
+          callback(error, null)
+        } else {
+          callback(null, userRegData)
+        }
+      });
+      } catch(error) {
+        logger.error({msg: 'setSourcingUserSessionData :: Error while saving user session data', err: error});
+        callback(error, null)
+    }
+  },
+
   checkPermission: function () {
     return function (req, res, next) {
       if (enablePermissionCheck && req.session['roles'] && req.session['roles'].length) {

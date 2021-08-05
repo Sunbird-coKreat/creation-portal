@@ -26,12 +26,12 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 
 export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('questionCreationChild', {static: false}) questionCreationChild;
+  @ViewChild('questionCreationChild') questionCreationChild;
   @Output() changeStage = new EventEmitter<any>();
   @Input() practiceQuestionSetComponentInput: any;
-  @ViewChild('FormControl', {static: false}) FormControl: NgForm;
+  @ViewChild('FormControl') FormControl: NgForm;
   @Output() uploadedContentMeta = new EventEmitter<any>();
-  @ViewChild('resourceTtlTextarea', {static: false}) resourceTtlTextarea: ElementRef;
+  @ViewChild('resourceTtlTextarea') resourceTtlTextarea: ElementRef;
 
   public sessionContext: any;
   public programContext: any;
@@ -681,7 +681,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   handleQuestionTabChange(questionId, actionStatus?: string) {
 
     if (_.includes(this.sessionContext.questionList, questionId) && !actionStatus) { return; }
-    if (!this.checkCurrentQuestionStatus()) { return ; }
+    if (!this.checkCurrentQuestionStatus() && !this.questionCreationChild.validateCurrentQuestion()) { return ; }
     this.sessionContext.questionList = [];
     this.sessionContext.questionList.push(questionId);
     this.selectedQuestionId = questionId;
@@ -746,8 +746,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public createNewQuestion(): void {
-
-    if (!this.checkCurrentQuestionStatus()) { return ; }
+    if (!this.checkCurrentQuestionStatus() || !this.questionCreationChild.validateCurrentQuestion()) { return ; }
     this.createDefaultAssessmentItem().pipe(
       map((data: any) => {
         const questionId = data.result.node_id;
@@ -1156,7 +1155,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
     }, {});
     const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
-    data = _.assign(data, ...(_.pickBy(sharedMetaData, _.identity)));
+    data = _.assign(data, _.pickBy(sharedMetaData, _.identity));
     if (!_.isEmpty(data['subject'])) {
       data['subject'] = data['subject'][0];
     }
@@ -1278,8 +1277,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleBack() {
-    this.generateTelemetryEndEvent('back');
-    this.programStageService.removeLastStage();
+    if(!this.questionCreationChild.validateCurrentQuestion() || !this.checkCurrentQuestionStatus()) {
+      return;
+    } else {
+      this.generateTelemetryEndEvent('back');
+      this.programStageService.removeLastStage();
+    }
   }
 
 

@@ -4,7 +4,7 @@ import {
   ElementRef, ViewChild, Renderer2, Output
 } from '@angular/core';
 import { ResourceService } from '../../services/index';
-import { IPopup } from 'ng2-semantic-ui';
+import { IPopup } from 'ng2-semantic-ui-v9';
 import { ISharelink, ITelemetryShare } from './../../interfaces';
 @Component({
   selector: 'app-share-link',
@@ -39,7 +39,7 @@ export class ShareLinkComponent implements OnInit {
   /**
   *Element Ref  for copyLinkButton;
   */
-  @ViewChild('copyLinkButton', {static: false}) copyLinkButton: ElementRef;
+  @ViewChild('copyLinkButton') copyLinkButton: ElementRef;
   /**
   *Element Ref  for copyLinkData;
   */

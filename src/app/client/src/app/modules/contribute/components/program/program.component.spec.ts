@@ -14,7 +14,7 @@ import { ProgramHeaderComponent } from '../program-header/program-header.compone
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
 let errorInitiate;
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
@@ -297,23 +297,23 @@ describe('ProgramComponent', () => {
     });
 
     it ('#setTargetCollectionValue() should set targetCollection values', () => {
+      component.targetCollections = undefined;
+      component.programDetails = programDetailsTargetCollection;
       const  programsService  = TestBed.get(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
-      component.programDetails = programDetailsTargetCollection;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).not.toBeUndefined();
-      expect(component.targetCollections).not.toBeUndefined();
   });
 
   it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    component.targetCollections = undefined;
+    component.programDetails = undefined;
     const  programsService  = TestBed.get(ProgramsService);
     spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
-    component.programDetails = undefined;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();
     component.setTargetCollectionValue();
     expect(component.targetCollection).toBeUndefined();
-    expect(component.targetCollections).toBeUndefined();
   });
 
   it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {

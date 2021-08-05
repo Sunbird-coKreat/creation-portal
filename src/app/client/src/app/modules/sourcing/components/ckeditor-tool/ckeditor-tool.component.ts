@@ -16,8 +16,8 @@ import { SourcingService } from '../../services';
   styleUrls: ['./ckeditor-tool.component.scss']
 })
 export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
-  @ViewChild('editor', {static: false}) public editorRef: ElementRef;
-  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
+  @ViewChild('editor') public editorRef: ElementRef;
+  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   @Input() editorConfig: any;
   @Input() editorDataInput: any;
   @Input() editorId: any;
@@ -94,23 +94,59 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
       ],
       fontSize: {
         options: [
-          9,
-          11,
-          13,
-          15,
-          17,
-          19,
-          21,
-          23,
-          25
+          'eight',
+          'ten',
+          'twelve',
+          'fourteen',
+          'sixteen',
+          'eighteen',
+          'twenty',
+          'twentytwo',
+          'twentyfour',
+          'twentysix',
+          'twentyeight',
+          'thirty',
+          'thirtysix'
         ]
       },
       image: {
-        toolbar: ['imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight'],
+        resizeUnit: '%',
+        resizeOptions: [{
+          name: 'resizeImage:25',
+          value: '25',
+          icon: 'small',
+          className: 'resize-25'
+        },
+        {
+          name: 'resizeImage:50',
+          value: '50',
+          icon: 'medium',
+          className: 'resize-50'
+        },
+        {
+          name: 'resizeImage:75',
+          value: '75',
+          icon: 'large',
+          className: 'resize-75'
+        },
+        {
+          name: 'resizeImage:100',
+          value: '100',
+          icon: 'full',
+          className: 'resize-100'
+        },
+        {
+          name: 'resizeImage:original',
+          value: null,
+          icon: 'original',
+          className: 'resize-original'
+        }],
+        toolbar: ['imageStyle:alignLeft', 'imageStyle:alignCenter',
+          'imageStyle:alignRight', '|', 'resizeImage:25', 'resizeImage:50', 'resizeImage:75',  'resizeImage:100', 'resizeImage:original'],
         styles: ['full', 'alignLeft', 'alignRight', 'alignCenter']
       },
       isReadOnly: false,
-      removePlugins: ['EasyImage', 'ImageCaption', 'mathtype', 'ChemType']
+      removePlugins: ['EasyImage', 'ImageCaption', 'mathtype', 'ChemType', 'ImageResizeHandles']
     }, this.editorConfig);
 
     this.acceptVideoType = this.getAcceptType(this.assetConfig.videoFiles, 'video');

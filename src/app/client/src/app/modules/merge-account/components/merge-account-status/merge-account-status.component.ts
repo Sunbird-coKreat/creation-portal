@@ -8,7 +8,7 @@ import {ResourceService} from '@sunbird/shared';
   styleUrls: ['./merge-account-status.component.scss']
 })
 export class MergeAccountStatusComponent implements OnInit {
-  @ViewChild('modal', {static: false}) modal;
+  @ViewChild('modal') modal;
   isMergeSuccess: any = {};
   redirectUri: string;
   mergeType: string;

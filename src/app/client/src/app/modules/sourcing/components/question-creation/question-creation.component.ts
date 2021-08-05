@@ -31,8 +31,8 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   @Input() telemetryEventsInput: any;
   @Input() roles: any;
   @Input() editableFieldsACL: any;
-  @ViewChild('author_names', {static: false}) authorName;
-  @ViewChild('reuestChangeForm', {static: false}) ReuestChangeForm: NgForm;
+  @ViewChild('author_names') authorName;
+  @ViewChild('reuestChangeForm') ReuestChangeForm: NgForm;
 
   public userProfile: IUserProfile;
   public publicDataService: PublicDataService;
@@ -329,6 +329,16 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     } else {
       this.showFormError = true;
       this.showPreview = false;
+    }
+  }
+
+  validateCurrentQuestion() {
+    if (_.isEmpty(this.editorState.question) || _.isEmpty(this.editorState.answer)) {
+        this.showFormError = true;
+        this.showPreview = false;
+        return false;
+    } else {
+      return true;
     }
   }
 

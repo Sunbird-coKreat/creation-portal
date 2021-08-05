@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
-  SuiRatingModule, SuiCollapseModule } from 'ng2-semantic-ui';
+  SuiRatingModule, SuiCollapseModule } from 'ng2-semantic-ui-v9';
 import { CommonModule, DatePipe } from '@angular/common';
 import { CoreModule, SessionExpiryInterceptor } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
@@ -18,8 +18,8 @@ import { CacheSessionStorage } from 'ng2-cache-service/dist/src/services/storage
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
 import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
-import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v8';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
 @NgModule({
   declarations: [

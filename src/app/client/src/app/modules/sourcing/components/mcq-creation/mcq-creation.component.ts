@@ -27,8 +27,8 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() roles: any;
   @Output() questionStatus = new EventEmitter<any>();
   @Output() questionFormChangeStatus = new EventEmitter<any>();
-  @ViewChild('author_names', {static: false}) authorName;
-  @ViewChild('reuestChangeForm', {static: false}) ReuestChangeForm: NgForm;
+  @ViewChild('author_names') authorName;
+  @ViewChild('reuestChangeForm') ReuestChangeForm: NgForm;
   public userProfile: IUserProfile;
   public showPreview = false;
   public setCharacterLimit = 160;
@@ -617,5 +617,17 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   getTelemetryInteractObject(id: string, type: string) {
     return this.programTelemetryService.getTelemetryInteractObject(id, type, '1.0',
     { l1: this.sessionContext.collection, l2: this.sessionContext.textBookUnitIdentifier, l3: this.sessionContext.resourceIdentifier});
+  }
+
+  validateCurrentQuestion() {
+    const optionInvalid = _.find(this.mcqForm.options, option =>
+      (option.body === undefined || option.body === '' || option.length > this.setCharacterLimit));
+    if (optionInvalid || !this.mcqForm.answer || [undefined, ''].includes(this.mcqForm.question)) {
+      this.showFormError = true;
+      this.showPreview = false;
+      return false;
+    } else {
+      return true;
+    }
   }
 }

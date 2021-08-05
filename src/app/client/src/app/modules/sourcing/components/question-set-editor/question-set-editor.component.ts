@@ -197,7 +197,7 @@ export class QuestionSetEditorComponent implements OnInit {
     if (this.showQuestionEditor) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
     }
-    //this.editorConfig.config = _.assign(this.editorConfig.config, this.hierarchyConfig);
+    this.getEditableFields();
     this.getCorrectionComments();
     this.getDikshaPreviewUrl();
     this.getStatustoShow();
@@ -213,7 +213,7 @@ export class QuestionSetEditorComponent implements OnInit {
     }
     
     if (submissionDateFlag && this.canReviewContent()) {
-      return 'review';
+      return 'orgReview';
     }
       
     if (this.canSourcingReviewerPerformActions()) {
@@ -294,6 +294,16 @@ export class QuestionSetEditorComponent implements OnInit {
     && this.programsService.isProjectLive(this.programContext));
   }
 
+  getEditableFields() {
+    this.editorConfig.config['editableFields'] = {};
+    const fields = _.map(_.filter(this.programsService.overrideMetaData, {editable: true}), 'code');
+    this.editorConfig.config.editableFields.orgreview = fields;
+    this.editorConfig.config.editableFields.sourcingreview = fields;
+  }
+
+  hasRole(role) {
+    return this.sessionContext.currentRoles.includes(role);
+  }
   canReviewContent() {
     const resourceStatus = this.collectionDetails.status.toLowerCase();
 

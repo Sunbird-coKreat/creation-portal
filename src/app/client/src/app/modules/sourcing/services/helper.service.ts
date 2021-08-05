@@ -868,9 +868,9 @@ export class HelperService {
       }
     };
 
-    // if (!_.isUndefined(comment)) {
-    //   requestBody.request.questionset['requestChanges'] = _.trim(comment);
-    // }
+    if (!_.isUndefined(comment)) {
+       requestBody.request.questionset['requestChanges'] = _.trim(comment);
+    }
     const option = {
       url: `questionset/v4/system/update/${questionsetId}`,
       data: requestBody
@@ -897,7 +897,6 @@ export class HelperService {
     const targetFrameworkUserInput = _.pick(row, _.map(this.frameworkService.targetFrameworkCategories, 'targetIdFieldName'));
     const framework = _.get(targetCollectionFrameworksData, 'framework');
     const targetFWIds = _.get(targetCollectionFrameworksData, 'targetFWIds');
-
     this.flattenedFrameworkCategories[framework] = {};
     // tslint:disable-next-line:max-line-length
     const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
@@ -905,7 +904,6 @@ export class HelperService {
       const terms = _.get(item, 'terms');
       this.flattenedFrameworkCategories[framework][item.code] = terms || [];
     });
-
     if (framework !== _.first(targetFWIds) && !_.isEmpty(_.first(targetFWIds))) {
       const targetFWId = _.first(targetFWIds);
       this.flattenedFrameworkCategories[targetFWId] = {};
@@ -916,17 +914,13 @@ export class HelperService {
         this.flattenedFrameworkCategories[_.first(targetFWIds)][item.code] = terms || [];
       });
     }
-
     _.forEach(organisationFrameworkUserInput, (value, key) => {
       const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
         'orgIdFieldName': key
       }), 'code');
-
       organisationFrameworkUserInput[key] = this.hasEmptyElement(value) ? _.get(targetCollectionFrameworksData, key) || [] :
       this.convertNameToIdentifier(framework, value, key, code, targetCollectionFrameworksData, 'identifier');
-
     });
-
     _.forEach(targetFrameworkUserInput, (value, key) => {
       const code = _.get(_.find(this.frameworkService.targetFrameworkCategories, {
         'targetIdFieldName': key
@@ -935,7 +929,6 @@ export class HelperService {
       _.get(targetCollectionFrameworksData, key) || [] :
       this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData, 'identifier');
     });
-
     return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
   }
 
@@ -956,7 +949,6 @@ export class HelperService {
     const uniqByName = _.uniqBy(filteredTermsByName, 'name');
     return _.map(uniqByName, mapBy);
   }
-
 
   hasEmptyElement(value) {
     if (_.isArray(value)) {

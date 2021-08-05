@@ -25,7 +25,8 @@ import { ThrowStmt } from '@angular/compiler';
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
-  @ViewChild('fineUploaderUI', {static: false}) fineUploaderUI: ElementRef;
+  @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
+  public unsubscribe = new Subject<void>();
   public programId: string;
   public guidLinefileName: String;
   public isFormValueSet = {
@@ -94,6 +95,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   private enableQuestionSetEditor: string;
   public openProjectTargetTypeModal= false;
   private projectTargetType: string = null;
+  public firstLevelFolderLabel: string;
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -354,6 +356,35 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     })).subscribe(res => {
       // Read upload video data
       this.getUploadVideo(res.result.node_id);
+    });
+  }
+  
+  getProgramDetails() {
+    const req = {
+      url: `program/v1/read/${this.programId}`
+    };
+    this.programsService.get(req).subscribe((programDetails) => {
+      this.programDetails = _.get(programDetails, 'result');
+
+      //this.selectedContentTypes = _.get(this.programDetails, 'content_types');
+      //this.programDetails['content_types'] = _.join(this.selectedContentTypes, ', ');
+
+      // tslint:disable-next-line: max-line-length
+      this.selectedTargetCollection = !_.isEmpty(_.get(this.programDetails, 'target_collection_category')) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
+      if (!_.isEmpty(this.programDetails.guidelines_url)) {
+        this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
+      }
+      this.initializeFormFields();
+    }, error => {
+      this.showLoader = false;
+      const errInfo = {
+        errorMsg:  'Fetching program details failed',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: req
+      };
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
@@ -622,13 +653,88 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
-  fetchBlueprintTemplate(): void {
-    this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
-      let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
+  getCollectionCategoryDefinition() {
+    if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
+      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
+        }
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resource, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
+    }
+  }
+
+  /**
+   * Executed when user come from any other page or directly hit the url
+   *
+   * It helps to initialize form fields and apply field level validation
+   */
+  initializeFormFields(): void {
+    this.createProgramForm = this.sbFormBuilder.group({
+      name: ['', [Validators.required, Validators.maxLength(100)]],
+      description: ['', Validators.maxLength(1000)],
+      nomination_enddate: [null, Validators.required],
+      shortlisting_enddate: [null],
+      program_end_date: [null, Validators.required],
+      content_submission_enddate: [null, Validators.required],
+      rewards: [],
+      defaultContributeOrgReview: [true]
+    });
+    this.collectionListForm = this.sbFormBuilder.group({
+      pcollections: this.sbFormBuilder.array([]),
+      medium: [],
+      gradeLevel: [],
+      subject: [],
+      targetPrimaryCategories: [null, Validators.required],
+      target_collection_category: [null, Validators.required],
+    });
+    if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
+      this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
+
+      if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
+        this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
+        this.editPublished = true;
       }
-    })
+      this.collectionListForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
+
+      const obj = {
+        name: [_.get(this.programDetails, 'name'), [Validators.required, Validators.maxLength(100)]],
+        description: [_.get(this.programDetails, 'description'), Validators.maxLength(1000)],
+        nomination_enddate : [null],
+        // tslint:disable-next-line: max-line-length
+        shortlisting_enddate: [_.get(this.programDetails, 'shortlisting_enddate') ? new Date(_.get(this.programDetails, 'shortlisting_enddate')) : null],
+        // tslint:disable-next-line: max-line-length
+        program_end_date: [_.get(this.programDetails, 'enddate') ? new Date(_.get(this.programDetails, 'enddate')) : null, Validators.required],
+        // tslint:disable-next-line: max-line-length
+        content_submission_enddate: [_.get(this.programDetails, 'content_submission_enddate') ? new Date(_.get(this.programDetails, 'content_submission_enddate')) : null, Validators.required],
+        // tslint:disable-next-line: max-line-length
+        rewards: [_.get(this.programDetails, 'rewards')],
+        // tslint:disable-next-line: max-line-length
+        defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editPublished })
+      };
+
+      if (this.isOpenNominations === true) {
+        // tslint:disable-next-line: max-line-length
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null, Validators.required];
+      } else {
+        // tslint:disable-next-line: max-line-length
+        obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null];
+      }
+      this.createProgramForm = this.sbFormBuilder.group(obj);
+      this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.getCollectionCategoryDefinition();
+      this.showProgramScope = false;
+      this.showTextBookSelector = false;
+    }
+
+    this.showLoader = false;
+    this.isFormValueSet = true;
   }
 
   saveProgramError(err) {
@@ -919,8 +1025,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 onChangeTargetCollection() {
     this.showTexbooklist(true);
-    this.projectScopeForm.value.pcollections = [];
-    this.fetchBlueprintTemplate();
+    this.collectionListForm.value.pcollections = [];
+    this.getCollectionCategoryDefinition();
     this.tempCollections = [];
 }
 showTexbooklist(showTextBookSelector = true) {

@@ -114,7 +114,7 @@
       "type": "string",
       "format": "url"
     },
-    "publishCheckList": {
+    "publishChecklist": {
       "type": "array"
     },
     "publishComment": {
@@ -229,6 +229,12 @@
     },
     "topic" : {
       "type": "array"
+    },
+    "learningOutcome": {
+      "type": "array",
+      "items": {
+          "type": "string"
+      }
     },
     "boardIds": {
       "type": "array",

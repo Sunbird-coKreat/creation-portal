@@ -13,13 +13,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class HelpPageComponent implements OnInit, AfterViewInit {
 
   public telemetryImpression: IImpressionEventInput;
-  @ViewChild('video1', {static: false}) video1: ElementRef;
-  @ViewChild('video2', {static: false}) video2: ElementRef;
-  @ViewChild('video3', {static: false}) video3: ElementRef;
-  @ViewChild('video4', {static: false}) video4: ElementRef;
-  @ViewChild('video5', {static: false}) video5: ElementRef;
-  @ViewChild('video6', {static: false}) video6: ElementRef;
-  @ViewChild('video7', {static: false}) video7: ElementRef;
+  @ViewChild('video1') video1: ElementRef;
+  @ViewChild('video2') video2: ElementRef;
+  @ViewChild('video3') video3: ElementRef;
+  @ViewChild('video4') video4: ElementRef;
+  @ViewChild('video5') video5: ElementRef;
+  @ViewChild('video6') video6: ElementRef;
+  @ViewChild('video7') video7: ElementRef;
   constructor(public userService: UserService, private configService: ConfigService, private activatedRoute: ActivatedRoute,
               public router: Router, private navigationHelperService: NavigationHelperService) { }
 
