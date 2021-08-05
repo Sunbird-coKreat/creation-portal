@@ -1051,6 +1051,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleBack() {
     this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
+    this.programsService.emitHeaderEvent(true);
   }
 
   changeFile() {

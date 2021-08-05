@@ -675,6 +675,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   handleBack() {
+    this.programsService.emitHeaderEvent(true);
     this.programStageService.removeLastStage();
   }
 
