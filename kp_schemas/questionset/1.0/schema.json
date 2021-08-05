@@ -114,7 +114,7 @@
       "type": "string",
       "format": "url"
     },
-    "publishCheckList": {
+    "publishChecklist": {
       "type": "array"
     },
     "publishComment": {
