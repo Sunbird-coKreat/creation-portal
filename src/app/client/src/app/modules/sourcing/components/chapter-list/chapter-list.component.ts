@@ -1066,7 +1066,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
+        this.programsService.emitHeaderEvent(false)
           this.contentId = result.identifier;
+     console.log(_.get(this.activeRoute, 'snapshot.firstChild.firstChild.firstChild.data.hideHeaderNFooter'), 'hideHeaderNFooter');
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
               // if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
@@ -1079,6 +1081,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         });
     } else if (event.templateDetails) {
       this.templateDetails = event.templateDetails;
+      this.programsService.emitHeaderEvent(false)
       // tslint:disable-next-line:max-line-length
       this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
@@ -1107,6 +1110,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
+        this.programsService.emitHeaderEvent(false)
       
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
