@@ -44,7 +44,7 @@ export class ContributorsListComponent implements OnInit {
 
   getOrgList() {
     this.registryService.getOrgList().subscribe(data => {
-      this.orgList = _.filter(_.get(data, 'result.Org'), (org) => (org.orgId !== this.userService.rootOrgId && _.includes(org.type, 'contribute')));
+      this.orgList = _.filter(_.get(data, 'result.Org'), (org) => (org.orgId !== this.userService.rootOrgId));
       // Org creator user open saber ids
       const orgCreatorOsIds = _.map(this.orgList, (org) => org.createdBy);
       this.getOrgCreatorDikshaIds(orgCreatorOsIds);

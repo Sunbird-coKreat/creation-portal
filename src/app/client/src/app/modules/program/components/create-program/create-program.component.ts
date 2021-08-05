@@ -1625,7 +1625,7 @@ showTexbooklist(showTextBookSelector = true) {
         };
 
         // if (this.isOpenNominations) {
-        if (this.projectType === 'public') {
+        if (this.projectType === 'public' || this.projectType === 'restricted') {
           this.programsService.publishProgram(data).subscribe(res => {
             this.generateTelemetryEndEvent('publish');
             this.toasterService.success(

@@ -406,7 +406,7 @@ const API_LIST = {
     '/learner/user/v1/password/reset': {
       checksNeeded: []
     },
-    '/learner/otp/v1/verify': {
+    '/learner/otp/v1/generate': {
       checksNeeded: []
     },
     '/learner/user/v1/fuzzy/search': {
