@@ -63,7 +63,7 @@
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th>{{programDetails.target_collection_category && programDetails.target_collection_category[0] === "Question paper" ? resourceService?.frmelmnts?.lbl?.sections : resourceService?.frmelmnts?.lbl?.chapters}}</th>
+						<th>{{firstLevelFolderLabel}}</th>
 						<th>{{resourceService.frmelmnts.lbl.status}}</th>
 						<th>&nbsp;</th>
 					</tr>
