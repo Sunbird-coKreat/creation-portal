@@ -576,7 +576,8 @@ getAllVideos(offset, query) {
     this.loading = true;
     this.showErrorMsg = false;
     if (!this.showErrorMsg) {
-      const req = this.sourcingService.generateAssetCreateRequest(this.uploader.getName(0), this.uploader.getFile(0).type, 'video', this.userProfile);      this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
+      const req = this.sourcingService.generateAssetCreateRequest(this.uploader.getName(0), this.uploader.getFile(0).type, 'video', this.userProfile);      
+      this.sourcingService.createMediaAsset(req).pipe(catchError(err => {
         this.loading = false;
         this.isClosable = true;
         const errInfo = { errorMsg: ' Unable to create an Asset' };
