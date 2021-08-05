@@ -192,7 +192,7 @@ const createSSOSession = async (loginId, client_id, req, res) => {
       keycloakClient.authenticated(req, function (error) {
         console.log('after authenticated');
         if (error) {
-          logger.info({msg: 'SsoHelper:createSession error creating session', additionalInfo: error});
+          logger.info({msg: 'SsoHelper:createSSOSession error creating session', additionalInfo: error});
           reject('ERROR_CREATING_SSO_SESSION')
         } else {
           resolve({
@@ -202,14 +202,14 @@ const createSSOSession = async (loginId, client_id, req, res) => {
         }
       });
     });
-  }catch (e) {
+  } catch (e) {
     handleError(e);
   }
 }
 
 const handleError = (error) => {
   logger.error({
-    msg: 'userService: handleError',
+    msg: 'ssoHelper: handleError',
     error: error,
     params: _.get(error, 'error.params'),
     message: _.get(error, 'message')
@@ -219,7 +219,7 @@ const handleError = (error) => {
   } else if (error instanceof Error) {
     throw error.message;
   } else {
-    throw 'unhandled exception while accepting tnc';
+    throw 'unhandled exception while sourcing sso';
   }
 };
 
