@@ -4,7 +4,8 @@ const envHelper = require('../helpers/environmentVariablesHelper');
 const {encrypt, decrypt} = require('../helpers/crypto');
 const {
   verifySignature, verifyIdentifier, verifyToken, fetchUserWithExternalId, createUser, fetchUserDetails,
-  createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier
+  createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier,
+  createSSOSession
 } = require('./../helpers/ssoHelper');
 const telemetryHelper = require('../helpers/telemetryHelper');
 const {generateAuthToken, getGrantFromCode} = require('../helpers/keyCloakHelperService');
@@ -422,10 +423,38 @@ module.exports = (app) => {
   })
   app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
     logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
-    console.log('req.query.obj ', req.query.obj);
-    let userId = req.query.obj;
-    // let userObj = decrypt(req.query.obj)
-    response = await createSession(userId, 'portal',req, res);
+    console.log('req.query.redirectUrl ', req.query.redirectUrl);
+    console.log('req.query.userName ', req.query.userName);
+    let  redirectUrl, errType;
+    let userName = req.query.userName;
+    try {
+      response = await createSSOSession(userName, 'portal',req, res);
+      // redirectURIFromCookie = _.get(req, 'cookies.SOURCING_SSO_REDIRECT_URI');
+      redirectUrl = req.query.redirectUrl ? req.query.redirectUrl : '/sourcing';
+      logger.info({
+        msg: 'sourcing sso sign-in success callback, session created',
+        additionalInfo: {
+          query: req.query,
+          redirectUrl: redirectUrl,
+          errType: errType
+        }
+      })
+    } catch (error) {
+      redirectUrl = `${errorUrl}?error_message=` + getErrorMessage(error, errType);
+      logger.error({
+        msg: 'sourcing sso sign-in success callback, create session error',
+        error,
+        additionalInfo: {
+          query: req.query,
+          redirectUrl: redirectUrl,
+          errType: errType
+        }
+      })
+      logErrorEvent(req, errType, error);
+    } finally {
+      // redirectURIFromCookie && res.cookie('SOURCING_SSO_REDIRECT_URI', '', {expires: new Date(0)});
+      res.redirect(redirectUrl || errorUrl);
+    }
   });
 
 };
