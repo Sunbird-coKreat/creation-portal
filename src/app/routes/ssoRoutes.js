@@ -431,6 +431,8 @@ module.exports = (app) => {
       response = await createSSOSession(userName, 'portal',req, res);
       // redirectURIFromCookie = _.get(req, 'cookies.SOURCING_SSO_REDIRECT_URI');
       redirectUrl = req.query.redirectUrl ? req.query.redirectUrl : '/sourcing';
+      redirectUrl = redirectUrl.split("?")[0];
+      console.log('redirectUrl ', redirectUrl);
       logger.info({
         msg: 'sourcing sso sign-in success callback, session created',
         additionalInfo: {
