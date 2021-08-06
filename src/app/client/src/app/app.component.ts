@@ -140,8 +140,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.hideHeaderNFooter = _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.data.hideHeaderNFooter') ||
           _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.firstChild.data.hideHeaderNFooter');
       });
-       this.programsService.getHeaderEmitter()
-      .subscribe(status => this.hideHeaderNFooter = !status );
   }
   ngOnInit() {
     this.didV2 = (localStorage && localStorage.getItem('fpDetails_v2')) ? true : false;
