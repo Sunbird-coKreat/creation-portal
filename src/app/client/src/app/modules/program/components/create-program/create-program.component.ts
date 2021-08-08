@@ -563,25 +563,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
   }
 
-/*
-  openForNominations(status) {
-    // this.isOpenNominations = status;
-    if (status) {
-      this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
-    } else {
-      this.createProgramForm.controls['nomination_enddate'].clearValidators();
-      this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
-      this.createProgramForm.controls['nomination_enddate'].setValue(null);
-      this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
-    }
-    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
-    this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
-  }
-*/
-
   setProjectType(type) {
     this.projectType = type;
-    // this.isOpenNominations = status;
     if (type === 'public') {
       this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
     } else {
@@ -669,7 +652,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       target_collection_category: [null, Validators.required],
     });
     if (!_.isEmpty(this.programDetails) && !_.isEmpty(this.programId)) {
-      // this.isOpenNominations = (_.get(this.programDetails, 'type') === 'public') ? true : false;
       this.projectType = _.get(this.programDetails, 'type') || 'public';
       if (_.get(this.programDetails, 'status') === 'Live' || _.get(this.programDetails, 'status') === 'Unlisted') {
         this.disableUpload = (_.get(this.programDetails, 'guidelines_url')) ? true : false;
@@ -693,7 +675,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         defaultContributeOrgReview: new FormControl({ value: _.get(this.programDetails, 'config.defaultContributeOrgReview'), disabled: this.editPublished })
       };
 
-      // if (this.isOpenNominations === true) {
       if (this.projectType === 'public') {
         // tslint:disable-next-line: max-line-length
         obj.nomination_enddate = [_.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null, Validators.required];
@@ -758,7 +739,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const programEndDate = moment(formData.program_end_date);
     const today = moment(moment().format('YYYY-MM-DD'));
 
-    // if (this.isOpenNominations) {
     if (this.projectType === 'public') {
       // nomination date should be >= today
       if (!nominationEndDate.isSameOrAfter(today) && !this.editPublished) {
@@ -810,7 +790,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   setValidations() {
-    // this.openForNominations(this.isOpenNominations);
     this.setProjectType(this.projectType);
     this.createProgramForm.controls['description'].setValidators(Validators.required);
     this.createProgramForm.controls['description'].updateValueAndValidity();
@@ -872,7 +851,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programData['createdon'] = new Date();
     this.programData['startdate'] = new Date();
     this.programData['slug'] = 'sunbird';
-    // this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
     this.programData['type'] = this.projectType;
     this.programData['default_roles'] = ['CONTRIBUTOR'];
     this.programData['enddate'] = this.programData.program_end_date;
@@ -981,7 +959,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       delete prgData.program_end_date;
       delete prgData.targetPrimaryCategories;
 
-      // if (this.isOpenNominations === false) {
       if (this.projectType === 'private' || this.projectType === 'restricted') {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
@@ -1630,7 +1607,6 @@ showTexbooklist(showTextBookSelector = true) {
           }
         };
 
-        // if (this.isOpenNominations) {
         if (this.projectType === 'public' || this.projectType === 'restricted') {
           this.programsService.publishProgram(data).subscribe(res => {
             this.generateTelemetryEndEvent('publish');
