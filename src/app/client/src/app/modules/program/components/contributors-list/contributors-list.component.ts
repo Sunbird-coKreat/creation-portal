@@ -25,6 +25,7 @@ export class ContributorsListComponent implements OnInit {
   pageNumber = 1;
   pageLimit: any;
   public showLoader = true;
+  public isDisabledSaveBtn = true;
   searchInput: any;
   @Output() onContributorSave = new EventEmitter();
   @Input() preSelectedContributors: any;
@@ -147,10 +148,12 @@ export class ContributorsListComponent implements OnInit {
 
   displayLoader() {
     this.showLoader = true;
+    this.isDisabledSaveBtn = true;
   }
 
   hideLoader() {
     this.showLoader = false;
+    this.isDisabledSaveBtn = false;
   }
 
   clearSearch() {

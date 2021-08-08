@@ -76,5 +76,5 @@
   </div>
 </div>
 <div class="sb-modal-actions">
-  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()">{{resource?.frmelmnts?.btn?.save}}</button>
+  <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn" class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()">{{resource?.frmelmnts?.btn?.save}}</button>
 </div>
