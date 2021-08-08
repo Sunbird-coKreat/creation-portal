@@ -376,7 +376,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   onContributorSave(contributors) {
-    this.setPreSelectedContributors(contributors, true);
+    this.setPreSelectedContributors(contributors);
     this.closeContributorListPopup();
   }
 
@@ -697,18 +697,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.isFormValueSet = true;
   }
 
-  setPreSelectedContributors(contributors, temp: boolean = false) {
+  setPreSelectedContributors(contributors) {
+    const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
+    const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
     this.selectedContributors = contributors;
     this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), orgOsid => {
       return {
         osid: orgOsid,
-        isDisabled: (this.editPublished && !temp) ? true : false
+        isDisabled: disabledContribOrg.includes(orgOsid)
       }
     });
     this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), userOsid => {
       return {
         osid: userOsid,
-        isDisabled: this.editPublished && !temp ? true : false
+        isDisabled: disabledContribUser.includes(userOsid)
       }
     });
 
