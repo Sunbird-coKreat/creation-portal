@@ -1,13 +1,13 @@
 import { UserService } from './../../../core/services/user/user.service';
-import { style } from '@angular/animations';
-import { map, isEmpty } from 'rxjs/operators';
 import { RegistryService, ProgramsService } from '@sunbird/core';
 import { Component, Input, OnInit } from '@angular/core';
 import { ResourceService, PaginationService, ConfigService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { IPagination } from '../../../sourcing/interfaces';
-import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
+import { IInteractEventEdata } from '@sunbird/telemetry';
 import { Output, EventEmitter } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SourcingService } from './../../../sourcing/services';
 
 @Component({
   selector: 'app-contributors-list',
@@ -33,14 +33,23 @@ export class ContributorsListComponent implements OnInit {
     Org: [],
     User: []
   };
+  public telemetryPageId: string;
+  public telemetryInteractCdata: any;
+  public resourceService: ResourceService;
+  public telemetryInteractObject: any;
+  public telemetryInteractPdata: any;
 
-  constructor(public resource: ResourceService, public registryService: RegistryService, public programsService: ProgramsService, public paginationService: PaginationService, public configService: ConfigService, public userService: UserService) { }
+  constructor(public resource: ResourceService, public registryService: RegistryService,
+    public programsService: ProgramsService, public paginationService: PaginationService,
+    public configService: ConfigService, public userService: UserService,
+    private activatedRoute: ActivatedRoute, private sourcingService: SourcingService,) { }
 
   ngOnInit(): void {
+    this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'sourcing_organization' }];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
     this.getOrgList();
     this.pageLimit = this.registryService.programUserPageLimit;
-    // this.pageLimit = 20;
-    console.log(this.userService.userProfile);
   }
 
   getOrgList() {
@@ -52,14 +61,19 @@ export class ContributorsListComponent implements OnInit {
     }, (error) => {
       console.log(error);
       const errInfo = {
-        // errorMsg: this.resourceService.messages.emsg.m0077,
-        // telemetryPageId: this.telemetryPageId,
-        // telemetryCdata : this.telemetryInteractCdata,
-        // env : this.activatedRoute.snapshot.data.telemetry.env,
-        // request: {'id': osid, role: role}
+        errorMsg: this.resourceService.messages.fmsg.contributorjoin.m0001,
+        telemetryPageId: this.getPageId(),
+        telemetryCdata: this.telemetryInteractCdata,
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        request: { "entityType": ["Org"] }
       };
-      // this.sourcingService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   getOrgCreatorDikshaIds(orgCreatorOsIds) {
@@ -80,25 +94,15 @@ export class ContributorsListComponent implements OnInit {
       ));
       this.getOrgUsersDetails(orgCreatorDikshaIds);
     }, (error) => {
-      console.log(error);
       const errInfo = {
-        // errorMsg: this.resourceService.messages.emsg.m0077,
-        // telemetryPageId: this.telemetryPageId,
-        // telemetryCdata : this.telemetryInteractCdata,
-        // env : this.activatedRoute.snapshot.data.telemetry.env,
-        // request: {'id': osid, role: role}
+        errorMsg: this.resourceService.messages.emsg.profile.m0002,
+        telemetryPageId: this.getPageId(),
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: {'entityType': ['User'], 'filters': {osid: {or: []}}}
       };
-      // this.sourcingService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
-  }
-
-  NavigateToPage(page: number): undefined | void {
-    if (page < 1 || page > this.pager.totalPages) {
-      return;
-    }
-    this.pageNumber = page;
-    this.contributorList = this.paginatedList[this.pageNumber - 1];
-    this.pager = this.paginationService.getPager(this.listCnt, this.pageNumber, this.pageLimit);
   }
 
   getOrgUsersDetails(orgCreatorDikshaIds) {
@@ -132,19 +136,24 @@ export class ContributorsListComponent implements OnInit {
     }, (error) => {
       console.log(error);
       const errInfo = {
-        // errorMsg: this.resourceService.messages.emsg.m0077,
-        // telemetryPageId: this.telemetryPageId,
-        // telemetryCdata : this.telemetryInteractCdata,
-        // env : this.activatedRoute.snapshot.data.telemetry.env,
-        // request: {'id': osid, role: role}
+        errorMsg: this.getPageId(),
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: {'filters': {'identifier': orgCreatorDikshaIds}, fields: fields}
       };
-      // this.sourcingService.apiErrorHandling(error, errInfo);
+      this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
 
-  // onChangeSelection(contributor) {
-  //   // this.onContributorSelectionChange.emit(contributor);
-  // }
+  NavigateToPage(page: number): undefined | void {
+    if (page < 1 || page > this.pager.totalPages) {
+      return;
+    }
+    this.pageNumber = page;
+    this.contributorList = this.paginatedList[this.pageNumber - 1];
+    this.pager = this.paginationService.getPager(this.listCnt, this.pageNumber, this.pageLimit);
+  }
 
   displayLoader() {
     this.showLoader = true;

@@ -984,7 +984,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (this.projectType === 'restricted') {
         prgData['config'] = _.get(this.programDetails, 'config');
-        debugger;
         prgData.config['contributors'] = this.selectedContributors;
       }
 
