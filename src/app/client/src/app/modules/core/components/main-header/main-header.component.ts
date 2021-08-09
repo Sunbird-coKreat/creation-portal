@@ -81,6 +81,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public showGlobalNotification: boolean;
   public notification: any;
  public showSubHeader = true;
+ public unSubscribeShowSubHeader: Subscription;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -163,13 +164,16 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
   });
   this.getNumberofNotification();
-         this.programsService.getHeaderEmitter()
+        this.unSubscribeShowSubHeader = this.programsService.getHeaderEmitter()
       .subscribe(status => this.showSubHeader = status );
   }
 
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+    if (this.unSubscribeShowSubHeader) {
+      this.unSubscribeShowSubHeader.unsubscribe();
     }
   }
 

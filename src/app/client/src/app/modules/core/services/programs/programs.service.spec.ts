@@ -144,5 +144,9 @@ describe('ProgramsService', () => {
       });
     }));
   });
-
+  it('should emit emitHeaderEvent', inject([ProgramsService], (programsService) => {
+    spyOn(programsService.headerEventOnNewEditor, 'emit').and.returnValue(true);
+    programsService.emitHeaderEvent(true);
+    expect(programsService.headerEventOnNewEditor.emit).toHaveBeenCalledWith(true);
+  }));
 });
