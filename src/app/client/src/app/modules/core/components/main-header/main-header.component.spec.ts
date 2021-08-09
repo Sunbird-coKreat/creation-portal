@@ -111,4 +111,10 @@ describe('MainHeaderComponent', () => {
      component.ngOnInit();
      expect(component.showSubHeader).toBeTruthy();
    });
+   it('Should call getHeaderEmitter and assign value to showSubHeader as true', () => {
+     component.unSubscribeShowSubHeader = {unsubscribe() {}}
+     spyOn(component.unSubscribeShowSubHeader, 'unsubscribe');
+     component.ngOnDestroy();
+     expect(component.unSubscribeShowSubHeader.unsubscribe).toHaveBeenCalled();
+   });
 });

@@ -81,7 +81,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public showGlobalNotification: boolean;
   public notification: any;
  public showSubHeader = true;
- public unSubscribeShowSubHeader: Subscription;
+ public unSubscribeShowSubHeader: any;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
