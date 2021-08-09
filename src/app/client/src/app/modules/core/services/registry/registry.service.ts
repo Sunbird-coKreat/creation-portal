@@ -317,8 +317,8 @@ export class RegistryService extends DataService {
         request: {
           entityType: ['Org'],
           filters:{},
-          // limit: limit || 250,
-          // offset: offset || 0,
+          limit: limit || 250,
+          offset: offset || 0,
         }
       }
     };

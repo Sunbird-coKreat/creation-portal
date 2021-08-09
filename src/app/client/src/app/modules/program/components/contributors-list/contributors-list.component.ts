@@ -1,3 +1,4 @@
+import { isEmpty, filter } from 'rxjs/operators';
 import { UserService } from './../../../core/services/user/user.service';
 import { RegistryService, ProgramsService } from '@sunbird/core';
 import { Component, Input, OnInit } from '@angular/core';
@@ -17,7 +18,7 @@ import { SourcingService } from './../../../sourcing/services';
 export class ContributorsListComponent implements OnInit {
   direction = '';
   sortColumn = 'name';
-  orgList: any;
+  orgList: any = [];
   contributorList: any = [];
   paginatedList: any = [];
   public listCnt = 0;
@@ -46,18 +47,25 @@ export class ContributorsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'sourcing_organization' }];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
-    this.getOrgList();
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.getOrgList();
   }
 
-  getOrgList() {
-    this.registryService.getOrgList().subscribe(data => {
-      this.orgList = _.filter(_.get(data, 'result.Org'), (org) => (org.orgId !== this.userService.rootOrgId));
-      // Org creator user open saber ids
-      const orgCreatorOsIds = _.map(this.orgList, (org) => org.createdBy);
-      this.getOrgCreatorDikshaIds(orgCreatorOsIds);
+  getOrgList(limit = 250, offset = 0) {
+    this.registryService.getOrgList(limit, offset).subscribe(data => {
+      if (!_.isEmpty(_.get(data, 'result.Org'))) {
+        this.orgList = this.orgList.concat(_.get(data, 'result.Org'));
+        offset = offset + 250;
+        this.getOrgList(limit, offset);
+      }
+      else {
+        this.orgList = _.filter(this.orgList, (org) => (org.orgId !== this.userService.rootOrgId));
+        // Org creator user open saber ids
+        const orgCreatorOsIds = _.map(this.orgList, (org) => org.createdBy);
+        this.getOrgCreatorIds(orgCreatorOsIds);
+      }
     }, (error) => {
       console.log(error);
       const errInfo = {
@@ -76,9 +84,9 @@ export class ContributorsListComponent implements OnInit {
     return this.telemetryPageId;
   }
 
-  getOrgCreatorDikshaIds(orgCreatorOsIds) {
+  getOrgCreatorIds(orgCreatorOsIds) {
     this.registryService.getUserdetailsByOsIds(orgCreatorOsIds).subscribe(data => {
-      const orgCreatorDikshaIds = _.map(_.get(data, 'result.User'), (user) => user.userId) || [];
+      const orgCreatorIds = _.map(_.get(data, 'result.User'), (user) => user.userId) || [];
       this.orgList = _.compact(_.map(this.orgList,
         (org) => {
           org.User = _.find(_.get(data, 'result.User'), (user) => {
@@ -92,14 +100,14 @@ export class ContributorsListComponent implements OnInit {
           }
         }
       ));
-      this.getOrgUsersDetails(orgCreatorDikshaIds);
+      this.getOrgUsersDetails(orgCreatorIds);
     }, (error) => {
       const errInfo = {
         errorMsg: this.resourceService.messages.emsg.profile.m0002,
         telemetryPageId: this.getPageId(),
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: {'entityType': ['User'], 'filters': {osid: {or: []}}}
+        telemetryCdata: this.telemetryInteractCdata,
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        request: { 'entityType': ['User'], 'filters': { osid: { or: [] } } }
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
@@ -138,9 +146,9 @@ export class ContributorsListComponent implements OnInit {
       const errInfo = {
         errorMsg: this.getPageId(),
         telemetryPageId: this.telemetryPageId,
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: {'filters': {'identifier': orgCreatorDikshaIds}, fields: fields}
+        telemetryCdata: this.telemetryInteractCdata,
+        env: this.activatedRoute.snapshot.data.telemetry.env,
+        request: { 'filters': { 'identifier': orgCreatorDikshaIds }, fields: fields }
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
@@ -221,11 +229,13 @@ export class ContributorsListComponent implements OnInit {
     }, _.isUndefined);
   }
   save() {
-    this.selectedContributors.Org = _.compact(_.map(this.orgList, org => {
-      if (org.isChecked) {
-        return org.osid;
+    this.selectedContributors.Org = _.map(_.filter(this.orgList, org => org.isChecked), org => {
+      return {
+        ...(_.pick(org, 'osid', 'isChecked')),
+        'User': _.pick(org.User, 'userId', 'maskedEmail', 'maskedPhone')
       }
-    }));
+    });
+
     this.onContributorSave.emit(this.selectedContributors);
   }
 }

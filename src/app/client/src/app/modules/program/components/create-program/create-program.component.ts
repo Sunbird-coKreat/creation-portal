@@ -701,16 +701,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
     const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
     this.selectedContributors = contributors;
-    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), orgOsid => {
+    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
       return {
-        osid: orgOsid,
-        isDisabled: disabledContribOrg.includes(orgOsid)
+        osid: org.osid,
+        isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
       }
     });
-    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), userOsid => {
+    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
       return {
-        osid: userOsid,
-        isDisabled: disabledContribUser.includes(userOsid)
+        osid: user.osid,
+        isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
       }
     });
 
