@@ -5,21 +5,19 @@
 </sui-dimmer>
 
 
-<div *ngIf="showPreview" class="">
-    <div class="sb-bg-color-primary py-15">
-  <div class="ui container">
-    <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold" (click)="handleBack()"
-      type="button"
-      appTelemetryInteract
-      [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'launch', 'content-editor')"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">
-      <i aria-hidden="true" class="arrow left icon sb-color-white"></i>
-      {{resourceService?.frmelmnts?.btn?.back}}
-    </button>
+<div *ngIf="showPreview" >
+  <div class="sb-bg-color-primary py-15">
+    <div class="ui container">
+        <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold"
+            (click)="handleBack()" type="button" appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('go-back', 'click', 'launch', 'content-editor')"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+            <i aria-hidden="true" class="arrow left icon sb-color-white"></i>
+            {{resourceService?.frmelmnts?.btn?.back}}
+        </button>
     </div>
-    </div>
+</div>
   <div class="ui container">
     <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content">
       <div #contentTitle class="font-weight-bold fs-1">
