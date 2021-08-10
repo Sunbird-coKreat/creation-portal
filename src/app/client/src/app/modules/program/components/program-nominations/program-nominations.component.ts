@@ -177,9 +177,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    if (this.stageSubscription) {
+      this.stageSubscription.unsubscribe();
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe.next();
+      this.unsubscribe.complete();
+    }
   }
 
   onStatusChange(status) {
