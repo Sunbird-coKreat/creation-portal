@@ -133,11 +133,16 @@ module.exports = (app) => {
             limit: reqDataLimitOfContentUpload,
             proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
             proxyReqPathResolver: (req) => {
+                console.log('contentURL ', contentURL, require('url').parse(contentURL + req.originalUrl.replace('/content/', '')).path);
                 return require('url').parse(contentURL + req.originalUrl.replace('/content/', '')).path
             },
             userResDecorator: (proxyRes, proxyResData, req, res) => {
                 try {
                     logger.info({msg: '/content/reg called'});
+                    console.log('req ', JSON.stringify(req));
+                    console.log('req ', JSON.stringify(res));
+                    console.log('proxyRes ', JSON.stringify(proxyRes));
+                    console.log('proxyResData ', JSON.stringify(proxyResData));
                     const data = JSON.parse(proxyResData.toString('utf8'));
                     if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
                     else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
