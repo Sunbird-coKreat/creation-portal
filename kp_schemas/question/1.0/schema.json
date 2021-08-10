@@ -109,7 +109,7 @@
       "type": "string",
       "format": "url"
     },
-    "publishCheckList": {
+    "publishChecklist": {
       "type": "array"
     },
     "publishComment": {
@@ -353,6 +353,10 @@
     },
     "createdBy": {
       "type": "string"
+    },
+    "artifactUrl": {
+      "type": "string",
+      "format": "url"
     },
     "lastUpdatedOn": {
       "type": "string"
