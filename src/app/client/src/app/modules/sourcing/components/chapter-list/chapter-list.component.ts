@@ -1083,10 +1083,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.contentId = result.identifier;
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
-              // if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
-              //   const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
-              //   this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
-              // }
               this.programsService.emitHeaderEvent(false)
                // tslint:disable-next-line:max-line-length
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
