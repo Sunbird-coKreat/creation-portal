@@ -126,6 +126,7 @@ describe('UtilService', () => {
     expect(service.translateLabel).toBeTruthy();
   }));
 
+
   xit('should call convertSelectedOption method', inject([UtilService], (service: UtilService) => {
     spyOn(service, 'convertSelectedOption').and.callThrough();
     service.convertSelectedOption(null, null, null, null);
