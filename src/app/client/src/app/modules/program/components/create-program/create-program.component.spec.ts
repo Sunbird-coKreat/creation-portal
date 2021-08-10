@@ -104,11 +104,6 @@ describe('CreateProgramComponent', () => {
     component.setFrameworkDataToProgram();
     expect(component.setFrameworkDataToProgram).toHaveBeenCalled();
   });
-  it('Should call the openForNominations method', () => {
-    spyOn(component, 'openForNominations');
-    component.openForNominations('accept');
-    expect(component.openForNominations).toHaveBeenCalled();
-  });
   it('Should call the onMediumChange method', () => {
     spyOn(component, 'onMediumChange');
     component.onMediumChange();
