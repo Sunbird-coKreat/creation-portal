@@ -21,6 +21,7 @@ import * as alphaNumSort from 'alphanum-sort';
 import { Component, ViewChild} from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClient } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;
@@ -67,7 +68,8 @@ describe('CreateProgramComponent', () => {
        {provide: ActivatedRoute, useValue: fakeActivatedRoute},
        {provide: UserService, useValue: userServiceStub},
        { provide: ResourceService, useValue: resourceBundle},
-       HttpClient]
+       HttpClient],
+       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
   }));
@@ -187,6 +189,20 @@ describe('CreateProgramComponent', () => {
     expect(component.updateContentWithURL).toHaveBeenCalled();
     expect(sourcingService.uploadMedia).toHaveBeenCalled();
     expect(component.getUploadVideo).toHaveBeenCalled();
+  });
+
+  it('openContributorListPopup set showContributorsListModal to true', () => {
+    component.showContributorsListModal = false;
+    spyOn(component, 'openContributorListPopup').and.callThrough();
+    component.openContributorListPopup();
+    expect(component.showContributorsListModal).toBeTruthy();
+  });
+
+  it('closeContributorListPopup set showContributorsListModal to false', () => {
+    component.showContributorsListModal = true;
+    spyOn(component, 'closeContributorListPopup').and.callThrough();
+    component.closeContributorListPopup();
+    expect(component.showContributorsListModal).toBeFalsy();
   });
 
   it('getProgramDetails Should call initializeFormFields method', () => {
@@ -320,6 +336,37 @@ describe('CreateProgramComponent', () => {
     expect(page).toBeDefined();
   });
 
+  it('Should call the setProjectType method when type is public', () => {
+    component.createProgramForm = new FormGroup({
+      nomination_enddate: new FormControl('2021-09-09T18:29:59.000Z'),
+      shortlisting_enddate: new FormControl('2021-09-24T18:29:59.000Z', Validators.required)
+    });
+    spyOn(component, 'setProjectType').and.callThrough();
+    component.setProjectType('public');
+    expect(component.setProjectType).toHaveBeenCalled();
+    expect(component.projectType).toEqual('public');
+  });
+
+  it('Should call the setProjectType method when type is not public', () => {
+    component.createProgramForm = new FormGroup({
+      nomination_enddate: new FormControl('2021-09-09T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-09-24T18:29:59.000Z', Validators.required)
+    });
+    spyOn(component, 'setProjectType').and.callThrough();
+    component.setProjectType('private');
+    expect(component.setProjectType).toHaveBeenCalled();
+    expect(component.projectType).toEqual('private');
+  });
+
+  it('onContributorSave should call setPreSelectedContributors and closeContributorListPopup', () => {
+    spyOn(component, 'closeContributorListPopup').and.callFake(() => {});
+    spyOn(component, 'setPreSelectedContributors').and.callFake(() => {});
+    spyOn(component, 'onContributorSave').and.callThrough();
+    component.onContributorSave({});
+    expect(component.onContributorSave).toHaveBeenCalled();
+    expect(component.setPreSelectedContributors).toHaveBeenCalled();
+    expect(component.closeContributorListPopup).toHaveBeenCalled();
+  });
 
   it('Should call the fetchFrameWorkDetails method', () => {
     component['frameworkService'] = TestBed.get(FrameworkService);

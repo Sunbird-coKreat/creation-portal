@@ -296,6 +296,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openContributorListPopup() {
+    this.showContributorsListModal = true;
+  }
+
+  closeContributorListPopup() {
+    this.showContributorsListModal = false;
+  }
+
   getProgramDetails() {
     const req = {
       url: `program/v1/read/${this.programId}`
@@ -373,11 +381,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.loading = false;
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }), map(data => data));
-  }
-
-  onContributorSave(contributors) {
-    this.setPreSelectedContributors(contributors);
-    this.closeContributorListPopup();
   }
 
   sortCollection(column) {
@@ -496,6 +499,25 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
+  setProjectType(type) {
+    this.projectType = type;
+    if (type === 'public') {
+      this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
+    } else {
+      this.createProgramForm.controls['nomination_enddate'].clearValidators();
+      this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
+      this.createProgramForm.controls['nomination_enddate'].setValue(null);
+      this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
+    }
+    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
+    this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
+  }
+
+  onContributorSave(contributors) {
+    this.setPreSelectedContributors(contributors);
+    this.closeContributorListPopup();
+  }
+
   setFrameworkDataToProgram() {
     this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
@@ -561,20 +583,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       return item.name === 'Kindergarten';
     });
     this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
-  }
-
-  setProjectType(type) {
-    this.projectType = type;
-    if (type === 'public') {
-      this.createProgramForm.controls['nomination_enddate'].setValidators(Validators.required);
-    } else {
-      this.createProgramForm.controls['nomination_enddate'].clearValidators();
-      this.createProgramForm.controls['shortlisting_enddate'].clearValidators();
-      this.createProgramForm.controls['nomination_enddate'].setValue(null);
-      this.createProgramForm.controls['shortlisting_enddate'].setValue(null);
-    }
-    this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
-    this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
   }
 
   onMediumChange() {
@@ -1656,13 +1664,5 @@ showTexbooklist(showTextBookSelector = true) {
       }
     };
     this.saveProgram(cb);
-  }
-
-  openContributorListPopup() {
-    this.showContributorsListModal = true;
-  }
-
-  closeContributorListPopup() {
-    this.showContributorsListModal = false;
   }
 }
