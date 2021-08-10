@@ -40,7 +40,7 @@ describe('NavigationHelperService', () => {
     });
   });
 
-  xit('should store route history', inject([NavigationHelperService, Router], (service: NavigationHelperService, router) => {
+  it('should store route history', inject([NavigationHelperService, Router], (service: NavigationHelperService, router) => {
     const history = service.history;
     expect(service).toBeTruthy();
     expect(history).toBeDefined();
