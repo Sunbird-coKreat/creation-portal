@@ -278,7 +278,7 @@ describe('CollectionComponent', () => {
     expect(component.sessionContext.targetCollectionFrameworksData).toBe(frameworkData);
   });
 
-  xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+  it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
     component.programContext = {target_collection_category: 'Course'};
     component['userService'] = TestBed.inject(UserService);
     component.firstLevelFolderLabel = undefined;
@@ -288,7 +288,7 @@ describe('CollectionComponent', () => {
     expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
     expect(component.firstLevelFolderLabel).toBeDefined();
   });
-  xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+  it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
     component.programContext = {target_collection_category: undefined};
     component['userService'] = TestBed.inject(UserService);
     component.firstLevelFolderLabel = undefined;
