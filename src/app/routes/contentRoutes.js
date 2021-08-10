@@ -142,7 +142,9 @@ module.exports = (app) => {
                     if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
                     else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
                 } catch (err) {
-                    logger.error({msg: 'content api user res decorator json parse error', proxyResData});
+                    console.log('content api user res decorator json parse error =>> err ', JSON.stringify(err));
+                    console.log('content api user res decorator json parse error =>> proxyResData ', JSON.stringify(proxyResData));
+                    logger.error({msg: 'content api user res decorator json parse error ', proxyResData});
                     return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
                 }
             }
