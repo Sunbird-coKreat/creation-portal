@@ -108,6 +108,7 @@ describe('MainHeaderComponent', () => {
   it('Should call getHeaderEmitter and assign value to showSubHeader as true', () => {
     component.showSubHeader = false;
     spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(true));
+    spyOn(component, 'ngOnDestroy').and.callThrough();
      component.ngOnInit();
      expect(component.showSubHeader).toBeTruthy();
    });

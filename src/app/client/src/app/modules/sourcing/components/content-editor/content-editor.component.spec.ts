@@ -126,10 +126,11 @@ describe('ContentEditorComponent', () => {
     component.getFormData(formInput);
     expect(component.formInputData).toBe(formInput);
   });
-  
+
   it ('#handleBack() should call handleBack and emit header event', () => {
     spyOn(component['programsService'],'emitHeaderEvent' ).and.callThrough();
     spyOn(component['programStageService'],'removeLastStage' ).and.callThrough();
+    spyOn(component, 'handleBack').and.callThrough();
     component.handleBack();
     expect(component['programsService'].emitHeaderEvent).toHaveBeenCalledWith(true);
     expect(component['programStageService'].removeLastStage).toHaveBeenCalled();
