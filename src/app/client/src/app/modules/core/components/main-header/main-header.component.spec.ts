@@ -54,6 +54,7 @@ describe('MainHeaderComponent', () => {
     const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(mockUserData.tenantSuccess));
     service.getTenantInfo('Sunbird');
+    spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     expect(component.tenantInfo.logo).toEqual(mockUserData.tenantSuccess.result.logo);
     expect(component.tenantInfo.titleName).toEqual(mockUserData.tenantSuccess.result.titleName);
@@ -61,6 +62,7 @@ describe('MainHeaderComponent', () => {
 
   it('Should not update logo unless tenant service returns it', () => {
     spyOn(document, 'getElementById').and.returnValue('true');
+    spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     expect(component.tenantInfo.logo).toBeUndefined();
     expect(component.tenantInfo.titleName).toBeUndefined();
@@ -71,6 +73,7 @@ describe('MainHeaderComponent', () => {
     const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(mockUserData.tenantSuccess));
     service.getTenantInfo('Sunbird');
+    spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('img').src).toEqual(mockUserData.tenantSuccess.result.logo);
@@ -87,6 +90,7 @@ describe('MainHeaderComponent', () => {
     const cacheService = TestBed.get(CacheService);
     cacheService.set('portalLanguage', 'hi', { maxAge: 10 * 60 });
     userService._authenticated = false;
+    spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     expect(cacheService.exists('portalLanguage')).toEqual(true);
   });
@@ -96,19 +100,21 @@ describe('MainHeaderComponent', () => {
     const cacheService = TestBed.get(CacheService);
     cacheService.set('portalLanguage', null);
     userService._authenticated = false;
+    spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     expect(cacheService.exists('portalLanguage')).toEqual(false);
   });
   it('Should call getHeaderEmitter and assign value to showSubHeader', () => {
    component.showSubHeader = true;
    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(false));
-    component.ngOnInit();
-    expect(component.showSubHeader).toBeFalsy();
+   spyOn(component, 'ngOnInit').and.callThrough();
+   component.ngOnInit();
+   expect(component.showSubHeader).toBeFalsy();
   });
   it('Should call getHeaderEmitter and assign value to showSubHeader as true', () => {
     component.showSubHeader = false;
     spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(true));
-    spyOn(component, 'ngOnDestroy').and.callThrough();
+    spyOn(component, 'ngOnInit').and.callThrough();
      component.ngOnInit();
      expect(component.showSubHeader).toBeTruthy();
    });
