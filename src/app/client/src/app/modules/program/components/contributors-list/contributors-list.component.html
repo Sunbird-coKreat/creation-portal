@@ -13,7 +13,7 @@
   <table *ngIf="!showLoader" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
     <thead class="sb-table-header sb-table-thead-gray">
       <tr>
-        <th class="w-10 cursor-pointer sb-sorting" (click)="showFilteredResults()">
+        <th class="w-10 cursor-pointer sb-sorting" (click)="sortOrganizations()">
           {{resource?.frmelmnts?.lbl?.username}} &nbsp;&nbsp;
           <span *ngIf="sortColumn == 'name'" class="d-inline-block">
             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>

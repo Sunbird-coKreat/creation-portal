@@ -130,6 +130,7 @@ export class ContributorsListComponent implements OnInit {
             ...org.User,
             ...userInfo
           };
+          org.isChecked = false;
           if (!_.isEmpty(_.get(this.preSelectedContributors, 'Org'))) {
             let preSelectedOrg = _.find(_.get(this.preSelectedContributors, 'Org'), { 'osid': org.osid });
             if (preSelectedOrg) {
@@ -208,8 +209,17 @@ export class ContributorsListComponent implements OnInit {
   }
 
   applySort(list) {
-    this.direction = this.direction === 'asc' ? 'desc' : 'asc';
+    if (!this.direction) {
+      return this.sortBySelected(list);
+    }
+
     return this.programsService.sortCollection(list, this.sortColumn, this.direction);
+  }
+
+  sortBySelected(list) {
+    return list.sort(function (x, y) {
+      return (x.isChecked === y.isChecked) ? 0 : x ? -1 : 1;
+    });
   }
 
   applyPagination(list) {
@@ -237,5 +247,10 @@ export class ContributorsListComponent implements OnInit {
     });
 
     this.onContributorSave.emit(this.selectedContributors);
+  }
+
+  sortOrganizations() {
+    this.direction = this.direction === 'asc' ? 'desc' : 'asc';
+    this.showFilteredResults();
   }
 }
