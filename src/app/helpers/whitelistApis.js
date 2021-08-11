@@ -412,6 +412,9 @@ const API_LIST = {
     '/learner/otp/v1/generate': {
       checksNeeded: []
     },
+    '/learner/user/v1/exists/phone:phone': {
+      checksNeeded: []
+    },
     '/learner/user/v1/fuzzy/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [

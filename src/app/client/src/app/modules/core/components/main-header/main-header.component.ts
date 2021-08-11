@@ -80,7 +80,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notificationData: Array<any>;
   public showGlobalNotification: boolean;
   public notification: any;
-
+ public showSubHeader = true;
+ public unSubscribeShowSubHeader: any;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -163,11 +164,16 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
   });
   this.getNumberofNotification();
+        this.unSubscribeShowSubHeader = this.programsService.getHeaderEmitter()
+      .subscribe(status => this.showSubHeader = status );
   }
 
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+    if (this.unSubscribeShowSubHeader) {
+      this.unSubscribeShowSubHeader.unsubscribe();
     }
   }
 
@@ -374,6 +380,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 
   onRouterChange() {
     // maintain active tab state
+    this.showSubHeader = true;
     if (this.location.path() === '/contribute') {
      this.handleActiveTabState('allPrograms');
      } else if (this.location.path() === '/contribute/orglist' || this.location.path() === '/sourcing/orglist') {

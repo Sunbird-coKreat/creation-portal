@@ -341,6 +341,10 @@ export class QuestionSetEditorComponent implements OnInit {
     case "sourcingReject": 
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
       break;
+      case "backContent": 
+      this.programsService.emitHeaderEvent(true);
+      this.programStageService.removeLastStage();
+      break;
     case "saveCollection": // saving as draft
     default: this.programStageService.removeLastStage();
       break;
