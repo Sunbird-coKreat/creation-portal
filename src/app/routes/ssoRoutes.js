@@ -427,7 +427,7 @@ module.exports = (app) => {
     try {
       console.log('before decrypt userName ', req.query.userName);
       console.log('before externalKey ', externalKey);
-      let userName = decrypt(req.query.userName, externalKey);
+      let userName = decrypt(JSON.parse(req.query.userName), externalKey);
       console.log('after decrypt userName ', userName);
       response = await createSSOSession(userName, 'portal',req, res);
       // redirectURIFromCookie = _.get(req, 'cookies.SOURCING_SSO_REDIRECT_URI');
