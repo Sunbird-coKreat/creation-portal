@@ -424,10 +424,11 @@ module.exports = (app) => {
   app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
     logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
     let  redirectUrl, errType;
-    console.log('before decrypt userName ', req.query.userName);
-    let userName = decrypt(req.query.userName, externalKey);
-    console.log('after decrypt userName ', userName);
     try {
+      console.log('before decrypt userName ', req.query.userName);
+      console.log('before externalKey ', externalKey);
+      let userName = decrypt(req.query.userName, externalKey);
+      console.log('after decrypt userName ', userName);
       response = await createSSOSession(userName, 'portal',req, res);
       // redirectURIFromCookie = _.get(req, 'cookies.SOURCING_SSO_REDIRECT_URI');
       redirectUrl = req.query.redirectUrl ? req.query.redirectUrl : '/sourcing';
