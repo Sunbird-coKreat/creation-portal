@@ -909,6 +909,7 @@ app-question-set-editor{
       margin-right: 8px;
     }
   }
+  
   .list-border{
     ul{
       font-weight: 500 !important;
@@ -967,7 +968,7 @@ app-question-set-editor{
       padding-left: 8px !important;
     }
   }
-  .dynamic-form{
+  .sb-col-lg-1{
     label{
       padding: 10px 0 0 0 !important;
     }
@@ -1025,5 +1026,10 @@ app-question-set-editor{
       .square{
         color: #999  !important; 
       }
+  }
+}
+.hover-none{
+  &:hover{
+    background: none !important;
   }
 }

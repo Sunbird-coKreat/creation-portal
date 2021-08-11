@@ -181,7 +181,7 @@ ol.ui.list ol {
     width: auto;
     left: inherit;
   }
-  
+
   .ui.dropdown .menu > .item {
     // padding: 0.78571429em 1.14285714em !important;
     padding: 1em 1.5em!important;
@@ -221,12 +221,18 @@ app-workspace {
   }
 }
 
+figure.image {
+  img {
+    max-width: 100%;
+  }
+}
+
 .sb-workspace-bg{
   position: relative;
   bottom: -35px;
   height: auto;
   margin-top: -35px;
-} 
+}
 
 @media screen and (max-width: 900px) {
   .footer{

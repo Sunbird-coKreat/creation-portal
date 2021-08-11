@@ -109,7 +109,7 @@
       "type": "string",
       "format": "url"
     },
-    "publishCheckList": {
+    "publishChecklist": {
       "type": "array"
     },
     "publishComment": {
@@ -156,6 +156,9 @@
     },
     "versionKey": {
       "type": "string"
+    },
+    "languageCode": {
+      "type": "array"
     },
     "language": {
       "type": "array",
@@ -353,6 +356,10 @@
     },
     "createdBy": {
       "type": "string"
+    },
+    "artifactUrl": {
+      "type": "string",
+      "format": "url"
     },
     "lastUpdatedOn": {
       "type": "string"

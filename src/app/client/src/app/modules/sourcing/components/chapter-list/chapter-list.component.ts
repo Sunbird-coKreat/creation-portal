@@ -1202,11 +1202,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               //   this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
               // }
                // tslint:disable-next-line:max-line-length
+               this.programsService.emitHeaderEvent(false);
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
     } else if (event.templateDetails) {
       this.templateDetails = event.templateDetails;
+      this.programsService.emitHeaderEvent(false)
       // tslint:disable-next-line:max-line-length
       this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
@@ -1235,6 +1237,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
+        this.programsService.emitHeaderEvent(false)
       
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);

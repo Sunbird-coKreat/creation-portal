@@ -409,6 +409,9 @@ const API_LIST = {
     '/learner/otp/v1/verify': {
       checksNeeded: []
     },
+    '/learner/otp/v1/generate': {
+      checksNeeded: []
+    },
     '/learner/user/v1/fuzzy/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [

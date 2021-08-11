@@ -120,7 +120,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private sourcingService: SourcingService, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, private helperService: HelperService,
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
-    private resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
+    public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
@@ -1051,6 +1051,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleBack() {
     this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
+    this.programsService.emitHeaderEvent(true);
   }
 
   changeFile() {

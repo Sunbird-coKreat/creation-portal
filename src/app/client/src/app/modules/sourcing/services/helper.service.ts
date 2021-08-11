@@ -868,9 +868,9 @@ export class HelperService {
       }
     };
 
-    // if (!_.isUndefined(comment)) {
-    //   requestBody.request.questionset['requestChanges'] = _.trim(comment);
-    // }
+    if (!_.isUndefined(comment)) {
+       requestBody.request.questionset['requestChanges'] = _.trim(comment);
+    }
     const option = {
       url: `questionset/v4/system/update/${questionsetId}`,
       data: requestBody
