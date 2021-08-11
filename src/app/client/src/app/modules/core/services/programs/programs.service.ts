@@ -902,7 +902,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
         return [topicTerms, tempLearningOutcomeOptions];
     }
-  
+
   filterBlueprintMetadata(selectedTopics) {
     let tempLearningOutcomeOptions = [];
     if(selectedTopics) {
@@ -1047,12 +1047,13 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
 
-  getOrgUsersDetails(reqFilters, offset?, limit?) {
+  getOrgUsersDetails(reqFilters, offset?, limit?, fields?) {
     const req = {
       url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
       data: {
         'request': {
-          'filters': reqFilters
+          'filters': reqFilters,
+          'fields': fields || []
         }
       }
     };
