@@ -124,7 +124,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionContext.textBookUnitIdentifier = _.get(this.practiceQuestionSetComponentInput, 'unitIdentifier');
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
-    this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
+    this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength || 200;
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.sessionContext.telemetryPageId = this.telemetryPageId;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;

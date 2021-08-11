@@ -136,7 +136,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
-    this.titleCharacterLimit = _.get(this.config, 'config.resourceTitleLength');
+    this.titleCharacterLimit = _.get(this.config, 'config.resourceTitleLength') || 200;
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
     this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
