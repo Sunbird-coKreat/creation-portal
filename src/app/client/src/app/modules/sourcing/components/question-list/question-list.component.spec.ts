@@ -337,7 +337,6 @@ describe('QuestionListComponent', () => {
     spyOn(programStageService, 'removeLastStage').and.callFake(() =>  {});
     spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(true);
     spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(true);
-    spyOn(component['programsService'], 'emitHeaderEvent').and.callThrough();
     spyOn(component, 'generateTelemetryEndEvent').and.callFake(() =>  {});
     spyOn(component, 'handleBack').and.callThrough();
     component.handleBack();
@@ -346,7 +345,6 @@ describe('QuestionListComponent', () => {
     expect(component.checkCurrentQuestionStatus).toHaveBeenCalled();
     expect(component.generateTelemetryEndEvent).toHaveBeenCalled();
     expect(programStageService.removeLastStage).toHaveBeenCalled();
-    expect(component['programsService'].emitHeaderEvent).toHaveBeenCalledWith(true);
   });
 
   it ('#handleBack() should not call generateTelemetryEndEvent()', () => {

@@ -28,7 +28,7 @@ class UtilServiceMock {
   // public  updateSearchKeyword = jasmine.createSpy('updateSearchKeyword');
   public updateSearchKeyword() { }
 }
-xdescribe('NavigationHelperService', () => {
+describe('NavigationHelperService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SharedModule.forRoot()],
