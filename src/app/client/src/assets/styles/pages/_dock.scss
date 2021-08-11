@@ -1028,3 +1028,8 @@ app-question-set-editor{
       }
   }
 }
+.hover-none{
+  &:hover{
+    background: none !important;
+  }
+}
