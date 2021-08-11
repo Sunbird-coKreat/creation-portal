@@ -325,6 +325,9 @@
       "type": "string",
       "default": "CC BY 4.0"
     },
+    "languageCode": {
+      "type": "array"
+    },
     "language": {
       "type": "array",
       "items": {
