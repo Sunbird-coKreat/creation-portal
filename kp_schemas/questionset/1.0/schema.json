@@ -185,7 +185,7 @@
     },
     "languageCode": {
       "type": "array"
-    }
+    },
     "language": {
       "type": "array",
       "items": {
