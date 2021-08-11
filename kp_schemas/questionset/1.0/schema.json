@@ -183,6 +183,9 @@
     "versionKey": {
       "type": "string"
     },
+    "languageCode": {
+      "type": "array"
+    }
     "language": {
       "type": "array",
       "items": {
