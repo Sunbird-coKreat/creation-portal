@@ -102,7 +102,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public telemetryService: TelemetryService, private fb: FormBuilder,
     private notificationService: NotificationService, private sourcingService: SourcingService, public contentService: ContentService,
     private itemsetService: ItemsetService, private helperService: HelperService,
-    private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
+    public resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
     public router: Router, private navigationHelperService: NavigationHelperService,
     public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService,
@@ -1282,6 +1282,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.generateTelemetryEndEvent('back');
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
     }
   }
 

@@ -74,7 +74,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public formInputData: any;
 
   constructor(
-    private resourceService: ResourceService,
+    public resourceService: ResourceService,
     private toasterService: ToasterService,
     private configService: ConfigService,
     private userService: UserService,
@@ -675,6 +675,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   handleBack() {
+    this.programsService.emitHeaderEvent(true);
     this.programStageService.removeLastStage();
   }
 

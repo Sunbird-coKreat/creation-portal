@@ -1,19 +1,17 @@
 <div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart">
-  <div class="ui container py-10">
-  <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn" (click)="handleBack()"
-  type="button"
-  appTelemetryInteract
-[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-[telemetryInteractObject]="telemetryInteractObject"
-[telemetryInteractCdata]="telemetryInteractCdata"
-[telemetryInteractPdata]="telemetryInteractPdata">
-            <i class="icon-svg icon-svg--xxs icon-back mr-4">
-                <svg class="icon icon-svg--primary">
-                    <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
-                </svg>
-            </i>
-            Back
+  <div class="sb-bg-color-primary">
+    <div class="ui container py-15">
+        <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold"
+            (click)="handleBack()" type="button" appTelemetryInteract
+            [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
+            <i aria-hidden="true" class="arrow left icon sb-color-white"></i>
+            {{resourceService?.frmelmnts?.btn?.back}}
         </button>
+    </div>
+</div>
+  <div class="ui container py-10">
         <div class="d-flex">
           <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
             <div #contentTitle class="fs-1">

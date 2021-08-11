@@ -1033,3 +1033,9 @@ app-question-set-editor{
   opacity: 0.6 !important;
   color: #999 !important;
 }
+
+.hover-none{
+  &:hover{
+    background: none !important;
+  }
+}
