@@ -237,8 +237,7 @@ export class MetaFormComponent implements OnInit, OnChanges, OnDestroy {
     this.toolbarEmitter.emit({ button: 'onFormStatusChange', event });
   }
 
-  valueChanges(event: any) {
-    console.log(event);
+  valueChanges(event: any) {    
     if (!_.isEmpty(this.appIcon) && this.showAppIcon) {
       event.appIcon = this.appIcon;
     }

@@ -273,10 +273,10 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
     switch (event.button) {
       case 'saveContent':
         this.buttonLoaders.saveAsDraftButtonLoader = true;
-        this.saveContent().then((message: string) => {
+        this.saveContent().then((response: any) => {
           this.buttonLoaders.saveAsDraftButtonLoader = false;
-          this.toasterService.success(message);
-          this.redirectToCreateProgramPage();
+          this.toasterService.success(response.message);
+          this.redirectToCreateProgramPage(response.collection);
         }).catch(((error: string) => {
           this.buttonLoaders.saveAsDraftButtonLoader = false;
           this.toasterService.error(error);
@@ -284,10 +284,10 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
         break;
         case 'saveCollection':
           this.buttonLoaders.saveAsDraftButtonLoader = true;
-          this.saveContent().then((message: string) => {
+          this.saveContent().then((response:any) => {
             this.buttonLoaders.saveAsDraftButtonLoader = false;
-            this.toasterService.success(message);
-            this.redirectToCreateProgramPage();
+            this.toasterService.success(response.message);
+            this.redirectToCreateProgramPage(response.collection);
           }).catch(((error: string) => {
             this.buttonLoaders.saveAsDraftButtonLoader = false;
             this.toasterService.error(error);
@@ -362,7 +362,7 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   redirectToCreateProgramPage(data?: any) {
     this.editorEmitter.emit({
-      close: true, action: this.actionType, identifier: this.collectionId
+      close: true, action: this.actionType, identifier: this.collectionId, collection: data
     })
   }
 
@@ -401,7 +401,7 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.validateFormStatus()) {
         return reject(_.get(this.configService, 'labelConfig.messages.error.029'));
       }
-      const nodesModified =  _.get(this.editorService.getCollectionHierarchy(), 'nodesModified');
+      const nodesModified =  _.get(this.editorService.getCollectionHierarchy(), 'nodesModified');      
       const objectType = this.configService.categoryConfig[this.editorConfig.config.objectType];
       if (objectType === 'questionSet') {
         const maxScore = await this.editorService.getMaxScore();
@@ -417,7 +417,16 @@ export class EditorComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           this.treeService.clearTreeCache();
           this.treeService.nextTreeStatus('saved');
-          resolve(_.get(this.configService, 'labelConfig.messages.success.001'));
+
+          const tempCollection = _.mapValues(nodesModified[this.collectionId]?.metadata, (value, key) => {
+            if(Array.isArray(value) && value.length === 1) return value[0];            
+            else return value;
+          });
+          tempCollection.identifier = this.collectionId;
+          tempCollection.editable = true;
+          tempCollection.total = Object.keys(response.identifiers).length;
+
+          resolve({collection: tempCollection, message: _.get(this.configService, 'labelConfig.messages.success.001')});
         }, err => {
           reject(_.get(this.configService, 'labelConfig.messages.error.001'));
         });

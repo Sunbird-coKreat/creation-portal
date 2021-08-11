@@ -1305,6 +1305,9 @@ export class ProgramsService extends DataService implements CanActivate {
     } else  {
       let collectionCat = '';
       if (_.isArray(program.target_collection_category)) {
+        if(!_.first(program.target_collection_category)) {
+          return 'Target Collections'
+        }
         collectionCat = program.target_collection_category[0];
       } else {
         collectionCat = program.target_collection_category;
@@ -1393,9 +1396,6 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   getContentAdditionModeConfig() {
-    if(this.cacheService.get('contentAdditionModeConfig')) {
-      return of(this.cacheService.get('contentAditionModeConfig'));
-    }
     const requestParam = {
       url: 'program/v1/configuration/search',
       header: {

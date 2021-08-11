@@ -349,11 +349,11 @@
                   <div class="twelve wide column">                    
                     <div class="six wide column pull-right">
                       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" *ngIf="isAddVisible"
-                              (click)="OnAdd()">
-                        <i class="plus icon"></i> Add New
+                              (click)="onAddTarget()">
+                        <i class="plus icon"></i> {{resource.frmelmnts?.btn?.addNew}}
                       </button>
-                      <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="showSubjectModal=!showSubjectModal" *ngIf="isSearchVisible">
-                        <i class="plus icon"></i> Search & Add
+                      <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8" (click)="onSearchTarget" *ngIf="isSearchVisible">
+                        <i class="plus icon"></i> {{resource.frmelmnts?.btn?.searchAndAdd}}
                       </button>
                     </div>
                   </div>
@@ -362,10 +362,11 @@
                     <div class="sb-bg-white b-1-100 br-4 o-y-auto">
                       <h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize"
                           *ngIf="resource.frmelmnts.lbl.number">
-                        {{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, 'plural'))}}
+                        {{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, tempCollections.length === 1 ? false: 'plural'))}}
                       </h5>
                       <hr class="mt-0">
-                      <div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
+                      <div class="o-y-auto maxmin-h-37
+					  5 fs-0-92 text-capitalize">
                         <div class="sb-program-collection ui container"
                              *ngFor="let tempCollection of tempCollections">
                           <div class="ui grid">
@@ -387,18 +388,24 @@
                               </small>
                             </div>
                             <div class="four wide column px-0 mt-5">
-                              <div class="sb-color-gray-400 fxsmall text-lowercase">
-                                {{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': tempCollection.contentTypeUnit || ''}}
+                              <div *ngIf="!tempCollection.editable" class="sb-color-gray-400 fxsmall text-lowercase">
+                                {{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | lowercase}}
                               </div>
-                              <div *ngIf="tempCollection.selected"
+                              <div *ngIf="tempCollection.selected &&!tempCollection.editable"
                                    class="sb-color-primary fxsmall cursor-pointer text-none"
                                    (click)="chooseChapters(tempCollection);">
                                 <i
-                                  class="edit outline icon"></i>{{blueprintTemplate ? resource?.frmelmnts?.lbl?.editSections : resource?.frmelmnts?.lbl.editChapters}}
+                                  class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}
+                              </div>
+							  <div *ngIf="tempCollection.editable"
+                                   class="sb-color-primary fxsmall cursor-pointer text-none"
+                                   (click)="onEditTarget(tempCollection.identifier);">
+                                <i
+                                  class="edit outline icon"></i>Edit
                               </div>
                               <div *ngIf="blueprintTemplate"
                                    class="sb-color-primary fxsmall cursor-pointer text-none"
-                                   (click)="editBlueprint(tempCollection);">
+                                   (click)="editBlueprint(tempCollection, tempCollection.editable ? true : false);">
                                 <i
                                   class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
                               </div>
@@ -471,7 +478,7 @@
   <div class="sb-modal-header">{{'Search & Add' }}</div>
   <div class="sb-modal-content">
     <div class="content">
-      <div class="ui grid">
+      <div class="ui grid" [formGroup]="collectionListForm">
         <div class="twelve wide column" *ngIf="showProgramScope">
           <div class="ui grid">
             <div class="three wide column">
@@ -503,8 +510,8 @@
 											<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
 													This field is required
 												</div-->
-										</div>
-									</div>
+				</div>
+				</div>
 									<div class="three wide column">
 										<div class="field">
 											<label class="d-block"> {{resource?.frmelmnts?.lbl?.grade}}
@@ -700,7 +707,7 @@
 											</table>
 										</div>
 									</div>
-									<div class="five wide column">
+									<!-- <div class="five wide column">
 										<div class="sb-bg-white b-1-100 br-4 o-y-auto">
 											<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
 												{{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [collectionListForm.value.target_collection_category]}, 'plural'))}}
@@ -759,16 +766,12 @@
 												</div>
 											</div>
 										</div>
-									</div>
+									</div> -->
 								</div>
 							</div>
-						</div>
-						</form>
-					</div>
-				</div>
-			</sui-tabset>
-		</div>
-		<div class="d-flex flex-jc-space-between" [appTelemetryStart]="telemetryStart">
+						</div>						
+	</div>								
+	<!-- <div class="d-flex flex-jc-space-between" [appTelemetryStart]="telemetryStart">
 			<div>
 				<button *ngIf="showTextBookSelector && !editPublished"
 					class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="navigateTo(1)"
@@ -804,9 +807,13 @@
 					[telemetryInteractCdata]="telemetryInteractCdata"
 					[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.publishProject}}</button>
 			</div>
-		</div>
-	</div>
-</div>
+	</div> -->
+  </div>
+  <div class="sb-modal-actions">
+		<button (click)="showSubjectModal = false" class="sb-btn sb-btn-primary sb-btn-normal"
+			>{{resource?.frmelmnts?.lbl?.done}}</button>
+  </div>
+</sui-modal>
 
 <sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="false"  (dismissed)="showDocumentUploader = false"
 	*ngIf="showDocumentUploader" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>

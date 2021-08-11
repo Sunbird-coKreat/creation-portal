@@ -18,6 +18,10 @@
                 "type": "upload"
             },
             {
+                "mimetype": "application/vnd.sunbird.question",
+                "type": "quml"
+            },
+            {
                 "mimetype":  "application/vnd.ekstep.h5p-archive",
                 "type": "upload"
             },

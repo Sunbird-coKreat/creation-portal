@@ -644,7 +644,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (this.programDetails.target_collection_category && this.userProfile.rootOrgId) {
       // tslint:disable-next-line:max-line-length
       this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
-        this.userProfile.rootOrgId, 'Collection').subscribe(res => {
+        this.userProfile.rootOrgId, _.get(
+          _.first(this.programDetails['targetcollectionprimarycategories']), 
+          'targetObjectType', 'Collection')).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
