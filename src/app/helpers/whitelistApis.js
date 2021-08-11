@@ -385,6 +385,9 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/learner/user/v1/exists/phone:phone': {
+      checksNeeded: []
+    },
     '/learner/user/v1/search': { /* Todo */
       checksNeeded: []
       // checksNeeded: ['ROLE_CHECK'],
@@ -393,6 +396,9 @@ const API_LIST = {
       //   ROLE.SOURCING_REVIEWER,
       //   ROLE.CONTRIBUTE_ORG_ADMIN
       // ]
+    },
+    'learner/data/v1/system/settings/get/tncConfig': {
+      checksNeeded: []
     },
     '/signup': {
       checksNeeded: [],
