@@ -145,6 +145,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('uploadHandler should call updateAccordianView function', () => {
+      spyOn(component, 'updateAccordianView').and.callThrough();
       spyOn(component, 'uploadHandler').and.callThrough();
       component.uploadHandler({contentId: 'do_1234567'});
       expect(component.updateAccordianView).toHaveBeenCalled();
