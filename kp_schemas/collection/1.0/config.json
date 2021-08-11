@@ -10,11 +10,6 @@
     "primaryKey": ["identifier"]
   },
   "relations": {
-    "concepts": {
-      "type": "associatedTo",
-      "direction": "out",
-      "objects": ["Concept"]
-    },
     "questions": {
       "type": "associatedTo",
       "direction": "out",
@@ -29,16 +24,6 @@
       "type": "hasSequenceMember",
       "direction": "in",
       "objects": ["Content", "ContentImage"]
-    },
-    "usedByContent": {
-      "type": "associatedTo",
-      "direction": "in",
-      "objects": ["Content"]
-    },
-    "usesContent": {
-      "type": "associatedTo",
-      "direction": "out",
-      "objects": ["Content"]
     }
   },
   "version": "enable",
