@@ -146,7 +146,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column"
-								*ngIf="isOpenNominations === true">
+								*ngIf="projectType === 'public'">
 								<div class="required field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -169,7 +169,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column"
-								*ngIf="isOpenNominations === true">
+								*ngIf="projectType === 'public'">
 								<div class="field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationShortlistingDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
