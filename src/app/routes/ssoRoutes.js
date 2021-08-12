@@ -12,7 +12,7 @@ const {generateAuthToken, getGrantFromCode} = require('../helpers/keyCloakHelper
 const {parseJson} = require('../helpers/utilityService');
 const {getUserIdFromToken} = require('../helpers/jwtHelper');
 const fs = require('fs');
-
+const externalKey = envHelper.CRYPTO_ENCRYPTION_KEY_EXTERNAL;
 const successUrl = '/sso/sign-in/success';
 const updateContactUrl = '/sign-in/sso/update/contact';
 const errorUrl = '/sso/sign-in/error';
@@ -423,16 +423,16 @@ module.exports = (app) => {
   })
   app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
     logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
-    console.log('req.query.redirectUrl ', req.query.redirectUrl);
-    console.log('req.query.userName ', req.query.userName);
     let  redirectUrl, errType;
-    let userName = req.query.userName;
     try {
+      console.log('before decrypt userName ', req.query.userName);
+      console.log('before externalKey ', externalKey);
+      let userName = decrypt(JSON.parse(req.query.userName), externalKey);
+      console.log('after decrypt userName ', userName);
       response = await createSSOSession(userName, 'portal',req, res);
       // redirectURIFromCookie = _.get(req, 'cookies.SOURCING_SSO_REDIRECT_URI');
       redirectUrl = req.query.redirectUrl ? req.query.redirectUrl : '/sourcing';
       redirectUrl = redirectUrl.split("?")[0];
-      console.log('redirectUrl ', redirectUrl);
       logger.info({
         msg: 'sourcing sso sign-in success callback, session created',
         additionalInfo: {
