@@ -99,4 +99,28 @@ describe('MainHeaderComponent', () => {
     component.ngOnInit();
     expect(cacheService.exists('portalLanguage')).toEqual(false);
   });
+  it('Should call getHeaderEmitter and assign value to showSubHeader', () => {
+    component.showSubHeader = true;
+    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(false));
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.showSubHeader).toBeFalsy();
+  });
+  it('Should call getHeaderEmitter and assign value to showSubHeader as true', () => {
+    component.showSubHeader = false;
+    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(true));
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.showSubHeader).toBeTruthy();
+  });
+  it('Should call getHeaderEmitter and assign value to showSubHeader as true', () => {
+    component.unSubscribeShowSubHeader = {
+      unsubscribe() {
+      }
+    };
+    spyOn(component.unSubscribeShowSubHeader, 'unsubscribe').and.callThrough();
+    spyOn(component, 'ngOnDestroy').and.callThrough();
+    component.ngOnDestroy();
+    expect(component.unSubscribeShowSubHeader.unsubscribe).toHaveBeenCalled();
+  });
 });
