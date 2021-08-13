@@ -141,6 +141,7 @@ export class ContributorsListComponent implements OnInit {
           return org;
         }
       );
+      this.orgList = _.filter(this.orgList, org => (_.get(org, 'User.maskedEmail') || _.get(org, 'User.maskedPhone')))
       this.showFilteredResults()
     }, (error) => {
       console.log(error);
