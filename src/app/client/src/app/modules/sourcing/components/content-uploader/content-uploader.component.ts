@@ -781,6 +781,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
     }
+    this.programsService.emitHeaderEvent(true);
   }
 
   detectMimeType(fileName) {
