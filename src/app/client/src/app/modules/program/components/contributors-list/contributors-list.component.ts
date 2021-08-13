@@ -67,7 +67,11 @@ export class ContributorsListComponent implements OnInit {
         this.getOrgCreatorIds(orgCreatorOsIds);
       }
     }, (error) => {
-      console.log(error);
+      console.log('Get org list', JSON.stringify(error))
+      if(error.response && error.response.data) {
+        console.log(`Get org list ==>`, JSON.stringify(error.response.data));
+      }
+
       const errInfo = {
         errorMsg: this.resourceService.messages.fmsg.contributorjoin.m0001,
         telemetryPageId: this.getPageId(),
@@ -102,6 +106,10 @@ export class ContributorsListComponent implements OnInit {
       ));
       this.getOrgUsersDetails(orgCreatorIds);
     }, (error) => {
+      console.log('Get org creator', JSON.stringify(error))
+      if(error.response && error.response.data) {
+        console.log(`Get org creator ==>`, JSON.stringify(error.response.data));
+      }
       const errInfo = {
         errorMsg: this.resourceService.messages.emsg.profile.m0002,
         telemetryPageId: this.getPageId(),
@@ -144,7 +152,10 @@ export class ContributorsListComponent implements OnInit {
       this.orgList = _.filter(this.orgList, org => (_.get(org, 'User.maskedEmail') || _.get(org, 'User.maskedPhone')))
       this.showFilteredResults()
     }, (error) => {
-      console.log(error);
+      console.log('Get org user list', JSON.stringify(error))
+      if(error.response && error.response.data) {
+        console.log(`Get org user list ==>`, JSON.stringify(error.response.data));
+      }
       const errInfo = {
         errorMsg: this.getPageId(),
         telemetryPageId: this.telemetryPageId,
