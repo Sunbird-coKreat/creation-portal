@@ -1365,32 +1365,4 @@ export class ProgramsService extends DataService implements CanActivate {
   getHeaderEmitter() {
     return this.headerEventOnNewEditor;
   }
-
-  initializeFormFields(frameworkCategories, formFieldProperties, contentMetadata, choosedTextBook)
-  {
-    let initTopicOptions;
-    let initLearningOutcomeOptions;
-    [initTopicOptions, initLearningOutcomeOptions] = this.initializeBlueprintMetadata(choosedTextBook, frameworkCategories);
-    let categoryMasterList;
-    const nonFrameworkFields = ['additionalCategories', 'license'];
-      // tslint:disable-next-line:max-line-length
-      if (_.has(choosedTextBook, 'framework') && !_.isEmpty(this.frameworkService.frameworkData[choosedTextBook.framework])) {
-        categoryMasterList =  this.frameworkService.frameworkData[choosedTextBook.framework];
-        // tslint:disable-next-line:max-line-length
-        _.forEach(formFieldProperties, (element) => {
-          _.forEach(element.fields, (field) => {
-          // tslint:disable-next-line:max-line-length
-            if ((field.code === "topics") && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
-                field.terms = initTopicOptions;
-            }
-
-            if ((field.code === "learningOutcomes") && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
-              field.terms = initLearningOutcomeOptions;
-            }
-          });
-        });
-    }
-
-    return formFieldProperties;
-  }
 }
