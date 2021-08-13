@@ -229,9 +229,9 @@ export class ContributorsListComponent implements OnInit {
   }
 
   sortBySelected(list) {
-    return list.sort(function (x, y) {
-      return (x.isChecked === y.isChecked) ? 0 : x ? -1 : 1;
-    });
+    const checked= _.filter(list, obj => obj.isChecked) || [];
+    const unchecked = _.filter(list, obj => !obj.isChecked) || [];
+    return checked.concat(unchecked);
   }
 
   applyPagination(list) {
