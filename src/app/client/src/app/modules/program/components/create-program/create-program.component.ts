@@ -1364,6 +1364,7 @@ showTexbooklist(showTextBookSelector = true) {
       }
     });
 
+    
      if (!_.isEmpty(savedBluePrintData) && savedBluePrintData[this.choosedTextBook.code]){
        this.blueprintFormConfig.forEach((element) => {
          if(element.fields)
