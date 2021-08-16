@@ -10,6 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { UserService } from '@sunbird/core';
+import { of as observableOf, of, throwError as observableError } from 'rxjs';
 
 describe('QuestionSetEditorComponent', () => {
   let component: QuestionSetEditorComponent;
@@ -89,5 +90,26 @@ describe('QuestionSetEditorComponent', () => {
     spyOn(component, 'publishQuestionSet').and.callThrough();
     component.editorEventListener(event);
     expect(component.publishQuestionSet).toHaveBeenCalledWith(event.identifier);
+  });
+  it('#publishQuestionSet should call publishQuestionSet', () => {
+    component.sessionContext =  {currentOrgRole: ''};
+    component.sessionContext =  {sampleContent: {}};
+    spyOn(component['helperService'], 'publishQuestionSet').and.returnValue(of(false));
+    spyOn(component['collectionHierarchyService'], 'addResourceToHierarchy').and.returnValue(of(false));
+    spyOn(component, 'publishQuestionSet').and.callThrough();
+    spyOn(component.toasterService, 'success').and.callThrough();
+    spyOn(component['programStageService'], 'removeLastStage').and.callThrough();
+    component.publishQuestionSet('1234');
+    expect(component.toasterService.success).not.toHaveBeenCalledWith('Content accepted successfully');
+  });
+  it('#requestCorrectionsBySourcing should call requestCorrectionsBySourcing', () => {
+    component.sessionContext =  {currentOrgRole: ''};
+    component.sessionContext =  {sampleContent: {}};
+    spyOn(component['helperService'], 'updateQuestionSetStatus').and.returnValue(of(false));
+    spyOn(component, 'requestCorrectionsBySourcing').and.callThrough();
+    spyOn(component.toasterService, 'success').and.callThrough();
+    spyOn(component['programStageService'], 'removeLastStage').and.callThrough();
+    component.requestCorrectionsBySourcing('1234', 'comment');
+    expect(component['programStageService'].removeLastStage).not.toHaveBeenCalled();
   });
 });
