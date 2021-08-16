@@ -22,6 +22,7 @@ import { SourcingModule } from '../sourcing/sourcing.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../sourcing';
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgReportsComponent } from './components/org-reports/org-reports.component';
+import { ContributorsListComponent } from './components/contributors-list/contributors-list.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,7 @@ import { OrgReportsComponent } from './components/org-reports/org-reports.compon
     ProgramComponent, OnboardPopupComponent,
     ProgramHeaderComponent, CreateProgramComponent,
     ProgramNominationsComponent,
-    ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent, OrgReportsComponent],
+    ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent, OrgReportsComponent, ContributorsListComponent],
   imports: [
   SuiModule,
     CommonModule,

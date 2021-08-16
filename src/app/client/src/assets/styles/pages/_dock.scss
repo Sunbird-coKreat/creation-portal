@@ -914,7 +914,7 @@ app-question-set-editor{
       margin-right: 8px;
     }
   }
-  
+
   .list-border{
     ul{
       font-weight: 500 !important;
@@ -1023,16 +1023,22 @@ app-question-set-editor{
 .ui.tree-picker.tree{
   .node.disabled{
       opacity: 0.8 !important;
-      color: #999  !important; 
+      color: #999  !important;
       cursor: alias !important;
       span{
-        cursor: alias !important; 
+        cursor: alias !important;
       }
       .square{
-        color: #999  !important; 
+        color: #999  !important;
       }
   }
 }
+
+.sb-field-disabled {
+  opacity: 0.6 !important;
+  color: #999 !important;
+}
+
 .hover-none{
   &:hover{
     background: none !important;

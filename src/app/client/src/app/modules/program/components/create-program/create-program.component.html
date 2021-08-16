@@ -72,34 +72,61 @@
 									</div>
 								</div>
 							</div>
-							<div class="twelve wide column sb-field-group pt-0"
-								[ngClass]="(editPublished) ? 'disabled field':''">
+							<div class="twelve wide column sb-field-group pt-0">
 								<div class="sb-field-group mb-8">
-									<label class="fs-0-92">{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominations}}
-										<i class="pull-right question circle link icon pull-right ml-10" suiPopup
-											popupDelay="500" [popupPlacement]="'right'"
-											popupText="{{resource?.frmelmnts?.lbl?.isThisProjectOpenForNominationsHint}}"></i>
-									</label>
+									<label
+										class="fs-0-92">{{resource?.frmelmnts?.lbl?.howToGetContributionsToThisProject}}</label>
 									<div class="sb-field mt-4 d-flex">
-										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="yes" [disabled]="editPublished" type="radio"
-												name="openNominations" [checked]="isOpenNominations"
-												(click)="openForNominations(true)" appTelemetryInteract
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary pr-20"
+											[ngClass]="(editPublished) ? 'disabled field':''">
+											<input id="public" [disabled]="editPublished" type="radio"
+												name="projectType" [checked]="projectType === 'public'"
+												(click)="setProjectType('public')" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
-											<label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
+											<label
+												for="public">{{resource?.frmelmnts?.lbl?.contributionFromAnyOne}}</label>
 										</div>
-										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input id="no" [disabled]="editPublished" type="radio"
-												name="openNominations" [checked]="!isOpenNominations"
-												(click)="openForNominations(false)" appTelemetryInteract
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary pr-20">
+											<div class="mb-0" [ngClass]="(editPublished) ? 'disabled field':''">
+												<input id="restricted" [disabled]="editPublished" type="radio"
+													name="projectType" [checked]="projectType === 'restricted'"
+													(click)="setProjectType('restricted')" appTelemetryInteract
+													[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+													[telemetryInteractObject]="telemetryInteractObject"
+													[telemetryInteractCdata]="telemetryInteractCdata"
+													[telemetryInteractPdata]="telemetryInteractPdata">
+												<label
+													for="restricted">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
+											</div>
+											<span *ngIf="projectType === 'restricted'"
+												class="fs-0-785 pl-20 cursor-pointer"
+												(click)="openContributorListPopup()">
+												<span *ngIf="selectedContributorsCnt <= 0"
+													class="sb-color-primary">{{resource?.frmelmnts?.lbl?.selectToContributor}}</span>
+												<div *ngIf="selectedContributorsCnt > 0" class="px-0 d-inline-block">
+													<em><span>{{selectedContributorsCnt}}</span>&nbsp;
+														<span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.added}}</span></em>
+													<div class="sb-dock-icon-tooltip d-inline-block">
+														<i class="icon edit sb-color-primary ui px-5"
+															data-tooltip="Modify"></i>
+													</div>
+												</div>
+											</span>
+										</div>
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary pr-20"
+											[ngClass]="(editPublished) ? 'disabled field':''">
+											<input id="private" [disabled]="editPublished" type="radio"
+												name="projectType" [checked]="projectType === 'private'"
+												(click)="setProjectType('private')" appTelemetryInteract
 												[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
-											<label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
+											<label
+												for="private">{{resource?.frmelmnts?.lbl?.contributionFromYourOrgOnly}}</label>
 										</div>
 									</div>
 								</div>
@@ -119,7 +146,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column"
-								*ngIf="isOpenNominations === true">
+								*ngIf="projectType === 'public'">
 								<div class="required field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationEndDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -142,7 +169,7 @@
 								</div>
 							</div>
 							<div class="twelve wide tablet three wide computer column"
-								*ngIf="isOpenNominations === true">
+								*ngIf="projectType === 'public'">
 								<div class="field">
 									<label class="d-block">{{resource?.frmelmnts?.lbl?.nominationShortlistingDate}}
 										<i class="pull-right question circle link icon pull-right" suiPopup
@@ -852,4 +879,9 @@
 			[telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
 			[telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.no}}</button>
 	</div>
+</sui-modal>
+
+<sui-modal *ngIf="showContributorsListModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+[size]="'large'" class="sb-modal" appBodyScroll (dismissed)="closeContributorListPopup()" #modal>
+    <app-contributors-list [preSelectedContributors]="preSelectedContributors" (onContributorSave)="onContributorSave($event)"></app-contributors-list>
 </sui-modal>
