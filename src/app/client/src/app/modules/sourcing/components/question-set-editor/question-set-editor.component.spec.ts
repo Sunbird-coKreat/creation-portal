@@ -2,29 +2,40 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { QuestionSetEditorComponent } from './question-set-editor.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { APP_BASE_HREF } from '@angular/common';
+import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { CacheService } from 'ng2-cache-service';
 import { ConfigService, BrowserCacheTtlService, ToasterService, ResourceService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
-import { ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
+import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
+import { UserService } from '@sunbird/core';
 
-xdescribe('QuestionSetEditorComponent', () => {
+describe('QuestionSetEditorComponent', () => {
   let component: QuestionSetEditorComponent;
   let fixture: ComponentFixture<QuestionSetEditorComponent>;
   let debugElement: DebugElement;
-
+  const UserServiceStub = {
+    userid: '874ed8a5-782e-4f6c-8f36-e0288455901e',
+    userProfile: {
+      firstName: 'Creator',
+      lastName: 'ekstep'
+    },
+    slug: 'custchannel'
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
-      declarations: [ QuestionSetEditorComponent ],
-      providers: [ ConfigService, TelemetryService, CacheService, BrowserCacheTtlService, ToasterService, ResourceService,
+      declarations: [QuestionSetEditorComponent],
+      providers: [ConfigService, TelemetryService, CacheService, CollectionHierarchyService,
+        BrowserCacheTtlService, ToasterService, ResourceService, DatePipe,
         { provide: Router },
         { provide: ActivatedRoute },
-        {provide: APP_BASE_HREF, useValue: '/'}],
+        { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: UserService, useValue: UserServiceStub }],
       schemas: [NO_ERRORS_SCHEMA]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -36,5 +47,25 @@ xdescribe('QuestionSetEditorComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+  it('#editorEventListener should call editorEventListener for sendForCorrections', () => {
+    const event = {
+      identifier: '1234', comment: 'comment', action: 'sendForCorrections'
+    };
+    spyOn(component, 'requestCorrectionsBySourcing').and.callThrough();
+    component.editorEventListener(event);
+    expect(component.requestCorrectionsBySourcing).toHaveBeenCalledWith(event.identifier, event.comment);
+  });
+  it('#editorEventListener should call editorEventListener for backContent', () => {
+    const event = { action: 'backContent' };
+    spyOn(component['programsService'], 'emitHeaderEvent').and.callThrough();
+    component.editorEventListener(event);
+    expect(component['programsService'].emitHeaderEvent).toHaveBeenCalledWith(true);
+  });
+  it('#editorEventListener should call editorEventListener for saveCollection', () => {
+    const event = { action: 'saveCollection' };
+    spyOn(component['programStageService'], 'removeLastStage').and.callThrough();
+    component.editorEventListener(event);
+    expect(component['programStageService'].removeLastStage).toHaveBeenCalled();
   });
 });
