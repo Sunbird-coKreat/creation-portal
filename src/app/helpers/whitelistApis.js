@@ -455,7 +455,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    'learner/data/v1/system/settings/get/tncConfig': {
+    '/learner/data/v1/system/settings/get/tncConfig': {
       checksNeeded: []
     },
     '/action/content/v3/update/:do_id': {
