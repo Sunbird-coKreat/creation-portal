@@ -361,6 +361,9 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/learner/user/v1/exists/phone:phone': {
+      checksNeeded: []
+    },
     '/learner/data/v1/role/read': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -450,6 +453,9 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_USER,
         ROLE.INDIVIDUAL_USER
       ]
+    },
+    'learner/data/v1/system/settings/get/tncConfig': {
+      checksNeeded: []
     },
     '/action/content/v3/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
