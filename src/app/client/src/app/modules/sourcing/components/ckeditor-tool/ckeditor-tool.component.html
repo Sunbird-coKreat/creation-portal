@@ -68,7 +68,7 @@
 </sui-modal> -->
 
 
-<sui-modal [isClosable]="true" class="sb-modal" [isInverted]="true" (dismissed)="dismissImagePicker()"
+<sui-modal [isClosable]="true" class="sb-modal" [isInverted]="false" (dismissed)="dismissImagePicker()"
   *ngIf="showImagePicker" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
   <div class="sb-modal-header">Select Image</div>
   <div class="sb-modal-content p-0">
@@ -159,7 +159,7 @@
   </div>
 </sui-modal>
 <!--Video POP UP-->
-<sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="true" (dismissed)="dismissVideoPicker()"
+<sui-modal [isClosable]="isClosable" class="sb-modal" [isInverted]="false" (dismissed)="dismissVideoPicker()"
   *ngIf="showVideoPicker" [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal>
   <div class="sb-modal-header">Select Video</div>
   <div class="sb-modal-content p-0">
@@ -298,7 +298,7 @@
   </div>
 </sui-modal>
 
-<sui-modal [isClosable]="true" [isInverted]="true" (dismissed)="dismissImageUploadModal()" *ngIf="showImageUploadModal"
+<sui-modal [isClosable]="true" [isInverted]="false" (dismissed)="dismissImageUploadModal()" *ngIf="showImageUploadModal"
   [size]="'normal'" [isFullScreen]="false" [mustScroll]="true" #modal3>
   <div class="header">Upload and Use</div>
   <div class="content">

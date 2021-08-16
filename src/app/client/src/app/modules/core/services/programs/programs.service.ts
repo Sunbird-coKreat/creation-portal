@@ -7,7 +7,7 @@ import { PublicDataService } from './../public-data/public-data.service';
 import { ActionService } from './../action/action.service';
 import { ConfigService, ServerResponse, ToasterService, ResourceService,
   HttpOptions, BrowserCacheTtlService, IUserProfile } from '@sunbird/shared';
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { UserService } from '../user/user.service';
 import { combineLatest, of, iif, Observable, BehaviorSubject, throwError, merge, forkJoin, Subject} from 'rxjs';
 import * as _ from 'lodash-es';
@@ -53,7 +53,8 @@ export class ProgramsService extends DataService implements CanActivate {
   public readonly programsNotificationData = this._programsNotificationData.asObservable()
     .pipe(skipWhile(data => data === undefined || data === null));
   private _projectFeedDays: string;
-
+  // to hablde header on new collection editor
+  public headerEventOnNewEditor: EventEmitter<boolean> = new EventEmitter(true);
   private userProfile: IUserProfile;
   constructor(config: ConfigService, http: HttpClient, private publicDataService: PublicDataService,
     private orgDetailsService: OrgDetailsService, private userService: UserService,
@@ -902,7 +903,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
         return [topicTerms, tempLearningOutcomeOptions];
     }
-  
+
   filterBlueprintMetadata(selectedTopics) {
     let tempLearningOutcomeOptions = [];
     if(selectedTopics) {
@@ -1054,12 +1055,13 @@ export class ProgramsService extends DataService implements CanActivate {
    }
   }
 
-  getOrgUsersDetails(reqFilters, offset?, limit?) {
+  getOrgUsersDetails(reqFilters, offset?, limit?, fields?) {
     const req = {
       url: this.config.urlConFig.URLS.ADMIN.USER_SEARCH,
       data: {
         'request': {
-          'filters': reqFilters
+          'filters': reqFilters,
+          'fields': fields || []
         }
       }
     };
@@ -1364,5 +1366,11 @@ export class ProgramsService extends DataService implements CanActivate {
       });
     }
     return targetPrimaryCategories;
+  }
+  emitHeaderEvent(status) {
+    this.headerEventOnNewEditor.emit(status);
+  }
+  getHeaderEmitter() {
+    return this.headerEventOnNewEditor;
   }
 }

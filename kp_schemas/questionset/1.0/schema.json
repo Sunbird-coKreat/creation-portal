@@ -114,7 +114,7 @@
       "type": "string",
       "format": "url"
     },
-    "publishCheckList": {
+    "publishChecklist": {
       "type": "array"
     },
     "publishComment": {
@@ -182,6 +182,9 @@
     },
     "versionKey": {
       "type": "string"
+    },
+    "languageCode": {
+      "type": "array"
     },
     "language": {
       "type": "array",

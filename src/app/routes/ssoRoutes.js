@@ -4,14 +4,15 @@ const envHelper = require('../helpers/environmentVariablesHelper');
 const {encrypt, decrypt} = require('../helpers/crypto');
 const {
   verifySignature, verifyIdentifier, verifyToken, fetchUserWithExternalId, createUser, fetchUserDetails,
-  createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier
+  createSession, updateContact, updateRoles, sendSsoKafkaMessage, migrateUser, freeUpUser, getIdentifier,
+  createSSOSession
 } = require('./../helpers/ssoHelper');
 const telemetryHelper = require('../helpers/telemetryHelper');
 const {generateAuthToken, getGrantFromCode} = require('../helpers/keyCloakHelperService');
 const {parseJson} = require('../helpers/utilityService');
 const {getUserIdFromToken} = require('../helpers/jwtHelper');
 const fs = require('fs');
-
+const externalKey = envHelper.CRYPTO_ENCRYPTION_KEY_EXTERNAL;
 const successUrl = '/sso/sign-in/success';
 const updateContactUrl = '/sign-in/sso/update/contact';
 const errorUrl = '/sso/sign-in/error';
@@ -420,6 +421,44 @@ module.exports = (app) => {
   app.all('/migrate/user/account', async (req, res) => {
     await ssoValidations(req, res)
   })
+  app.get('/v1/sourcing/sso/success/redirect', async (req, res) => {
+    logger.info({msg: '/v1/sourcing/sso/success/redirect called'});
+    let  redirectUrl, errType;
+    try {
+      console.log('before decrypt userName ', req.query.userName);
+      console.log('before externalKey ', externalKey);
+      let userName = decrypt(JSON.parse(req.query.userName), externalKey);
+      console.log('after decrypt userName ', userName);
+      response = await createSSOSession(userName, 'portal',req, res);
+      // redirectURIFromCookie = _.get(req, 'cookies.SOURCING_SSO_REDIRECT_URI');
+      redirectUrl = req.query.redirectUrl ? req.query.redirectUrl : '/sourcing';
+      redirectUrl = redirectUrl.split("?")[0];
+      logger.info({
+        msg: 'sourcing sso sign-in success callback, session created',
+        additionalInfo: {
+          query: req.query,
+          redirectUrl: redirectUrl,
+          errType: errType
+        }
+      })
+    } catch (error) {
+      redirectUrl = `${errorUrl}?error_message=` + getErrorMessage(error, errType);
+      logger.error({
+        msg: 'sourcing sso sign-in success callback, create session error',
+        error,
+        additionalInfo: {
+          query: req.query,
+          redirectUrl: redirectUrl,
+          errType: errType
+        }
+      })
+      logErrorEvent(req, errType, error);
+    } finally {
+      // redirectURIFromCookie && res.cookie('SOURCING_SSO_REDIRECT_URI', '', {expires: new Date(0)});
+      res.redirect(redirectUrl || errorUrl);
+    }
+  });
+
 };
 
 const handleProfileUpdateError = (error) => {

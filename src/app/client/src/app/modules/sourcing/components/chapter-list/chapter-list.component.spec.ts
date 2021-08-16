@@ -15,7 +15,7 @@ import { DatePipe } from '@angular/common';
 
 import {
   chapterListComponentInput, responseSample,
-  fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection
+  fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection, objectCategoryDefinition
 } from './chapter-list.component.spec.data';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -136,18 +136,6 @@ describe('ChapterListComponent', () => {
       spyOn(component, 'updateAccordianView');
       component.ngOnInit();
       expect(component.updateAccordianView).toHaveBeenCalled();
-    });
-
-    xit('should fetch blueprint template on initialize', () => {
-      spyOn(component, 'fetchBlueprintTemplate');
-      component.ngOnInit();
-      expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
-    });
-
-    xit('should set local blueprint on fetching blueprint template', () => {
-      spyOn(component, 'setLocalBlueprint');
-      component.fetchBlueprintTemplate();
-      expect(component.setLocalBlueprint).toHaveBeenCalled();
     });
 
     it('sessionContext should be updated if session in chapterListComponentInput changes', () => {
@@ -368,10 +356,11 @@ describe('ChapterListComponent', () => {
       expect(component.targetCollection).not.toBeUndefined();
     });
 
-    it ('#setTargetCollectionValue() should not set targetCollection values', () => {
+    it ('#setTargetCollectionValue() should not set targetCollection values in chapter-list', () => {
+      component.targetCollection = undefined;
+      component.programContext = undefined;
       const  programsService  = TestBed.get(ProgramsService);
       spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
-      component.programContext = undefined;
       spyOn(component, 'setTargetCollectionValue').and.callThrough();
       component.setTargetCollectionValue();
       expect(component.targetCollection).toBeUndefined();
@@ -385,5 +374,28 @@ describe('ChapterListComponent', () => {
       spyOn(programsService, 'setTargetCollectionName').and.callThrough();
       component.setTargetCollectionValue();
       expect(programsService.setTargetCollectionName).toHaveBeenCalled();
+    });
+
+    it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+      component.collection = {primaryCategory: 'Course'};
+      component.programContext = {rootorg_id: '12345'};
+      component.blueprintTemplate = undefined;
+      component.firstLevelFolderLabel = undefined;
+      component['programsService'] = TestBed.get(ProgramsService);
+      spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+      component.getCollectionCategoryDefinition();
+      expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
+      expect(component.blueprintTemplate).toBeDefined();
+      expect(component.firstLevelFolderLabel).toBeDefined();
+    });
+    xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+      component.collection = {primaryCategory: undefined};
+      component.programContext = {rootorg_id: undefined};
+      component.blueprintTemplate = undefined;
+      component.firstLevelFolderLabel = undefined;
+      component['programsService'] = TestBed.get(ProgramsService);
+      spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
+      component.getCollectionCategoryDefinition();
+      expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
     });
 });

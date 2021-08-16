@@ -28,7 +28,7 @@
                     </div>
                     <ng-container *ngIf="programDetails">
                         <div class="program-timeline w-30">
-                            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+                            <div class="program-timeline-item" *ngIf="programDetails?.type == 'public'">
                                 <div class="status" [class.active]="activeDate === 'nomination_enddate'">
                                     <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
                                     <div class="status__date">
@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+                            <div class="program-timeline-item" *ngIf="programDetails?.type == 'public'">
                                 <div class="status" [class.active]="activeDate === 'shortlisting_enddate'">
                                     <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
                                     <div class="status__date">
@@ -101,10 +101,10 @@
                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.nominations}}
                         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ totalNominations || 0  }}</span>
                     </a>
-                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');" 
-                    appTelemetryInteract 
+                    <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');"
+                    appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('aasign_users_to_project', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectAssignUsers)"
-                    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata" 
+                    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}}
                         <!--span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span-->
                     </a>
@@ -625,8 +625,8 @@
                                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
                                 </tr>
                                 <tr>
-                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName}}</td>
-                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{TARGET_NAME}': targetCollection}}</td>
+                                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.ChapterLevelReportName | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel}}</td>
+                                    <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
                                         appTelemetryInteract
                                         [telemetryInteractEdata]="getTelemetryInteractEdata('chapter_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"

@@ -213,7 +213,7 @@ export class QuestionSetEditorComponent implements OnInit {
     }
     
     if (submissionDateFlag && this.canReviewContent()) {
-      return 'review';
+      return 'orgReview';
     }
       
     if (this.canSourcingReviewerPerformActions()) {
@@ -296,7 +296,9 @@ export class QuestionSetEditorComponent implements OnInit {
 
   getEditableFields() {
     this.editorConfig.config['editableFields'] = {};
-    this.editorConfig.config.editableFields.review = _.map(_.filter(this.programsService.overrideMetaData, {editable: true}), 'code');
+    const fields = _.map(_.filter(this.programsService.overrideMetaData, {editable: true}), 'code');
+    this.editorConfig.config.editableFields.orgreview = fields;
+    this.editorConfig.config.editableFields.sourcingreview = fields;
   }
 
   hasRole(role) {
@@ -338,6 +340,10 @@ export class QuestionSetEditorComponent implements OnInit {
       break;
     case "sourcingReject": 
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
+      break;
+      case "backContent": 
+      this.programsService.emitHeaderEvent(true);
+      this.programStageService.removeLastStage();
       break;
     case "saveCollection": // saving as draft
     default: this.programStageService.removeLastStage();

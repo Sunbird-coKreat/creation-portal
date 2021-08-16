@@ -102,6 +102,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public telemetryPageId: string;
   public targetCollection: string;
   public targetCollections: string;
+  public firstLevelFolderLabel: string;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -176,9 +177,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   ngOnDestroy() {
-    this.stageSubscription.unsubscribe();
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    if (this.stageSubscription) {
+      this.stageSubscription.unsubscribe();
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe.next();
+      this.unsubscribe.complete();
+    }
   }
 
   onStatusChange(status) {
@@ -597,6 +602,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.getCollectionCategoryDefinition();
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
@@ -636,6 +642,22 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
+  }
+
+  getCollectionCategoryDefinition() {
+    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId) {
+      // tslint:disable-next-line:max-line-length
+      this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
+        this.userProfile.rootOrgId, 'Collection').subscribe(res => {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
+    }
   }
 
   setTargetCollectionValue() {
@@ -1232,12 +1254,16 @@ textbookLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Subjects,
     // tslint:disable-next-line:max-line-length
     this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6,
+    // tslint:disable-next-line:max-line-length
+    this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn6.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8,
-    this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9,
+    // tslint:disable-next-line:max-line-length
+    this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn7.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
+    // tslint:disable-next-line:max-line-length
+    this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
+    // tslint:disable-next-line:max-line-length
+    this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
     ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
   ];
   return headers;
@@ -1251,7 +1277,8 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.profile.Subjects,
     // tslint:disable-next-line:max-line-length
     this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
-    this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6,
+    // tslint:disable-next-line:max-line-length
+    this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn6.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
