@@ -261,6 +261,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/content/mvc/v3/search': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/content/object/category/definition/v1/read': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
