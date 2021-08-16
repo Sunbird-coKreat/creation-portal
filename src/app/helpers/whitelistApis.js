@@ -81,6 +81,7 @@ const API_LIST = {
     '/content/program/v1/nomination/add': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.CONTRIBUTE_ORG_ADMIN,
         ROLE.INDIVIDUAL_USER
@@ -447,6 +448,12 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_USER,
         ROLE.INDIVIDUAL_USER
       ]
+    },
+    '/learner/user/v1/exists/phone:phone': {
+      checksNeeded: []
+    },
+    '/learner/data/v1/system/settings/get/tncConfig': {
+      checksNeeded: []
     },
     '/action/content/v3/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
