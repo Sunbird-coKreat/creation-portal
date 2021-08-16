@@ -448,7 +448,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         });
         this.setLocalBlueprint();
         }
-      }
+      })
     }
   }
 

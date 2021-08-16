@@ -27,7 +27,7 @@ import { FaqModule } from '@project-sunbird/common-consumption-v8/lib/faq/faq.mo
 import { element } from 'protractor';
 import {UUID} from 'angular2-uuid';
 import {IContentEditorComponentInput} from '../../../sourcing/interfaces';
-
+ 
 @Component({
   selector: 'app-create-program',
   templateUrl: './create-program.component.html',
@@ -165,6 +165,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
+    this.fetchBlueprintTemplate();
     this.pageStartTime = Date.now();
   }
 
@@ -631,13 +632,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchBlueprintTemplate(): void {
-    this.programsService.getCollectionCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId).subscribe(res => {
-      let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
-        this.blueprintFormConfig = this.blueprintTemplate.properties;
-      }
-    })
+    this.getCollectionCategoryDefinition();
+    this.blueprintFormConfig = this.blueprintTemplate.properties;
   }
 
   getCollectionCategoryDefinition() {
