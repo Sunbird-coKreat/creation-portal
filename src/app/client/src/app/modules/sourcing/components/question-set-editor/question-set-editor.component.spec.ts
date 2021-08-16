@@ -102,6 +102,7 @@ describe('QuestionSetEditorComponent', () => {
     component.publishQuestionSet('1234');
     expect(component.toasterService.success).not.toHaveBeenCalledWith('Content accepted successfully');
   });
+
   it('#requestCorrectionsBySourcing should call requestCorrectionsBySourcing', () => {
     component.sessionContext =  {currentOrgRole: ''};
     component.sessionContext =  {sampleContent: {}};
