@@ -81,6 +81,7 @@ const API_LIST = {
     '/content/program/v1/nomination/add': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.CONTRIBUTE_ORG_ADMIN,
         ROLE.INDIVIDUAL_USER
