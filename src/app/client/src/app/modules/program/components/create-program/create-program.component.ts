@@ -6,12 +6,13 @@ import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter} from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
-import { UserService } from '@sunbird/core';
+import { UserService, ContentService } from '@sunbird/core';
+import { IUserProfile } from '@sunbird/shared';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
@@ -20,7 +21,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
-
+ 
 @Component({
   selector: 'app-create-program',
   templateUrl: './create-program.component.html',
@@ -28,6 +29,9 @@ import { CacheService } from 'ng2-cache-service';
 })
 
 export class CreateProgramComponent implements OnInit, AfterViewInit {
+  @Input() formFieldProperties: any;
+  @Output() formStatus = new EventEmitter<any>();
+  @Output() formInputData = new EventEmitter<any>();
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
   public unsubscribe = new Subject<void>();
   public programId: string;
@@ -111,6 +115,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   };
   public selectedContributorsCnt: number = 0;
   public firstLevelFolderLabel: string;
+  public blueprintFormConfig:any;
+  public formstatus: any;
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -153,6 +159,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
+    this.fetchBlueprintTemplate();
     this.pageStartTime = Date.now();
   }
 
@@ -618,6 +625,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
   }
 
+  fetchBlueprintTemplate(): void {
+    this.getCollectionCategoryDefinition();
+    this.blueprintFormConfig = this.blueprintTemplate.properties;
+  }
+
   getCollectionCategoryDefinition() {
     if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
       this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
@@ -893,6 +905,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     if (!this.programConfig['blueprintMap']) {
+      let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
+      let blueprintData = [];
+
+      _.forEach(this.textbooks, textbook => {
+        if (_.isEmpty(this.localBlueprintMap[textbook.code]) && !_.isEmpty(savedBluePrintData[textbook.code])) {
+          this.localBlueprintMap[textbook.code] = savedBluePrintData[textbook.code];
+        }
+      });
+
       this.programConfig['blueprintMap'] = this.localBlueprintMap;
     }
 
@@ -1295,9 +1316,18 @@ showTexbooklist(showTextBookSelector = true) {
 
   public totalQuestions() {
     let revisedTotalCount = 0;
-    _.forEach(Object.keys(this.localBlueprint.questionTypes), (type: any) => {
-      revisedTotalCount = revisedTotalCount + parseInt(this.localBlueprint.questionTypes[type]);
+    let questionTypes = ['Objective', 'VSA', 'SA', 'LA'];
+
+    this.blueprintFormConfig.forEach((element) => {
+      if(element.fields) {
+        element.fields.forEach(field => {
+          if(questionTypes.includes(field.code)){
+            revisedTotalCount = revisedTotalCount + parseFloat(this.formInputData[field.code]);
+          }
+        });
+      }
     });
+
     this.localBlueprint.totalQuestions  = revisedTotalCount;
     return revisedTotalCount;
   }
@@ -1310,69 +1340,125 @@ showTexbooklist(showTextBookSelector = true) {
 
   public mapBlueprintToId() {
     if(this.isBlueprintValid()) {
-      this.localBlueprintMap[this.choosedTextBook.code] = this.localBlueprint;
+      const formattedData = this.getFormattedData(this.formInputData, this.blueprintFormConfig);
+
+      if (formattedData) {
+        this.localBlueprintMap[this.choosedTextBook.code] = formattedData;
+      }
+
       this.editBlueprintFlag = false;
     }
     else {
       this.toasterService.error(this.resource.messages.emsg.blueprintViolation);
     }
+  }
 
+  getFormattedData(formValue, fieldGroups) {
+    // tslint:disable-next-line:only-arrow-functions
+    const truthyformValue = _.pickBy(formValue, function(value, key) {
+      return !(value === undefined || (_.isArray(value) && value.length === 0) || value === '' || value === null);
+    });
+    const trimmedValue = _.mapValues(truthyformValue, (value) => {
+      if (_.isString(value)) {
+        return _.trim(value);
+      } else {
+        return value;
+      }
+    });
+    _.forEach(fieldGroups, formFields => {
+      _.forEach(formFields, field => {
+        if (field.dataType === 'list') {
+          if (_.isString(trimmedValue[field.code])) {
+            trimmedValue[field.code] = _.split(trimmedValue[field.code], ',');
+          }
+        } else if (field.dataType === 'text') {
+          if (_.isArray(trimmedValue[field.code])) {
+            trimmedValue[field.code] = _.join(trimmedValue[field.code]);
+          }
+        }
+      });
+    });
+    return _.pickBy(_.assign({}, trimmedValue), _.identity);
   }
 
   initEditBlueprintForm(collection) {
-   [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
-   let blueprint = {};
-    this.blueprintTemplate.properties.forEach( (property) => {
-      if(!property.default) {
-        if(property.code === 'topics') property.options = this.initTopicOptions;
-        else if(property.code === 'learningOutcomes') property.options = this.initLearningOutcomeOptions;
-        blueprint[property.code] = [];
+    let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
+    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
+    // this.blueprintFormConfig = this.programsService.initializeFormFields(this.frameworkCategories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
+ 
+    this.blueprintFormConfig.forEach((element) => {
+      if(element.fields) {
+        element.fields.forEach(field => {
+          if(field.code === 'topics'){
+            field.range = _.map(this.initTopicOptions, data => {
+              return {name: data.name};
+            });
+          }
+          else if(field.code === 'learningOutcomes') {
+              field.range = _.map(this.initLearningOutcomeOptions, data => {
+                return {name: data.name};
+              });
+            }
+            field.default='';
+        });
       }
-      if(property.children) {
-        blueprint[property.code] = {};
-        property.children.forEach((nestedProperty) => {
-          blueprint[property.code][nestedProperty.code] = property.default;
-        })
-      }
-    })
-    if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
-      this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code]
-    }
-    else this.localBlueprint = blueprint;
+    });
 
+     if (!_.isEmpty(savedBluePrintData) && savedBluePrintData[this.choosedTextBook.code]){
+       this.blueprintFormConfig.forEach((element) => {
+         if(element.fields) {
+           element.fields.forEach(field => {
+             if (savedBluePrintData[this.choosedTextBook.code][field.code] != 'undefined' && !_.isEmpty(savedBluePrintData[this.choosedTextBook.code][field.code])) {
+                 field.default = savedBluePrintData[this.choosedTextBook.code][field.code];
+             }
+           });
+         }
+       });
+     }
+ 
+     if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
+       this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code];
+     }
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 
   isBlueprintValid() {
     let validity = true, totalQuestions = this.localBlueprint.totalQuestions;
-    _.forEach(this.blueprintTemplate.properties, (prop) => {
-      let val = this.localBlueprint[prop.code]
-      if(prop.required) {
-        if(!val) validity = false;
-        else if(Array.isArray(val)) {
-          if(!val.length) validity = false;
-        }
-        else if(typeof val === 'object') {
-          if(_.reduce(val, (result, child, key) => {
-            if(isNaN(parseFloat(child))) validity = false;
-            else if(parseFloat(child) < 0) validity = false;
-            result = result + parseInt(child);
-            return result;
-          }, 0) === 0) {
-            validity = false;
+
+    this.blueprintFormConfig.forEach((element) => {
+      if(element.fields) {
+        element.fields.forEach(field => {
+         let val = this.formInputData[field.code];
+          if(field.required) {
+            if(!val) validity = false;
+            else if(Array.isArray(val)) {
+              if(!val.length) validity = false;
+            }
           }
-        }
+
+          if(field.code === 'totalMarks') {
+            if(val) {
+              if(isNaN(parseFloat(val))) validity = false;
+              else if(parseFloat(val) < 0) validity = false;
+            }
+          }
+
+        });
       }
-      if(prop.code === 'totalMarks') {
-        if(val) {
-          if(isNaN(parseFloat(val))) validity = false;
-          else if(parseFloat(val) < 0) validity = false;
-        }
-      }
-    })
-    if(!totalQuestions) validity = false;
+    });
+
+     if(!totalQuestions) validity = false;
     else {
       if(isNaN(totalQuestions) && isNaN(parseFloat(totalQuestions))) validity = false;
     }
+
     return validity;
   }
 
