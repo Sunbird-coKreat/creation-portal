@@ -30,6 +30,7 @@ export class ContributorsListComponent implements OnInit {
   searchInput: any;
   @Output() onContributorSave = new EventEmitter();
   @Input() preSelectedContributors: any;
+  @Input() allowToModifyContributors: boolean = false;
   public selectedContributors = {
     Org: [],
     User: []
@@ -149,6 +150,11 @@ export class ContributorsListComponent implements OnInit {
           return org;
         }
       );
+
+      if (this.allowToModifyContributors === false) {
+        this.orgList = _.filter(this.orgList, org => (_.get(org, 'isChecked') == true))
+      }
+
       this.orgList = _.filter(this.orgList, org => (_.get(org, 'User.maskedEmail') || _.get(org, 'User.maskedPhone')))
       this.showFilteredResults()
     }, (error) => {
