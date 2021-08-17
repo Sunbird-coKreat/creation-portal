@@ -101,7 +101,7 @@
 												<label
 													for="restricted">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
 											</div>
-											<span *ngIf="projectType === 'restricted'"
+											<span [ngClass]="(!allowToModifyContributors) ? 'disabled field':''" *ngIf="projectType === 'restricted'"
 												class="fs-0-785 pl-20 cursor-pointer"
 												(click)="openContributorListPopup()">
 												<span *ngIf="selectedContributorsCnt <= 0"

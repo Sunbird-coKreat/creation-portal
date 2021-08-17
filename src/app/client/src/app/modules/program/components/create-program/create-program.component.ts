@@ -110,6 +110,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     User: []
   };
   public selectedContributorsCnt: number = 0;
+  public allowToModifyContributors:boolean = true;
   public firstLevelFolderLabel: string;
   constructor(
     public frameworkService: FrameworkService,
@@ -699,10 +700,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (!_.isEmpty(_.get(this.programDetails, 'config.contributors'))) {
         this.setPreSelectedContributors(_.get(this.programDetails, 'config.contributors'));
       }
+
+      this.createProgramForm.get('content_submission_enddate').valueChanges.subscribe(value => {
+        this.setAllowToModifyContributors(value);
+      });
+      this.setAllowToModifyContributors(_.get(this.programDetails, 'content_submission_enddate'));
     }
 
     this.showLoader = false;
     this.isFormValueSet = true;
+  }
+
+  setAllowToModifyContributors(content_submission_enddate) {
+    if(this.projectType === 'restricted' && this.editPublished) {
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const contentSubmissionEndDate = moment(content_submission_enddate);
+      if (contentSubmissionEndDate.isBefore(today)) {
+        this.allowToModifyContributors = false;
+      }
+      else {
+        this.allowToModifyContributors = true;
+      }
+    }
   }
 
   setPreSelectedContributors(contributors) {
