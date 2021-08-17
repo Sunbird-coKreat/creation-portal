@@ -883,5 +883,5 @@
 
 <sui-modal *ngIf="showContributorsListModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
 [size]="'large'" class="sb-modal" appBodyScroll (dismissed)="closeContributorListPopup()" #modal>
-    <app-contributors-list [preSelectedContributors]="preSelectedContributors" (onContributorSave)="onContributorSave($event)"></app-contributors-list>
+    <app-contributors-list [allowToModifyContributors]="allowToModifyContributors" [preSelectedContributors]="preSelectedContributors" (onContributorSave)="onContributorSave($event)"></app-contributors-list>
 </sui-modal>
