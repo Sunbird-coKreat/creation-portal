@@ -777,11 +777,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else if (this.modal && this.modal.deny && this.showUploadModal) {
       this.modal.deny();
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
     }
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
     }
-    this.programsService.emitHeaderEvent(true);
   }
 
   detectMimeType(fileName) {
@@ -840,7 +840,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  saveMetadataForm(cb?) {
+  saveMetadataForm(cb?, emitHeaderEvent?) {
     if (this.helperService.validateForm(this.formstatus)) {
       console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
@@ -856,6 +856,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
+          if (emitHeaderEvent) {
+            this.programsService.emitHeaderEvent(true);
+          }
           this.showEditMetaForm = false;
           if (cb) {
             cb.call(this);
@@ -888,10 +891,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleCallback() {
     switch (this.requiredAction) {
       case 'review':
-        this.saveMetadataForm(this.sendForReview);
+        this.saveMetadataForm(this.sendForReview, true);
         break;
       case 'publish':
-        this.saveMetadataForm(this.publishContent);
+        this.saveMetadataForm(this.publishContent, true);
         break;
       default:
         this.saveMetadataForm();

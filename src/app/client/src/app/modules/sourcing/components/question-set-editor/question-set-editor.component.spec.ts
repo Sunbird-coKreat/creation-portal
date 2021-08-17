@@ -91,26 +91,20 @@ describe('QuestionSetEditorComponent', () => {
     component.editorEventListener(event);
     expect(component.publishQuestionSet).toHaveBeenCalledWith(event.identifier);
   });
-  // it('#publishQuestionSet should call publishQuestionSet', () => {
-  //   component.sessionContext =  {currentOrgRole: ''};
-  //   component.sessionContext =  {sampleContent: {}};
-  //   spyOn(component['helperService'], 'publishQuestionSet').and.returnValue(of(false));
-  //   spyOn(component['collectionHierarchyService'], 'addResourceToHierarchy').and.returnValue(of(false));
-  //   spyOn(component, 'publishQuestionSet').and.callThrough();
-  //   spyOn(component.toasterService, 'success').and.callThrough();
-  //   spyOn(component['programStageService'], 'removeLastStage').and.callThrough();
-  //   component.publishQuestionSet('1234');
-  //   expect(component.toasterService.success).not.toHaveBeenCalledWith('Content accepted successfully');
-  // });
-
-  // it('#requestCorrectionsBySourcing should call requestCorrectionsBySourcing', () => {
-  //   component.sessionContext =  {currentOrgRole: ''};
-  //   component.sessionContext =  {sampleContent: {}};
-  //   spyOn(component['helperService'], 'updateQuestionSetStatus').and.returnValue(of(false));
-  //   spyOn(component, 'requestCorrectionsBySourcing').and.callThrough();
-  //   spyOn(component.toasterService, 'success').and.callThrough();
-  //   spyOn(component['programStageService'], 'removeLastStage').and.callThrough();
-  //   component.requestCorrectionsBySourcing('1234', 'comment');
-  //   expect(component['programStageService'].removeLastStage).not.toHaveBeenCalled();
-  // });
+  it('#hasRole should call hasRole', () => {
+    const role = 'CONTRIBUTOR';
+    component.sessionContext =  {currentOrgRole: ''};
+    component.sessionContext =  {sampleContent: {}, currentRoles: []};
+    spyOn(component, 'hasRole').and.callThrough();
+    const data = component.hasRole(role);
+    expect(data).toBeFalsy();
+  });
+  it('#hasAccessFor should call hasAccessFor', () => {
+    const role = ['CONTRIBUTOR'];
+    component.sessionContext =  {currentOrgRole: ''};
+    component.sessionContext =  {sampleContent: {}, currentRoles: []};
+    spyOn(component, 'hasRole').and.callThrough();
+    const data = component.hasAccessFor(role);
+    expect(data).toBeFalsy();
+  });
 });

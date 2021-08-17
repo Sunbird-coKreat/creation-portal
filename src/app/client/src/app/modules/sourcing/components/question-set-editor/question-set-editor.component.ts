@@ -333,12 +333,15 @@ export class QuestionSetEditorComponent implements OnInit {
       }
       break;
     case "sendForCorrections": 
+      this.programsService.emitHeaderEvent(true);
       this.requestCorrectionsBySourcing(event.identifier, event.comment)
       break;
     case "sourcingApprove":
+      this.programsService.emitHeaderEvent(true);
       this.helperService.manageSourcingActions('accept', this.sessionContext, this.unitIdentifier, this.collectionDetails);
       break;
     case "sourcingReject": 
+      this.programsService.emitHeaderEvent(true);
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
       break;
       case "backContent": 
