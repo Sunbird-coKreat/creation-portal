@@ -76,5 +76,4 @@ describe('QuestionSetEditorComponent', () => {
     component.editorEventListener(event);
     expect(component['helperService'].manageSourcingActions).toHaveBeenCalledWith('accept', component.sessionContext, undefined, undefined);
   });
-
 });
