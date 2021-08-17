@@ -54,6 +54,8 @@ export class RegistryService extends DataService {
               return resolve([]);
             }
             return resolve(_.compact(userList));
+          } else {
+            return resolve([]);
           }
         });
       });
