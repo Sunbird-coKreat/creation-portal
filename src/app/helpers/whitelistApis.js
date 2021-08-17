@@ -63,12 +63,14 @@ const API_LIST = {
     '/content/program/v1/list/download': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
     '/content/program/v1/report': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
@@ -113,6 +115,7 @@ const API_LIST = {
     '/content/program/v1/nomination/list/download': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER
       ]
