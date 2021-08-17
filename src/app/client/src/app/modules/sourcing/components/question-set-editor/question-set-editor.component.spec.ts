@@ -76,35 +76,4 @@ describe('QuestionSetEditorComponent', () => {
     component.editorEventListener(event);
     expect(component['helperService'].manageSourcingActions).toHaveBeenCalledWith('accept', component.sessionContext, undefined, undefined);
   });
-  it('#editorEventListener should call editorEventListener for sourcingReject', () => {
-    const event = { action: 'sourcingReject' };
-    spyOn(component['helperService'], 'manageSourcingActions').and.callFake(() => {});
-    component.editorEventListener(event);
-    expect(component['helperService'].manageSourcingActions).toHaveBeenCalledWith('reject', undefined, undefined,  undefined, undefined);
-  });
-  it('#editorEventListener should call editorEventListener for submitContent', () => {
-    const event = { action: 'submitContent', identifier: '1234' };
-    component.sessionContext =  {currentOrgRole: ''};
-    component.sessionContext =  {sampleContent: {}};
-    spyOn(component['helperService'], 'isIndividualAndNotSample').and.returnValue(true);
-    spyOn(component, 'publishQuestionSet').and.callThrough();
-    component.editorEventListener(event);
-    expect(component.publishQuestionSet).toHaveBeenCalledWith(event.identifier);
-  });
-  it('#hasRole should call hasRole', () => {
-    const role = 'CONTRIBUTOR';
-    component.sessionContext =  {currentOrgRole: ''};
-    component.sessionContext =  {sampleContent: {}, currentRoles: []};
-    spyOn(component, 'hasRole').and.callThrough();
-    const data = component.hasRole(role);
-    expect(data).toBeFalsy();
-  });
-  it('#hasAccessFor should call hasAccessFor', () => {
-    const role = ['CONTRIBUTOR'];
-    component.sessionContext =  {currentOrgRole: ''};
-    component.sessionContext =  {sampleContent: {}, currentRoles: []};
-    spyOn(component, 'hasRole').and.callThrough();
-    const data = component.hasAccessFor(role);
-    expect(data).toBeFalsy();
-  });
 });
