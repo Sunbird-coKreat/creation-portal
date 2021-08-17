@@ -21,12 +21,6 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
-import { HelperService } from './../../../sourcing/services/helper.service';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
-import { FaqModule } from '@project-sunbird/common-consumption-v8/lib/faq/faq.module';
-import { element } from 'protractor';
-import {UUID} from 'angular2-uuid';
-import {IContentEditorComponentInput} from '../../../sourcing/interfaces';
  
 @Component({
   selector: 'app-create-program',
@@ -915,8 +909,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       let blueprintData = [];
 
       _.forEach(this.textbooks, textbook => {
-        if (_.isEmpty(this.localBlueprintMap[textbook.code]) && !_.isEmpty(savedBluePrintData[textbook.code]))
-        {
+        if (_.isEmpty(this.localBlueprintMap[textbook.code]) && !_.isEmpty(savedBluePrintData[textbook.code])) {
           this.localBlueprintMap[textbook.code] = savedBluePrintData[textbook.code];
         }
       });
@@ -1326,8 +1319,7 @@ showTexbooklist(showTextBookSelector = true) {
     let questionTypes = ['Objective', 'VSA', 'SA', 'LA'];
 
     this.blueprintFormConfig.forEach((element) => {
-      if(element.fields)
-      {
+      if(element.fields) {
         element.fields.forEach(field => {
           if(questionTypes.includes(field.code)){
             revisedTotalCount = revisedTotalCount + parseFloat(this.formInputData[field.code]);
@@ -1350,8 +1342,7 @@ showTexbooklist(showTextBookSelector = true) {
     if(this.isBlueprintValid()) {
       const formattedData = this.getFormattedData(this.formInputData, this.blueprintFormConfig);
 
-      if (formattedData)
-      {
+      if (formattedData) {
         this.localBlueprintMap[this.choosedTextBook.code] = formattedData;
       }
 
@@ -1396,8 +1387,7 @@ showTexbooklist(showTextBookSelector = true) {
     // this.blueprintFormConfig = this.programsService.initializeFormFields(this.frameworkCategories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
  
     this.blueprintFormConfig.forEach((element) => {
-      if(element.fields)
-      {
+      if(element.fields) {
         element.fields.forEach(field => {
           if(field.code === 'topics'){
             field.range = _.map(this.initTopicOptions, data => {
@@ -1416,14 +1406,10 @@ showTexbooklist(showTextBookSelector = true) {
 
      if (!_.isEmpty(savedBluePrintData) && savedBluePrintData[this.choosedTextBook.code]){
        this.blueprintFormConfig.forEach((element) => {
-         if(element.fields)
-         {
+         if(element.fields) {
            element.fields.forEach(field => {
-             if (savedBluePrintData[this.choosedTextBook.code][field.code] != 'undefined' && !_.isEmpty(savedBluePrintData[this.choosedTextBook.code][field.code]))
-             {
-               {
+             if (savedBluePrintData[this.choosedTextBook.code][field.code] != 'undefined' && !_.isEmpty(savedBluePrintData[this.choosedTextBook.code][field.code])) {
                  field.default = savedBluePrintData[this.choosedTextBook.code][field.code];
-               }
              }
            });
          }
@@ -1447,8 +1433,7 @@ showTexbooklist(showTextBookSelector = true) {
     let validity = true, totalQuestions = this.localBlueprint.totalQuestions;
 
     this.blueprintFormConfig.forEach((element) => {
-      if(element.fields)
-      {
+      if(element.fields) {
         element.fields.forEach(field => {
          let val = this.formInputData[field.code];
           if(field.required) {

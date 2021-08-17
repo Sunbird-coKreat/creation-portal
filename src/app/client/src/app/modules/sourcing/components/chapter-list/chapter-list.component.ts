@@ -326,8 +326,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         understand: 0,
         apply: 0
       };
-      if (this.localBlueprint.questionTypes)
-      {
+      if (this.localBlueprint.questionTypes) {
         _.forEach(this.localBlueprint.questionTypes, (value, key) => {
           value = parseInt(value);
           this.localBlueprint.count.total = this.localBlueprint.count.total + value;
@@ -359,9 +358,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.localBlueprint.count.topics = this.localBlueprint.topics && this.localBlueprint.topics.length;
         this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningOutcomes && this.localBlueprint.learningOutcomes.length;
         this.viewOldBlueprint = true;
-      }
-      else
-      {
+      } else {
         _.forEach(this.localBlueprint, (value, key) => {
           value = parseInt(value);
           if(key === "LA" || key === "SA" || key === "VSA") {
@@ -411,8 +408,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
     let localBlueprintData = _.get(localBlueprintMap, `${this.collection && this.collection.code}`);
 
-    if (!_.isEmpty(localBlueprintData) && localBlueprintData.questionTypes != undefined)
-    {
+    if (!_.isEmpty(localBlueprintData) && localBlueprintData.questionTypes != undefined) {
       this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
         let templateDetails = res.result.objectCategoryDefinition;
         if(templateDetails && templateDetails.forms) {
@@ -425,17 +421,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.setLocalBlueprint();
         }
       })
-   }
-   else
-   {
+   } else {
     this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
       let templateDetails = res.result.objectCategoryDefinition;
       if(templateDetails && templateDetails.forms) {
         this.blueprintTemplate = templateDetails.forms.blueprintCreate;
         this.detailBlueprintFormConfig = this.blueprintTemplate.properties;
         this.detailBlueprintFormConfig.forEach((element) => {
-          if(element.fields)
-          {
+          if(element.fields) {
             element.fields.forEach(field => {
               field.editable = false;
               field.default = localBlueprintData[field.code];
