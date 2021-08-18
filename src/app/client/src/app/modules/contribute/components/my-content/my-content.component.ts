@@ -24,6 +24,7 @@ export class MyContentComponent implements OnInit {
   public contributionDetails: any;
   public fwIdTypeMap: any = {};
   public publishedContentMap: any = {};
+  public channelMap: any = {};
   public userMap: any = {};
   public _selectedTab: string;
   public selectedFrameworkType: any;
@@ -71,7 +72,7 @@ export class MyContentComponent implements OnInit {
   }
 
   initialize() {
-    forkJoin([this.getContents(), this.getFrameworks()]).pipe(
+    forkJoin([this.getContents(), this.getFrameworks(), this.getAllTenantList()]).pipe(
       map(([contentRes, frameworkRes]: any) => {
         this.contents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
         this.framework = _.get(frameworkRes, 'Framework');
@@ -123,7 +124,9 @@ export class MyContentComponent implements OnInit {
     _.map(this.publishedContents, (value) => {
       this.publishedContentMap[value.origin] = {
         identifier: value.identifier,
-        userId: value.lastPublishedBy
+        userId: value.lastPublishedBy,
+        lastPublishedOn: value.lastPublishedOn,
+        publisher: value.publisher
       };
     });
     const obj = {};
@@ -133,6 +136,8 @@ export class MyContentComponent implements OnInit {
       value.publishBy = this.userMap[value.lastPublishedId];
       value.frameworkType = this.fwIdTypeMap[value.framework];
       value.isPublished = _.has(this.publishedContentMap, value.identifier);
+      value.lastPublishedOn = _.get(this.publishedContentMap[value.identifier], 'lastPublishedOn');
+      value.publisher = _.get(this.publishedContentMap[value.identifier], 'publisher');
       if (value && !_.isEmpty(value.frameworkType)) {
         obj[value.frameworkType] = obj[value.frameworkType] || {};
         obj[value.frameworkType] = {
@@ -249,6 +254,15 @@ export class MyContentComponent implements OnInit {
     this.sortColumn = column;
   }
 
+  getAllTenantList() {
+    return this.programsService.getAllTenantList().pipe(map(response => {
+      const channel = _.get(response, 'result.content');
+      _.forEach(channel, (value) => {
+        this.channelMap[value.id] = value.orgName;
+      });
+    }));
+  }
+
   getContents() {
     const option = {
       url: 'composite/v3/search',
@@ -265,7 +279,8 @@ export class MyContentComponent implements OnInit {
           not_exists: ['sampleContent'],
           fields: [
             'name', 'status', 'framework', 'board', 'gradeLevel', 'medium',
-          'subject', 'creator', 'mimeType', 'lastPublishedBy'],
+          'subject', 'creator', 'mimeType', 'lastPublishedBy', 'me_totalRatingsCount', 'me_averageRating',
+          'me_totalTimeSpentInSec', 'me_totalPlaySessionCount', 'createdOn', 'primaryCategory', 'channel'],
           limit: 1000
         }
       }
@@ -285,7 +300,7 @@ export class MyContentComponent implements OnInit {
             origin: contentIds
           },
           exists: ['originData'],
-          fields: ['status', 'origin', 'lastPublishedBy'],
+          fields: ['status', 'origin', 'lastPublishedBy', 'lastPublishedOn', 'publisher'],
           limit: 1000
         }
       }
@@ -352,6 +367,68 @@ export class MyContentComponent implements OnInit {
     const btnElement = (<HTMLInputElement>document.getElementById(`${category}Btn${selectedIndex}`));
     divElement.classList.remove('d-none');
     btnElement.classList.add('d-none');
+  }
+
+  downloadReport() {
+    const allContents = [];
+    _.forEach(this.selectedContributionDetails, (value) => {
+      allContents.push(...(value.contents ? value.contents : {}));
+    });
+    const csvDownloadConfig = {
+      filename: 'Contributor-Content Usage Report',
+      tableData: this.prepareContentUsageReportData(allContents),
+      headers: this.contentUsageReportHeaders(),
+      showTitle: false
+    };
+    this.programsService.generateCSV(csvDownloadConfig);
+  }
+
+  contentUsageReportHeaders() {
+    const headers = [
+      'Content id', 'Content Name', 'Content Category', 'Content Mimetype', 'Created On', 'Created By',
+      'Last Published Date', 'Publisher Organization', 'Total No of Plays', 'Average Play Time in mins',
+      'Average Rating (Out of 5)', 'Board', 'Medium', 'Class', 'Subject'
+    ];
+    return headers;
+  }
+
+  prepareContentUsageReportData(contents) {
+    const tableData = [];
+    _.forEach(contents, (value) => {
+        if (value.isPublished) {
+          const obj = {
+            'Content id' : value.identifier,
+            'Content Name' : value.name,
+            'Content Category' : value.primaryCategory,
+            'Content Mimetype' : value.mimeType,
+            'Created On' : value.createdOn,
+            'Created By' : value.creator,
+            'Last Published Date' : value.lastPublishedOn,
+            'Publisher Organization' : _.get(this.channelMap, value.channel) || '',
+            'Total No of Plays' : this.getCountData(value, 'me_totalPlaySessionCount'),
+            'Average Play Time in mins' : Math.floor(this.getCountData(value, 'me_totalTimeSpentInSec') / 60),
+            'Average Rating (Out of 5)' : value.me_averageRating ? value.me_averageRating : 0,
+            'Board' : value.board ? value.board : '',
+            'Medium' : value.medium ? value.medium : '',
+            'Class' : value.gradeLevel ? value.gradeLevel : '',
+            'Subject' : value.subject ? value.subject : '',
+          };
+          tableData.push(obj);
+        }
+    });
+    return tableData;
+  }
+
+  getCountData(value, key) {
+    let count = 0;
+    if (_.get(value, `${key}.portal`)) {
+      count += _.get(value, `${key}.portal`);
+    }
+
+    if (_.get(value, `${key}.app`)) {
+      count += _.get(value, `${key}.app`);
+    }
+    return count;
   }
 
 }

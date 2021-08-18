@@ -63,6 +63,7 @@ describe('MyContentComponent', () => {
 
   it('#initialize() should fetch content details when API success', () => {
     spyOn(component, 'getContents').and.callFake(() => of(mockData.contentListRes.result));
+    spyOn(component, 'getAllTenantList').and.callFake(() => of({}));
     spyOn(component, 'getFrameworks').and.callFake(() => of(mockData.frameworkListRes.result));
     spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of(mockData.publishedContentListRes.result));
     spyOn(component, 'getUserProfiles').and.callFake(() => of(mockData.userContentListRes.result));
@@ -76,6 +77,7 @@ describe('MyContentComponent', () => {
 
   it('#initialize() should not call #getUserProfiles when #publishedContents empty', () => {
     spyOn(component, 'getContents').and.callFake(() => of(mockData.contentListRes.result));
+    spyOn(component, 'getAllTenantList').and.callFake(() => of({}));
     spyOn(component, 'getFrameworks').and.callFake(() => of(mockData.frameworkListRes.result));
     spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of(mockData.publishedContentListRes));
     spyOn(component, 'getUserProfiles').and.callThrough();
@@ -255,6 +257,21 @@ describe('MyContentComponent', () => {
     spyOn(component, 'loadTabComponent').and.callThrough();
     component.getConfigByContent('do_123');
     expect(component.loadTabComponent).toHaveBeenCalledWith('previewTab');
+  });
+
+  it('#downloadReport() should download the report', () => {
+    const programsService: ProgramsService = TestBed.inject(ProgramsService);
+    spyOn(programsService, 'generateCSV').and.callThrough();
+    spyOn(component, 'prepareContentUsageReportData').and.callThrough();
+    component.selectedContributionDetails = [{contents: mockData.selectedContributionDetails}];
+    component.downloadReport();
+    expect(programsService.generateCSV).toHaveBeenCalled();
+    expect(component.prepareContentUsageReportData).toHaveBeenCalled();
+  });
+
+  it('#getCountData() should return expected result', () => {
+    const result = component.getCountData(mockData.selectedContributionDetails[0], 'me_totalPlaySessionCount');
+    expect(result).toBe(5796);
   });
 
 });

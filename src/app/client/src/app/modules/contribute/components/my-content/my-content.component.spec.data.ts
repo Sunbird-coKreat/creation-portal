@@ -141,5 +141,45 @@ export const mockData = {
           ]
         }
       }
-    }
+    },
+    selectedContributionDetails: [
+      {
+        'identifier': 'do_11328844752158720013582',
+        'creator': 'n123',
+        'me_totalTimeSpentInSec': {
+          'portal': 572723
+        },
+        'subject': [
+          'Hindi'
+        ],
+        'channel': '01309282781705830427',
+        'mimeType': 'video/mp4',
+        'medium': [
+          'English'
+        ],
+        'lastPublishedBy': '0ce5b67e-b48e-489b-a818-e938e8bfc14b',
+        'createdOn': '2021-05-27T14:16:12.900+0000',
+        'objectType': 'Content',
+        'gradeLevel': [
+          'Class 10'
+        ],
+        'me_totalRatingsCount': 2,
+        'framework': 'ekstep_ncert_k-12',
+        'me_averageRating': 1,
+        'primaryCategory': 'Explanation Content',
+        'name': '1.2',
+        'me_totalPlaySessionCount': {
+          'portal': 5784,
+          'app' : 12
+        },
+        'board': 'CBSE',
+        'status': 'Live',
+        'origin': 'do_113289107137044480148',
+        'lastPublishedId': '5a587cc1-e018-4859-a0a8-e842650b9d64',
+        'publishBy': 'N11',
+        'frameworkType': 'K-12',
+        'isPublished': true,
+        'lastPublishedOn': '2021-05-28T12:37:45.664+0000'
+      }
+    ]
   };
