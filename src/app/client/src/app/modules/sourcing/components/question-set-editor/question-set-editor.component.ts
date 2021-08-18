@@ -330,6 +330,7 @@ export class QuestionSetEditorComponent implements OnInit {
       }
       else {
        this.programStageService.removeLastStage();
+       this.programsService.emitHeaderEvent(true);
       }
       break;
     case "sendForCorrections": 
@@ -349,6 +350,7 @@ export class QuestionSetEditorComponent implements OnInit {
       break;
     case "saveCollection": // saving as draft
     default: this.programStageService.removeLastStage();
+             this.programsService.emitHeaderEvent(true);
       break;
    }
   }
