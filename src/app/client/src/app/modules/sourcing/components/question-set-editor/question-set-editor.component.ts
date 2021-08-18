@@ -336,9 +336,11 @@ export class QuestionSetEditorComponent implements OnInit {
       this.requestCorrectionsBySourcing(event.identifier, event.comment)
       break;
     case "sourcingApprove":
+      this.programsService.emitHeaderEvent(true);
       this.helperService.manageSourcingActions('accept', this.sessionContext, this.unitIdentifier, this.collectionDetails);
       break;
     case "sourcingReject": 
+      this.programsService.emitHeaderEvent(true);
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
       break;
       case "backContent": 
@@ -360,6 +362,7 @@ export class QuestionSetEditorComponent implements OnInit {
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
           });
         }
       }, (err) => {
@@ -379,6 +382,7 @@ export class QuestionSetEditorComponent implements OnInit {
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
       }, (err) => {
         const errInfo = {
           errorMsg: this.resourceService.messages.fmsg.m00106,
