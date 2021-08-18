@@ -58,7 +58,6 @@ describe('ContributorsListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ContributorsListComponent);
     component = fixture.componentInstance;
-    // fixture.detectChanges();
   });
 
   it('should create', () => {
