@@ -394,8 +394,14 @@ export class CollectionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getCollectionCategoryDefinition() {
     if (this.programContext.target_collection_category && this.userService.userProfile.rootOrgId) {
+      let targetCollectionCategory;
+      if (_.isArray(this.programContext.target_collection_category)) {
+        targetCollectionCategory = this.programContext.target_collection_category[0];
+      } else {
+        targetCollectionCategory = this.programContext.target_collection_category;
+      }
       // tslint:disable-next-line:max-line-length
-      this.programsService.getCategoryDefinition(this.programContext.target_collection_category, this.userService.userProfile.rootOrgId).subscribe(res => {
+      this.programsService.getCategoryDefinition(targetCollectionCategory, this.userService.userProfile.rootOrgId, 'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
