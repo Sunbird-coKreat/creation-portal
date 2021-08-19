@@ -7,7 +7,11 @@
     <div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document pb-10 mt-10 ui container"
         [ngClass]="{'grid' : !_selectedTab}">
         ​<div *ngIf="_selectedTab">
-            <button (click)="onBack();" class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn">
+            <button (click)="onBack();" class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('back', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">
                 <i class="icon-svg icon-svg--xxs icon-back mr-4" aria-hidden="true">
                     <svg class="icon icon-svg--primary">
                         <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
