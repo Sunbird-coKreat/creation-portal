@@ -364,9 +364,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getCollectionCategoryDefinition() {
-    if (this.collection.primaryCategory && this.programContext.rootorg_id) {
+    if (this.programContext.target_collection_category && this.programContext.rootorg_id) {
       // tslint:disable-next-line:max-line-length
-      this.programsService.getCategoryDefinition(this.collection.primaryCategory,this.programContext.rootorg_id,
+      this.programsService.getCategoryDefinition(this.programContext.target_collection_category[0], this.programContext.rootorg_id,
         'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         // tslint:disable-next-line:max-line-length

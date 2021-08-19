@@ -63,18 +63,21 @@ const API_LIST = {
     '/content/program/v1/list/download': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
     '/content/program/v1/report': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
     '/content/program/v1/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
@@ -90,6 +93,7 @@ const API_LIST = {
     '/content/program/v1/nomination/update': { /* TODO */
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -100,6 +104,7 @@ const API_LIST = {
     '/content/program/v1/nomination/list': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -110,6 +115,7 @@ const API_LIST = {
     '/content/program/v1/nomination/list/download': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER
       ]
@@ -130,6 +136,7 @@ const API_LIST = {
     '/content/program/v1/contributor/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -144,6 +151,7 @@ const API_LIST = {
     '/content/program/v1/configuration/list': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -187,6 +195,7 @@ const API_LIST = {
     '/content/program/v1/process/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -203,6 +212,7 @@ const API_LIST = {
     '/content/program/v1/process/update': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -225,6 +235,7 @@ const API_LIST = {
     '/content/reg/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -235,6 +246,7 @@ const API_LIST = {
     '/content/reg/update': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -255,6 +267,12 @@ const API_LIST = {
       ]
     },
     '/content/composite/v1/search': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/content/mvc/v3/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
@@ -281,6 +299,7 @@ const API_LIST = {
     '/action/content/v3/hierarchy/add': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -291,6 +310,7 @@ const API_LIST = {
     '/action/content/v3/hierarchy/remove': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -301,6 +321,7 @@ const API_LIST = {
     '/action/content/v3/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -311,6 +332,7 @@ const API_LIST = {
     '/action/itemset/v3/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -321,6 +343,7 @@ const API_LIST = {
     '/action/itemset/v3/retire/': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -331,6 +354,7 @@ const API_LIST = {
     '/action/content/v3/unlisted/publish/:contentId': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -341,6 +365,7 @@ const API_LIST = {
     '/action/user/v1/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -361,9 +386,6 @@ const API_LIST = {
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
-    },
-    '/learner/user/v1/exists/phone:phone': {
-      checksNeeded: []
     },
     '/learner/data/v1/role/read': {
       checksNeeded: ['ROLE_CHECK'],
@@ -416,9 +438,6 @@ const API_LIST = {
     '/learner/otp/v1/generate': {
       checksNeeded: []
     },
-    '/learner/user/v1/exists/phone:phone': {
-      checksNeeded: []
-    },
     '/learner/user/v1/fuzzy/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -428,6 +447,7 @@ const API_LIST = {
     '/learner/user/v1/notification/email': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -455,12 +475,16 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    'learner/data/v1/system/settings/get/tncConfig': {
+    '/learner/user/v1/exists/phone:phone': {
+      checksNeeded: []
+    },
+    '/learner/data/v1/system/settings/get/tncConfig': {
       checksNeeded: []
     },
     '/action/content/v3/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -471,6 +495,7 @@ const API_LIST = {
     '/action/content/v3/upload/url/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -481,6 +506,7 @@ const API_LIST = {
     '/action/content/v3/upload/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -491,6 +517,7 @@ const API_LIST = {
     '/action/content/v3/review/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -501,6 +528,7 @@ const API_LIST = {
     '/action/content/v3/publish/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -511,6 +539,7 @@ const API_LIST = {
     '/action/content/v3/reject/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -519,6 +548,7 @@ const API_LIST = {
     '/action/content/v3/retire/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -527,6 +557,7 @@ const API_LIST = {
     '/action/assessment/v3/items/retire/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -535,6 +566,7 @@ const API_LIST = {
     '/action/system/v3/content/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -543,6 +575,7 @@ const API_LIST = {
     '/action/itemset/v3/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -559,6 +592,7 @@ const API_LIST = {
     '/action/itemset/v3/review/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -569,6 +603,7 @@ const API_LIST = {
     '/action/itemset/v3/retire/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -577,6 +612,7 @@ const API_LIST = {
     '/action/questionset/v4/system/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -591,6 +627,7 @@ const API_LIST = {
     '/action/questionset/v1/review/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -601,6 +638,7 @@ const API_LIST = {
     '/action/questionset/v1/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -611,6 +649,7 @@ const API_LIST = {
     '/action/questionset/v1/publish/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -621,6 +660,7 @@ const API_LIST = {
     '/action/questionset/v1/reject/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN
@@ -647,6 +687,7 @@ const API_LIST = {
     '/action/question/v1/review/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -657,6 +698,7 @@ const API_LIST = {
     '/action/question/v1/publish/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -667,6 +709,7 @@ const API_LIST = {
     '/action/question/v1/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
