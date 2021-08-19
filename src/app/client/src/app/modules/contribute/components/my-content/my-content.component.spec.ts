@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
 import { SharedModule, ToasterService, ConfigService } from '@sunbird/shared';
 import { PlayerHelperModule } from '@sunbird/player-helper';
-import { TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
+import { TelemetryModule, TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
 import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { MyContentComponent } from './my-content.component';
@@ -27,7 +27,7 @@ describe('MyContentComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), PlayerHelperModule],
+      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(), PlayerHelperModule],
       declarations: [ MyContentComponent ],
       providers: [
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
