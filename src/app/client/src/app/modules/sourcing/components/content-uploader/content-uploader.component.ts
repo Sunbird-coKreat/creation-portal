@@ -565,6 +565,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           env : this.activeRoute.snapshot.data.telemetry.env, request: option
          };
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
@@ -573,6 +574,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               this.uploadFile(mimeType, result.node_id);
             }, (err) => {
               this.programStageService.removeLastStage();
+              this.programsService.emitHeaderEvent(true);
             });
         });
     } else if (!this.uploadInprogress) {
@@ -912,6 +914,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.generateTelemetryEndEvent('submit');
             this.toasterService.success(this.resourceService.messages.smsg.m0061);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.content_id
             });
@@ -947,6 +950,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.node_id
             });
@@ -971,6 +975,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         this.uploadedContentMeta.emit({
           contentId: res.result.node_id
         });
@@ -995,6 +1000,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.generateTelemetryEndEvent('publish');
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
             });
