@@ -377,8 +377,7 @@ describe('ChapterListComponent', () => {
     });
 
     it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
-      component.collection = {primaryCategory: 'Course'};
-      component.programContext = {rootorg_id: '12345'};
+      component.programContext = {rootorg_id: '12345', target_collection_category: 'Course'};
       component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
       component['programsService'] = TestBed.get(ProgramsService);
@@ -388,6 +387,7 @@ describe('ChapterListComponent', () => {
       expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
+
     xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
       component.programContext = {rootorg_id: undefined};
