@@ -11,13 +11,15 @@ import { mockResponseData } from './programs.service.spec.data';
 import * as _ from 'lodash-es';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { of, throwError } from 'rxjs';
-import { APP_BASE_HREF,DatePipe } from '@angular/common';
+import { APP_BASE_HREF, DatePipe } from '@angular/common';
+import { LearnerService } from '../learner/learner.service';
 
 describe('ProgramsService', () => {
 
   beforeEach(() => TestBed.configureTestingModule({
-    imports: [SharedModule.forRoot(), HttpClientTestingModule, RouterTestingModule,TelemetryModule],
-    providers: [ConfigService, ExtPluginService, OrgDetailsService, UserService,DatePipe,TelemetryService,
+    imports: [SharedModule.forRoot(), HttpClientTestingModule, RouterTestingModule, TelemetryModule],
+    providers: [ConfigService, ExtPluginService, OrgDetailsService, UserService,
+      DatePipe, TelemetryService, LearnerService,
       {provide: APP_BASE_HREF, useValue: '/'}]
   }));
 
@@ -92,6 +94,14 @@ describe('ProgramsService', () => {
           expect(result).toBeDefined();
           expect(result).toBeTruthy();
         });
+    }));
+
+    it('getOrgUsersDetails should call learnerService.post', inject([ProgramsService], (programsService) => {
+      const learnerService = TestBed.get(LearnerService);
+      spyOn(learnerService, 'post').and.callFake(() => {});
+      spyOn(programsService, 'getOrgUsersDetails').and.callThrough();
+      programsService.getOrgUsersDetails({}, 0, 5, ['name']);
+      expect(learnerService.post).toHaveBeenCalled();
     }));
   });
 
