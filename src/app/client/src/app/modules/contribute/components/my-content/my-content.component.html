@@ -3,7 +3,7 @@
         <app-loader></app-loader>
     </div>
 </div>
-<ng-container *ngIf='!showLoader'>
+<ng-container *ngIf='!showLoader' [appTelemetryImpression]="telemetryImpression">
     <div class="text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document pb-10 mt-10 ui container"
         [ngClass]="{'grid' : !_selectedTab}">
         ​<div *ngIf="_selectedTab">
@@ -90,7 +90,11 @@
                             class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                     </div>
                     <button type="button" (click)="downloadReport();"
-                        class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.downloadReport}}</button>
+                        class="sb-btn sb-btn-normal sb-btn-outline-primary"
+                        appTelemetryInteract
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                      [telemetryInteractCdata]="telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.downloadReport}}</button>
                 </div>
                 <div class="sb-pageSection-content">
                     <div class="sb-table-responsive">

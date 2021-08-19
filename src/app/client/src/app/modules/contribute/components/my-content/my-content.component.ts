@@ -1,22 +1,24 @@
-import { ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit } from '@angular/core';
 import * as _ from 'lodash-es';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ResourceService } from '@sunbird/shared';
+import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
+import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 
 @Component({
   selector: 'app-my-content',
   templateUrl: './my-content.component.html',
   styleUrls: ['./my-content.component.scss']
 })
-export class MyContentComponent implements OnInit {
+export class MyContentComponent implements OnInit, AfterViewInit {
 
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public telemetryImpression: IImpressionEventInput;
   public showLoader = true;
   public contents: any = [];
   public publishedContents: any = [];
@@ -46,6 +48,8 @@ export class MyContentComponent implements OnInit {
   private configService: ConfigService;
   private sourcingService: SourcingService;
   private programsService: ProgramsService;
+  private router: Router;
+  private navigationHelperService: NavigationHelperService;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
@@ -54,6 +58,8 @@ export class MyContentComponent implements OnInit {
       this.configService = injector.get<ConfigService>(ConfigService);
       this.sourcingService = injector.get<SourcingService>(SourcingService);
       this.programsService = injector.get<ProgramsService>(ProgramsService);
+      this.navigationHelperService = injector.get<NavigationHelperService>(NavigationHelperService);
+      this.router = injector.get<Router>(Router);
      }
 
   ngOnInit(): void {
@@ -64,6 +70,31 @@ export class MyContentComponent implements OnInit {
       pid: this.configService.appConfig.TELEMETRY.PID
     };
     this.initialize();
+  }
+
+  ngAfterViewInit() {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    setTimeout(() => {
+      this.telemetryImpression = {
+        context: {
+          env: this.activatedRoute.snapshot.data.telemetry.env,
+          cdata: this.telemetryInteractCdata || [],
+          pdata: {
+            id: this.userService.appId,
+            ver: version,
+            pid: this.configService.appConfig.TELEMETRY.PID
+          }
+        },
+        edata: {
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
+          pageid: this.getPageId(),
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
+          subtype: _.get(this.activatedRoute, 'snapshot.data.telemetry.subtype'),
+          duration: this.navigationHelperService.getPageLoadTime()
+        }
+      };
+    });
   }
 
   getPageId() {
@@ -428,6 +459,16 @@ export class MyContentComponent implements OnInit {
       count += _.get(value, `${key}.app`);
     }
     return count;
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      subtype,
+      pageid,
+      extra
+    }, _.isUndefined);
   }
 
 }
