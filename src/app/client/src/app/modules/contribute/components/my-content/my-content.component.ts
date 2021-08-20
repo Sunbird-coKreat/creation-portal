@@ -97,11 +97,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getPageId() {
-    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
-    return this.telemetryPageId;
-  }
-
   initialize() {
     forkJoin([this.getContents(), this.getFrameworks(), this.getAllTenantList()]).pipe(
       map(([contentRes, frameworkRes]: any) => {
@@ -137,6 +132,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         };
         this.sourcingService.apiErrorHandling(err, errInfo);
       });
+  }
+
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute, 'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
   }
 
   createUserMap(data): void {
