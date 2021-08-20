@@ -78,19 +78,19 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
-          env: this.activatedRoute.snapshot.data.telemetry.env,
           cdata: this.telemetryInteractCdata || [],
+          env: this.activatedRoute.snapshot.data.telemetry.env,
           pdata: {
             id: this.userService.appId,
-            ver: version,
-            pid: this.configService.appConfig.TELEMETRY.PID
+            pid: this.configService.appConfig.TELEMETRY.PID,
+            ver: version
           }
         },
         edata: {
-          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           pageid: this.getPageId(),
-          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
+          type: _.get(this.activatedRoute, 'snapshot.data.telemetry.type'),
           subtype: _.get(this.activatedRoute, 'snapshot.data.telemetry.subtype'),
+          uri: this.userService.slug.length ? `/${this.userService.slug}${this.router.url}` : this.router.url,
           duration: this.navigationHelperService.getPageLoadTime()
         }
       };
