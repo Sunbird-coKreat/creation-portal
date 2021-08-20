@@ -170,7 +170,11 @@
                                     </td>
                                     <td class="text-center">
                                         <button type="button" (click)="onFrameworkClick(item);"
-                                            class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.open}}</button>
+                                            class="sb-btn sb-btn-normal sb-btn-outline-primary"
+                                            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -244,7 +248,11 @@
                                     <td *ngIf="!content.isPublished" class="sb-color-error">
                                         {{resourceService.frmelmnts.lbl.notPublished}}</td>
                                     <td class="text-center"><button type="button" (click)="onPreview(content);"
-                                            class="sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.open}}</button>
+                                            class="sb-btn sb-btn-normal sb-btn-outline-primary"
+                                            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -373,7 +381,11 @@
                         </div>
                         <div>
                             <button type="button" (click)="onCardClick(item)"
-                                class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary">{{resourceService.frmelmnts.btn.open}}</button>
+                                class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary"
+                                appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+            [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
                         </div>
                     </div>
                 </div>
