@@ -1612,6 +1612,12 @@ showTexbooklist(showTextBookSelector = true) {
       return false;
     }
 
+    if (this.projectType ==='restricted' && !this.selectedContributorsCnt) {
+      this.navigateTo(1);
+      this.toasterService.warning(this.resource.messages.smsg.selectOneContributor);
+      return false;
+    }
+
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
       this.toasterService.warning(this.resource.messages.smsg.selectOneTargetCollection);
