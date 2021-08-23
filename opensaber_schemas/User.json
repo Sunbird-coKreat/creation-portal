@@ -119,7 +119,14 @@
           "$id": "#/properties/updateBy",
           "type": "string",
           "title":"User Id"         
-        }
+        },
+        "roles": {
+			"$id": "#/properties/roles",
+			"type": "array",
+			"items": {
+				"$ref": "Common.json#/definitions/UserRole"
+			}
+		}
              
       }
     }
