@@ -99,7 +99,11 @@ const API_LIST = {
     '/content/program/v1/nomination/list': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
-        ROLE.PUBLIC
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
       ]
     },
     '/content/program/v1/nomination/list/download': {
@@ -220,7 +224,11 @@ const API_LIST = {
     '/content/reg/search': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
-        ROLE.PUBLIC
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
       ]
     },
     '/content/reg/update': {
