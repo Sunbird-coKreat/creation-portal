@@ -455,12 +455,6 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/learner/user/v1/exists': {
-      checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [
-        ROLE.PUBLIC
-      ]
-    },
     '/learner/content/v1/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -483,7 +477,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/learner/user/v1/exists/phone:phone': {
+    '/learner/user/v1/exists/phone/:phone': {
       checksNeeded: []
     },
     '/learner/data/v1/system/settings/get/tncConfig': {
@@ -768,7 +762,8 @@ const API_LIST = {
     '/action/question/v1/publish/:do_id',
     '/action/question/v1/update/:do_id',
     '/content/content/v1/read/:do_id',
-    '/content/questionset/v1/read/:do_id'
+    '/content/questionset/v1/read/:do_id',
+    '/learner/user/v1/exists/phone/:phone'
   ]
 }
 module.exports = API_LIST;
