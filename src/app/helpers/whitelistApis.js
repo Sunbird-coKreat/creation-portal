@@ -455,6 +455,12 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
+    '/learner/user/v1/exists': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/learner/content/v1/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
