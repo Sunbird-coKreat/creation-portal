@@ -26,7 +26,7 @@ import { DatePipe } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { McqCreationStubComponent } from '../mcq-creation/mcq-creation-stub.component.spec';
 import { ProgramStageService } from '../../../program/services';
-import { questionData } from './question-list.component.spec.data';
+import { questionData, programContext } from './question-list.component.spec.data';
 
 describe('QuestionListComponent', () => {
 
@@ -163,6 +163,7 @@ describe('QuestionListComponent', () => {
     spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(true);
     spyOn(component, 'createDefaultAssessmentItem').and.returnValue(of(questionData));
     spyOn(component, 'updateItemset').and.returnValue(of({}));
+    component.programContext = programContext;
     component.createNewQuestion();
     expect(component.checkCurrentQuestionStatus).toHaveBeenCalled();
     expect(component.questionCreationChild.validateCurrentQuestion).toHaveBeenCalled();
