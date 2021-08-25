@@ -774,10 +774,18 @@ export class BulkUploadComponent implements OnInit {
           this.oldProcessStatus = this.process.status;
           this.calculateCompletionPercentage();
         }, (error) => {
-          console.log(error);
-        });
+          const errMsg = (_.get(error, 'error.params.errmsg')) ? _.get(error, 'error.params.errmsg') : this.resourceService.messages.emsg.bulkUpload.somethingFailed;
+          this.setError(errMsg);
+          this.uploader.reset();
+          this.bulkUploadState = 4;
+          return;
+      });
     }, (error) => {
-      console.log(error);
+      const errMsg = (_.get(error, 'error.params.errmsg')) ? _.get(error, 'error.params.errmsg') : this.resourceService.messages.emsg.bulkUpload.somethingFailed;
+      this.setError(errMsg);
+      this.uploader.reset();
+      this.bulkUploadState = 4;
+      return;
     });
   }
 
