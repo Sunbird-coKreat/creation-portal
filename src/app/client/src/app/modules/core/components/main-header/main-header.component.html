@@ -156,7 +156,7 @@
 [telemetryInteractEdata]="getTelemetryInteractEdata('my-content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch ,pageId)"
 [telemetryInteractObject]="telemetryInteractObject"
 [telemetryInteractCdata]="telemetryInteractCdata"
-[telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">resourceService?.frmelmnts?.lbl?.myContent</span></a>
+[telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{resourceService?.frmelmnts?.lbl?.myContent}}</span></a>
                     <a routerLink="sourcing/orglist" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('manage_users', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,pageId)"
