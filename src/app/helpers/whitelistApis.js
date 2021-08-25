@@ -725,6 +725,18 @@ const API_LIST = {
     },
     '/content/data/v1/telemetry': {
       checksNeeded: []
+    },
+    '/content/question/v1/bulkUpload': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/content/question/v1/bulkUploadStatus': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
     }
   },
   URL_PATTERN: [
