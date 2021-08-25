@@ -35,6 +35,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId: string;
+  public disableBulkApprove = false;
   @Input() programContext;
   @Input() sessionContext;
   @Input() storedCollectionData;
@@ -132,8 +133,14 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       }
     });
   }
-
+  showApproveBulkModal() {
+    if (!this.disableBulkApprove) {
+      this.showBulkApproveModal = true;
+      this.bulkApprovalComfirmation = true;
+    }
+  }
   bulkApproval() {
+    this.disableBulkApprove = true;
     this.sendContentForBulkApproval();
   }
 
@@ -203,6 +210,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
           }
         }
       }, err => {
+        this.disableBulkApprove = false;
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
       });
     } else if (questionSets && questionSets.length) {
@@ -222,6 +230,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
         this.updateCollection();
       });
     } else {
+      this.disableBulkApprove = false;
       this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.something);
     }
   }
