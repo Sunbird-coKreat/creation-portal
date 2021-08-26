@@ -38,7 +38,7 @@
 					</div>
 					<ng-container *ngIf="programDetails">
 						<div class="program-timeline px-10">
-						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+						  <div class="program-timeline-item" *ngIf="programDetails?.type == 'public'">
 							<div class="status" [class.active]="activeDate === 'nomination_enddate'">
 							  <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
 							  <div class="status__date">
@@ -48,7 +48,7 @@
 							  </div>
 							</div>
 						  </div>
-						  <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+						  <div class="program-timeline-item" *ngIf="programDetails?.type == 'public'">
 							<div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
 							  <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
 							  <div class="status__date">
@@ -360,7 +360,7 @@
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">First</a>
-							<a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" 
+							<a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)"
 							appTelemetryInteract
 										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_previous_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage - 1]})"
 										[telemetryInteractObject]="telemetryInteractObject"
@@ -423,7 +423,7 @@
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium" 
+								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
 								appTelemetryInteract
 								[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
 								[telemetryInteractObject]="telemetryInteractObject"

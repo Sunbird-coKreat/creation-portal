@@ -162,6 +162,7 @@
       "enum": [
         "admin",
         "user",
+        "individual",
 	"sourcing_reviewer",
 	"sourcing_admin"
       ]

@@ -144,7 +144,7 @@ describe('ChapterListComponent', () => {
       expect(component.sessionContext).toEqual(jasmine.objectContaining({subject: ['dummyValue']}));
     });
 
-    it('uploadHandler should call updateAccordianView function', () => {
+    xit('uploadHandler should call updateAccordianView function', () => {
       spyOn(component, 'updateAccordianView').and.callThrough();
       spyOn(component, 'uploadHandler').and.callThrough();
       component.uploadHandler({contentId: 'do_1234567'});
@@ -376,12 +376,11 @@ describe('ChapterListComponent', () => {
       expect(programsService.setTargetCollectionName).toHaveBeenCalled();
     });
 
-    xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
-      component.collection = {primaryCategory: 'Course'};
-      component.programContext = {rootorg_id: '12345'};
+    it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+      component.programContext = {rootorg_id: '12345', target_collection_category: 'Course'};
       component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
-      component['programsService'] = TestBed.inject(ProgramsService);
+      component['programsService'] = TestBed.get(ProgramsService);
       spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
@@ -393,7 +392,7 @@ describe('ChapterListComponent', () => {
       component.programContext = {rootorg_id: undefined};
       component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
-      component['programsService'] = TestBed.inject(ProgramsService);
+      component['programsService'] = TestBed.get(ProgramsService);
       spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();

@@ -364,9 +364,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getCollectionCategoryDefinition() {
-    if (this.collection.primaryCategory && this.programContext.rootorg_id) {
+    if (this.programContext.target_collection_category && this.programContext.rootorg_id) {
       // tslint:disable-next-line:max-line-length
-      this.programsService.getCategoryDefinition(this.collection.primaryCategory,this.programContext.rootorg_id,
+      this.programsService.getCategoryDefinition(this.programContext.target_collection_category[0], this.programContext.rootorg_id,
         'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         // tslint:disable-next-line:max-line-length
@@ -1079,16 +1079,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.contentId = result.identifier;
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
-              // if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
-              //   const queryParams = "collectionId=" + this.sessionContext.collection + "&unitId=" + this.unitIdentifier;
-              //   this.router.navigateByUrl('/contribute/questionSet/' + result.identifier + "?" + queryParams);
-              // }
+              this.programsService.emitHeaderEvent(false)
                // tslint:disable-next-line:max-line-length
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
     } else if (event.templateDetails) {
       this.templateDetails = event.templateDetails;
+      this.programsService.emitHeaderEvent(false)
       // tslint:disable-next-line:max-line-length
       this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
@@ -1117,6 +1115,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
+        this.programsService.emitHeaderEvent(false)
       
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);

@@ -74,7 +74,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public formInputData: any;
 
   constructor(
-    private resourceService: ResourceService,
+    public resourceService: ResourceService,
     private toasterService: ToasterService,
     private configService: ConfigService,
     private userService: UserService,
@@ -306,6 +306,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       err => {
         this.toasterService.warning(this.resourceService.messages.imsg.m0027);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
       }
     );
   }
@@ -627,6 +628,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0061);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.content_id
             });
@@ -650,6 +652,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
           });
         }
       }, (err) => {
@@ -667,6 +670,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0063);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
           });
         }
       }, (err) => {
@@ -675,6 +679,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   handleBack() {
+    this.programsService.emitHeaderEvent(true);
     this.programStageService.removeLastStage();
   }
 
@@ -749,6 +754,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         this.uploadedContentMeta.emit({
           contentId: res.result.node_id
         });

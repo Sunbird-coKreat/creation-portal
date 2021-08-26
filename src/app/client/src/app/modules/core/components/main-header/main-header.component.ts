@@ -80,7 +80,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notificationData: Array<any>;
   public showGlobalNotification: boolean;
   public notification: any;
-
+ public showSubHeader = true;
+ public unSubscribeShowSubHeader: any;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -148,6 +149,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('manageUsers');
     } else if (this.router.isActive('/contribute/help', true) || this.router.isActive('/sourcing/help', true)) {
       this.handleActiveTabState('contributorHelp');
+    } else if (this.router.isActive('/contribute/mycontent', true)) {
+      this.handleActiveTabState('myContent');
     } else if (this.router.isActive('/sourcing/orgreports', true)) {
       this.handleActiveTabState('organisationReports');
     } else {
@@ -163,11 +166,16 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
   });
   this.getNumberofNotification();
+        this.unSubscribeShowSubHeader = this.programsService.getHeaderEmitter()
+      .subscribe(status => this.showSubHeader = status );
   }
 
   ngOnDestroy() {
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+    if (this.unSubscribeShowSubHeader) {
+      this.unSubscribeShowSubHeader.unsubscribe();
     }
   }
 
@@ -374,13 +382,16 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 
   onRouterChange() {
     // maintain active tab state
+    this.showSubHeader = true;
     if (this.location.path() === '/contribute') {
      this.handleActiveTabState('allPrograms');
      } else if (this.location.path() === '/contribute/orglist' || this.location.path() === '/sourcing/orglist') {
        this.handleActiveTabState('manageUsers');
      } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
       this.handleActiveTabState('myPrograms');
-     } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
+    } else if (this.location.path() === '/contribute/mycontent') {
+      this.handleActiveTabState('myContent');
+    } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
       this.handleActiveTabState('contributorHelp');
     } else if (this.location.path() === '/sourcing/orgreports') {
       this.handleActiveTabState('organisationReports');

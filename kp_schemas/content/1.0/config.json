@@ -31,11 +31,6 @@
         "primaryKey": ["content_id"]
     },
     "relations": {
-        "concepts": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["Concept"]
-        },
         "questions": {
             "type": "associatedTo",
             "direction": "out",
@@ -51,20 +46,10 @@
             "direction": "in",
             "objects": ["Content", "ContentImage"]
         },
-        "usedByContent": {
-            "type": "associatedTo",
-            "direction": "in",
-            "objects": ["Content"]
-        },
-        "usesContent": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["Content"]
-        },
         "itemSets": {
-            "type": "associatedTo",
-            "direction": "out",
-            "objects": ["ItemSet"]
+          "type": "associatedTo",
+          "direction": "out",
+          "objects": ["ItemSet"]
         }
     },
     "version": "enable",

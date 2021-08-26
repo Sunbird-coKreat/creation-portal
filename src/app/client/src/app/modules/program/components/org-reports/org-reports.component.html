@@ -26,9 +26,9 @@
                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.collectionLevelContentGaps}}</td>
                     <td>{{resourceService.frmelmnts.lbl.collectionLevelReportGapDescription}}</td>
                     <td class="text-center">
-                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('TextbookLevel', true);" 
+                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('CollectionLevel', true);"
                       appTelemetryInteract
-                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_textbookLevelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_collectionLevelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                       [telemetryInteractObject]="telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
@@ -37,9 +37,9 @@
                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.folderLevelContentGaps}}</td>
                     <td>{{resourceService.frmelmnts.lbl.folderLevelReportGapDescription}}</td>
                     <td class="text-center">
-                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ChapterLevel', true);" 
+                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FolderLevel', true);"
                       appTelemetryInteract
-                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_chapterLevelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_folderLevelReport', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                       [telemetryInteractObject]="telemetryInteractObject"
                       [telemetryInteractCdata]="telemetryInteractCdata"
                       [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>

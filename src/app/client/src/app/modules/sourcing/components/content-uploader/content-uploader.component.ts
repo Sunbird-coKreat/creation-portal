@@ -120,7 +120,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private sourcingService: SourcingService, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, private helperService: HelperService,
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
-    private resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
+    public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
@@ -136,7 +136,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
-    this.titleCharacterLimit = _.get(this.config, 'config.resourceTitleLength');
+    this.titleCharacterLimit = _.get(this.config, 'config.resourceTitleLength') || 200;
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
     this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
@@ -565,6 +565,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           env : this.activeRoute.snapshot.data.telemetry.env, request: option
          };
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
@@ -573,6 +574,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               this.uploadFile(mimeType, result.node_id);
             }, (err) => {
               this.programStageService.removeLastStage();
+              this.programsService.emitHeaderEvent(true);
             });
         });
     } else if (!this.uploadInprogress) {
@@ -777,6 +779,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     } else if (this.modal && this.modal.deny && this.showUploadModal) {
       this.modal.deny();
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
     }
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
@@ -839,7 +842,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
 
-  saveMetadataForm(cb?) {
+  saveMetadataForm(cb?, emitHeaderEvent?) {
     if (this.helperService.validateForm(this.formstatus)) {
       console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
@@ -855,6 +858,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
+          if (emitHeaderEvent) {
+            this.programsService.emitHeaderEvent(true);
+          }
           this.showEditMetaForm = false;
           if (cb) {
             cb.call(this);
@@ -887,10 +893,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleCallback() {
     switch (this.requiredAction) {
       case 'review':
-        this.saveMetadataForm(this.sendForReview);
+        this.saveMetadataForm(this.sendForReview, true);
         break;
       case 'publish':
-        this.saveMetadataForm(this.publishContent);
+        this.saveMetadataForm(this.publishContent, true);
         break;
       default:
         this.saveMetadataForm();
@@ -908,6 +914,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.generateTelemetryEndEvent('submit');
             this.toasterService.success(this.resourceService.messages.smsg.m0061);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.content_id
             });
@@ -943,6 +950,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.node_id
             });
@@ -967,6 +975,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         this.uploadedContentMeta.emit({
           contentId: res.result.node_id
         });
@@ -991,6 +1000,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.generateTelemetryEndEvent('publish');
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
             });
@@ -1051,6 +1061,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleBack() {
     this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
+    this.programsService.emitHeaderEvent(true);
   }
 
   changeFile() {

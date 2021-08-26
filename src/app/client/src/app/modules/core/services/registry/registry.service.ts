@@ -54,6 +54,8 @@ export class RegistryService extends DataService {
               return resolve([]);
             }
             return resolve(_.compact(userList));
+          } else {
+            return resolve([]);
           }
         });
       });
@@ -300,5 +302,29 @@ export class RegistryService extends DataService {
       edata: edata
     };
     this.telemetryService.interact(appTelemetryInteractData);
+  }
+
+  public getOrgList(limit?, offset?): Observable<ServerResponse> {
+    const option = {
+      url: 'reg/search',
+      data: {
+        id: 'open-saber.registry.search',
+        ver: '1.0',
+        ets: '11234',
+        params: {
+          did: '',
+          key: '',
+          msgid: ''
+        },
+        request: {
+          entityType: ['Org'],
+          filters:{},
+          limit: limit || 250,
+          offset: offset || 0,
+        }
+      }
+    };
+
+    return this.contentService.post(option);
   }
 }
