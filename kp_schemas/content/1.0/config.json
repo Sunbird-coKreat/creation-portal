@@ -46,10 +46,10 @@
             "direction": "in",
             "objects": ["Content", "ContentImage"]
         },
-        "usedByContent": {
-            "type": "associatedTo",
-            "direction": "in",
-            "objects": ["Content"]
+        "itemSets": {
+          "type": "associatedTo",
+          "direction": "out",
+          "objects": ["ItemSet"]
         }
     },
     "version": "enable",
