@@ -56,7 +56,6 @@ describe('BulkApprovalComponent', () => {
     expect(component.showBulkApproveModal).toBeTruthy();
     expect(component.bulkApprovalComfirmation).toBeTruthy();
   });
-
   it('#bulkApproval() should call bulkApproval', () => {
     component.disableBulkApprove = false;
     spyOn(component, 'sendContentForBulkApproval').and.callFake (() => {});
