@@ -63,7 +63,7 @@ module.exports = (app) => {
             }
         }))
 
-    app.get('/content/program/v1/print/pdf',
+    app.get('/content/program/v1/print/docx',
         permissionsHelper.checkPermission(),
         proxyUtils.verifyToken(),
         proxy(programServiceUrl, {
@@ -77,7 +77,7 @@ module.exports = (app) => {
             },
             userResDecorator: (proxyRes, proxyResData, req, res) => {
                 try {
-                    logger.info({msg: '/content/program/v1/print/pdf called'});
+                    logger.info({msg: '/content/program/v1/print/docx called'});
                     const data = JSON.parse(proxyResData.toString('utf8'));
                     if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
                     else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)

@@ -1126,9 +1126,9 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  generateCollectionPDF(identifier) {
+  generateCollectionDocx(identifier) {
     const req = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PRINT_PREVIEW}`,
+      url: `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`,
       param: {
         id: identifier,
         format: 'json'
