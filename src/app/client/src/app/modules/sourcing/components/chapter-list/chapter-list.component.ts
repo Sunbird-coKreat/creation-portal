@@ -421,7 +421,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           setTimeout(() => {
             URL.revokeObjectURL(fileURL);
             document.body.removeChild(a);
-          })          
+          }, 0)          
         }
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToPrint)
