@@ -327,4 +327,30 @@ export class RegistryService extends DataService {
 
     return this.contentService.post(option);
   }
+
+  public getUserList(limit?, offset?, filters?): Observable<ServerResponse> {
+    const option = {
+      url: 'reg/search',
+      data: {
+        id: 'open-saber.registry.search',
+        ver: '1.0',
+        ets: Date.now(),
+        params: {
+          did: '',
+          key: '',
+          msgid: ''
+        },
+        request: {
+          entityType: ['User'],
+          filters: filters || {},
+          limit: limit || 250,
+          offset: offset || 0,
+        }
+      }
+    };
+
+    return this.contentService.post(option);
+  }
+
+
 }
