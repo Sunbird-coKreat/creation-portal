@@ -980,6 +980,29 @@ export class ProgramsService extends DataService implements CanActivate {
     }
   }
 
+  getCollectionCategoryDefinition(categoryName, rootOrgId) {
+    const cacheInd = categoryName + ':' + rootOrgId;
+    if (this.cacheService.get(cacheInd)) {
+      return  of(this.cacheService.get(cacheInd));
+    } else {
+      const req = {
+        url: 'object/category/definition/v1/read?fields=objectMetadata,forms,name',
+        data: {
+          request: {
+            "objectCategoryDefinition": {
+                "objectType": "Collection",
+                "name": categoryName,
+                "channel": rootOrgId
+            },
+          }
+        }
+      };
+      return this.post(req).pipe(tap(data => {
+        this.setSessionCache({name: cacheInd, value: data})
+      }));
+    }
+  }
+  
   isNotEmpty(obj, key) {
    if (_.isNil(obj) || _.isNil(obj[key])) {
      return false;
