@@ -25,7 +25,7 @@
       </sui-select>
     </div>
   </div>
-  <table *ngIf="!showLoader" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+  <table *ngIf="!showLoader && listCnt > 0" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
     <thead class="sb-table-header sb-table-thead-gray">
       <tr>
         <th class="w-10 cursor-pointer sb-sorting" (click)="sortList()">
@@ -93,6 +93,9 @@
   </div>
   <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
     <app-loader></app-loader>
+  </div>
+  <div class="mt-12" *ngIf="!showLoader && listCnt == 0">
+    <app-no-result [data]="{ messageText: 'resource.messages.stmsg.m0006'}"> </app-no-result>
   </div>
 </div>
 <div class="sb-modal-actions">

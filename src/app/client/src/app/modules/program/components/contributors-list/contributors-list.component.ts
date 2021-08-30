@@ -44,7 +44,6 @@ export class ContributorsListComponent implements OnInit {
   };
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
-  public resourceService: ResourceService;
   public telemetryInteractObject: any;
   public telemetryInteractPdata: any;
   public contributorTypes: string[] = ["Organisation", "Individual"];
@@ -102,7 +101,7 @@ export class ContributorsListComponent implements OnInit {
         }
 
         const errInfo = {
-          errorMsg: this.resourceService.messages.fmsg.contributorjoin.m0001,
+          errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
           telemetryPageId: this.getPageId(),
           telemetryCdata: this.telemetryInteractCdata,
           env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -189,7 +188,7 @@ export class ContributorsListComponent implements OnInit {
           );
         }
         const errInfo = {
-          errorMsg: this.resourceService.messages.emsg.profile.m0002,
+          errorMsg: this.resource.messages.emsg.profile.m0002,
           telemetryPageId: this.getPageId(),
           telemetryCdata: this.telemetryInteractCdata,
           env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -386,7 +385,6 @@ export class ContributorsListComponent implements OnInit {
           usersData = usersData.concat(
             _.get(data, "result.response.content")
           );
-          // @Todo remove comments
           if (index < userIds.length) {
             this.getUsersProfile(userIds, index, limit, resolve, reject, usersData);
           } else {
@@ -496,7 +494,7 @@ export class ContributorsListComponent implements OnInit {
         }
 
         const errInfo = {
-          errorMsg: this.resourceService.messages.fmsg.contributorjoin.m0001,
+          errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
           telemetryPageId: this.getPageId(),
           telemetryCdata: this.telemetryInteractCdata,
           env: this.activatedRoute.snapshot.data.telemetry.env,
