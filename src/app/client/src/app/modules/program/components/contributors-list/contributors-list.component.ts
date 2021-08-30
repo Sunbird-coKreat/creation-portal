@@ -335,7 +335,6 @@ export class ContributorsListComponent implements OnInit {
           usersData = usersData.concat(
             _.get(data, "result.response.content")
           );
-          // @Todo remove comments
           if (index < userIds.length) {
             this.getUsersProfile(userIds, index, limit, resolve, reject, usersData);
           } else {
