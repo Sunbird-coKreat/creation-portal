@@ -276,7 +276,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     if (_.has(value, category)) {
       return _.compact(_.uniq([...value[category], ..._.castArray(defaultValue[category])]));
     } else {
-      return _.castArray(defaultValue[category]);
+      return _.compact(_.castArray(defaultValue[category]));
     }
   }
 
