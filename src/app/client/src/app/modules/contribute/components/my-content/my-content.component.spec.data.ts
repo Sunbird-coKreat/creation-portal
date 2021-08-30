@@ -3,7 +3,10 @@ export const mockData = {
       userid: '874ed8a5-782e-4f6c-8f36-e0288455901e',
       channel: '123456789',
       appId: 'dev.dock.portal',
-      slug: 'custchannel'
+      slug: 'custchannel',
+      isContributingOrgAdmin: () => {
+        return true;
+      }
     },
     contentListRes: {
       'id': 'api.search-service.search',
