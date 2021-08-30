@@ -37,9 +37,9 @@ export class ContributorsListComponent implements OnInit {
   };
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
-  public resourceService: ResourceService;
   public telemetryInteractObject: any;
   public telemetryInteractPdata: any;
+  public osLimit = 500;
 
   constructor(public resource: ResourceService, public registryService: RegistryService,
     public programsService: ProgramsService, public paginationService: PaginationService,
@@ -54,18 +54,18 @@ export class ContributorsListComponent implements OnInit {
     this.getOrgList();
   }
 
-  getOrgList(limit = 250, offset = 0) {
+  getOrgList(limit = this.osLimit, offset = 0) {
     this.registryService.getOrgList(limit, offset).subscribe(data => {
       if (!_.isEmpty(_.get(data, 'result.Org'))) {
         this.orgList = this.orgList.concat(_.get(data, 'result.Org'));
-        offset = offset + 250;
+        offset = offset + this.osLimit;
         this.getOrgList(limit, offset);
       }
       else {
         this.orgList = _.filter(this.orgList, (org) => (org.orgId !== this.userService.rootOrgId));
         // Org creator user open saber ids
-        const orgCreatorOsIds = _.map(this.orgList, (org) => org.createdBy);
-        this.getOrgCreatorIds(orgCreatorOsIds);
+        const osOrgUsers = _.chunk(_.uniq(_.map(this.orgList, (org) => org.createdBy)), this.osLimit);
+        this.getOrgCreatorIds(osOrgUsers);
       }
     }, (error) => {
       console.log('Get org list', JSON.stringify(error))
@@ -74,7 +74,7 @@ export class ContributorsListComponent implements OnInit {
       }
 
       const errInfo = {
-        errorMsg: this.resourceService.messages.fmsg.contributorjoin.m0001,
+        errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
         telemetryPageId: this.getPageId(),
         telemetryCdata: this.telemetryInteractCdata,
         env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -89,30 +89,71 @@ export class ContributorsListComponent implements OnInit {
     return this.telemetryPageId;
   }
 
-  getOrgCreatorIds(orgCreatorOsIds) {
-    this.registryService.getUserdetailsByOsIds(orgCreatorOsIds).subscribe(data => {
-      const orgCreatorIds = _.map(_.get(data, 'result.User'), (user) => user.userId) || [];
-      this.orgList = _.compact(_.map(this.orgList,
-        (org) => {
-          org.User = _.find(_.get(data, 'result.User'), (user) => {
-            if (user.osid == org.createdBy) {
-              return user;
-            }
-          });
+  getOrgCreatorIds(orgCreatorOsIds, orgCreators = [], index = 0) {
+    this.registryService.getUserdetailsByOsIds(orgCreatorOsIds[index]).subscribe(data => {
+      index++;
+      orgCreators = orgCreators.concat(_.get(data, "result.User"));
+      if (index < orgCreatorOsIds.length) {
+        this.getOrgCreatorIds(orgCreatorOsIds, orgCreators, index);
+      } else {
+        const orgCreatorIds = _.map(orgCreators, (user) => user.userId) || [];
+        this.orgList = _.compact(_.map(this.orgList,
+          (org) => {
+            org.User = _.find(orgCreators, (user) => {
+              if (user.osid == org.createdBy) {
+                return user;
+              }
+            });
 
-          if (!_.isUndefined(org.User) && _.get(org, 'name')) {
-            return org;
+            if (!_.isUndefined(org.User) && _.get(org, 'name')) {
+              return org;
+            }
           }
-        }
-      ));
-      this.getOrgUsersDetails(orgCreatorIds);
+        ));
+
+        this.getUsers(orgCreatorIds).then(
+          (res) => {
+            this.orgList = _.map(this.orgList, (org) => {
+                let userInfo = _.find(res, (user) => {
+                  if (user.identifier == _.get(org, 'User.userId')) {
+                    return user;
+                  }
+                });
+                org.User = {
+                  ...org.User,
+                  ...userInfo
+                };
+                org.isChecked = false;
+                if (!_.isEmpty(_.get(this.preSelectedContributors, 'Org'))) {
+                  let preSelectedOrg = _.find(_.get(this.preSelectedContributors, 'Org'), { 'osid': org.osid });
+                  if (preSelectedOrg) {
+                    org.isChecked = true;
+                    org.isDisabled = preSelectedOrg.isDisabled;
+                  }
+                }
+                return org;
+              }
+            );
+
+            if (this.allowToModifyContributors === false) {
+              this.orgList = _.filter(this.orgList, org => (_.get(org, 'isChecked') == true))
+            }
+
+            this.orgList = _.filter(this.orgList, org => (_.get(org, 'User.maskedEmail') || _.get(org, 'User.maskedPhone')))
+            this.showFilteredResults()
+          },
+          (err) => {
+            console.log("Get org list", JSON.stringify(err));
+          }
+        );
+      }
     }, (error) => {
       console.log('Get org creator', JSON.stringify(error))
       if(error.response && error.response.data) {
         console.log(`Get org creator ==>`, JSON.stringify(error.response.data));
       }
       const errInfo = {
-        errorMsg: this.resourceService.messages.emsg.profile.m0002,
+        errorMsg: this.resource.messages.emsg.profile.m0002,
         telemetryPageId: this.getPageId(),
         telemetryCdata: this.telemetryInteractCdata,
         env: this.activatedRoute.snapshot.data.telemetry.env,
@@ -270,5 +311,55 @@ export class ContributorsListComponent implements OnInit {
   sortOrganizations() {
     this.direction = this.direction === 'asc' ? 'desc' : 'asc';
     this.showFilteredResults();
+  }
+
+  getUsers(usersIds) {
+    usersIds = _.chunk(usersIds, this.osLimit);
+    return new Promise((resolve, reject) => {
+      let index = 0,
+        limit = this.osLimit;
+      this.getUsersProfile(usersIds, index, limit, resolve, reject);
+    });
+  }
+
+  getUsersProfile(userIds, index, limit, resolve, reject, usersData = []) {
+    const reqFilters = {
+      identifier: userIds[index],
+    };
+    index++;
+    const fields = ["identifier", "maskedEmail", "maskedPhone"];
+    this.programsService
+      .getOrgUsersDetails(reqFilters, undefined, limit, fields)
+      .subscribe(
+        (data) => {
+          usersData = usersData.concat(
+            _.get(data, "result.response.content")
+          );
+          // @Todo remove comments
+          if (index < userIds.length) {
+            this.getUsersProfile(userIds, index, limit, resolve, reject, usersData);
+          } else {
+            return resolve(_.compact(usersData));
+          }
+        },
+        (error) => {
+          console.log("Get user list", JSON.stringify(error));
+          if (error.response && error.response.data) {
+            console.log(
+              `Get user list ==>`,
+              JSON.stringify(error.response.data)
+            );
+          }
+          const errInfo = {
+            errorMsg: this.getPageId(),
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata: this.telemetryInteractCdata,
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            request: { filters: { identifier: userIds }, fields: fields },
+          };
+          this.sourcingService.apiErrorHandling(error, errInfo);
+          reject(error);
+        }
+      );
   }
 }
