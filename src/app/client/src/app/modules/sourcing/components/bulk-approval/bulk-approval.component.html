@@ -1,6 +1,6 @@
 <div class="d-flex">
   <button [disabled]="!originalCollectionData || originalCollectionData && originalCollectionData.status !== 'Draft'" *ngIf="approvalPending && approvalPending.length && showBulkApprovalButton" type="button"
-   class="sb-btn sb-btn-normal sb-btn-primary text-inherit" (click)="showBulkApproveModal=true; bulkApprovalComfirmation=true"
+  [ngClass]="{'sb-btn-primary': !disableBulkApprove, 'sb-btn-disabled': disableBulkApprove}" class="sb-btn sb-btn-normal text-inherit" (click)="showApproveBulkModal()"
    appTelemetryInteract
     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('bulk_approve_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
     [telemetryInteractObject]="telemetryInteractObject"

@@ -112,38 +112,38 @@
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
                   <div class="program-timeline">
                     <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'nomination_enddate', i)" *ngIf="program.type == 'public'">
+                      <div class="status" [class.active]="program?.activeDate && program.activeDate == 'nomination_enddate'" *ngIf="program.type == 'public'">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.nominationSubmission }}</div>
                         <div class="status__date">
                           {{ program?.nomination_enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'nomination_enddate', i)" [class.sb-color-warning]="isActive(program, 'nomination_enddate', i)">{{ program?.nomination_enddate | daysToGo  }}</em>
-                        </div>
-                      </div>
-                    </div>
-                         <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'shortlisting_enddate', i)" *ngIf="program.type == 'public'">
-                        <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
-                        <div class="status__date">
-                          {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'shortlisting_enddate', i)" [class.sb-color-warning]="isActive(program, 'shortlisting_enddate', i)">{{ program?.shortlisting_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="program?.activeDate && program.activeDate == 'nomination_enddate'" [class.sb-color-warning]="program?.activeDate && program.activeDate == 'nomination_enddate'">{{ program?.nomination_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
                     <div class="program-timeline-item">
-                      <div class="status" [class.active]="isActive(program, 'content_submission_enddate', i)">
+                      <div class="status" [class.active]="program?.activeDate && program.activeDate == 'shortlisting_enddate'" *ngIf="program.type == 'public'">
+                        <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.shortlistingNomination }}</div>
+                        <div class="status__date">
+                          {{ program?.shortlisting_enddate | date:'LLLL d, yyyy'  }}
+                          <em class="d-block" *ngIf="program?.activeDate && program.activeDate == 'shortlisting_enddate'" [class.sb-color-warning]="program?.activeDate && program.activeDate == 'shortlisting_enddate'">{{ program?.shortlisting_enddate | daysToGo  }}</em>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="program-timeline-item">
+                      <div class="status" [class.active]="program?.activeDate && program.activeDate == 'content_submission_enddate'" >
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.contributions }}</div>
                         <div class="status__date">
                           {{ program?.content_submission_enddate | date:'LLLL d, yyyy'  }}
-                          <em class="d-block" *ngIf="isActive(program, 'content_submission_enddate', i)" [class.sb-color-warning]="isActive(program, 'content_submission_enddate', i)">{{ program?.content_submission_enddate | daysToGo  }}</em>
+                          <em class="d-block" *ngIf="program?.activeDate && program.activeDate == 'content_submission_enddate'" [class.sb-color-warning]="program?.activeDate && program.activeDate == 'content_submission_enddate'">{{ program?.content_submission_enddate | daysToGo  }}</em>
                         </div>
                       </div>
                     </div>
                     <div class="program-timeline-item" *ngIf="!isContributor">
-                      <div class="status" [class.active]="isActive(program, 'enddate', i)">
+                      <div class="status" [class.active]="program?.activeDate && program.activeDate == 'enddate'">
                         <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
                         <div class="status__date">
                           {{ program?.enddate | date:'LLLL d, yyyy' }}
-                          <em class="d-block" *ngIf="isActive(program, 'enddate', i)" [class.sb-color-warning]="isActive(program, 'enddate', i)">{{ program?.enddate | daysToGo }}</em>
+                          <em class="d-block" *ngIf="program?.activeDate && program.activeDate == 'enddate'" [class.sb-color-warning]="program?.activeDate && program.activeDate == 'enddate'">{{ program?.enddate | daysToGo }}</em>
                         </div>
                       </div>
                     </div>

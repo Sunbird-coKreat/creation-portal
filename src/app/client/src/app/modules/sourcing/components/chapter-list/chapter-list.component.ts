@@ -566,12 +566,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['topics'] = 0;
         instance.countData['learningOutcomes'] = 0;
 
-        const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
-        const originUrl = this.programsService.getContentOriginEnvironment();
-        const url =  originUrl + hierarchyUrl1 ;
-
         if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
-          this.httpClient.get(url).subscribe(async res => {
+          this.programsService.getHierarchyFromOrigin(this.collectionData.origin).subscribe(async res => {
             const content = _.get(res, 'result.content');
             this.originalCollectionData = content;
             this.setTreeLeafStatusMessage(identifier, instance);
