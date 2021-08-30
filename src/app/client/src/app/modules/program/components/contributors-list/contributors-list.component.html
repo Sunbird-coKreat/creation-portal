@@ -9,7 +9,7 @@
         <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="Search..." />
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
-      <button class="sb-btn sb-btn-normal" (click)="search()"
+      <button class="sb-btn sb-btn-normal" (click)="getData()"
         [disabled]="showLoader">{{resource?.frmelmnts?.lbl?.search}}</button>
     </div>
     <div class="w-100 ml-20">
@@ -19,7 +19,7 @@
 											popupText="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.tooltip}}"></i>
       </label>
       <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData()"
-        [options]="contributorTypes" #types [disabled]="showLoader">
+        [options]="contributorTypes" #types [isDisabled]="showLoader">
         <sui-select-option *ngFor="let option of contributorTypes;" [value]="option">
         </sui-select-option>
       </sui-select>

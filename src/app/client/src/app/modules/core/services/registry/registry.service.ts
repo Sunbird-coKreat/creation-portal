@@ -125,7 +125,8 @@ export class RegistryService extends DataService {
           entityType: ['User'],
           filters: {
             osid: { or: userList }
-          }
+          },
+          limit : userList.length
         }
       }
     };
