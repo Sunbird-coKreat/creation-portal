@@ -275,7 +275,7 @@
         </div>
         <div *ngSwitchDefault class="sb-pageSection sb-bg-color-white my-24 pb-24">
             <div class="ui container">
-                <div class="sb-pageSection-header pt-24">
+                <!-- <div class="sb-pageSection-header pt-24">
                     <h4 class="sb-pageSection-title pr-10"> Top 10 Content</h4>
                 </div>
                 <div class="sb-pageSection-content">
@@ -326,67 +326,65 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-                <div class="sb-pageSection-header mt-30">
+                </div> -->
+                <div class="sb-pageSection-header mt-30 pt-24">
                     <h4 class="sb-pageSection-title pr-10"> {{resourceService.frmelmnts.lbl.contributionDetails}}</h4>
                     <span
                         class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                 </div>
-                <div class="sb-card-bx" *ngFor="let item of contributionDetails | keyvalue; let i = index">
-                    <div class="fs-1-3 font-weight-bold mb-20"> {{item.key}} framework</div>
-                    <div class="d-flex">
-                        <div class="pr-20 w-40">
-                            <label
-                                class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
-                            <div>{{item.value.board}}</div>
-                        </div>
-                        <div class="pr-20 w-40">
-                            <label
-                                class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-                            <div>{{item.value.medium}}</div>
-                        </div>
-                        <div class="pr-20 w-40">
-                            <label
-                                class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-                            <div>
-                                <ng-container *ngFor="let item of item.value.gradeLevel | slice:0:2">
-                                    {{ item }},
-                                </ng-container>
-                                <span class="d-none" [attr.id]="'gradeLevelList' + i">
-                                    <ng-container *ngFor="let item of item.value.gradeLevel | slice:2">
-                                        {{ item }},
-                                    </ng-container>
-                                </span>
+                <div class="d-flex">
+                    <div class="sb-card-bx mr-20" *ngFor="let item of contributionDetails | keyvalue; let i = index">
+                        <div class="fs-1-3 font-weight-bold mb-20"> {{item.key}} framework</div>
+                        <div class="d-flex">
+                            <div class="pr-20 w-40" *ngIf="item.value?.board.length > 0">
+                                <label
+                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
+                                <div>{{item.value.board}}</div>
                             </div>
-                            <small class="cursor-pointer" [attr.id]="'gradeLevelBtn' + i"
-                                (click)="onExpand(i, 'gradeLevel');"
-                                *ngIf="item.value.gradeLevel.length > 2">+{{item.value.gradeLevel.length
-                                - 2}} more</small>
-                        </div>
-                        <div class="pr-20 w-40">
-                            <label
-                                class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-                            <div>
-                                <ng-container *ngFor="let item of item.value.subject | slice:0:2">
-                                    {{ item }},
-                                </ng-container>
-                                <span class="d-none" [attr.id]="'subjectList' + i">
-                                    <ng-container *ngFor="let item of item.value.subject | slice:2">
-                                        {{ item }},
-                                    </ng-container>
-                                </span>
+                            <div class="pr-20 w-40" *ngIf="item?.value?.medium.length > 0">
+                                <label
+                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+                                <div>{{item.value.medium}}</div>
                             </div>
-                            <small class="cursor-pointer" [attr.id]="'subjectBtn' + i" (click)="onExpand(i, 'subject');"
-                                *ngIf="item.value.subject.length > 2">+{{item.value.subject.length
-                                - 2}} more</small>
-                        </div>
-                        <div>
-                            <button type="button" (click)="onCardClick(item)"
-                                class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary"
-                                appTelemetryInteract
-            [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-            [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
+                            <div class="pr-20 w-40" *ngIf="item?.value?.gradeLevel.length > 0">
+                                <label
+                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
+                                <div>
+                                    {{ item.value.gradeLevel | slice:0:2 }}
+                                    <span class="d-none" [attr.id]="'gradeLevelList' + i">
+                                        <ng-container *ngFor="let item of item.value.gradeLevel | slice:2">
+                                            ,{{ item }}
+                                        </ng-container>
+                                    </span>
+                                </div>
+                                <small class="cursor-pointer" [attr.id]="'gradeLevelBtn' + i"
+                                    (click)="onExpand(i, 'gradeLevel');"
+                                    *ngIf="item.value.gradeLevel.length > 2">+{{item.value.gradeLevel.length
+                                    - 2}} more</small>
+                            </div>
+                            <div class="pr-20 w-40" *ngIf="item?.value?.subject.length > 0">
+                                <label
+                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
+                                <div>
+                                    {{ item.value.subject | slice:0:2 }}
+                                    <span class="d-none" [attr.id]="'subjectList' + i">
+                                        <ng-container *ngFor="let item of item.value.subject | slice:2">
+                                            ,{{ item }}
+                                        </ng-container>
+                                    </span>
+                                </div>
+                                <small class="cursor-pointer" [attr.id]="'subjectBtn' + i" (click)="onExpand(i, 'subject');"
+                                    *ngIf="item.value.subject.length > 2">+{{item.value.subject.length
+                                    - 2}} more</small>
+                            </div>
+                            <div>
+                                <button type="button" (click)="onCardClick(item)"
+                                    class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary"
+                                    appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
+                            </div>
                         </div>
                     </div>
                 </div>

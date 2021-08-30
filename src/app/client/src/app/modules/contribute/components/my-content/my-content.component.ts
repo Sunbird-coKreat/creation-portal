@@ -276,7 +276,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     if (_.has(value, category)) {
       return _.compact(_.uniq([...value[category], ..._.castArray(defaultValue[category])]));
     } else {
-      return _.castArray(defaultValue[category]);
+      return _.compact(_.castArray(defaultValue[category]));
     }
   }
 
@@ -307,6 +307,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   }
 
   getContents() {
+    const isContributingOrgAdmin =  this.userService.isContributingOrgAdmin();
     const option = {
       url: 'composite/v3/search',
       data: {
@@ -314,7 +315,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
           filters: {
             objectType: ['content', 'questionset'],
             status: ['Live'],
-            createdBy: this.userService.userid,
+            ...(!isContributingOrgAdmin && { 'createdBy' : this.userService.userid }),
+            ...(isContributingOrgAdmin && { 'organisationId' : _.get(this.userService, 'userProfile.userRegData.Org.osid')}),
             mimeType: { '!=': 'application/vnd.ekstep.content-collection' },
             contentType: { '!=': 'Asset' }
           },
