@@ -371,7 +371,7 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    '/content/program/v1/print/pdf': {
+    '/content/program/v1/print/docx': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.ORG_ADMIN,
