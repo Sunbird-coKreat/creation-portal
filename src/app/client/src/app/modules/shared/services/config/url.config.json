@@ -270,7 +270,8 @@
       "RETIRE": "content/v3/retire",
       "REJECT": "content/v3/reject",
       "FLAG": "content/v3/flag",
-      "PRINT_PREVIEW": "program/v1/print/docx"
+      "PRINT_PREVIEW": "program/v1/print/docx",
+      "SEARCH": "composite/v3/search"
     },
     "DOCKCONTENT_MVC": {
       "SEARCH": "mvc/v3/search"
