@@ -296,7 +296,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.handleContentStatusText();
       this.handlePreview();
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
-        this.fetchFrameWorkDetails();
+        this.helperService.fetchProgramFramework(this.sessionContext);
       }
       this.fetchCategoryDetails();
         } else {

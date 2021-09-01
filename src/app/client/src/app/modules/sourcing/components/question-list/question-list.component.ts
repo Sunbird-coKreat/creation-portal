@@ -138,7 +138,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
-      this.fetchFrameWorkDetails();
+      this.helperService.fetchProgramFramework(this.sessionContext);
     }
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
@@ -232,7 +232,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  fetchFrameWorkDetails() {
+  /*fetchFrameWorkDetails() {
     this.frameworkService.initialize(this.sessionContext.framework);
     this.frameworkService.frameworkData$.pipe(takeUntil(this.onComponentDestroy$),
     filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), take(1)).subscribe((frameworkDetails: any) => {
@@ -242,7 +242,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
-  }
+  }*/
 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {

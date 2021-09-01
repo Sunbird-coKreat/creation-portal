@@ -7,7 +7,11 @@ import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } f
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
+import { ActivatedRoute } from '@angular/router';
+import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';
+import { UUID } from 'angular2-uuid';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +28,15 @@ export class HelperService {
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
+  private _telemetryPageId: any;
+  private _telemetryInteractCdata: any;
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService, public learnerService: LearnerService) { }
+    public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute,
+    private sourcingService: SourcingService) { }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -48,9 +55,11 @@ export class HelperService {
     });
   }
 
-  getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta) {
+  getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, programTargetType?) {
+
+    if (!programTargetType || programTargetType === 'collections') {
     // tslint:disable-next-line:max-line-length
-    const categoryDefinition$ = this.programsService.getCollectionCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId)
+    const categoryDefinition$ = this.programsService.getCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId, 'Collection')
       .pipe(
         switchMap((response: any) => {
           const targetCollectionFormData = _.get(response, 'result.objectCategoryDefinition.forms.childMetadata.properties');
@@ -63,15 +72,23 @@ export class HelperService {
           return of(targetCollectionFormData);
         })
       );
-
-    categoryDefinition$.subscribe(
-      (response) => {
-        console.log(response);
-        this.selectedCategoryMetaData = response;
-        this._categoryMetaData$.next(response);
-      }
-    );
-
+      categoryDefinition$.subscribe(
+        (response) => {
+          this.selectedCategoryMetaData = response;
+          this._categoryMetaData$.next(response);
+        }
+      );
+    } else if(programTargetType === 'searchCriteria'){
+      const contentCategoryDefinition$ = this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType).pipe(map((data) => {
+        return _.get(data, 'result.objectCategoryDefinition.forms.update.properties');
+      }));
+      contentCategoryDefinition$.subscribe(
+        (response) => {
+          this.selectedCategoryMetaData = response;
+          this._categoryMetaData$.next(response);
+        }
+      );
+    }
   }
 
   set selectedCategoryMetaData(data) {
@@ -776,14 +793,18 @@ export class HelperService {
       }
   }
 
-  fetchRootMetaData(sharedContext, selectedSharedContext) {
+  fetchRootMetaData(sharedContext, selectedSharedContext, programTargetType?) {
     return sharedContext.reduce((obj, context) => {
-              return { ...obj, ...(this.getContextObj(context, selectedSharedContext)) };
+              return { ...obj, ...(this.getContextObj(context, selectedSharedContext, programTargetType)) };
             }, {});
   }
 
-  getContextObj(context, selectedSharedContext) {
-    if (context === 'topic') { // Here topic is fetched from unitLevel meta
+  getContextObj(context, selectedSharedContext, programTargetType?) {
+    if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria')) { // Here topic is fetched from unitLevel meta
+      const fieldMustbeString = ['framework', 'board'];
+      if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
+        return {[context]:_.first(selectedSharedContext[context])}
+      }
       return {[context]: selectedSharedContext[context]};
     } else {
       return {[context]: this._selectedCollectionMetaData[context]};
@@ -1051,5 +1072,115 @@ export class HelperService {
       sourceCategoryValuesMap[category.code] = this.convertNameToIdentifier(framework, category.value, key, category.code, targetCollectionFrameworksData, 'name');
     });
     return sourceCategoryValuesMap;
+  }
+
+  /*set telemetryPageId(telemetryPageId) {
+    this._telemetryPageId = telemetryPageId;
+  }
+  get telemetryPageId () {
+    return this._telemetryPageId;
+  }
+  set telemetryInteractCdata(telemetryPageId) {
+    this._telemetryInteractCdata = telemetryPageId;
+  }
+  get telemetryInteractCdata () {
+    return this._telemetryInteractCdata;
+  }*/
+
+  fetchProgramFramework(sessionContext) {
+    if (sessionContext.framework) {
+      this.frameworkService.initialize(sessionContext.framework);
+      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+        if (frameworkDetails && !frameworkDetails.err) {
+          sessionContext.frameworkData = frameworkDetails.frameworkdata[sessionContext.framework].categories;
+          sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
+        }
+      }, error => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        const errInfo = {
+          errorMsg: 'Fetching framework details failed',
+          telemetryPageId: _.get(this.activatedRoute,'snapshot.data.telemetry.pageid'),
+          telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}, {id: sessionContext.programId , type: 'project'}],
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+      });
+    }
+  }
+
+  isOpenForNomination(programDetails) {
+    const today = moment();
+    const validNomDate = moment(programDetails.nomination_enddate).isSameOrAfter(today, 'day') && this.programsService.isProjectLive(programDetails);
+    const ifOnlyforDefaultOrg = (programDetails.status === 'Unlisted' && _.get(this.userService, 'userProfile.rootOrgId') === _.get(programDetails, 'rootorg_id'));
+    return validNomDate && ( ifOnlyforDefaultOrg || programDetails.status === 'Live');
+  }
+
+  canAcceptContribution(programDetails) {
+    const contributionendDate  = moment(programDetails.content_submission_enddate);
+    const endDate  = moment(programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && this.programsService.isProjectLive(programDetails)) ? true : false;
+  }
+  /**
+   *
+   *
+   * @param {*} type - is it content, questionset or question
+   * @param {*} value - user input in the CSV row
+   * @param {*} key - CSV cell identifier
+   * @param {*} code - corresponding system level code for `key`
+   * @param {*} collectionMeta - target collection metadata
+   * @returns - returns user input in the framework_code_value format.
+   * @memberof HelperService
+   */
+  createContent (type, mimeType, primaryCategory, program, nominationDetails, sharedMetaData, appIcon?, collectionId?, unitId?, questionCategory?) {
+    let creator = this.userService.userProfile.firstName; 
+    if (!_.isEmpty(this.userService.userProfile.lastName)) {
+      creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+    }
+
+    let obj= {
+      'name': 'Untitled',
+      'code': UUID.UUID(),
+      'mimeType': mimeType,
+      'createdBy': this.userService.userid,
+      'primaryCategory': primaryCategory,
+      'creator': creator,
+      'author': creator,
+      'programId': program.program_id,
+      ...(nominationDetails &&
+        nominationDetails.organisation_id &&
+        {'organisationId': nominationDetails.organisation_id || null}),
+        ...(_.pickBy(sharedMetaData, _.identity))
+    }
+    if (collectionId && unitId) {
+      obj['collectionId'] = collectionId;
+      obj['unitIdentifiers'] = [unitId];
+    }
+    if (!nominationDetails || (_.get(nominationDetails, 'status') === 'Initiated')) {
+     obj['sampleContent'] = true;
+    }
+    if (appIcon) {
+      obj['appIcon'] = appIcon;
+    }
+    (type === 'question') ? obj['questionCategories'] = questionCategory : delete(obj['questionCategories']);
+    const option = { 
+      url: 'content/v3/create',
+      header: {
+        'X-Channel-Id': program.rootorg_id
+      },
+      data: { request: {} }
+    }
+    
+    if (type === 'questionset') {
+      option.url = 'questionset/v1/create';
+      option.data.request['questionset'] = {};
+      option.data.request['questionset'] = obj;      
+    } else {
+      option.data.request['content'] = {};
+      option.data.request['content'] = obj; 
+    }
+    
+    return this.actionService.post(option);
   }
 }
