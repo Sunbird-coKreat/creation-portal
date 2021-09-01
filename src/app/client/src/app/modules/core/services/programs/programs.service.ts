@@ -22,6 +22,7 @@ import { ExportToCsv } from 'export-to-csv';
 import { CacheService } from 'ng2-cache-service';
 import { isUndefined } from 'lodash';
 import * as moment from 'moment';
+import { promise } from 'protractor';
 
 @Injectable({
   providedIn: 'root'
@@ -650,7 +651,7 @@ export class ProgramsService extends DataService implements CanActivate {
     };
     return this.API_URL(req);
   }
-
+  
   addorUpdateNomination(request: any) {
     // check if nomination for the program already exists by org id
     const filters = {
@@ -1268,13 +1269,13 @@ export class ProgramsService extends DataService implements CanActivate {
     if (program.target_collection_category === null) {
      return plural ? 'Digital Textbooks' : 'Digital Textbook';
     } else  {
-      let collectionCat = '';
-      if (_.isArray(program.target_collection_category)) {
+      let collectionCat = 'Content';
+      if (_.isArray(program.target_collection_category) && !_.isEmpty(program.target_collection_category)) {
         collectionCat = program.target_collection_category[0];
-      } else {
+      } else if (!_.isEmpty(_.get(program, 'target_collection_category'))){
         collectionCat = program.target_collection_category;
       }
-
+    
      return plural ? collectionCat + 's' : collectionCat;
     }
   }
