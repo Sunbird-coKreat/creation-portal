@@ -1,16 +1,16 @@
 {
 	"request": {
 		"objectCategoryDefinition": {
-			"categoryId": "obj-cat:question-paper",
-			"targetObjectType": "Collection",
-			"Channel": "{{channelId}}",
+			"identifier": "obj-cat:question-paper_collection_0127674553846579203",
 			"objectMetadata": {
 				"config": {},
 				"schema": {
 					"properties": {
 						"mimeType": {
 							"type": "string",
-							"enum": ["application/vnd.ekstep.content-collection"]
+							"enum": [
+								"application/vnd.ekstep.content-collection"
+							]
 						},
 						"appIcon": {
 							"type": "string",
@@ -27,7 +27,9 @@
 					}
 				}
 			},
+			"visibility": "Default",
 			"languageCode": [],
+			"name": "Question Paper",
 			"forms": {
 				"blueprintCreate": {
 					"templateName": "",
@@ -55,7 +57,9 @@
 							"label": "Competencies",
 							"name": "Competencies",
 							"placeholder": "Please select Competencies",
-							"depends": ["chapters"],
+							"depends": [
+								"chapters"
+							],
 							"renderingHints": {},
 							"required": true
 						},
@@ -74,7 +78,14 @@
 							"inputType": "select",
 							"placeholder": "",
 							"default": 0,
-							"options": [0, 1, 2, 3, 4, 5],
+							"options": [
+								0,
+								1,
+								2,
+								3,
+								4,
+								5
+							],
 							"children": [{
 									"type": "learningLevel",
 									"label": "Knowledge",
@@ -128,7 +139,14 @@
 									"code": "LA"
 								}
 							],
-							"options": [0, 1, 2, 3, 4, 5],
+							"options": [
+								0,
+								1,
+								2,
+								3,
+								4,
+								5
+							],
 							"placeholder": "Question Types"
 						},
 						{
@@ -164,7 +182,7 @@
 							"description": "Name",
 							"index": 1,
 							"label": "Name",
-							"required": true,
+							"required": false,
 							"name": "Name",
 							"inputType": "text",
 							"placeholder": "Name",
@@ -178,7 +196,7 @@
 							"code": "board",
 							"visible": true,
 							"depends": [],
-							"editable": true,
+							"editable": false,
 							"dataType": "text",
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
@@ -196,7 +214,7 @@
 							"depends": [
 								"board"
 							],
-							"editable": true,
+							"editable": false,
 							"dataType": "list",
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
@@ -215,7 +233,7 @@
 								"board",
 								"medium"
 							],
-							"editable": true,
+							"editable": false,
 							"dataType": "list",
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
@@ -266,7 +284,7 @@
 							"inputType": "topicselector",
 							"label": "Chapters covered",
 							"placeholder": "Choose chapters",
-							"required": true
+							"required": false
 						},
 						{
 							"code": "learningOutcome",
@@ -283,7 +301,7 @@
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
 							},
-							"required": true
+							"required": false
 						},
 						{
 							"code": "marks",
@@ -327,7 +345,7 @@
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
 							},
-							"required": true,
+							"required": false,
 							"visible": true,
 							"editable": true,
 							"name": "Learning Level",
