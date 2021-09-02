@@ -1,7 +1,7 @@
 {
 	"request": {
 		"objectCategoryDefinition": {
-			"identifier": "obj-cat:question-paper_collection_0127674553846579203",
+			"identifier": "obj-cat:question-paper_collection_{{rootOrgId}}",
 			"objectMetadata": {
 				"config": {},
 				"schema": {
