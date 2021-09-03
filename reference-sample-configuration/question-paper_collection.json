@@ -284,7 +284,7 @@
 							"inputType": "topicselector",
 							"label": "Chapters covered",
 							"placeholder": "Choose chapters",
-							"required": false
+							"required": true
 						},
 						{
 							"code": "learningOutcome",
@@ -301,7 +301,7 @@
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
 							},
-							"required": false
+							"required": true
 						},
 						{
 							"code": "marks",
@@ -345,7 +345,7 @@
 							"renderingHints": {
 								"class": "sb-g-col-lg-1"
 							},
-							"required": false,
+							"required": true,
 							"visible": true,
 							"editable": true,
 							"name": "Learning Level",
