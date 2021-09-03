@@ -6,7 +6,7 @@
     <div class="sb-search-box medium mb-15 mt-20">
       <div class="input-div relative">
         <i class="search icon"></i>
-        <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="Search..." />
+        <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.search}}" />
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
       <button class="sb-btn sb-btn-normal" (click)="getData()"

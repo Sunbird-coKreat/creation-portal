@@ -151,7 +151,8 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
         lastName: this.userService.userProfile.lastName || '',
         userId: this.userService.userProfile.identifier,
         enrolledDate: new Date().toISOString(),
-        channel: this.userService.userProfile.rootOrgId
+        channel: this.userService.userProfile.rootOrgId,
+        roles: (this.enrollAsOrg === true) ? ['admin'] : ['individual']
       }
     };
 

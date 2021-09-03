@@ -1,4 +1,3 @@
-import { isEmpty } from 'rxjs/operators';
 import { UserService } from "./../../../core/services/user/user.service";
 import { RegistryService, ProgramsService } from "@sunbird/core";
 import { Component, Input, OnInit } from "@angular/core";
@@ -11,7 +10,7 @@ import * as _ from "lodash-es";
 import { IPagination } from "../../../sourcing/interfaces";
 import { IInteractEventEdata } from "@sunbird/telemetry";
 import { Output, EventEmitter } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { SourcingService } from "./../../../sourcing/services";
 import { CacheService } from 'ng2-cache-service';
 
@@ -82,7 +81,7 @@ export class ContributorsListComponent implements OnInit {
       (data) => {
         if (!_.isEmpty(_.get(data, "result.Org"))) {
           this.orgList = this.orgList.concat(_.get(data, "result.Org"));
-          offset = offset + this.osLimit;
+            offset = offset + this.osLimit;
           this.getOrgList(limit, offset);
         } else {
           this.orgList = _.filter(
@@ -162,14 +161,13 @@ export class ContributorsListComponent implements OnInit {
                 return org;
               });
 
-              this.orgList = this.setSelected(this.orgList, 'Org');
-
               if (!_.isEmpty(this.orgList)) {
                 this.programsService.setSessionCache({
                   name: 'orgList',
                   value: this.orgList
                 });
               }
+              this.orgList = this.setSelected(this.orgList, 'Org');
               this.isOrgLoaded = true;
               this.showFilteredResults();
             },
@@ -349,7 +347,7 @@ export class ContributorsListComponent implements OnInit {
         (ind) => {
           return {
             ..._.pick(ind, "osid", "isChecked"),
-            User: _.pick(ind.User, "identifier", "maskedEmail", "maskedPhone"),
+            User: _.pick(ind.User, "userId", "maskedEmail", "maskedPhone"),
           };
         }
       );
@@ -415,6 +413,7 @@ export class ContributorsListComponent implements OnInit {
   setSelected(contributorList, type) {
     contributorList = _.map(contributorList, (obj) => {
       obj.isChecked = false;
+      obj.isDisabled = false;
       if (!_.isEmpty(_.get(this.preSelectedContributors, type))) {
         let preSelectedUser = _.find(
           _.get(this.preSelectedContributors, type),
@@ -444,7 +443,8 @@ export class ContributorsListComponent implements OnInit {
   }
 
   getIndividualList(limit = this.osLimit, offset = 0) {
-    this.registryService.getUserList(limit, offset).subscribe(
+    const filters = {"roles": {"contains": "individual"}};
+    this.registryService.getUserList(limit, offset, filters).subscribe(
       (data) => {
         if (!_.isEmpty(_.get(data, "result.User"))) {
           this.indList = this.indList.concat(_.get(data, "result.User"));
@@ -461,20 +461,21 @@ export class ContributorsListComponent implements OnInit {
                 // Attach user details in User Obj
                 obj.User = _.find(res, (user) => {
                   if (user.identifier == _.get(obj, "userId")) {
+                    user['userId'] = _.get(user, 'identifier');
+                    delete user.identifier;
                     return user;
                   }
                 });
                 return obj;
               });
 
-              this.indList = this.setSelected(this.indList, 'User');
               if (!_.isEmpty(this.indList)) {
                 this.programsService.setSessionCache({
                   name: 'indList',
                   value: this.indList
                 });
               }
-
+              this.indList = this.setSelected(this.indList, 'User');
               this.isIndLoaded = true;
               this.showFilteredResults();
             },
