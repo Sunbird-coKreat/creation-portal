@@ -573,7 +573,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!this.editPublished) {
       return this.pickerMinDate;
-    } else {
+    } else if(this.createProgramForm.value.type === 'public') {
       return new Date(this.createProgramForm.value.nomination_enddate.setHours(23,59,59));
     }
   }
