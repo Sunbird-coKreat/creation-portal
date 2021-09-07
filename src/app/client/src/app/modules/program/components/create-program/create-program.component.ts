@@ -2,7 +2,7 @@ import { ConfigService, ResourceService, ToasterService, NavigationHelperService
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, FrameworkService, ActionService, UserService} from '@sunbird/core';
 import { HelperService } from '../../../sourcing/services/helper.service';
-import { Subscription, Subject, throwError, Observable } from 'rxjs';
+import { Subscription, Subject, throwError, Observable, of } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import * as _ from 'lodash-es';
@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-create-program',
@@ -232,37 +233,51 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     }
     this.setProjectScopeDetails();
-    this.isFormValueSet.projectScopeForm = true;
   }
   setProjectScopeDetails() {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
-    const frameworkName = (this.projectTargetType === 'collections') ? '' : 'nit_k-12';
-    this.frameworkService.getChannelData(this.userService.hashTagId);
-    this.frameworkService.channelData$.subscribe((channelData) => {
-      if (!channelData.err) {
-        this.programScope['userChannelData'] = _.get(channelData, 'channelData');
-        const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
-        const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
-        const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
-        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-        this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
-        if (_.toLower(this.enableQuestionSetEditor) === 'true') {
-          this.programScope['targetPrimaryObjects'] = questionSetCategories;
-          this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
-        }
-         // tslint:disable-next-line:max-line-length
-        this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
-          if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
-            this.programScope['targetPrimaryCategories'].push(o.name);
-            return o;
+
+    if ((this.projectTargetType === 'collections')) {
+      this.initializeFrameworkForTatgetType('')
+    } else {
+      this.frameworkService.getChannelData(this.userService.hashTagId);
+      this.frameworkService.channelData$.subscribe((channelData) => {
+        if (!channelData.err) {
+          this.programScope['userChannelData'] = _.get(channelData, 'channelData');
+          this.getFramewok().subscribe(
+            (response) => {
+              if (!response) {
+                this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
+                return false;
+              } else {
+                this.initializeFrameworkForTatgetType(response.identifier);
+              }
+          });
+          const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
+          const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+          const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
+          const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+          this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
+          if (_.toLower(this.enableQuestionSetEditor) === 'true') {
+            this.programScope['targetPrimaryObjects'] = questionSetCategories;
+            this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
           }
-        }));
-        // tslint:disable-next-line:max-line-length
-        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
-        this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
-      }
-    });
+         // tslint:disable-next-line:max-line-length
+          this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+            if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+              this.programScope['targetPrimaryCategories'].push(o.name);
+              return o;
+            }
+          }));
+          // tslint:disable-next-line:max-line-length
+          this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
+          this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
+        }
+      });
+    }
+  }
+  initializeFrameworkForTatgetType (frameworkName) {
     this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
     this.frameworkService.frameworkData$.subscribe((frameworkData) => {
       if (frameworkData && !frameworkData.err) {
@@ -273,13 +288,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.programScope['frameworkAttributes'] = frameworkData.frameworkdata.defaultFramework.categories;
         } else {
           //this.programScope['userFramework'] = 'nit_k-12';
-          this.projectScopeForm.controls['framework'].setValue(['nit_k-12']);
-
-          this.programScope['frameworkAttributes'] = frameworkData.frameworkdata['nit_k-12'].categories;
+          this.projectScopeForm.controls['framework'].setValue(frameworkName);
+          this.programScope['frameworkAttributes'] = frameworkData.frameworkdata[frameworkName].categories;
         }
       }
       this.setFrameworkAttributes();
+      this.isFormValueSet.projectScopeForm = true;
     });
+  }
+
+  getFramewok () {
+    // Get K-12 framework
+    const channelFrameworks = _.get(this.programScope['userChannelData'], 'frameworks');
+    const frameworkTypeGroup = _.groupBy(channelFrameworks, 'type');
+    if (!_.isEmpty(_.get(frameworkTypeGroup, 'K-12'))) {
+      const ret = _.first(_.get(frameworkTypeGroup, 'K-12'));
+      return of(ret);
+    } else {
+      // get systemDefault framework
+      return this.frameworkService.getFrameworkData(undefined, 'K-12', undefined, "Yes").pipe(map((response) => {
+        return _.first(_.get(response, 'result.Framework'));
+      }));
+    }
   }
 
   setFrameworkAttributes() {
