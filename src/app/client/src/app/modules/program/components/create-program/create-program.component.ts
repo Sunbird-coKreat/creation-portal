@@ -17,6 +17,7 @@ import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
 import { ThrowStmt } from '@angular/compiler';
+import { values } from 'lodash';
 
 @Component({
   selector: 'app-create-program',
@@ -94,8 +95,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   private enableQuestionSetEditor: string;
   public openProjectTargetTypeModal= false;
   private projectTargetType: string = null;
+  public showContributorsListModal = false;
+  public selectedContributors = {
+    Org:[],
+    User: []
+  };
+  public preSelectedContributors = {
+    Org:[],
+    User: []
+  };
+  public selectedContributorsCnt: number = 0;
+  public allowToModifyContributors:boolean = true;
   public firstLevelFolderLabel: string;
-
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -499,6 +510,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openContributorListPopup() {
+    this.showContributorsListModal = true;
+  }
+
+  closeContributorListPopup() {
+    this.showContributorsListModal = false;
+  }
+
   getUploadVideo(videoId) {
     this.loading = false;
     this.isClosable = true;
@@ -639,17 +658,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return this.telemetryPageId;
   }
 
-  // fetchFrameWorkDetails() {
-  //   this.frameworkService.initialize();
-  //   this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-  //     if (frameworkInfo && !frameworkInfo.err) {
-  //       this.programConfig.framework = frameworkInfo.frameworkdata.defaultFramework.identifier;
-  //       this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
-  //     }
-  //     this.setFrameworkDataToProgram();
-  //   });
-  // }
-
   openForNominations(projectType) {
     //this.isOpenNominations = status;
     if (projectType === 'public') {
@@ -680,6 +688,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     } else {
       this.programScope['medium'] = this.originalProgramScope['medium'];
     }
+  }
+
+  onContributorSave(contributors) {
+    this.setPreSelectedContributors(contributors);
+    this.closeContributorListPopup();
   }
   onMediumChange() {
     this.projectScopeForm.controls['gradeLevel'].setValue('');
@@ -729,6 +742,39 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  setAllowToModifyContributors(content_submission_enddate) {
+    if(this.createProgramForm.value.type === 'restricted' && this.editPublished) {
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const contentSubmissionEndDate = moment(content_submission_enddate);
+      if (contentSubmissionEndDate.isBefore(today)) {
+        this.allowToModifyContributors = false;
+      }
+      else {
+        this.allowToModifyContributors = true;
+      }
+    }
+  }
+
+  setPreSelectedContributors(contributors) {
+    const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
+    const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
+    this.selectedContributors = contributors;
+    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
+      return {
+        osid: org.osid,
+        isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
+      }
+    });
+    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
+      return {
+        osid: user.osid,
+        isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
+      }
+    });
+
+    this.selectedContributorsCnt = this.preSelectedContributors.Org.length + this.preSelectedContributors.User.length;
   }
 
   saveProgramError(err) {
@@ -869,6 +915,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         return o;
       }
     });
+    if (programData.type === 'restricted') {
+      this.programConfig['contributors'] = this.selectedContributors;
+    }
     programData['sourcing_org_name'] = this.userprofile.rootOrg.orgName;
     programData['rootorg_id'] = this.userprofile.rootOrgId;
     programData['createdby'] = this.userprofile.id;
@@ -1002,6 +1051,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       if (prgData['content_submission_enddate']) {
         prgData['content_submission_enddate'].setHours(23,59,59);
+      }
+
+      if (prgData.type === 'restricted') {
+        prgData['config'] = _.get(this.programDetails, 'config');
+        prgData.config['contributors'] = this.selectedContributors;
       }
 
       this.programsService.updateProgram(prgData).subscribe(
@@ -1589,6 +1643,12 @@ showTexbooklist(showTextBookSelector = true) {
       return false;
     }
 
+    if (this.createProgramForm.value.type ==='restricted' && !this.selectedContributorsCnt) {
+      this.navigateTo(1);
+      this.toasterService.warning(this.resource.messages.smsg.selectOneContributor);
+      return false;
+    }
+
     if (this.projectTargetType === 'collections' && _.isEmpty(this.projectScopeForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
       this.toasterService.warning(this.resource.messages.smsg.selectOneTargetCollection);
@@ -1611,8 +1671,7 @@ showTexbooklist(showTextBookSelector = true) {
             'channel': 'sunbird'
           }
         };
-
-        if (this.createProgramForm.value.type === 'public') {
+        if (this.createProgramForm.value.type === 'public' || this.createProgramForm.value.type === 'restricted') {
           this.programsService.publishProgram(data).subscribe(res => {
             this.generateTelemetryEndEvent('publish');
             this.toasterService.success(
