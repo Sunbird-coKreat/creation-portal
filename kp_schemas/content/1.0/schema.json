@@ -365,6 +365,9 @@
             "type": "string",
             "default": "CC BY 4.0"
         },
+        "languageCode": {
+          "type": "array"
+        },
         "language": {
             "type": "array",
             "items": {
@@ -608,6 +611,19 @@
                     "Practice"
                 ]
             }
+        },
+        "interceptionPoints": {
+            "type": "object",
+            "items": {
+                "type": "array"
+            },
+            "default": {}
+        },
+        "interceptionType": {
+            "type": "string",
+            "enum": [
+                "Timestamp"
+            ]
         },
         "feedback": {
             "type": "array",

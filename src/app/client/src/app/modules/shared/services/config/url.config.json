@@ -261,8 +261,7 @@
       "CONFIGURATION_SEARCH": "program/v1/configuration/search",
       "PREFERENCE_READ": "program/v1/preference/read",
       "PREFERENCE_ADD": "program/v1/preference/create",
-      "FEED_SEARCH": "program/v1/feed/search",
-      "PRINT_PREVIEW": "program/v1/print/pdf"
+      "FEED_SEARCH":"program/v1/feed/search"   
     },
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",
@@ -270,7 +269,9 @@
       "GET": "content/v3/read",
       "RETIRE": "content/v3/retire",
       "REJECT": "content/v3/reject",
-      "FLAG": "content/v3/flag"
+      "FLAG": "content/v3/flag",
+      "PRINT_PREVIEW": "program/v1/print/docx",
+      "SEARCH": "composite/v3/search"
     },
     "DOCKCONTENT_MVC": {
       "SEARCH": "mvc/v3/search"

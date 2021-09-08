@@ -5,7 +5,7 @@ import { HelperService } from '../../../sourcing/services/helper.service';
 import { Subscription, Subject, throwError, Observable, of } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
-import * as _ from 'lodash-es';
+import  * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
@@ -95,7 +95,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   private enableQuestionSetEditor: string;
   public openProjectTargetTypeModal= false;
   private projectTargetType: string = null;
-  public showContributorsListModal = false;
+  public showContributorsListModal = fals
   public selectedContributors = {
     Org:[],
     User: []
@@ -513,7 +513,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   openContributorListPopup() {
     this.showContributorsListModal = true;
   }
-
   closeContributorListPopup() {
     this.showContributorsListModal = false;
   }
@@ -694,6 +693,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.setPreSelectedContributors(contributors);
     this.closeContributorListPopup();
   }
+
   onMediumChange() {
     this.projectScopeForm.controls['gradeLevel'].setValue('');
     this.projectScopeForm.controls['subject'].setValue('');
@@ -746,6 +746,39 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   setAllowToModifyContributors(content_submission_enddate) {
     if(this.createProgramForm.value.type === 'restricted' && this.editPublished) {
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const contentSubmissionEndDate = moment(content_submission_enddate);
+      if (contentSubmissionEndDate.isBefore(today)) {
+        this.allowToModifyContributors = false;
+      }
+      else {
+        this.allowToModifyContributors = true;
+      }
+    }
+  }
+
+  setPreSelectedContributors(contributors) {
+    const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
+    const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
+    this.selectedContributors = contributors;
+    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
+      return {
+        osid: org.osid,
+        isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
+      }
+    });
+    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
+      return {
+        osid: user.osid,
+        isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
+      }
+    });
+
+    this.selectedContributorsCnt = this.preSelectedContributors.Org.length + this.preSelectedContributors.User.length;
+  }
+
+  setAllowToModifyContributors(content_submission_enddate) {
+    if(this.projectType === 'restricted' && this.editPublished) {
       const today = moment(moment().format('YYYY-MM-DD'));
       const contentSubmissionEndDate = moment(content_submission_enddate);
       if (contentSubmissionEndDate.isBefore(today)) {
@@ -927,6 +960,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
     //this.programData['default_roles'] = ['CONTRIBUTOR'];
     //programData['enddate'] = this.programData.program_end_date;
+
     // tslint:disable-next-line: max-line-length
     programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
     programData['status'] = this.editPublished ? 'Live' : 'Draft';
@@ -1053,7 +1087,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         prgData['content_submission_enddate'].setHours(23,59,59);
       }
 
-      if (prgData.type === 'restricted') {
+      if (prgData.type === 'restricted') 
         prgData['config'] = _.get(this.programDetails, 'config');
         prgData.config['contributors'] = this.selectedContributors;
       }

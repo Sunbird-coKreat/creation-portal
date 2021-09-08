@@ -771,6 +771,11 @@ $progressCircle: xs calculateRem(16px) 4px 10px, sm calculateRem(24px) 6px 10px,
   }
 }
 .sb-modal.blueprint-modal{
+  sui-select-option{
+    span{
+      line-height: 1.4;
+    }
+  }
   .ui{
       .modal{
           margin: 0.5rem auto 0 !important;
@@ -854,11 +859,11 @@ app-question-set-editor{
   .sb-textarea-container{
     margin: 1rem 0;
   }
+  
   .sb-textarea{
     border: .5px solid #333 !important;
     border-radius: 0 !important;
     height: 2.3rem;
-    margin-top: 10px;
     padding-top: .5rem !important;
     font-size: 0.785rem !important;
     line-height: 1.2rem;
@@ -909,7 +914,7 @@ app-question-set-editor{
       margin-right: 8px;
     }
   }
-  
+
   .list-border{
     ul{
       font-weight: 500 !important;
@@ -989,6 +994,15 @@ app-question-set-editor{
     }
   }
 }
+.dot-separator{
+  margin: 0 8px;
+  background: #999;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  vertical-align: middle;
+  display: inline-block;
+}
 .sb-modal-content.sb-edit-form{
   .dynamic-form sb-dynamic-checkbox.required .font-italic:before{
     margin: -0.2em 0.3rem 0 0em;
@@ -1018,13 +1032,51 @@ app-question-set-editor{
 .ui.tree-picker.tree{
   .node.disabled{
       opacity: 0.8 !important;
-      color: #999  !important; 
+      color: #999  !important;
       cursor: alias !important;
       span{
-        cursor: alias !important; 
+        cursor: alias !important;
       }
       .square{
-        color: #999  !important; 
+        color: #999  !important;
       }
+  }
+}
+
+.middle-section-set {
+  max-width: 854px;
+  width: 100%;
+  margin: 0 auto;
+  .msg-box {
+    margin: ($base-block-space * 4) auto;
+    &__content {
+      border: 1px dotted #024f9d;
+      &__label {
+        color: #00BD7F;
+        padding-bottom: ($base-block-space * 0.75);
+      }
+      &__error-msg {
+        color: var(--red);
+        padding-bottom: ($base-block-space * 0.75);
+      }
+      &__blank-box {
+        height: 100%;
+        width: 100%;
+        border: calculateRem(1px) dotted #80A7CE;
+        background: #F5F9FC;
+        border-radius: ($base-block-space / 2);
+      }
+    }
+  }
+}
+
+.sb-field-disabled {
+  opacity: 0.6 !important;
+  color: #999 !important;
+}
+
+.hover-none{
+  &:hover{
+    background: none !important;
   }
 }

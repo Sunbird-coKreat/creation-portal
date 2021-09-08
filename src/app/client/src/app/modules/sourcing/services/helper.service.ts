@@ -265,6 +265,7 @@ export class HelperService {
       action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00104) :
         this.toasterService.error(this.resourceService.messages.fmsg.m00105);
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
       return true;
     } else {
       return false;
@@ -377,6 +378,7 @@ export class HelperService {
         }
         this.sendNotification.next(_.capitalize(action));
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
     }, (err) => {
       this.acceptContent_errMsg(action);
     });

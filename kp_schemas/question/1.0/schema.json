@@ -48,6 +48,15 @@
     "copyright": {
       "type": "string"
     },
+	"processId": {
+		"type": "string"
+    },
+	"questionFileRefId": {
+		"type": "string"
+    },
+	"questionUploadStatus": {
+        "type": "string"
+    },
     "license": {
       "type": "string",
       "default": "CC BY 4.0"
@@ -156,6 +165,9 @@
     },
     "versionKey": {
       "type": "string"
+    },
+    "languageCode": {
+      "type": "array"
     },
     "language": {
       "type": "array",

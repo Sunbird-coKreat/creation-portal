@@ -84,7 +84,7 @@
 												[telemetryInteractPdata]="telemetryInteractPdata"/>
 											<label for="type_public">{{resource?.frmelmnts?.lbl?.contributionFromAnyOne}}</label>
 										</div>
-                    					<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+                   <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<div> 
 												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('public', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
@@ -106,7 +106,7 @@
 													</div>
 												</div>
 											</span>
-                    					</div>
+                    </div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<input type="radio" formControlName="type" id="type_private" value="private" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('private', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 											[telemetryInteractObject]="telemetryInteractObject"

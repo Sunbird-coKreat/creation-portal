@@ -126,4 +126,5 @@ describe('ContentEditorComponent', () => {
     component.getFormData(formInput);
     expect(component.formInputData).toBe(formInput);
   });
+
 });

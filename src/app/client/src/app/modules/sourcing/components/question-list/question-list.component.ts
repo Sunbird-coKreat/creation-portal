@@ -102,7 +102,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public telemetryService: TelemetryService, private fb: FormBuilder,
     private notificationService: NotificationService, private sourcingService: SourcingService, public contentService: ContentService,
     private itemsetService: ItemsetService, private helperService: HelperService,
-    private resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
+    public resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
     public router: Router, private navigationHelperService: NavigationHelperService,
     public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService,
@@ -124,7 +124,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sessionContext.textBookUnitIdentifier = _.get(this.practiceQuestionSetComponentInput, 'unitIdentifier');
     this.practiceSetConfig = _.get(this.practiceQuestionSetComponentInput, 'config');
     this.sourcingReviewStatus = _.get(this.practiceQuestionSetComponentInput, 'sourcingStatus') || '';
-    this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength;
+    this.resourceTitleLimit = this.practiceSetConfig.config.resourceTitleLength || 200;
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.sessionContext.telemetryPageId = this.telemetryPageId;
     this.sessionContext.practiceSetConfig = this.practiceSetConfig;
@@ -460,10 +460,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   handleCallback() {
     switch (this.requiredAction) {
       case 'review':
-        this.saveMetadataForm(this.sendForReview);
+        this.saveMetadataForm(this.sendForReview, true);
         break;
       case 'publish':
-        this.saveMetadataForm(this.publishContent);
+        this.saveMetadataForm(this.publishContent, true);
         break;
       default:
         this.saveMetadataForm();
@@ -471,7 +471,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  saveMetadataForm(cb?) {
+  saveMetadataForm(cb?, emitHeaderEvent?) {
     if (this.helperService.validateForm(this.formstatus)) {
       console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
@@ -489,6 +489,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
           this.showEditMetaForm = false;
+          if (emitHeaderEvent) {
+            this.programsService.emitHeaderEvent(true);
+          }
           if (cb) {
             cb.call(this);
           } else {
@@ -877,6 +880,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.generateTelemetryEndEvent('submit');
           this.toasterService.success(this.resourceService.messages.smsg.m0061);
           this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
@@ -911,6 +915,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.generateTelemetryEndEvent('publish');
           this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
           this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
@@ -940,6 +945,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.m0062);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
             this.uploadedContentMeta.emit({
               contentId: contentId
             });
@@ -971,6 +977,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         this.uploadedContentMeta.emit({
           contentId: res.result.node_id
         });
@@ -1282,6 +1289,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.generateTelemetryEndEvent('back');
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
     }
   }
 

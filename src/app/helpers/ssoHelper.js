@@ -181,18 +181,13 @@ const createSSOSession = async (loginId, client_id, req, res) => {
   let keycloakClient = keyCloakClient;
   let scope = 'openid';
   try {
-    console.log('before grant', loginId, scope);
     grant = await keycloakClient.grantManager.obtainDirectly(loginId, undefined, undefined, scope).catch(handleError);
-    console.log('after grant', grant);
     keycloakClient.storeGrant(grant, req, res);
-    console.log('after storeGrant');
     req.kauth.grant = grant;
     return new Promise((resolve, reject) => {
-      console.log('after Promise');
       keycloakClient.authenticated(req, function (error) {
-        console.log('after authenticated');
         if (error) {
-          logger.info({msg: 'SsoHelper:createSession error creating session', additionalInfo: error});
+          logger.info({msg: 'SsoHelper:createSSOSession error creating session', additionalInfo: error});
           reject('ERROR_CREATING_SSO_SESSION')
         } else {
           resolve({
@@ -202,14 +197,14 @@ const createSSOSession = async (loginId, client_id, req, res) => {
         }
       });
     });
-  }catch (e) {
+  } catch (e) {
     handleError(e);
   }
 }
 
 const handleError = (error) => {
   logger.error({
-    msg: 'userService: handleError',
+    msg: 'ssoHelper: handleError',
     error: error,
     params: _.get(error, 'error.params'),
     message: _.get(error, 'message')
@@ -219,7 +214,7 @@ const handleError = (error) => {
   } else if (error instanceof Error) {
     throw error.message;
   } else {
-    throw 'unhandled exception while accepting tnc';
+    throw 'unhandled exception while sourcing sso';
   }
 };
 
@@ -231,16 +226,11 @@ const createSession = async (loginId, client_id, req, res) => {
     keycloakClient = keycloakTrampolineAndroid;
     scope = 'offline_access';
   }
-  console.log('before grant', loginId, scope);
   grant = await keycloakClient.grantManager.obtainDirectly(loginId, undefined, undefined, scope);
-  console.log('after grant', grant);
   keycloakClient.storeGrant(grant, req, res);
-  console.log('after storeGrant');
   req.kauth.grant = grant;
   return new Promise((resolve, reject) => {
-    console.log('after Promise');
     keycloakClient.authenticated(req, function (error) {
-      console.log('after authenticated');
       if (error) {
         logger.info({msg: 'SsoHelper:createSession error creating session', additionalInfo: error});
         reject('ERROR_CREATING_SSO_SESSION')

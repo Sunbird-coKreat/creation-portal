@@ -79,7 +79,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public questionPattern: Array<any> = [];
   public viewBlueprintFlag: boolean;
   public displayPrintPreview: boolean;
-  public pdfData: any;
+  public printPreviewResponseData: any;
   public viewBlueprintDetailsFlag: boolean;
   public blueprintTemplate: any;
   public localBlueprint: any;
@@ -364,9 +364,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getCollectionCategoryDefinition() {
-    if (this.collection.primaryCategory && this.programContext.rootorg_id) {
+    if (this.programContext.target_collection_category && this.programContext.rootorg_id) {
       // tslint:disable-next-line:max-line-length
-      this.programsService.getCategoryDefinition(this.collection.primaryCategory,this.programContext.rootorg_id,
+      this.programsService.getCategoryDefinition(this.programContext.target_collection_category[0], this.programContext.rootorg_id,
         'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         // tslint:disable-next-line:max-line-length
@@ -398,18 +398,31 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   printPreview(): void {
     this.toasterService.info(this.resourceService.messages.imsg.m0076 || 'Generating PDF. Please wait...')
     let identifier = this.collectionData.identifier;
-    this.programsService.generateCollectionPDF(identifier).subscribe((res) => {      
+    this.programsService.generateCollectionDocx(identifier).subscribe((res) => {      
       if(res.responseCode === 'OK') {
-        this.pdfData = res.result.base64string;
-        const byteCharacters = atob(this.pdfData);
+        this.printPreviewResponseData = res.result.base64string;
+        let fileName = res.result.filename;
+        const byteCharacters = atob(this.printPreviewResponseData);
         let byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        const file = new Blob([byteArray], { type: 'application/pdf;base64' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
+        const file = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main' });
+        if (window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(file, fileName);
+        } else {
+          const a = document.createElement('a');
+          document.body.appendChild(a);          
+          const fileURL = URL.createObjectURL(file);
+          a.href = fileURL;
+          a.download = fileName;
+          a.click();
+          setTimeout(() => {
+            URL.revokeObjectURL(fileURL);
+            document.body.removeChild(a);
+          }, 0)          
+        }
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToPrint)
       });
@@ -1079,11 +1092,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.contentId = result.identifier;
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
+              this.programsService.emitHeaderEvent(false)
+               // tslint:disable-next-line:max-line-length
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
     } else if (event.templateDetails) {
       this.templateDetails = event.templateDetails;
+      this.programsService.emitHeaderEvent(false)
       // tslint:disable-next-line:max-line-length
       this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
     }
@@ -1112,6 +1128,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
+        this.programsService.emitHeaderEvent(false)
       
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
