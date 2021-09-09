@@ -99,57 +99,45 @@ describe('ContributorsListComponent', () => {
     expect(pageId).toEqual('create-program');
   });
 
-  it('getOrgCreatorIds should call registryService.getUserdetailsByOsIds', () => {
-    spyOn(component, 'getOrgCreatorIds').and.callThrough();
+  it('getOrgCreatorInfo should call registryService.getUserdetailsByOsIds', () => {
+    spyOn(component, 'getOrgCreatorInfo').and.callThrough();
     const registryService = TestBed.get(RegistryService);
-    spyOn(component, 'getOrgUsersDetails').and.callFake(() => {});
-    spyOn(registryService, 'getUserdetailsByOsIds').and.returnValue(of(mockData.orgList));
-    component.getOrgCreatorIds('123');
+    spyOn(component, 'getUsers').and.callFake(() => {});
+    spyOn(registryService, 'getUserdetailsByOsIds').and.returnValue(of(mockData.userDetails));
+    component.getOrgCreatorInfo([[123, 456]], [{'userId': 123}, {'userId': 456}]);
     expect(registryService.getUserdetailsByOsIds).toHaveBeenCalled();
     expect(component.orgList).toBeDefined();
-    expect(component.getOrgUsersDetails).toHaveBeenCalled();
+    expect(component.getUsers).toHaveBeenCalled();
   });
 
-  it('getOrgUsersDetails should call programsService.getOrgUsersDetails', () => {
-    spyOn(component, 'getOrgUsersDetails').and.callThrough();
-    const programsService = TestBed.get(ProgramsService);
-    spyOn(component, 'showFilteredResults').and.callFake(() => {});
-    spyOn(programsService, 'getOrgUsersDetails').and.returnValue(of(mockData.orgUserDetails));
-    component.getOrgUsersDetails('123');
-    expect(programsService.getOrgUsersDetails).toHaveBeenCalled();
-    expect(component.orgList).toBeDefined();
-    expect(component.showFilteredResults).toHaveBeenCalled();
-  });
-
-  it('NavigateToPage should set pager value', () => {
+  xit('navigateToPage should set pager value', () => {
     const paginationService = TestBed.get(PaginationService);
     spyOn(paginationService, 'getPager').and.returnValue([]);
     component.pager = mockData.pager;
     component.paginatedList[44] = [];
     component.listCnt = 1;
     component.pageLimit = 5;
-    spyOn(component, 'NavigateToPage').and.callThrough();
-    component.NavigateToPage(45);
+    spyOn(component, 'getUsers').and.returnValue(of({}));
+    spyOn(component, 'navigateToPage').and.callThrough();
+    component.navigateToPage(45);
     expect(component.pageNumber).toEqual(45);
     expect(paginationService.getPager).toHaveBeenCalled();
   });
 
-  it('clearSearch should call showFilteredResults', () => {
-    spyOn(component, 'showFilteredResults').and.callFake(() => {});
+  it('clearSearch should call getData', () => {
+    spyOn(component, 'getData').and.callFake(() => {});
     spyOn(component, 'clearSearch').and.callThrough();
     component.clearSearch();
-    expect(component.showFilteredResults).toHaveBeenCalled();
+    expect(component.getData).toHaveBeenCalled();
   });
 
   it('showFilteredResults should call hideLoader', () => {
-    spyOn(component, 'displayLoader').and.callFake(() => {});
     spyOn(component, 'applySearchFilter').and.returnValue([]);
     spyOn(component, 'applySort').and.returnValue([]);
     spyOn(component, 'applyPagination').and.returnValue([]);
     spyOn(component, 'hideLoader').and.callFake(() => {});
     spyOn(component, 'showFilteredResults').and.callThrough();
     component.showFilteredResults();
-    expect(component.displayLoader).toHaveBeenCalled();
     expect(component.applySearchFilter).toHaveBeenCalled();
     expect(component.applySort).toHaveBeenCalled();
     expect(component.applyPagination).toHaveBeenCalled();
@@ -158,11 +146,11 @@ describe('ContributorsListComponent', () => {
 
   it('applySort should call programsService.sortCollection', () => {
     component.direction = 'asc';
-    component.sortColumn = 'name';
+    component.orgSortColumn = 'name';
     spyOn(component, 'applySort').and.callThrough();
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'sortCollection').and.returnValue([]);
-    component.applySort([]);
+    component.applySort([], component.orgSortColumn);
     expect(programsService.sortCollection).toHaveBeenCalled();
   });
 
