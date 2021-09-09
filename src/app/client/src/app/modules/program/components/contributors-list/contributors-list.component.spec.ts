@@ -99,7 +99,7 @@ describe('ContributorsListComponent', () => {
     expect(pageId).toEqual('create-program');
   });
 
-  it('getOrgCreatorIds should call registryService.getUserdetailsByOsIds', () => {
+  xit('getOrgCreatorIds should call registryService.getUserdetailsByOsIds', () => {
     spyOn(component, 'getOrgCreatorIds').and.callThrough();
     const registryService = TestBed.get(RegistryService);
     spyOn(component, 'getOrgUsersDetails').and.callFake(() => {});

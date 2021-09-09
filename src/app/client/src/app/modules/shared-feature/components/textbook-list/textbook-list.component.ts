@@ -198,7 +198,7 @@ export class TextbookListComponent implements OnInit {
           this.resourceService.frmelmnts.lbl.profile.Medium,
           this.resourceService.frmelmnts.lbl.profile.Classes,
           this.resourceService.frmelmnts.lbl.profile.Subjects,
-          this.resourceService.frmelmnts.lbl.chapterCount,
+          this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
           this.resourceService.frmelmnts.lbl.nominationReceived,
           this.resourceService.frmelmnts.lbl.samplesRecieved,
           this.resourceService.frmelmnts.lbl.nominationAccepted,
