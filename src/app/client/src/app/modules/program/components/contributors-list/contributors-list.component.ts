@@ -81,7 +81,7 @@ export class ContributorsListComponent implements OnInit {
       (data) => {
         if (!_.isEmpty(_.get(data, "result.Org"))) {
           this.orgList = this.orgList.concat(_.get(data, "result.Org"));
-            offset = offset + this.osLimit;
+          offset = offset + this.osLimit;
           this.getOrgList(limit, offset);
         } else {
           this.orgList = _.filter(
@@ -136,7 +136,6 @@ export class ContributorsListComponent implements OnInit {
                   return user;
                 }
               });
-
               if (!_.isUndefined(org.User) && _.get(org, "name")) {
                 return org;
               }
@@ -269,7 +268,7 @@ export class ContributorsListComponent implements OnInit {
       return list.filter((item) => {
         const firstName = _.get(item, 'firstName') ? _.get(item, 'firstName').toString().toLocaleLowerCase() : "";
         const lastName = _.get(item, 'lastName') ? _.get(item, 'lastName').toString().toLocaleLowerCase() : "";
-        const fullName = firstName +" "+ lastName;
+        const fullName = firstName + " " + lastName;
         if (firstName.includes(searchStr) || lastName.includes(searchStr) || fullName.includes(searchStr)) {
           return item;
         }
@@ -443,7 +442,7 @@ export class ContributorsListComponent implements OnInit {
   }
 
   getIndividualList(limit = this.osLimit, offset = 0) {
-    const filters = {"roles": {"contains": "individual"}};
+    const filters = { "roles": { "contains": "individual" } };
     this.registryService.getUserList(limit, offset, filters).subscribe(
       (data) => {
         if (!_.isEmpty(_.get(data, "result.User"))) {

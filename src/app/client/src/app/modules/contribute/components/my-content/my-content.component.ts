@@ -309,7 +309,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   getContents() {
     const isContributingOrgAdmin =  this.userService.isContributingOrgAdmin();
     const option = {
-      url: 'composite/v3/search',
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.SEARCH}`,
       data: {
         request: {
           filters: {
@@ -326,7 +326,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
             'name', 'status', 'framework', 'board', 'gradeLevel', 'medium',
           'subject', 'creator', 'mimeType', 'lastPublishedBy', 'me_totalRatingsCount', 'me_averageRating',
           'me_totalTimeSpentInSec', 'me_totalPlaySessionCount', 'createdOn', 'primaryCategory', 'channel'],
-          limit: 1000
+          limit: 10000
         }
       }
     };
@@ -346,7 +346,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
           },
           exists: ['originData'],
           fields: ['status', 'origin', 'lastPublishedBy', 'lastPublishedOn', 'publisher'],
-          limit: 1000
+          limit: 10000
         }
       }
     };
