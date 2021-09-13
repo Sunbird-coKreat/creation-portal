@@ -19,7 +19,7 @@ import { AuthGuard } from './guard/auth-gard.service';
 import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { CommonFormElementsModule } from 'common-form-elements-v9';
+import { CommonFormElementsModule } from 'common-form-elements-web-v9';
 @NgModule({
   imports: [
     CommonModule,
