@@ -234,13 +234,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (this.projectTargetType === 'collections') {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
      // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
-      this.projectScopeForm.get('target_collection_category').valueChanges.subscribe(value => {
-        this.projectScopeForm.controls['framework'].setValue(value);
-        this.showTexbooklist(true);
-        this.projectScopeForm.value.pcollections = [];
-        this.getCollectionCategoryDefinition();
-        this.tempCollections = [];
-      });
     }
     this.setProjectScopeDetails();
   }
@@ -250,11 +243,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if ((this.projectTargetType === 'collections')) {
       this.initializeFrameworkForTatgetType('')
-    } else {
-      this.frameworkService.getChannelData(this.userService.hashTagId);
-      this.frameworkService.channelData$.subscribe((channelData) => {
-        if (!channelData.err) {
-          this.programScope['userChannelData'] = _.get(channelData, 'channelData');
+    } 
+    this.frameworkService.getChannelData(this.userService.hashTagId);
+    this.frameworkService.channelData$.subscribe((channelData) => {
+      if (!channelData.err) {
+        this.programScope['userChannelData'] = _.get(channelData, 'channelData');
+        if (this.projectTargetType === 'searchCriteria') {
           this.getFramewok().subscribe(
             (response) => {
               if (!response) {
@@ -264,28 +258,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
                 this.initializeFrameworkForTatgetType(response.identifier);
               }
           });
-          const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
-          const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
-          const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
-          const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-          this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
-          if (_.toLower(this.enableQuestionSetEditor) === 'true') {
-            this.programScope['targetPrimaryObjects'] = questionSetCategories;
-            this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
-          }
-         // tslint:disable-next-line:max-line-length
-          this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
-            if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
-              this.programScope['targetPrimaryCategories'].push(o.name);
-              return o;
-            }
-          }));
-          // tslint:disable-next-line:max-line-length
-          this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
-          this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
         }
-      });
-    }
+        const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
+        const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+        const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
+        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+        this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
+        if (_.toLower(this.enableQuestionSetEditor) === 'true') {
+          this.programScope['targetPrimaryObjects'] = questionSetCategories;
+          this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
+        }
+        // tslint:disable-next-line:max-line-length
+        this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+          if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+            this.programScope['targetPrimaryCategories'].push(o.name);
+            return o;
+          }
+        }));
+        // tslint:disable-next-line:max-line-length
+        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
+        this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
+      }
+    });
   }
   initializeFrameworkForTatgetType (frameworkName) {
     this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
@@ -1027,12 +1021,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.validateDates();
   }
-/*onChangeTargetCollection() {
+onChangeTargetCollectionCategory() {
+  this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
   this.showTexbooklist(true);
   this.projectScopeForm.value.pcollections = [];
   this.getCollectionCategoryDefinition();
   this.tempCollections = [];
-}*/
+}
 showTexbooklist(showTextBookSelector = true) {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
     if (!primaryCategory) {
