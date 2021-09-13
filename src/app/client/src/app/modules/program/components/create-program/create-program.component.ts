@@ -727,19 +727,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   setPreSelectedContributors(contributors) {
     const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
     const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
-    this.selectedContributors = contributors;
-    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
-      return {
-        osid: org.osid,
-        isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
-      }
-    });
-    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
-      return {
-        osid: user.osid,
-        isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
-      }
-    });
+
+    if (_.get(contributors, 'Org') !== null) {
+      this.selectedContributors.Org = _.get(contributors, 'Org');
+      this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
+        return {
+          osid: org.osid,
+          isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
+        }
+      });
+    }
+
+    if (_.get(contributors, 'User') !== null) {
+      this.selectedContributors.User = _.get(contributors, 'User');
+      this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
+        return {
+          osid: user.osid,
+          isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
+        }
+      });
+    }
 
     this.selectedContributorsCnt = this.preSelectedContributors.Org.length + this.preSelectedContributors.User.length;
   }

@@ -253,7 +253,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   async updateAccordianView(unitId?, onSelectChapterChange?) {
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
+    if (this.isSkipTwoLevelReviewEnabled() && this.isRestrictedProgram()) {
+      this.sessionContext.currentOrgRole = 'individual';
+    }
+    else if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
       await this.getCollectionHierarchy(this.sessionContext.collection,
@@ -398,7 +401,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   printPreview(): void {
     this.toasterService.info(this.resourceService.messages.imsg.m0076 || 'Generating PDF. Please wait...')
     let identifier = this.collectionData.identifier;
-    this.programsService.generateCollectionDocx(identifier).subscribe((res) => {      
+    this.programsService.generateCollectionDocx(identifier).subscribe((res) => {
       if(res.responseCode === 'OK') {
         this.printPreviewResponseData = res.result.base64string;
         let fileName = res.result.filename;
@@ -413,7 +416,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           window.navigator.msSaveOrOpenBlob(file, fileName);
         } else {
           const a = document.createElement('a');
-          document.body.appendChild(a);          
+          document.body.appendChild(a);
           const fileURL = URL.createObjectURL(file);
           a.href = fileURL;
           a.download = fileName;
@@ -421,7 +424,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           setTimeout(() => {
             URL.revokeObjectURL(fileURL);
             document.body.removeChild(a);
-          }, 0)          
+          }, 0)
         }
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToPrint)
@@ -1129,7 +1132,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
         this.programsService.emitHeaderEvent(false)
-      
+
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
     //   return false;
@@ -1624,4 +1627,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.updateAccordianView();
   }
 
+  isRestrictedProgram() {
+    return _.get(this.programContext, 'type') === 'restricted';
+  }
+
+  isSkipTwoLevelReviewEnabled() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
+  }
 }
