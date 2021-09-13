@@ -227,6 +227,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
 
   onPreview(content: any) {
     this.slectedContent = content;
+    this.slectedContent['totalViews'] = this.getCountData(content, 'me_totalPlaySessionCount');
     this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
     this.getConfigByContent(content.identifier);
   }
