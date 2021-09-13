@@ -113,6 +113,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public viewNewBlueprint: boolean;
   public detailBlueprintFormConfig:any;
 
+  public addFormLibraryInput = {};
+  editorConfig: any;
+  private deviceId: string;
+  private buildNumber: string;
+  private portalVersion: string;
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -122,6 +128,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService,
     private programsService: ProgramsService, public programTelemetryService: ProgramTelemetryService) {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
+    this.deviceId = deviceId ? deviceId.value : '';
+    this.buildNumber = buildNumber ? buildNumber.value : '1.0';
+    this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
   }
 
   ngOnInit() {
@@ -1261,6 +1272,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.contentId = event.content.identifier;
         this.handlePreview(event);
         break;
+      case 'addFromLibrary':
+        this.currentStage = 'addFromLibrary';
+        this.setAddLibraryInput();
+        break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
         break;
@@ -1717,4 +1732,58 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   isSkipTwoLevelReviewEnabled() {
     return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
   }
+
+  setAddLibraryInput() {
+    this.addFormLibraryInput = {
+      collectionId: this.sessionContext.collection,
+      editorConfig: {
+        context: {
+          identifier: this.sessionContext.collection,
+          channel: this.programContext.rootorg_id,
+          user: {
+            id: this.userService.userid,
+            orgIds: this.userProfile.organisationIds,
+            organisations: this.userService.orgIdNameMap,
+            fullName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
+              this.userProfile.firstName,
+            firstName: this.userProfile.firstName,
+            lastName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.lastName : '',
+            isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
+          },
+          sid: this.userService.sessionId,
+          did: this.deviceId,
+          uid: this.userService.userid,
+          pdata: {
+            id: this.userService.appId,
+            ver: this.portalVersion,
+            pid: 'sunbird-portal'
+          },
+          authToken: '',
+          contextRollup: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
+          tags: this.userService.dims,
+          timeDiff: this.userService.getServerTimeDiff,
+          defaultLicense: this.frameworkService.getDefaultLicense(),
+          endpoint: '/data/v3/telemetry',
+          env: 'question_editor'
+        },
+        config: {
+          mode: 'edit',
+          objectType: 'QuestionSet',
+          primaryCategory: 'Practice Question Set',
+          isRoot: true,
+          iconClass: 'fa fa-book',
+          showAddCollaborator: false,
+          children: {
+            Question: [
+              'Multiple Choice Question',
+              'Subjective Question'
+            ]
+          },
+          contentPolicyUrl: '/term-of-use.html'
+        }
+      },
+      searchFormConfig: {}
+    };
+  }
+
 }
