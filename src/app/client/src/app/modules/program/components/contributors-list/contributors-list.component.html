@@ -1,5 +1,5 @@
 <div class="sb-modal-header">
-  {{resource?.frmelmnts?.lbl?.createProject?.selectContributors}}
+  {{resource?.frmelmnts?.lbl?.selectContributorsHeading}}
 </div>
 <div class="sb-modal-content">
   <div class="d-flex">
@@ -13,10 +13,10 @@
         [disabled]="showLoader">{{resource?.frmelmnts?.lbl?.search}}</button>
     </div>
     <div class="w-100 ml-20">
-      <label class="d-block">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.types}}
+      <label class="d-block">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.types}}
         <i class="pull-right question circle link icon pull-right" suiPopup
 											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.tooltip}}"></i>
+											popupText="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.tooltip}}"></i>
       </label>
       <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData()"
         [options]="contributorTypes" #types [isDisabled]="showLoader">
@@ -35,9 +35,9 @@
             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
           </span>
         </th>
-        <th class="w-5">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.email}}</th>
-        <th class="w-5">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.mobile}}</th>
-        <th class="w-5">{{resource?.frmelmnts?.lbl?.createProject?.contributor.cls.type}}</th>
+        <th class="w-5">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.email}}</th>
+        <th class="w-5">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.mobile}}</th>
+        <th class="w-5">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor.cls.type}}</th>
       </tr>
     </thead>
     <tbody class="sb-table-body">
