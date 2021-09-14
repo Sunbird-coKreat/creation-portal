@@ -203,7 +203,7 @@ export class ProgramsService extends DataService implements CanActivate {
       return false;
     }
   } else if (updateOsid) {
-    this.updateUserRole(updateOsid, _.uniq(uRoles)).subscribe(
+    this.updateUserRole(updateOsid, _.uniq(uRoles), UserOsid).subscribe(
       (userAddRes) => {
         console.log('User added to org'+ UserOsid, userAddRes);
         this.onAfterJoinRedirect();
@@ -230,7 +230,13 @@ export class ProgramsService extends DataService implements CanActivate {
 
       this.addToRegistry(userOrgAdd).subscribe(
         (res) => {
-          this.onAfterJoinRedirect();
+          this.updateUser(UserOsid, userOrgAdd.User_Org.roles).subscribe(response => {
+            this.onAfterJoinRedirect();
+          },
+          err => {
+            this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
+            this.router.navigate(['contribute/myenrollprograms']);
+          });
         },
         (error) => {
           this.toasterService.error(this.resourceService.messages.fmsg.contributorjoin.m0002);
@@ -1002,7 +1008,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }));
     }
   }
-  
+
   isNotEmpty(obj, key) {
    if (_.isNil(obj) || _.isNil(obj[key])) {
      return false;
@@ -1086,9 +1092,34 @@ export class ProgramsService extends DataService implements CanActivate {
     }
 
   /**
+   * @param osid   User osid
+   * @param roles  User roles
+   * @returns
+   */
+  updateUser(osid, roles) {
+    const request = {
+      User: {
+        osid: osid,
+        roles: roles
+      }
+    };
+    return this.updateToRegistry(request);
+  }
+
+  /**
   * Function to update the role of org user
   */
-  updateUserRole(osid, newRoles) {
+  updateUserRole(osid, newRoles, userOsid?) {
+    if (userOsid) {
+      const userUpdate = {
+        User: {
+          osid: userOsid,
+          roles: newRoles
+        }
+      };
+      this.updateToRegistry(userUpdate);
+    }
+
     const userOrgUpdate = {
       User_Org: {
         osid: osid,
@@ -1371,7 +1402,7 @@ export class ProgramsService extends DataService implements CanActivate {
 
  /**
   * Function to get the hierarchy of the collection from origin i.e. Diksha
-  * @param identifier collection id 
+  * @param identifier collection id
   * @returns API response
   */
  getHierarchyFromOrigin(identifier) : Observable<ServerResponse> {
