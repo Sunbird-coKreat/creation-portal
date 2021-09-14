@@ -1,5 +1,36 @@
-<div class="ui container pb-48">
-  <div class="sb-pageSection my-24">
+<sui-tabset *ngIf="!isContributor && issourcingOrgAdmin">
+  <div class="ui pointing secondary menu sb-bg-color-primary-100">
+    <div class="ui container">
+      <div class="p-0 m-0 d-flex">
+        <a class="item" [isActive]="forTargetType === 'collections'"  suiTabHeader="1"  (click)="forTargetType='collections';getProgramsListByRole()"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('collections', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectContributions)"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forCollections }}
+        </a>
+        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="forTargetType='searchCriteria';getProgramsListByRole()"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forSearchCriteria }}
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="1">
+    <ng-container *ngTemplateOutlet="projectList"></ng-container>
+  </div> 
+  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
+    <ng-container *ngTemplateOutlet="projectList"></ng-container>
+  </div>    
+</sui-tabset>
+<div *ngIf="isContributor  || !issourcingOrgAdmin">
+  <ng-container *ngTemplateOutlet="projectList"></ng-container>
+</div>
+<ng-template #projectList>
+<div class="ui container pt-10 m-0">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">
@@ -244,8 +275,8 @@
         </ng-template>
       <!-- </ng-container> -->
     </div>
-  </div>
 </div>
+</ng-template>
 <sui-modal *ngIf="showCloseModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
   class="sb-modal" appBodyScroll (dismissed)="showCloseModal = false" #modal>
   <div class="sb-modal-header">
