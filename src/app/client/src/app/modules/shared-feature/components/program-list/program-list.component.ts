@@ -56,6 +56,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public inviewLogs: any = [];
   public impressionEventTriggered: Boolean = false;
   public userProfile = this.userService.userProfile;
+  public forTargetType = 'collections';
 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -546,6 +547,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (this.userService.isSourcingOrgAdmin()) {
       filters['rootorg_id'] = _.get(this.userService, 'userProfile.rootOrgId');
       filters['status'] = ['Live', 'Unlisted', 'Draft', 'Closed'];
+      filters['target_type'] = this.forTargetType;
     } else {
       filters['status'] = ['Live', 'Unlisted', 'Closed'];
       filters['role'] = ['REVIEWER'];
@@ -696,28 +698,53 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   modifyNomination() {
     if (this.selectedProgramToModify) {
-      // Update nomination back to Initiated stage
-      const req = {
-        program_id: this.selectedProgramToModify.program_id,
-        status: 'Initiated',
-        updatedby: this.userService.userid
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.bulkApprove.something,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: {}
       };
-
-      this.programsService.addorUpdateNomination(req).subscribe((data) => {
-        if (data === 'Approved' || data === 'Rejected') {
-          this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
-          this.ngOnInit();
+      // Update nomination back to Initiated stage
+      let filters = { 'program_id': this.selectedProgramToModify.program_id }
+      if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+        filters['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+      } else {
+        filters['user_id'] = this.userService.userProfile.identifier;
+      }
+  
+      this.programsService.getNominationList(filters).subscribe((res)=>{
+        if (res.result && res.result.length) { 
+          const nomination = _.first(res.result);
+          if (nomination.status === 'Approved' || nomination.status === 'Rejected') {
+            this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${nomination.status}`);
+            this.ngOnInit();
+          } else if (nomination.status === 'Pending') {
+            const request = { 
+              "request" : {
+                program_id: this.selectedProgramToModify.program_id,
+                status: 'Initiated',
+                updatedby: this.userService.userid
+              }
+            }
+            if (!_.isEmpty(this.userService.userProfile.userRegData.User_Org)) {
+              request.request['organisation_id'] = this.userService.userProfile.userRegData.User_Org.orgId;
+            } else {
+              request.request['user_id'] = this.userService.userProfile.identifier;
+            }
+            this.programsService.updateNomination(request).subscribe((res)=> {
+              this.router.navigateByUrl('/contribute/program/' + this.selectedProgramToModify.program_id);
+            }, (err)=>{
+              this.sourcingService.apiErrorHandling(err, errInfo);
+            })
+          } else {
+            this.router.navigateByUrl('/contribute/program/' + this.selectedProgramToModify.program_id);
+          }
         } else {
-          this.router.navigateByUrl('/contribute/program/' + this.selectedProgramToModify.program_id);
+          this.toasterService.error(this.resourceService.messages.stmsg.m0146);
+          this.ngOnInit();
         }
-      }, err => {
-        const errInfo = {
-          errorMsg: this.resourceService.messages.emsg.bulkApprove.something,
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activeRoute.snapshot.data.telemetry.env,
-          request: req
-        };
+      }, (err)=> {
         this.sourcingService.apiErrorHandling(err, errInfo);
       });
     } else {
