@@ -1384,21 +1384,11 @@ showTexbooklist(showTextBookSelector = true) {
   initEditBlueprintForm(collection) {
     let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
     [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
-    // this.blueprintFormConfig = this.programsService.initializeFormFields(this.frameworkCategories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
+    this.blueprintFormConfig = this.programsService.initializeFormFields(this.frameworkCategories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
  
     this.blueprintFormConfig.forEach((element) => {
       if(element.fields) {
         element.fields.forEach(field => {
-          if(field.code === 'topics'){
-            field.range = _.map(this.initTopicOptions, data => {
-              return {name: data.name};
-            });
-          }
-          else if(field.code === 'learningOutcomes') {
-              field.range = _.map(this.initLearningOutcomeOptions, data => {
-                return {name: data.name};
-              });
-            }
             field.default='';
         });
       }
