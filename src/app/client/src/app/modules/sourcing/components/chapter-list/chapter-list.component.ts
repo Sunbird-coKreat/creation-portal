@@ -1735,6 +1735,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   setAddLibraryInput() {
     this.addFormLibraryInput = {
+      framework: this.sessionContext.framework,
       collectionId: this.sessionContext.collection,
       editorConfig: {
         context: {
@@ -1782,7 +1783,89 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           contentPolicyUrl: '/term-of-use.html'
         }
       },
-      searchFormConfig: {}
+      searchFormConfig: [
+        {
+          "code": "primaryCategory",
+          "dataType": "list",
+          "description": "Type",
+          "editable": true,
+          "default": [],
+          "renderingHints": {
+            "class": "sb-g-col-lg-1"
+          },
+          "inputType": "nestedselect",
+          "label": "Content Type(s)",
+          "name": "Type",
+          "placeholder": "Select ContentType",
+          "required": false,
+          "visible": true
+        },
+        {
+          "code": "gradeLevel",
+          "visible": true,
+          "depends": [
+            "board",
+            "medium"
+          ],
+          "editable": true,
+          "default": "",
+          "dataType": "list",
+          "renderingHints": {
+            "class": "sb-g-col-lg-1"
+          },
+          "description": "Class",
+          "label": "Class(es)",
+          "required": false,
+          "name": "Class",
+          "inputType": "nestedselect",
+          "placeholder": "Select Class",
+          "output": "name"
+        },
+        {
+          "code": "subject",
+          "visible": true,
+          "depends": [
+            "board",
+            "medium",
+            "gradeLevel"
+          ],
+          "editable": true,
+          "default": "",
+          "dataType": "list",
+          "renderingHints": {
+            "class": "sb-g-col-lg-1"
+          },
+          "description": "",
+          "label": "Subject(s)",
+          "required": false,
+          "name": "Subject",
+          "inputType": "nestedselect",
+          "placeholder": "Select Subject",
+          "output": "name"
+        },
+        {
+          "code": "topic",
+          "visible": true,
+          "editable": true,
+          "dataType": "list",
+          "depends": [
+            "board",
+            "medium",
+            "gradeLevel",
+            "subject"
+          ],
+          "default": "",
+          "renderingHints": {
+            "class": "sb-g-col-lg-1"
+          },
+          "name": "Topic",
+          "description": "Choose a Topics",
+          "inputType": "topicselector",
+          "label": "Topic(s)",
+          "placeholder": "Choose Topics",
+          "required": false
+        }
+      ]
     };
   }
 
