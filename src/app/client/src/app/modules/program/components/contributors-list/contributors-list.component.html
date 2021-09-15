@@ -6,7 +6,8 @@
     <div class="sb-search-box medium mb-15 mt-20">
       <div class="input-div relative">
         <i class="search icon"></i>
-        <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.search}}" />
+        <input class="sb-search-input" [(ngModel)]="searchInput" type="text"
+          placeholder="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.search}}" />
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
       <button class="sb-btn sb-btn-normal" (click)="getData()"
@@ -14,9 +15,8 @@
     </div>
     <div class="w-100 ml-20">
       <label class="d-block">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.types}}
-        <i class="pull-right question circle link icon pull-right" suiPopup
-											popupDelay="500" [popupPlacement]="'left'"
-											popupText="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.tooltip}}"></i>
+        <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" [popupPlacement]="'left'"
+          popupText="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.tooltip}}"></i>
       </label>
       <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData()"
         [options]="contributorTypes" #types [isDisabled]="showLoader">
@@ -25,7 +25,8 @@
       </sui-select>
     </div>
   </div>
-  <table *ngIf="!showLoader && listCnt > 0" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+  <table *ngIf="!showLoader && listCnt > 0"
+    class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
     <thead class="sb-table-header sb-table-thead-gray">
       <tr>
         <th class="w-10 cursor-pointer sb-sorting" (click)="sortList()">
@@ -100,5 +101,8 @@
 </div>
 <div class="sb-modal-actions">
   <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn"
-    class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()">{{resource?.frmelmnts?.btn?.save}}</button>
+    class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()" appTelemetryInteract
+    [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_save-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.save}}</button>
 </div>
