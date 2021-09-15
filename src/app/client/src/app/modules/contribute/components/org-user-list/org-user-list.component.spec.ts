@@ -119,7 +119,7 @@ describe('OrgUserListComponent', () => {
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'updateUserRole').and.callThrough();
     component.updateUserRole(osid, role, userId);
-    expect(programsService.updateUserRole).toHaveBeenCalledWith(osid, [role]);
+    expect(programsService.updateUserRole).toHaveBeenCalledWith(osid, [role], userId);
   })
 
 
