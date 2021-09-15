@@ -79,7 +79,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public questionPattern: Array<any> = [];
   public viewBlueprintFlag: boolean;
   public displayPrintPreview: boolean;
-  public pdfData: any;
+  public printPreviewResponseData: any;
   public viewBlueprintDetailsFlag: boolean;
   public blueprintTemplate: any;
   public localBlueprint: any;
@@ -257,7 +257,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   async updateAccordianView(unitId?, onSelectChapterChange?) {
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
+    if (this.isSkipTwoLevelReviewEnabled() && this.isRestrictedProgram()) {
+      this.sessionContext.currentOrgRole = 'individual';
+    }
+    else if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
       await this.getCollectionHierarchy(this.sessionContext.collection,
@@ -326,6 +329,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         understand: 0,
         apply: 0
       };
+
       if (this.localBlueprint.questionTypes) {
         _.forEach(this.localBlueprint.questionTypes, (value, key) => {
           value = parseInt(value);
@@ -396,14 +400,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
-  viewBlueprint(): void {
-    this.viewBlueprintFlag = true;
-  }
-
-  viewBlueprintDetails(): void {
-    this.viewBlueprintDetailsFlag = true;
-  }
-
   fetchBlueprintTemplate(): void {
     let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
     let localBlueprintData = _.get(localBlueprintMap, `${this.collection && this.collection.code}`);
@@ -445,10 +441,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
+  viewBlueprint(): void {
+    this.viewBlueprintFlag = true;
+  }
+
+  viewBlueprintDetails(): void {
+    this.viewBlueprintDetailsFlag = true;
+  }
+
   getCollectionCategoryDefinition() {
-    if (this.collection.primaryCategory && this.programContext.rootorg_id) {
+    if (this.programContext.target_collection_category && this.programContext.rootorg_id) {
       // tslint:disable-next-line:max-line-length
-      this.programsService.getCategoryDefinition(this.collection.primaryCategory,this.programContext.rootorg_id,
+      this.programsService.getCategoryDefinition(this.programContext.target_collection_category[0], this.programContext.rootorg_id,
         'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         // tslint:disable-next-line:max-line-length
@@ -480,18 +484,31 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   printPreview(): void {
     this.toasterService.info(this.resourceService.messages.imsg.m0076 || 'Generating PDF. Please wait...')
     let identifier = this.collectionData.identifier;
-    this.programsService.generateCollectionPDF(identifier).subscribe((res) => {      
+    this.programsService.generateCollectionDocx(identifier).subscribe((res) => {
       if(res.responseCode === 'OK') {
-        this.pdfData = res.result.base64string;
-        const byteCharacters = atob(this.pdfData);
+        this.printPreviewResponseData = res.result.base64string;
+        let fileName = res.result.filename;
+        const byteCharacters = atob(this.printPreviewResponseData);
         let byteNumbers = new Array(byteCharacters.length);
         for (let i = 0; i < byteCharacters.length; i++) {
           byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        const file = new Blob([byteArray], { type: 'application/pdf;base64' });
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
+        const file = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main' });
+        if (window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(file, fileName);
+        } else {
+          const a = document.createElement('a');
+          document.body.appendChild(a);
+          const fileURL = URL.createObjectURL(file);
+          a.href = fileURL;
+          a.download = fileName;
+          a.click();
+          setTimeout(() => {
+            URL.revokeObjectURL(fileURL);
+            document.body.removeChild(a);
+          }, 0)
+        }
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToPrint)
       });
@@ -648,12 +665,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['topics'] = 0;
         instance.countData['learningOutcomes'] = 0;
 
-        const hierarchyUrl1 = '/action/content/v3/hierarchy/' + this.collectionData.origin + '?mode=edit';
-        const originUrl = this.programsService.getContentOriginEnvironment();
-        const url =  originUrl + hierarchyUrl1 ;
-
         if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
-          this.httpClient.get(url).subscribe(async res => {
+          this.programsService.getHierarchyFromOrigin(this.collectionData.origin).subscribe(async res => {
             const content = _.get(res, 'result.content');
             this.originalCollectionData = content;
             this.setTreeLeafStatusMessage(identifier, instance);
@@ -1202,7 +1215,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
         this.programsService.emitHeaderEvent(false)
-      
+
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
     //   return false;
@@ -1697,4 +1710,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.updateAccordianView();
   }
 
+  isRestrictedProgram() {
+    return _.get(this.programContext, 'type') === 'restricted';
+  }
+
+  isSkipTwoLevelReviewEnabled() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
+  }
 }

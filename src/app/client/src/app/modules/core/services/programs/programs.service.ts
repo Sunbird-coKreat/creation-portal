@@ -1001,9 +1001,8 @@ export class ProgramsService extends DataService implements CanActivate {
         this.setSessionCache({name: cacheInd, value: data})
       }));
     }
-
   }
-
+  
   isNotEmpty(obj, key) {
    if (_.isNil(obj) || _.isNil(obj[key])) {
      return false;
@@ -1029,6 +1028,15 @@ export class ProgramsService extends DataService implements CanActivate {
     if (_.isNumber(bColumn)) {
     bColumn = _.toString(bColumn);
     }
+
+    if (_.isBoolean(aColumn)) {
+      aColumn = _.toString(aColumn);
+    }
+
+    if (_.isBoolean(bColumn)) {
+      bColumn = _.toString(bColumn);
+    }
+
     return bColumn.localeCompare(aColumn);
   }
 
@@ -1126,9 +1134,9 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
-  generateCollectionPDF(identifier) {
+  generateCollectionDocx(identifier) {
     const req = {
-      url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.PRINT_PREVIEW}`,
+      url: `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`,
       param: {
         id: identifier,
         format: 'json'
@@ -1359,6 +1367,34 @@ export class ProgramsService extends DataService implements CanActivate {
       });
     }
     return targetPrimaryCategories;
+  }
+
+ /**
+  * Function to get the hierarchy of the collection from origin i.e. Diksha
+  * @param identifier collection id 
+  * @returns API response
+  */
+ getHierarchyFromOrigin(identifier) : Observable<ServerResponse> {
+   const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
+   const originUrl = this.getContentOriginEnvironment();
+   const url =  originUrl + hierarchyUrl ;
+   return this.http.get(url).pipe(
+     mergeMap((data: ServerResponse) => {
+       if (data.responseCode !== 'OK') {
+         return throwError(data);
+       }
+       return of(data);
+   }));
+ }
+
+ /**
+   * makes api call to get the program
+   */
+  getProgram(programId): Observable<ServerResponse> {
+    const req = {
+      url: `program/v1/read/${programId}`
+    };
+    return this.get(req);
   }
   emitHeaderEvent(status) {
     this.headerEventOnNewEditor.emit(status);

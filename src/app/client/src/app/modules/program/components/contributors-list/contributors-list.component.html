@@ -2,20 +2,35 @@
   {{resource?.frmelmnts?.lbl?.createProject?.selectContributors}}
 </div>
 <div class="sb-modal-content">
-  <div class="sb-search-box medium mb-15">
-    <div class="input-div relative">
-      <i class="search icon"></i>
-      <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="Search..." />
-      <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
+  <div class="d-flex">
+    <div class="sb-search-box medium mb-15 mt-20">
+      <div class="input-div relative">
+        <i class="search icon"></i>
+        <input class="sb-search-input" [(ngModel)]="searchInput" type="text" placeholder="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.search}}" />
+        <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
+      </div>
+      <button class="sb-btn sb-btn-normal" (click)="getData()"
+        [disabled]="showLoader">{{resource?.frmelmnts?.lbl?.search}}</button>
     </div>
-    <button class="sb-btn sb-btn-normal" (click)="search()">{{resource?.frmelmnts?.lbl?.search}}</button>
+    <div class="w-100 ml-20">
+      <label class="d-block">{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.types}}
+        <i class="pull-right question circle link icon pull-right" suiPopup
+											popupDelay="500" [popupPlacement]="'left'"
+											popupText="{{resource?.frmelmnts?.lbl?.createProject?.contributor?.filter?.tooltip}}"></i>
+      </label>
+      <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData()"
+        [options]="contributorTypes" #types [isDisabled]="showLoader">
+        <sui-select-option *ngFor="let option of contributorTypes;" [value]="option">
+        </sui-select-option>
+      </sui-select>
+    </div>
   </div>
-  <table *ngIf="!showLoader" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+  <table *ngIf="!showLoader && listCnt > 0" class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
     <thead class="sb-table-header sb-table-thead-gray">
       <tr>
-        <th class="w-10 cursor-pointer sb-sorting" (click)="sortOrganizations()">
+        <th class="w-10 cursor-pointer sb-sorting" (click)="sortList()">
           {{resource?.frmelmnts?.lbl?.username}} &nbsp;&nbsp;
-          <span *ngIf="sortColumn == 'name'" class="d-inline-block">
+          <span class="d-inline-block">
             <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
             <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
           </span>
@@ -26,45 +41,50 @@
       </tr>
     </thead>
     <tbody class="sb-table-body">
-      <tr *ngFor="let org of contributorList; let i = index;" [ngClass]="(org.isDisabled) ? 'sb-field-disabled':''">
+      <tr *ngFor="let contributor of contributorList; let i = index;"
+        [ngClass]="(contributor.isDisabled) ? 'sb-field-disabled':''">
         <td>
-          <div [ngClass]="(org.isDisabled) ? 'disabled field':''" class="sb-checkbox sb-checkbox-primary">
-            <input id="{{org.osid}}"
-              [disabled]="org.isDisabled"
-              type="checkbox" value="{{org.osid}}" [(ngModel)]="org.isChecked">
-            <label for="{{org.osid}}" class="sb__ellipsis sb__ellipsis--three">{{org?.name}}</label>
+          <div [ngClass]="(contributor.isDisabled) ? 'disabled field':''" class="sb-checkbox sb-checkbox-primary">
+            <input id="{{contributor.osid}}" [disabled]="contributor.isDisabled" type="checkbox"
+              value="{{contributor.osid}}" [(ngModel)]="contributor.isChecked">
+            <label *ngIf="contributorType == 'Organisation'; else indName" for="{{contributor.osid}}"
+              class="sb__ellipsis sb__ellipsis--three">{{contributor?.name}}</label>
+            <ng-template #indName>
+              <label for="{{contributor.osid}}" class="sb__ellipsis sb__ellipsis--three">{{contributor?.firstName
+                }}&nbsp;{{contributor?.lastName}}</label>
+            </ng-template>
           </div>
           <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"></div>
         </td>
-        <td><span>{{org?.User?.maskedEmail}}</span></td>
-        <td><span>{{org?.User?.maskedPhone}}</span></td>
-        <td><span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.org}}</span></td>
+        <td><span>{{contributor?.User?.maskedEmail}}</span></td>
+        <td><span>{{contributor?.User?.maskedPhone}}</span></td>
+        <td><span>{{contributorType}}</span></td>
       </tr>
     </tbody>
   </table>
   <div *ngIf="listCnt > 0 && pager.totalPages > 1 && !showLoader"
     class="sb-pagination-container flex-jc-flex-start pt-16">
     <div class="sb-pagination">
-      <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)" appTelemetryInteract
+      <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="navigateToPage(1)" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_fist-page', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
-      <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)"
+      <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="navigateToPage(pager.currentPage - 1)"
         appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
-      <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)"
+      <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="navigateToPage(page)"
         class="sb-item" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
-      <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"
+      <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="navigateToPage(pager.currentPage + 1)"
         class="sb-item" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
-      <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"
+      <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="navigateToPage(pager.totalPages)"
         class="sb-item" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
@@ -74,7 +94,11 @@
   <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
     <app-loader></app-loader>
   </div>
+  <div class="mt-12" *ngIf="!showLoader && listCnt == 0">
+    <app-no-result [data]="{ messageText: 'resource.messages.stmsg.m0006'}"> </app-no-result>
+  </div>
 </div>
 <div class="sb-modal-actions">
-  <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn" class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()">{{resource?.frmelmnts?.btn?.save}}</button>
+  <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn"
+    class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()">{{resource?.frmelmnts?.btn?.save}}</button>
 </div>

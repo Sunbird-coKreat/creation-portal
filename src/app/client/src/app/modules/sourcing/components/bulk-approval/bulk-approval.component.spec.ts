@@ -50,4 +50,17 @@ describe('BulkApprovalComponent', () => {
     component.bulkApproval();
     expect(component.sendContentForBulkApproval).toHaveBeenCalled();
   });
+  it('#showApproveBulkModal() should call showApproveBulkModal', () => {
+    component.disableBulkApprove = false;
+    component.showApproveBulkModal();
+    expect(component.showBulkApproveModal).toBeTruthy();
+    expect(component.bulkApprovalComfirmation).toBeTruthy();
+  });
+  it('#bulkApproval() should call bulkApproval', () => {
+    component.disableBulkApprove = false;
+    spyOn(component, 'sendContentForBulkApproval').and.callFake (() => {});
+    component.bulkApproval();
+    expect(component.disableBulkApprove).toBeTruthy();
+    expect(component.sendContentForBulkApproval).toHaveBeenCalled();
+  });
 });

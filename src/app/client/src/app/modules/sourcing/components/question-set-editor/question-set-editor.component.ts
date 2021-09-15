@@ -330,6 +330,7 @@ export class QuestionSetEditorComponent implements OnInit {
       }
       else {
        this.programStageService.removeLastStage();
+       this.programsService.emitHeaderEvent(true);
       }
       break;
     case "sendForCorrections": 
@@ -347,6 +348,7 @@ export class QuestionSetEditorComponent implements OnInit {
       break;
     case "saveCollection": // saving as draft
     default: this.programStageService.removeLastStage();
+             this.programsService.emitHeaderEvent(true);
       break;
    }
   }
@@ -360,6 +362,7 @@ export class QuestionSetEditorComponent implements OnInit {
           .subscribe((data) => {
             this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
             this.programStageService.removeLastStage();
+            this.programsService.emitHeaderEvent(true);
           });
         }
       }, (err) => {
@@ -379,6 +382,7 @@ export class QuestionSetEditorComponent implements OnInit {
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
       }, (err) => {
         const errInfo = {
           errorMsg: this.resourceService.messages.fmsg.m00106,

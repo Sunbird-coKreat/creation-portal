@@ -6,13 +6,12 @@ import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter} from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
-import { UserService, ContentService } from '@sunbird/core';
-import { IUserProfile } from '@sunbird/shared';
+import { UserService } from '@sunbird/core';
 import { programConfigObj } from './programconfig';
 import { HttpClient } from '@angular/common/http';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
@@ -21,7 +20,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
- 
+
 @Component({
   selector: 'app-create-program',
   templateUrl: './create-program.component.html',
@@ -114,9 +113,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     User: []
   };
   public selectedContributorsCnt: number = 0;
+  public allowToModifyContributors:boolean = true;
   public firstLevelFolderLabel: string;
   public blueprintFormConfig:any;
   public formstatus: any;
+
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -711,28 +712,53 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (!_.isEmpty(_.get(this.programDetails, 'config.contributors'))) {
         this.setPreSelectedContributors(_.get(this.programDetails, 'config.contributors'));
       }
+
+      this.createProgramForm.get('content_submission_enddate').valueChanges.subscribe(value => {
+        this.setAllowToModifyContributors(value);
+      });
+      this.setAllowToModifyContributors(_.get(this.programDetails, 'content_submission_enddate'));
     }
 
     this.showLoader = false;
     this.isFormValueSet = true;
   }
 
+  setAllowToModifyContributors(content_submission_enddate) {
+    if(this.projectType === 'restricted' && this.editPublished) {
+      const today = moment(moment().format('YYYY-MM-DD'));
+      const contentSubmissionEndDate = moment(content_submission_enddate);
+      if (contentSubmissionEndDate.isBefore(today)) {
+        this.allowToModifyContributors = false;
+      }
+      else {
+        this.allowToModifyContributors = true;
+      }
+    }
+  }
+
   setPreSelectedContributors(contributors) {
     const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
     const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
-    this.selectedContributors = contributors;
-    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
-      return {
-        osid: org.osid,
-        isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
-      }
-    });
-    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
-      return {
-        osid: user.osid,
-        isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
-      }
-    });
+
+    if (_.get(contributors, 'Org') !== null) {
+      this.selectedContributors.Org = _.get(contributors, 'Org');
+      this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
+        return {
+          osid: org.osid,
+          isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
+        }
+      });
+    }
+
+    if (_.get(contributors, 'User') !== null) {
+      this.selectedContributors.User = _.get(contributors, 'User');
+      this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
+        return {
+          osid: user.osid,
+          isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
+        }
+      });
+    }
 
     this.selectedContributorsCnt = this.preSelectedContributors.Org.length + this.preSelectedContributors.User.length;
   }
@@ -1383,7 +1409,6 @@ showTexbooklist(showTextBookSelector = true) {
 
   initEditBlueprintForm(collection) {
     let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
-    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
     this.blueprintFormConfig = this.programsService.initializeFormFields(this.frameworkCategories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
  
     this.blueprintFormConfig.forEach((element) => {
@@ -1392,31 +1417,23 @@ showTexbooklist(showTextBookSelector = true) {
             field.default='';
         });
       }
-    });
+    })
 
-     if (!_.isEmpty(savedBluePrintData) && savedBluePrintData[this.choosedTextBook.code]){
-       this.blueprintFormConfig.forEach((element) => {
-         if(element.fields) {
-           element.fields.forEach(field => {
-             if (savedBluePrintData[this.choosedTextBook.code][field.code] != 'undefined' && !_.isEmpty(savedBluePrintData[this.choosedTextBook.code][field.code])) {
-                 field.default = savedBluePrintData[this.choosedTextBook.code][field.code];
-             }
-           });
-         }
-       });
-     }
- 
-     if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
-       this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code];
-     }
-  }
+    if (!_.isEmpty(savedBluePrintData) && savedBluePrintData[this.choosedTextBook.code]){
+      this.blueprintFormConfig.forEach((element) => {
+        if(element.fields) {
+          element.fields.forEach(field => {
+            if (savedBluePrintData[this.choosedTextBook.code][field.code] != 'undefined' && !_.isEmpty(savedBluePrintData[this.choosedTextBook.code][field.code])) {
+                field.default = savedBluePrintData[this.choosedTextBook.code][field.code];
+            }
+          });
+        }
+      });
+    }
 
-  formStatusEventListener(event) {
-    this.formstatus = event;
-  }
-
-  getFormData(event) {
-    this.formInputData = event;
+    if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
+      this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code];
+    }
   }
 
   isBlueprintValid() {
@@ -1669,6 +1686,12 @@ showTexbooklist(showTextBookSelector = true) {
       return false;
     }
 
+    if (this.projectType ==='restricted' && !this.selectedContributorsCnt) {
+      this.navigateTo(1);
+      this.toasterService.warning(this.resource.messages.smsg.selectOneContributor);
+      return false;
+    }
+
     if (_.isEmpty(this.collectionListForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
       this.toasterService.warning(this.resource.messages.smsg.selectOneTargetCollection);
@@ -1740,5 +1763,13 @@ showTexbooklist(showTextBookSelector = true) {
       }
     };
     this.saveProgram(cb);
+  }
+
+  formStatusEventListener(event) {
+    this.formstatus = event;
+  }
+
+  getFormData(event) {
+    this.formInputData = event;
   }
 }

@@ -63,12 +63,14 @@ const API_LIST = {
     '/content/program/v1/list/download': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
     '/content/program/v1/report': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN
       ]
     },
@@ -113,6 +115,7 @@ const API_LIST = {
     '/content/program/v1/nomination/list/download': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER
       ]
@@ -368,7 +371,7 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    '/content/program/v1/print/pdf': {
+    '/content/program/v1/print/docx': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.ORG_ADMIN,
@@ -455,6 +458,7 @@ const API_LIST = {
     '/learner/content/v1/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -465,6 +469,7 @@ const API_LIST = {
     '/learner/questionset/v1/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
+        ROLE.PUBLIC,
         ROLE.ORG_ADMIN,
         ROLE.SOURCING_USER,
         ROLE.CONTRIBUTE_ORG_ADMIN,
@@ -472,7 +477,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/learner/user/v1/exists/phone:phone': {
+    '/learner/user/v1/exists/phone/:phone': {
       checksNeeded: []
     },
     '/learner/data/v1/system/settings/get/tncConfig': {
@@ -757,7 +762,8 @@ const API_LIST = {
     '/action/question/v1/publish/:do_id',
     '/action/question/v1/update/:do_id',
     '/content/content/v1/read/:do_id',
-    '/content/questionset/v1/read/:do_id'
+    '/content/questionset/v1/read/:do_id',
+    '/learner/user/v1/exists/phone/:phone'
   ]
 }
 module.exports = API_LIST;

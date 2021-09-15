@@ -648,6 +648,11 @@ export class BulkUploadComponent implements OnInit {
       return 'publish';
     }
 
+    // If restricted program and skip two level review enabled
+    if (this.isRestrictedProgram() && this.isSkipTwoLevelReviewEnabled()) {
+      return 'publish';
+    }
+
     // If user from other org
     if (!this.isDefaultContributingOrg()) {
       return 'review';
@@ -655,6 +660,14 @@ export class BulkUploadComponent implements OnInit {
 
     // If user from same org then check for skip review option
     return _.get(this.programContext, 'config.defaultContributeOrgReview') ? 'review' : 'publish';
+  }
+
+  isRestrictedProgram() {
+    return _.get(this.programContext, 'type') === 'restricted';
+  }
+
+  isSkipTwoLevelReviewEnabled() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
   }
 
   isContributorOrgUser() {
@@ -774,10 +787,18 @@ export class BulkUploadComponent implements OnInit {
           this.oldProcessStatus = this.process.status;
           this.calculateCompletionPercentage();
         }, (error) => {
-          console.log(error);
-        });
+          const errMsg = (_.get(error, 'error.params.errmsg')) ? _.get(error, 'error.params.errmsg') : this.resourceService.messages.emsg.bulkUpload.somethingFailed;
+          this.setError(errMsg);
+          this.uploader.reset();
+          this.bulkUploadState = 4;
+          return;
+      });
     }, (error) => {
-      console.log(error);
+      const errMsg = (_.get(error, 'error.params.errmsg')) ? _.get(error, 'error.params.errmsg') : this.resourceService.messages.emsg.bulkUpload.somethingFailed;
+      this.setError(errMsg);
+      this.uploader.reset();
+      this.bulkUploadState = 4;
+      return;
     });
   }
 
