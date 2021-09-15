@@ -53,10 +53,19 @@ export class OrgUsersListComponent implements OnInit {
   onRoleChange(user) {
     const selectedRole = _.get(user, 'selectedRole');
     const osid = _.get(user, 'User_Org.osid');
+    const userOsid = _.get(user, 'User.osid');
 
     this.programsService.updateUserRole(osid, [selectedRole]).subscribe(
       (res) => {
-        this.toasterService.success(this.resourceService.messages.smsg.m0065);
+        this.programsService.updateUser(userOsid, [selectedRole]).subscribe(
+          (resp)=> {
+            this.toasterService.success(this.resourceService.messages.smsg.m0065);
+          },
+          (err) => {
+            console.log(err);
+            this.toasterService.error(this.resourceService.messages.emsg.m0077);
+          }
+        );
       },
       (error) => {
         console.log(error);

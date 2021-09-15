@@ -106,18 +106,19 @@ describe('OrgUserListComponent', () => {
   })
 
   it ('#onRoleChange() should call updateUserRole()', () => {
-    const user = {selectedRole: 'dummy', User_Org: { osid: '12345' }};
+    const user = {selectedRole: 'dummy', User_Org: { osid: '12345' }, User: { osid: '12345' }};
     spyOn(component, 'updateUserRole');
     component.onRoleChange(user);
-    expect(component.updateUserRole).toHaveBeenCalledWith(user.User_Org.osid, user.selectedRole);
+    expect(component.updateUserRole).toHaveBeenCalledWith(user.User_Org.osid, user.selectedRole, user.User.osid);
   })
 
   it ('#updateUserRole() should call programsService.updateUserRole()', () => {
     const osid = '12345';
     const role = 'dummy';
+    const userId = '123';
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'updateUserRole').and.callThrough();
-    component.updateUserRole(osid, role);
+    component.updateUserRole(osid, role, userId);
     expect(programsService.updateUserRole).toHaveBeenCalledWith(osid, [role]);
   })
 

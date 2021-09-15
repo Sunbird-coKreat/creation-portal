@@ -44,5 +44,10 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
   }
   getQuestionSet(identifier) {
     return of(identifier);
-}
+  }
+
+  getAllQuestionSet(identifiers: string[]): Observable<any> {
+    return of({});
+  }
+
 }
