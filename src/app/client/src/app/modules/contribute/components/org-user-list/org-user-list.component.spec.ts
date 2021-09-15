@@ -115,9 +115,10 @@ describe('OrgUserListComponent', () => {
   it ('#updateUserRole() should call programsService.updateUserRole()', () => {
     const osid = '12345';
     const role = 'dummy';
+    const userId = '123';
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'updateUserRole').and.callThrough();
-    component.updateUserRole(osid, role);
+    component.updateUserRole(osid, role, userId);
     expect(programsService.updateUserRole).toHaveBeenCalledWith(osid, [role]);
   })
 

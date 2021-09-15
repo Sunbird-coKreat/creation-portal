@@ -203,10 +203,14 @@ export class ProgramsService extends DataService implements CanActivate {
       return false;
     }
   } else if (updateOsid) {
-    this.updateUserRole(updateOsid, _.uniq(uRoles), UserOsid).subscribe(
+    this.updateUserRole(updateOsid, _.uniq(uRoles)).subscribe(
       (userAddRes) => {
+        this.updateUser(UserOsid, _.uniq(uRoles)).subscribe(
+          (rsp)=> {
+            this.onAfterJoinRedirect();
+          }
+        );
         console.log('User added to org'+ UserOsid, userAddRes);
-        this.onAfterJoinRedirect();
       },
       (userAddErr) => {
           console.log('Error while adding User added to org'+ UserOsid, userAddErr);
@@ -1109,23 +1113,14 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
   * Function to update the role of org user
   */
-  updateUserRole(osid, newRoles, userOsid?) {
-    if (userOsid) {
-      const userUpdate = {
-        User: {
-          osid: userOsid,
-          roles: newRoles
-        }
-      };
-      this.updateToRegistry(userUpdate);
-    }
-
+  updateUserRole(osid, newRoles) {
     const userOrgUpdate = {
       User_Org: {
         osid: osid,
         roles: newRoles
       }
     };
+
     return this.updateToRegistry(userOrgUpdate);
   }
 
