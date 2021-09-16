@@ -105,4 +105,9 @@
     [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_save-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
     [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.save}}</button>
-</div>
+    <button
+    class="sb-btn sb-btn-normal" (click)="close()" appTelemetryInteract
+    [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_close-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.close}}</button>
+  </div>
