@@ -1735,13 +1735,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   onLibraryChange(event) {
     switch (event.action) {
-      case 'back':
-        this.currentStage = 'chapterListComponent';
-        break;
       case 'add':
-        // handle
+        this.addResourceToHierarchy(event.collectionId);
         break;
     }
+    this.currentStage = 'chapterListComponent';
   }
 
   setAddLibraryInput() {
@@ -1792,9 +1790,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       },
       searchFormConfig: [
         {
-          code: 'primaryCategory', dataType: 'list', description: 'Type', editable: true, default: [],
+          code: 'primaryCategory', dataType: 'list', description: 'Type', editable: true,
+          default: this.programContext.targetprimarycategories.map(v => v['name']),
+          range: this.programContext.targetprimarycategories,
           inputType: 'nestedselect', label: 'Content Type(s)', name: 'Type', placeholder: 'Select ContentType',
-          required: false, visible: true,
+          required: false, visible: true, output: 'name',
           renderingHints: {
             class: 'sb-g-col-lg-1'
           }
@@ -1803,84 +1803,44 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           code: 'board', visible: true, depends: [], editable: true, dataType: 'list',
           description: 'Board', label: 'Board', required: false, name: 'Board', inputType: 'select',
           placeholder: 'Select Board', output: 'name',
-          renderingHints: {
-            class: 'sb-g-col-lg-1'
-          }
+          renderingHints: {class: 'sb-g-col-lg-1'}
         },
         {
           code: 'medium', visible: true, editable: true, dataType: 'list', description: '', label: 'Medium(s)',
           required: false, name: 'Medium', inputType: 'nestedselect', placeholder: 'Select Medium', output: 'name',
-          depends: [
-            'board'
-          ],
-          renderingHints: {
-            class: 'sb-g-col-lg-1'
-          }
+          depends: ['board'],
+          renderingHints: {class: 'sb-g-col-lg-1'}
         },
         {
-          code: 'gradeLevel',
-          visible: true,
-          depends: [
-            'board',
-            'medium'
-          ],
-          editable: true,
-          default: '',
-          dataType: 'list',
-          renderingHints: {
-            class: 'sb-g-col-lg-1'
-          },
-          description: 'Class',
-          label: 'Class(es)',
-          required: false,
-          name: 'Class',
-          inputType: 'nestedselect',
-          placeholder: 'Select Class',
+          code: 'gradeLevel', visible: true, depends: ['board', 'medium'], editable: true,
+          default: '', dataType: 'list', renderingHints: {class: 'sb-g-col-lg-1'}, description: 'Class',
+          label: 'Class(es)', required: false, name: 'Class', inputType: 'nestedselect', placeholder: 'Select Class',
           output: 'name'
         },
         {
-          code: 'subject',
-          visible: true,
-          depends: [
-            'board',
-            'medium',
-            'gradeLevel'
-          ],
-          editable: true,
-          default: '',
-          dataType: 'list',
-          renderingHints: {
-            class: 'sb-g-col-lg-1'
-          },
-          description: '',
-          label: 'Subject(s)',
-          required: false,
-          name: 'Subject',
-          inputType: 'nestedselect',
-          placeholder: 'Select Subject',
-          output: 'name'
+          code: 'subject', visible: true, depends: [ 'board', 'medium', 'gradeLevel' ],
+          editable: true, default: '', dataType: 'list', renderingHints: {class: 'sb-g-col-lg-1'},
+          description: '', label: 'Subject(s)', required: false, name: 'Subject', inputType: 'nestedselect',
+          placeholder: 'Select Subject', output: 'name'
         },
         {
-          code: 'topic',
-          visible: true,
-          editable: true,
-          dataType: 'list',
-          depends: [
-            'board',
-            'medium',
-            'gradeLevel',
-            'subject'
-          ],
-          default: '',
+          code: 'topic', visible: true, editable: true, dataType: 'list',
+          depends: ['board', 'medium', 'gradeLevel', 'subject'], default: '',
           renderingHints: {
             class: 'sb-g-col-lg-1'
           },
-          name: 'Topic',
-          description: 'Choose a Topics',
+          name: 'Topic', description: 'Choose a Topics',
           inputType: 'topicselector',
           label: 'Topic(s)',
           placeholder: 'Choose Topics',
           required: false
+        },
+        {
+          inputType: 'topicselector', code: 'learningOutcome',
+          visible: true, depends: ['board', 'medium', 'gradeLevel', 'subject', 'topic'], editable: true, dataType: 'list',
+          description: 'learningOutcome', label: 'Learning Outcome', required: false, name: 'learningOutcome',
+          placeholder: 'Select Learning Outcome', output: 'name',
+          renderingHints: {class: 'sb-g-col-lg-1'}
         }
       ]
     };
