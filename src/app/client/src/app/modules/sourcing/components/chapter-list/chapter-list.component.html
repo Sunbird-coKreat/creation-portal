@@ -224,7 +224,7 @@
   </div>
 
   <div *ngIf="currentStage === 'addFromLibrary'">
-    <lib-library [libraryInput]="addFormLibraryInput"></lib-library>
+    <lib-library [libraryInput]="addFormLibraryInput" (libraryEmitter)="onLibraryChange($event)"></lib-library>
   </div>
 </div>
 <div class="twelve wide column sb-bg-white" *ngIf="currentStage !== 'chapterListComponent' && currentStage !== 'addFromLibrary'">

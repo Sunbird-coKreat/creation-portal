@@ -1733,8 +1733,21 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
   }
 
+  onLibraryChange(event) {
+    switch (event.action) {
+      case 'back':
+        this.currentStage = 'chapterListComponent';
+        break;
+      case 'add':
+        // handle
+        break;
+    }
+  }
+
   setAddLibraryInput() {
     this.addFormLibraryInput = {
+      programContext: this.programContext,
+      sessionContext: this.sessionContext,
       framework: this.sessionContext.framework,
       collectionId: this.sessionContext.collection,
       editorConfig: {
@@ -1743,8 +1756,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           channel: this.programContext.rootorg_id,
           user: {
             id: this.userService.userid,
-            orgIds: this.userProfile.organisationIds,
             organisations: this.userService.orgIdNameMap,
+            orgIds: this.userProfile.organisationIds,
             fullName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
               this.userProfile.firstName,
             firstName: this.userProfile.firstName,
@@ -1769,101 +1782,105 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         },
         config: {
           mode: 'edit',
-          objectType: 'QuestionSet',
-          primaryCategory: 'Practice Question Set',
+          // tslint:disable-next-line:max-line-length
+          objectType: this.sessionContext.targetCollectionMimetype === 'application/vnd.ekstep.content-collection' ? 'Collection' : 'QuestionSet',
+          primaryCategory: this.sessionContext.targetCollectionPrimaryCategory,
           isRoot: true,
           iconClass: 'fa fa-book',
-          showAddCollaborator: false,
-          children: {
-            Question: [
-              'Multiple Choice Question',
-              'Subjective Question'
-            ]
-          },
-          contentPolicyUrl: '/term-of-use.html'
+          showAddCollaborator: false
         }
       },
       searchFormConfig: [
         {
-          "code": "primaryCategory",
-          "dataType": "list",
-          "description": "Type",
-          "editable": true,
-          "default": [],
-          "renderingHints": {
-            "class": "sb-g-col-lg-1"
-          },
-          "inputType": "nestedselect",
-          "label": "Content Type(s)",
-          "name": "Type",
-          "placeholder": "Select ContentType",
-          "required": false,
-          "visible": true
+          code: 'primaryCategory', dataType: 'list', description: 'Type', editable: true, default: [],
+          inputType: 'nestedselect', label: 'Content Type(s)', name: 'Type', placeholder: 'Select ContentType',
+          required: false, visible: true,
+          renderingHints: {
+            class: 'sb-g-col-lg-1'
+          }
         },
         {
-          "code": "gradeLevel",
-          "visible": true,
-          "depends": [
-            "board",
-            "medium"
-          ],
-          "editable": true,
-          "default": "",
-          "dataType": "list",
-          "renderingHints": {
-            "class": "sb-g-col-lg-1"
-          },
-          "description": "Class",
-          "label": "Class(es)",
-          "required": false,
-          "name": "Class",
-          "inputType": "nestedselect",
-          "placeholder": "Select Class",
-          "output": "name"
+          code: 'board', visible: true, depends: [], editable: true, dataType: 'list',
+          description: 'Board', label: 'Board', required: false, name: 'Board', inputType: 'select',
+          placeholder: 'Select Board', output: 'name',
+          renderingHints: {
+            class: 'sb-g-col-lg-1'
+          }
         },
         {
-          "code": "subject",
-          "visible": true,
-          "depends": [
-            "board",
-            "medium",
-            "gradeLevel"
+          code: 'medium', visible: true, editable: true, dataType: 'list', description: '', label: 'Medium(s)',
+          required: false, name: 'Medium', inputType: 'nestedselect', placeholder: 'Select Medium', output: 'name',
+          depends: [
+            'board'
           ],
-          "editable": true,
-          "default": "",
-          "dataType": "list",
-          "renderingHints": {
-            "class": "sb-g-col-lg-1"
-          },
-          "description": "",
-          "label": "Subject(s)",
-          "required": false,
-          "name": "Subject",
-          "inputType": "nestedselect",
-          "placeholder": "Select Subject",
-          "output": "name"
+          renderingHints: {
+            class: 'sb-g-col-lg-1'
+          }
         },
         {
-          "code": "topic",
-          "visible": true,
-          "editable": true,
-          "dataType": "list",
-          "depends": [
-            "board",
-            "medium",
-            "gradeLevel",
-            "subject"
+          code: 'gradeLevel',
+          visible: true,
+          depends: [
+            'board',
+            'medium'
           ],
-          "default": "",
-          "renderingHints": {
-            "class": "sb-g-col-lg-1"
+          editable: true,
+          default: '',
+          dataType: 'list',
+          renderingHints: {
+            class: 'sb-g-col-lg-1'
           },
-          "name": "Topic",
-          "description": "Choose a Topics",
-          "inputType": "topicselector",
-          "label": "Topic(s)",
-          "placeholder": "Choose Topics",
-          "required": false
+          description: 'Class',
+          label: 'Class(es)',
+          required: false,
+          name: 'Class',
+          inputType: 'nestedselect',
+          placeholder: 'Select Class',
+          output: 'name'
+        },
+        {
+          code: 'subject',
+          visible: true,
+          depends: [
+            'board',
+            'medium',
+            'gradeLevel'
+          ],
+          editable: true,
+          default: '',
+          dataType: 'list',
+          renderingHints: {
+            class: 'sb-g-col-lg-1'
+          },
+          description: '',
+          label: 'Subject(s)',
+          required: false,
+          name: 'Subject',
+          inputType: 'nestedselect',
+          placeholder: 'Select Subject',
+          output: 'name'
+        },
+        {
+          code: 'topic',
+          visible: true,
+          editable: true,
+          dataType: 'list',
+          depends: [
+            'board',
+            'medium',
+            'gradeLevel',
+            'subject'
+          ],
+          default: '',
+          renderingHints: {
+            class: 'sb-g-col-lg-1'
+          },
+          name: 'Topic',
+          description: 'Choose a Topics',
+          inputType: 'topicselector',
+          label: 'Topic(s)',
+          placeholder: 'Choose Topics',
+          required: false
         }
       ]
     };
