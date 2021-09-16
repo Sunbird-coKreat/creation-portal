@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit } from '@
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ResourceService, NavigationHelperService , ToasterService} from '@sunbird/shared';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
@@ -52,6 +52,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   private configService: ConfigService;
   private sourcingService: SourcingService;
   private programsService: ProgramsService;
+  private toasterService: ToasterService;
   private router: Router;
   private navigationHelperService: NavigationHelperService;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
@@ -64,6 +65,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       this.programsService = injector.get<ProgramsService>(ProgramsService);
       this.navigationHelperService = injector.get<NavigationHelperService>(NavigationHelperService);
       this.router = injector.get<Router>(Router);
+      this.toasterService = injector.get<ToasterService>(ToasterService);
      }
 
   ngOnInit(): void {
@@ -426,7 +428,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       headers: this.contentUsageReportHeaders(),
       showTitle: false
     };
-    this.programsService.generateCSV(csvDownloadConfig);
+    if (_.get(this.contentCountData, 'published') && csvDownloadConfig.tableData.length) {
+      this.programsService.generateCSV(csvDownloadConfig);
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.m0079);
+    }
   }
 
   contentUsageReportHeaders() {
