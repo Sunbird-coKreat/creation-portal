@@ -185,8 +185,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.getNominationStatus();
       this.setActiveDate();
       this.setTargetCollectionValue();
-      this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
-      this.programDetails.config.defaultContributeOrgReview === false) ;
+      this.isShowSkipReview();
+
     }, error => {
       // TODO: navigate to program list page
       const errInfo = {
@@ -200,6 +200,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  isShowSkipReview () {
+    this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
+      this.programDetails.config.defaultContributeOrgReview === false);
+
+    if (this.showSkipReview === false ) {
+      const restrictedProject = !!(_.get(this.programDetails, 'type') == 'restricted');
+      const skipTwoLevelReview = !!(_.get(this.programDetails, 'config.defaultContributeOrgReview') === false);
+      if (restrictedProject && skipTwoLevelReview === false) {
+
+      }
+    }
+  }
   setTargetCollectionValue() {
     if (!_.isUndefined(this.programDetails)) {
       this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
