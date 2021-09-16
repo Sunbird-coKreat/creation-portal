@@ -86,6 +86,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   pageLimit: any;
   sharedContext;
   showSkipReview = false;
+  showSkipReviewContributor = false;
   searchInput: any;
   initialSourcingOrgUser = [];
   searchLimitMessage: any;
@@ -185,7 +186,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.getNominationStatus();
       this.setActiveDate();
       this.setTargetCollectionValue();
-      this.isShowSkipReview();
+      this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id')
+        && this.programDetails.config.defaultContributeOrgReview === false);
 
     }, error => {
       // TODO: navigate to program list page
@@ -200,15 +202,20 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  isShowSkipReview () {
-    this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
-      this.programDetails.config.defaultContributeOrgReview === false);
-
+  isShowSkipReview() {
     if (this.showSkipReview === false ) {
       const restrictedProject = !!(_.get(this.programDetails, 'type') == 'restricted');
       const skipTwoLevelReview = !!(_.get(this.programDetails, 'config.defaultContributeOrgReview') === false);
-      if (restrictedProject && skipTwoLevelReview === false) {
-
+      if (restrictedProject
+          && skipTwoLevelReview
+          && this.sessionContext.currentOrgRole !== "individual"
+          && (this.sessionContext.currentOrgRole)) {
+            if (this.sessionContext.currentRoles.includes("CONTRIBUTOR")
+                || this.sessionContext.currentRoles.includes("REVIWER")
+                || this.sessionContext.currentOrgRole === "admin"
+                ) {
+                  this.showSkipReviewContributor = true;
+              }
       }
     }
   }
@@ -306,6 +313,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.currentRoles = ['CONTRIBUTOR'];
           this.sessionContext.currentOrgRole = 'individual';
         }
+        this.isShowSkipReview();
 
         const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
         this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
