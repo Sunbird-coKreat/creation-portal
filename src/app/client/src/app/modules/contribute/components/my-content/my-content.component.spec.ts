@@ -282,7 +282,7 @@ describe('MyContentComponent', () => {
   it('#downloadReport() should call download the report and show error toaster message when zero published content', () => {
     const programsService: ProgramsService = TestBed.inject(ProgramsService);
     spyOn(programsService, 'generateCSV').and.callThrough();
-    spyOn(component.toasterService, 'error').and.callThrough();
+    spyOn(component['toasterService'], 'error').and.callThrough();
     component.contentCountData = {
       published: 0
     };
@@ -290,7 +290,7 @@ describe('MyContentComponent', () => {
     component.selectedContributionDetails = [{contents: mockData.selectedContributionDetails}];
     component.downloadReport();
     expect(programsService.generateCSV).not.toHaveBeenCalled();
-    expect(component.toasterService.error).toHaveBeenCalledWith(resourceServiceStub.messages.emsg.m0079);
+    expect(component['toasterService']['error']).toHaveBeenCalledWith(resourceServiceStub.messages.emsg.m0079);
     expect(component.prepareContentUsageReportData).toHaveBeenCalled();
   });
 

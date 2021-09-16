@@ -52,10 +52,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   private configService: ConfigService;
   private sourcingService: SourcingService;
   private programsService: ProgramsService;
+  private toasterService: ToasterService;
   private router: Router;
   private navigationHelperService: NavigationHelperService;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
-    private userService: UserService, private activatedRoute: ActivatedRoute, public toasterService: ToasterService,
+    private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
       this.playerService = injector.get<PlayerService>(PlayerService);
       this.helperService = injector.get<HelperService>(HelperService);
@@ -64,6 +65,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       this.programsService = injector.get<ProgramsService>(ProgramsService);
       this.navigationHelperService = injector.get<NavigationHelperService>(NavigationHelperService);
       this.router = injector.get<Router>(Router);
+      this.toasterService = injector.get<ToasterService>(ToasterService);
      }
 
   ngOnInit(): void {
