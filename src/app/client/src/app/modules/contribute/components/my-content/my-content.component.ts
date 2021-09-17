@@ -33,6 +33,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public playerConfig: any;
   public totalContent: number;
   public totalPublishedContent: number;
+  public chunkSize = 500;
   public contentCountData: any = {
     total: 0,
     published: 0,
@@ -112,10 +113,10 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         return _.map(this.contents, (content => _.get(content, 'identifier')));
       }),
       mergeMap(contentIds => iif(() => !_.isEmpty(contentIds),
-        this.getOriginForApprovedContents(contentIds).pipe(
+        this.fetchAllgetOriginForApprovedContents(contentIds).pipe(
           map((contentRes: any) => {
-            this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
-            this.totalPublishedContent = _.get(contentRes, 'count') || 0;
+            this.publishedContents = contentRes;
+            this.totalPublishedContent = _.size(this.publishedContents) || 0;
             return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
           })), of([]))),
       mergeMap(userIds => iif(() => !_.isEmpty(userIds),
@@ -336,6 +337,19 @@ export class MyContentComponent implements OnInit, AfterViewInit {
 
     return this.actionService.post(option).pipe(map((res: any) => {
       return res.result;
+    }));
+  }
+
+  fetchAllgetOriginForApprovedContents(contentIds) {
+    const chunkedContentIds = _.chunk(contentIds, this.chunkSize);
+    const chunkedContentObservables = chunkedContentIds.map(block => {
+      return this.getOriginForApprovedContents(block);
+    });
+    return forkJoin(chunkedContentObservables).pipe(map(data => {
+      return _.reduce(data, (result, value, key) => {
+        result = [...result, ..._.compact(_.concat(_.get(value, 'content'), _.get(value, 'QuestionSet')))];
+        return result;
+      }, []);
     }));
   }
 
