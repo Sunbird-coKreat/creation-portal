@@ -14,7 +14,6 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RecursiveTreeComponent } from './components/recursive-tree/recursive-tree.component';
 import { ContentUploaderComponent } from './components/content-uploader/content-uploader.component';
-import { ResourceTemplateComponent } from './components/resource-template/resource-template.component';
 import { DynamicModule } from 'ng-dynamic-component';
 import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { CollectionComponent } from './components/collection/collection.component';
@@ -45,7 +44,7 @@ import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
     McqTemplateSelectionComponent, QuestionPreviewComponent, SanitizeHtmlPipe,
     QuestionCreationHeaderComponent, DashboardComponent, RecursiveTreeComponent,
-    ContentUploaderComponent,  ResourceTemplateComponent, CollectionComponent,
+    ContentUploaderComponent, CollectionComponent,
     ResourceReorderComponent, ContentEditorComponent, MvcLibraryComponent,
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
     BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent],
@@ -67,7 +66,7 @@ import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml
     DynamicModule.withComponents([QuestionListComponent,
       QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
       McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
-      DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent, ResourceTemplateComponent,
+      DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent,
       ContentEditorComponent, QuestionSetEditorComponent]),
     NgInviewModule,
     CollectionEditorLibraryModule,

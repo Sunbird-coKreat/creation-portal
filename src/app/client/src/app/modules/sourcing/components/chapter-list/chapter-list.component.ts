@@ -1106,71 +1106,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.showResourceTemplatePopup = false;
     this.sessionContext['templateDetails'] =  event.templateDetails;
     if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
-      this.templateDetails = event.templateDetails;
-      let creator = this.userProfile.firstName;
-      if (!_.isEmpty(this.userProfile.lastName)) {
-        creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
+      const creationInput  = {
+        sessionContext: this.sessionContext,
+        unitIdentifier: this.unitIdentifier,
+        templateDetails: event.templateDetails,
+        selectedSharedContext: this.selectedSharedContext,
+        contentId: this.contentId,
+        originCollectionData: this.originalCollectionData,
+        action: 'creation',
+        programContext: _.get(this.chapterListComponentInput, 'programContext')
       }
-
-      let targetCollectionFrameworksData = {};
-      targetCollectionFrameworksData = this.helperService.setFrameworkCategories(this.collection);
-
-      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      _.merge(sharedMetaData, targetCollectionFrameworksData);
-      const option = {
-        url: `content/v3/create`,
-        header: {
-          'X-Channel-Id': this.programContext.rootorg_id
-        },
-        data: {
-          request: {
-            content: {
-              'name': 'Untitled',
-              'code': UUID.UUID(),
-              'mimeType': this.templateDetails.mimeType[0],
-              'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.name,
-              'creator': creator,
-              'author': creator,
-              'programId': this.sessionContext.programId,
-              'collectionId': this.sessionContext.collection,
-              'unitIdentifiers': [this.unitIdentifier],
-              ...(this.sessionContext.nominationDetails &&
-                this.sessionContext.nominationDetails.organisation_id &&
-                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              ...(_.pickBy(sharedMetaData, _.identity))
-            }
-          }
-        }
-      };
-      if (this.sampleContent) {
-        option.data.request.content.sampleContent = this.sampleContent;
-      }
-      if (_.get(this.templateDetails, 'modeOfCreation') === 'question') {
-        option.data.request.content.questionCategories =  [this.templateDetails.questionCategory];
-      }
-      if (_.get(this.templateDetails, 'appIcon')) {
-        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
-      }
-
-      let createRes;
-      if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
-        option.url = 'questionset/v1/create';
-        option.data.request['questionset'] = {};
-        option.data.request['questionset'] = option.data.request.content;
-        delete option.data.request.content;
-        createRes = this.actionService.post(option);
-      } else {
-        createRes = this.actionService.post(option);
-      }
-
-      createRes.pipe(map((res: any) => res.result), catchError(err => {
+      
+      const createContentReq = this.helperService.createContent(creationInput);
+      createContentReq.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
           telemetryPageId: this.telemetryPageId,
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
-          request: option
+          request: {}
         };
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))

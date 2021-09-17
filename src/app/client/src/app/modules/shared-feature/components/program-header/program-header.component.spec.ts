@@ -2,17 +2,17 @@ import { async, ComponentFixture, TestBed} from '@angular/core/testing';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ProgramHeaderComponent } from './program-header.component';
-import { ProgramTelemetryService } from '../../services';
-import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
+import { ProgramStageService, ProgramTelemetryService } from '../../services';
 import { ToasterService, ConfigService } from '@sunbird/shared';
 import { mockRes } from './program-header.component.spec.data';
 import { of } from 'rxjs';
 import * as _ from 'lodash-es';
-import { RouterTestingModule } from '@angular/router/testing';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
-import { APP_BASE_HREF } from '@angular/common'; 
-// import { MainHeaderComponent } from 'src/app/modules/core/components/main-header/main-header.component';
+import { Location } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
+import { APP_BASE_HREF } from '@angular/common';
+
 
 const fakeActivatedRoute = {
   snapshot: {
@@ -32,8 +32,7 @@ class RouterStub {
 
 const testStage = {stageId: 1, stage: 'collectionComponent'};
 
-
-xdescribe('ProgramHeaderComponent', () => {
+describe('ProgramHeaderComponent', () => {
   let component: ProgramHeaderComponent;
   let fixture: ComponentFixture<ProgramHeaderComponent>;
   let programStageService;
@@ -75,7 +74,7 @@ xdescribe('ProgramHeaderComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [TelemetryModule, HttpClientTestingModule,RouterTestingModule],
+      imports: [TelemetryModule.forRoot(), HttpClientTestingModule, RouterTestingModule],
       declarations: [ ProgramHeaderComponent ],
       providers: [ ProgramStageService, ToasterService, TelemetryService, ConfigService,
         { provide: ProgramTelemetryService, useValue: programTelemetryServiceStub},

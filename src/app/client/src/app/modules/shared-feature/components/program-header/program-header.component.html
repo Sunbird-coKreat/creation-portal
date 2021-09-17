@@ -1,0 +1,127 @@
+<div class="sb-bg-color-primary-0 practical-header py-16">
+  <div class="practical-header__content pt-10">
+    <div class="ui grid">
+      <div class="three wide column">
+        <div class="practical-header__title ">
+          <h5 class="m-0 p-0 pb-10 font-weight-bold d-inline-block break-word">{{ programDetails?.name }} </h5>
+          <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+            <ng-template #popupTemplate>
+              <div class="content">
+                <div class="textbook-details ml-8">
+                  <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+                  <div class="content">
+                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+                  </div>
+                  <hr />
+                  <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
+                  <div class="content">
+                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
+                  </div>
+                  <hr />
+                  <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.subjects }}</strong></div>
+                  <div class="content">
+                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.subject.join(', ') }}</label>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          <div *ngIf="programDetails?.target_type==='searchCriteria'" class="sb-color-warning pb-10 pb-10">
+            <span class="font-weight-bold">{{ programDetails?.config.framework.join(', ') }}</span>
+          </div>
+          <p class="fs-0-785 pt-10 bt-1 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
+        </div>
+      </div>
+      <div class="nine wide column pl-20">
+        <div class="d-flex  practical-header__content py-10">
+          <div class="sb-meta-data-container sb-meta-data-column px-10 w-50">
+            <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
+            <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
+          </div>
+          <div class="program-timeline px-10">
+            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+            <div class="status" [class.active]="activeDate === 'nomination_enddate'">
+              <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
+              <div class="status__date">
+              {{ programDetails?.nomination_enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'nomination_enddate'" *ngIf="activeDate === 'nomination_enddate'">{{ programDetails?.nomination_enddate | daysToGo  }}</em>
+              </div>
+            </div>
+            </div>
+            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+            <div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
+              <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
+              <div class="status__date">
+              {{ programDetails?.shortlisting_enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'shortlisting_enddate'" *ngIf="activeDate === 'shortlisting_enddate'">{{ programDetails?.shortlisting_enddate | daysToGo  }}</em>
+              </div>
+            </div>
+            </div>
+            <div class="program-timeline-item">
+            <div class="status"  [class.active]="activeDate === 'content_submission_enddate'">
+              <div class="status__label">{{resourceService.frmelmnts.lbl.contributionReview}}</div>
+              <div class="status__date">
+              {{ programDetails?.content_submission_enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'content_submission_enddate'" *ngIf="activeDate === 'content_submission_enddate'">{{ programDetails?.content_submission_enddate | daysToGo  }}</em>
+              </div>
+            </div>
+            </div>
+            <div class="program-timeline-item">
+            <div class="status" [class.active]="activeDate === 'enddate'">
+              <div class="status__label">{{ resourceService?.frmelmnts?.lbl?.programEndDate }}</div>
+              <div class="status__date">
+              {{ programDetails?.enddate |  date:'LLLL d, yyyy'  }}
+              <br/>
+              <em [class.sb-color-warning]="activeDate === 'enddate'" *ngIf="activeDate === 'enddate'">{{ programDetails?.enddate | daysToGo  }}</em>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="sb-meta-data-container sb-meta-data-column">
+            <div class="px-10">
+              <div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
+                <label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
+                <p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
+              </div>
+            </div>
+            <div class="px-10" *ngIf="nominationDetails?.status=='Rejected'">
+              <label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
+              <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
+            </div>
+            <div class="px-10" *ngIf="showSkipReview">
+              <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
+              <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
+            </div>
+          </div>
+          
+        </div>
+        <div *ngIf="canNominate">
+          <hr class="my-10">
+          <div class="d-flex sb-steps flex-jc-flex-end pt-10">
+            <div class="fs-0-92 pr-30">
+              {{resourceService.frmelmnts.lbl.nominationProcess}}
+            </div>
+            <div class="sb-bx">
+              <span class="sb-step-circle">1</span>
+              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.clickSelectContentType}}</span>
+            </div>
+            <div class="sb-bx">
+              <span class="sb-step-circle">2</span>
+              <span class="sb-step-label" *ngIf="!programDetails?.target_type || programDetails?.target_type ==='collections'">{{resourceService.frmelmnts.lbl.uploadSampleContentToTextbook.replace('{TARGET_NAME}', targetCollections | lowercase)}}</span>
+              <span class="sb-step-label" *ngIf="programDetails?.target_type ==='searchCriteria'">{{resourceService.frmelmnts.lbl.uploadSampleContentToTextbook.replace('{TARGET_NAME}', targetCollections | lowercase)}}</span>
+            </div>
+            <div class="sb-bx">
+              <span class="sb-step-circle">3</span>
+              <span class="sb-step-label">{{resourceService.frmelmnts.lbl.onceUploadedSampleClick}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  

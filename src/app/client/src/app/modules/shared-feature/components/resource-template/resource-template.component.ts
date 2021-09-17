@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, OnDestroy, Output, Input, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
-import { ISessionContext, IChapterListComponentInput, IResourceTemplateComponentInput } from '../../interfaces';
+import { ISessionContext, IChapterListComponentInput, IResourceTemplateComponentInput } from '../../../sourcing/interfaces';
 import { ProgramTelemetryService } from '../../../program/services';
 import { ConfigService, ResourceService, ToasterService} from '@sunbird/shared';
 import { UserService, ProgramsService } from '@sunbird/core';

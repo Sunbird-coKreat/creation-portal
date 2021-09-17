@@ -603,7 +603,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   canReviewContent() {
-    return !!(this.roles.currentRoles.includes('REVIEWER')
+    return !!(this.sessionContext.currentRoles.includes('REVIEWER')
             && this.sessionContext.resourceStatus === 'Review'
             && this.router.url.includes('/contribute')
             && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)

@@ -219,4 +219,23 @@ export class FrameworkService {
       this.setOrgAndTargetFrameworkCategories();
     });
   }
+
+  getFrameworkData(channel?, type?, identifier?, systemDefault?) {
+    const option = {
+      url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
+      data: {
+        request: {
+            filters: {
+                objectType: 'Framework',
+                status: ['Live'],
+                ...(type && {type}),
+                ...(identifier && {identifier}),
+                ...(channel && {channel}),
+                ...(systemDefault && {systemDefault})
+            }
+        }
+    }
+      };
+    return this.learnerService.post(option);
+  }
 }
