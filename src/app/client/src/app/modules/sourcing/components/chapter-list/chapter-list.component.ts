@@ -1399,6 +1399,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.actionService.patch(req).pipe(map((data: any) => data.result), catchError(err => {
       return throwError('');
     })).subscribe(res => {
+      this.updateAccordianView();
       console.log('result ', res);
     });
   }
