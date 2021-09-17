@@ -115,6 +115,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public addFormLibraryInput = {};
   editorConfig: any;
+  searchConfig;
+  collectionSourcingConfig;
   private deviceId: string;
   private buildNumber: string;
   private portalVersion: string;
@@ -474,7 +476,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }
 
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
+          this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
+          this.sessionContext['addFromLibraryBetaEnabled'] = this.collectionSourcingConfig.addFromLibraryBetaEnabled;
+        }
+
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -483,6 +491,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
           this.setLocalBlueprint();
         }
+
         this.levelOneChapterList.push({
           identifier: 'all',
           // tslint:disable-next-line:max-line-length
@@ -1745,24 +1754,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   setAddLibraryInput() {
     this.addFormLibraryInput = {
-      programContext: this.programContext,
-      sessionContext: this.sessionContext,
+      targetPrimaryCategories: this.programContext.targetprimarycategories,
       framework: this.sessionContext.framework,
       collectionId: this.sessionContext.collection,
       editorConfig: {
         context: {
           identifier: this.sessionContext.collection,
           channel: this.programContext.rootorg_id,
-          user: {
-            id: this.userService.userid,
-            organisations: this.userService.orgIdNameMap,
-            orgIds: this.userProfile.organisationIds,
-            fullName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
-              this.userProfile.firstName,
-            firstName: this.userProfile.firstName,
-            lastName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.lastName : '',
-            isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
-          },
           sid: this.userService.sessionId,
           did: this.deviceId,
           uid: this.userService.userid,
@@ -1775,75 +1773,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           contextRollup: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
           tags: this.userService.dims,
           timeDiff: this.userService.getServerTimeDiff,
-          defaultLicense: this.frameworkService.getDefaultLicense(),
           endpoint: '/data/v3/telemetry',
           env: 'question_editor'
         },
         config: {
           mode: 'edit',
-          // tslint:disable-next-line:max-line-length
-          objectType: this.sessionContext.targetCollectionMimetype === 'application/vnd.ekstep.content-collection' ? 'Collection' : 'QuestionSet',
-          primaryCategory: this.sessionContext.targetCollectionPrimaryCategory,
-          isRoot: true,
-          iconClass: 'fa fa-book',
-          showAddCollaborator: false
+          ...this.collectionSourcingConfig
         }
       },
-      searchFormConfig: [
-        {
-          code: 'primaryCategory', dataType: 'list', description: 'Type', editable: true,
-          default: this.programContext.targetprimarycategories.map(v => v['name']),
-          range: this.programContext.targetprimarycategories,
-          inputType: 'nestedselect', label: 'Content Type(s)', name: 'Type', placeholder: 'Select ContentType',
-          required: false, visible: true, output: 'name',
-          renderingHints: {
-            class: 'sb-g-col-lg-1'
-          }
-        },
-        {
-          code: 'board', visible: true, depends: [], editable: true, dataType: 'list',
-          description: 'Board', label: 'Board', required: false, name: 'Board', inputType: 'select',
-          placeholder: 'Select Board', output: 'name',
-          renderingHints: {class: 'sb-g-col-lg-1'}
-        },
-        {
-          code: 'medium', visible: true, editable: true, dataType: 'list', description: '', label: 'Medium(s)',
-          required: false, name: 'Medium', inputType: 'nestedselect', placeholder: 'Select Medium', output: 'name',
-          depends: ['board'],
-          renderingHints: {class: 'sb-g-col-lg-1'}
-        },
-        {
-          code: 'gradeLevel', visible: true, depends: ['board', 'medium'], editable: true,
-          default: '', dataType: 'list', renderingHints: {class: 'sb-g-col-lg-1'}, description: 'Class',
-          label: 'Class(es)', required: false, name: 'Class', inputType: 'nestedselect', placeholder: 'Select Class',
-          output: 'name'
-        },
-        {
-          code: 'subject', visible: true, depends: [ 'board', 'medium', 'gradeLevel' ],
-          editable: true, default: '', dataType: 'list', renderingHints: {class: 'sb-g-col-lg-1'},
-          description: '', label: 'Subject(s)', required: false, name: 'Subject', inputType: 'nestedselect',
-          placeholder: 'Select Subject', output: 'name'
-        },
-        {
-          code: 'topic', visible: true, editable: true, dataType: 'list',
-          depends: ['board', 'medium', 'gradeLevel', 'subject'], default: '',
-          renderingHints: {
-            class: 'sb-g-col-lg-1'
-          },
-          name: 'Topic', description: 'Choose a Topics',
-          inputType: 'topicselector',
-          label: 'Topic(s)',
-          placeholder: 'Choose Topics',
-          required: false
-        },
-        {
-          inputType: 'topicselector', code: 'learningOutcome',
-          visible: true, depends: ['board', 'medium', 'gradeLevel', 'subject', 'topic'], editable: true, dataType: 'list',
-          description: 'learningOutcome', label: 'Learning Outcome', required: false, name: 'learningOutcome',
-          placeholder: 'Select Learning Outcome', output: 'name',
-          renderingHints: {class: 'sb-g-col-lg-1'}
-        }
-      ]
+      searchFormConfig: this.searchConfig.properties
     };
   }
 

@@ -50,7 +50,7 @@
     "@project-sunbird/sunbird-video-player-v9": "4.1.1",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "@project-sunbird/web-extensions": "^0.0.2",
-    "@samagra-x/sunbird-resource-library": "^0.0.4",
+    "@samagra-x/sunbird-resource-library": "^0.0.5",
     "@types/lodash": "^4.14.104",
     "alphanum-sort": "^1.0.2",
     "angular-inport": "^2.0.0",
