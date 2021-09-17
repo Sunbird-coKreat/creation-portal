@@ -41,13 +41,13 @@ const routes: Routes = [{
     object: { type: 'project', ver: '1.0'} }
   }
 },
-{
-  path: 'program/:programId', component: ProgramComponent, canActivate: [ProgramsService, AuthGuard],
-  data: {
-    roles: 'programSourcingRole',
-    telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'program-details' }
-  }
-},
+// {
+//   path: 'program/:programId', component: ProgramComponent, canActivate: [ProgramsService, AuthGuard],
+//   data: {
+//     roles: 'programSourcingRole',
+//     telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'program-details' }
+//   }
+// },
 {
   path: 'nominations/:programId', component: ProgramNominationsComponent, canActivate: [ProgramsService],
   data: {
