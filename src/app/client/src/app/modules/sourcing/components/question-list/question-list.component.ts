@@ -114,7 +114,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.originCollectionData = _.get(this.practiceQuestionSetComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.practiceQuestionSetComponentInput, 'content.originUnitStatus');
     this.selectedSharedContext = _.get(this.practiceQuestionSetComponentInput, 'selectedSharedContext');
-    this.roles = _.get(this.practiceQuestionSetComponentInput, 'roles');
     this.templateDetails = _.get(this.practiceQuestionSetComponentInput, 'templateDetails');
     this.programContext = _.get(this.practiceQuestionSetComponentInput, 'programContext');
     this.sessionContext.programContext = this.programContext;
@@ -138,7 +137,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
-      this.fetchFrameWorkDetails();
+      this.helperService.fetchProgramFramework(this.sessionContext);
     }
     this.pageStartTime = Date.now();
     this.setTelemetryStartData();
@@ -230,18 +229,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       return _.get(this.activeRoute, 'snapshot.data.telemetry.type');
     }
-  }
-
-  fetchFrameWorkDetails() {
-    this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(takeUntil(this.onComponentDestroy$),
-    filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), take(1)).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
-        const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-        this.sessionContext.frameworkData = frameworkData;
-        this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
-      }
-    });
   }
 
   fetchCategoryDetails() {
@@ -486,26 +473,36 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.resourceDetails.identifier).subscribe((res) => {
         this.existingContentVersionKey = _.get(res, 'result.versionKey');
         // tslint:disable-next-line:max-line-length
-        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, res.result.node_id || res.result.identifier)
+        if (this.sessionContext.collection && this.sessionContext.textBookUnitIdentifier) {
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.sessionContext.textBookUnitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
+            this.showEditMetaForm = false;
+            if (emitHeaderEvent) {
+             this.programsService.emitHeaderEvent(true);
+            }
+            if (cb) {
+              cb.call(this);
+            } else {
+              this.getContentMetadata(this.resourceDetails.identifier);
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            }
+          }, (err) => {
+            const errInfo = {
+              errorMsg: this.resourceService.messages.fmsg.m0098,
+              telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+              env : this.activeRoute.snapshot.data.telemetry.env
+            };
+              this.sourcingService.apiErrorHandling(err, errInfo);
+          });
+        } else {
           this.showEditMetaForm = false;
-          if (emitHeaderEvent) {
-            this.programsService.emitHeaderEvent(true);
-          }
-          if (cb) {
-            cb.call(this);
-          } else {
-            this.getContentMetadata(this.resourceDetails.identifier);
-            this.toasterService.success(this.resourceService.messages.smsg.m0060);
-          }
-        }, (err) => {
-          const errInfo = {
-            errorMsg: this.resourceService.messages.fmsg.m0098,
-            telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
-            env : this.activeRoute.snapshot.data.telemetry.env
-           };
-            this.sourcingService.apiErrorHandling(err, errInfo);
-        });
+            if (cb) {
+              cb.call(this);
+            } else {
+              this.getContentMetadata(this.resourceDetails.identifier);
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            }
+        }
       }, err => {
         const errInfo = {
           errorMsg: this.resourceService.messages.fmsg.m0098,
@@ -542,7 +539,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.resourceDetails, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
   }
 
   canDeleteQuestion() {
@@ -589,15 +586,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   canReviewContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.resourceDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.resourceDetails.createdBy);
-  }
-
-  canSourcingReviewerPerformActions() {
-    return !!(this.router.url.includes('/sourcing')
-    && !this.resourceDetails.sampleContent === true && this.resourceStatus === 'Live'
-    && this.userService.userid !== this.resourceDetails.createdBy
-    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
-    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')
-    && this.programsService.isProjectLive(this.programContext));
   }
 
   canEditContentTitle() {
@@ -841,11 +829,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           }],
           'questionCategories': _.uniq(_.compact(_.get(selectedQuestionsData, 'category'))),
           'editorVersion': 3,
-          'unitIdentifiers': [this.sessionContext.textBookUnitIdentifier],
           'rejectComment' : ''
         }
       };
-
+      if (_.get(this.sessionContext,'textBookUnitIdentifier')) {
+        requestBody.content['unitIdentifiers']= [this.sessionContext.textBookUnitIdentifier]
+      }
       if (!_.isEmpty(topic)) {
         requestBody.content['topic'] = topic;
       }
@@ -892,6 +881,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
            };
             this.sourcingService.apiErrorHandling(err, errInfo);
         });
+      } else {
+        this.generateTelemetryEndEvent('submit');
+          this.toasterService.success(this.resourceService.messages.smsg.m0061);
+          this.programStageService.removeLastStage();
+          this.uploadedContentMeta.emit({
+            contentId: contentId
+          });
       }
     }, (err) => {
       const errInfo = {
@@ -919,6 +915,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
+        });
+      } else {
+        this.generateTelemetryEndEvent('submit');
+        this.toasterService.success(this.resourceService.messages.smsg.m0061);
+        this.programStageService.removeLastStage();
+        this.uploadedContentMeta.emit({
+          contentId: contentId
         });
       }
     }, (err) => {
@@ -1161,7 +1164,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     const sharedContext = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.selectedSharedContext[context] || this.sessionContext[context] };
     }, {});
-    const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
+    const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.programContext.target_type);
     data = _.assign(data, _.pickBy(sharedMetaData, _.identity));
     if (!_.isEmpty(data['subject'])) {
       data['subject'] = data['subject'][0];

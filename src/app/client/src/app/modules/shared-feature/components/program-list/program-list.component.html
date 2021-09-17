@@ -7,14 +7,14 @@
         [telemetryInteractEdata]="getTelemetryInteractEdata('collections', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectContributions)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forCollections }}
+        [telemetryInteractPdata]="telemetryInteractPdata">Target Collections
         </a>
         <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="forTargetType='searchCriteria';getProgramsListByRole()"
         appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forSearchCriteria }}
+        [telemetryInteractPdata]="telemetryInteractPdata">Framework
         </a>
       </div>
     </div>
@@ -47,12 +47,12 @@
           {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}
         </div>
         <button type="button" appTelemetryInteract
-          [telemetryInteractEdata]="getTelemetryInteractEdata('apply_filter', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-          [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-          [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
-          (click)="showFiltersModal = true">
-          <i class="filter icon"></i>
-          {{resourceService?.frmelmnts?.btn?.applyFilter}}
+	  [telemetryInteractEdata]="getTelemetryInteractEdata('apply_filter', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+	  [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+	  [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
+	  (click)="showFiltersModal = true">
+	  <i class="filter icon"></i>
+	  {{resourceService?.frmelmnts?.btn?.applyFilter}}
         </button>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->

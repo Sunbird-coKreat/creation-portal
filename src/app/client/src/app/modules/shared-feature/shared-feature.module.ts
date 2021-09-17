@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import {
   ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
   OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-  UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent, OrgUsersListComponent, ProjectFilterComponent
+  UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent, OrgUsersListComponent, ProjectFilterComponent, ProgramHeaderComponent, ResourceTemplateComponent
 } from './components';
 import { DaysToGoPipe } from './pipes';
 import { SlickModule } from 'ngx-slick';
@@ -34,10 +34,10 @@ import { HelpPageComponent } from './components/help-page/help-page.component';
   declarations: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
     UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe,
-    TextbookListComponent, OrgUsersListComponent, HelpPageComponent, ProjectFilterComponent
+    TextbookListComponent, OrgUsersListComponent, HelpPageComponent, ProjectFilterComponent, ProgramHeaderComponent, ResourceTemplateComponent
   ],
   exports: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,
-    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe, TextbookListComponent, OrgUsersListComponent]
+    UserLocationComponent, EnrollContributorComponent, ProgramListComponent, DaysToGoPipe, TextbookListComponent, ProgramHeaderComponent, OrgUsersListComponent, ResourceTemplateComponent]
 })
 export class SharedFeatureModule { }

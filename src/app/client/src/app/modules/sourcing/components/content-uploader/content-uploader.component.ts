@@ -34,7 +34,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   @ViewChild('FormControl') FormControl: NgForm;
   // @ViewChild('contentTitle', {static: false}) contentTitle: ElementRef;
   @Input() contentUploadComponentInput: IContentUploadComponentInput;
-
   public sessionContext: any;
   public sharedContext: any;
   public selectedSharedContext: any;
@@ -70,7 +69,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   showUploadModal: boolean;
   submitButton: boolean;
   uploadButton: boolean;
-  titleCharacterLimit: number;
   allFormFields: Array<any>;
   telemetryImpression: any;
   public telemetryInteractCdata: any;
@@ -136,7 +134,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.templateDetails  = _.get(this.contentUploadComponentInput, 'templateDetails');
     this.unitIdentifier  = _.get(this.contentUploadComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentUploadComponentInput, 'programContext');
-    this.titleCharacterLimit = _.get(this.config, 'config.resourceTitleLength') || 200;
     this.selectedSharedContext = _.get(this.contentUploadComponentInput, 'selectedSharedContext');
     this.sharedContext = _.get(this.contentUploadComponentInput, 'programContext.config.sharedContext');
     this.sourcingReviewStatus = _.get(this.contentUploadComponentInput, 'sourcingStatus') || '';
@@ -307,7 +304,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.contentMetaData, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
     this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
@@ -355,16 +352,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   canReviewContent() {
     // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
-  }
-
-  canSourcingReviewerPerformActions() {
-    // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/sourcing')
-    && !this.contentMetaData.sampleContent === true && this.resourceStatus === 'Live'
-    && this.userService.userid !== this.contentMetaData.createdBy
-    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
-    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')
-    && this.programsService.isProjectLive(this.programContext));
   }
 
   initiateUploadModal() {
@@ -523,59 +510,29 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   uploadByURL(fileUpload, mimeType) {
     this.loading = true;
     if (fileUpload && !this.uploadInprogress && !this.contentMetaData && !this.contentUploadComponentInput.contentId) {
-      let creator = this.userService.userProfile.firstName;
-      if (!_.isEmpty(this.userService.userProfile.lastName)) {
-        creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
-      }
-
-      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
-      const option = {
-        url: `content/v3/create`,
-        data: {
-          request: {
-            content: {
-              'name': 'Untitled',
-              'code': UUID.UUID(),
-              'mimeType': this.detectMimeType(this.uploader.getName(0)),
-              'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.name,
-              'creator': creator,
-              'collectionId': this.sessionContext.collection,
-              ...(this.sessionContext.nominationDetails &&
-                this.sessionContext.nominationDetails.organisation_id &&
-                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              'programId': this.sessionContext.programId,
-              'unitIdentifiers': [this.unitIdentifier],
-              ...(_.pickBy(sharedMetaData, _.identity))
-            }
-          }
-        }
-      };
-      if (this.sessionContext.sampleContent) {
-        option.data.request.content.sampleContent = this.sessionContext.sampleContent;
-      }
-      if (_.get(this.templateDetails, 'appIcon')) {
-        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
-      }
-      this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+      const createContentReq = this.helperService.createContent(this.contentUploadComponentInput, mimeType);
+     
+      createContentReq.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
           telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
-          env : this.activeRoute.snapshot.data.telemetry.env, request: option
+          env : this.activeRoute.snapshot.data.telemetry.env, request: {}
          };
         this.programStageService.removeLastStage();
         this.programsService.emitHeaderEvent(true);
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
-            .subscribe(() => {
-              this.uploadFile(mimeType, result.node_id);
-            }, (err) => {
-              this.programStageService.removeLastStage();
-              this.programsService.emitHeaderEvent(true);
-            });
+          if (!_.get(this.programContext, 'target_type') || _.get(this.programContext, 'target_type') === 'collections') {
+            this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
+              .subscribe(() => {
+                this.uploadFile(mimeType, result.node_id);
+              }, (err) => {
+                this.programStageService.removeLastStage();
+              });
+            } else {
+              this.uploadFile(mimeType, result.identifier);
+            }
         });
     } else if (!this.uploadInprogress) {
       this.uploadFile(mimeType, this.contentMetaData ? this.contentMetaData.identifier : this.contentUploadComponentInput.contentId);
@@ -763,7 +720,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       // At the end of execution
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
-        this.fetchFrameWorkDetails();
+        this.helperService.fetchProgramFramework(this.sessionContext);
       }
       this.fetchCategoryDetails();
       this.getTelemetryData();
@@ -800,18 +757,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return thisFileMimetype;
   }
 
-  fetchFrameWorkDetails() {
-    this.frameworkService.initialize(this.sessionContext.framework);
-    this.frameworkService.frameworkData$.pipe(takeUntil(this.onComponentDestroy$),
-      filter(data => _.get(data, `frameworkdata.${this.sessionContext.framework}`)), take(1)).subscribe((frameworkDetails: any) => {
-      if (frameworkDetails && !frameworkDetails.err) {
-        const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-        // this.categoryMasterList = _.cloneDeep(frameworkDetails.frameworkdata[this.sessionContext.framework].categories);
-        this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-        this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
-      }
-    });
-  }
 
   fetchCategoryDetails() {
     this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
@@ -831,7 +776,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       objectType: this.contentMetaData.objectType
     };
 
-    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
   }
 
   changePolicyCheckValue (event) {
@@ -855,6 +800,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
 
       this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentMetaData.identifier).subscribe((res) => {
+        if (this.sessionContext.collection && this.unitIdentifier) {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
         .subscribe((data) => {
@@ -862,21 +808,30 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.programsService.emitHeaderEvent(true);
           }
           this.showEditMetaForm = false;
+            if (cb) {
+              cb.call(this);
+            } else {
+              this.getUploadedContentMeta(this.contentMetaData.identifier);
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            }
+          }, (err) => {
+            const errInfo = {
+              errorMsg: this.resourceService.messages.fmsg.m0098,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+              env : this.activeRoute.snapshot.data.telemetry.env
+            };
+            this.sourcingService.apiErrorHandling(err, errInfo);
+          });
+        } else {
+          this.showEditMetaForm = false;
           if (cb) {
             cb.call(this);
           } else {
             this.getUploadedContentMeta(this.contentMetaData.identifier);
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }
-        }, (err) => {
-          const errInfo = {
-            errorMsg: this.resourceService.messages.fmsg.m0098,
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
-            env : this.activeRoute.snapshot.data.telemetry.env
-          };
-          this.sourcingService.apiErrorHandling(err, errInfo);
-        });
+        }
       }, err => {
         const errInfo = {
           errorMsg: this.resourceService.messages.fmsg.m0098,
@@ -926,6 +881,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               env : this.activeRoute.snapshot.data.telemetry.env
             };
             this.sourcingService.apiErrorHandling(err, errInfo);
+          });
+        } else {
+          this.generateTelemetryEndEvent('submit');
+          this.toasterService.success(this.resourceService.messages.smsg.m0061);
+          this.programStageService.removeLastStage();
+          this.uploadedContentMeta.emit({
+            contentId: res.result.content_id
           });
         }
        }, (err) => {
@@ -1004,6 +966,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.uploadedContentMeta.emit({
               contentId: res.result.identifier
             });
+          });
+        } else {
+          this.generateTelemetryEndEvent('publish');
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+          this.programStageService.removeLastStage();
+          this.uploadedContentMeta.emit({
+            contentId: res.result.identifier
           });
         }
       }, (err) => {
@@ -1089,7 +1058,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (action === 'reject' && this.FormControl.value.rejectComment.length) {
       rejectComment = this.FormControl.value.rejectComment;
     }
-    this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+    this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
   }
 
   ngOnDestroy() {

@@ -63,42 +63,54 @@
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th>{{firstLevelFolderLabel}}</th>
+						<th *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
+						<th *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">{{ resourceService.frmelmnts.lbl.creator }}</th>
 						<th>{{resourceService.frmelmnts.lbl.status}}</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100" *ngIf="collections.length">
-					<tr *ngFor="let data of collections">
-						<td>
-							<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
-								{{data.name}}
-							</div>
-						</td>
-						<td>
-							<div>
-								{{data.medium}}
-							</div>
-						</td>
-						<td>
-							<div class="sb__ellipsis sb__ellipsis--three">
-								{{data.gradeLevel}}
-							</div>
-						</td>
-						<td>
-							<div>
-								{{data.subject}}
-							</div>
-						</td>
-						<td>{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
-						<td class="fsmall"><span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span></td>
-						<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)"
-							appTelemetryInteract
-							[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-							[telemetryInteractObject]="telemetryInteractObject"
-							[telemetryInteractCdata]="getTelemetryInteractCdata(data.identifier,'linked_collection')"
-							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
-					</tr>
+					<ng-container *ngFor="let data of collections;">  
+						<tr *ngIf="data?.contentVisibility === undefined || data?.contentVisibility">
+							<td>
+								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
+									{{data.name}}
+								</div>
+							</td>
+							<td>
+								<div>
+									{{data.medium}}
+								</div>
+							</td>
+							<td>
+								<div class="sb__ellipsis sb__ellipsis--three">
+									{{data.gradeLevel}}
+								</div>
+							</td>
+							<td>
+								<div>
+									{{data.subject}}
+								</div>
+							</td>
+							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
+							<td class="fsmall"  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">
+								<span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}
+									<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span>
+							</td>
+							<td class="fsmall"  *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">
+								<span [ngClass]="data.resourceStatusClass">{{ data.creator }}</span>
+							</td>
+							<td class="fsmall"  *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">
+								<span [ngClass]="data.resourceStatusClass">{{ data.resourceStatusText }}</span>
+							</td>
+							<td class="text-center"><button type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="viewContribution(data)"
+								appTelemetryInteract
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="getTelemetryInteractCdata(data.identifier,'linked_collection')"
+								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
+						</tr>
+					</ng-container>
 				</tbody>
 			</table>
 		</div>

@@ -1,21 +1,25 @@
-import { ExtPluginService, UserService, FrameworkService, ProgramsService, RegistryService, ActionService} from '@sunbird/core';
+import { ExtPluginService, UserService, FrameworkService, ProgramsService, RegistryService, ActionService, ContentHelper} from '@sunbird/core';
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { UUID } from 'angular2-uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { tap, first } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { ICollectionComponentInput, IDashboardComponentInput,
   IPagination, IChapterListComponentInput} from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
-import { ProgramStageService } from '../../../program/services/program-stage/program-stage.service';
+import { ProgramStageService, ProgramTelemetryService} from '../../../program/services';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+
 
 interface IDynamicInput {
   collectionComponentInput?: ICollectionComponentInput;
@@ -26,18 +30,17 @@ interface IDynamicInput {
   templateUrl: './program.component.html'
 })
 export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('prefModal') prefModal;
+  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public programId: string;
   public programDetails: any;
-  public userProfile: any;
+  public loaders = {
+    showProgramHeaderLoader: true,
+    showCollectionListLoader: true,
+    showUsersLoader: true,
+  };
   public showLoader = true;
-  public showTabs = true;
-  public programSelected = false;
-  public associatedPrograms: any;
-  public headerComponentInput: any;
   public stageSubscription: any;
-  public tabs;
-  public showStage;
-  public defaultView;
   public dynamicInputs;
   public component: any;
   public sessionContext: ISessionContext = {};
@@ -46,46 +49,34 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   public currentStage: any;
   public telemetryImpression: IImpressionEventInput;
-  outputs = {
-    isCollectionSelected: (check) => {
-      this.showTabs = false;
-    }
-  };
   public chapterListComponentInput: IChapterListComponentInput = {};
-  public showChapterList = false;
   public contributorTextbooks: any = [];
   public tempSortTextbooks = [];
   public direction = 'asc';
   public sortColumn = '';
   public contentStatusCounts: any = {};
-  public activeDate = '';
   public programContentTypes: string;
   public roles;
   public rolesWithNone;
   public roleNames;
-  public currentNominationStatus: any;
+  public currentNominationStatus = '';
   public nominationDetails: any = {};
-  public nominated = false;
   showTextbookFiltersModal = false;
   textbookFiltersApplied = false;
   userPreferences: any = {};
   setPreferences = {};
   prefernceForm: FormGroup;
-  @ViewChild('prefModal') prefModal;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
   public directionOrgUsers = 'desc';
   public sortColumnOrgUsers = 'projectselectedRole';
   public isInitialSourcingOrgUser = true;
-  collection;
-  showUsersLoader = true;
   OrgUsersCnt = 0;
   pager: IPagination;
   pageNumber = 1;
   pageLimit: any;
   sharedContext;
-  showSkipReview = false;
   showSkipReviewContributor = false;
   searchInput: any;
   initialSourcingOrgUser = [];
@@ -93,7 +84,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   searchLimitCount: any;
   isContributingOrgAdmin: any;
   visitedTab = [];
-  @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
   public userRemoveRoleLoader = false;
   public showUserRemoveRoleModal = false;
   public selectedUserToRemoveRole: any;
@@ -102,6 +92,19 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public telemetryInteractPdata: any;
   public targetCollection: string;
   public targetCollections: string;
+  public selectedCollectionIds = [];
+  public selectedContentTypes = [];
+  public showContentTypeModal = false;
+  public preSavedContentTypes = [];
+  public visibility = {};
+  public firstLevelFolderLabel: string;
+  public showResourceTemplatePopup = false;
+  public resourceTemplateComponentInput: any;
+  public templateDetails;
+  public contentId: string;
+  public nominationIsInProcess: boolean = false;
+  public showNominateModal: boolean = false;
+  public contentCount = 0;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public extPluginService: ExtPluginService, public userService: UserService,
@@ -110,9 +113,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService) {
+    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService, 
+    public programTelemetryService: ProgramTelemetryService, private contentHelper: ContentHelper) {
     this.programId = this.activatedRoute.snapshot.params.programId;
-    localStorage.setItem('programId', this.programId);
   }
   ngOnInit() {
     if (['null', null, undefined, 'undefined'].includes(this.programId)) {
@@ -124,7 +127,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
-    this.getProgramDetails();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
@@ -134,6 +136,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStage = 'programComponent';
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.getProgramDetails();
   }
 
   ngAfterViewInit() {
@@ -168,27 +171,23 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   getProgramDetails() {
-    const req = {
-      url: `program/v1/read/${this.programId}`
-    };
-    this.programsService.get(req).subscribe((programDetails) => {
+    this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
+      /*this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
-      this.programContentTypes = (!_.isEmpty(this.programDetails.targetprimarycategories)) ? _.join(_.map(this.programDetails.targetprimarycategories, 'name'), ', ') : _.join(this.programDetails.content_types, ', ');
+      this.programContentTypes = (!_.isEmpty(this.programDetails.targetprimarycategories)) ? _.join(_.map(this.programDetails.targetprimarycategories, 'name'), ', ') : _.join(this.programDetails.content_types, ', ');*/
+      this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
       this.roles =_.get(this.programDetails, 'config.roles');
       this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
       this.rolesWithNone = _.cloneDeep(this.roles);
       this.rolesWithNone.push({'id': 4, 'name': 'NONE', 'defaultTab': 4, 'tabs': [4]});
       this.roleNames = _.map(this.rolesWithNone, 'name');
-      this.fetchFrameWorkDetails();
+      this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
+      this.helperService.fetchProgramFramework(this.sessionContext);
       this.getNominationStatus();
-      this.setActiveDate();
       this.setTargetCollectionValue();
-      this.showSkipReview = !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id')
-        && this.programDetails.config.defaultContributeOrgReview === false);
-
+      this.getCollectionCategoryDefinition();
     }, error => {
       // TODO: navigate to program list page
       const errInfo = {
@@ -196,7 +195,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         telemetryPageId: this.telemetryPageId,
         telemetryCdata : this.telemetryInteractCdata,
         env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: req
+        request: {}
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
@@ -225,149 +224,128 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
     }
   }
-
-  public fetchFrameWorkDetails() {
-    this.sessionContext.framework = _.get(this.programDetails, 'config.framework');
-    if (this.sessionContext.framework) {
-      this.frameworkService.initialize(this.sessionContext.framework);
-      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-        if (frameworkDetails && !frameworkDetails.err) {
-          this.sessionContext.frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
-        }
-      }, error => {
-        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
-        this.toasterService.error(errorMes || 'Fetching framework details failed');
-        const errInfo = {
-          errorMsg: 'Fetching framework details failed',
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activatedRoute.snapshot.data.telemetry.env,
-        };
-        this.sourcingService.apiErrorHandling(error, errInfo);
-      });
-    }
+  checkSourcingStatus(content) {
+    if (this.programDetails.acceptedContents  &&
+         _.includes(this.programDetails.acceptedContents || [], content.identifier)) {
+            return 'Approved';
+      } else if (this.programDetails.rejectedContents  &&
+              _.includes(this.programDetails.rejectedContents || [], content.identifier)) {
+            return 'Rejected';
+      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
+            return 'PendingForCorrections';
+      } else {
+        return null;
+      }
   }
 
-  initiateInputs() {
-    this.showLoader = false;
-    this.sessionContext.programId = this.programDetails.program_id;
-    this.sessionContext.telemetryPageDetails = {
-      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNomination,
-      telemetryInteractCdata: this.telemetryInteractCdata
-    };
-    this.dynamicInputs = {
-      collectionComponentInput: {
-        sessionContext: this.sessionContext,
-        userProfile: this.userService.userProfile,
-        config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' }),
-        programContext: this.programDetails
-      },
-      dashboardComponentInput: {
-        sessionContext: this.sessionContext,
-        programContext: this.programDetails
+  hasAccessFor(roles: Array<string>) {
+    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
+  }
+  isSourcingOrgReviewer () {
+    return this.userService.isSourcingOrgReviewer(this.programDetails);
+  }
+  getStatusText(content) {
+    const resourceStatus = content.status;
+    const sourcingStatus = content.sourcingStatus;
+    const prevStatus = content.prevStatus;
+    let resourceStatusText,resourceStatusClass; 
+    if (resourceStatus === 'Review') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+      resourceStatusClass = 'sb-color-primary';
+    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      resourceStatusClass = 'sb-color-warning';
+    } else if ( sourcingStatus=== 'Rejected') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      resourceStatusClass = 'sb-color-error';
+    } else if (sourcingStatus === 'Approved') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      resourceStatusClass = 'sb-color-success';
+    } else if (resourceStatus === 'Failed') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Processing') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+      resourceStatusClass = '';
+    } else {
+      resourceStatusText = resourceStatus;
+      resourceStatusClass = 'sb-color-gray-300';
+    }
+    return [resourceStatusText, resourceStatusClass];
+  }
+  shouldContentBeVisible(content) {
+    const hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
+    const hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
+    const hasAccessForBoth =  hasAccessForContributor && hasAccessForReviewer;
+    const currentUserID = this.userService.userid;
+    const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
+    const myOrgId = (this.userService.userRegistryData
+      && this.userService.userProfile.userRegData
+      && this.userService.userProfile.userRegData.User_Org
+      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
+    if ((this.currentNominationStatus && _.includes(['Approved', 'Rejected'], this.currentNominationStatus))
+      && content.sampleContent === true) {
+      return false;
+    // tslint:disable-next-line:max-line-length
+    } else if (hasAccessForBoth) {
+      if (( (_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && currentUserID !== content.createdBy && content.organisationId === myOrgId) || currentUserID === content.createdBy) {
+        return true;
+      } else if (content.status === 'Live' && content.sourceURL) {
+        return true;
       }
-    };
+    } else if (hasAccessForReviewer && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
+    && currentUserID !== content.createdBy
+    && content.organisationId === myOrgId) {
+      return true;
+    } else if (hasAccessForContributor && currentUserID === content.createdBy) {
+      return true;
+    } else if (contributingOrgAdmin && content.organisationId === myOrgId) {
+      return true;
+    } else if (content.status === 'Live' && content.sourceURL) {
+      return true;
+    }
+    return false;
   }
 
   getNominationStatus() {
-    const req = {
-      url: `${this.configService.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
-      data: {
-        request: {
-          filters: {
-            program_id: this.activatedRoute.snapshot.params.programId
-          }
-        }
-      }
-    };
-
-    if (this.userService.isUserBelongsToOrg()) {
-      req.data.request.filters['organisation_id'] = this.userService.getUserOrgId();
-    } else {
-      req.data.request.filters['user_id'] = this.userService.userid;
+    const filters = {
+      program_id: this.activatedRoute.snapshot.params.programId
     }
-    this.programsService.post(req).subscribe((data) => {
-      const nominationDetails = _.first(_.get(data, 'result', []));
-
-      if (!_.isEmpty(nominationDetails)) {
-        if (!_.isEmpty(nominationDetails.content_types)) {
-          nominationDetails.content_types = this.helperService.mapContentTypesToCategories(nominationDetails.content_types);
+    if (this.userService.isUserBelongsToOrg()) {
+      filters['organisation_id'] = this.userService.getUserOrgId();
+    } else {
+      filters['user_id'] = this.userService.userid;
+    }
+    this.programsService.getNominationList(filters).subscribe((data) => {
+      this.nominationDetails = _.first(_.get(data, 'result', []));
+      this.loaders.showProgramHeaderLoader = false;
+      if (!_.isEmpty(this.nominationDetails)) {
+        if (!_.isEmpty(this.nominationDetails.content_types)) {
+          this.nominationDetails.content_types = this.helperService.mapContentTypesToCategories(this.nominationDetails.content_types);
         }
-
-        this.nominationDetails = nominationDetails;
+        this.selectedContentTypes = this.programsService.getNominatedTargetPrimaryCategories(this.programDetails, this.nominationDetails);
+        this.currentNominationStatus = _.get(this.nominationDetails, 'status');
+        this.selectedCollectionIds = _.get(this.nominationDetails, 'collection_ids');
+        //this.nominated = !!(this.nominationDetails.status !== 'Initiated');
+        this.sessionContext.nominationDetails = this.nominationDetails;
       }
-      if (!_.isEmpty(nominationDetails) && this.nominationDetails.status !== 'Initiated') {
-        this.nominated = true;
-        this.sessionContext.nominationDetails = nominationDetails;
-        this.currentNominationStatus = _.get(nominationDetails, 'status');
-        if (this.userService.isUserBelongsToOrg()) {
-          this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
-          if (this.sessionContext.currentOrgRole === 'admin') {
-            this.sessionContext.currentRoles = (['Approved', 'Rejected'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
-          } else if (this.sessionContext.nominationDetails.rolemapping) {
-            this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
-          } else {
-            this.sessionContext.currentRoles = ['CONTRIBUTOR'];
-          }
-        } else {
-          this.sessionContext.currentRoles = ['CONTRIBUTOR'];
-          this.sessionContext.currentOrgRole = 'individual';
-        }
-        this.isShowSkipReview();
-
-        const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
-        this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
-        if (this.userService.isUserBelongsToOrg()) {
-          this.registryService.getOrgUsersDetails().then((orgUsers) => {
-            this.setOrgUsers(orgUsers);
-          });
-        }
+      this.setProgramRole();
+      this.handleActionButtons();
+      this.setifSampleInSession();
+      if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
+        this.contentHelper.initialize(this.programDetails, this.sessionContext);
+      }
+      this.contentCount = 0;
+      if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+        this.getProgramCollections();
       } else {
-        if (data.result && !_.isEmpty(data.result)) {
-          this.sessionContext.nominationDetails = _.first(data.result);
-        }
-        this.component = this.programComponentsService.getComponentInstance('collectionComponent');
-        this.tabs = _.get(this.programDetails.config, 'header.config.tabs');
-        this.initiateInputs();
-      }
-
-      if (this.nominated) {
-        if (this.userService.isContributingOrgAdmin() || this.sessionContext.currentRoles.includes('REVIEWER')) {
-          this.prefernceForm = this.sbFormBuilder.group({
-            medium: [],
-            subject: [],
-            gradeLevel: [],
-          });
-          this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
-            (prefres) => {
-              let preffilter = {};
-              if (prefres.result !== null || prefres.result !== undefined) {
-                this.userPreferences = prefres.result;
-                preffilter = _.get(this.userPreferences, 'contributor_preference');
-              }
-              if (!_.isEmpty(this.userPreferences.contributor_preference)) {
-                this.textbookFiltersApplied = true;
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-                // tslint:disable-next-line: max-line-length
-                this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
-              }
-              this.getProgramTextbooks(preffilter);
-          }, (err) => { // TODO: navigate to program list page
-            this.getProgramTextbooks();
-            const errInfo = {
-              errorMsg: 'Fetching Preferences  failed',
-              telemetryPageId: this.telemetryPageId,
-              telemetryCdata : this.telemetryInteractCdata,
-              env : this.activatedRoute.snapshot.data.telemetry.env,
-            };
-            this.sourcingService.apiErrorHandling(err, errInfo);
-          });
-        } else {
-          this.getProgramTextbooks();
-        }
+        this.getProgramContents();
       }
     }, error => {
       const errInfo = {
@@ -380,22 +358,73 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  setActiveDate() {
-    const dates = ['nomination_enddate', 'shortlisting_enddate', 'content_submission_enddate', 'enddate'];
-
-    dates.forEach(key => {
-      const date = moment(moment(this.programDetails[key]).format('YYYY-MM-DD'));
-      const today = moment(moment().format('YYYY-MM-DD'));
-      const isFutureDate = !date.isSame(today) && date.isAfter(today);
-
-      if (key === 'nomination_enddate' && isFutureDate) {
-        this.activeDate = key;
+  setProgramRole() {
+    //const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
+    //if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus)) {
+      if (this.userService.isUserBelongsToOrg()) {
+        this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
+        if (this.sessionContext.currentOrgRole === 'admin') {
+          this.sessionContext.currentRoles = (['Approved', 'Rejected'].includes(this.currentNominationStatus)) ? ['REVIEWER'] : ['CONTRIBUTOR'];
+        } else if (this.sessionContext.nominationDetails.rolemapping) {
+          this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
+        } else {
+          this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+        }
+      } else {
+        this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+        this.sessionContext.currentOrgRole = 'individual';
       }
+      const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
+      this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
+      this.roles.currentRoles = this.sessionContext.currentRoles;
+    //} 
+  }
+  setifSampleInSession() {
+    if (this.sessionContext.currentOrgRole !== 'user' && (!this.currentNominationStatus || !_.includes(['Approved', 'Rejected'], this.currentNominationStatus))) {
+      this.sessionContext['sampleContent'] = true;
+    } else {
+      this.sessionContext['sampleContent'] = false;
+    }
+  }
 
-      if (this.activeDate === '' && isFutureDate) {
-        this.activeDate = key;
-      }
-    });
+  getProgramCollections() {
+    const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
+    if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus) && (this.isContributingOrgAdmin || this.sessionContext.currentRoles.includes('REVIEWER'))) {
+      this.prefernceForm = this.sbFormBuilder.group({
+        medium: [],
+        subject: [],
+        gradeLevel: [],
+      });
+      this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
+        (prefres) => {
+          let preffilter = {};
+          if (prefres.result !== null || prefres.result !== undefined) {
+            this.userPreferences = prefres.result;
+            preffilter = _.get(this.userPreferences, 'contributor_preference');
+          }
+          if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+            this.textbookFiltersApplied = true;
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+            // tslint:disable-next-line: max-line-length
+            this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          }
+          this.fetchProgramCollections(preffilter);
+      }, (err) => { // TODO: navigate to program list page
+        this.fetchProgramCollections();
+        const errInfo = {
+          errorMsg: 'Fetching Preferences  failed',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+      });
+    } else {
+      this.fetchProgramCollections();
+    }
   }
   getUserDetailsBySearch(clearInput?) {
     clearInput ? this.searchInput = '': this.searchInput;
@@ -422,9 +451,19 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
      this.pager = this.paginationService.getPager(this.OrgUsersCnt, isUserSearch ? 1 : this.pageNumber, this.pageLimit);
   }
 
+  getContributorOrgUsers() {
+    const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
+    if (this.userService.isUserBelongsToOrg()) {
+      this.registryService.getOrgUsersDetails().then((orgUsers) => {
+        this.setOrgUsers(orgUsers);
+      });
+    }
+  }
+
   setOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
-      this.showUsersLoader = false;
+      this.loaders.showUsersLoader = false;
       return false;
     }
 
@@ -457,7 +496,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.OrgUsersCnt = this.allContributorOrgUsers.length;
     this.sortOrgUsers('projectselectedRole');
-    this.showUsersLoader = false;
+    this.loaders.showUsersLoader = false;
     // tslint:disable-next-line:max-line-length
     this.logTelemetryImpressionEvent(this.allContributorOrgUsers, 'user', this.configService.telemetryLabels.pageId.contribute.projectAssignUsers);
     return true;
@@ -621,36 +660,60 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sortColumnOrgUsers = column;
     this.sortUsersList(this.allContributorOrgUsers);
   }
-
-  getProgramTextbooks(preferencefilters?) {
-    const option = {
-      url: 'composite/v3/search',
-      data: {
-        request: {
-          filters: {
-            objectType: 'collection',
-            programId: this.activatedRoute.snapshot.params.programId,
-            status: ['Draft', 'Live'],
-            primaryCategory: !_.isNull(this.programDetails.target_collection_category) ? this.programDetails.target_collection_category : 'Digital Textbook'
-          }
-        }
-      }
-    };
-    if (!_.isUndefined(preferencefilters)) {
-      if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
-        option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
-      }
-      if (!_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
-        option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
-      }
-      if (!_.isEmpty(_.get(preferencefilters, 'subject'))) {
-        option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
+  getProgramContents() {
+    let sampleValue, organisation_id, individualUserId, onlyCount;
+    if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
+        sampleValue = true;
+      if (this.userService.isUserBelongsToOrg()) {
+        organisation_id = this.userService.getUserOrgId();
+      } else {
+        individualUserId = this.userService.userid;
       }
     }
-    this.actionService.post(option).subscribe(
+    this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId, onlyCount, true).subscribe(
+      (response) => {
+        let contents = [];
+        if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
+          contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
+        }
+        this.contributorTextbooks = _.cloneDeep(contents);
+        _.map(this.contributorTextbooks, (content) => {
+          content['contentVisibility'] = this.shouldContentBeVisible(content);
+          content['sourcingStatus'] = this.checkSourcingStatus(content);
+          const temp = this.getStatusText(content)
+          content['resourceStatusText'] = temp[0];
+          content['resourceStatusClass'] = temp[1]; 
+          if (content.contentVisibility) {
+            this.contentCount++;
+          }
+        });
+        
+        if (this.userService.isUserBelongsToOrg()) {
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId());
+        } else {
+          // tslint:disable-next-line:max-line-length
+          this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid);
+        }
+        this.tempSortTextbooks = this.contributorTextbooks;
+        this.loaders.showCollectionListLoader= false;
+        this.logTelemetryImpressionEvent(this.contributorTextbooks, 'contents');
+      },(error) => {
+        this.loaders.showCollectionListLoader= false;
+        this.logTelemetryImpressionEvent([], 'contents');
+        const errInfo = {
+          errorMsg: 'Fetching textbooks failed. Please try again...',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+      });  
+  }
+  fetchProgramCollections(preferencefilters?) {
+    this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).subscribe(
       (res) => {
-        if (res && res.result) {
-          this.showTexbooklist(res);
+        if (res && res.result && res.result.content && res.result.content.length) {
+          this.showTexbooklist(res.result.content);
         }
       },
       (err) => {
@@ -664,53 +727,74 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  showTexbooklist(res) {
+  showTexbooklist(contributorTextbooks) {
+    const notInitiatedNoms = ['Pending', 'Approved', 'Rejected'];
     // tslint:disable-next-line:max-line-length
-    const contributorTextbooks = (res.result.content && res.result.content.length && this.nominationDetails.collection_ids) ? _.filter(res.result.content, (collection) => {
+    contributorTextbooks = (!_.isUndefined(this.currentNominationStatus) && _.includes(notInitiatedNoms, this.currentNominationStatus)) ? _.filter(contributorTextbooks, (collection) => {
       return _.includes(this.nominationDetails.collection_ids, collection.identifier);
-    }) : [];
-    if (!_.isEmpty(contributorTextbooks) && this.isNominationOrg()) {
-      this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId).subscribe(
-        (response) => {
-          if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
-            const contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
-            // tslint:disable-next-line:max-line-length
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
-            // tslint:disable-next-line:max-line-length
-            this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
-          } else {
-            // tslint:disable-next-line:max-line-length
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
-            // tslint:disable-next-line:max-line-length
-            this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
-          }
-          this.tempSortTextbooks = this.contributorTextbooks;
-          this.showLoader = false;
-          const mvcStageData = this.programsService.getMvcStageData();
-          this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
-          if (!_.isEmpty(mvcStageData)) {
-            this.viewContribution(mvcStageData.collection);
-          }
-        },
-        (error) => {
-          console.log(error);
-          this.showLoader = false;
-          this.logTelemetryImpressionEvent(contributorTextbooks, 'collection');
-          const errInfo = {
-            errorMsg: 'Fetching textbooks failed. Please try again...',
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : this.telemetryInteractCdata,
-            env : this.activatedRoute.snapshot.data.telemetry.env,
-          };
-          this.sourcingService.apiErrorHandling(error, errInfo);
+    }) : contributorTextbooks;
+
+    let sampleValue, organisation_id, individualUserId;
+    if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
+        sampleValue = true;
+      if (this.userService.isUserBelongsToOrg()) {
+        organisation_id = this.userService.getUserOrgId();
+      } else {
+        individualUserId = this.userService.userid;
+      }
+    } 
+    this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId).subscribe(
+      (response) => {
+        let contents = [];
+        if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
+          contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
-      );
-    } else {
+        if (this.userService.isUserBelongsToOrg()) {
+            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), contributorTextbooks);
+        } else {
+          // tslint:disable-next-line:max-line-length
+          this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid, contributorTextbooks);
+        }
+        this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
+        this.contentCount = this.contributorTextbooks.length;
+        const collectionsWithSamples = _.map(_.filter(this.contributorTextbooks, c => c.totalSampleContent > 0), 'identifier');
+        if (!_.isEmpty(this.selectedCollectionIds)) {
+          this.selectedCollectionIds = [...this.selectedCollectionIds, ...collectionsWithSamples]
+        } else {
+          this.selectedCollectionIds = collectionsWithSamples;
+        }
+        this.selectedCollectionIds = _.uniq(_.compact(this.selectedCollectionIds));
+      _.map(this.contributorTextbooks, textbook => {
+        textbook.isSelected = _.includes(this.selectedCollectionIds, textbook.identifier);
+        });
+        this.tempSortTextbooks = this.contributorTextbooks;
+        this.loaders.showCollectionListLoader = false;
+        this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
+        // } else {
+        //   if (_.isDefined(this.currentNominationStatus) && _.includes(notInitiatedNoms, this.currentNominationStatus)) {
+        //     // tslint:disable-next-line:max-line-length
+        //     this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
+        //     // tslint:disable-next-line:max-line-length
+        //   } 
+        // }
+
+    }, (error) => {
+      this.loaders.showCollectionListLoader = false;
+      this.logTelemetryImpressionEvent(contributorTextbooks, 'collection');
+      const errInfo = {
+        errorMsg: 'Fetching textbooks failed. Please try again...',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+      };
+      this.sourcingService.apiErrorHandling(error, errInfo);
+    });
+    /*else {
       this.contributorTextbooks = contributorTextbooks;
       this.tempSortTextbooks = this.contributorTextbooks;
       this.showLoader = false;
       this.logTelemetryImpressionEvent(this.contributorTextbooks, 'collection');
-    }
+    }*/
   }
 
   public logTelemetryImpressionEvent(data, type, pageId?) {
@@ -743,61 +827,32 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setFrameworkCategories(collection);
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+      return {...obj, [context]: this.contentHelper.getSharedContextObjectProperty(context)};
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: collection[context] || this.sharedContext[context]};
     }, this.sharedContext);
-    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
-       this.checkArrayCondition(val);
-    });
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
         collection: collection,
-        config: _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.chapterList' }),
         programContext: this.programDetails,
         roles: {
           currentRoles: this.sessionContext.currentRoles
         }
       }
     };
-
-    this.showChapterList = true;
     this.programsService.clearMvcStageData();
     this.programStageService.addStage('chapterListComponent');
   }
 
+  openContent(content) {
+    this.contentHelper.openContent(content);
+  }
+
   setFrameworkCategories(collection) {
     this.sessionContext.targetCollectionFrameworksData = this.helperService.setFrameworkCategories(collection);
-  }
-
-  getSharedContextObjectProperty(property) {
-    if (property === 'channel') {
-       return _.get(this.programDetails, 'config.scope.channel');
-    } else if ( property === 'topic' ) {
-      return null;
-    } else {
-      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
-      const filters =  collectionComComponent.config.filters;
-      const explicitProperty =  _.find(filters.explicit, {'code': property});
-      const implicitProperty =  _.find(filters.implicit, {'code': property});
-      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
-       explicitProperty.range || explicitProperty.defaultValue;
-    }
-  }
-
-  checkArrayCondition(param) {
-    // tslint:disable-next-line:max-line-length
-    this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
-  }
-
-  canUploadContent() {
-    const contributionendDate  = moment(this.programDetails.content_submission_enddate);
-    const endDate  = moment(this.programDetails.enddate);
-    const today = moment();
-    return (contributionendDate.isSameOrAfter(today, 'day') && this.programsService.isProjectLive(this.programDetails)) ? true : false;
   }
 
   applyPreferences(preferences?) {
@@ -833,7 +888,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
     });
-    this.getProgramTextbooks(preferences);
+    this.fetchProgramCollections(preferences);
   }
 
   applyTextbookFilters() {
@@ -853,16 +908,211 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     return !!(_.get(this.sessionContext, 'nominationDetails.organisation_id'));
   }
 
+  showResourceTemplate() {
+    if (!_.get(this.nominationDetails, 'id')) {
+      this.createNomination('Initiated');
+    } else {
+      this.resourceTemplateInputData();
+      this.showResourceTemplatePopup = true;
+    }
+  }
+  uploadSampleContent(collection) {
+    if (!_.get(this.nominationDetails, 'id')) {
+      this.createNomination('Initiated', collection);
+    } else {
+      this.openCollection(collection);
+    }
+  }
+  createNomination(status = 'Pending', collection?) {
+    this.nominationIsInProcess = true;
+    if (!this.selectedContentTypes.length) {
+      this.nominationIsInProcess = false;
+      this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
+    } else {
+      const programId = this.activatedRoute.snapshot.params.programId;
+      const userId = this.userService.userid;
+      const request = {
+        program_id: programId,
+        status: status,
+        collection_ids: this.selectedCollectionIds
+      };
+      
+      if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
+        request['targetprimarycategories'] =  this.selectedContentTypes;
+        request['content_types'] = [];
+      } else {
+        request['content_types'] = _.map(this.selectedContentTypes, 'name');
+      }
+      this.programsService.addorUpdateNomination(request).subscribe((data) => {
+        this.nominationIsInProcess = false;
+        this.showNominateModal = false;
+        const router = this.router;
+        if (data.result && !_.isEmpty(data.result)) {
+          if (status === 'Initiated') {
+            this.sessionContext.nominationDetails = {
+              id: data.result.id,
+              status: 'Initiated',
+              program_id: programId,
+              user_id: userId,
+            };
+
+            if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
+              this.sessionContext.nominationDetails['targetprimarycategories'] =  this.selectedContentTypes;
+              request['content_types'] = [];
+            } else {
+              this.sessionContext.nominationDetails['content_types'] = _.map(this.selectedContentTypes, 'name');
+            }
+            if (this.userService.isUserBelongsToOrg()) {
+              this.sessionContext.nominationDetails['organisation_id'] = this.userService.getUserOrgId();
+            }
+            if (collection && (!_.get(this.programDetails, 'target_type') || this.programDetails.target_type === 'collections')) {
+              this.openCollection(collection);
+            } else {
+              this.contentHelper.setNominationDetails(this.sessionContext.nominationDetails);
+              this.resourceTemplateInputData();
+              this.showResourceTemplatePopup = true;
+            }
+          } else {
+            this.toasterService.success('Nomination sent');
+            setTimeout(function() { router.navigateByUrl('/contribute/myenrollprograms'); }, 10);
+          }
+        } else if (data === 'Approved' || data === 'Rejected') {
+          this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${data}`);
+          setTimeout(function() { router.navigateByUrl('/contribute/myenrollprograms'); }, 10);
+        }
+      }, (error)=> {
+        this.nominationIsInProcess = false;
+        const errInfo = {
+          errorMsg: this.resourceService.messages.emsg.bulkApprove.something,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+          request: request
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+      });
+    }
+  }
+
+  handleTemplateSelection(event) {
+    this.showResourceTemplatePopup = false;
+    this.contentHelper.handleContentCreation(event);
+  }
+  
+  resourceTemplateInputData() {
+    //let contentCategories = this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails);
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNominationSampleDetails,
+      telemetryInteractCdata: this.telemetryInteractCdata
+    }
+    this.resourceTemplateComponentInput = {
+      templateList: this.selectedContentTypes,
+      programContext: this.programDetails,
+      sessionContext: this.sessionContext,
+      unitIdentifier: null
+    };
+  }
+  handleActionButtons() {
+    this.visibility = {};
+    const isOpenForNomination = this.helperService.isOpenForNomination(this.programDetails);
+    const canAcceptContribution = this.helperService.canAcceptContribution(this.programDetails);
+    const isProgramForCollections = !!(!this.programDetails.target_type || this.programDetails.target_type === 'collections')
+    const isProgramForNoCollections = !!(this.programDetails.target_type && this.programDetails.target_type === 'searchCriteria')
+    this.visibility['showNominate'] = isOpenForNomination && (!_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated');
+    this.visibility['showProgramLevelSampleUpload'] = this.visibility['showNominate'] && isProgramForNoCollections;
+    this.visibility['showProgramLevelContentUpload'] = this.currentNominationStatus === 'Approved' && isProgramForNoCollections && this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution;
+    this.visibility['showCollectionLevelSampleUpload'] = this.visibility['showNominate'] && isProgramForCollections;
+    this.visibility['showCollectionLevelUploadContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
+    this.visibility['showViewContribution'] = this.currentNominationStatus === 'Approved' && !canAcceptContribution && isProgramForCollections;
+    this.visibility['showReviewContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
+    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending' || this.currentNominationStatus === 'Approved') && isProgramForNoCollections;
+  }
+ 
+  getCollectionCategoryDefinition() {
+    this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+    if (!_.isEmpty(this.programDetails.target_collection_category) && this.userService.userProfile.rootOrgId) {
+      // tslint:disable-next-line:max-line-length
+      this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0], this.userService.userProfile.rootOrgId, 'Collection').subscribe(res => {
+        const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
+          // tslint:disable-next-line:max-line-length
+        this.firstLevelFolderLabel = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.hierarchy.level1.name;
+        } else {
+          this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
+        }
+      });
+    }
+  }
+
+  contentTypeModalAction(action) {
+    if (action === 'open') {
+      this.preSavedContentTypes = _.clone(this.selectedContentTypes)
+    } else if (action === 'cancel') {
+      this.selectedContentTypes = this.preSavedContentTypes;
+    }
+    if (action === 'cancel' && !this.selectedContentTypes.length) {
+      this.toasterService.error(this.resourceService.messages.emsg.nomination.m001);
+    } else if (action === 'submit') {
+      if (this.programDetails.target_type === 'searchCriteria'){
+        //this.initiateNomination();
+        this.toasterService.success(this.resourceService.messages.smsg.nomination.m001)
+      } else {
+        this.toasterService.success(this.resourceService.messages.smsg.nomination.m001)
+      }
+    }
+  }
+  checkIfSelected(contentType) {
+    let catObj = _.find(this.selectedContentTypes, (element) => {
+      return element.name === contentType.name;
+    });
+    return (catObj) ? true : false;
+  }
+  toggle(item: any) {
+    let catObj = _.find(this.selectedContentTypes, (element) => {
+      return element.name === item.name;
+    });
+    if (catObj) {
+      _.remove(this.selectedContentTypes, (data) => {
+        return data.name === item.name;
+      });
+    } else {
+      this.selectedContentTypes.push(item);
+    }
+  }
+  selectCollectionForNomination(collection) {
+    if (_.includes(this.selectedCollectionIds, collection.identifier)) {
+      _.remove(this.selectedCollectionIds, (data) => {
+        return data === collection.identifier;
+      });
+    } else {
+      this.selectedCollectionIds.push(collection.identifier);
+    }
+    this.toggleUploadSampleButton(collection);
+  }
+  toggleUploadSampleButton(collection) {
+    collection.isSelected = !collection.isSelected;
+  }
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
+    if (this.currentStage !== 'programComponent') {
+      this.contentHelper.dynamicInputs$.subscribe((res)=> {
+        this.dynamicInputs = res;
+      });
+      this.contentHelper.currentOpenedComponent$.subscribe((res)=> {
+        this.component = res;
+      });
+    }
+    if (this.sessionContext && this.programDetails && this.currentStage === 'programComponent') {
+      this.nominationIsInProcess = false;
+      this.loaders.showCollectionListLoader = true;
+      this.getNominationStatus();
+    }
   }
-
   tabChangeHandler(e) {
     this.component = this.programComponentsService.getComponentInstance(e);
   }
-
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
       id,

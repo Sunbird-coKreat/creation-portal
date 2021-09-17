@@ -2,7 +2,7 @@ import { ProgramsService } from '@sunbird/core';
 import { ProgramListComponent } from '../shared-feature/components/program-list/program-list.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProgramComponent, CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
+import { CreateProgramComponent, ProgramNominationsComponent, ListContributorTextbooksComponent,
    OrgUserListComponent, OrgReportsComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 import * as telemetryLabels from '../shared/services/config/telemetry-label.config.json';
