@@ -6,8 +6,8 @@
     <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
   </ng-container>
   <ng-template #nominatedBlock> -->
-	<app-program-header *ngIf="!loaders.showProgramHeaderLoader" (applyFilters)="getProgramsListByRole($event)"
-	[programDetails]="programDetails" [nominationDetails]="nominationDetails" [telemetryPageId]="telemetryPageId" > </app-program-header>
+	<app-program-header *ngIf="!loaders.showProgramHeaderLoader"
+	[programDetails]="programDetails" [nominationDetails]="nominationDetails" [roles]="roles" [telemetryPageId]="telemetryPageId" > </app-program-header>
 	<div *ngIf="!loaders.showCollectionListLoader && visibility.showNominate" class="bt-1 w-100 py-20">
 		<div class="d-inline-block br-2 pr-20">
 		<button type="button" (click)="showContentTypeModal= true; contentTypeModalAction('open')" class="sb-btn sb-btn-normal sb-btn-outline-primary" appTelemetryInteract

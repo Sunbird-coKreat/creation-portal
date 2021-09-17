@@ -201,23 +201,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  isShowSkipReview() {
-    if (this.showSkipReview === false ) {
-      const restrictedProject = !!(_.get(this.programDetails, 'type') == 'restricted');
-      const skipTwoLevelReview = !!(_.get(this.programDetails, 'config.defaultContributeOrgReview') === false);
-      if (restrictedProject
-          && skipTwoLevelReview
-          && this.sessionContext.currentOrgRole !== "individual"
-          && (this.sessionContext.currentOrgRole)) {
-            if (this.sessionContext.currentRoles.includes("CONTRIBUTOR")
-                || this.sessionContext.currentRoles.includes("REVIEWER")
-                || this.sessionContext.currentOrgRole === "admin"
-                ) {
-                  this.showSkipReviewContributor = true;
-              }
-      }
-    }
-  }
   setTargetCollectionValue() {
     if (!_.isUndefined(this.programDetails)) {
       this.targetCollection = this.programsService.setTargetCollectionName(this.programDetails);
@@ -324,7 +307,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.programsService.getNominationList(filters).subscribe((data) => {
       this.nominationDetails = _.first(_.get(data, 'result', []));
-      this.loaders.showProgramHeaderLoader = false;
       if (!_.isEmpty(this.nominationDetails)) {
         if (!_.isEmpty(this.nominationDetails.content_types)) {
           this.nominationDetails.content_types = this.helperService.mapContentTypesToCategories(this.nominationDetails.content_types);
@@ -341,6 +323,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
         this.contentHelper.initialize(this.programDetails, this.sessionContext);
       }
+      this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
       if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
         this.getProgramCollections();
@@ -812,7 +795,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.telemetryService.impression(telemetryImpression);
   }
 
-  viewContribution(collection) {
+  openCollection(collection) {
     this.component = ChapterListComponent;
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
