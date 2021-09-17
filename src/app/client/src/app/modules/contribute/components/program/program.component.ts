@@ -211,7 +211,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           && this.sessionContext.currentOrgRole !== "individual"
           && (this.sessionContext.currentOrgRole)) {
             if (this.sessionContext.currentRoles.includes("CONTRIBUTOR")
-                || this.sessionContext.currentRoles.includes("REVIWER")
+                || this.sessionContext.currentRoles.includes("REVIEWER")
                 || this.sessionContext.currentOrgRole === "admin"
                 ) {
                   this.showSkipReviewContributor = true;
