@@ -10,7 +10,6 @@ import {  throwError , of } from 'rxjs';
 import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
   programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection } from './program.component.spec.data';
 import { CollectionComponent } from '../../../sourcing/components/collection/collection.component';
-import { ProgramHeaderComponent } from '../program-header/program-header.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
 let errorInitiate;
@@ -122,7 +121,6 @@ describe('ProgramComponent', () => {
       declarations: [
         ProgramComponent,
         OnboardPopupComponent,
-        ProgramHeaderComponent,
         DaysToGoPipe
       ],
       providers: [
@@ -208,15 +206,20 @@ describe('ProgramComponent', () => {
     expect(component.getProgramDetails).toHaveBeenCalled();
   });
 
+  it('#getProgramDetails() should call #fetchProgramFramework()', () => {
+    spyOn(component, 'getProgramDetails').and.callThrough();
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.getProgramDetails).toHaveBeenCalled();
+  });
+
   it('#fetchFrameWorkDetails() should called #frameworkService()', () => {
-    component.programDetails = {
-      config: { framework: 'NCFCOPY'}
+    component.sessionContext = {
+       framework: 'NCFCOPY'
     }
-    const frameworkService = TestBed.get(FrameworkService);
-    spyOn(frameworkService, 'initialize').and.callThrough();
-    spyOn(component, 'fetchFrameWorkDetails').and.callThrough();
-    component.fetchFrameWorkDetails();
-    expect(frameworkService.initialize).toHaveBeenCalledWith('NCFCOPY');
+    const  helperService  = TestBed.get(HelperService);
+    spyOn(helperService, 'fetchFrameWorkDetails').and.returnValue({});
+    expect(helperService.fetchFrameWorkDetails).toHaveBeenCalledWith(component.sessionContext );
   });
 
   it('should tabChangeHandler be triggered', () => {

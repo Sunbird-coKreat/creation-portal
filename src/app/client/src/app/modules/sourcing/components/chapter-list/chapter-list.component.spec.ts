@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as _ from 'lodash-es';
 import { ChapterListComponent } from './chapter-list.component';
 import { RecursiveTreeComponent } from '../recursive-tree/recursive-tree.component';
-import { ResourceTemplateComponent } from '../resource-template/resource-template.component';
+import { ResourceTemplateComponent } from '../../../shared-feature/components/resource-template/resource-template.component';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ToasterService, SharedModule, ResourceService} from '@sunbird/shared';
 import { CoreModule, ActionService, UserService, PublicDataService, ProgramsService } from '@sunbird/core';

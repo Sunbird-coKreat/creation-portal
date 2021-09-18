@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed} from '@angular/core/testing';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ProgramHeaderComponent } from './program-header.component';
-import { ProgramStageService, ProgramTelemetryService } from '../../services';
+import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { ToasterService, ConfigService } from '@sunbird/shared';
 import { mockRes } from './program-header.component.spec.data';
 import { of } from 'rxjs';
@@ -94,7 +94,9 @@ describe('ProgramHeaderComponent', () => {
     configService = TestBed.get(ConfigService);
     telemetryService = TestBed.get(TelemetryService);
     component = fixture.componentInstance;
-    component.headerComponentInput = mockRes.inputData;
+    component.programDetails = mockRes.inputData;
+    component.nominationDetails = mockRes.inputData;
+    component.roles = mockRes.inputData;
   });
 
   beforeEach(() => {
@@ -106,69 +108,25 @@ describe('ProgramHeaderComponent', () => {
   }));
 
 
-  it('should generate tabs based on config', () => {
-    const spyOne = spyOn(component, 'generateTabs').and.callThrough();
+  it('should checkIfshowSkipReview based on config', () => {
+    const spyOne = spyOn(component, 'checkIfshowSkipReview').and.callThrough();
     component.ngOnInit();
     // programStageService.getStage();
     fixture.detectChanges();
     expect(spyOne).toHaveBeenCalled();
-    expect(component.tabs).toEqual(mockRes.inputData.header.config.tabs);
-    expect(component.state.stages.length).toEqual(0);
+    expect(component.checkIfshowSkipReview).toEqual(false);
   });
 
-
-  it('should have empty stage', () => {
-    const EXPECTED_NUMBER_OF_ITEMS = 0;
-    expect(component.state.stages.length).toBe(EXPECTED_NUMBER_OF_ITEMS);
-  });
-
-
-  it('should have initial stage', () => {
+  it('should have setActiveDate stage', () => {
+    const spyOne = spyOn(component, 'setActiveDate').and.callThrough();
     component.ngOnInit();
-    programStageService.getStage().subscribe(state => {
-      fixture.detectChanges();
-      expect(state.stages).toEqual([testStage]);
-    });
-
-    // expect(component.headerActions.showTabs).toBe(false);
-    programStageService.addStage('collectionComponent');
-  });
-
-  it('should execute ngOnChanges lifecycle', () => {
-    const spyOne = spyOn(component, 'generateTabs').and.callThrough();
-    component.headerComponentInput = mockRes.inputData;
-    component.ngOnChanges();
-    fixture.detectChanges();
     expect(spyOne).toHaveBeenCalled();
+    expect(component.setActiveDate).toEqual('nomination_enddate');
   });
 
-  xit('should call handleTabChange on  ', () => {
-    const spy = spyOn(component, 'handleTabChange').and.callThrough();
 
-    const button = fixture.debugElement.nativeElement.querySelector('.practical-appbar__item');
-    button.click();
-
-    fixture.whenStable().then(() => {
-      expect(spy).toHaveBeenCalled();
-    });
-  });
-
-  it('should call handleBack on button click ', () => {
-    component.headerActions.showTabs = false;
-    fixture.detectChanges();
-    const spy = spyOn(component, 'handleBack').and.callThrough();
-    const button = fixture.debugElement.nativeElement.querySelector('button');
-    button.click();
-    fixture.whenStable().then(() => {
-      expect(spy).toHaveBeenCalled();
-    });
-  });
-
-  it('should make showTabs false', () => {
-    // component.ngOnInit();
-    component.state.stages.length = 2;
-    component.handleTabs();
-    expect(component.headerActions.showTabs).toEqual(false);
-
+  xit('should call setTargetCollectionValue on  ', () => {
+    const spy = spyOn(component, 'setTargetCollectionValue').and.callThrough();
+    expect(spy).toHaveBeenCalled();
   });
 });
