@@ -1,6 +1,6 @@
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService, PaginationService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
-import { ProgramsService, UserService, FrameworkService, RegistryService, ContentHelper } from '@sunbird/core';
+import { ProgramsService, UserService, FrameworkService, RegistryService, ContentHelperService } from '@sunbird/core';
 import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState, IPagination} from '../../../sourcing/interfaces';
@@ -109,8 +109,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
      private activatedRoute: ActivatedRoute, private router: Router,
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
-    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService, private contentHelper: ContentHelper,
-     public telemetryService: TelemetryService, private helperService: HelperService) {
+    public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
+    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService) {
     this.userProfile = this.userService.userProfile;
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
@@ -254,7 +254,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.showDashboardLoader =  false;
               const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
               this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            }); 
+            });
         } else {
           this.programCollections = _.cloneDeep(this.contentAggregationData);
           this.showDashboardLoader =  false;
@@ -895,10 +895,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.currentStage = _.last(this.state.stages).stage;
     }
     if (this.currentStage !== 'programNominations') {
-      this.contentHelper.dynamicInputs$.subscribe((res)=> {
+      this.contentHelperService.dynamicInputs$.subscribe((res)=> {
         this.dynamicInputs = res;
       });
-      this.contentHelper.currentOpenedComponent$.subscribe((res)=> {
+      this.contentHelperService.currentOpenedComponent$.subscribe((res)=> {
         this.component = res;
       });
     }
@@ -923,8 +923,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   openContent(content) {
-    this.contentHelper.initialize(this.programDetails, this.sessionContext);
-    this.contentHelper.openContent(content);
+    this.contentHelperService.initialize(this.programDetails, this.sessionContext);
+    this.contentHelperService.openContent(content);
   }
   viewContribution(collection) {
     if (this.programDetails.target_type === 'searchCriteria') {

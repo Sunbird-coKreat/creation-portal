@@ -1,4 +1,5 @@
-import { ExtPluginService, UserService, FrameworkService, ProgramsService, RegistryService, ActionService, ContentHelper} from '@sunbird/core';
+import { ExtPluginService, UserService, FrameworkService,
+  ProgramsService, RegistryService, ActionService, ContentHelperService} from '@sunbird/core';
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -113,8 +114,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService, 
-    public programTelemetryService: ProgramTelemetryService, private contentHelper: ContentHelper) {
+    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService,
+    public programTelemetryService: ProgramTelemetryService, private contentHelperService: ContentHelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
   ngOnInit() {
@@ -231,7 +232,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const resourceStatus = content.status;
     const sourcingStatus = content.sourcingStatus;
     const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass; 
+    let resourceStatusText,resourceStatusClass;
     if (resourceStatus === 'Review') {
       resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
       resourceStatusClass = 'sb-color-primary';
@@ -321,7 +322,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.handleActionButtons();
       this.setifSampleInSession();
       if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
-        this.contentHelper.initialize(this.programDetails, this.sessionContext);
+        this.contentHelperService.initialize(this.programDetails, this.sessionContext);
       }
       this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
@@ -360,7 +361,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
       this.roles.currentRoles = this.sessionContext.currentRoles;
-    //} 
+    //}
   }
   setifSampleInSession() {
     if (this.sessionContext.currentOrgRole !== 'user' && (!this.currentNominationStatus || !_.includes(['Approved', 'Rejected'], this.currentNominationStatus))) {
@@ -665,12 +666,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           content['sourcingStatus'] = this.checkSourcingStatus(content);
           const temp = this.getStatusText(content)
           content['resourceStatusText'] = temp[0];
-          content['resourceStatusClass'] = temp[1]; 
+          content['resourceStatusClass'] = temp[1];
           if (content.contentVisibility) {
             this.contentCount++;
           }
         });
-        
+
         if (this.userService.isUserBelongsToOrg()) {
             this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId());
         } else {
@@ -690,7 +691,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
-      });  
+      });
   }
   fetchProgramCollections(preferencefilters?) {
     this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).subscribe(
@@ -725,7 +726,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       } else {
         individualUserId = this.userService.userid;
       }
-    } 
+    }
     this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId).subscribe(
       (response) => {
         let contents = [];
@@ -758,7 +759,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         //     // tslint:disable-next-line:max-line-length
         //     this.contentStatusCounts = this.collectionHierarchyService.getContentCounts([], this.sessionContext.nominationDetails.organisation_id, contributorTextbooks);
         //     // tslint:disable-next-line:max-line-length
-        //   } 
+        //   }
         // }
 
     }, (error) => {
@@ -810,7 +811,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setFrameworkCategories(collection);
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.contentHelper.getSharedContextObjectProperty(context)};
+      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context)};
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: collection[context] || this.sharedContext[context]};
@@ -831,7 +832,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openContent(content) {
-    this.contentHelper.openContent(content);
+    this.contentHelperService.openContent(content);
   }
 
   setFrameworkCategories(collection) {
@@ -919,7 +920,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         status: status,
         collection_ids: this.selectedCollectionIds
       };
-      
+
       if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
         request['targetprimarycategories'] =  this.selectedContentTypes;
         request['content_types'] = [];
@@ -951,7 +952,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             if (collection && (!_.get(this.programDetails, 'target_type') || this.programDetails.target_type === 'collections')) {
               this.openCollection(collection);
             } else {
-              this.contentHelper.setNominationDetails(this.sessionContext.nominationDetails);
+              this.contentHelperService.setNominationDetails(this.sessionContext.nominationDetails);
               this.resourceTemplateInputData();
               this.showResourceTemplatePopup = true;
             }
@@ -979,9 +980,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
-    this.contentHelper.handleContentCreation(event);
+    this.contentHelperService.handleContentCreation(event);
   }
-  
+
   resourceTemplateInputData() {
     //let contentCategories = this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails);
     this.sessionContext.telemetryPageDetails = {
@@ -1010,7 +1011,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showReviewContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
     this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending' || this.currentNominationStatus === 'Approved') && isProgramForNoCollections;
   }
- 
+
   getCollectionCategoryDefinition() {
     this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
     if (!_.isEmpty(this.programDetails.target_collection_category) && this.userService.userProfile.rootOrgId) {
@@ -1080,10 +1081,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.currentStage = _.last(this.state.stages).stage;
     }
     if (this.currentStage !== 'programComponent') {
-      this.contentHelper.dynamicInputs$.subscribe((res)=> {
+      this.contentHelperService.dynamicInputs$.subscribe((res)=> {
         this.dynamicInputs = res;
       });
-      this.contentHelper.currentOpenedComponent$.subscribe((res)=> {
+      this.contentHelperService.currentOpenedComponent$.subscribe((res)=> {
         this.component = res;
       });
     }

@@ -1,6 +1,7 @@
 import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService, FrameworkService, ActionService, NotificationService, ContentHelper} from '@sunbird/core';
+import { ProgramsService, PublicDataService, UserService, FrameworkService,
+  ActionService, NotificationService, ContentHelperService} from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
@@ -74,7 +75,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
   private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
   public toasterService: ToasterService, public actionService: ActionService,
-  private collectionHierarchyService: CollectionHierarchyService, private contentHelper: ContentHelper,
+  private collectionHierarchyService: CollectionHierarchyService, private contentHelperService: ContentHelperService,
   private notificationService: NotificationService, private sourcingService: SourcingService, private helperService: HelperService) { }
 
   ngOnInit() {
@@ -106,7 +107,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.setActiveDate();
       this.setProgramRole();
       if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
-        this.contentHelper.initialize(this.programContext, this.sessionContext);
+        this.contentHelperService.initialize(this.programContext, this.sessionContext);
       }
       if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
         this.getProgramTextbooks();
@@ -221,7 +222,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
           env : this.activatedRoute.snapshot.data.telemetry.env,
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
-    });  
+    });
   }
   getProgramTextbooks() {
     const req = this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, undefined);
@@ -326,9 +327,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     return this.telemetryPageId;
   }
   openContent(content) {
-    this.contentHelper.openContent(content);
+    this.contentHelperService.openContent(content);
   }
- 
+
   setProgramRole() {
     this.sessionContext.currentRoles = ['REVIEWER'] ;
     const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
@@ -346,7 +347,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.sessionContext.collectionName = collection.name;
     this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
     this.sharedContext = this.programContext.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]:  this.contentHelper.getSharedContextObjectProperty(context)};
+      return {...obj, [context]:  this.contentHelperService.getSharedContextObjectProperty(context)};
     }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: collection[context] || this.sharedContext[context]};
@@ -436,10 +437,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.currentStage = _.last(this.state.stages).stage;
     }
     if (this.currentStage !== 'listContributorTextbook') {
-      this.contentHelper.dynamicInputs$.subscribe((res)=> {
+      this.contentHelperService.dynamicInputs$.subscribe((res) => {
         this.dynamicInputs = res;
       });
-      this.contentHelper.currentOpenedComponent$.subscribe((res)=> {
+      this.contentHelperService.currentOpenedComponent$.subscribe((res) => {
         this.component = res;
       });
     }
