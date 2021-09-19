@@ -1,4 +1,4 @@
-import { ExtPluginService, UserService, FrameworkService,
+import { UserService, FrameworkService,
   ProgramsService, RegistryService, ActionService, ContentHelperService} from '@sunbird/core';
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -108,7 +108,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contentCount = 0;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
-    public extPluginService: ExtPluginService, public userService: UserService,
+    public userService: UserService,
     public toasterService: ToasterService, public programStageService: ProgramStageService,
     public programComponentsService: ProgramComponentsService, public programsService: ProgramsService,
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
