@@ -1,5 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SharedModule, ResourceService, ConfigService , ToasterService} from '@sunbird/shared';
+import { SharedModule, ResourceService, ConfigService , ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
@@ -12,7 +12,7 @@ import { ProgramsService, DataService, FrameworkService, ActionService } from '@
 import { of, Subject, throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, FormGroupName, FormsModule, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { Validators, FormGroupName, FormsModule, FormBuilder, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { SourcingService } from './../../../sourcing/services';
 import { UserService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -20,8 +20,8 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { Component, ViewChild} from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { HttpClient } from '@angular/common/http';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ProgramTelemetryService } from '../../services';
 
 describe('CreateProgramComponent', () => {
   let component: CreateProgramComponent;
@@ -53,6 +53,7 @@ describe('CreateProgramComponent', () => {
       }
     }
   };
+  const routerStub = { url: '/sourcing/orgreports' };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -61,14 +62,14 @@ describe('CreateProgramComponent', () => {
       declarations: [CreateProgramComponent],
       providers: [ToasterService, CacheService, ConfigService, DatePipe,
         ProgramsService, DataService, FrameworkService, ActionService,
-        Component, ViewChild, Validators, FormGroupName,
-        SourcingService, TelemetryService,
+        Component, ViewChild, Validators, FormGroupName, FormBuilder, NavigationHelperService,
+        SourcingService, ProgramTelemetryService, TelemetryService, 
         DeviceDetectorService,
         Subject,
-       {provide: ActivatedRoute, useValue: fakeActivatedRoute},
-       {provide: UserService, useValue: userServiceStub},
-       { provide: ResourceService, useValue: resourceBundle},
-       HttpClient],
+       { provide: Router, useValue: routerStub },
+       { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+       { provide: UserService, useValue: userServiceStub },
+       { provide: ResourceService, useValue: resourceBundle }],
        schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
@@ -87,9 +88,9 @@ describe('CreateProgramComponent', () => {
   xit('#ngOnInit() should initalize varibles', () => {
     component.enableQuestionSetEditor = undefined;
     component.assetConfig = {pdfFiles: 'sample.pdf'};
+    component.openProjectTargetTypeModal = false;
     spyOn(document, 'getElementById').and.returnValue({value: 'data'});
     spyOn(component, 'getPageId').and.callFake(() => {});
-    spyOn(component, 'getAcceptType').and.returnValue('dummy');
     spyOn(component, 'getProgramDetails').and.callFake(() => {});
     spyOn(component, 'initializeProjectTargetTypeForm').and.callFake(() => {});
     spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
@@ -104,13 +105,15 @@ describe('CreateProgramComponent', () => {
     expect(component.localBlueprint).toBeDefined();
     expect(component.localBlueprintMap).toBeDefined();
     expect(component.telemetryInteractObject).toBeDefined();
+    expect(component.telemetryInteractPdata).toBeDefined();
+    expect(component.telemetryInteractCdata).toBeDefined();
     expect(component.getPageId).toHaveBeenCalled();
-    expect(component.getAcceptType).toHaveBeenCalled();
     expect(component.getProgramDetails).toHaveBeenCalled();
     expect(component.initializeProjectTargetTypeForm).not.toHaveBeenCalled();
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
     expect(component.initializeProjectScopeForm).toHaveBeenCalled();
     expect(component.setTelemetryStartData).toHaveBeenCalled();
+    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
     expect(component['pageStartTime']).toBeDefined();
   });
 
@@ -206,36 +209,26 @@ describe('CreateProgramComponent', () => {
     component.closeContributorListPopup();
     expect(component.showContributorsListModal).toBeFalsy();
   });
-
-  it('getProgramDetails Should call initializeCreateProgramForm method', () => {
-    component.programId = 'abcd12345';
-    const programsService = TestBed.get(ProgramsService);
-    spyOn(programsService, 'get').and.returnValue(of(mockData.programDetails));
-    spyOn(component, 'getProgramDetails').and.callThrough();
+  it('Should call the initializeCreateProgramForm method', () => {
     spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
-    component.getProgramDetails();
-    expect(programsService.get).toHaveBeenCalled();
-    expect(component.programDetails).toBeDefined();
-    expect(component.selectedTargetCollection).toBeDefined();
-    expect(component.guidLinefileName).toBeUndefined();
+    component.initializeCreateProgramForm();
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
   });
-
-  it('getProgramDetails Should call apiErrorHandling method', () => {
-    component.programId = 'abcd12345';
+  /*it('getProgramDetails Should call apiErrorHandling method', () => {
+    component.programId = 'bnbabcd12345';
     component.telemetryPageId = 'create-program';
     component.telemetryInteractCdata = {};
     const programsService = TestBed.get(ProgramsService);
-    spyOn(programsService, 'get').and.returnValue(throwError({}));
+    spyOn(programsService, 'getProgram').and.returnValue(throwError({}));
     const sourcingService = TestBed.get(SourcingService);
     spyOn(sourcingService, 'apiErrorHandling').and.callFake(() => {});
     spyOn(component, 'getProgramDetails').and.callThrough();
-    component.getProgramDetails();
-    expect(programsService.get).toHaveBeenCalled();
-    expect(component.programDetails).toBeUndefined();
+    programsService.getProgram();
+    expect(programsService.getProgram).toHaveBeenCalled();
+    expect(component.programDetails).toEqual({});
     expect(component.selectedTargetCollection).toBeUndefined();
     expect(sourcingService.apiErrorHandling).toHaveBeenCalled();
-  });
+  });*/
 
   it('getUploadVideo Should call sourcingService.getVideo method', () => {
     const sourcingService = TestBed.get(SourcingService);
@@ -272,7 +265,7 @@ describe('CreateProgramComponent', () => {
   });
 
   it('generateAssetCreateRequest should return data', () => {
-    component.userprofile = {
+    const userprofile = {
       userId: '123456789',
       firstName: 'n11',
       lastName: 'yopmail',
@@ -282,7 +275,7 @@ describe('CreateProgramComponent', () => {
     };
     const sourcingService = TestBed.get(SourcingService);
     spyOn(sourcingService, 'generateAssetCreateRequest').and.callThrough();
-    const data = sourcingService.generateAssetCreateRequest('abcd', 'pdf', 'pdf');
+    const data = sourcingService.generateAssetCreateRequest('abcd', 'pdf', 'pdf', userprofile);
     expect(data).toBeDefined();
   });
 
@@ -340,24 +333,22 @@ describe('CreateProgramComponent', () => {
 
   it('Should call the openForNominations method when type is public', () => {
     component.createProgramForm = new FormGroup({
-      nomination_enddate: new FormControl('2021-09-09T18:29:59.000Z'),
-      shortlisting_enddate: new FormControl('2021-09-24T18:29:59.000Z', Validators.required)
+      nomination_enddate: new FormControl(null),
+      shortlisting_enddate: new FormControl(null),
     });
     spyOn(component, 'openForNominations').and.callThrough();
     component.openForNominations('public');
     expect(component.openForNominations).toHaveBeenCalled();
-    expect(component.openForNominations).toEqual('public');
   });
 
-  it('Should call the setProjectType method when type is not public', () => {
+  it('Should call the openForNominations method when type is not public', () => {
     component.createProgramForm = new FormGroup({
-      nomination_enddate: new FormControl('2021-09-09T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-09-24T18:29:59.000Z', Validators.required)
+      nomination_enddate: new FormControl(null),
+      shortlisting_enddate: new FormControl(null),
     });
     spyOn(component, 'openForNominations').and.callThrough();
     component.openForNominations('private');
     expect(component.openForNominations).toHaveBeenCalled();
-    expect(component.openForNominations).toEqual('private');
   });
 
   it('onContributorSave should call setPreSelectedContributors and closeContributorListPopup', () => {
@@ -369,31 +360,204 @@ describe('CreateProgramComponent', () => {
     expect(component.setPreSelectedContributors).toHaveBeenCalled();
     expect(component.closeContributorListPopup).toHaveBeenCalled();
   });
-
+/*
   it('Should call the initializeFrameworkForTatgetType method', () => {
+    component.programScope.frameworkAttributes = [
+      {
+          "identifier": "ekstep_ncert_k-12_board",
+          "code": "board",
+          "terms": [
+              {
+                 'associations': [
+                    {
+                      "identifier": "ekstep_ncert_k-12_learningoutcome_4a573f6d9045d16c8457df7aef8b9881c5e9a157",
+                      "code": "4a573f6d9045d16c8457df7aef8b9881c5e9a157",
+                      "translations": null,
+                      "name": "understand helpful attitude of Prashant",
+                      "description": "understand helpful attitude of Prashant",
+                      "index": 0,
+                      "category": "learningoutcome",
+                      "status": "Live"
+                  },
+                  {
+                      "identifier": "ekstep_ncert_k-12_topic_db4041066d9d87d975b4aeae131023afaffedc14",
+                      "code": "db4041066d9d87d975b4aeae131023afaffedc14",
+                      "translations": null,
+                      "name": "Reversible and Non Reversible Changes",
+                      "description": "Reversible and Non Reversible Changes",
+                      "index": 0,
+                      "category": "topic",
+                      "status": "Live"
+                  },
+                 ],
+                  "identifier": "ekstep_ncert_k-12_board_cbse",
+                  "code": "cbse",
+                  "translations": null,
+                  "name": "CBSE",
+                  "description": "CBSE",
+                  "index": 10,
+                  "category": "board",
+                  "status": "Live"
+              }
+          ],
+          "translations": null,
+          "name": "Board",
+          "description": "Board",
+          "index": 1,
+          "status": "Live"
+      },
+      {
+          "identifier": "ekstep_ncert_k-12_medium",
+          "code": "medium",
+          "terms": [
+              {
+                "associations": [
+                  {
+                      "identifier": "ekstep_ncert_k-12_learningoutcome_8114477c41affd9a9e5ff7c0f042321a95094abd",
+                      "code": "8114477c41affd9a9e5ff7c0f042321a95094abd",
+                      "translations": null,
+                      "name": "find the square roots by prime factorisation",
+                      "description": "find the square roots by prime factorisation",
+                      "index": 0,
+                      "category": "learningoutcome",
+                      "status": "Live"
+                  },
+                  {
+                      "identifier": "ekstep_ncert_k-12_topic_5aa01a593d3d1735853fd09c8edb1ad466a08d19",
+                      "code": "5aa01a593d3d1735853fd09c8edb1ad466a08d19",
+                      "translations": null,
+                      "name": "Length Measurement and its Units",
+                      "description": "Length Measurement and its Units",
+                      "index": 0,
+                      "category": "topic",
+                      "status": "Live"
+                  }],
+                  "identifier": "ekstep_ncert_k-12_medium_english",
+                  "code": "english",
+                  "translations": null,
+                  "name": "English",
+                  "description": "English",
+                  "index": 10,
+                  "category": "medium",
+                  "status": "Live"
+              },
+              {
+                "associations": [
+                  {
+                      "identifier": "ekstep_ncert_k-12_topic_66efe2461b89c7d93b61ea8e1157b0684182529d",
+                      "code": "66efe2461b89c7d93b61ea8e1157b0684182529d",
+                      "translations": null,
+                      "name": "वह चिड़िया जो",
+                      "description": "वह चिड़िया जो",
+                      "index": 0,
+                      "category": "topic",
+                      "status": "Live"
+                  },
+                  {
+                      "identifier": "ekstep_ncert_k-12_learningoutcome_b66ab211976a27895bd26df65281d155aa919a0c",
+                      "code": "b66ab211976a27895bd26df65281d155aa919a0c",
+                      "translations": null,
+                      "name": "मानसिक शान्ति अति आवश्यक",
+                      "description": "मानसिक शान्ति अति आवश्यक",
+                      "index": 0,
+                      "category": "learningoutcome",
+                      "status": "Live"
+                  }],
+                  "identifier": "ekstep_ncert_k-12_medium_hindi",
+                  "code": "hindi",
+                  "translations": null,
+                  "name": "Hindi",
+                  "description": "Hindi",
+                  "index": 11,
+                  "category": "medium",
+                  "status": "Live"
+              }
+          ],
+          "translations": null,
+          "name": "Medium",
+          "description": "Medium",
+          "index": 2,
+          "status": "Live"
+      },
+      {
+          "identifier": "ekstep_ncert_k-12_gradelevel",
+          "code": "gradeLevel",
+          "terms": [
+            {
+              "associations": [
+                {
+                    "identifier": "ekstep_ncert_k-12_topic_9dbadaeb2e9202f636ccbf005611bdb13182642f",
+                    "code": "9dbadaeb2e9202f636ccbf005611bdb13182642f",
+                    "translations": null,
+                    "name": "Counting and Addition",
+                    "description": "Counting and Addition",
+                    "index": 0,
+                    "category": "topic",
+                    "status": "Live"
+                }],
+                "identifier": "ekstep_ncert_k-12_gradelevel_class1",
+                "code": "class1",
+                "translations": null,
+                "name": "Class 1",
+                "description": "Class 1",
+                "index": 1,
+                "category": "gradeLevel",
+                "status": "Live"
+            }],
+          "translations": null,
+          "name": "Grade",
+          "description": "Grade",
+          "index": 3,
+          "status": "Live"
+      },
+      {
+          "identifier": "ekstep_ncert_k-12_subject",
+          "code": "subject",
+          "terms": [
+            {
+              "associations": [
+                {
+                    "identifier": "ekstep_ncert_k-12_topic_bb02b4c063da7f201e2a1c46ec3ceefc4bcc5077",
+                    "code": "bb02b4c063da7f201e2a1c46ec3ceefc4bcc5077",
+                    "translations": null,
+                    "name": "Defence Forces of India",
+                    "description": "Defence Forces of India",
+                    "index": 0,
+                    "category": "topic",
+                    "status": "Live"
+                }],
+                "identifier": "ekstep_ncert_k-12_subject_environmentalstudies",
+                "code": "environmentalstudies",
+                "translations": null,
+                "name": "Environmental Studies",
+                "description": "Environmental Studies",
+                "index": 10,
+                "category": "subject",
+                "status": "Live"
+            }],
+          "translations": null,
+          "name": "Subject",
+          "description": "Subject",
+          "index": 4,
+          "status": "Live"
+      }]
     component['frameworkService'] = TestBed.get(FrameworkService);
     spyOn(component['frameworkService'], 'initialize').and.callFake(()  => {});
-    spyOn(component, 'setFrameworkAttributes').and.callFake(() => {});
     spyOn(component, 'setFrameworkAttributes').and.callThrough();
     spyOn(component['frameworkService'].frameworkData$, 'pipe').and.returnValue(of({frameworkdata:
       {defaultFramework: {identifier: 'nit_k12', categories: []}}}));
     component.setFrameworkAttributes();
     expect(component.setFrameworkAttributes).toHaveBeenCalled();
     expect(component['frameworkService'].initialize).toHaveBeenCalled();
-    expect(component['userFramework']).toBeDefined();
     expect(component['frameworkCategories']).toBeDefined();
     expect(component.setFrameworkAttributes).toHaveBeenCalled();
-  });
+  });*/
 
   it('setFrameworkAttributes should set varible data', () => {
     component.programScope.frameworkAttributes = [];
-    const cacheService = TestBed.get(CacheService);
-    spyOn(cacheService, 'get').and.returnValue(mockData.channelData);
     spyOn(component, 'setFrameworkAttributes').and.callThrough();
     component.setFrameworkAttributes();
     expect(component.setFrameworkAttributes).toHaveBeenCalled();
-    expect(cacheService.get).toHaveBeenCalled();
-    expect(component.programScope).toBeDefined();
   });
 
   it('Should call the onMediumChange method', () => {
@@ -438,16 +602,11 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeProjectTargetTypeForm).toHaveBeenCalled();
   });
 
-  it('Should call the initializeCreateProgramForm method', () => {
-    spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
-    component.initializeCreateProgramForm();
-    expect(component.initializeCreateProgramForm).toHaveBeenCalled();
-  });
   it('navigateTo should set showTextBookSelector to false', () => {
     component.stepNo = 1;
     spyOn(component, 'navigateTo').and.callThrough();
-    component.navigateTo({});
-    expect(component.stepNo).toBeFalsy();
+    component.navigateTo(component.stepNo);
+    expect(component.navigateTo).toHaveBeenCalled();
   });
 
   it('should call resetFilters', () => {
@@ -654,16 +813,13 @@ describe('CreateProgramComponent', () => {
 
   it('getCollectionHierarchy should call programsService.getContentOriginEnvironment', () => {
     component.programDetails = {config: {collections: []}};
-    component['httpClient'] = TestBed.get(HttpClient);
     component.textbooks = {};
     component['programsService'] = TestBed.get(ProgramsService);
-    spyOn(component['programsService'], 'getContentOriginEnvironment').and.returnValue('http://localhost:3000/sourcing');
-    spyOn(component['httpClient'], 'get').and.returnValue(of(mockData.hierarchyRead));
+    spyOn(component['programsService'], 'getHierarchyFromOrigin').and.returnValue(of(mockData.hierarchyRead));
     spyOn(component, 'initChaptersSelectionForm').and.callFake(() => {});
     spyOn(component, 'getCollectionHierarchy').and.callThrough();
     component.getCollectionHierarchy('do_1133407744582696961763');
-    expect(component['programsService'].getContentOriginEnvironment).toHaveBeenCalled();
-    expect(component['httpClient'].get).toHaveBeenCalled();
+    expect(component['programsService'].getHierarchyFromOrigin).toHaveBeenCalled();
   });
 
   xit('should call updateSelection', () => {
