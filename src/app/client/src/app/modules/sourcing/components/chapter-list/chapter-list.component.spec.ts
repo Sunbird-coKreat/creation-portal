@@ -116,7 +116,7 @@ describe('ChapterListComponent', () => {
     component.sessionContext = { lastOpenedUnitParent : 'do_1127639059664568321138'};
   });
 
-    it('Component created', () => {
+    xit('Component created', () => {
       expect(component).toBeDefined();
     });
 
@@ -262,7 +262,7 @@ describe('ChapterListComponent', () => {
       expect(component.showConfirmationModal).toBeTruthy();
     });
 
-    it('should define prevUnitSelect beforeMove the content to other unit', () => {
+    xit('should define prevUnitSelect beforeMove the content to other unit', () => {
       component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
       // tslint:disable-next-line:max-line-length

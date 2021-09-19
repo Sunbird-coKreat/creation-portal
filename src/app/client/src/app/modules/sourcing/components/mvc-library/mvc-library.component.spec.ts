@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of as observableOf,  throwError as observableThrowError, } from 'rxjs';
-import { ConfigService, ToasterService, SharedModule} from '@sunbird/shared';
+import { ConfigService, ToasterService, SharedModule, NavigationHelperService} from '@sunbird/shared';
 import { ActionService, ProgramsService, ContentService } from '@sunbird/core';
 import { APP_BASE_HREF } from '@angular/common';
 import { SourcingService } from '../../services';
@@ -31,9 +31,12 @@ describe('MvcLibraryComponent', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot()],
       declarations: [ MvcLibraryComponent ],
-      providers: [{ provide: Router }, { provide: ActivatedRoute, useValue: fakeActivatedRoute }, ConfigService,
-        {provide: APP_BASE_HREF, useValue: '/'}, ToasterService, TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
-        DatePipe, ActionService, ProgramsService, SourcingService],
+      providers: [{ provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        ConfigService,
+        {provide: APP_BASE_HREF, useValue: '/'},
+        ToasterService, TelemetryService,
+        { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
+        DatePipe, ActionService, ProgramsService, SourcingService, NavigationHelperService],
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();

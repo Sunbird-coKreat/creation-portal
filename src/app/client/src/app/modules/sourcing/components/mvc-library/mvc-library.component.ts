@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy} from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { catchError, map, finalize, tap } from 'rxjs/operators';
-import { throwError, forkJoin } from 'rxjs';
+import { throwError, forkJoin, Subject } from 'rxjs';
 import { TelemetryService, IImpressionEventInput} from '@sunbird/telemetry';
 import { ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
@@ -15,7 +15,7 @@ import { SourcingService } from '../../services';
   templateUrl: './mvc-library.component.html',
   styleUrls: ['./mvc-library.component.scss']
 })
-export class MvcLibraryComponent implements OnInit, AfterViewInit {
+export class MvcLibraryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public telemetryImpression: IImpressionEventInput;
   public sessionContext: any;
@@ -41,12 +41,13 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public showAddedContent: Boolean = true;
   public uniqueId: string;
   public telemetryPageId: string;
+  private onComponentDestroy$ = new Subject<any>();
 
   constructor(
     public programTelemetryService: ProgramTelemetryService, private telemetryService: TelemetryService,
     private contentService: ContentService, public configService: ConfigService, private actionService: ActionService,
-    private sourcingService: SourcingService, private programsService: ProgramsService,
-    private toasterService: ToasterService, private route: ActivatedRoute, private router: Router, public resourceService: ResourceService,
+    private sourcingService: SourcingService, public programsService: ProgramsService,
+    private toasterService: ToasterService, public route: ActivatedRoute, public router: Router, public resourceService: ResourceService,
     private userService: UserService, private navigationHelperService: NavigationHelperService,
   ) { }
 
@@ -109,7 +110,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     this.telemetryPageId = _.get(this.route, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
- 
+
 
   initialize() {
     forkJoin([this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()]).subscribe(
@@ -399,6 +400,11 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       lastOpenedUnitId: this.collectionUnitId
     });
     this.router.navigateByUrl(`/contribute/program/${this.programId}`);
+  }
+
+  ngOnDestroy() {
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 
 }

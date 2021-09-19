@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
-import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
+import { IUserProfile, ConfigService, ToasterService, ResourceService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService } from '../../../program/services';
@@ -12,13 +12,14 @@ import { SourcingService } from '../../services';
 import * as _ from 'lodash-es';
 import { map} from 'rxjs/operators';
 import { ThrowStmt } from '@angular/compiler';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-question-set-editor',
   templateUrl: './question-set-editor.component.html',
   styleUrls: ['./question-set-editor.component.scss']
 })
-export class QuestionSetEditorComponent implements OnInit {
+export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   @Input() questionSetEditorComponentInput: IContentEditorComponentInput;
   questionSetEditorInput: any;
   editorConfig: any;
@@ -35,13 +36,14 @@ export class QuestionSetEditorComponent implements OnInit {
   public programContext: any;
   public unitIdentifier: string;
   public telemetryPageId: string;
+  private onComponentDestroy$ = new Subject<any>();
 
-  constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
+  constructor(public activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
-    private frameworkService: FrameworkService, private programsService: ProgramsService, 
+    private frameworkService: FrameworkService, public programsService: ProgramsService,
     private contentService: ContentService, public toasterService: ToasterService,
-    private resourceService: ResourceService, private programStageService: ProgramStageService,
-    private helperService: HelperService, private collectionHierarchyService: CollectionHierarchyService,
+    private resourceService: ResourceService, public programStageService: ProgramStageService,
+    public helperService: HelperService, private collectionHierarchyService: CollectionHierarchyService,
     private sourcingService: SourcingService, public router: Router, private notificationService: NotificationService,
     ) {
       const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
@@ -60,7 +62,7 @@ export class QuestionSetEditorComponent implements OnInit {
 
     // this.telemetryPageId = _.get(this.questionSetEditorInput, 'telemetryPageDetails.telemetryPageId');
     // this.templateDetails  = _.get(this.questionSetEditorInput, 'templateDetails');
-    // 
+    //
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
     };
@@ -80,7 +82,7 @@ export class QuestionSetEditorComponent implements OnInit {
     };
     return this.contentService.get(req).pipe(map((response: any) => {return response}));
   }
-  
+
   /*getFrameWorkDetails() {
     if (this.programContext.rootorg_id) {
       this.helperService.fetchChannelData(this.programContext.rootorg_id);
@@ -189,8 +191,8 @@ export class QuestionSetEditorComponent implements OnInit {
         objectType: "QuestionSet",
         mode: this.getEditorMode(),
         setDefaultCopyRight: false,
-        showOriginPreviewUrl: false, 
-        showSourcingStatus: false, 
+        showOriginPreviewUrl: false,
+        showSourcingStatus: false,
         showCorrectionComments: false
       }
     };
@@ -211,11 +213,11 @@ export class QuestionSetEditorComponent implements OnInit {
     if (submissionDateFlag && this.canSubmit()) {
       return 'edit';
     }
-    
+
     if (submissionDateFlag && this.canReviewContent()) {
       return 'orgReview';
     }
-      
+
     if (this.canSourcingReviewerPerformActions()) {
       return 'sourcingReview';
     }
@@ -323,7 +325,7 @@ export class QuestionSetEditorComponent implements OnInit {
 
   editorEventListener(event) {
    switch (event.action) {
-    case "submitContent" : 
+    case "submitContent" :
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content
       if (this.helperService.isIndividualAndNotSample(this.sessionContext.currentOrgRole, this.sessionContext.sampleContent)) {
         this.publishQuestionSet(event.identifier);
@@ -333,16 +335,16 @@ export class QuestionSetEditorComponent implements OnInit {
        this.programsService.emitHeaderEvent(true);
       }
       break;
-    case "sendForCorrections": 
+    case "sendForCorrections":
       this.requestCorrectionsBySourcing(event.identifier, event.comment)
       break;
     case "sourcingApprove":
       this.helperService.manageSourcingActions('accept', this.sessionContext, this.programContext, this.unitIdentifier, this.collectionDetails);
       break;
-    case "sourcingReject": 
+    case "sourcingReject":
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.programContext, this.unitIdentifier, this.collectionDetails, event.comment);
       break;
-      case "backContent": 
+      case "backContent":
       this.programsService.emitHeaderEvent(true);
       this.programStageService.removeLastStage();
       break;
@@ -420,5 +422,10 @@ export class QuestionSetEditorComponent implements OnInit {
         .subscribe((res) => {  });
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 }
