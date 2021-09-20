@@ -125,7 +125,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
-    this.setUserAccess();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -133,6 +132,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.setUserAccess();
     this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
@@ -1146,34 +1146,29 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-        this.templateDetails = {
-          'name' : event.content.primaryCategory
-        };
-        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-        const acceptedFile = appEditorConfig[event.content.mimeType];
-        this.templateDetails['filesConfig'] = {};
-        this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
-        this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
-        this.templateDetails.questionCategories = event.content.questionCategories;
-        if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
-          this.templateDetails.onClick = 'questionSetComponent';
-        } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
-          this.templateDetails.onClick = 'editorComponent';
-        } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
-          this.templateDetails.onClick = 'questionSetComponent';
-        } else if (event.content.mimeType === 'application/vnd.sunbird.questionset'){
-          this.templateDetails.onClick = 'questionSetEditorComponent';
-        } else {
-          this.templateDetails.onClick = 'uploadComponent';
-        }
-        this.componentLoadHandler('preview',
-        this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
-        this.programsService.emitHeaderEvent(false)
-
-    // }, (error)=> {
-    //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
-    //   return false;
-    // });
+    this.templateDetails = {
+      'name' : event.content.primaryCategory
+    };
+    const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    const acceptedFile = appEditorConfig[event.content.mimeType];
+    this.templateDetails['filesConfig'] = {};
+    this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
+    this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+    this.templateDetails.questionCategories = event.content.questionCategories;
+    if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
+      this.templateDetails.onClick = 'questionSetComponent';
+    } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
+      this.templateDetails.onClick = 'editorComponent';
+    } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+      this.templateDetails.onClick = 'questionSetComponent';
+    } else if (event.content.mimeType === 'application/vnd.sunbird.questionset'){
+      this.templateDetails.onClick = 'questionSetEditorComponent';
+    } else {
+      this.templateDetails.onClick = 'uploadComponent';
+    }
+    this.componentLoadHandler('preview',
+    this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
+    this.programsService.emitHeaderEvent(false)
   }
 
   componentLoadHandler(action, component, componentName, event?) {
