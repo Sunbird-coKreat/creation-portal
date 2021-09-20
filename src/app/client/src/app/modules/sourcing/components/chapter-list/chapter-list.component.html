@@ -311,12 +311,6 @@
 				</div>
 			</form>
 		</div>
-    <div *ngIf="viewNewBlueprint">
-      <app-content-data-form
-      #formData
-      [formFieldProperties]="detailBlueprintFormConfig">
-      </app-content-data-form>
-  </div>
 	</div>
 	<div class="sb-modal-actions">
 		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="viewBlueprintFlag = false"  [disabled]="btnDoneDisabled">
