@@ -242,6 +242,13 @@ describe('MyContentComponent', () => {
     });
   });
 
+  it('#fetchAllgetOriginForApprovedContents() should return published content details when API success', () => {
+    spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of(mockData.publishedContentListRes.result));
+    component.fetchAllgetOriginForApprovedContents(['do_123']).subscribe((contens: any) => {
+      expect(contens.length).toBe(3);
+    });
+  });
+
   it('#getUserProfiles() should fetch user details when API success', () => {
     const learnerService: LearnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'post').and.returnValue(of(mockData.userContentListRes));
