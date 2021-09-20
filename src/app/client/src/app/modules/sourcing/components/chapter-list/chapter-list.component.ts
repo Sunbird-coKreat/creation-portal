@@ -968,6 +968,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                   }
                 })
               }
+
               if(data.learningOutcome && data.learningOutcome.length) {
                 _.forEach(data.learningOutcome, (lo)=> {
                   if(_.includes(this.localUniqueLearningOutcomesList, lo)) return;
