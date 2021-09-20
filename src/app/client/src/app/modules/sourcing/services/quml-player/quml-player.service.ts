@@ -4,13 +4,17 @@ import * as _ from 'lodash-es';
 import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
 import { CsModule } from '@project-sunbird/client-services';
+import { PublicPlayerService } from '@sunbird/public';
+import { map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { CsLibInitializerService } from './../../../../service/CsLibInitializer/cs-lib-initializer.service';
 @Injectable({ providedIn: 'root' })
 
 export class QumlPlayerService implements QuestionCursor, EditorCursor {
   private questionMap =  new Map();
   private contentCsService: any;
-  constructor(public csLibInitializerService: CsLibInitializerService) {
+  constructor(public csLibInitializerService: CsLibInitializerService,public playerService: PublicPlayerService,private http: HttpClient) {
     if (!CsModule.instance.isInitialised) {
       this.csLibInitializerService.initializeCs();
     }
@@ -43,6 +47,37 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
     this.questionMap.clear();
   }
   getQuestionSet(identifier) {
-    return of(identifier);
-}
+     // if (this.listUrl) {
+           const hierarchy =  this.http.get("https://localhost:3000/learner/questionset/v1/hierarchy/"+identifier)
+           const questionSet = this.http.get(`https://localhost:3000/api/questionset/v1/read/${identifier}?fields=instructions`)
+            return (
+                forkJoin([hierarchy, questionSet]).pipe(
+                    map(res => {
+                        let questionSet =  res[0]['result']['questionSet'];
+                        if(res[1]['result']['questionset']['instructions'] && questionSet) {
+                            questionSet['instructions']
+                        }
+                        return {questionSet}
+                    })
+                ))
+
+        // } 
+    //return of(identifier);
+  } 
+  getAllQuestionSet(identifiers: string[]): Observable<any> {
+  //   const option = {
+  //     params: {
+  //       fields: 'maxScore'
+  //     }
+  //   };
+  //   const requests = _.map(identifiers, id => {
+  //     return this.playerService.getQuestionSetRead(id, option);
+  //   });
+  //   return forkJoin(requests).pipe(
+  //       map(res => {
+  //         return res.map(item => _.get(item, 'result.questionset.maxScore'));
+  //       })
+  //   );
+  // }
+  return of({}); }
 }

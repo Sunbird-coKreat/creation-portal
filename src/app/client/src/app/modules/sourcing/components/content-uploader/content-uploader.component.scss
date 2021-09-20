@@ -173,7 +173,7 @@
 .middle-section-set {
   max-width: 854px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0 0 0 150px;
   .msg-box {
     margin: ($base-block-space * 4) auto;
     &__content {
@@ -197,7 +197,10 @@
   }
 }
 
-
+.middle-question-set {
+  margin: 0 auto;
+  padding-top: 2rem;
+}
 #url-upload .url-upload-label {
     float: left;
     margin-right: 10px;
@@ -285,4 +288,7 @@
   .asterik{
     position: relative;
     bottom:calculateRem(8px);
+  }
+  .lableDiv, .timeDiv{
+    padding-bottom: 2rem;
   }

@@ -799,6 +799,7 @@ $progressCircle: xs calculateRem(16px) 4px 10px, sm calculateRem(24px) 6px 10px,
 app-question-set-editor{
   .add-to-library{
     z-index: 99  !important;
+    overflow: scroll;
   }
 }
 .footer{

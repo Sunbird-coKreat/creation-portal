@@ -36,6 +36,8 @@ xdescribe('ContentUploaderComponent', () => {
   let errorInitiate;
     // tslint:disable-next-line:prefer-const
   let errorInitiate1;
+
+  let ResourceServiceMock: ResourceService;
   const actionServiceStub = {
     patch() {
       if (errorInitiate) {
@@ -94,7 +96,7 @@ xdescribe('ContentUploaderComponent', () => {
       userId: '123456789'
     }
   };
-
+  
   let helperService: any;
 
   beforeEach(async(() => {
@@ -450,6 +452,74 @@ xdescribe('ContentUploaderComponent', () => {
       .query(By.css('#requestChanges'))
       .triggerEventHandler('click', null);
       expect(helperServiceStub.submitRequestChanges).not.toHaveBeenCalled();
+  });
+
+  /***********************************************/
+  it('should emit event with type -next- on handleCreateQuestionSetSubmit method execution', () => {
+    const resourceBundle = {
+        messages: {
+          emsg: {
+            m0027: 'Something went wrong while fetching the category details',
+            m0026: 'The mimetypes are not configured for the selected category.'
+          }
+        }
+    };
+    component.templateSelected = 'explanationContent';
+    component.programContext = {
+      rootorg_id: '1131700101604311041350'
+    };
+    component.selectedtemplateDetails = {
+      objectMetadata: {
+        schema: {
+          properties: {
+            mimeType: {
+              enum: ['application/vnd.sunbird.questionset', 'application/vnd.ekstep.ecml-archive']
+            }
+          }
+        }
+      }
+    };
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(observableError(true));
+    spyOn(component['toasterService'], 'error');
+    component.handleCreateQuestionSetSubmit();
+    component.showQuestionTypeModal = false;
+    component.showModeofCreationModal = false;
+    expect(component.selectedtemplateDetails).toBeDefined();
+    expect(component.selectedtemplateDetails.onClick).toBe('questionSetComponent');
+    expect(component['toasterService']['error']).toHaveBeenCalledWith(resourceBundle.messages.emsg.m0027);
+  });
+  it('templateDetails should be defined on successful template selection', () => {
+      const resourceBundle = {
+        messages: {
+          emsg: {
+            m0027: 'Something went wrong while fetching the category details',
+            m0026: 'The mimetypes are not configured for the selected category.'
+          }
+        }
+      };
+      // tslint:disable-next-line:prefer-const
+      component.selectedSharedContext = {framework: 'NCFCOPY', topic: ['Topic 2 child']};
+      spyOn(component, 'componentLoadHandler');
+      component.componentLoadHandler('accept', 'question', 'questionlist');
+      expect(component.componentLoadHandler).toHaveBeenCalledWith('creation', jasmine.any(Function), 'uploadComponent');
+  });
+  it('should call updateAccordian on uploadHandler', () => {
+      component.unitIdentifier = 'do_0000000000';
+      spyOn(component, 'updateAccordianView');
+      component.uploadHandler({contentId: 'do_1234567890'});
+      expect(component.updateAccordianView).toHaveBeenCalled();
+  });
+  it('should lastOpenedUnitParent be defined with parent do_id of given child-unit', () => {
+      component.lastOpenedUnit('do_112931801879011328152'); // do_id of child-unit
+      expect(component.sessionContext.lastOpenedUnitParent).toEqual('do_1127639059664568321138');
+  });
+  it('should updateAccordianView after successful removal of content', () => {
+      let ResourceServiceMock: ResourceService;
+      component.unitIdentifier = 'do_0000000000';
+      ResourceServiceMock = TestBed.get(ResourceService);
+      ResourceServiceMock.messages = {smsg: {m0064: 'Content is successfully removed'}};
+      spyOn(component, 'updateAccordianView');
+      expect(component.updateAccordianView).toHaveBeenCalledWith(jasmine.any(String));
   });
 
 });
