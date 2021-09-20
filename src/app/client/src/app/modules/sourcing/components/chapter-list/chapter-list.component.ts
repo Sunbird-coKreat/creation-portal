@@ -110,10 +110,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public unsubscribe = new Subject<void>();
   public firstLevelFolderLabel: string;
 
-  public viewOldBlueprint: boolean;
-  public viewNewBlueprint: boolean;
-  public detailBlueprintFormConfig:any;
-
   public addFormLibraryInput = {};
   editorConfig: any;
   searchConfig;
