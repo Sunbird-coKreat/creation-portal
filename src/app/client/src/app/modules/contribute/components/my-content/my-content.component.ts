@@ -56,6 +56,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   private toasterService: ToasterService;
   private router: Router;
   private navigationHelperService: NavigationHelperService;
+  public isQumlPlayer: Boolean = false;
+  public baseUrl: string;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
@@ -67,6 +69,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       this.navigationHelperService = injector.get<NavigationHelperService>(NavigationHelperService);
       this.router = injector.get<Router>(Router);
       this.toasterService = injector.get<ToasterService>(ToasterService);
+      this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
+      ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
      }
 
   ngOnInit(): void {
@@ -229,10 +233,45 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   }
 
   onPreview(content: any) {
+    this.isQumlPlayer = false;
     this.slectedContent = content;
     this.slectedContent['totalViews'] = this.getCountData(content, 'me_totalPlaySessionCount');
-    this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
-    this.getConfigByContent(content.identifier);
+    if (content.mimeType === 'application/vnd.sunbird.questionset') {
+      this.slectedContent.originPreviewUrl = this.helperService.getQuestionSetOriginUrl(this.slectedContent.origin);
+      this.initQumlPlayer(content);
+    } else {
+      this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
+      this.getConfigByContent(content.identifier);
+    }
+  }
+
+  initQumlPlayer(content) {
+    forkJoin([this.playerService.getQuestionSetHierarchy(content.identifier), this.playerService.getQuestionSetRead(content.identifier)])
+    .subscribe(([hierarchyRes, questionSetData]: any) => {
+        this.isQumlPlayer = true;
+        const questionSet = _.get(hierarchyRes, 'result.questionSet');
+        questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
+        const contentDetails = {
+          contentId: content.identifier,
+          contentData: questionSet
+        };
+        this.loadTabComponent('previewTab');
+        this.playerConfig = this.playerService.getConfig(contentDetails);
+        this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+        this.playerConfig.context = {
+          ...this.playerConfig.context,
+          cdata: this.telemetryInteractCdata,
+          userData: {
+            firstName: this.userService.userProfile.firstName,
+            lastName : !_.isEmpty(this.userService.userProfile.lastName) ? this.userService.userProfile.lastName : '',
+          },
+          endpoint: '/data/v3/telemetry',
+          mode: 'play',
+          env: 'question_editor',
+          threshold: 3,
+          host: this.baseUrl
+        };
+    });
   }
 
   onBack(): void {
@@ -504,6 +543,14 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  getPlayerEvents(event) {
+    console.log('get player events', JSON.stringify(event));
+  }
+
+  getTelemetryEvents(event) {
+    console.log('event is for telemetry', JSON.stringify(event));
   }
 
 }

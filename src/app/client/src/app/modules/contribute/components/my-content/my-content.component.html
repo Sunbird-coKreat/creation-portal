@@ -281,9 +281,19 @@
         <div *ngSwitchCase="'previewTab'" class="sb-pageSection sb-bg-color-white mt-24 py-24">
             <div class="middle-section-set">
                 <div class="ui container msg-box">
-                    <div class="msg-box__content">
+                    <div class="msg-box__content" *ngIf="playerConfig && !isQumlPlayer">
                         <div class="container msg-box__content__blank-box">
                             <app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+                        </div>
+                    </div>
+                    <div class="b-1-100 br-2 mt-5" *ngIf="playerConfig && isQumlPlayer" >
+                        <div class="aspectratio" data-ratio="16:9"> 
+                            <div class="content-player">
+                                <div class="w-100 h-100">
+                                    <quml-main-player [playerConfig]="playerConfig" (playerEvent)="getPlayerEvents($event)"
+                                        (telemetryEvent)="getTelemetryEvents($event)"></quml-main-player>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
