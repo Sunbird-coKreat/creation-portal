@@ -329,7 +329,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         understand: 0,
         apply: 0
       };
-
       if (this.localBlueprint.questionTypes) {
         _.forEach(this.localBlueprint.questionTypes, (value, key) => {
           value = parseInt(value);
@@ -393,8 +392,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             this.localBlueprint.count.understand = this.localBlueprint.count.understand + value;
           }
         })
-        this.localBlueprint.count.topics = this.localBlueprint.topics && this.localBlueprint.topics.length;
-        this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningOutcomes && this.localBlueprint.learningOutcomes.length;
+        this.localBlueprint.count.topics = this.localBlueprint.topic && this.localBlueprint.topic.length;
+        this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningoutcome && this.localBlueprint.learningoutcome.length;
         this.viewNewBlueprint = true;
       }
     }
@@ -961,7 +960,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                   else {
                     this.localUniqueTopicsList.push(topic);
                     this.countData['topics'] = this.countData['topics'] + 1;
-                    this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
+                    if (this.localBlueprint.questionTypes) {
+                      this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
+                    }else{
+                      this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topic, {name: topic})
+                    }
                   }
                 })
               }
@@ -971,7 +974,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                   else {
                     this.localUniqueLearningOutcomesList.push(lo);
                     this.countData['learningOutcomes'] = this.countData['learningOutcomes'] + 1;
-                    this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
+                    if (this.localBlueprint.questionTypes) {
+                      this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
+                    }else{
+                      this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningoutcome, {name: lo})
+                    }
                   }
                 })
               }
