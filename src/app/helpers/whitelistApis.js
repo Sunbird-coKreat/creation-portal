@@ -727,6 +727,12 @@ const API_LIST = {
     },
     '/content/data/v1/telemetry': {
       checksNeeded: []
+    },
+    '/api/question/v1/list': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
     }
   },
   URL_PATTERN: [
