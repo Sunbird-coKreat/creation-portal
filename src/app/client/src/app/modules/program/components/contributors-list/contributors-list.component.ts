@@ -35,6 +35,7 @@ export class ContributorsListComponent implements OnInit {
   public isDisabledSaveBtn = true;
   searchInput: any;
   @Output() onContributorSave = new EventEmitter();
+  @Output() onContributorClose = new EventEmitter();
   @Input() preSelectedContributors: any;
   @Input() allowToModifyContributors: boolean = false;
   public selectedContributors = {
@@ -353,6 +354,10 @@ export class ContributorsListComponent implements OnInit {
     }
 
     this.onContributorSave.emit(this.selectedContributors);
+  }
+
+  close() {
+    this.onContributorClose.emit();
   }
 
   sortList() {

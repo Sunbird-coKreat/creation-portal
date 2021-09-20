@@ -184,9 +184,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.setTelemetryForonRoleChange(user)
     const selectedRole = _.get(user, 'selectedRole');
     const osid = _.get(user, 'User_Org.osid');
+    const userOsid = _.get(user, 'User.osid');
     // const org = this.userService.userProfile.userRegData.Org;
 
-    this.updateUserRole(osid, selectedRole);
+    this.updateUserRole(osid, selectedRole, userOsid);
 
     /*
     // Already user in Open Saber so update the role directly
@@ -255,11 +256,25 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     );
   }*/
 
-  updateUserRole(osid, role) {
+  updateUserRole(osid, role, userOsid) {
     this.programsService.updateUserRole(osid, [role]).subscribe(
       (res) => {
-        this.toasterService.success(this.resourceService.messages.smsg.m0065);
-        this.cacheService.remove('orgUsersDetails');
+        this.programsService.updateUser(userOsid, [role]).subscribe(
+          (response) => {
+            this.toasterService.success(this.resourceService.messages.smsg.m0065);
+            this.cacheService.remove('orgUsersDetails');
+          },(err) => {
+            console.log(err);
+            const errInfo = {
+              errorMsg: this.resourceService.messages.emsg.m0077,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activatedRoute.snapshot.data.telemetry.env,
+              request: {osid: osid, role: [role]}
+            };
+            this.sourcingService.apiErrorHandling(err, errInfo);
+          }
+        );
       },
       (error) => {
         console.log(error);

@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit } from '@
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ResourceService, NavigationHelperService , ToasterService} from '@sunbird/shared';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
@@ -33,6 +33,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public playerConfig: any;
   public totalContent: number;
   public totalPublishedContent: number;
+  public chunkSize = 500;
   public contentCountData: any = {
     total: 0,
     published: 0,
@@ -52,6 +53,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   private configService: ConfigService;
   private sourcingService: SourcingService;
   private programsService: ProgramsService;
+  private toasterService: ToasterService;
   private router: Router;
   private navigationHelperService: NavigationHelperService;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
@@ -64,6 +66,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       this.programsService = injector.get<ProgramsService>(ProgramsService);
       this.navigationHelperService = injector.get<NavigationHelperService>(NavigationHelperService);
       this.router = injector.get<Router>(Router);
+      this.toasterService = injector.get<ToasterService>(ToasterService);
      }
 
   ngOnInit(): void {
@@ -110,10 +113,10 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         return _.map(this.contents, (content => _.get(content, 'identifier')));
       }),
       mergeMap(contentIds => iif(() => !_.isEmpty(contentIds),
-        this.getOriginForApprovedContents(contentIds).pipe(
+        this.fetchAllgetOriginForApprovedContents(contentIds).pipe(
           map((contentRes: any) => {
-            this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
-            this.totalPublishedContent = _.get(contentRes, 'count') || 0;
+            this.publishedContents = contentRes;
+            this.totalPublishedContent = _.size(this.publishedContents) || 0;
             return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
           })), of([]))),
       mergeMap(userIds => iif(() => !_.isEmpty(userIds),
@@ -337,6 +340,19 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  fetchAllgetOriginForApprovedContents(contentIds) {
+    const chunkedContentIds = _.chunk(contentIds, this.chunkSize);
+    const chunkedContentObservables = chunkedContentIds.map(block => {
+      return this.getOriginForApprovedContents(block);
+    });
+    return forkJoin(chunkedContentObservables).pipe(map(data => {
+      return _.reduce(data, (result, value, key) => {
+        result = [...result, ..._.compact(_.concat(_.get(value, 'content'), _.get(value, 'QuestionSet')))];
+        return result;
+      }, []);
+    }));
+  }
+
   getOriginForApprovedContents(contentIds) {
     const option = {
       url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
@@ -426,7 +442,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       headers: this.contentUsageReportHeaders(),
       showTitle: false
     };
-    this.programsService.generateCSV(csvDownloadConfig);
+    if (_.get(this.contentCountData, 'published') && csvDownloadConfig.tableData.length) {
+      this.programsService.generateCSV(csvDownloadConfig);
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.m0079);
+    }
   }
 
   contentUsageReportHeaders() {
