@@ -113,14 +113,6 @@ const isAllowed = () => {
   * @since - release-3.1.0
   */
  ROLE_CHECK: (resolve, reject, req, rolesForURL, REQ_URL) => {
-   logger.info({
-     msg: 'SourcingPortal_API_WHITELIST : Middleware for URL [ ' + REQ_URL + ' ]',
-     reqPath: req.path,
-     matchPattern: REQ_URL,
-     method: req.method,
-     sessionRoles: _.get(req, 'session.roles') || 'no roles in session',
-     rulesForURL: rolesForURL
-   });
    if (_.includes(rolesForURL, 'ALL') && req.session['roles'].length > 0) {
      resolve();
    } else if (_.intersection(rolesForURL, req.session['roles']).length > 0) {
