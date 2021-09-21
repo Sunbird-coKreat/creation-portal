@@ -725,6 +725,10 @@
           "id": "sunbird.portal",
           "ver": "1.8.0",
           "pid": "sunbird-portal"
+        },
+        "userData": {
+          "firstName": "Sourav",
+          "lastName": "Dey"
         }
       },
       "config": {
@@ -763,7 +767,8 @@
             "ver": 1.1,
             "type": "plugin"
           }
-        ]
+        ],
+        "sideMenu" : {}
       }
     },
     "contentType": {

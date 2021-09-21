@@ -48,8 +48,8 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
   }
   getQuestionSet(identifier) {
      // if (this.listUrl) {
-           const hierarchy =  this.http.get("https://localhost:3000/learner/questionset/v1/hierarchy/"+identifier)
-           const questionSet = this.http.get(`https://localhost:3000/api/questionset/v1/read/${identifier}?fields=instructions`)
+           const hierarchy =  this.http.get("action/questionset/v1/hierarchy/"+identifier+"?mode=edit")
+           const questionSet = this.http.get(`action/questionset/v1/read/${identifier}?fields=instructions`)
             return (
                 forkJoin([hierarchy, questionSet]).pipe(
                     map(res => {

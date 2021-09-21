@@ -211,32 +211,32 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   //       lastName: 'Gangula'
   //     }
   //   },
-    config: this.configSunbird,
-    // tslint:disable-next-line:max-line-length
-    metadata: { "interceptionPoints": 
-                  { "items": 
-                    [ 
-                      { 
-                        "type": "QuestionSet", 
-                        "interceptionPoint": 50, 
-                        "identifier": "do_1133684681106227201168" 
-                      }, 
-                      { 
-                        "type": "QuestionSet", 
-                        "interceptionPoint": 90, 
-                        "identifier": "do_1133702669042892801173" 
-                      }, 
-                      { 
-                        "type": "QuestionSet", 
-                        "interceptionPoint": 120, 
-                        "identifier": "do_1133702687093719041176" 
-                      } 
-                    ] 
-                  }, 
-                  "interceptionType": "Timestamp", 
-                  "compatibilityLevel": 2, "copyright": "NCERT", "subject": [ "CPD" ], "channel": "0125196274181898243", "language": [ "English" ], "mimeType": "video/mp4", "objectType": "Content", "gradeLevel": [ "Others" ], "appIcon": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31309320735055872011111/artifact/nishtha_icon.thumb.jpg", "primaryCategory": "Explanation Content", "artifactUrl": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/assets/do_31309320735055872011111/engagement-with-language-.mp4", "contentType": "ExplanationResource", "identifier": "do_21310353608830976014671", "audience": [ "Student" ], "visibility": "Default", "mediaType": "content", "osId": "org.ekstep.quiz.app", "languageCode": [ "en" ], "license": "CC BY-SA 4.0", "name": "Engagement with Language", "status": "Live", "code": "1c5bd8da-ad50-44ad-8b07-9c18ec06ce29", "streamingUrl": "https://ntppreprodmedia-inct.streaming.media.azure.net/409780ae-3fc2-4879-85f7-f1affcce55fa/mp4_14.ism/manifest(format=m3u8-aapl-v3)", "medium": [ "English" ], "createdOn": "2020-08-24T17:58:32.911+0000", "copyrightYear": 2020, "lastUpdatedOn": "2020-08-25T04:36:47.587+0000", "creator": "NCERT COURSE CREATOR 6", "pkgVersion": 1, "versionKey": "1598330207587", "framework": "ncert_k-12", "createdBy": "68dc1f8e-922b-4fcd-b663-593573c75f22", "resourceType": "Learn", "orgDetails": { "email": "director.ncert@nic.in", "orgName": "NCERT" }, "licenseDetails": { "name": "CC BY-SA 4.0", "url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode", "description": "For details see below:" } },
-    data: {}
-  };
+  //   config: this.configSunbird,
+  //   // tslint:disable-next-line:max-line-length
+  //   metadata: { "interceptionPoints": 
+  //                 { "items": 
+  //                   [ 
+  //                     { 
+  //                       "type": "QuestionSet", 
+  //                       "interceptionPoint": 50, 
+  //                       "identifier": "do_1133684681106227201168" 
+  //                     }, 
+  //                     { 
+  //                       "type": "QuestionSet", 
+  //                       "interceptionPoint": 90, 
+  //                       "identifier": "do_1133702669042892801173" 
+  //                     }, 
+  //                     { 
+  //                       "type": "QuestionSet", 
+  //                       "interceptionPoint": 120, 
+  //                       "identifier": "do_1133702687093719041176" 
+  //                     } 
+  //                   ] 
+  //                 }, 
+  //                 "interceptionType": "Timestamp", 
+  //                 "compatibilityLevel": 2, "copyright": "NCERT", "subject": [ "CPD" ], "channel": "0125196274181898243", "language": [ "English" ], "mimeType": "video/mp4", "objectType": "Content", "gradeLevel": [ "Others" ], "appIcon": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31309320735055872011111/artifact/nishtha_icon.thumb.jpg", "primaryCategory": "Explanation Content", "artifactUrl": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/assets/do_31309320735055872011111/engagement-with-language-.mp4", "contentType": "ExplanationResource", "identifier": "do_21310353608830976014671", "audience": [ "Student" ], "visibility": "Default", "mediaType": "content", "osId": "org.ekstep.quiz.app", "languageCode": [ "en" ], "license": "CC BY-SA 4.0", "name": "Engagement with Language", "status": "Live", "code": "1c5bd8da-ad50-44ad-8b07-9c18ec06ce29", "streamingUrl": "https://ntppreprodmedia-inct.streaming.media.azure.net/409780ae-3fc2-4879-85f7-f1affcce55fa/mp4_14.ism/manifest(format=m3u8-aapl-v3)", "medium": [ "English" ], "createdOn": "2020-08-24T17:58:32.911+0000", "copyrightYear": 2020, "lastUpdatedOn": "2020-08-25T04:36:47.587+0000", "creator": "NCERT COURSE CREATOR 6", "pkgVersion": 1, "versionKey": "1598330207587", "framework": "ncert_k-12", "createdBy": "68dc1f8e-922b-4fcd-b663-593573c75f22", "resourceType": "Learn", "orgDetails": { "email": "director.ncert@nic.in", "orgName": "NCERT" }, "licenseDetails": { "name": "CC BY-SA 4.0", "url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode", "description": "For details see below:" } },
+  //   data: {}
+  // };
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,

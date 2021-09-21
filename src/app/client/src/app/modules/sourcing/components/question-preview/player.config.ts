@@ -29,7 +29,8 @@ export let PlayerConfig  = {
             'type': 'plugin'
           }
         ],
-        'enableTelemetryValidation': true
+        'enableTelemetryValidation': true,
+        'sideMenu' : {}
       },
       metadata: {
         'mimeType': 'application/vnd.ekstep.ecml-archive',
