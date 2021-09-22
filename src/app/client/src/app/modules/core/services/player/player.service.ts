@@ -4,6 +4,7 @@ import { mergeMap, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ContentService } from './../content/content.service';
 import { UserService } from './../user/user.service';
+import { ActionService } from './../action/action.service';
 import { Injectable } from '@angular/core';
 import {
   ConfigService, IUserData, ServerResponse,
@@ -31,7 +32,7 @@ export class PlayerService {
   previewCdnUrl: string;
   constructor(public userService: UserService, public contentService: ContentService,
     public configService: ConfigService, public router: Router, public navigationHelperService: NavigationHelperService,
-    public publicDataService: PublicDataService) {
+    public publicDataService: PublicDataService, private actionService: ActionService) {
       this.previewCdnUrl = (<HTMLInputElement>document.getElementById('previewCdnUrl'))
       ? (<HTMLInputElement>document.getElementById('previewCdnUrl')).value : undefined;
   }
@@ -215,4 +216,26 @@ export class PlayerService {
       }
     }, 0);
   }
+
+  getQuestionSetRead(contentId: string, option: any = { params: {} }): Observable<ServerResponse> {
+    const param = { fields: this.configService.urlConFig.params.questionSetRead };
+    const req = {
+        url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${contentId}`,
+        param: { ...param, ...option.params }
+    };
+    return this.actionService.get(req).pipe(map((response: ServerResponse) => {
+        return response;
+    }));
+  }
+
+  getQuestionSetHierarchy(contentId: string) {
+    const req = {
+        url: `${this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_READ}/${contentId}`,
+        // param: { mode: 'edit' }
+    };
+    return this.actionService.get(req).pipe(map((response: ServerResponse) => {
+        return response;
+    }));
+  }
+
 }

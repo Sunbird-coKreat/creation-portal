@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
-import { SharedModule, ToasterService, ConfigService } from '@sunbird/shared';
+import { SharedModule, ToasterService, ConfigService , ResourceService} from '@sunbird/shared';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { TelemetryModule, TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
 import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
@@ -11,6 +11,8 @@ import { SourcingService, HelperService } from '../../../sourcing/services';
 import { MyContentComponent } from './my-content.component';
 import { mockData } from './my-content.component.spec.data';
 import { of, throwError as observableThrowError } from 'rxjs';
+import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player-v9';
+import { SuiPopupModule } from 'ng2-semantic-ui-v9';
 
 describe('MyContentComponent', () => {
   let component: MyContentComponent;
@@ -24,15 +26,23 @@ describe('MyContentComponent', () => {
       }
     }
   };
-
+  const resourceServiceStub = {
+    messages: {
+      emsg: {
+        m0079: 'There are no published contents'
+      }
+    }
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(), PlayerHelperModule],
+      imports: [HttpClientTestingModule, QumlLibraryModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
+                PlayerHelperModule, SuiPopupModule],
       declarations: [ MyContentComponent ],
       providers: [
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
         { provide: UserService, useValue: mockData.userServiceStub },
+        { provide: ResourceService, useValue:  resourceServiceStub},
         ActionService, LearnerService, SourcingService, ConfigService, HelperService, ProgramsService
       ],
     })
@@ -235,6 +245,13 @@ describe('MyContentComponent', () => {
     });
   });
 
+  it('#fetchAllgetOriginForApprovedContents() should return published content details when API success', () => {
+    spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of(mockData.publishedContentListRes.result));
+    component.fetchAllgetOriginForApprovedContents(['do_123']).subscribe((contens: any) => {
+      expect(contens.length).toBe(3);
+    });
+  });
+
   it('#getUserProfiles() should fetch user details when API success', () => {
     const learnerService: LearnerService = TestBed.inject(LearnerService);
     spyOn(learnerService, 'post').and.returnValue(of(mockData.userContentListRes));
@@ -262,10 +279,28 @@ describe('MyContentComponent', () => {
   it('#downloadReport() should download the report', () => {
     const programsService: ProgramsService = TestBed.inject(ProgramsService);
     spyOn(programsService, 'generateCSV').and.callThrough();
+    component.contentCountData = {
+      published: 10
+    };
     spyOn(component, 'prepareContentUsageReportData').and.callThrough();
     component.selectedContributionDetails = [{contents: mockData.selectedContributionDetails}];
     component.downloadReport();
     expect(programsService.generateCSV).toHaveBeenCalled();
+    expect(component.prepareContentUsageReportData).toHaveBeenCalled();
+  });
+
+  it('#downloadReport() should call download the report and show error toaster message when zero published content', () => {
+    const programsService: ProgramsService = TestBed.inject(ProgramsService);
+    spyOn(programsService, 'generateCSV').and.callThrough();
+    spyOn(component['toasterService'], 'error').and.callThrough();
+    component.contentCountData = {
+      published: 0
+    };
+    spyOn(component, 'prepareContentUsageReportData').and.callThrough();
+    component.selectedContributionDetails = [{contents: mockData.selectedContributionDetails}];
+    component.downloadReport();
+    expect(programsService.generateCSV).not.toHaveBeenCalled();
+    expect(component['toasterService']['error']).toHaveBeenCalledWith(resourceServiceStub.messages.emsg.m0079);
     expect(component.prepareContentUsageReportData).toHaveBeenCalled();
   });
 

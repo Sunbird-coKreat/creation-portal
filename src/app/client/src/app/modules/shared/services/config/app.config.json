@@ -768,7 +768,11 @@
             "type": "plugin"
           }
         ],
-        "sideMenu" : {}
+        "sideMenu": {
+          "showShare": true,
+          "showDownload": true,
+          "showExit": false
+        }
       }
     },
     "contentType": {

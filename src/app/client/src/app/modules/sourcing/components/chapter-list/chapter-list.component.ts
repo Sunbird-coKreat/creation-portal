@@ -109,6 +109,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public targetCollection: string;
   public unsubscribe = new Subject<void>();
   public firstLevelFolderLabel: string;
+
+  public addFormLibraryInput = {};
+  editorConfig: any;
+  searchConfig;
+  collectionSourcingConfig;
+  private deviceId: string;
+  private buildNumber: string;
+  private portalVersion: string;
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -118,6 +127,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     private collectionHierarchyService: CollectionHierarchyService, private resourceService: ResourceService,
     private navigationHelperService: NavigationHelperService, private helperService: HelperService,
     private programsService: ProgramsService, public programTelemetryService: ProgramTelemetryService) {
+    const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
+    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
+    this.deviceId = deviceId ? deviceId.value : '';
+    this.buildNumber = buildNumber ? buildNumber.value : '1.0';
+    this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
   }
 
   ngOnInit() {
@@ -253,7 +267,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   async updateAccordianView(unitId?, onSelectChapterChange?) {
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
+    if (this.isSkipTwoLevelReviewEnabled() && this.isRestrictedProgram()) {
+      this.sessionContext.currentOrgRole = 'individual';
+    }
+    else if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
       this.sessionContext.currentOrgRole = 'individual';
     }
       await this.getCollectionHierarchy(this.sessionContext.collection,
@@ -377,7 +394,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }
 
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
+          this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
+          this.sessionContext['addFromLibraryBetaEnabled'] = this.collectionSourcingConfig.addFromLibraryBetaEnabled;
+        }
+
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -386,6 +409,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
           this.setLocalBlueprint();
         }
+
         this.levelOneChapterList.push({
           identifier: 'all',
           // tslint:disable-next-line:max-line-length
@@ -398,7 +422,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   printPreview(): void {
     this.toasterService.info(this.resourceService.messages.imsg.m0076 || 'Generating PDF. Please wait...')
     let identifier = this.collectionData.identifier;
-    this.programsService.generateCollectionDocx(identifier).subscribe((res) => {      
+    this.programsService.generateCollectionDocx(identifier).subscribe((res) => {
       if(res.responseCode === 'OK') {
         this.printPreviewResponseData = res.result.base64string;
         let fileName = res.result.filename;
@@ -413,7 +437,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           window.navigator.msSaveOrOpenBlob(file, fileName);
         } else {
           const a = document.createElement('a');
-          document.body.appendChild(a);          
+          document.body.appendChild(a);
           const fileURL = URL.createObjectURL(file);
           a.href = fileURL;
           a.download = fileName;
@@ -421,7 +445,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           setTimeout(() => {
             URL.revokeObjectURL(fileURL);
             document.body.removeChild(a);
-          }, 0)          
+          }, 0)
         }
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToPrint)
@@ -1129,7 +1153,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.componentLoadHandler('preview',
         this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
         this.programsService.emitHeaderEvent(false)
-      
+
     // }, (error)=> {
     //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
     //   return false;
@@ -1174,6 +1198,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       case 'preview':
         this.contentId = event.content.identifier;
         this.handlePreview(event);
+        break;
+      case 'addFromLibrary':
+        this.currentStage = 'addFromLibrary';
+        this.setAddLibraryInput();
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
@@ -1298,6 +1326,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.actionService.patch(req).pipe(map((data: any) => data.result), catchError(err => {
       return throwError('');
     })).subscribe(res => {
+      this.updateAccordianView();
       console.log('result ', res);
     });
   }
@@ -1622,6 +1651,56 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   bulkApprovalSuccess(e) {
     this.updateAccordianView();
+  }
+
+  isRestrictedProgram() {
+    return _.get(this.programContext, 'type') === 'restricted';
+  }
+
+  isSkipTwoLevelReviewEnabled() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
+  }
+
+  onLibraryChange(event) {
+    switch (event.action) {
+      case 'add':
+        this.addResourceToHierarchy(event.collectionId);
+        break;
+    }
+    this.currentStage = 'chapterListComponent';
+  }
+
+  setAddLibraryInput() {
+    this.addFormLibraryInput = {
+      targetPrimaryCategories: this.programContext.targetprimarycategories,
+      framework: this.sessionContext.framework,
+      collectionId: this.sessionContext.collection,
+      editorConfig: {
+        context: {
+          identifier: this.sessionContext.collection,
+          channel: this.programContext.rootorg_id,
+          sid: this.userService.sessionId,
+          did: this.deviceId,
+          uid: this.userService.userid,
+          pdata: {
+            id: this.userService.appId,
+            ver: this.portalVersion,
+            pid: 'sunbird-portal'
+          },
+          authToken: '',
+          contextRollup: this.telemetryService.getRollUpData(this.userProfile.organisationIds),
+          tags: this.userService.dims,
+          timeDiff: this.userService.getServerTimeDiff,
+          endpoint: '/data/v3/telemetry',
+          env: 'question_editor'
+        },
+        config: {
+          mode: 'edit',
+          ...this.collectionSourcingConfig
+        }
+      },
+      searchFormConfig: this.searchConfig.properties
+    };
   }
 
 }

@@ -151,8 +151,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.getProgramDetails();
     } else {
       this.initializeFormFields();
+      this.fetchFrameWorkDetails();
     }
-    this.fetchFrameWorkDetails();
     this.setTelemetryStartData();
     this.pageStartTime = Date.now();
   }
@@ -321,6 +321,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
       this.initializeFormFields();
+      this.fetchFrameWorkDetails();
     }, error => {
       this.showLoader = false;
       const errInfo = {
@@ -490,14 +491,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   fetchFrameWorkDetails() {
-    this.frameworkService.initialize();
-    this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkInfo: any) => {
-      if (frameworkInfo && !frameworkInfo.err) {
-        this.userFramework = frameworkInfo.frameworkdata.defaultFramework.identifier;
-        this.frameworkCategories = frameworkInfo.frameworkdata.defaultFramework.categories;
+    this.frameworkService.readFramworkCategories().subscribe((frameworkInfo: any) => {
+      if (frameworkInfo) {
+        this.userFramework = frameworkInfo.identifier;
+        this.frameworkCategories = frameworkInfo.categories;
       }
       this.setFrameworkDataToProgram();
     });
+    this.setCategoriesFromChannel();
   }
 
   setProjectType(type) {
@@ -519,29 +520,35 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.closeContributorListPopup();
   }
 
-  setFrameworkDataToProgram() {
-    this.collectionCategories = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
-    const channelCats = _.get(this.cacheService.get(this.userService.hashTagId), 'primaryCategories');
-    this.programScope['targetPrimaryCategories'] = [];
-    const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
-    if (_.toLower(this.enableQuestionSetEditor) === 'true') {
-      const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-      this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
-      this.programScope['targetPrimaryObjects'] = questionSetCategories;
-    }
+  setCategoriesFromChannel() {
+    const channelData$ = this.frameworkService.readChannel();
+    channelData$.subscribe((channelData) => {
+      if (channelData) {
+        this.collectionCategories = _.get(channelData, 'collectionPrimaryCategories');
+        const channelCats = _.get(channelData, 'primaryCategories');
+        this.programScope['targetPrimaryCategories'] = [];
+        const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+        if (_.toLower(this.enableQuestionSetEditor) === 'true') {
+          const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+          this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
+          this.programScope['targetPrimaryObjects'] = questionSetCategories;
+        }
+        const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
+        // tslint:disable-next-line:max-line-length
+        this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+          if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+            this.programScope['targetPrimaryCategories'].push(o.name);
+            return o;
+          }
+        }));
 
-    const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
-    // tslint:disable-next-line:max-line-length
-    this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
-      if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
-        this.programScope['targetPrimaryCategories'].push(o.name);
-        return o;
+        // tslint:disable-next-line:max-line-length
+        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
+        this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
       }
-    }));
-
-    // tslint:disable-next-line:max-line-length
-    this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
-    this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
+    });
+  }
+  setFrameworkDataToProgram() {
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
@@ -727,19 +734,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   setPreSelectedContributors(contributors) {
     const disabledContribOrg = this.editPublished ? _.get(this.programDetails, 'config.contributors.Org') : [];
     const disabledContribUser = this.editPublished ? _.get(this.programDetails, 'config.contributors.User') : [];
-    this.selectedContributors = contributors;
-    this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
-      return {
-        osid: org.osid,
-        isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
-      }
-    });
-    this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
-      return {
-        osid: user.osid,
-        isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
-      }
-    });
+
+    if (_.get(contributors, 'Org') !== null) {
+      this.selectedContributors.Org = _.get(contributors, 'Org');
+      this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
+        return {
+          osid: org.osid,
+          isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
+        }
+      });
+    }
+
+    if (_.get(contributors, 'User') !== null) {
+      this.selectedContributors.User = _.get(contributors, 'User');
+      this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
+        return {
+          osid: user.osid,
+          isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
+        }
+      });
+    }
 
     this.selectedContributorsCnt = this.preSelectedContributors.Org.length + this.preSelectedContributors.User.length;
   }

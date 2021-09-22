@@ -26,6 +26,9 @@
                 "Live"
             ],
             "default": "Live"
+        },
+        "label": {
+            "type": "string"
         }
     },
     "additionalProperties": true

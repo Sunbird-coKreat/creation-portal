@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, Injector, OnInit } from '@
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActionService, UserService, LearnerService, PlayerService, ProgramsService } from '@sunbird/core';
-import { ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, ResourceService, NavigationHelperService , ToasterService} from '@sunbird/shared';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
@@ -33,6 +33,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public playerConfig: any;
   public totalContent: number;
   public totalPublishedContent: number;
+  public chunkSize = 500;
   public contentCountData: any = {
     total: 0,
     published: 0,
@@ -52,8 +53,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   private configService: ConfigService;
   private sourcingService: SourcingService;
   private programsService: ProgramsService;
+  private toasterService: ToasterService;
   private router: Router;
   private navigationHelperService: NavigationHelperService;
+  public isQumlPlayer: Boolean = false;
+  public baseUrl: string;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
@@ -64,6 +68,9 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       this.programsService = injector.get<ProgramsService>(ProgramsService);
       this.navigationHelperService = injector.get<NavigationHelperService>(NavigationHelperService);
       this.router = injector.get<Router>(Router);
+      this.toasterService = injector.get<ToasterService>(ToasterService);
+      this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
+      ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
      }
 
   ngOnInit(): void {
@@ -110,10 +117,10 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         return _.map(this.contents, (content => _.get(content, 'identifier')));
       }),
       mergeMap(contentIds => iif(() => !_.isEmpty(contentIds),
-        this.getOriginForApprovedContents(contentIds).pipe(
+        this.fetchAllgetOriginForApprovedContents(contentIds).pipe(
           map((contentRes: any) => {
-            this.publishedContents = _.compact(_.concat(_.get(contentRes, 'content'), _.get(contentRes, 'QuestionSet')));
-            this.totalPublishedContent = _.get(contentRes, 'count') || 0;
+            this.publishedContents = contentRes;
+            this.totalPublishedContent = _.size(this.publishedContents) || 0;
             return _.compact(_.uniq(_.map(this.publishedContents, (content => _.get(content, 'lastPublishedBy')))));
           })), of([]))),
       mergeMap(userIds => iif(() => !_.isEmpty(userIds),
@@ -226,9 +233,45 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   }
 
   onPreview(content: any) {
+    this.isQumlPlayer = false;
     this.slectedContent = content;
-    this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
-    this.getConfigByContent(content.identifier);
+    this.slectedContent['totalViews'] = this.getCountData(content, 'me_totalPlaySessionCount');
+    if (content.mimeType === 'application/vnd.sunbird.questionset') {
+      this.slectedContent.originPreviewUrl = this.helperService.getQuestionSetOriginUrl(this.slectedContent.origin);
+      this.initQumlPlayer(content);
+    } else {
+      this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
+      this.getConfigByContent(content.identifier);
+    }
+  }
+
+  initQumlPlayer(content) {
+    forkJoin([this.playerService.getQuestionSetHierarchy(content.identifier), this.playerService.getQuestionSetRead(content.identifier)])
+    .subscribe(([hierarchyRes, questionSetData]: any) => {
+        this.isQumlPlayer = true;
+        const questionSet = _.get(hierarchyRes, 'result.questionSet');
+        questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
+        const contentDetails = {
+          contentId: content.identifier,
+          contentData: questionSet
+        };
+        this.loadTabComponent('previewTab');
+        this.playerConfig = this.playerService.getConfig(contentDetails);
+        this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+        this.playerConfig.context = {
+          ...this.playerConfig.context,
+          cdata: this.telemetryInteractCdata,
+          userData: {
+            firstName: this.userService.userProfile.firstName,
+            lastName : !_.isEmpty(this.userService.userProfile.lastName) ? this.userService.userProfile.lastName : '',
+          },
+          endpoint: '/data/v3/telemetry',
+          mode: 'play',
+          env: 'question_editor',
+          threshold: 3,
+          host: this.baseUrl
+        };
+    });
   }
 
   onBack(): void {
@@ -336,6 +379,19 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     }));
   }
 
+  fetchAllgetOriginForApprovedContents(contentIds) {
+    const chunkedContentIds = _.chunk(contentIds, this.chunkSize);
+    const chunkedContentObservables = chunkedContentIds.map(block => {
+      return this.getOriginForApprovedContents(block);
+    });
+    return forkJoin(chunkedContentObservables).pipe(map(data => {
+      return _.reduce(data, (result, value, key) => {
+        result = [...result, ..._.compact(_.concat(_.get(value, 'content'), _.get(value, 'QuestionSet')))];
+        return result;
+      }, []);
+    }));
+  }
+
   getOriginForApprovedContents(contentIds) {
     const option = {
       url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
@@ -425,7 +481,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       headers: this.contentUsageReportHeaders(),
       showTitle: false
     };
-    this.programsService.generateCSV(csvDownloadConfig);
+    if (_.get(this.contentCountData, 'published') && csvDownloadConfig.tableData.length) {
+      this.programsService.generateCSV(csvDownloadConfig);
+    } else {
+      this.toasterService.error(this.resourceService.messages.emsg.m0079);
+    }
   }
 
   contentUsageReportHeaders() {
@@ -483,6 +543,14 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  getPlayerEvents(event) {
+    console.log('get player events', JSON.stringify(event));
+  }
+
+  getTelemetryEvents(event) {
+    console.log('event is for telemetry', JSON.stringify(event));
   }
 
 }
