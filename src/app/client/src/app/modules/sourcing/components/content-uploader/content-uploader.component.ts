@@ -188,6 +188,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }, ...this.videoMetaDataconfig
   };
   playerConfigSunbird: PlayerConfig;
+  currentLastStageInService: any;
   // playerConfigSunbird: PlayerConfig = {
   //   context: {
   //     mode: 'play',
@@ -857,7 +858,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
   })).subscribe(res => {
-      console.log("harry",res)
       this.interceptionMetaData = res.interceptionPoints
       const contentDetails = {
         contentId: contentId,
@@ -910,7 +910,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.playerConfigSunbird.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.playerConfigSunbird.context.cdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
-      console.log("harry",this.playerConfigSunbird)
       this.showUploadModal = false;
       if (!this.contentMetaData.artifactUrl) {
         this.fetchFileSizeLimit();
@@ -1216,9 +1215,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   handleBack() {
-    this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
-    this.programsService.emitHeaderEvent(true);
   }
 
   changeFile() {
@@ -1533,7 +1530,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                   return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
               }))
               .subscribe(result => {
-                console.log("harry",result);
+                console.log(result);
               })
             });
         });
@@ -1543,7 +1540,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.programsService.emitHeaderEvent(false)
       this.showQuestionSetCreationComponent = true
       // tslint:disable-next-line:max-line-length
-      this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+      this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), 'contentUploaderComponent');
 
     }
   }
@@ -1581,7 +1578,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
   uploadHandler(event) {
-    console.log("inside uploadhanlder",event);
     if (event.contentId) {
       this.updateAccordianView(this.unitIdentifier);
     }
@@ -2371,12 +2367,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
   changeView() {
+    this.currentLastStageInService = this.programStageService.getLastStage();
     // if (!_.isEmpty(this.state.stages)) {
     //   this.currentStage = _.last(this.state.stages).stage;
     // }
     if (this.currentStage == 'contentUploaderComponent') {
       this.updateAccordianView(this.unitIdentifier);
       this.resetContentId();
+    }
+    else if (this.currentLastStageInService === 'questionSetEditorComponent') {
+      this.currentStage = 'questionSetEditorComponent';
     }else{
       this.currentStage = ''
     }

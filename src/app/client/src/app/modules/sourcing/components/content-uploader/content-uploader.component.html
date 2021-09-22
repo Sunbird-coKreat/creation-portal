@@ -1,10 +1,10 @@
 
 
-<div class="twelve wide column sb-bg-white"  *ngIf="currentStage !== 'contentUploaderComponent'">
+<div class="twelve wide column sb-bg-white"  *ngIf="currentLastStageInService === 'questionSetEditorComponent'">
           <ndc-dynamic [ndcDynamicComponent]="creationComponent" [ndcDynamicInputs]="dynamicInputs"
             [ndcDynamicOutputs]="dynamicOutputs"></ndc-dynamic>
 </div>
-<div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart" *ngIf="currentStage == 'contentUploaderComponent'">
+<div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart" *ngIf="currentLastStageInService !== 'questionSetEditorComponent'">
   <div class="sb-bg-color-primary">
     <div class="ui container py-15">
         <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold"
@@ -112,7 +112,7 @@
   </div>
 </div>
 <!-- /****************************************************/ -->
-<div class="ui container py-10" *ngIf="currentStage == 'contentUploaderComponent'">
+<div class="ui container py-10" *ngIf="currentLastStageInService !== 'questionSetEditorComponent'">
   <div class="d-flex">
     <div class="d-flex flex-jc-space-between practical-header__content w-100">
       <div class="middle-section-set" *ngIf="showPreview">
@@ -120,7 +120,7 @@
           <div class="msg-box__content">
             <div class="container msg-box__content__blank-box">
                 <sunbird-video-player *ngIf="videoFileFormat" [playerConfig]="playerConfigSunbird" (telemetryEvent)="telemetryEvent($event)" (playerEvent)="eventHandler($event)"></sunbird-video-player>
-                 <app-player  *ngIf="!videoFileFormat" class="content-player"  [playerConfig]="playerConfig"></app-player>
+                <app-player  *ngIf="!videoFileFormat" class="content-player"  [playerConfig]="playerConfig"></app-player>
             </div>
           </div>
         </div>
