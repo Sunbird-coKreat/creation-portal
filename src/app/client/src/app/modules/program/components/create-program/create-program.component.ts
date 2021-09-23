@@ -2,12 +2,12 @@ import { ConfigService, ResourceService, ToasterService, ServerResponse, Navigat
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService, UserService} from '@sunbird/core';
 import { Subscription, Subject, throwError, Observable, of } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-import { SourcingService, HelperService} from './../../../sourcing/services';
+import { SourcingService } from './../../../sourcing/services';
 import { programConfigObj } from './programconfig';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -123,7 +123,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private sourcingService: SourcingService,
     private sbFormBuilder: FormBuilder,
     private navigationHelperService: NavigationHelperService,
-    private helperService: HelperService,
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
@@ -228,11 +227,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeProjectScopeForm(): void {
     this.projectScopeForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
-      framework: [_.get(this.programDetails, 'config.framework') || []],
-      board: [_.get(this.programDetails, 'config.board') || []],
-      medium: [_.get(this.programDetails, 'config.medium') || []],
-      gradeLevel: [_.get(this.programDetails, 'config.gradeLevel') || []],  
-      subject: [_.get(this.programDetails, 'config.subject') || []],
+      framework: [],
+      board: [],
+      medium: [],
+      gradeLevel: [],  
+      subject: [],
       targetPrimaryCategories: [null, Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
     });
@@ -249,10 +248,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if ((this.projectTargetType === 'collections')) {
       this.initializeFrameworkForTatgetType('')
     } 
-    this.frameworkService.getChannelData(this.userService.hashTagId);
-    this.frameworkService.channelData$.subscribe((channelData) => {
-      if (!channelData.err) {
-        this.programScope['userChannelData'] = _.get(channelData, 'channelData');
+    const channelData$ = this.frameworkService.readChannel();
+    channelData$.subscribe((channelData) => {
+      if (channelData) {
+        this.programScope['userChannelData'] = channelData;
         if (this.projectTargetType === 'searchCriteria') {
           this.getFramewok().subscribe(
             (response) => {
@@ -287,21 +286,24 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
   initializeFrameworkForTatgetType (frameworkName) {
-    this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
-    this.frameworkService.frameworkData$.subscribe((frameworkData) => {
-      if (frameworkData && !frameworkData.err) {
-        
-        if (this.projectTargetType === 'collections') {
-          //this.programScope['userFramework'] = frameworkData.frameworkdata.defaultFramework.identifier;
-          this.projectScopeForm.controls['framework'].setValue([frameworkData.frameworkdata.defaultFramework.identifier]);
-          this.programScope['frameworkAttributes'] = frameworkData.frameworkdata.defaultFramework.categories;
-        } else {
-          //this.programScope['userFramework'] = 'nit_k-12';
-          this.projectScopeForm.controls['framework'].setValue(frameworkName);
-          this.programScope['frameworkAttributes'] = frameworkData.frameworkdata[frameworkName].categories;
-        }
+    //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
+    this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
+      if (frameworkData) {
+        //this.projectScopeForm.controls['framework'].setValue([frameworkData.identifier]);
+        this.programScope['framework'] = frameworkData;
+        //this.programScope['frameworkAttributes'] = frameworkData.categories;
+
+        // if (this.projectTargetType === 'collections') {
+        //   //this.programScope['userFramework'] = frameworkData.frameworkdata.defaultFramework.identifier;
+        //   this.projectScopeForm.controls['framework'].setValue([frameworkData.defaultFramework.identifier]);
+        //   this.programScope['frameworkAttributes'] = frameworkData.defaultFramework.categories;
+        // } else {
+        //   //this.programScope['userFramework'] = 'nit_k-12';
+        //   this.projectScopeForm.controls['framework'].setValue(frameworkName);
+        //   this.programScope['frameworkAttributes'] = frameworkData[frameworkName].categories;
+        // }
+        this.setFrameworkAttributes();
       }
-      this.setFrameworkAttributes();
       this.isFormValueSet.projectScopeForm = true;
     });
   }
@@ -326,15 +328,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
-
-    if (this.projectScopeForm && _.get(this.programDetails, 'target_type') === 'collections') {
+    this.projectScopeForm.controls['framework'].setValue([this.programScope.framework.identifier]);
+    if (this.projectScopeForm && this.projectTargetType === 'collections') {
       this.projectScopeForm.controls['board'].setValue('');
       this.projectScopeForm.controls['medium'].setValue('');
       this.projectScopeForm.controls['gradeLevel'].setValue('');
       this.projectScopeForm.controls['subject'].setValue('');
-    
-
-      const board = _.find(this.programScope.frameworkAttributes, (element) => {
+      const board = _.find(this.programScope.framework.categories, (element) => {
         return element.code === 'board';
       });
       if (board) {
@@ -344,21 +344,21 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           this.projectScopeForm.controls['board'].setValue(this.userprofile.framework.board[0]);
         }
 
-        const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.programScope.frameworkAttributes);
+        const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.programScope.framework.categories);
         if (mediumOption.length) {
           this.programScope['medium'] = mediumOption;
         }
       }
     }
 
-    this.programScope.frameworkAttributes.forEach((element) => {
+    this.programScope.framework.categories.forEach((element) => {
       const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
-        result.push(value['name']);
+        result.push(value);
         return result;
       }, []));
-      const sortedTermsArray = _.map(sortedArray, (name) => {
-        if (_.find(element['terms'], { name: name })) {
-          return name;
+      const sortedTermsArray = _.map(sortedArray, (term) => {
+        if (_.find(element['terms'], { name: term.name })) {
+          return term;
         }
       });
       this.programScope[element['code']] = sortedTermsArray;
@@ -366,15 +366,42 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
 
     const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
-      return item === 'Kindergarten';
+      return item.name === 'Kindergarten';
     });
     this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
+
+    // set framework attribute values
+    if (this.projectScopeForm && this.projectTargetType === 'searchCriteria') {
+      const selectedBoard =  _.find(this.programScope.board, {'name': _.first(_.get(this.programDetails, 'config.board'))});
+      this.projectScopeForm.controls['board'].setValue(selectedBoard);
+
+      const selectedMediums =  _.filter(this.programScope.medium, (temp) => {
+        if (_.includes(_.get(this.programDetails, 'config.medium'), temp.name)) {
+          return temp;
+        }
+      });
+      this.projectScopeForm.controls['medium'].setValue(selectedMediums);
+
+      const selectedgradeLevels =  _.filter(this.programScope.gradeLevel, (temp) => {
+        if (_.includes(_.get(this.programDetails, 'config.gradeLevel'), temp.name)) {
+          return temp;
+        }
+      });
+      this.projectScopeForm.controls['gradeLevel'].setValue(selectedgradeLevels);
+
+      const selectedsubjects =  _.filter(this.programScope.subject, (temp) => {
+        if (_.includes(_.get(this.programDetails, 'config.subject'), temp.name)) {
+          return temp;
+        }
+      });
+      this.projectScopeForm.controls['subject'].setValue(selectedsubjects);
+    }
   }
 
   initiateDocumentUploadModal() {
     this.showDocumentUploader = true;
     this.loading = false;
-    this.isClosable = true;
+    this.isClosable = true; 
     return setTimeout(() => {
       this.initiateUploadModal();
     }, 0);
@@ -665,15 +692,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.projectScopeForm.controls['gradeLevel'].setValue('');
     this.projectScopeForm.controls['subject'].setValue('');
 
-    if (!_.isEmpty(this.projectScopeForm.value.medium)) {
+    if (!_.isEmpty(this.projectScopeForm.value.board)) {
+      const boardValue = _.isArray(this.projectScopeForm.value.board) ? this.projectScopeForm.value.board : [this.projectScopeForm.value.board];
       // tslint:disable-next-line: max-line-length
-      const classOption = this.programsService.getAssociationData(this.projectScopeForm.value.medium, 'medium', this.programScope.frameworkAttributes);
+      const mediumOption = this.programsService.getAssociationData(boardValue, 'medium', this.programScope.framework.categories);
 
-      if (classOption.length) {
-        this.programScope['medium'] = classOption;
+      if (mediumOption.length) {
+        this.programScope['medium'] = mediumOption;
       }
 
-      this.onClassChange();
+      this.onMediumChange();
     } else {
       this.programScope['medium'] = this.originalProgramScope['medium'];
     }
@@ -684,7 +712,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!_.isEmpty(this.projectScopeForm.value.medium)) {
       // tslint:disable-next-line: max-line-length
-      const classOption = this.programsService.getAssociationData(this.projectScopeForm.value.medium, 'gradeLevel', this.programScope.frameworkAttributes);
+      const classOption = this.programsService.getAssociationData(this.projectScopeForm.value.medium, 'gradeLevel', this.programScope.framework.categories);
 
       if (classOption.length) {
         this.programScope['gradeLevel'] = classOption;
@@ -701,7 +729,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (!_.isEmpty(this.projectScopeForm.value.gradeLevel)) {
       // tslint:disable-next-line: max-line-length
-      const subjectOption = this.programsService.getAssociationData(this.projectScopeForm.value.gradeLevel, 'subject', this.programScope.frameworkAttributes);
+      const subjectOption = this.programsService.getAssociationData(this.projectScopeForm.value.gradeLevel, 'subject', this.programScope.framework.categories);
 
       if (subjectOption.length) {
         this.programScope['subject'] = subjectOption;
@@ -713,7 +741,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   fetchBlueprintTemplate(): void {
     this.getCollectionCategoryDefinition();
-    this.blueprintFormConfig = this.blueprintTemplate.properties;
+    this.blueprintFormConfig = _.get(this.blueprintTemplate,'properties');
   }
 
   getCollectionCategoryDefinition() {
@@ -1165,11 +1193,39 @@ showTexbooklist(showTextBookSelector = true) {
   }
   setFrameworkAttributesToconfig() {
     if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
+      this.programConfig['boardIds'] = [];
+      this.programConfig['gradeLevelIds'] = [];
+      this.programConfig['mediumIds'] = [];
+      this.programConfig['subjectIds'] = [];
       this.programConfig['framework'] = _.isArray(this.projectScopeForm.value.framework) ? this.projectScopeForm.value.framework : [this.projectScopeForm.value.framework];
-      this.programConfig['board'] = this.projectScopeForm.value.board;
-      this.programConfig['gradeLevel'] = this.projectScopeForm.value.gradeLevel;
-      this.programConfig['medium'] = this.projectScopeForm.value.medium;
-      this.programConfig['subject'] = this.projectScopeForm.value.subject;
+      if(_.isArray(this.projectScopeForm.value.board)) {
+        this.programConfig['board'] = _.map(this.projectScopeForm.value.board, (board) => {
+          this.programConfig['boardIds'].push(board.identifier);
+          return board.name;
+        });
+      } else {
+        this.programConfig['board'] = [this.projectScopeForm.value.board.name];
+        this.programConfig['boardIds'] = [this.projectScopeForm.value.board.identifier]
+      }
+
+      this.programConfig['gradeLevel'] =  _.map(this.projectScopeForm.value.gradeLevel, (gradeLevel) => {
+        this.programConfig['gradeLevelIds'].push(gradeLevel.identifier);
+        return gradeLevel.name;
+      });
+      this.programConfig['medium'] =  _.map(this.projectScopeForm.value.medium, (medium) => {
+        this.programConfig['mediumIds'].push(medium.identifier);
+        return medium.name;
+      });
+      this.programConfig['subject'] = 
+      this.programConfig['subject'] =  _.map(this.projectScopeForm.value.subject, (subject) => {
+        this.programConfig['subjectIds'].push(subject.identifier);
+        return subject.name;
+      });
+      this.programConfig['frameworkObj'] = { 
+        identifier : this.programScope.framework.identifier,
+        code: this.programScope.framework.code, 
+        type: this.programScope.framework.type
+      }
     }
   }
 
@@ -1385,7 +1441,7 @@ showTexbooklist(showTextBookSelector = true) {
 
   initEditBlueprintForm(collection) {
     let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
-    this.blueprintFormConfig = this.programsService.initializeFormFields(this.programScope['frameworkAttributes'], this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
+    this.blueprintFormConfig = this.programsService.initializeFormFields(this.programScope.framework.categories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
  
     this.blueprintFormConfig.forEach((element) => {
       if(element.fields) {
@@ -1614,7 +1670,7 @@ showTexbooklist(showTextBookSelector = true) {
         const cb = (error, resp) => {
           if (!error && resp) {
             this.navigateTo(2);
-            this.showTexbooklist();
+            //this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1624,7 +1680,7 @@ showTexbooklist(showTextBookSelector = true) {
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
         this.navigateTo(2);
-        this.showTexbooklist();
+        //this.showTexbooklist();
       } else {
         this.validateAllFormFields(this.createProgramForm);
         return false;

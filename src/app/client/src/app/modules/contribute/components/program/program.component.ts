@@ -811,11 +811,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setFrameworkCategories(collection);
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context)};
+      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context, collection)};
     }, {});
-    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
+    /*this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
       return {...obj, [context]: collection[context] || this.sharedContext[context]};
-    }, this.sharedContext);
+    }, this.sharedContext);*/
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {

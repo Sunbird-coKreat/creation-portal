@@ -221,7 +221,7 @@ describe('ProgramNominationsComponent', () => {
     expect(pageId).toBeDefined();
   });
 
-  it('#setTelemetryPageId() should set telemetryPageId for textbook', () => {
+  xit('#setTelemetryPageId() should set telemetryPageId for textbook', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('textbook');
     expect(component.telemetryPageId).toBeDefined();

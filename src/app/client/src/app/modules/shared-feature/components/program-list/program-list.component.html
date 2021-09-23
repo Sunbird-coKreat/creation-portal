@@ -113,8 +113,9 @@
                   <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                     {{program?.name}}
                   </div>
-                  <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
-                  <div *ngIf="activeMyProgramsMenu && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--three" *ngIf="program?.target_type === 'searchCriteria'">{{ getProgramInfo(program, 'framework') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--three"*ngIf="!program.target_type || program?.target_type === 'collections'">{{ getProgramTextbooksCount(program) }}</div>
+                  <div *ngIf="activeMyProgramsMenu && (!program.target_type || program?.target_type === 'collections') && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                   <div *ngIf = "program.notificationData" class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex mt-5">
                     <div><i class="icon bell"></i></div>
                     <div class="text-inherit">

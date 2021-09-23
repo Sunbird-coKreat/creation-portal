@@ -941,14 +941,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
     };
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.getSharedContextObjectProperty(context)};
+      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context, collection)};
     }, {});
-    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: collection[context] || this.sharedContext[context]};
-    }, this.sharedContext);
-    _.forEach(['gradeLevel', 'medium', 'subject'], (val) => {
-       this.checkArrayCondition(val);
-    });
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {

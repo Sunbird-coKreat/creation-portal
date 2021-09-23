@@ -180,7 +180,7 @@ export class ContentHelperService {
         return {...obj, [context]: this.getSharedContextObjectProperty(context)};
       }, {});
     }
-    getSharedContextObjectProperty(property) {
+    getSharedContextObjectProperty(property, collection?) {
       let ret;
       switch (property) {
         case 'channel':
@@ -192,6 +192,9 @@ export class ContentHelperService {
         default:
           ret =  _.get(this._programDetails, `config.${property}`);
           break;
+      }
+      if (collection) {
+        ret = collection[property] || ret;
       }
       if (_.includes(['gradeLevel', 'medium', 'subject'], property)) {
         ret = _.isArray(ret) ? ret : _.split(ret, ',');

@@ -346,12 +346,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
     this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
-    this.sharedContext = this.programContext.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]:  this.contentHelperService.getSharedContextObjectProperty(context)};
-    }, {});
     this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: collection[context] || this.sharedContext[context]};
-    }, this.sharedContext);
+      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context, collection)};
+    }, {});
     this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
     this.dynamicInputs = {
       chapterListComponentInput: {

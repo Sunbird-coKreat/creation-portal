@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { CacheService } from 'ng2-cache-service';
-import { ConfigService, BrowserCacheTtlService, ToasterService, ResourceService } from '@sunbird/shared';
+import { ConfigService, BrowserCacheTtlService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
@@ -24,14 +24,26 @@ describe('QuestionSetEditorComponent', () => {
     },
     slug: 'custchannel'
   };
+  const fakeActivatedRoute = {
+    snapshot: {
+      params: {
+        programId: '12345'
+      },
+      data: {
+        telemetry: {
+          env: 'workspace', pageid: 'workspace-content-draft', subtype: 'scroll', type: 'list',
+          object: { type: '', ver: '1.0' }
+        }
+      }
+    }
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
       declarations: [QuestionSetEditorComponent],
       providers: [ConfigService, TelemetryService, CacheService, CollectionHierarchyService,
-        BrowserCacheTtlService, ToasterService, ResourceService, DatePipe,
-        { provide: Router },
-        { provide: ActivatedRoute },
+        BrowserCacheTtlService, ToasterService, ResourceService, DatePipe, NavigationHelperService,
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: APP_BASE_HREF, useValue: '/' },
         { provide: UserService, useValue: UserServiceStub }],
       schemas: [NO_ERRORS_SCHEMA]
@@ -74,7 +86,7 @@ describe('QuestionSetEditorComponent', () => {
     component.sessionContext = {hierarchyObj:  ''};
     spyOn(component['helperService'], 'manageSourcingActions').and.callFake(() => {});
     component.editorEventListener(event);
-    expect(component['helperService'].manageSourcingActions).toHaveBeenCalledWith('accept', component.sessionContext, undefined, undefined);
+    expect(component['helperService'].manageSourcingActions).toHaveBeenCalledWith('accept', component.sessionContext, component.programContext, undefined, undefined);
   });
 
 });
