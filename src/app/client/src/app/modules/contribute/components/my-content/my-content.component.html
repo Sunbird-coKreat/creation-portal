@@ -43,19 +43,35 @@
                         class="fs-1-286 font-weight-bold">{{contentCountData.notPublished}}</span>
                     {{resourceService.frmelmnts.lbl.notPublishedOnDiksha}}</div>
             </div>
-            <div class="d-flex" *ngIf="_selectedTab === 'previewTab'">
-                <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
+            <div class="d-flex w-100" *ngIf="_selectedTab === 'previewTab'">
+                <div class="d-flex flex-jc-space-between practical-header__content w-100">
                     <div class="fs-1">
                         <div class="d-flex flex-ai-center">
                             <div class="practical-header__title font-weight-bold" suipopup="">
                                 {{slectedContent.name}} </div>
                         </div>
                         <div class="mt-8 practice-set__status">
-                            <span class="sb-label sb-label-table sb-color-success">
-                                {{slectedContent.isPublished ? 'Approved' : 'Not Approved'}}
+                            <span class="sb-label sb-label-table" [ngClass]="{'sb-color-success': slectedContent.isPublished, 'sb-color-error' : !slectedContent.isPublished }">
+                                {{slectedContent.isPublished ? resourceService.frmelmnts.lbl.publishedonDiksha : resourceService.frmelmnts.lbl.notPublishedOnDiksha}}
                             </span>
                             <a id="viewContentOnDiksha"  *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
                             href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+                        </div>
+                    </div>
+                    <div class="pt-10">
+                        <label
+                            class="d-block width-100 font-weight-normal">{{resourceService.frmelmnts.lbl.usageDetails}}</label>
+                        <div class="d-flex">
+                            <dl class="pr-10 mb-0">
+                                <dt class="fs-1-286 font-weight-bold py-10">{{slectedContent.totalViews}}</dt>
+                                <dd>{{resourceService.frmelmnts.lbl.totalViews}}</dd>
+                            </dl>
+                            <dl class="mb-0">
+                                <dt class="fs-1-286 font-weight-bold py-8"><i class="icon star sb-color-yellow fs-0-785" aria-hidden="true"></i>
+                                    {{slectedContent.me_averageRating ? slectedContent.me_averageRating : '0'}}
+                                </dt>
+                                <dd>{{resourceService.frmelmnts.lbl.averageRating}}</dd>
+                            </dl>
                         </div>
                     </div>
                 </div>
@@ -71,7 +87,7 @@
                         <dd>{{resourceService.frmelmnts.lbl.totalPlays}}</dd>
                     </dl>
                     <dl class="pr-10 mb-0">
-                        <dt class="fs-1-286 font-weight-bold py-10">{{usageDetailsCount.totalPlays / publishedContents.length | number: '1.0-0'}}</dt>
+                        <dt class="fs-1-286 font-weight-bold py-10">{{ publishedContents.length !== 0 ? (usageDetailsCount.totalPlays / publishedContents.length | number: '1.0-0') : '0'}}</dt>
                         <dd>{{resourceService.frmelmnts.lbl.averagePlaysPerCount}}</dd>
                     </dl>
                     <dl class="mb-0">
@@ -94,12 +110,12 @@
                         <span
                             class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                     </div>
-                    <button type="button" (click)="downloadReport();"
+                    <button type="button" (click)="downloadReport();" suiPopup  popupDelay="500"  popupText="{{resourceService.frmelmnts.lbl.myContentDownloadReportBtn}}"
                         class="sb-btn sb-btn-normal sb-btn-outline-primary"
                         appTelemetryInteract
                       [telemetryInteractEdata]="getTelemetryInteractEdata('download_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                       [telemetryInteractCdata]="telemetryInteractCdata"
-                      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.downloadReport}}</button>
+                      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.downloadPublishedContent}}</button>
                 </div>
                 <div class="sb-pageSection-content">
                     <div class="sb-table-responsive">
@@ -265,9 +281,19 @@
         <div *ngSwitchCase="'previewTab'" class="sb-pageSection sb-bg-color-white mt-24 py-24">
             <div class="middle-section-set">
                 <div class="ui container msg-box">
-                    <div class="msg-box__content">
+                    <div class="msg-box__content" *ngIf="playerConfig && !isQumlPlayer">
                         <div class="container msg-box__content__blank-box">
                             <app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+                        </div>
+                    </div>
+                    <div class="b-1-100 br-2 mt-5" *ngIf="playerConfig && isQumlPlayer" >
+                        <div class="aspectratio" data-ratio="16:9"> 
+                            <div class="content-player">
+                                <div class="w-100 h-100">
+                                    <quml-main-player [playerConfig]="playerConfig" (playerEvent)="getPlayerEvents($event)"
+                                        (telemetryEvent)="getTelemetryEvents($event)"></quml-main-player>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -333,60 +359,65 @@
                         class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{contentCountData.total}}</span>
                 </div>
                 <div class="d-flex">
-                    <div class="sb-card-bx mr-20" *ngFor="let item of contributionDetails | keyvalue; let i = index">
-                        <div class="fs-1-3 font-weight-bold mb-20"> {{item.key}} framework</div>
-                        <div class="d-flex">
-                            <div class="pr-20 w-40" *ngIf="item.value?.board.length > 0">
-                                <label
-                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
-                                <div>{{item.value.board}}</div>
-                            </div>
-                            <div class="pr-20 w-40" *ngIf="item?.value?.medium.length > 0">
-                                <label
-                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-                                <div>{{item.value.medium}}</div>
-                            </div>
-                            <div class="pr-20 w-40" *ngIf="item?.value?.gradeLevel.length > 0">
-                                <label
-                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-                                <div>
-                                    {{ item.value.gradeLevel | slice:0:2 }}
-                                    <span class="d-none" [attr.id]="'gradeLevelList' + i">
-                                        <ng-container *ngFor="let item of item.value.gradeLevel | slice:2">
-                                            ,{{ item }}
-                                        </ng-container>
-                                    </span>
+                    <ng-container  *ngIf="contributionDetails else noResult" >
+                        <div class="sb-card-bx mr-20" *ngFor="let item of contributionDetails | keyvalue; let i = index">
+                            <div class="fs-1-3 font-weight-bold mb-20"> {{item.key}} framework</div>
+                            <div class="d-flex">
+                                <div class="pr-20 w-40" *ngIf="item.value?.board.length > 0">
+                                    <label
+                                        class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
+                                    <div class="fs-0-92">{{item.value.board}}</div>
                                 </div>
-                                <small class="cursor-pointer" [attr.id]="'gradeLevelBtn' + i"
-                                    (click)="onExpand(i, 'gradeLevel');"
-                                    *ngIf="item.value.gradeLevel.length > 2">+{{item.value.gradeLevel.length
-                                    - 2}} more</small>
-                            </div>
-                            <div class="pr-20 w-40" *ngIf="item?.value?.subject.length > 0">
-                                <label
-                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-                                <div>
-                                    {{ item.value.subject | slice:0:2 }}
-                                    <span class="d-none" [attr.id]="'subjectList' + i">
-                                        <ng-container *ngFor="let item of item.value.subject | slice:2">
-                                            ,{{ item }}
-                                        </ng-container>
-                                    </span>
+                                <div class="pr-20 w-40" *ngIf="item?.value?.medium.length > 0">
+                                    <label
+                                        class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
+                                    <div class="fs-0-92">{{item.value.medium}}</div>
                                 </div>
-                                <small class="cursor-pointer" [attr.id]="'subjectBtn' + i" (click)="onExpand(i, 'subject');"
-                                    *ngIf="item.value.subject.length > 2">+{{item.value.subject.length
-                                    - 2}} more</small>
-                            </div>
-                            <div>
-                                <button type="button" (click)="onCardClick(item)"
-                                    class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary"
-                                    appTelemetryInteract
-                [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-                [telemetryInteractCdata]="telemetryInteractCdata"
-                [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
+                                <div class="pr-20 w-40" *ngIf="item?.value?.gradeLevel.length > 0">
+                                    <label
+                                        class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
+                                    <div class="fs-0-92">
+                                        {{ item.value.gradeLevel | slice:0:2 }}
+                                        <span class="d-none" [attr.id]="'gradeLevelList' + i">
+                                            <ng-container *ngFor="let item of item.value.gradeLevel | slice:2">
+                                                ,{{ item }}
+                                            </ng-container>
+                                        </span>
+                                    </div>
+                                    <small class="cursor-pointer" [attr.id]="'gradeLevelBtn' + i"
+                                        (click)="onExpand(i, 'gradeLevel');"
+                                        *ngIf="item.value.gradeLevel.length > 2">+{{item.value.gradeLevel.length
+                                        - 2}} more</small>
+                                </div>
+                                <div class="pr-20 w-40" *ngIf="item?.value?.subject.length > 0">
+                                    <label
+                                        class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
+                                    <div class="fs-0-92">
+                                        {{ item.value.subject | slice:0:2 }}
+                                        <span class="d-none" [attr.id]="'subjectList' + i">
+                                            <ng-container *ngFor="let item of item.value.subject | slice:2">
+                                                ,{{ item }}
+                                            </ng-container>
+                                        </span>
+                                    </div>
+                                    <small class="cursor-pointer" [attr.id]="'subjectBtn' + i" (click)="onExpand(i, 'subject');"
+                                        *ngIf="item.value.subject.length > 2">+{{item.value.subject.length
+                                        - 2}} more</small>
+                                </div>
+                                <div>
+                                    <button type="button" (click)="onCardClick(item)"
+                                        class="mt-20 sb-btn sb-btn-normal sb-btn-outline-primary"
+                                        appTelemetryInteract
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('open', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </ng-container>    
+                    <ng-template #noResult>
+                        <app-no-result class="w-100" *ngIf="!showLoader" [data]="{messageText: resourceService?.messages?.stmsg?.m0006}"></app-no-result>
+                      </ng-template>
                 </div>
             </div>
         </div>

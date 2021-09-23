@@ -65,19 +65,6 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
     //return of(identifier);
   } 
   getAllQuestionSet(identifiers: string[]): Observable<any> {
-  //   const option = {
-  //     params: {
-  //       fields: 'maxScore'
-  //     }
-  //   };
-  //   const requests = _.map(identifiers, id => {
-  //     return this.playerService.getQuestionSetRead(id, option);
-  //   });
-  //   return forkJoin(requests).pipe(
-  //       map(res => {
-  //         return res.map(item => _.get(item, 'result.questionset.maxScore'));
-  //       })
-  //   );
-  // }
-  return of({}); }
+    return of({});
+  } 
 }

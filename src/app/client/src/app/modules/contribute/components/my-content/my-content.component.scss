@@ -10,3 +10,21 @@
 .d-none {
     display: none;
 } 
+
+.aspectratio {
+    position: relative;
+    width: 100%;
+    height: 0;
+}
+
+.aspectratio[data-ratio="16:9"] {
+    padding-top: 56.25%;
+}
+
+.aspectratio>* {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}

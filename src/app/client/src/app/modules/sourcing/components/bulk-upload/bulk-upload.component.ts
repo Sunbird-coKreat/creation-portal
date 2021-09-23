@@ -648,6 +648,11 @@ export class BulkUploadComponent implements OnInit {
       return 'publish';
     }
 
+    // If restricted program and skip two level review enabled
+    if (this.isRestrictedProgram() && this.isSkipTwoLevelReviewEnabled()) {
+      return 'publish';
+    }
+
     // If user from other org
     if (!this.isDefaultContributingOrg()) {
       return 'review';
@@ -655,6 +660,14 @@ export class BulkUploadComponent implements OnInit {
 
     // If user from same org then check for skip review option
     return _.get(this.programContext, 'config.defaultContributeOrgReview') ? 'review' : 'publish';
+  }
+
+  isRestrictedProgram() {
+    return _.get(this.programContext, 'type') === 'restricted';
+  }
+
+  isSkipTwoLevelReviewEnabled() {
+    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
   }
 
   isContributorOrgUser() {
@@ -690,6 +703,10 @@ export class BulkUploadComponent implements OnInit {
       const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
       sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
     }
+    let creatorName = this.userProfile.firstName;
+      if (!_.isEmpty(this.userProfile.lastName)) {
+        creatorName = this.userProfile.firstName + ' ' + this.userProfile.lastName;
+      }
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -698,7 +715,8 @@ export class BulkUploadComponent implements OnInit {
         source: source,
         artifactUrl: source,
         appIcon: this.getDownloadableLink(row.appIcon),
-        creator: row.creator,
+        creator: creatorName,
+        author: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
         mimeType: this.getMimeType(_.toLower(row.fileFormat)),
