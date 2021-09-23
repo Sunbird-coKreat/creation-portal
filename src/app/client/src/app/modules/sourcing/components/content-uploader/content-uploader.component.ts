@@ -1,14 +1,15 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService,
+  HttpOptions } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
+import { catchError, map, filter, take, takeUntil, tap } from 'rxjs/operators';
 import { throwError, Observable, Subject } from 'rxjs';
-import { IContentUploadComponentInput,IResourceTemplateComponentInput,IContentEditorComponentInput} from '../../interfaces';
+import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
 import { AzureFileUploaderService } from '../../services';
@@ -19,20 +20,14 @@ import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/tel
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { PlayerConfig } from './playerInterfaces';
-/*****************************/
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { InitialState } from '../../interfaces';
-/******************************/
-/******************************/
+
 interface IDynamicInput {
-  contentUploadComponentInput?: IContentUploadComponentInput;
-  resourceTemplateComponentInput?: IResourceTemplateComponentInput;
-  practiceQuestionSetComponentInput?: any;
-  contentEditorComponentInput?: IContentEditorComponentInput;
   questionSetEditorComponentInput?: any;
 }
-/******************************/
+
+
 @Component({
   selector: 'app-content-uploader',
   templateUrl: './content-uploader.component.html',
@@ -126,118 +121,22 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
-  /****************/
-  isReadOnly :boolean;
-  interceptionTime:any = '00:00';
-  public templateSelected;
-  public selectedtemplateDetails;
-  public showModeofCreationModal = false;
-  public showQuestionTypeModal = false;
-  public dynamicInputs: IDynamicInput;
-  public userProfile: any;
-  public collection: any;
-  public sampleContent = false;
-  contentId: string;
+
+  public interceptionTime:any = '00:00';
+  public interceptionMetaData: any;
+  public showquestionCreationUploadModal: boolean;
   public creationComponent;
-  public originalCollectionData: any;
-  showquestionCreationUploadModal:boolean;
-  showQuestionSetCreationComponent = false;
-  public unsubscribe = new Subject<void>();
-  public dynamicOutputs: any;
-  public selectedChapterOption: any = {};
-  public storedCollectionData: any;
-  public collectionHierarchy = [];
-  showLoader:boolean;
-  public collectionData;
-  public countData: Array<any> = [];
-  public textbookStatusMessage: string;
-  public targetCollection: string;
-  showError:boolean;
-  public levelOneChapterList: Array<any> = [];
-  public currentUserID: string;
-  public hierarchyObj = {};
-  public hasAccessForContributor: any;
-  public hasAccessForReviewer: any;
-  private myOrgId = '';
-  public localBlueprint: any;
-  localUniqueTopicsList: string[] = [];
-  public topicsInsideBlueprint: boolean = true;
-  localUniqueLearningOutcomesList: string[] = [];
-  public learningOutcomesInsideBlueprint: boolean = true;
+  public dynamicInputs: IDynamicInput;
+  public questionSetId: any;
+  public contentId: any;
+  public interceptionData: any;
+  public currentLastStageInService: any;
   public currentStage: any;
+  public stageSubscription: any;
   public state: InitialState = {
     stages: []
   };
-  public stageSubscription: any;
-  otherTypes: boolean = false;
-  videoDoId:any;
-  interceptionData:any;
-  interceptionMetaData:any;
-  /****************/
-
-   videoMetaDataconfig: any = JSON.parse(localStorage.getItem('config')) || {};
-   configSunbird = {
-    ...{
-      traceId: 'afhjgh',
-      sideMenu: {
-        showShare: true,
-        showDownload: true,
-        showReplay: true,
-        showExit: true
-      }
-    }, ...this.videoMetaDataconfig
-  };
-  playerConfigSunbird: PlayerConfig;
-  currentLastStageInService: any;
-  // playerConfigSunbird: PlayerConfig = {
-  //   context: {
-  //     mode: 'play',
-  //     authToken: '',
-  //     sid: '7283cf2e-d215-9944-b0c5-269489c6fa56',
-  //     did: '3c0a3724311fe944dec5df559cc4e006',
-  //     uid: 'anonymous',
-  //     channel: '505c7c48ac6dc1edc9b08f21db5a571d',
-  //     pdata: { id: 'prod.diksha.portal', ver: '3.2.12', pid: 'sunbird-portal.contentplayer' },
-  //     contextRollup: { l1: '505c7c48ac6dc1edc9b08f21db5a571d' },
-  //     tags: [
-  //       ''
-  //     ],
-  //     cdata: [],
-  //     timeDiff: 0,
-  //     objectRollup: {},
-  //     host: '',
-  //     endpoint: '',
-  //     userData: {
-  //       firstName: 'Harish Kumar',
-  //       lastName: 'Gangula'
-  //     }
-  //   },
-  //   config: this.configSunbird,
-  //   // tslint:disable-next-line:max-line-length
-  //   metadata: { "interceptionPoints": 
-  //                 { "items": 
-  //                   [ 
-  //                     { 
-  //                       "type": "QuestionSet", 
-  //                       "interceptionPoint": 50, 
-  //                       "identifier": "do_1133684681106227201168" 
-  //                     }, 
-  //                     { 
-  //                       "type": "QuestionSet", 
-  //                       "interceptionPoint": 90, 
-  //                       "identifier": "do_1133702669042892801173" 
-  //                     }, 
-  //                     { 
-  //                       "type": "QuestionSet", 
-  //                       "interceptionPoint": 120, 
-  //                       "identifier": "do_1133702687093719041176" 
-  //                     } 
-  //                   ] 
-  //                 }, 
-  //                 "interceptionType": "Timestamp", 
-  //                 "compatibilityLevel": 2, "copyright": "NCERT", "subject": [ "CPD" ], "channel": "0125196274181898243", "language": [ "English" ], "mimeType": "video/mp4", "objectType": "Content", "gradeLevel": [ "Others" ], "appIcon": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/do_31309320735055872011111/artifact/nishtha_icon.thumb.jpg", "primaryCategory": "Explanation Content", "artifactUrl": "https://ntpproductionall.blob.core.windows.net/ntp-content-production/content/assets/do_31309320735055872011111/engagement-with-language-.mp4", "contentType": "ExplanationResource", "identifier": "do_21310353608830976014671", "audience": [ "Student" ], "visibility": "Default", "mediaType": "content", "osId": "org.ekstep.quiz.app", "languageCode": [ "en" ], "license": "CC BY-SA 4.0", "name": "Engagement with Language", "status": "Live", "code": "1c5bd8da-ad50-44ad-8b07-9c18ec06ce29", "streamingUrl": "https://ntppreprodmedia-inct.streaming.media.azure.net/409780ae-3fc2-4879-85f7-f1affcce55fa/mp4_14.ism/manifest(format=m3u8-aapl-v3)", "medium": [ "English" ], "createdOn": "2020-08-24T17:58:32.911+0000", "copyrightYear": 2020, "lastUpdatedOn": "2020-08-25T04:36:47.587+0000", "creator": "NCERT COURSE CREATOR 6", "pkgVersion": 1, "versionKey": "1598330207587", "framework": "ncert_k-12", "createdBy": "68dc1f8e-922b-4fcd-b663-593573c75f22", "resourceType": "Learn", "orgDetails": { "email": "director.ncert@nic.in", "orgName": "NCERT" }, "licenseDetails": { "name": "CC BY-SA 4.0", "url": "https://creativecommons.org/licenses/by-sa/4.0/legalcode", "description": "For details see below:" } },
-  //   data: {}
-  // };
+  public interactiveQuestionSets = {};
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -250,7 +149,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
     private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
-    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,public programComponentsService?: ProgramComponentsService) { }
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
+    public programComponentsService?: ProgramComponentsService) { }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -284,29 +184,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (!_.isUndefined(targetFWIds)) {
       this.helperService.setTargetFrameWorkData(targetFWIds);
     }
-    /**********************************/
-    this.collection = _.get(this.contentUploadComponentInput, 'collection');
     this.currentStage = 'contentUploaderComponent';
-    this.userService.userData$.pipe(
-      takeUntil(this.unsubscribe))
-      .subscribe((user: any) => {
-      if (user && !user.err) {
-        this.userProfile = user.userProfile;
-      }
-    });
-    this.dynamicOutputs = {
-      uploadedContentMeta: (contentMeta) => {
-        this.uploadHandler(contentMeta);
-      }
-    };
-     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
     });
-    this.myOrgId = (this.userService.userRegistryData
-      && this.userProfile.userRegData
-      && this.userProfile.userRegData.User_Org
-      && this.userProfile.userRegData.User_Org.orgId) ? this.userProfile.userRegData.User_Org.orgId : '';
    }
 
    setTelemetryStartData() {
@@ -717,9 +599,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
         .subscribe(result => {
+          this.contentId = result.identifier;
           this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
             .subscribe(() => {
-              this.videoDoId =  result.node_id;
               this.uploadFile(mimeType, result.node_id);
             }, (err) => {
               this.programStageService.removeLastStage();
@@ -857,17 +739,29 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         env : this.activeRoute.snapshot.data.telemetry.env, request: option
       };
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-  })).subscribe(res => {
-      this.interceptionMetaData = res.interceptionPoints
+    })).subscribe(res => {
+      this.interceptionMetaData = _.get(res, 'interceptionPoints');
+      if (!_.isEmpty(this.interceptionMetaData)) {
+        this.getInteractiveQuestionSet().subscribe(
+          (response) => {
+            const questionSets = _.get(response, 'result.QuestionSet');
+            if (!_.isEmpty(questionSets)) {
+              _.forEach(questionSets, questionSet => {
+                this.interactiveQuestionSets[questionSet.identifier] = [questionSet.name];
+              });
+            }
+          }
+        );
+      }
+      this.contentId = res.identifier;
       const contentDetails = {
         contentId: contentId,
         contentData: res
       };
-      this.videoDoId = res.identifier;
       this.contentMetaData = res;
       if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
         this.videoFileFormat = true;
-      }else{
+      } else {
         this.videoFileFormat = false;
       }
       this.editTitle = this.contentMetaData.name || '' ;
@@ -906,9 +800,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.resourceStatusClass = 'sb-color-gray-300';
       }
 
-      this.playerConfigSunbird = this.playerService.getConfig(contentDetails);
-      this.playerConfigSunbird.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
-      this.playerConfigSunbird.context.cdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
+      this.playerConfig = this.playerService.getConfig(contentDetails);
+      this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+      this.playerConfig.context.cdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
       this.showUploadModal = false;
       if (!this.contentMetaData.artifactUrl) {
@@ -1215,7 +1109,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   handleBack() {
+    this.generateTelemetryEndEvent('back');
     this.programStageService.removeLastStage();
+    this.programsService.emitHeaderEvent(true);
   }
 
   changeFile() {
@@ -1250,13 +1146,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.showEditMetaForm = false;
     this.onComponentDestroy$.next();
     this.onComponentDestroy$.complete();
-    if (this.stageSubscription) {
-      this.stageSubscription.unsubscribe();
-    }
-    if (this.unsubscribe) {
-      this.unsubscribe.next();
-      this.unsubscribe.complete();
-    }
   }
 
   showCommentAddedAgainstContent() {
@@ -1297,1092 +1186,238 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   getFormData(event) {
     this.formInputData = event;
   }
-/***********************************************************************************/
+
+  format(time) {
+    // tslint:disable-next-line:no-bitwise
+    const hrs = ~~(time / 3600);
+    // tslint:disable-next-line:no-bitwise
+    const mins = ~~((time % 3600) / 60);
+    // tslint:disable-next-line:no-bitwise
+    const secs = ~~time % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    let ret = '';
+    if (hrs > 0) {
+        ret += '' + hrs + ':' + (mins < 10 ? '0' : '');
+    }
+    ret += '' + String(mins).padStart(2, '0') + ':' + (secs < 10 ? '0' : '');
+    ret += '' + secs;
+    return ret;
+  }
+
+  addInterception() {
+    this.showquestionCreationUploadModal = true;
+    if (this.interceptionTime !== '') {
+      this.interceptionTime = this.format(this.interceptionTime);
+    }
+  }
+
   telemetryEvent(event) {
-     //console.log('in app: ', JSON.stringify(event));
+    // console.log('in app: ', JSON.stringify(event));
   }
   eventHandler(event) {
-    if(event.type && event.type == "pause"){
+    if (event.type && event.type === 'pause') {
       this.interceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime* 10) / 10)
     }
   }
-  addInterception(){
-    this.isReadOnly = true;
-    if(this.interceptionTime !== ''){
-      this.interceptionTime = this.format(this.interceptionTime);
-    }
-    this.showquestionCreationUploadModal = true;
-  }
-  public closeQuestionCreationUploadModal() {
-    this.showquestionCreationUploadModal = false;
-  }
-  createQuestionSet(){
-    
-    this.templateSelected = { name: "Demo Practice Question Set", identifier: "obj-cat:demo-practice-question-set_questionset_all", targetObjectType: "QuestionSet" }
-    this.handleCreateQuestionSetSubmit()
-    
-    this.showquestionCreationUploadModal = false;
-    this.currentStage = '';
-  }
-  format(time) {
-    var hrs = ~~(time / 3600);
-    var mins = ~~((time % 3600) / 60);
-    var secs = ~~time % 60;
 
-    // Output like "1:01" or "4:03:59" or "123:03:59"
-    var ret = "";
-    if (hrs > 0) {
-        ret += "" + hrs + ":" + (mins < 10 ? "0" : "");
-    }
-    ret += "" + String(mins).padStart(2, '0') + ":" + (secs < 10 ? "0" : "");
-    ret += "" + secs;
-    return ret;
-  }
-  handleCreateQuestionSetSubmit(){
-    let rootorgId = _.get(this.programContext, 'rootorg_id')
-    this.programsService.getCategoryDefinition(this.templateSelected.name,rootorgId , this.templateSelected.targetObjectType).subscribe((res) => {
-      this.selectedtemplateDetails = res.result.objectCategoryDefinition;
-      const catMetaData = this.selectedtemplateDetails.objectMetadata;
-      if (_.isEmpty(_.get(catMetaData, 'schema.properties.mimeType.enum'))) {
-          this.toasterService.error(this.resourceService.messages.emsg.m0026);
-      } else {
-        const supportedMimeTypes = catMetaData.schema.properties.mimeType.enum;
-        let catEditorConfig = !_.isEmpty(_.get(catMetaData, 'config.sourcingConfig.editor')) ? catMetaData.config.sourcingConfig.editor : [];
-        let appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.editor;
-        const editorTypes = [];
-        let tempEditors = _.map(supportedMimeTypes, (mimetype) => {
-          const editorObj = _.filter(catEditorConfig, {"mimetype": mimetype});
-          if (!_.isEmpty(editorObj)) {
-              editorTypes.push(...editorObj);
-          } else {
-            const editorObj = _.filter(appEditorConfig, {"mimetype": mimetype});
-            if (!_.isEmpty(editorObj)) {
-              editorTypes.push(...editorObj);
+  createQuestionSet() {
+      this.showquestionCreationUploadModal = false;
+      let creator = this.userService.userProfile.firstName;
+      if (!_.isEmpty(this.userService.userProfile.lastName)) {
+        creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+      }
+      const rootorgId = _.get(this.programContext, 'rootorg_id');
+      this.frameworkService.readChannel(rootorgId).subscribe(channelData => {
+        const channelCats = _.get(channelData, 'primaryCategories');
+        const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+        const primaryCategories  = _.map(questionSetCategories, 'name');
+        const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+        _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
+        const option = {
+          url: `questionset/v1/create`,
+          header: {
+            'X-Channel-Id': this.programContext.rootorg_id
+          },
+          data: {
+            request: {
+              questionset: {
+                'name': 'Untitled',
+                'code': UUID.UUID(),
+                'mimeType': 'application/vnd.sunbird.questionset',
+                'createdBy': this.userService.userid,
+                'primaryCategory': primaryCategories[0],
+                'creator': creator,
+                'author': creator,
+                'programId': this.sessionContext.programId,
+                'collectionId': this.sessionContext.collection,
+                'unitIdentifiers': [this.unitIdentifier],
+                ...(this.sessionContext.nominationDetails &&
+                  this.sessionContext.nominationDetails.organisation_id &&
+                  {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
+                ...(_.pickBy(sharedMetaData, _.identity))
+              }
             }
           }
-        });
-        let modeOfCreation = _.map(editorTypes, 'type');
-        modeOfCreation = _.uniq(modeOfCreation);
-        this.selectedtemplateDetails["editors"] = editorTypes;
-        this.selectedtemplateDetails["editorTypes"] = _.uniq(modeOfCreation);
-        if (modeOfCreation.length > 1) {
-          this.showModeofCreationModal = true;
-          this.showQuestionTypeModal = false;
-        } else {
-          this.selectedtemplateDetails["modeOfCreation"] = modeOfCreation[0];
-          //handle Submit functionality
-          this.showModeofCreationModal = false;
-          this.showQuestionTypeModal = false;
-          this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';
-          this.selectedtemplateDetails.mimeType = ['application/vnd.sunbird.questionset'];
-          const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-          const filesConfig =  _.map(this.selectedtemplateDetails.mimeType, (mimetype) => {
-              return appEditorConfig[mimetype];
-          });
-
-          this.selectedtemplateDetails['filesConfig'] = {};
-          this.selectedtemplateDetails.filesConfig['accepted'] = (!_.isEmpty(filesConfig)) ? _.join(_.compact(filesConfig), ', ') : '';
-          this.selectedtemplateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
-          this.handleTemplateSelection({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails })
-        }
-      }
-    }, (err) => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0027);
-      return false;
-    });
-  }
-  handleTemplateSelection(event) {
-    this.sessionContext['templateDetails'] = { name: "Demo Practice Question Set", identifier: "obj-cat:demo-practice-question-set_questionset_all", targetObjectType: "QuestionSet" };
-    if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
-      this.templateDetails = { name: "Demo Practice Question Set", identifier: "obj-cat:demo-practice-question-set_questionset_all", targetObjectType: "QuestionSet" };
-      let creator = this.userProfile.firstName;
-      if (!_.isEmpty(this.userProfile.lastName)) {
-        creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
-      }
-
-      let targetCollectionFrameworksData = {};
-      targetCollectionFrameworksData = this.helperService.setFrameworkCategories(this.collection);
-      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      _.merge(sharedMetaData, targetCollectionFrameworksData);
-      const option = {
-        url: `questionset/v1/create`,
-        header: {
-          'X-Channel-Id': this.programContext.rootorg_id
-        },
-        data: {
-          request: {
-            questionset: {
-              'name': 'Untitled',
-              'code': UUID.UUID(),
-              'mimeType': "application/vnd.sunbird.questionset",
-              'createdBy': this.userService.userid,
-              'primaryCategory': "Demo Practice Question Set",
-              'creator': creator,
-              'author': creator,
-              'programId': this.sessionContext.programId,
-              'collectionId': this.sessionContext.collection,
-              'unitIdentifiers': [this.unitIdentifier],
-              ...(this.sessionContext.nominationDetails &&
-                this.sessionContext.nominationDetails.organisation_id &&
-                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              ...(_.pickBy(sharedMetaData, _.identity))
-            }
-          }
-        }
-      };
-      if (this.sampleContent) {
-        option.data.request.questionset.sampleContent = this.sampleContent;
-      }
-      if (_.get(this.templateDetails, 'modeOfCreation') === 'question') {
-        option.data.request.questionset.questionCategories =  [this.templateDetails.questionCategory];
-      }
-      if (_.get(this.templateDetails, 'appIcon')) {
-        option.data.request.questionset.appIcon = _.get(this.templateDetails, 'appIcon');
-      }
-
-      let timeStamp = this.interceptionTime.replace(":",".").split(".")
-      let getTimeStamp = parseFloat(timeStamp[0])* 60 + parseFloat(timeStamp[1]);
-
-      let createRes;
-      if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
-        option.url = 'questionset/v1/create';
-        option.data.request['questionset'] = {};
-        option.data.request['questionset'] = option.data.request.questionset;
-        delete option.data.request.questionset;
-        createRes = this.actionService.post(option);
-      } else {
-        createRes = this.actionService.post(option);
-      }
-
-      createRes.pipe(map((res: any) => res.result), catchError(err => {
-        const errInfo = {
-          errorMsg: 'Unable to create contentId, Please Try Again',
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activeRoute.snapshot.data.telemetry.env,
-          request: option
         };
-        return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-      }))
-        .subscribe(result => {
-          this.contentId = result.identifier;
-          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
-            .subscribe(() => {
-              this.showQuestionSetCreationComponent = true
-              this.programsService.emitHeaderEvent(false)
-               // tslint:disable-next-line:max-line-length
-               this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+        if (this.sessionContext.sampleContent) {
+          option.data.request.questionset.sampleContent = this.sessionContext.sampleConten;
+        }
 
-                if(this.interceptionMetaData && Object.keys(this.interceptionMetaData).length === 0)
-                {
-                  this.interceptionData = {
-                    url: `content/v3/update/${this.videoDoId}`,
-                    data: {
-                      request : {
-                        content : {
-                          versionKey : this.contentMetaData.versionKey,
-                          interceptionPoints : {
-                            items : [
-                              {
-                                "type" : "QuestionSet",
-                                "interceptionPoint" : getTimeStamp ,
-                                "identifier": result.identifier
-                              }
-                            ]
-                          },
-                          interceptionType: "Timestamp"
-                        }
-                      }
-                    }
-                  }
-                }else{
-                  let existingItems = this.interceptionMetaData.items
-                  existingItems.push({
-                    "type" : "QuestionSet",
-                    "interceptionPoint" : getTimeStamp ,
-                    "identifier": result.identifier
-                  })
-                  this.interceptionData = {
-                    url: `content/v3/update/${this.videoDoId}`,
-                    data: {
-                      request : {
-                        content : {
-                          versionKey : this.contentMetaData.versionKey,
-                          interceptionPoints : {
-                            items : existingItems
-                          },
-                          interceptionType: "Timestamp"
-                        }
-                      }
-                    }
+        const timeStamp = this.interceptionTime.replace(':', '.').split('.');
+        const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+
+        this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+          const errInfo = {
+            errorMsg: 'Unable to create contentId, Please Try Again',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+            request: option
+          };
+          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+        })).subscribe(result => {
+            this.questionSetId = result.identifier;
+            this.programsService.emitHeaderEvent(false);
+            // tslint:disable-next-line:max-line-length
+            this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance('questionSetEditorComponent'), 'questionSetEditorComponent');
+            let interceptionPoints = [];
+            if (this.interceptionMetaData && Object.keys(this.interceptionMetaData).length === 0) {
+              interceptionPoints.push({
+                'tyep': 'QuestionSet',
+                'interceptionPoint': getTimeStamp,
+                'identifier': this.questionSetId
+              });
+            } else {
+              interceptionPoints = this.interceptionMetaData.items;
+              interceptionPoints.push({
+                'tyep': 'QuestionSet',
+                'interceptionPoint': getTimeStamp,
+                'identifier': this.questionSetId
+              });
+            }
+            this.interceptionData = {
+              url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+              data: {
+                request : {
+                  content : {
+                    versionKey : this.contentMetaData.versionKey,
+                    interceptionPoints : {
+                      items : interceptionPoints
+                    },
+                    interceptionType: 'Timestamp'
                   }
                 }
-
-                  
-              this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
-                  const errInfo = {
-                    errorMsg: 'Unable to create contentId, Please Try Again',
-                    telemetryPageId: this.telemetryPageId,
-                    telemetryCdata : this.telemetryInteractCdata,
-                    env : this.activeRoute.snapshot.data.telemetry.env,
-                    request: option
-                  };
-                  return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-              }))
-              .subscribe(result => {
-                console.log(result);
-              })
+              }
+            };
+            this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+                const errInfo = {
+                  errorMsg: 'Unable to create contentId, Please Try Again',
+                  telemetryPageId: this.telemetryPageId,
+                  telemetryCdata : this.telemetryInteractCdata,
+                  env : this.activeRoute.snapshot.data.telemetry.env,
+                  request: option
+                };
+                return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+            }))
+            .subscribe(result => {
+              console.log(result);
             });
-        });
-    } 
-    else if (event.templateDetails) {
-      this.templateDetails = event.templateDetails;
-      this.programsService.emitHeaderEvent(false)
-      this.showQuestionSetCreationComponent = true
-      // tslint:disable-next-line:max-line-length
-      this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), 'contentUploaderComponent');
 
-    }
+        });
+      }, (err) => {
+        const errInfo = {
+          errorMsg: 'QuestionSet primary category not defined at channle, Please Try Again',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env
+        };
+        return throwError(this.sourcingService.apiErrorHandling({}, errInfo));
+      });
   }
+
   componentLoadHandler(action, component, componentName, event?) {
     this.initiateInputs(action, (event ? event.content : undefined));
     this.creationComponent = component;
     this.programStageService.addStage(componentName);
   }
+
   public initiateInputs(action?, content?) {
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
-    this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
     this.dynamicInputs = {
       questionSetEditorComponentInput: {
-        contentId: this.contentId,
+        contentId: action === 'preview' ? content.identifier : this.questionSetId,
         action: action,
         content: content,
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier,
         programContext: this.programContext,
-        originCollectionData: this.originalCollectionData,
+        originCollectionData: this.originCollectionData,
         sourcingStatus: sourcingStatus,
         selectedSharedContext: this.selectedSharedContext
       }
-    }
-  }
-  getTelemetryPageIdForContentDetailsPage() {
-    if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectNominationTargetCollection) {
-      return this.configService.telemetryLabels.pageId.sourcing.projectNominationContributionDetails;
-    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.sourcing.projectTargetCollection) {
-      return this.configService.telemetryLabels.pageId.sourcing.projectContributionDetails;
-    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.contribute.projectTargetCollection) {
-      return this.configService.telemetryLabels.pageId.contribute.projectContributionDetails;
-    } else if (this.telemetryPageId === this.configService.telemetryLabels.pageId.contribute.submitNominationTargetCollection) {
-      return this.configService.telemetryLabels.pageId.contribute.submitNominationSampleDetails;
-    }
-  }
-  uploadHandler(event) {
-    if (event.contentId) {
-      this.updateAccordianView(this.unitIdentifier);
-    }
-  }
-   async updateAccordianView(unitId?, onSelectChapterChange?) {
-    if (this.isPublishOrSubmit() && this.isContributingOrgContributor() && this.isDefaultContributingOrg()) {
-      this.sessionContext.currentOrgRole = 'individual';
-    }
-      await this.getCollectionHierarchy(this.sessionContext.collection,
-                this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
-      const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
-      if (!_.isEmpty(acceptedContents)) {
-        await this.getOriginForApprovedContents(acceptedContents);
-      }
-    if (unitId) {
-      this.lastOpenedUnit(unitId);
-    } else if (onSelectChapterChange === true && this.selectedChapterOption !== 'all') {
-      this.lastOpenedUnit(this.selectedChapterOption);
-    } else {
-      if (!_.isEmpty(this.collectionHierarchy)) { this.lastOpenedUnit(this.collectionHierarchy[0].identifier)}
-    }
-  }
-  public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
-    const instance = this;
-    let hierarchy;
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
-    if (unitIdentifier) {
-      hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
-    }
-    const req = {
-      url: hierarchyUrl,
-      param: { 'mode': 'edit' }
     };
-     return new Promise((resolve) => {
-    this.actionService.get(req).pipe(catchError(err => {
-      const errInfo = {
-        errorMsg: 'Fetching TextBook details failed',
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activeRoute.snapshot.data.telemetry.env,
-        request: req
-      };
-      this.showLoader = false;
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-    }))
-      .subscribe((response) => {
-        const children = [];
-        _.forEach(response.result.content.children, (child) => {
-          if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
-          (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
-            children.push(child);
-          }
-        });
-
-        response.result.content.children = children;
-        this.collectionData = response.result.content;
-        this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
-        if (this.storedCollectionData['channel'] !== this.programContext.rootorg_id) {
-          this.storedCollectionData['channel'] = this.programContext.rootorg_id;
-        }
-        this.helperService.selectedCollectionMetaData = _.omit(this.storedCollectionData, ['children', 'childNodes']);
-        const textBookMetaData = [];
-        instance.countData['total'] = 0;
-        instance.countData['review'] = 0;
-        instance.countData['reject'] = 0;
-        instance.countData['live'] = 0;
-        instance.countData['draft'] = 0;
-        instance.countData['mycontribution'] = 0;
-        instance.countData['totalreview'] = 0;
-        instance.countData['awaitingreview'] = 0;
-        instance.countData['sampleContenttotal'] = 0;
-        instance.countData['sampleMycontribution'] = 0;
-        instance.countData['pendingReview'] = 0;
-        instance.countData['nominatedUserSample'] = 0;
-        instance.countData['sourcing_total'] = 0;
-        instance.countData['sourcing_approvalPending'] = 0;
-        instance.countData['sourcing_correctionPending'] = 0;
-        instance.countData['sourcing_approved'] = 0;
-        instance.countData['sourcing_rejected'] = 0;
-        instance.countData['objective'] = 0;
-        instance.countData['vsa'] = 0;
-        instance.countData['sa'] = 0;
-        instance.countData['la'] = 0;
-        instance.countData['subjective'] = 0;
-        instance.countData['multipleChoice'] = 0;
-        instance.countData['remember'] = 0;
-        instance.countData['understand'] = 0;
-        instance.countData['apply'] = 0;
-        instance.countData['topics'] = 0;
-        instance.countData['learningOutcomes'] = 0;
-
-        if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
-          this.programsService.getHierarchyFromOrigin(this.collectionData.origin).subscribe(async res => {
-            const content = _.get(res, 'result.content');
-            this.originalCollectionData = content;
-            this.setTreeLeafStatusMessage(identifier, instance);
-            resolve('Done');
-          }, error => resolve('Done')
-          );
-        } else {
-          this.setTreeLeafStatusMessage(identifier, instance);
-          resolve('Done');
-        }
-      });
-    });
-  }
-  isPublishOrSubmit() {
-    return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false
-    && _.get(this.sessionContext, 'currentRoles').includes('CONTRIBUTOR')
-    && this.sampleContent === false);
-  }
-    isContributingOrgContributor() {
-    return this.userService.isContributingOrgContributor(this.sessionContext.nominationDetails);
-  }
-  isDefaultContributingOrg() {
-    return this.userService.isDefaultContributingOrg(this.programContext);
-  }
-  getOriginForApprovedContents (acceptedContents) {
-    this.collectionHierarchyService.getOriginForApprovedContents(acceptedContents).subscribe(
-      (response) => {
-        if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
-          this.sessionContext['contentOrigins'] = {};
-          _.forEach( _.get(response, 'result.content'), (obj) => {
-            if (obj.status == 'Live') {
-              this.sessionContext['contentOrigins'][obj.origin] = obj;
-            }
-          });
-          _.forEach( _.get(response, 'result.QuestionSet'), (obj) => {
-            if (obj.status == 'Live') {
-              this.sessionContext['contentOrigins'][obj.origin] = obj;
-            }
-          });
-        }
-      },
-      (error) => {
-        console.log('Getting origin data failed');
-    });
-  }
-  lastOpenedUnit(unitId) {
-    this.collectionHierarchy.forEach((parentunit) => {
-        if (parentunit.identifier === unitId) {
-          this.sessionContext.lastOpenedUnitChild = unitId;
-          this.sessionContext.lastOpenedUnitParent = parentunit.identifier;
-          return;
-        } else if (parentunit.children) {
-          _.forEach(parentunit.children, (childUnit) => {
-            if (childUnit.identifier === unitId) {
-             this.sessionContext.lastOpenedUnitChild = childUnit.identifier;
-             this.sessionContext.lastOpenedUnitParent = parentunit.identifier;
-             return;
-            }
-          });
-        }
-    });
-  }
-  setTreeLeafStatusMessage(identifier, instance) {
-    this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
-    if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
-      // tslint:disable-next-line:max-line-length
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection);
-
-    }
-    this.getFolderLevelCount(this.collectionHierarchy);
-    const hierarchy = instance.hierarchyObj;
-    this.sessionContext.hierarchyObj = { hierarchy };
-    if (_.get(this.collectionData, 'sourcingRejectedComments')) {
-    // tslint:disable-next-line:max-line-length
-    this.sessionContext.hierarchyObj['sourcingRejectedComments'] = _.isString(_.get(this.collectionData, 'sourcingRejectedComments')) ? JSON.parse(_.get(this.collectionData, 'sourcingRejectedComments')) : _.get(this.collectionData, 'sourcingRejectedComments');
-    }
-    this.showLoader = false;
-    this.showError = false;
-    this.levelOneChapterList = _.uniqBy(this.levelOneChapterList, 'identifier');
-  }
-  getFolderLevelCount(collections) {
-    let status = this.sampleContent ? ['Review', 'Draft'] : [];
-    let prevStatus;
-    let createdBy, visibility;
-    if (this.sampleContent === false && this.isSourcingOrgReviewer()) {
-      if (this.sourcingOrgReviewer) {
-        status = ['Live', 'Draft'];
-        prevStatus = 'Live';
-      }
-      visibility = true;
-    }
-    if (this.isContributingOrgContributor()) {
-      createdBy = this.currentUserID;
-    }
-    if (this.isContributingOrgReviewer()) {
-      status = ['Review', 'Live', 'Draft'];
-      prevStatus = 'Review';
-    }
-    if (this.isNominationByOrg()) {
-      _.forEach(collections, collection => {
-        // tslint:disable-next-line:max-line-length
-        this.getContentCountPerFolder(collection , status , this.sampleContent, this.getNominationId('org'), createdBy, visibility, prevStatus);
-      });
-    } else {
-      _.forEach(collections, collection => {
-        createdBy = this.getNominationId('individual');
-        this.getContentCountPerFolder(collection , status , this.sampleContent, undefined, createdBy, visibility, prevStatus);
-      });
-    }
-  }
-   setCollectionTree(data, identifier) {
-    // tslint:disable-next-line:max-line-length
-    if (this.sessionContext.currentOrgRole !== 'user' && this.sessionContext.nominationDetails && !_.includes(['Approved', 'Rejected'], this.sessionContext.nominationDetails.status)) {
-      this.sampleContent = true;
-      this.sessionContext['sampleContent'] = true;
-      this.getSampleContentStatusCount(data);
-    } else {
-      this.sampleContent = false;
-      this.sessionContext['sampleContent'] = false;
-      this.getContentStatusCount(data);
-    }
-    if (!this.checkIfMainCollection(data)) {
-      const rootMeta = _.pick(data, this.sharedContext);
-      const rootTree = this.generateNodeMeta(data, rootMeta);
-      const isFolderExist = _.find(data.children, (child) => {
-        return (this.checkIfCollectionFolder(child));
-      });
-      if (isFolderExist) {
-        const children = this.getUnitWithChildren(data, identifier);
-        const treeChildren = this.getTreeChildren(children);
-        const treeLeaf = this.getTreeLeaf(children);
-        rootTree['children'] = treeChildren || null;
-        rootTree['leaf'] = this.getContentVisibility(treeLeaf) || null;
-        return rootTree ? [rootTree] : [];
-      } else {
-        rootTree['leaf'] = _.map(data.children, (child) => {
-          const meta = _.pick(child, this.sharedContext);
-          const treeItem = this.generateNodeMeta(child, meta);
-          treeItem['contentVisibility'] = this.shouldContentBeVisible(child);
-          treeItem['sourcingStatus'] = this.checkSourcingStatus(child);
-          return treeItem;
-        });
-        return rootTree ? [rootTree] : [];
-      }
-    } else {
-      return this.getUnitWithChildren(data, identifier) || [];
-    }
-  }
-  isSourcingOrgReviewer () {
-    return this.userService.isSourcingOrgReviewer(this.programContext);
-  }
-  isContributingOrgReviewer() {
-    return this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails);
-  }
-  isNominationByOrg() {
-    return !!(_.get(this.sessionContext, 'nominationDetails.organisation_id'));
-  }
-  getContentCountPerFolder(collection, contentStatus?: string[], onlySample?: boolean, organisationId?: string, createdBy?: string, visibility?: boolean, prevStatus?: string) {
-    const self = this;
-    collection.totalLeaf = 0;
-    collection.sourcingStatusDetail = {};
-    _.each(collection.children, child => {
-      // tslint:disable-next-line:max-line-length
-      const [restOfTheStatus, totalLeaf] = self.getContentCountPerFolder(child, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus);
-      // collection.totalLeaf += totalLeaf;
-      if (!_.isEmpty(restOfTheStatus)) {
-        // tslint:disable-next-line:max-line-length
-        collection.sourcingStatusDetail  =  _.mergeWith(_.cloneDeep(restOfTheStatus), _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
-      }
-      collection.totalLeaf = collection.totalLeaf + totalLeaf;
-    });
-
-    if (collection.leaf) {
-      // tslint:disable-next-line:max-line-length
-      const filteredContents = this.filterContentsForCount(collection.leaf, contentStatus, onlySample, organisationId, createdBy, visibility, prevStatus);
-      collection.totalLeaf = collection.totalLeaf + filteredContents.length;
-      const unitContentStatusCount =  this.setUnitContentsStatusCount(filteredContents);
-      if (!_.isEmpty(unitContentStatusCount)) {
-        // tslint:disable-next-line:max-line-length
-        collection.sourcingStatusDetail = _.mergeWith(unitContentStatusCount, _.cloneDeep(collection.sourcingStatusDetail), this.addTwoObjects);
-      }
-    }
-    // tslint:disable-next-line:max-line-length
-    if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
-      // tslint:disable-next-line:max-line-length
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection);
-    }
-
-    // tslint:disable-next-line:max-line-length
-    collection.totalLeaf = !_.isEmpty(collection.sourcingStatusDetail) ? _.sum(_.values(collection.sourcingStatusDetail)) :  collection.totalLeaf;
-    return [collection.sourcingStatusDetail, collection.totalLeaf];
-  }
-   getNominationId(type) {
-    if (type === 'individual') {
-      return this.getNominatedUserId();
-    } else if (type === 'org') {
-      return this.getNominatedOrgId();
-    }
   }
 
-  getNominatedUserId() {
-    return _.get(this.sessionContext, 'nominationDetails.user_id');
-  }
-  getNominatedOrgId() {
-    return _.get(this.sessionContext, 'nominationDetails.organisation_id');
-  }
-
-  addTwoObjects(objValue, srcValue) {
-    return objValue + srcValue;
-  }
-  getSampleContentStatusCount(data) {
-    const self = this;
-    if (this.checkifContent(data) && data.sampleContent) {
-      this.countData['sampleContenttotal'] = this.countData['sampleContenttotal'] + 1;
-      if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.user_id === data.createdBy) {
-        this.countData['nominatedUserSample'] += 1;
-      }
-      if (data.createdBy === this.currentUserID) {
-        this.countData['sampleMycontribution'] = this.countData['sampleMycontribution'] + 1;
-      }
-    }
-    const childData = data.children;
-    if (childData) {
-      childData.map(child => {
-        self.getSampleContentStatusCount(child);
-      });
-    }
-  }
-  checkIfMainCollection (data) {
-      return this.helperService.checkIfMainCollection(data);
-  }
-  generateNodeMeta(node, sharedMeta) {
-   const nodeMeta =  {
-      identifier: node.identifier,
-      name: node.name,
-      visibility: node.visibility,
-      contentType: node.contentType,
-      primaryCategory: node.primaryCategory,
-      mimeType: node.mimeType,
-      itemSets: _.has(node, 'itemSets') ? node.itemSets : null,
-      questionCategories: _.has(node, 'questionCategories') ? node.questionCategories : null,
-      topic: node.topic,
-      origin: node.origin,
-      status: node.status,
-      creator: node.creator,
-      createdBy: node.createdBy || null,
-      parentId: node.parent || null,
-      organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
-      prevStatus: node.prevStatus || null,
-      sourceURL : node.sourceURL,
-      sampleContent: node.sampleContent || null,
-      sharedContext: {
-        ...sharedMeta
-      }
-    };
-    return nodeMeta;
-  }
-  checkIfCollectionFolder(data) {
-    return this.helperService.checkIfCollectionFolder(data);
-  }
-  getUnitWithChildren(data, collectionId) {
-    const self = this;
-    this.hierarchyObj[data.identifier] = {
-      'name': data.name,
-      'mimeType': data.mimeType,
-      'contentType': data.contentType,
-      'children': _.map(data.children, (child) => {
-        return child.identifier;
-      }),
-      'root': this.checkIfMainCollection(data) ? true : false,
-      'origin': data.origin,
-      'originData': data.originData,
-      'parent': data.parent || ''
-    };
-    const childData = data.children;
-    if (childData) {
-      const tree = childData.map(child => {
-        const meta = _.pick(child, this.sharedContext);
-        if (child.parent && child.parent === collectionId && child.openForContribution === true) {
-          self.levelOneChapterList.push({
-            identifier: child.identifier,
-            name: child.name
-          });
-        }
-        const treeItem = this.generateNodeMeta(child, meta);
-        const treeUnit = self.getUnitWithChildren(child, collectionId);
-        const treeChildren = this.getTreeChildren(treeUnit);
-        const treeLeaf = this.getTreeLeaf(treeUnit);
-        treeItem['children'] = (treeChildren && treeChildren.length > 0) ? treeChildren : null;
-        if (treeLeaf && treeLeaf.length > 0) {
-          treeItem['leaf'] = this.getContentVisibility(treeLeaf);
-        }
-        return treeItem;
-      });
-      return tree;
-    }
-  }
-  getTreeChildren(children) {
-    return children && children.filter(function (item) {
-      return item.mimeType === 'application/vnd.ekstep.content-collection' && item.visibility === "Parent";
-    });
-  }
-  getTreeLeaf(children) {
-    return children && children.filter(function (item) {
-      return item.mimeType !== 'application/vnd.ekstep.content-collection';
-    });
-  }
-  getContentVisibility(branch) {
-    const leafNodes = [];
-    _.forEach(branch, (leaf) => {
-      const contentVisibility = this.shouldContentBeVisible(leaf);
-      const sourcingStatus = this.checkSourcingStatus(leaf);
-      leaf['contentVisibility'] = contentVisibility;
-      leaf['sourcingStatus'] = sourcingStatus || null;
-      leafNodes.push(leaf);
-    });
-    return _.isEmpty(leafNodes) ? null : leafNodes;
-  }
-  shouldContentBeVisible(content) {
-    const creatorViewRole = this.hasAccessForContributor;
-    const reviewerViewRole = this.hasAccessForReviewer;
-    const creatorAndReviewerRole = creatorViewRole && reviewerViewRole;
-    const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
-    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer) {
-      if (this.sessionContext.nominationDetails && this.sessionContext.nominationDetails.status === 'Pending') {
-        if ( reviewerViewRole && content.sampleContent === true
-          && this.getNominatedUserId() === content.createdBy) {
-            return true;
-          }
-          return false;
-      } else if (this.sessionContext.nominationDetails
-        && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')) {
-          if ( reviewerViewRole && content.sampleContent !== true &&
-          (content.status === 'Live' || (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
-              return true;
-          }
-          return false;
-      } else if (reviewerViewRole && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
-          return true;
-      }
-    } else {
-      if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
-       && content.sampleContent === true) {
-        return false;
-      // tslint:disable-next-line:max-line-length
-      } else if (creatorAndReviewerRole) {
-        if (( (_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && this.currentUserID !== content.createdBy && content.organisationId === this.myOrgId) || this.currentUserID === content.createdBy) {
-          return true;
-        } else if (content.status === 'Live' && content.sourceURL) {
-          return true;
-        }
-      } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
-      && this.currentUserID !== content.createdBy
-      && content.organisationId === this.myOrgId) {
-        return true;
-      } else if (creatorViewRole && this.currentUserID === content.createdBy) {
-        return true;
-      } else if (contributingOrgAdmin && content.organisationId === this.myOrgId) {
-        return true;
-      } else if (content.status === 'Live' && content.sourceURL) {
-        return true;
-      }
-    }
-    return false;
-  }
-  checkSourcingStatus(content) {
-    if (this.storedCollectionData.acceptedContents  &&
-         _.includes(this.storedCollectionData.acceptedContents || [], content.identifier)) {
-            return 'Approved';
-      } else if (this.storedCollectionData.rejectedContents  &&
-              _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
-            return 'Rejected';
-      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            return 'PendingForCorrections';
-      } else {
-        return null;
-      }
-  }
-   filterContentsForCount(contents, status?, onlySample?, organisationId?, createdBy?, visibility?, prevStatus?) {
-    const filter = {
-      ...(onlySample && { sampleContent: true }),
-      ...(!onlySample && { sampleContent: null }),
-      ...(createdBy && { createdBy }),
-      ...(organisationId && { organisationId }),
-      ...(visibility && { contentVisibility : true})
-    };
-    if (status && status.length > 0) {
-      contents = _.filter(contents, leaf => {
-        if (prevStatus && leaf.status === 'Draft' && (leaf.prevStatus === 'Review' || leaf.prevStatus === 'Live')) {
-          return true;
-        } else {
-          return _.includes(status, leaf.status);
-        }
-      });
-    }
-
-    if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
-      delete filter.createdBy;
-    }
-
-    let leaves;
-    if (this.router.url.includes('/sourcing')) {
-      leaves = _.concat(_.filter(contents, filter));
-    } else {
-      leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
-
-      // If user is having contributor and reviewer both roles
-      if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
-        leaves = _.concat(leaves, _.filter(contents, (c) => {
-          const result = (c.organisationId === organisationId && c.status === 'Draft' &&
-            ((c.createdBy === createdBy && c.contentVisibility === true) || c.prevStatus === 'Review' || c.prevStatus === 'Live'));
-          return result;
-        }));
-
-        leaves = _.uniqBy(leaves, 'identifier');
-      }
-    }
-    return leaves;
-  }
-   setUnitContentsStatusCount(contents) {
-    const contentStatusCount = {};
-    if (this.isSourcingOrgReviewer() && this.router.url.includes('/sourcing')) {
-      contentStatusCount['approved'] = 0;
-      contentStatusCount['rejected'] = 0;
-      contentStatusCount['approvalPending'] = 0;
-      contentStatusCount['correctionsPending'] = 0;
-      _.forEach(contents, (content) => {
-        if (!content.sampleContent) {
-          if (content.sourcingStatus === 'Approved') {
-            contentStatusCount['approved'] += 1;
-          } else if (content.sourcingStatus === 'Rejected') {
-            contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Live' && content.sourceURL) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Live') {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            contentStatusCount['correctionsPending'] += 1;
-          }
-        }
-      });
-    } else if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
-      contentStatusCount['notAccepted'] = 0;
-      contentStatusCount['approvalPending'] = 0;
-      contentStatusCount['reviewPending'] = 0;
-      contentStatusCount['draft'] = 0;
-      contentStatusCount['rejected'] = 0;
-      contentStatusCount['approved'] = 0;
-      contentStatusCount['correctionsPending'] = 0;
-      _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId && !content.sampleContent) {
-          if (content.status === 'Draft' && content.prevStatus === 'Review') {
-            contentStatusCount['notAccepted'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Review') {
-            contentStatusCount['reviewPending'] += 1;
-          } else if (content.status === 'Draft' && !content.prevStatus && content.createdBy === this.currentUserID) {
-            contentStatusCount['draft'] += 1;
-          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
-            contentStatusCount['approved'] += 1;
-          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
-            contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            contentStatusCount['correctionsPending'] += 1;
-          }
-        }
-      });
-    } else if (this.userService.isContributingOrgAdmin() || this.isContributingOrgReviewer()) {
-      contentStatusCount['notAccepted'] = 0;
-      contentStatusCount['approvalPending'] = 0;
-      contentStatusCount['reviewPending'] = 0;
-      contentStatusCount['draft'] = 0;
-      contentStatusCount['rejected'] = 0;
-      contentStatusCount['approved'] = 0;
-      contentStatusCount['correctionsPending'] = 0;
-      _.forEach(contents, (content) => {
-        if (content.organisationId === this.myOrgId && !content.sampleContent) {
-          if (content.status === 'Draft' && content.prevStatus === 'Review') {
-            contentStatusCount['notAccepted'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus && content.sourceURL) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Review') {
-            contentStatusCount['reviewPending'] += 1;
-          } else if (content.status === 'Draft' && !content.prevStatus && this.userService.isContributingOrgAdmin()) {
-            contentStatusCount['draft'] += 1;
-          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
-            contentStatusCount['approved'] += 1;
-          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
-            contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            contentStatusCount['correctionsPending'] += 1;
-          }
-        }
-      });
-    } else if (this.isContributingOrgContributor()) {
-      contentStatusCount['notAccepted'] = 0;
-      contentStatusCount['approvalPending'] = 0;
-      contentStatusCount['reviewPending'] = 0;
-      contentStatusCount['rejected'] = 0;
-      contentStatusCount['approved'] = 0;
-      contentStatusCount['draft'] = 0;
-      contentStatusCount['correctionsPending'] = 0;
-      _.forEach(contents, (content) => {
-        // tslint:disable-next-line:max-line-length
-        if (content.organisationId === this.myOrgId && !content.sourceURL && !content.sampleContent && content.createdBy === this.currentUserID) {
-          if (content.status === 'Draft' && content.prevStatus === 'Review') {
-            contentStatusCount['notAccepted'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.status === 'Review') {
-            contentStatusCount['reviewPending'] += 1;
-          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
-            contentStatusCount['approved'] += 1;
-          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
-            contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Draft' && !content.prevStatus) {
-            contentStatusCount['draft'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            contentStatusCount['correctionsPending'] += 1;
-          }
-        }
-      });
-    } else if (this.sessionContext.currentOrgRole === 'individual') {
-      contentStatusCount['approvalPending'] = 0;
-      contentStatusCount['draft'] = 0;
-      contentStatusCount['rejected'] = 0;
-      contentStatusCount['approved'] = 0;
-      contentStatusCount['correctionsPending'] = 0;
-      _.forEach(contents, (content) => {
-        if (content.createdBy === this.userService.userid && !content.sampleContent) {
-          if (content.status === 'Draft' && !content.prevStatus) {
-            contentStatusCount['draft'] += 1;
-          } else if (content.status === 'Live' && !content.sourcingStatus) {
-            contentStatusCount['approvalPending'] += 1;
-          } else if (content.sourcingStatus === 'Approved' && content.status === 'Live') {
-            contentStatusCount['approved'] += 1;
-          } else if (content.sourcingStatus === 'Rejected' && content.status === 'Live') {
-            contentStatusCount['rejected'] += 1;
-          } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            contentStatusCount['correctionsPending'] += 1;
-          }
-        }
-      });
-    }
-    if (_.mean(_.valuesIn(contentStatusCount)) > 0) {
-      return contentStatusCount;
-    }
-  }
-   getContentStatusCount(data) {
-    const self = this;
-    if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
-      // tslint:disable-next-line:max-line-length
-      if ((this.checkifContent(data) && this.myOrgId === data.organisationId)  && (!data.sampleContent || data.sampleContent === undefined)) {
-        this.countData['total'] = this.countData['total'] + 1;
-        if (data.createdBy === this.currentUserID && data.status === 'Review') {
-          this.countData['review'] = this.countData['review'] + 1;
-        }
-        if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
-          this.countData['reject'] = this.countData['reject'] + 1;
-        }
-        if (data.createdBy === this.currentUserID) {
-          this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
-        }
-        if(this.sessionContext.currentRoles.includes('REVIEWER')) {
-          if (data.status === 'Review') {
-            this.countData['totalreview'] = this.countData['totalreview'] + 1;
-          }
-          if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-            this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
-          }
-        }
-      }
-    }
-     else if(['individual'].includes(this.sessionContext.currentOrgRole)  && this.sessionContext.currentRoles.includes('CONTRIBUTOR')) {
-      if ((data.contentType !== 'TextBook' && data.contentType !== 'TextBookUnit' )  && (!data.sampleContent || data.sampleContent === undefined)) {
-
-        if (data.createdBy === this.currentUserID) {
-          this.countData['total'] = this.countData['total'] + 1;
-        }
-      }
-    }
-    else {
-      // tslint:disable-next-line:max-line-length
-      if (this.checkifContent(data) && (!data.sampleContent || data.sampleContent === undefined)) {
-        this.countData['total'] = this.countData['total'] + 1;
-        if (data.createdBy === this.currentUserID && data.status === 'Review') {
-          this.countData['review'] = this.countData['review'] + 1;
-        }
-        if (data.createdBy === this.currentUserID && data.status === 'Draft') {
-          this.countData['draft'] = this.countData['draft'] + 1;
-        }
-        if (data.createdBy === this.currentUserID && data.status === 'Live') {
-          this.countData['live'] = this.countData['live'] + 1;
-        }
-        if (data.createdBy === this.currentUserID && data.status === 'Draft' && data.prevStatus === 'Review') {
-          this.countData['reject'] = this.countData['reject'] + 1;
-        }
-        if (data.createdBy === this.currentUserID) {
-          this.countData['mycontribution'] = this.countData['mycontribution'] + 1;
-        }
-        if (data.status === 'Review') {
-          this.countData['totalreview'] = this.countData['totalreview'] + 1;
-        }
-        if (data.createdBy !== this.currentUserID && data.status === 'Review') {
-          this.countData['awaitingreview'] = this.countData['awaitingreview'] + 1;
-        }
-        if (this.sourcingOrgReviewer && data.status === 'Live' &&
-        // tslint:disable-next-line:max-line-length
-        !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
-          this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
-          this.countData['sourcing_approvalPending'] = this.countData['sourcing_approvalPending'] + 1;
-          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-        }
-        if (this.sourcingOrgReviewer && data.status === 'Draft' && data.prevStatus === 'Live' ) {
-          this.countData['sourcing_correctionPending'] = this.countData['sourcing_correctionPending'] + 1;
-          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-        }
-        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
-          this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
-          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-           // Add blueprint metrics count
-            if(data.questionCategories && data.questionCategories.length) {
-              _.forEach(data.questionCategories, (cat)=> {
-                if(cat === "MTF" || cat === "FTB" || cat === "MCQ") {
-                  this.countData['objective'] = this.countData['objective'] + 1;
-                }
-                else if(cat === "VSA" || cat === "SA" || cat === "LA") {
-                  if(cat === "VSA") this.countData['vsa'] = this.countData['vsa'] + 1;
-                  if(cat === "SA") this.countData['sa'] = this.countData['sa'] + 1;
-                  if(cat === "LA") this.countData['la'] = this.countData['la'] + 1;
-                  this.countData['subjective'] = this.countData['subjective'] + 1;
-                }
-              })
-            }
-            if(data.bloomsLevel && data.bloomsLevel.length) {
-              _.forEach(data.bloomsLevel, (bl)=> {
-                bl = bl.toLowerCase();
-                if(bl === "remember") {
-                this.countData['remember'] = this.countData['remember'] + 1;
-                }
-                else if(bl === "understand") {
-                  this.countData['understand'] = this.countData['understand'] + 1;
-                }
-                else if(bl === "apply") {
-                  this.countData['apply'] = this.countData['apply'] + 1;
-                }
-              })
-            }
-            if(this.localBlueprint) {
-              if(data.topic && data.topic.length) {
-                _.forEach(data.topic, (topic)=> {
-                  if(_.includes(this.localUniqueTopicsList, topic)) return;
-                  else {
-                    this.localUniqueTopicsList.push(topic);
-                    this.countData['topics'] = this.countData['topics'] + 1;
-                    this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
-                  }
-                })
-              }
-              if(data.learningOutcome && data.learningOutcome.length) {
-                _.forEach(data.learningOutcome, (lo)=> {
-                  if(_.includes(this.localUniqueLearningOutcomesList, lo)) return;
-                  else {
-                    this.localUniqueLearningOutcomesList.push(lo);
-                    this.countData['learningOutcomes'] = this.countData['learningOutcomes'] + 1;
-                    this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
-                  }
-                })
-              }
-            }
-        }
-        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
-          this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
-          this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
-        }
-      }
-    }
-
-    const childData = data.children;
-    if (childData) {
-      childData.map(child => {
-        self.getContentStatusCount(child);
-      });
-    }
-  }
-  checkifContent (content) {
-    if (content.mimeType !== 'application/vnd.ekstep.content-collection' && content.visibility !== 'Parent') {
-      return true;
-    } else {
-      return false;
-    }
-  }
   changeView() {
     this.currentLastStageInService = this.programStageService.getLastStage();
-    // if (!_.isEmpty(this.state.stages)) {
-    //   this.currentStage = _.last(this.state.stages).stage;
-    // }
-    if (this.currentStage == 'contentUploaderComponent') {
-      this.updateAccordianView(this.unitIdentifier);
-      this.resetContentId();
+    if (!_.isEmpty(this.state.stages)) {
+      const lastStage = _.last(this.state.stages).stage;
+      if (lastStage === 'uploadComponent') {
+        this.currentStage = 'contentUploaderComponent';
+      }
     }
-    else if (this.currentLastStageInService === 'questionSetEditorComponent') {
+    if (this.currentStage === 'contentUploaderComponent') {
+      this.getUploadedContentMeta(this.contentMetaData.identifier);
+    } else if (this.currentLastStageInService === 'questionSetEditorComponent') {
       this.currentStage = 'questionSetEditorComponent';
-    }else{
-      this.currentStage = ''
+    } else {
+      this.currentStage = '';
     }
   }
-  public resetContentId() {
-    this.contentId = '';
+
+  handleQuestionSetPreview(e) {
+    if (this.contentMetaData && this.contentMetaData.status && this.contentMetaData.status.toLowerCase() !== 'draft') {
+      return;
+    }
+    const event = {
+      action: 'preview',
+      content: {
+        identifier: e.identifier
+      }
+    };
+    this.componentLoadHandler('preview',
+    this.programComponentsService.getComponentInstance('questionSetEditorComponent'), 'questionSetEditorComponent', event);
+  }
+
+  public getInteractiveQuestionSet() {
+    const httpOptions: HttpOptions = {
+      headers: {
+        'content-type': 'application/json',
+      }
+    };
+    const option = {
+      url: 'composite/v3/search',
+      data: {
+        request: {
+          filters: {
+            status: [],
+            identifier: _.map(this.interceptionMetaData.items, 'identifier')
+          },
+          fields: ['name']
+        }
+      }
+    };
+    const req = {
+      url: option.url,
+      data: option.data,
+    };
+    return this.actionService.post(req);
+  }
+
+  public closeQuestionCreationUploadModal() {
+    this.showquestionCreationUploadModal = false;
   }
 
 }

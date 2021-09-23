@@ -21,7 +21,7 @@ import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
-import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -42,7 +42,6 @@ import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-
     ...PluginModules,
     QumlLibraryModule,
     CollectionEditorLibraryModule,
-    SunbirdVideoPlayerModule,
     AppRoutingModule // don't add any module below this because it contains wildcard route
   ],
   entryComponents: [AppComponent],
