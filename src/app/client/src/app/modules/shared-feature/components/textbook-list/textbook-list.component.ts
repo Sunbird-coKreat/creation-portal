@@ -117,8 +117,8 @@ export class TextbookListComponent implements OnInit {
   }
 
   getCollectionCategoryDefinition() {
-    if (this.programDetails.target_collection_category && this.userService.userProfile.rootOrgId) {
-       // tslint:disable-next-line:max-line-length
+    if (this.programDetails.target_collection_category && this.userService.userProfile.rootOrgId && (!this.programDetails.target_type || this.programDetails.target_type === 'collections')) {
+      // tslint:disable-next-line:max-line-length
     this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
       this.userService.userProfile.rootOrgId, 'Collection').subscribe(res => {
       const objectCategoryDefinition = res.result.objectCategoryDefinition;
