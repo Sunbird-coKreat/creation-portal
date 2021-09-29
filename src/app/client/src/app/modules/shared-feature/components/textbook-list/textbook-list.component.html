@@ -141,7 +141,11 @@
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata">
 								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
-								> </sui-select-option>
+								appTelemetryInteract
+								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
+								[telemetryInteractObject]="telemetryInteractObject"
+								[telemetryInteractCdata]="telemetryInteractCdata"
+								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>
