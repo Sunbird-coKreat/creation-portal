@@ -290,10 +290,10 @@ describe('ChapterListComponent', () => {
     it('should call handlePreview on preview event', () => {
       component.programContext = { content_types: ['eTextbook']};
       spyOn(component, 'showResourceTemplate').and.callThrough();
-      spyOn(component, 'handlePreview');
+      spyOn(component, 'getCategoryDefinition');
       // tslint:disable-next-line:max-line-length
       component.showResourceTemplate({action: 'preview', content: {identifier: 'do_12345', contentType: 'ExplanationResource'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
-      expect(component.handlePreview).toHaveBeenCalled();
+      expect(component.getCategoryDefinition).toHaveBeenCalled();
     });
 
     xit('should call componentHandler on preview of content', () => {
