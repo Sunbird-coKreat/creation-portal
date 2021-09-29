@@ -151,7 +151,14 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
     this.selectedtemplateDetails['filesConfig'] = {};
     this.selectedtemplateDetails.filesConfig['accepted'] = (!_.isEmpty(filesConfig)) ? _.join(_.compact(filesConfig), ', ') : '';
-    this.selectedtemplateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+    const defaultfileSize =   _.get(this.selectedtemplateDetails, 'objectMetadata.config.sourcingConfig.defaultfileSize');
+    const defaultVideoSize =   _.get(this.selectedtemplateDetails, 'objectMetadata.config.sourcingConfig.defaultVideoSize');
+    this.selectedtemplateDetails.filesConfig['size'] = {
+      // tslint:disable-next-line:max-line-length
+      defaultfileSize:  defaultfileSize ? defaultfileSize : this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize,
+      // tslint:disable-next-line:max-line-length
+      defaultVideoSize: defaultVideoSize ? defaultVideoSize : this.configService.contentCategoryConfig.sourcingConfig.defaultVideoSize,
+    };
     this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
   }
 

@@ -159,6 +159,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (!_.isUndefined(targetFWIds)) {
       this.helperService.setTargetFrameWorkData(targetFWIds);
     }
+    this.videoSizeLimit = this.formatBytes(_.toNumber(this.templateDetails.filesConfig.size.defaultVideoSize) * 1024 * 1024);
    }
 
    setTelemetryStartData() {
@@ -210,7 +211,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
-      this.fetchFileSizeLimit();
+      this.showUploadModal = true;
+      this.initiateUploadModal();
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -425,31 +427,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return acceptedFiles.toString();
   }
 
-  fetchFileSizeLimit() {
-    if (!this.cacheService.get('contentVideoSize')) {
-      const request = {
-        key: 'contentVideoSize',
-        status: 'active'
-      };
-      this.helperService.getProgramConfiguration(request).subscribe(res => {
-        this.showUploadModal = true;
-        this.initiateUploadModal();
-        if (_.get(res, 'result.configuration.value')) {
-          this.videoSizeLimit = this.formatBytes(_.toNumber(_.get(res, 'result.configuration.value')) * 1024 * 1024);
-          this.cacheService.set(request.key  , res.result.configuration.value,
-            { maxAge: this.browserCacheTtlService.browserCacheTtl });
-        }
-      }, err => {
-        this.showUploadModal = true;
-        this.initiateUploadModal();
-        this.toasterService.error('Unable to fetch size Limit...Please try later!');
-      });
-    } else {
-      this.showUploadModal = true;
-      this.initiateUploadModal();
-      this.videoSizeLimit = this.formatBytes(_.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024);
-    }
-  }
 
   segregateFileTypes() {
     const extns = (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
@@ -462,20 +439,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   checkFileSizeLimit(fileUpload, mimeType) {
     if (this.videoFileFormat) {
-      if (this.cacheService.get('contentVideoSize')) {
-        const val = _.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024;
+        const val = _.toNumber(this.templateDetails.filesConfig.size.defaultVideoSize) * 1024 * 1024;
         if (this.uploader.getSize(0) < val) {
           this.uploadByURL(fileUpload, mimeType);
         } else {
           this.handleSizeLimitError(this.formatBytes(val));
         }
-      } else {
-        this.handleSizeLimitError('');
-      }
-    } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024)) {
+    } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size.defaultfileSize) * 1024 * 1024)) {
       this.uploadByURL(fileUpload, mimeType);
     } else {
-      this.handleSizeLimitError(`${this.templateDetails.filesConfig.size} MB`);
+      this.handleSizeLimitError(`${this.templateDetails.filesConfig.size.defaultfileSize} MB`);
     }
   }
 
@@ -756,7 +729,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
       this.showUploadModal = false;
       if (!this.contentMetaData.artifactUrl) {
-        this.fetchFileSizeLimit();
+        this.showUploadModal = true;
+        this.initiateUploadModal();
       }
       this.loading = false;
       this.handleActionButtons();
@@ -1067,7 +1041,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changeFile() {
     this.changeFile_instance = true;
     this.uploadButton = false;
-    this.fetchFileSizeLimit();
+    this.showUploadModal = true;
+    this.initiateUploadModal();
   }
 
   getContentStatus(contentId) {
