@@ -122,7 +122,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public formstatus: any;
   public formInputData: any;
 
-  public interceptionTime:any = '00:00';
+  public unFormatedinterceptionTime;
+  public interceptionTime: any = '00:00';
   public interceptionMetaData: any;
   public showquestionCreationUploadModal: boolean;
   public creationComponent;
@@ -826,11 +827,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = true;
       this.showUploadModal = false;
       this.changeFile_instance = false;
+      this.showquestionCreationUploadModal = false;
     } else if (this.modal && this.modal.deny && this.showUploadModal) {
       this.modal.deny();
       this.programStageService.removeLastStage();
       this.programsService.emitHeaderEvent(true);
     }
+    this.showquestionCreationUploadModal = false;
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
     }
@@ -1207,8 +1210,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   addInterception() {
     this.showquestionCreationUploadModal = true;
-    if (this.interceptionTime !== '') {
-      this.interceptionTime = this.format(this.interceptionTime);
+    if (this.unFormatedinterceptionTime !== '') {
+      this.interceptionTime = this.format(this.unFormatedinterceptionTime);
     }
   }
 
@@ -1216,8 +1219,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // console.log('in app: ', JSON.stringify(event));
   }
   eventHandler(event) {
-    if (event.type && event.type === 'pause') {
-      this.interceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime* 10) / 10)
+    if (event.type && event.type === 'timeupdate') {
+      this.unFormatedinterceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime * 10) / 10);
+    } else if (event.type && event.type === 'ended') {
+      this.interceptionTime = '00:00';
     }
   }
 
@@ -1378,7 +1383,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   handleQuestionSetPreview(e) {
-    if (this.contentMetaData && this.contentMetaData.status && this.contentMetaData.status.toLowerCase() !== 'draft') {
+    if (this.contentMetaData && this.contentMetaData.status && this.contentMetaData.status.toLower() !== 'draft') {
       return;
     }
     const event = {

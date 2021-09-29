@@ -92,8 +92,10 @@ export class AzureFileUploaderService {
   }
 
   abortUpload(err?) {
-    _.forEach(this.fileReqBlocks, data => data.controller.abort());
-    this.azurObserver.error(err);
+    if (this.fileReqBlocks.length > 0) {
+      _.forEach(this.fileReqBlocks, data => data.controller.abort());
+      this.azurObserver.error(err);
+    }
   }
 
   handleUploadedData(data) {
