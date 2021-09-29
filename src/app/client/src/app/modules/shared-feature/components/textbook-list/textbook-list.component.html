@@ -11,22 +11,30 @@
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 		</a>
-		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10" (click)="showTextbookFiltersModal = true"
-		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10"
+		(click)="showTextbookFiltersModal = true" appTelemetryInteract
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_' + targetCollections.replace(' ', '_').toLowerCase(),
+		configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,
+		telemetryPageId)"
+		[telemetryInteractObject]="telemetryInteractObject"
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata">
+			<i class="filter icon"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 			<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': targetCollections}}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
-		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10" (click)="downloadCSV()"
-		appTelemetryInteract
-                                                        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_collection_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-                                                        [telemetryInteractObject]="telemetryInteractObject"
-                                                        [telemetryInteractCdata]="telemetryInteractCdata"
-                                                        [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{resourceService.frmelmnts.lbl.downloadProjectDetails | interpolate:'{TARGET_NAME}': targetCollection}}</button>
+		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10"
+		(click)="downloadCSV()" appTelemetryInteract
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_' + targetCollections.replace(' ', '_').toLowerCase() + '_details',
+		configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,
+		telemetryPageId)"
+		[telemetryInteractObject]="telemetryInteractObject"
+		[telemetryInteractCdata]="telemetryInteractCdata"
+		[telemetryInteractPdata]="telemetryInteractPdata">
+			<i class="download icon"></i>
+			{{resourceService.frmelmnts.lbl.downloadProjectDetails | interpolate:'{TARGET_NAME}': targetCollection}}
+		</button>
 	</div>
 </div>
 <div class="sb-pageSection">
@@ -133,11 +141,7 @@
 								[telemetryInteractCdata]="telemetryInteractCdata"
 								[telemetryInteractPdata]="telemetryInteractPdata">
 								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
+								> </sui-select-option>
 							</sui-multi-select>
 						</div>
 					</div>

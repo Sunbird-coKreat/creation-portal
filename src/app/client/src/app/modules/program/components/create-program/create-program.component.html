@@ -82,7 +82,7 @@
 											<input id="public" [disabled]="editPublished" type="radio"
 												name="projectType" [checked]="projectType === 'public'"
 												(click)="setProjectType('public')" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('from_anyone', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
@@ -94,7 +94,7 @@
 												<input id="restricted" [disabled]="editPublished" type="radio"
 													name="projectType" [checked]="projectType === 'restricted'"
 													(click)="setProjectType('restricted')" appTelemetryInteract
-													[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+													[telemetryInteractEdata]="getTelemetryInteractEdata('from_a_selected_set_of_contributors', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 													[telemetryInteractObject]="telemetryInteractObject"
 													[telemetryInteractCdata]="telemetryInteractCdata"
 													[telemetryInteractPdata]="telemetryInteractPdata">
@@ -121,7 +121,7 @@
 											<input id="private" [disabled]="editPublished" type="radio"
 												name="projectType" [checked]="projectType === 'private'"
 												(click)="setProjectType('private')" appTelemetryInteract
-												[telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												[telemetryInteractEdata]="getTelemetryInteractEdata('from_your_organization_only', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata">
@@ -136,7 +136,11 @@
 									<input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
 										name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
 										[checked]="defaultContributeOrgReviewChecked"
-										(change)="defaultContributeOrgReviewChanged($event)">
+										(change)="defaultContributeOrgReviewChanged($event)" appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('Skip_two_level_review', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.radioButton, telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 									<label
 										for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
 								</div>

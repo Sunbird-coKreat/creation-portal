@@ -87,7 +87,7 @@
                 <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
                     <a class="item" [isActive]="activeTab === 'textbook'"  suiTabHeader="2"  (click)="resetStatusFilter('textbook')"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('textbooks', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata(targetCollections.replace(' ', '_').toLowerCase(), config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{targetCollections}}
@@ -103,7 +103,7 @@
                     </a>
                     <a class="item" *ngIf="isSourcingOrgAdmin()" [isActive]="activeTab === 'user'"  suiTabHeader="3"  (click)="resetStatusFilter('user');"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata('aasign_users_to_project', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectAssignUsers)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('assign_users_to_project', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectAssignUsers)"
                     [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.assignUsersToProject}}
                         <!--span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ sourcingOrgUser.length || 0 }}</span-->
@@ -619,7 +619,7 @@
                                     <td>{{resourceService.frmelmnts.lbl.TextbookLevelReportDescription | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{TARGET_NAME}': targetCollection}} </td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('textbookLevelReport')"
                                         appTelemetryInteract
-                                    [telemetryInteractEdata]="getTelemetryInteractEdata('textbook_level_content_report',config.telemetryLabels.eventType.click ,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                    [telemetryInteractEdata]="getTelemetryInteractEdata((targetCollection.replace(' ', '_')).toLowerCase() + '_level_content_report',config.telemetryLabels.eventType.click ,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                     [telemetryInteractObject]="telemetryInteractObject"
                                     [telemetryInteractCdata]="telemetryInteractCdata"
                                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
@@ -629,7 +629,7 @@
                                     <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
                                         appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata('chapter_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata(firstLevelFolderLabel.replace(' ', '_').toLowerCase() + '_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                         [telemetryInteractObject]="telemetryInteractObject"
                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
