@@ -1220,16 +1220,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     // tslint:disable-next-line:max-line-length
     const templateDetails = _.find(this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails), { 'name': event.content.primaryCategory });
     this.programsService.getCategoryDefinition(event.content.primaryCategory,
-       this.programContext.rootorg_id, _.get(templateDetails, 'targetObjectType'))
-    .subscribe((res) => {
-       // tslint:disable-next-line:max-line-length
-       this.defaultfileSize = _.get(res, 'result.objectCategoryDefinition.objectMetadata.config.sourcingConfig.defaultfileSize');
-       // tslint:disable-next-line:max-line-length
-       this.defaultVideoSize  = _.get(res, 'result.objectCategoryDefinition.objectMetadata.config.sourcingConfig.defaultVideoSize');
-      this.handlePreview(event);
-    }, error => {
-      this.handlePreview(event);
-    });
+      this.programContext.rootorg_id, _.get(templateDetails, 'targetObjectType'))
+      .subscribe((res) => {
+        // tslint:disable-next-line:max-line-length
+        this.defaultfileSize = _.get(res, 'result.objectCategoryDefinition.objectMetadata.config.sourcingConfig.defaultfileSize');
+        // tslint:disable-next-line:max-line-length
+        this.defaultVideoSize = _.get(res, 'result.objectCategoryDefinition.objectMetadata.config.sourcingConfig.defaultVideoSize');
+        this.handlePreview(event);
+      }, error => {
+        this.handlePreview(event);
+      });
   }
 
   removeMvcContentFromHierarchy() {
