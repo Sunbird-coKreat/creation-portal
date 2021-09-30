@@ -1290,14 +1290,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             let interceptionPoints = [];
             if (this.interceptionMetaData && Object.keys(this.interceptionMetaData).length === 0) {
               interceptionPoints.push({
-                'tyep': 'QuestionSet',
+                'type': 'QuestionSet',
                 'interceptionPoint': getTimeStamp,
                 'identifier': this.questionSetId
               });
             } else {
               interceptionPoints = this.interceptionMetaData.items;
               interceptionPoints.push({
-                'tyep': 'QuestionSet',
+                'type': 'QuestionSet',
                 'interceptionPoint': getTimeStamp,
                 'identifier': this.questionSetId
               });
@@ -1383,7 +1383,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   handleQuestionSetPreview(e) {
-    if (this.contentMetaData && this.contentMetaData.status && this.contentMetaData.status.toLower() !== 'draft') {
+    if (this.contentMetaData && this.contentMetaData.status && this.contentMetaData.status.toLowerCase() !== 'draft') {
       return;
     }
     const event = {
