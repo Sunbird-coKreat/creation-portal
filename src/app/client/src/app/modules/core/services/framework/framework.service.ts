@@ -6,11 +6,7 @@ import {
   BrowserCacheTtlService
 } from '@sunbird/shared';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-<<<<<<< HEAD
-import { skipWhile, mergeMap, map} from 'rxjs/operators';
-=======
 import { skipWhile, mergeMap, map } from 'rxjs/operators';
->>>>>>> 1b7ab8b4b0e2fb1ecddbe98a6d4a42708a714e4a
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
 import { CacheService } from 'ng2-cache-service';
