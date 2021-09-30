@@ -113,7 +113,6 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
     expect(component.initializeProjectScopeForm).toHaveBeenCalled();
     expect(component.setTelemetryStartData).toHaveBeenCalled();
-    expect(component.fetchBlueprintTemplate).toHaveBeenCalled();
     expect(component['pageStartTime']).toBeDefined();
   });
 
@@ -214,8 +213,9 @@ describe('CreateProgramComponent', () => {
     component.initializeCreateProgramForm();
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
   });
-  /*it('getProgramDetails Should call apiErrorHandling method', () => {
-    component.programId = 'bnbabcd12345';
+
+  xit('getProgramDetails Should call apiErrorHandling method', () => {
+    component.programId = 'abcd12345';
     component.telemetryPageId = 'create-program';
     component.telemetryInteractCdata = {};
     const programsService = TestBed.get(ProgramsService);
@@ -228,7 +228,7 @@ describe('CreateProgramComponent', () => {
     expect(component.programDetails).toEqual({});
     expect(component.selectedTargetCollection).toBeUndefined();
     expect(sourcingService.apiErrorHandling).toHaveBeenCalled();
-  });*/
+  });
 
   it('getUploadVideo Should call sourcingService.getVideo method', () => {
     const sourcingService = TestBed.get(SourcingService);

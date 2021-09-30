@@ -10,7 +10,8 @@
     "enrolledCourses": {
       "fields": "contentType,topic,name,channel",
       "batchDetails": "name,endDate,startDate,status,enrollmentType,createdBy,certificates"
-    }
+    },
+    "questionSetRead": "instructions"
   },
   "URLS": {
     "LEARNER_PREFIX": "/learner/",
@@ -98,7 +99,8 @@
       "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
     },
     "QUESTIONSET" : {
-      "GET": "questionset/v1/read"
+      "GET": "questionset/v1/read",
+      "HIERARCHY_READ": "questionset/v1/hierarchy"
     },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",

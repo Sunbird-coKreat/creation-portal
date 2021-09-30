@@ -84,14 +84,26 @@
       </div>
 
      <div class="d-flex">
-      <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
-        appTelemetryInteract
-        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
-        [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata"
-        popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted' && mvcLibraryFeatureConfiguration === 'enable'">
-          <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+       <ng-container *ngIf="sessionContext['addFromLibraryBetaEnabled']; else noLibrary">
+         <button (click)="addFromLibrary($event, collection)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+                 appTelemetryInteract
+                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+                 [telemetryInteractCdata]="telemetryInteractCdata"
+                 [telemetryInteractPdata]="telemetryInteractPdata"
+                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && sessionContext['addFromLibraryBetaEnabled']">
+           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+       </ng-container>
+       <ng-template #noLibrary>
+         <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+                 appTelemetryInteract
+                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+                 [telemetryInteractCdata]="telemetryInteractCdata"
+                 [telemetryInteractPdata]="telemetryInteractPdata"
+                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted' && mvcLibraryFeatureConfiguration === 'enable'">
+           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+       </ng-template>
 
       <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
         *ngIf="visibility && visibility['showAddresource']"

@@ -34,6 +34,7 @@ export interface ISessionContext { // TODO: remove any 'textbook' reference
   questionSetEditorDetails?: any;
   targetCollectionFrameworksData?: any;
   targetCollectionPrimaryCategory?: any;
+  targetCollectionMimetype?: any;
 }
 
 export interface IPagination {

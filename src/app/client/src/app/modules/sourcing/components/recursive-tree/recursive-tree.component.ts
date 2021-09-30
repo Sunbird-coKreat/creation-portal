@@ -104,6 +104,16 @@ export class RecursiveTreeComponent implements OnInit {
     });
   }
 
+  addFromLibrary(e, collection) {
+    e.stopPropagation();
+    this.showModal = true;
+    this.nodeMeta.emit({
+      action: 'addFromLibrary',
+      showPopup: this.showModal,
+      collection: collection
+    });
+  }
+
   createResource(e, collection) {
     e.stopPropagation();
     this.showModal = true;

@@ -703,6 +703,10 @@ export class BulkUploadComponent implements OnInit {
       const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
       sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
     }
+    let creatorName = this.userProfile.firstName;
+      if (!_.isEmpty(this.userProfile.lastName)) {
+        creatorName = this.userProfile.firstName + ' ' + this.userProfile.lastName;
+      }
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -711,7 +715,8 @@ export class BulkUploadComponent implements OnInit {
         source: source,
         artifactUrl: source,
         appIcon: this.getDownloadableLink(row.appIcon),
-        creator: row.creator,
+        creator: creatorName,
+        author: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
         mimeType: this.getMimeType(_.toLower(row.fileFormat)),
