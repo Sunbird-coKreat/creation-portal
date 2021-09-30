@@ -41,9 +41,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // tslint:disable-next-line:max-line-length
-    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dock_default_file_size')).value;
+    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value;
     // tslint:disable-next-line:max-line-length
-    this.defaultVideoSize = (<HTMLInputElement>document.getElementById('dock_default_video_size')).value;
+    this.defaultVideoSize = (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value;
     this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
     console.log(this.templateList);
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
