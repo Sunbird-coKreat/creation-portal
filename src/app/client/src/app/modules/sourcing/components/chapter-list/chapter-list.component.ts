@@ -117,7 +117,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private deviceId: string;
   private buildNumber: string;
   private portalVersion: string;
-  public defaultfileSize: any;
+  public defaultFileSize: any;
   public defaultVideoSize: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -136,6 +136,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
+    // tslint:disable-next-line:max-line-length
+    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dock_default_file_size')).value;
+    // tslint:disable-next-line:max-line-length
+    this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dock_default_video_size')).value;
     this.setUserAccess();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
@@ -1140,9 +1144,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
         this.templateDetails.filesConfig['size'] = {
           // tslint:disable-next-line:max-line-length
-          defaultfileSize:  this.defaultfileSize ? this.defaultfileSize : this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize,
+          defaultfileSize:  this.defaultFileSize,
           // tslint:disable-next-line:max-line-length
-          defaultVideoSize:  this.defaultVideoSize ? this.defaultVideoSize : this.configService.contentCategoryConfig.sourcingConfig.defaultVideoSize
+          defaultVideoSize:  this.defaultVideoSize
         }
         ;
         this.templateDetails.questionCategories = event.content.questionCategories;
@@ -1204,7 +1208,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         break;
       case 'preview':
         this.contentId = event.content.identifier;
-        this.getCategoryDefinition(event);
+        this.handlePreview(event);
         break;
       case 'addFromLibrary':
         this.currentStage = 'addFromLibrary';
@@ -1215,21 +1219,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         break;
     }
     this.resourceTemplateInputData();
-  }
-  getCategoryDefinition(event) {
-    // tslint:disable-next-line:max-line-length
-    const templateDetails = _.find(this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails), { 'name': event.content.primaryCategory });
-    this.programsService.getCategoryDefinition(event.content.primaryCategory,
-      this.programContext.rootorg_id, _.get(templateDetails, 'targetObjectType'))
-      .subscribe((res) => {
-        // tslint:disable-next-line:max-line-length
-        this.defaultfileSize = _.get(res, 'result.objectCategoryDefinition.objectMetadata.config.sourcingConfig.defaultfileSize');
-        // tslint:disable-next-line:max-line-length
-        this.defaultVideoSize = _.get(res, 'result.objectCategoryDefinition.objectMetadata.config.sourcingConfig.defaultVideoSize');
-        this.handlePreview(event);
-      }, error => {
-        this.handlePreview(event);
-      });
   }
 
   removeMvcContentFromHierarchy() {

@@ -32,12 +32,18 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public selectedtemplateDetails;
   public showModeofCreationModal = false;
   public showQuestionTypeModal = false;
+  public defaultFileSize: any;
+  public defaultVideoSize: any;
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
     public configService: ConfigService, public resourceService: ResourceService,
     private programsService: ProgramsService, private toasterService: ToasterService) { }
 
 
   ngOnInit() {
+    // tslint:disable-next-line:max-line-length
+    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dock_default_file_size')).value;
+    // tslint:disable-next-line:max-line-length
+    this.defaultVideoSize = (<HTMLInputElement>document.getElementById('dock_default_video_size')).value;
     this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
     console.log(this.templateList);
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
@@ -151,13 +157,11 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
     this.selectedtemplateDetails['filesConfig'] = {};
     this.selectedtemplateDetails.filesConfig['accepted'] = (!_.isEmpty(filesConfig)) ? _.join(_.compact(filesConfig), ', ') : '';
-    const defaultfileSize =   _.get(this.selectedtemplateDetails, 'objectMetadata.config.sourcingConfig.defaultfileSize');
-    const defaultVideoSize =   _.get(this.selectedtemplateDetails, 'objectMetadata.config.sourcingConfig.defaultVideoSize');
     this.selectedtemplateDetails.filesConfig['size'] = {
       // tslint:disable-next-line:max-line-length
-      defaultfileSize:  defaultfileSize ? defaultfileSize : this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize,
+      defaultfileSize:  this.defaultFileSize,
       // tslint:disable-next-line:max-line-length
-      defaultVideoSize: defaultVideoSize ? defaultVideoSize : this.configService.contentCategoryConfig.sourcingConfig.defaultVideoSize,
+      defaultVideoSize: this.defaultVideoSize
     };
     this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
   }
