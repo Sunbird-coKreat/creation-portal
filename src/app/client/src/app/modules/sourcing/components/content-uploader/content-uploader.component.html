@@ -130,10 +130,12 @@
     <div class="show-interactive-question-set"> 
       <ul class="question-ul" *ngIf="interceptionMetaData?.items?.length> 0">
           <li class="question-li" *ngFor="let interceptionPoint of interceptionMetaData?.items">
-              <div class="background-set" (click)="handleQuestionSetPreview(interceptionPoint)">
+              <div class="background-set" >
                   <div class="timer-div">{{format(interceptionPoint.interceptionPoint)}}</div>
                   <div class="question-set-name">{{interactiveQuestionSets[interceptionPoint.identifier]}}</div>
-              </div> 
+                  <div class="edit-div" (click)="handleQuestionSetPreview(interceptionPoint)"><i class="edit icon edit-icon"></i></div> 
+                  <div class="delete-div"><i class="delete icon delete-icon"></i></div> 
+              </div>
           </li>
       </ul>
   </div>
