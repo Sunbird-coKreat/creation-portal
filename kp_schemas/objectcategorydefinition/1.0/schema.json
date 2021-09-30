@@ -86,6 +86,9 @@
     },
     "consumerId": {
       "type": "string"
+    },
+    "label": {
+      "type": "string"
     }
   },
   "additionalProperties": false

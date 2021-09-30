@@ -6,7 +6,7 @@ import {
   BrowserCacheTtlService
 } from '@sunbird/shared';
 import { Observable, BehaviorSubject, of } from 'rxjs';
-import { skipWhile, mergeMap, map} from 'rxjs/operators';
+import { skipWhile, mergeMap, map } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
 import { CacheService } from 'ng2-cache-service';
@@ -220,7 +220,6 @@ export class FrameworkService {
       this.setOrgAndTargetFrameworkCategories();
     });
   }
-
   getFrameworkData(channel?, type?, identifier?, systemDefault?) {
     const option = {
       url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
@@ -239,7 +238,6 @@ export class FrameworkService {
       };
     return this.learnerService.post(option);
   }
-
   public readChannel(hashTagId?) {
     const channelKey =  hashTagId ? hashTagId : this.userService.hashTagId;
     const channelData = this.cacheService.get(channelKey);

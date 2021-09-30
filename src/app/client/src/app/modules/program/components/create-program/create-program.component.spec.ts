@@ -214,8 +214,9 @@ describe('CreateProgramComponent', () => {
     component.initializeCreateProgramForm();
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
   });
-  /*it('getProgramDetails Should call apiErrorHandling method', () => {
-    component.programId = 'bnbabcd12345';
+
+  xit('getProgramDetails Should call apiErrorHandling method', () => {
+    component.programId = 'abcd12345';
     component.telemetryPageId = 'create-program';
     component.telemetryInteractCdata = {};
     const programsService = TestBed.get(ProgramsService);
