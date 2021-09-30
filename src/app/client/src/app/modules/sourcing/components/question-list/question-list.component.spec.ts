@@ -73,6 +73,7 @@ describe('QuestionListComponent', () => {
     component.sessionContext = {targetCollectionFrameworksData: {
       framework: 'cbse_framework'
     }};
+    component.questionList = ['do_123'];
     component.sessionContext['questionList'] = ['do_123'];
     component.questionCreationChild = TestBed.createComponent(McqCreationStubComponent).componentInstance as McqCreationComponent;
     // fixture.autoDetectChanges();
@@ -166,8 +167,9 @@ describe('QuestionListComponent', () => {
     expect(component.getQuestionDetails).toHaveBeenCalled();
   });
 
-  it('should Call createNewQuestion call createDefaultAssessmentItem', async() => {
+  xit('should Call createNewQuestion call createDefaultAssessmentItem', async() => {
     component.questionList = [];
+    component.sessionContext.questionList = [];
     component.resourceName = 'abcd';
     spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(true);
     spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(true);
