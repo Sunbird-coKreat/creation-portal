@@ -1379,7 +1379,7 @@ showTexbooklist(showTextBookSelector = true) {
   }
 
   initEditBlueprintForm(collection) {
-   [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.frameworkCategories);
+   [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.programScope.framework.categories);
    let blueprint = {};
     this.blueprintTemplate.properties.forEach( (property) => {
       if(!property.default) {
