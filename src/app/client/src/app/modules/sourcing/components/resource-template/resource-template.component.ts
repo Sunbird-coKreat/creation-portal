@@ -32,18 +32,14 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public selectedtemplateDetails;
   public showModeofCreationModal = false;
   public showQuestionTypeModal = false;
-  public defaultFileSize: any;
-  public defaultVideoSize: any;
+  public defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value;
+  public defaultVideoSize = (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value;
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
     public configService: ConfigService, public resourceService: ResourceService,
     private programsService: ProgramsService, private toasterService: ToasterService) { }
 
 
   ngOnInit() {
-    // tslint:disable-next-line:max-line-length
-    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value;
-    // tslint:disable-next-line:max-line-length
-    this.defaultVideoSize = (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value;
     this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
     console.log(this.templateList);
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');

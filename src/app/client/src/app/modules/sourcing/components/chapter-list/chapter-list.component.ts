@@ -117,8 +117,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private deviceId: string;
   private buildNumber: string;
   private portalVersion: string;
-  public defaultFileSize: any;
-  public defaultVideoSize: any;
+  public defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value;
+  public defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -136,10 +136,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
-    // tslint:disable-next-line:max-line-length
-    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value;
-    // tslint:disable-next-line:max-line-length
-    this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value;
     this.setUserAccess();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
