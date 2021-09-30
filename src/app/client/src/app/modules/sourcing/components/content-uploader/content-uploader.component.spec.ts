@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ContentUploaderComponent } from './content-uploader.component';
 import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { DebugElement, ChangeDetectorRef} from '@angular/core';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
@@ -13,19 +13,23 @@ import {
 import { CacheService } from 'ng2-cache-service';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { TelemetryService } from '@sunbird/telemetry';
-import { of as observableOf, throwError as observableError } from 'rxjs';
-import { ActionService, PlayerService, FrameworkService, UserService } from '@sunbird/core';
+import { of as observableOf, throwError as observableError, of } from 'rxjs';
+import { ActionService, PlayerService, FrameworkService, UserService, NotificationService, ProgramsService, ContentService,
+  CoreModule } from '@sunbird/core';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { RouterTestingModule } from '@angular/router/testing';
 import {contentUploadComponentInput, contentMetaData, contentMetaData1, playerConfig, frameworkDetails,
              licenseDetails, updateContentResponse, getPreSignedUrl,
              contentUploadComponentInput1, userProfile, addParticipentResponseSample} from './content-uploader.component.data';
 import { HelperService } from '../../services/helper.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as _ from 'lodash-es';
+import { SourcingService } from '../../services';
+import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
+import { AzureFileUploaderService } from '../../services';
 
 // Following describe method is for 'PREVIEW' scenario
 xdescribe('ContentUploaderComponent', () => {
@@ -35,7 +39,6 @@ xdescribe('ContentUploaderComponent', () => {
   // tslint:disable-next-line:prefer-const
   let errorInitiate;
     // tslint:disable-next-line:prefer-const
-  let errorInitiate1;
   const actionServiceStub = {
     patch() {
       if (errorInitiate) {
@@ -94,33 +97,52 @@ xdescribe('ContentUploaderComponent', () => {
       userId: '123456789'
     }
   };
-
-  let helperService: any;
+  const activatedRouteStub = {
+    data: of({
+      config: {
+        question_categories: [
+          'vsa',
+          'sa',
+          'la',
+          'mcq'
+        ]
+      }
+    }),
+    snapshot: {
+      root: { firstChild: { data: { telemetry: { env: 'env' } } } },
+      data: {
+        telemetry: { env: 'env' }
+      }
+    }
+  };
 
   beforeEach(async(() => {
-    helperService = jasmine.createSpy('HelperService');
+    //helperService = jasmine.createSpy('HelperService');
     // helperService.getNotification();
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule, SharedModule],
       declarations: [ ContentUploaderComponent ],
-      providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService,
-         TelemetryService, PlayerService, ResourceService, DatePipe,
+      providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, SourcingService, ProgramsService,
+         TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService,
+         AzureFileUploaderService, ContentService, 
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
                   { provide: HelperService, useValue: helperServiceStub }, { provide: ResourceService, useValue: resourceServiceStub },
-                  {provide: UserService, useValue: userServiceStub},
-                  {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}}]
+                  { provide: UserService, useValue: userServiceStub },
+                  { provide: ActivatedRoute, useValue: activatedRouteStub }]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ContentUploaderComponent);
-    component = fixture.componentInstance;
+    component = fixture.debugElement.componentInstance;
     debugElement = fixture.debugElement;
+    //debugElement = fixture.debugElement;
     component.contentUploadComponentInput = contentUploadComponentInput;
-    fixture.autoDetectChanges();
+    component.sessionContext = contentUploadComponentInput.sessionContext;
+    fixture.detectChanges();
   });
   afterEach(() => {
     fixture.destroy();
@@ -213,7 +235,27 @@ describe('ContentUploaderComponent', () => {
         return playerConfig;
     }
   };
-
+  const helperServiceStub = {
+    getLicences() {
+      return observableOf(licenseDetails);
+    },
+    publishContent() {
+      return observableOf({
+        result: { node_id: '123'}
+      });
+    },
+    submitRequestChanges() {
+      return observableOf({
+        result: { node_id: '123'}
+      });
+    },
+    initializeFormFields() {
+      return [{code: 'name'}];
+    },
+    validateFormConfiguration() {
+      return false;
+    }
+  };
   const frameWorkServiceStub = {
     initialize() {
       return null;
@@ -236,19 +278,52 @@ describe('ContentUploaderComponent', () => {
     userid: userProfile.userId,
     userProfile : userProfile
   };
+  const resourceServiceStub = {
+    messages: {
+      fmsg: {
+        m0076: 'Please Fill Mandatory Fields!',
+      },
+      smsg: {
+        m0060: 'Content added to Hierarchy Successfully...'
+      }
+    }
+  };
+  const activatedRouteStub = {
+    data: of({
+      config: {
+        question_categories: [
+          'vsa',
+          'sa',
+          'la',
+          'mcq'
+        ]
+      }
+    }),
+    snapshot: {
+      root: { firstChild: { data: { telemetry: { env: 'env' } } } },
+      data: {
+        telemetry: { env: 'env' }
+      }
+    }
+  };
+  class RouterStub {
+    navigate = jasmine.createSpy('navigate');
+    url = jasmine.createSpy('url');
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
-                  RouterTestingModule, TelemetryModule],
+      imports: [ SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
+                  RouterTestingModule, TelemetryModule, SharedModule, CoreModule ],
       declarations: [ ContentUploaderComponent ],
-      providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, TelemetryService, PlayerService, ResourceService,
+      providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, SourcingService, ProgramsService,
+         TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService,
+         AzureFileUploaderService, ContentService, DeviceDetectorService,
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
-                 {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}},
-                 {provide: UserService, useValue: userServiceStub},
-                 HelperService, DeviceDetectorService],
-      schemas: [NO_ERRORS_SCHEMA]
+                  { provide: HelperService, useValue: helperServiceStub }, { provide: ResourceService, useValue: resourceServiceStub },
+                  { provide: UserService, useValue: userServiceStub },
+                  { provide: ActivatedRoute, useValue: activatedRouteStub }]
     })
     .compileComponents();
   }));
@@ -375,7 +450,7 @@ xdescribe('ContentUploaderComponent', () => {
   const helperServiceStub = {
     getLicences() {
       return observableOf(licenseDetails);
-  },
+    },
     publishContent() {
       return observableOf({
         result: { node_id: '123'}

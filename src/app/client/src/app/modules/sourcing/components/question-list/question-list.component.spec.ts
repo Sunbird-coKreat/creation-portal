@@ -6,9 +6,9 @@ import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-seman
 import { TelemetryModule, TelemetryInteractDirective } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { DebugElement, NO_ERRORS_SCHEMA, ChangeDetectorRef} from '@angular/core';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
-import { FormsModule, ReactiveFormsModule, NgForm } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, NgForm, FormBuilder } from '@angular/forms';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import {
   ResourceService, ToasterService, SharedModule, ConfigService, UtilService, BrowserCacheTtlService,
@@ -16,17 +16,20 @@ import {
 import { CacheService } from 'ng2-cache-service';
 import { TelemetryService } from '@sunbird/telemetry';
 import { of as observableOf, of, throwError as observableError } from 'rxjs';
-import { ActionService, PlayerService, FrameworkService, UserService } from '@sunbird/core';
+import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { HelperService } from '../../services/helper.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { McqCreationStubComponent } from '../mcq-creation/mcq-creation-stub.component.spec';
 import { ProgramStageService } from '../../../program/services';
+import { ProgramTelemetryService } from '../../../program/services';
 import { questionData, programContext } from './question-list.component.spec.data';
+import { ItemsetService } from '../../services/itemset/itemset.service';
+import { SourcingService } from '../../services';
 
 describe('QuestionListComponent', () => {
 
@@ -41,7 +44,10 @@ describe('QuestionListComponent', () => {
     },
     slug: 'custchannel'
   };
-
+  class RouterStub {
+    navigate = jasmine.createSpy('navigate');
+    url = jasmine.createSpy('url');
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
@@ -49,10 +55,13 @@ describe('QuestionListComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [ QuestionListComponent, McqCreationStubComponent ],
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService,
-      TelemetryService, PlayerService, ResourceService, DatePipe,
+      TelemetryService, ResourceService, DatePipe,
       CacheService, BrowserCacheTtlService, NavigationHelperService,
-      HelperService,
+      HelperService, ActionService, ChangeDetectorRef, FormBuilder, NotificationService,
+      SourcingService, ContentService, ItemsetService, ProgramStageService, 
+      ProgramsService, FrameworkService, ProgramTelemetryService,
       {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}},
+      {provide: Router, useValue: RouterStub},
       DeviceDetectorService, { provide: UserService, useValue: UserServiceStub }]
     })
     .compileComponents();
@@ -64,6 +73,7 @@ describe('QuestionListComponent', () => {
     component.sessionContext = {targetCollectionFrameworksData: {
       framework: 'cbse_framework'
     }};
+    component.sessionContext['questionList'] = ['do_123'];
     component.questionCreationChild = TestBed.createComponent(McqCreationStubComponent).componentInstance as McqCreationComponent;
     // fixture.autoDetectChanges();
   });
@@ -180,6 +190,7 @@ describe('QuestionListComponent', () => {
   });
 
   it('should Call questionStatusHandler', () => {
+    component.sessionContext['questionList'] = ['do_123'];
     spyOn(component, 'handleQuestionTabChange');
     component.questionStatusHandler({'evnt': 'call'});
     expect(component.handleQuestionTabChange).toHaveBeenCalled();

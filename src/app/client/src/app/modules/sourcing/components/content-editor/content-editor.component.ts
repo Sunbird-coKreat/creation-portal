@@ -79,7 +79,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     private configService: ConfigService,
     private userService: UserService,
     private _zone: NgZone,
-    private tenantService: TenantService,
     private telemetryService: TelemetryService,
     private router: Router,
     private navigationHelperService: NavigationHelperService,

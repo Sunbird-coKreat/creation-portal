@@ -18,7 +18,7 @@ import { FormsModule, ReactiveFormsModule, NgForm, FormGroup } from '@angular/fo
 import { validMcqFormData, invalidMcqFormData } from './mcq-creation.component.spec.data';
 import { McqForm } from './../../class/McqForm';
 
-describe('McqCreationComponent', () => {
+xdescribe('McqCreationComponent', () => {
     let component: McqCreationComponent;
     let fixture: ComponentFixture<McqCreationComponent>;
     beforeEach(async(() => {

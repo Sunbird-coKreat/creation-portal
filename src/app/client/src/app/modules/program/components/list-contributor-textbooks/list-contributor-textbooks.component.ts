@@ -1,11 +1,9 @@
 import { IImpressionEventInput, IInteractEventEdata} from '@sunbird/telemetry';
 import { ResourceService, ConfigService, NavigationHelperService, ToasterService } from '@sunbird/shared';
-import { ProgramsService, PublicDataService, UserService, FrameworkService,
-  ActionService, NotificationService, ContentHelperService} from '@sunbird/core';
+import { ProgramsService, UserService, FrameworkService, NotificationService, ContentHelperService} from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { IChapterListComponentInput } from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
 import { ProgramStageService } from '../../services/';
@@ -16,7 +14,7 @@ import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
-import { throwError, forkJoin } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-list-contributor-textbooks',
@@ -69,14 +67,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public telemetryInteractObject: any;
   public telemetryPageId: string;
   public targetCollections: string;
+  private onComponentDestroy$ = new Subject<any>();
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
-    public config: ConfigService, private publicDataService: PublicDataService,
-  private activatedRoute: ActivatedRoute, private router: Router, public programStageService: ProgramStageService,
-  private navigationHelperService: NavigationHelperService,  private httpClient: HttpClient,
-  public toasterService: ToasterService, public actionService: ActionService,
-  private collectionHierarchyService: CollectionHierarchyService, private contentHelperService: ContentHelperService,
-  private notificationService: NotificationService, private sourcingService: SourcingService, private helperService: HelperService) { }
+    public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router, 
+    public programStageService: ProgramStageService, private navigationHelperService: NavigationHelperService,
+    public toasterService: ToasterService, private collectionHierarchyService: CollectionHierarchyService, 
+    private contentHelperService: ContentHelperService, private notificationService: NotificationService, 
+    private sourcingService: SourcingService, private helperService: HelperService) { }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -464,5 +462,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 }

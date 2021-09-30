@@ -2,14 +2,14 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
 import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
-import { PublicDataService, UserService, ActionService, PlayerService, FrameworkService, NotificationService,
+import { UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
 import { throwError, Observable, Subject } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
-import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
+import { FormGroup, FormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
 import { AzureFileUploaderService } from '../../services';
 import { HelperService } from '../../services/helper.service';
@@ -113,9 +113,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public formInputData: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
-    private publicDataService: PublicDataService, public actionService: ActionService,
-    public playerService: PlayerService, public configService: ConfigService, private formBuilder: FormBuilder,
-    private sourcingService: SourcingService, public frameworkService: FrameworkService,
+    public actionService: ActionService, public playerService: PlayerService, 
+    public configService: ConfigService, private sourcingService: SourcingService, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, private helperService: HelperService,
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,

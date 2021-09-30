@@ -1,17 +1,16 @@
 import { async, TestBed, ComponentFixture } from '@angular/core/testing';
-import { SharedModule, ResourceService, ConfigService } from '@sunbird/shared';
-import { FrameworkService, UserService, ExtPluginService, ProgramsService , RegistryService} from '@sunbird/core';
-
+import { SharedModule, ToasterService, ConfigService, ResourceService, NavigationHelperService, PaginationService } from '@sunbird/shared';
+import { ProgramsService, UserService, FrameworkService, NotificationService, ContentHelperService, RegistryService } from '@sunbird/core';
 import { DynamicModule } from 'ng-dynamic-component';
 import * as _ from 'lodash-es';
-import {  throwError , of } from 'rxjs';
+import {  throwError , of, Subject } from 'rxjs';
 import * as SpecData from './program-nominations.spec.data';
 import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 import { ProgramNominationsComponent } from './program-nominations.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TelemetryModule } from '@sunbird/telemetry';
+import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DaysToGoPipe, TextbookListComponent } from '../../../shared-feature';
@@ -21,6 +20,8 @@ import { ContributorProfilePopupComponent } from '../contributor-profile-popup/c
 import { convertToParamMap } from '@angular/router';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
+import {ProgramTelemetryService} from '../../services';
+import { SourcingService } from '../../../sourcing/services';
 
 const errorInitiate = false;
 const userServiceStub = {
@@ -100,7 +101,13 @@ describe('ProgramNominationsComponent', () => {
         tab: 'contributionDashboard'
     }))
   };
-
+  const resourceBundle = {
+    messages: {
+      emsg: {
+        blueprintViolation : 'Please provide all required blueprint values'
+      }
+    }
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -120,33 +127,15 @@ describe('ProgramNominationsComponent', () => {
         ContributorProfilePopupComponent
       ],
       providers: [
-        {
-          provide: Router,
-          useClass: RouterStub
-        }, {
-          provide: FrameworkService,
-          useValue: frameworkServiceStub
-        },
-        {
-          provide: UserService,
-          useValue: userServiceStub
-        },
-        {
-          provide: ActivatedRoute,
-          useValue: fakeActivatedRoute
-        },
-        {
-          provide: ExtPluginService,
-          useValue: extPluginServiceStub
-        },
-        DatePipe,
-        ResourceService,
-        CollectionHierarchyService,
-        HelperService,
-        ProgramStageService,
-        RegistryService,
-        ConfigService
-      ]
+        { provide: Router, useClass: RouterStub },
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        { provide: UserService, useValue: userServiceStub },
+        { provide: ResourceService, useValue: resourceBundle },
+        ToasterService, ConfigService, DatePipe, ProgramStageService, 
+        ProgramsService, FrameworkService, HelperService, Subject, PaginationService,
+        NavigationHelperService, CollectionHierarchyService, ContentHelperService,
+        SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
+      ],
     }).compileComponents();
   }));
 

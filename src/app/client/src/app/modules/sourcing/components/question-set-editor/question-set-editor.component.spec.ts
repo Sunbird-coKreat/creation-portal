@@ -9,7 +9,10 @@ import { TelemetryService } from '@sunbird/telemetry';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
-import { UserService } from '@sunbird/core';
+import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
+import { SourcingService } from '../../services';
+import { ProgramStageService } from '../../../program/services';
+import { HelperService } from '../../services/helper.service';
 import { of as observableOf, of, throwError as observableError } from 'rxjs';
 
 describe('QuestionSetEditorComponent', () => {
@@ -43,6 +46,8 @@ describe('QuestionSetEditorComponent', () => {
       declarations: [QuestionSetEditorComponent],
       providers: [ConfigService, TelemetryService, CacheService, CollectionHierarchyService,
         BrowserCacheTtlService, ToasterService, ResourceService, DatePipe, NavigationHelperService,
+        FrameworkService, ProgramsService, ContentService, ProgramStageService, HelperService,
+        SourcingService, NotificationService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: APP_BASE_HREF, useValue: '/' },
         { provide: UserService, useValue: UserServiceStub }],
