@@ -11,6 +11,8 @@ import { SourcingService, HelperService } from '../../../sourcing/services';
 import { MyContentComponent } from './my-content.component';
 import { mockData } from './my-content.component.spec.data';
 import { of, throwError as observableThrowError } from 'rxjs';
+import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player-v9';
+import { SuiPopupModule } from 'ng2-semantic-ui-v9';
 
 describe('MyContentComponent', () => {
   let component: MyContentComponent;
@@ -33,7 +35,8 @@ describe('MyContentComponent', () => {
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(), PlayerHelperModule],
+      imports: [HttpClientTestingModule, QumlLibraryModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
+                PlayerHelperModule, SuiPopupModule],
       declarations: [ MyContentComponent ],
       providers: [
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },

@@ -219,7 +219,7 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeFormFields).toHaveBeenCalled();
   });
 
-  it('getProgramDetails Should call apiErrorHandling method', () => {
+  xit('getProgramDetails Should call apiErrorHandling method', () => {
     component.programId = 'abcd12345';
     component.telemetryPageId = 'create-program';
     component.telemetryInteractCdata = {};
@@ -369,28 +369,28 @@ describe('CreateProgramComponent', () => {
   });
 
   it('Should call the fetchFrameWorkDetails method', () => {
-    component['frameworkService'] = TestBed.get(FrameworkService);
-    spyOn(component['frameworkService'], 'initialize').and.callFake(()  => {});
-    spyOn(component, 'setFrameworkDataToProgram').and.callFake(() => {});
+    component.frameworkCategories = [];
+    const frameworkService = TestBed.get(FrameworkService);
+    spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of(mockData.frameworkDetails.frameworkdata.NCFCOPY));
+    spyOn(frameworkService, 'readChannel').and.returnValue(of(mockData.channelData.channel))
+    spyOn(component, 'setFrameworkDataToProgram').and.callThrough();
+    spyOn(component, 'frameworkService').and.callFake(() => {});
     spyOn(component, 'fetchFrameWorkDetails').and.callThrough();
-    spyOn(component['frameworkService'].frameworkData$, 'pipe').and.returnValue(of({frameworkdata:
-      {defaultFramework: {identifier: 'nit_k12', categories: []}}}));
+    spyOn(component, 'setCategoriesFromChannel').and.callThrough();
     component.fetchFrameWorkDetails();
     expect(component.fetchFrameWorkDetails).toHaveBeenCalled();
-    expect(component['frameworkService'].initialize).toHaveBeenCalled();
-    expect(component['userFramework']).toBeDefined();
+    expect(component['frameworkService'].readFramworkCategories).toHaveBeenCalled();
+    expect(component['frameworkService'].readChannel).toHaveBeenCalled();
     expect(component['frameworkCategories']).toBeDefined();
+    expect(component.setCategoriesFromChannel).toHaveBeenCalled();
     expect(component.setFrameworkDataToProgram).toHaveBeenCalled();
   });
 
   it('setFrameworkDataToProgram should set varible data', () => {
-    component.frameworkCategories = [];
-    const cacheService = TestBed.get(CacheService);
-    spyOn(cacheService, 'get').and.returnValue(mockData.channelData);
+    component.frameworkCategories = mockData.frameworkDetails.frameworkdata.NCFCOPY.categories;
     spyOn(component, 'setFrameworkDataToProgram').and.callThrough();
     component.setFrameworkDataToProgram();
     expect(component.setFrameworkDataToProgram).toHaveBeenCalled();
-    expect(cacheService.get).toHaveBeenCalled();
     expect(component.programScope).toBeDefined();
   });
 

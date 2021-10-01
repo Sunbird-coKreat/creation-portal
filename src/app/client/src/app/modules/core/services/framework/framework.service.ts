@@ -5,8 +5,8 @@ import {
   ConfigService, ToasterService, ResourceService, ServerResponse, Framework, FrameworkData,
   BrowserCacheTtlService
 } from '@sunbird/shared';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { skipWhile, mergeMap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { skipWhile, mergeMap, map } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
 import { CacheService } from 'ng2-cache-service';
@@ -218,5 +218,48 @@ export class FrameworkService {
 
       this.setOrgAndTargetFrameworkCategories();
     });
+  }
+
+  public readChannel(hashTagId?) {
+    const channelKey =  hashTagId ? hashTagId : this.userService.hashTagId;
+    const channelData = this.cacheService.get(channelKey);
+    if (channelData) {
+       return of(channelData);
+    } 
+    return this.getDefaultFrameWork(channelKey).pipe(
+      map(data => {
+        this.setChannelData(channelKey, data)
+        return _.get(data, 'result.channel')
+      }));
+  }
+
+  public readFramworkCategories(framework?: string) {
+    const channelData = this.cacheService.get(this.userService.hashTagId);
+    const frameworkData = this.cacheService.get(this.userService.hashTagId);
+    let frameWorkToGet;
+    if (!framework) {
+        const defaultFrameworkInCache = this.cacheService.get(_.get(channelData, 'defaultFramework'));
+        if (channelData && _.get(channelData, 'defaultFramework') && defaultFrameworkInCache) {
+          return of(this.cacheService.get(_.get(channelData, 'defaultFramework')))
+        } 
+        if (channelData && _.get(channelData, 'defaultFramework') && !defaultFrameworkInCache) {
+          frameWorkToGet = _.get(channelData, 'defaultFramework');
+        }
+    } else {
+      if (this.cacheService.get(framework)) {
+        return of(this.cacheService.get(framework));
+      } else {
+        frameWorkToGet = framework;
+      }
+    }    
+    if (frameWorkToGet) { 
+      return this.getFrameworkCategories(frameWorkToGet).pipe(
+      map(data => {
+        this.setFrameWorkData(data)
+        return _.get(data, 'result.framework');
+      }));
+    } else {
+      return of({});
+    } 
   }
 }
