@@ -138,8 +138,8 @@
               </div>
           </li>
       </ul>
-  </div>
-  </div>
+    </div>
+    </div>
 </div>
 </div>
 </div>
@@ -153,59 +153,57 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
                  <div class="timeDiv">
                        <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
 
-                   <!--  <div *ngFor = "let time of interceptionPoint" >
-                          <input maxlength=1 class="sb-form-control-tab" [(ngModel)]="time" />
-                    </div> -->
-                 </div>
-              </div>
-           <div class="sb-modal-actions">
-              <button type="submit" class="sb-btn sb-btn-normal" (click)="createQuestionSet()"
-              >  Create Question Set
-              </button>
-              <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal sb-btn-outline-primary" >  Cancel
-              </button>
-           </div>
-        </form>
-     </div>
-
+               <!--  <div *ngFor = "let time of interceptionPoint" >
+                      <input maxlength=1 class="sb-form-control-tab" [(ngModel)]="time" />
+                </div> -->
+             </div>
+          </div>
+       <div class="sb-modal-actions">
+          <button type="submit" class="sb-btn sb-btn-normal" (click)="createQuestionSet()"
+          >  Create Question Set
+          </button>
+          <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal sb-btn-outline-primary" >  Cancel
+          </button>
+       </div>
+    </form>
+ </div>
 </sui-modal>
 <sui-modal *ngIf="showQuestionSetEditModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeQuestionSetEditModal()" #modal >
-     <div class="sb-modal-header">Update Interception Point</div>
-     <div class="sb-modal-content">
-        <form #FormControl="ngForm" class="ui form">
-           <div class = "lableDiv">Question TimeStamp</div>
-              <div class="d-flex">
-                 <div class="timeDiv">
-                    <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
-                 </div>
-              </div>
-           <div class="sb-modal-actions">
-              <button type="submit" class="sb-btn sb-btn-normal" (click)="editInterceptionDetails()"
-              >  Update Question Set
-              </button>
-              <button (click)="closeQuestionSetEditModal()" class="sb-btn sb-btn-normal" >  Cancel
-              </button>
-           </div>
-        </form>
-     </div>
-
+ <div class="sb-modal-header">Update Interception Point</div>
+ <div class="sb-modal-content">
+    <form #FormControl="ngForm" class="ui form">
+       <div class = "lableDiv">Question TimeStamp</div>
+          <div class="d-flex">
+             <div class="timeDiv">
+                <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
+             </div>
+          </div>
+       <div class="sb-modal-actions">
+          <button type="submit" class="sb-btn sb-btn-normal" (click)="editInterceptionDetails()"
+          >  Update Question Set
+          </button>
+          <button (click)="closeQuestionSetEditModal()" class="sb-btn sb-btn-normal" >  Cancel
+          </button>
+       </div>
+    </form>
+ </div>
 </sui-modal>
 <sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
-     <div class="sb-modal-header">Confirmation</div>
-     <div class="sb-modal-content">
-        <form #FormControl="ngForm" class="ui form">
-           <div class = "lableDiv">Do you really want to delete this QuestionSet?</div>
-           <div class="sb-modal-actions">
-              <button type="submit" class="sb-btn sb-btn-normal" (click)="deleteQuestionSet()"
-              >  Delete
-              </button>
-              <button (click)="closeConfirmationModal()" class="sb-btn sb-btn-normal" >  Close
-              </button>
-           </div>
-        </form>
-     </div>
+ <div class="sb-modal-header">Confirmation</div>
+ <div class="sb-modal-content">
+    <form #FormControl="ngForm" class="ui form">
+       <div class = "lableDiv">Do you really want to delete this QuestionSet?</div>
+       <div class="sb-modal-actions">
+          <button type="submit" class="sb-btn sb-btn-normal" (click)="deleteQuestionSet()"
+          >  Delete
+          </button>
+          <button (click)="closeConfirmationModal()" class="sb-btn sb-btn-normal" >  Close
+          </button>
+       </div>
+    </form>
+ </div>
 
 </sui-modal>
 <!-- / ADD interactive QuestionSets/ END -->
@@ -408,11 +406,3 @@ class="sb-modal sb-z-index99" appBodyScroll (dismissed)="showEditMetaForm= false
 </div>
 <!--/Actions-->
 </sui-modal>
-
-
-
-
-
-
-
-
