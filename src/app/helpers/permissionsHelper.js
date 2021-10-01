@@ -134,7 +134,7 @@ let PERMISSIONS_HELPER = {
         'content-type': 'application/json',
         'accept': 'application/json',
         'Authorization': 'Bearer ' + apiAuthToken,
-        'x-authenticated-user-token': reqObj.kauth.grant.access_token.token
+        'x-authenticated-user-token': reqObj.session.userAccessToken
       },
       json: true
     }

@@ -57,9 +57,8 @@ const decorateSunbirdRequestHeaders = function () {
     if(!srcReq.get('X-App-Id')){
       proxyReqOpts.headers['X-App-Id'] = appId
     }
-    if (srcReq.kauth && srcReq.kauth.grant && srcReq.kauth.grant.access_token &&
-    srcReq.kauth.grant.access_token.token) {
-      proxyReqOpts.headers['x-authenticated-user-token'] = srcReq.kauth.grant.access_token.token
+    if (srcReq.session && srcReq.session.userAccessToken) {
+        proxyReqOpts.headers['x-authenticated-user-token'] = srcReq.session.userAccessToken
     }
     proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
     proxyReqOpts.rejectUnauthorized = false

@@ -12,7 +12,7 @@ const logger = require('sb_logger_util_v2');
 module.exports = {
   updateLoginTime: function (req, callback) {
     var data = this.prepareRequestBody(req)
-    var token = req.kauth.grant.access_token.token
+    var token = req.session.userAccessToken
     this.sendUpdateTimeReq(req, token, data, function (err, status) {
       callback(err, status)
     })
@@ -44,7 +44,7 @@ module.exports = {
       id: data.request.userId,
       userId: data.request.userId}
     // telemetryHelper.logAPICallEvent(telemetryData)
-    /* istanbul ignore next  */  
+    /* istanbul ignore next  */
     request(options, function (error, response, body) {
       telemetryData.statusCode = _.get(response, 'statusCode');
       if (callback) {
