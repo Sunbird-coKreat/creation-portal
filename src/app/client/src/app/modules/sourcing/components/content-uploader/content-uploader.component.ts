@@ -122,7 +122,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public formstatus: any;
   public formInputData: any;
 
-  public interceptionTime:any = '00:00';
+  public unFormatedinterceptionTime;
+  public interceptionTime: any = '00:00';
   public interceptionMetaData: any;
   public showquestionCreationUploadModal: boolean;
   public creationComponent;
@@ -137,6 +138,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     stages: []
   };
   public interactiveQuestionSets = {};
+  public showConfirmationModal: boolean = false;
+  public selectedQuestionSet: any;
+  public showQuestionSetEditModal: boolean = false;
+  public totalDuration: any;
+  public selectedQuestionSetEdit: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -826,11 +832,17 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = true;
       this.showUploadModal = false;
       this.changeFile_instance = false;
+      this.showquestionCreationUploadModal = false;
+      this.showConfirmationModal = false;
+      this.showQuestionSetEditModal = false;
     } else if (this.modal && this.modal.deny && this.showUploadModal) {
       this.modal.deny();
       this.programStageService.removeLastStage();
       this.programsService.emitHeaderEvent(true);
     }
+    this.showquestionCreationUploadModal = false;
+    this.showConfirmationModal = false;
+    this.showQuestionSetEditModal = false;
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
     }
@@ -1207,8 +1219,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   addInterception() {
     this.showquestionCreationUploadModal = true;
-    if (this.interceptionTime !== '') {
-      this.interceptionTime = this.format(this.interceptionTime);
+    if (this.unFormatedinterceptionTime !== '') {
+      this.interceptionTime = this.format(this.unFormatedinterceptionTime);
     }
   }
 
@@ -1216,125 +1228,134 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // console.log('in app: ', JSON.stringify(event));
   }
   eventHandler(event) {
-    if (event.type && event.type === 'pause') {
-      this.interceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime* 10) / 10)
+    this.totalDuration = event.target.player.player_.cache_.duration;
+    if (event.type && event.type === 'timeupdate') {
+      this.unFormatedinterceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime * 10) / 10);
+    } else if (event.type && event.type === 'ended') {
+      this.interceptionTime = '00:00';
     }
   }
 
   createQuestionSet() {
-      this.showquestionCreationUploadModal = false;
-      let creator = this.userService.userProfile.firstName;
-      if (!_.isEmpty(this.userService.userProfile.lastName)) {
-        creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
-      }
-      const rootorgId = _.get(this.programContext, 'rootorg_id');
-      this.frameworkService.readChannel(rootorgId).subscribe(channelData => {
-        const channelCats = _.get(channelData, 'primaryCategories');
-        const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
-        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-        const primaryCategories  = _.map(questionSetCategories, 'name');
-        const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-        _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
-        const option = {
-          url: `questionset/v1/create`,
-          header: {
-            'X-Channel-Id': this.programContext.rootorg_id
-          },
-          data: {
-            request: {
-              questionset: {
-                'name': 'Untitled',
-                'code': UUID.UUID(),
-                'mimeType': 'application/vnd.sunbird.questionset',
-                'createdBy': this.userService.userid,
-                'primaryCategory': primaryCategories[0],
-                'creator': creator,
-                'author': creator,
-                'programId': this.sessionContext.programId,
-                'collectionId': this.sessionContext.collection,
-                'unitIdentifiers': [this.unitIdentifier],
-                ...(this.sessionContext.nominationDetails &&
-                  this.sessionContext.nominationDetails.organisation_id &&
-                  {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-                ...(_.pickBy(sharedMetaData, _.identity))
-              }
-            }
-          }
-        };
-        if (this.sessionContext.sampleContent) {
-          option.data.request.questionset.sampleContent = this.sessionContext.sampleConten;
+      const timeStamp = this.interceptionTime.replace(':', '.').split('.');
+      const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+      if(getTimeStamp > this.totalDuration){
+        this.toasterService.error('Selected Timestamp is not valid');
+        return false;
+      } else if(this.interceptionTime === "00:00"){
+        this.toasterService.error('Please select a Timestamp');
+        return false;
+      }else{
+        this.showquestionCreationUploadModal = false;
+        let creator = this.userService.userProfile.firstName;
+        if (!_.isEmpty(this.userService.userProfile.lastName)) {
+          creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
         }
-
-        const timeStamp = this.interceptionTime.replace(':', '.').split('.');
-        const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
-
-        this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
-          const errInfo = {
-            errorMsg: 'Unable to create contentId, Please Try Again',
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : this.telemetryInteractCdata,
-            env : this.activeRoute.snapshot.data.telemetry.env,
-            request: option
-          };
-          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-        })).subscribe(result => {
-            this.questionSetId = result.identifier;
-            this.programsService.emitHeaderEvent(false);
-            // tslint:disable-next-line:max-line-length
-            this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance('questionSetEditorComponent'), 'questionSetEditorComponent');
-            let interceptionPoints = [];
-            if (this.interceptionMetaData && Object.keys(this.interceptionMetaData).length === 0) {
-              interceptionPoints.push({
-                'tyep': 'QuestionSet',
-                'interceptionPoint': getTimeStamp,
-                'identifier': this.questionSetId
-              });
-            } else {
-              interceptionPoints = this.interceptionMetaData.items;
-              interceptionPoints.push({
-                'tyep': 'QuestionSet',
-                'interceptionPoint': getTimeStamp,
-                'identifier': this.questionSetId
-              });
-            }
-            this.interceptionData = {
-              url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
-              data: {
-                request : {
-                  content : {
-                    versionKey : this.contentMetaData.versionKey,
-                    interceptionPoints : {
-                      items : interceptionPoints
-                    },
-                    interceptionType: 'Timestamp'
-                  }
+        const rootorgId = _.get(this.programContext, 'rootorg_id');
+        this.frameworkService.readChannel(rootorgId).subscribe(channelData => {
+          const channelCats = _.get(channelData, 'primaryCategories');
+          const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+          const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+          const primaryCategories  = _.map(questionSetCategories, 'name');
+          const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+          _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
+          const option = {
+            url: `questionset/v1/create`,
+            header: {
+              'X-Channel-Id': this.programContext.rootorg_id
+            },
+            data: {
+              request: {
+                questionset: {
+                  'name': 'Untitled',
+                  'code': UUID.UUID(),
+                  'mimeType': 'application/vnd.sunbird.questionset',
+                  'createdBy': this.userService.userid,
+                  'primaryCategory': primaryCategories[0],
+                  'creator': creator,
+                  'author': creator,
+                  'programId': this.sessionContext.programId,
+                  'collectionId': this.sessionContext.collection,
+                  'unitIdentifiers': [this.unitIdentifier],
+                  ...(this.sessionContext.nominationDetails &&
+                    this.sessionContext.nominationDetails.organisation_id &&
+                    {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
+                  ...(_.pickBy(sharedMetaData, _.identity))
                 }
               }
+            }
+          };
+          if (this.sessionContext.sampleContent) {
+            option.data.request.questionset.sampleContent = this.sessionContext.sampleConten;
+          }
+          this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+            const errInfo = {
+              errorMsg: 'Unable to create contentId, Please Try Again',
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activeRoute.snapshot.data.telemetry.env,
+              request: option
             };
-            this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
-                const errInfo = {
-                  errorMsg: 'Unable to create contentId, Please Try Again',
-                  telemetryPageId: this.telemetryPageId,
-                  telemetryCdata : this.telemetryInteractCdata,
-                  env : this.activeRoute.snapshot.data.telemetry.env,
-                  request: option
-                };
-                return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-            }))
-            .subscribe(result => {
-              console.log(result);
-            });
-
+            return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+          })).subscribe(result => {
+              this.questionSetId = result.identifier;
+              this.programsService.emitHeaderEvent(false);
+              // tslint:disable-next-line:max-line-length
+              this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance('questionSetEditorComponent'), 'questionSetEditorComponent');
+              let interceptionPoints = [];
+              if (this.interceptionMetaData && Object.keys(this.interceptionMetaData).length === 0) {
+                interceptionPoints.push({
+                  'type': 'QuestionSet',
+                  'interceptionPoint': getTimeStamp,
+                  'identifier': this.questionSetId
+                });
+              } else {
+                interceptionPoints = this.interceptionMetaData.items;
+                interceptionPoints.push({
+                  'type': 'QuestionSet',
+                  'interceptionPoint': getTimeStamp,
+                  'identifier': this.questionSetId
+                });
+              }
+              this.interceptionData = {
+                url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+                data: {
+                  request : {
+                    content : {
+                      versionKey : this.contentMetaData.versionKey,
+                      interceptionPoints : {
+                        items : interceptionPoints
+                      },
+                      interceptionType: 'Timestamp'
+                    }
+                  }
+                }
+              };
+              this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+                  const errInfo = {
+                    errorMsg: 'Unable to create contentId, Please Try Again',
+                    telemetryPageId: this.telemetryPageId,
+                    telemetryCdata : this.telemetryInteractCdata,
+                    env : this.activeRoute.snapshot.data.telemetry.env,
+                    request: option
+                  };
+                  return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+              }))
+              .subscribe(result => {
+                console.log(result);
+              });
+  
+          });
+        }, (err) => {
+          const errInfo = {
+            errorMsg: 'QuestionSet primary category not defined at channle, Please Try Again',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          return throwError(this.sourcingService.apiErrorHandling({}, errInfo));
         });
-      }, (err) => {
-        const errInfo = {
-          errorMsg: 'QuestionSet primary category not defined at channle, Please Try Again',
-          telemetryPageId: this.telemetryPageId,
-          telemetryCdata : this.telemetryInteractCdata,
-          env : this.activeRoute.snapshot.data.telemetry.env
-        };
-        return throwError(this.sourcingService.apiErrorHandling({}, errInfo));
-      });
+      }  
   }
 
   componentLoadHandler(action, component, componentName, event?) {
@@ -1418,6 +1439,146 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   public closeQuestionCreationUploadModal() {
     this.showquestionCreationUploadModal = false;
+  }
+
+  public handleQuestionSetDelete(e){
+    console.log("selected 1",e)
+    this.selectedQuestionSet = {}
+    this.showConfirmationModal = true;
+    this.selectedQuestionSet = e;
+  }
+  public closeConfirmationModal(){
+    this.selectedQuestionSet  = {}
+    this.showConfirmationModal = false;
+  }
+  public deleteQuestionSet(){
+    console.log(this.interceptionMetaData)
+    const option = {
+      url : `questionset/v1/retire/${this.selectedQuestionSet.identifier}`,
+      header: {
+        'X-Channel-Id': this.programContext.rootorg_id
+      }
+    }
+    this.actionService.delete(option).pipe(map((res: any) => res.result), catchError(err => {
+      const errInfo = {
+        errorMsg: 'Unable to Delete QuestionSet, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+       };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+    }))
+    .subscribe(result => { 
+      let currentInterceptionPoint = []
+      console.log("harry",result)
+      this.interceptionMetaData.items.map(item => {
+        if(item.identifier !== this.selectedQuestionSet.identifier){
+          currentInterceptionPoint.push(item)
+        }
+      })
+      this.interceptionData = {
+        url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+        data: {
+          request : {
+            content : {
+              versionKey : this.contentMetaData.versionKey,
+              interceptionPoints : {
+                items : currentInterceptionPoint
+              },
+              interceptionType: 'Timestamp'
+            }
+          }
+        }
+      };
+      this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+          const errInfo = {
+            errorMsg: 'Unable to Delete Interception Point, Please Try Again',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+            request: option
+          };
+          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      }))
+      .subscribe(result => {
+        console.log(result);
+        this.toasterService.success('Successfully deleted QuestionSet');
+      });
+    })
+    this.showConfirmationModal = false;
+    this.getUploadedContentMeta(this.contentMetaData.identifier);
+  }
+  public openQuestionSetEditModal(e){
+    this.selectedQuestionSetEdit = e;
+    this.interceptionTime = this.format(e.interceptionPoint)
+    this.showQuestionSetEditModal = true;
+  }
+  public  editInterceptionDetails(){
+    const timeStamp = this.interceptionTime.replace(':', '.').split('.');
+    const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+    if(getTimeStamp > this.totalDuration){
+      this.toasterService.error('Selected Timestamp is not valid');
+      return false;
+    } else if(this.interceptionTime === "00:00"){
+      this.toasterService.error('Please select a Timestamp');
+      return false;
+    }else{
+      let updatedInterceptionData = []
+      let obj = this.interceptionMetaData.items.find(obj => obj.interceptionPoint === getTimeStamp)
+      if(obj === undefined){
+        this.interceptionMetaData.items.map(item => {
+          if(item.identifier === this.selectedQuestionSetEdit.identifier){
+            updatedInterceptionData.push({
+              'type': 'QuestionSet',
+              'interceptionPoint': getTimeStamp,
+              'identifier': this.selectedQuestionSetEdit.identifier
+            })
+          }else{
+            updatedInterceptionData.push(item)
+          }
+        })
+        this.interceptionData = {
+          url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+          data: {
+            request : {
+              content : {
+                versionKey : this.contentMetaData.versionKey,
+                interceptionPoints : {
+                  items : updatedInterceptionData
+                },
+                interceptionType: 'Timestamp'
+              }
+            }
+          }
+        };
+        this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+            const errInfo = {
+              errorMsg: 'Unable to Delete Interception Point, Please Try Again',
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activeRoute.snapshot.data.telemetry.env,
+            };
+            return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+        }))
+        .subscribe(result => {
+          console.log(result);
+          this.showQuestionSetEditModal = false;
+          this.handleQuestionSetPreview(this.selectedQuestionSetEdit)
+        });
+      }else {
+        console.log(this.selectedQuestionSetEdit)
+        if(obj && obj.identifier !== this.selectedQuestionSetEdit.identifier){
+          this.toasterService.success('Selected timestamp cannot  updated since another question set is already present');
+          this.showQuestionSetEditModal = false;
+          this.handleQuestionSetPreview(obj)
+        }else{
+          this.showQuestionSetEditModal = false;
+          this.handleQuestionSetPreview(this.selectedQuestionSetEdit)
+        }
+      }
+    }
+  }
+  public closeQuestionSetEditModal(){
+    this.showQuestionSetEditModal = false;
   }
 
 }

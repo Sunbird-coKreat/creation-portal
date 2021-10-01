@@ -302,7 +302,8 @@
     margin-top: 1rem;
   }
   .question-li{
-    padding-bottom: 10px;
+    padding-bottom: 1rem;
+    margin:unset;
   }
   .question-ul{
     margin: unset;
@@ -326,11 +327,6 @@
     color: white;
     width: 90%;
     white-space: break-spaces;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
   }
   .edit-icon,.delete-icon{
     color:#fff;
@@ -351,4 +347,7 @@
     margin-left: 10px;
     padding-left: 4px;
     cursor: pointer;
+  }
+  .addQuestionSet{
+    width:100%;
   }

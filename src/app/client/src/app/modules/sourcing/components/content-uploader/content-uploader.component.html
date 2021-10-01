@@ -123,18 +123,18 @@
     </div>
   </div>
   <div class="middle-question-set" *ngIf="videoFileFormat">
-    <button  class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8 add-question-button" id="addQuestionSet"
+    <button  class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8 addQuestionSet" id="addQuestionSet"
     suiPopup popupText="Add a new Question" [popupPlacement]="'top'" (click)="addInterception()">
             Add a new Question
     </button>
-    <div class="show-interactive-question-set"> 
+    <div class="show-interactive-question-set">
       <ul class="question-ul" *ngIf="interceptionMetaData?.items?.length> 0">
           <li class="question-li" *ngFor="let interceptionPoint of interceptionMetaData?.items">
-              <div class="background-set" >
+              <div class="background-set">
                   <div class="timer-div">{{format(interceptionPoint.interceptionPoint)}}</div>
                   <div class="question-set-name">{{interactiveQuestionSets[interceptionPoint.identifier]}}</div>
-                  <div class="edit-div" (click)="handleQuestionSetPreview(interceptionPoint)"><i class="edit icon edit-icon"></i></div> 
-                  <div class="delete-div"><i class="delete icon delete-icon"></i></div> 
+                  <div class="edit-div" (click)="openQuestionSetEditModal(interceptionPoint)"><i class="edit icon edit-icon"></i></div> 
+                  <div class="delete-div" (click)="handleQuestionSetDelete(interceptionPoint)"><i class="delete icon delete-icon"></i></div> 
               </div>
           </li>
       </ul>
@@ -162,7 +162,46 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
               <button type="submit" class="sb-btn sb-btn-normal" (click)="createQuestionSet()"
               >  Create Question Set
               </button>
-              <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal" >  Cancel
+              <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal sb-btn-outline-primary" >  Cancel
+              </button>
+           </div>
+        </form>
+     </div>
+
+</sui-modal>
+<sui-modal *ngIf="showQuestionSetEditModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeQuestionSetEditModal()" #modal >
+     <div class="sb-modal-header">Update Interception Point</div>
+     <div class="sb-modal-content">
+        <form #FormControl="ngForm" class="ui form">
+           <div class = "lableDiv">Question TimeStamp</div>
+              <div class="d-flex">
+                 <div class="timeDiv">
+                    <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
+                 </div>
+              </div>
+           <div class="sb-modal-actions">
+              <button type="submit" class="sb-btn sb-btn-normal" (click)="editInterceptionDetails()"
+              >  Update Question Set
+              </button>
+              <button (click)="closeQuestionSetEditModal()" class="sb-btn sb-btn-normal" >  Cancel
+              </button>
+           </div>
+        </form>
+     </div>
+
+</sui-modal>
+<sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+     <div class="sb-modal-header">Confirmation</div>
+     <div class="sb-modal-content">
+        <form #FormControl="ngForm" class="ui form">
+           <div class = "lableDiv">Do you really want to delete this QuestionSet?</div>
+           <div class="sb-modal-actions">
+              <button type="submit" class="sb-btn sb-btn-normal" (click)="deleteQuestionSet()"
+              >  Delete
+              </button>
+              <button (click)="closeConfirmationModal()" class="sb-btn sb-btn-normal" >  Close
               </button>
            </div>
         </form>
@@ -369,7 +408,6 @@ class="sb-modal sb-z-index99" appBodyScroll (dismissed)="showEditMetaForm= false
 </div>
 <!--/Actions-->
 </sui-modal>
-
 
 
 
