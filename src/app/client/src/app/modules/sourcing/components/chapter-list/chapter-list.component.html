@@ -158,8 +158,13 @@
             <div class="sb-textbook-allchapters sb-field">
               <label class="fsmall font-weight-normal">{{resourceService.frmelmnts?.lbl?.selectFirstLevelFolders | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}</label>
               <sui-select class="selection w-100" placeholder="{{resourceService.frmelmnts?.lbl?.allFirstLevelFolders | interpolate: '{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | titlecase}}" [isSearchable]=true labelField="name"
-                valueField="identifier" [(ngModel)]="selectedChapterOption"
-                (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter>
+              valueField="identifier" [(ngModel)]="selectedChapterOption"
+              (selectedOptionChange)="onSelectChapterChange()" [options]="levelOneChapterList" #selectdChapter
+              appTelemetryInteract
+              [telemetryInteractEdata]="getTelemetryInteractEdata('select_' + firstLevelFolderLabel.replace(' ', '_').toLowerCase(), configService.telemetryLabels.eventType.select, telemetryPageId)"
+              [telemetryInteractObject]="telemetryInteractObject"
+              [telemetryInteractCdata]="telemetryInteractCdata"
+              [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let option of selectdChapter.filteredOptions" [value]="option">
                 </sui-select-option>
               </sui-select>
@@ -168,7 +173,11 @@
               <label class="fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.selectStatus}}</label>
               <sui-multi-select class="selection w-100 max-height-2-5" placeholder="{{resourceService.frmelmnts.lbl.allQuestions}}" [isSearchable]=false
                 [(ngModel)]="selectedStatusOptions" labelField="label" valueField="status"
-                [options]="statusOptionsList" #selectedStatus>
+                [options]="statusOptionsList" #selectedStatus appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('select_status', configService.telemetryLabels.eventType.select, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let option of selectedStatus.filteredOptions" [value]="option">
                 </sui-select-option>
               </sui-multi-select>
