@@ -8,7 +8,7 @@ import { PublicDataService, UserService, ActionService, PlayerService, Framework
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, filter, take, takeUntil, tap } from 'rxjs/operators';
-import { throwError, Observable, Subject } from 'rxjs';
+import { throwError, Observable, Subject, forkJoin } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, FormBuilder, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -143,6 +143,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showQuestionSetEditModal: boolean = false;
   public totalDuration: any;
   public selectedQuestionSetEdit: any;
+  public baseUrl: string;
+  public showQuestionSetPreview: boolean = false;
+  public qumlPlayerConfig;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -156,7 +159,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
     private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
-    public programComponentsService?: ProgramComponentsService) { }
+    public programComponentsService?: ProgramComponentsService) {
+      this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
+      ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
+    }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -843,6 +849,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.showquestionCreationUploadModal = false;
     this.showConfirmationModal = false;
     this.showQuestionSetEditModal = false;
+    this.showQuestionSetPreview = false;
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
     }
@@ -1344,7 +1351,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               .subscribe(result => {
                 console.log(result);
               });
-  
+
           });
         }, (err) => {
           const errInfo = {
@@ -1355,7 +1362,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           };
           return throwError(this.sourcingService.apiErrorHandling({}, errInfo));
         });
-      }  
+      }
   }
 
   componentLoadHandler(action, component, componentName, event?) {
@@ -1441,24 +1448,23 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.showquestionCreationUploadModal = false;
   }
 
-  public handleQuestionSetDelete(e){
-    console.log("selected 1",e)
-    this.selectedQuestionSet = {}
+  public handleQuestionSetDelete(data, event) {
+    event.stopPropagation();
+    this.selectedQuestionSet = {} ;
     this.showConfirmationModal = true;
-    this.selectedQuestionSet = e;
+    this.selectedQuestionSet = data;
   }
-  public closeConfirmationModal(){
-    this.selectedQuestionSet  = {}
+  public closeConfirmationModal() {
+    this.selectedQuestionSet  = {};
     this.showConfirmationModal = false;
   }
-  public deleteQuestionSet(){
-    console.log(this.interceptionMetaData)
+  public deleteQuestionSet() {
     const option = {
       url : `questionset/v1/retire/${this.selectedQuestionSet.identifier}`,
       header: {
         'X-Channel-Id': this.programContext.rootorg_id
       }
-    }
+    };
     this.actionService.delete(option).pipe(map((res: any) => res.result), catchError(err => {
       const errInfo = {
         errorMsg: 'Unable to Delete QuestionSet, Please Try Again',
@@ -1467,14 +1473,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
        };
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }))
-    .subscribe(result => { 
-      let currentInterceptionPoint = []
-      console.log("harry",result)
+    .subscribe(result => {
+      let currentInterceptionPoint = [];
       this.interceptionMetaData.items.map(item => {
-        if(item.identifier !== this.selectedQuestionSet.identifier){
-          currentInterceptionPoint.push(item)
+        if (item.identifier !== this.selectedQuestionSet.identifier) {
+          currentInterceptionPoint.push(item);
         }
-      })
+      });
       this.interceptionData = {
         url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
         data: {
@@ -1503,16 +1508,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         console.log(result);
         this.toasterService.success('Successfully deleted QuestionSet');
       });
-    })
+    });
     this.showConfirmationModal = false;
     this.getUploadedContentMeta(this.contentMetaData.identifier);
   }
-  public openQuestionSetEditModal(e){
-    this.selectedQuestionSetEdit = e;
-    this.interceptionTime = this.format(e.interceptionPoint)
+  public openQuestionSetEditModal(data, event) {
+    event.stopPropagation();
+    this.selectedQuestionSetEdit = data;
+    this.interceptionTime = this.format(data.interceptionPoint);
     this.showQuestionSetEditModal = true;
   }
-  public  editInterceptionDetails(){
+
+  public  editInterceptionDetails() {
     const timeStamp = this.interceptionTime.replace(':', '.').split('.');
     const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
     if(getTimeStamp > this.totalDuration){
@@ -1564,7 +1571,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.showQuestionSetEditModal = false;
           this.handleQuestionSetPreview(this.selectedQuestionSetEdit)
         });
-      }else {
+      } else {
         console.log(this.selectedQuestionSetEdit)
         if(obj && obj.identifier !== this.selectedQuestionSetEdit.identifier){
           this.toasterService.success('Selected timestamp cannot  updated since another question set is already present');
@@ -1577,8 +1584,43 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
     }
   }
-  public closeQuestionSetEditModal(){
+
+  public closeQuestionSetEditModal() {
     this.showQuestionSetEditModal = false;
+  }
+
+  public previewQuestionSet(data) {
+    const option = {
+      params: {
+        mode: 'edit'
+      }
+    };
+    // tslint:disable-next-line:max-line-length
+    forkJoin([this.playerService.getQuestionSetHierarchy(data.identifier, option), this.playerService.getQuestionSetRead(data.identifier, option)])
+      .subscribe(([hierarchyRes, questionSetData]: any) => {
+        this.showQuestionSetPreview = true;
+        const questionSet = _.get(hierarchyRes, 'result.questionSet');
+        questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
+        const contentDetails = {
+            contentId: data.identifier,
+            contentData: questionSet
+        };
+        this.qumlPlayerConfig = this.playerService.getConfig(contentDetails);
+        this.qumlPlayerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+        this.qumlPlayerConfig.context = {
+          ...this.qumlPlayerConfig.context,
+          cdata: this.telemetryInteractCdata,
+          userData: {
+            firstName: this.userService.userProfile.firstName,
+            lastName : !_.isEmpty(this.userService.userProfile.lastName) ? this.userService.userProfile.lastName : '',
+          },
+          endpoint: '/data/v3/telemetry',
+          mode: 'play',
+          env: 'question_editor',
+          threshold: 3,
+          host: this.baseUrl
+        };
+    });
   }
 
 }
