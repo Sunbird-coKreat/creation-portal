@@ -46,7 +46,7 @@ describe('SortByComponent', () => {
   ];
   component.queryParams = {sortType: 'asc', sort_by: 'createdOn'};
   });
-  xit('should call applySorting method with learn url ', inject([ConfigService, Router, ActivatedRoute],
+  it('should call applySorting method with learn url ', inject([ConfigService, Router, ActivatedRoute],
     (configService, route, activatedRoute) => {
       activatedRoute.parent = 'learn';
       component.url = 'learn';
