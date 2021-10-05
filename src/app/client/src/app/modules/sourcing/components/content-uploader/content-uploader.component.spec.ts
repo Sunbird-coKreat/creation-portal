@@ -196,7 +196,7 @@ xdescribe('ContentUploaderComponent', () => {
 });
 
 // Following describe method is for fresh 'UPLOAD' scenario
-describe('ContentUploaderComponent', () => {
+xdescribe('ContentUploaderComponent', () => {
   let component: ContentUploaderComponent;
   let collectionHierarchyService: CollectionHierarchyService;
   let fixture: ComponentFixture<ContentUploaderComponent>;

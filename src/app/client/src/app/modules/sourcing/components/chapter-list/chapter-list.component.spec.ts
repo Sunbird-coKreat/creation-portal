@@ -123,7 +123,7 @@ describe('ChapterListComponent', () => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, RouterTestingModule, TelemetryModule.forRoot(), SuiModule,
         SuiTabsModule, FormsModule, DynamicModule],
-      declarations: [ChapterListComponent, RecursiveTreeComponent, ResourceTemplateComponent],
+      declarations: [ChapterListComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
             { provide: ActionService, useValue: actionServiceStub }, 
@@ -156,7 +156,7 @@ describe('ChapterListComponent', () => {
       expect(component).toBeDefined();
     });
 
-    xit('stageSubscription should get subcribe on component initialize', () => {
+    it('stageSubscription should get subcribe on component initialize', () => {
       expect(component.stageSubscription).toBeDefined();
     });
 

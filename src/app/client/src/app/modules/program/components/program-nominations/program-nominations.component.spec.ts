@@ -222,19 +222,19 @@ describe('ProgramNominationsComponent', () => {
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  it('#setTelemetryPageId() should set telemetryPageId for user', () => {
+  xit('#setTelemetryPageId() should set telemetryPageId for user', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('user');
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  it('#setTelemetryPageId() should set telemetryPageId for contributionDashboard', () => {
+  xit('#setTelemetryPageId() should set telemetryPageId for contributionDashboard', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('contributionDashboard');
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  it('#setTelemetryPageId() should set telemetryPageId for report', () => {
+  xit('#setTelemetryPageId() should set telemetryPageId for report', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('report');
     expect(component.telemetryPageId).toBeDefined();
