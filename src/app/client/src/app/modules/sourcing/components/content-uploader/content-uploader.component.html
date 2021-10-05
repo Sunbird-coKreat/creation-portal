@@ -122,7 +122,7 @@
       </div>
     </div>
   </div>
-  <div class="middle-question-set" *ngIf="videoFileFormat">
+  <div class="middle-question-set" *ngIf="videoFileFormat && this.enableInteractivity">
     <button  class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8 addQuestionSet" id="addQuestionSet"
     suiPopup popupText="Add a new Question" [popupPlacement]="'top'" (click)="addInterception()">
             Add a new Question
@@ -217,7 +217,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
     <div class="content-player">
        <div class="w-100 h-100">
                <div class="contentViewerIframeShadow">
-                   <quml-main-player [QumlPlayerConfig]="qumlPlayerConfig"></quml-main-player>
+                   <quml-main-player [playerConfig]="qumlPlayerConfig"></quml-main-player>
                </div>
            </div>
        </div>

@@ -146,6 +146,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public baseUrl: string;
   public showQuestionSetPreview: boolean = false;
   public qumlPlayerConfig;
+  public enableInteractivity = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     private publicDataService: PublicDataService, public actionService: ActionService,
@@ -201,6 +202,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.state.stages = state.stages;
       this.changeView();
     });
+    if (_.has(this.templateDetails, 'objectMetadata.config.enableInteractivity')) {
+      this.enableInteractivity = _.get(this.templateDetails, 'objectMetadata.config.enableInteractivity');
+    } else {
+      this.programsService.getCategoryDefinition(_.get(this.templateDetails, 'name'),
+        this.programContext.rootorg_id, 'Content').subscribe((res) => {
+          this.enableInteractivity = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.enableInteractivity');
+      });
+    }
    }
 
    setTelemetryStartData() {
@@ -741,10 +750,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
 
   getUploadedContentMeta(contentId) {
+    this.showPreview = false;
     const option = {
       url: 'content/v3/read/' + contentId
     };
     this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
+      this.showPreview = true;
       const errInfo = {
         errorMsg: 'Unable to read the Content, Please Try Again',
         telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
@@ -752,6 +763,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     })).subscribe(res => {
+      this.showPreview = true;
       this.interceptionMetaData = _.get(res, 'interceptionPoints');
       if (!_.isEmpty(this.interceptionMetaData)) {
         this.getInteractiveQuestionSet().subscribe(
@@ -1246,13 +1258,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   createQuestionSet() {
       const timeStamp = this.interceptionTime.replace(':', '.').split('.');
       const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
-      if(getTimeStamp > this.totalDuration){
+      if (getTimeStamp > this.totalDuration) {
         this.toasterService.error('Selected Timestamp is not valid');
         return false;
-      } else if(this.interceptionTime === "00:00"){
+      } else if (this.interceptionTime === '00:00') {
         this.toasterService.error('Please select a Timestamp');
         return false;
-      }else{
+      } else {
         this.showquestionCreationUploadModal = false;
         let creator = this.userService.userProfile.firstName;
         if (!_.isEmpty(this.userService.userProfile.lastName)) {
@@ -1383,7 +1395,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         programContext: this.programContext,
         originCollectionData: this.originCollectionData,
         sourcingStatus: sourcingStatus,
-        selectedSharedContext: this.selectedSharedContext
+        selectedSharedContext: this.selectedSharedContext,
+        hideSubmitForReviewBtn: true
       }
     };
   }
