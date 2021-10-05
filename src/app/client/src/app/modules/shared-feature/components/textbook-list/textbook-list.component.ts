@@ -84,6 +84,9 @@ export class TextbookListComponent implements OnInit {
     if (this.router.url.includes('sourcing/nominations/' + this.programId) && this.programDetails.program_id) {
       this.showTexbooklist(this.collectionsInput, this.contentAggregationInput);
       this.collectionsCnt = this.collectionsInput && this.collectionsInput.length;
+      if (this.programDetails.target_type === 'searchCriteria') {
+        this.getContentsVisibilityStatusText();
+      }
 
       if (!_.isEmpty(this.userPreferences.sourcing_preference)) {
         this.textbookFiltersApplied = true;
@@ -114,8 +117,8 @@ export class TextbookListComponent implements OnInit {
   }
 
   getCollectionCategoryDefinition() {
-    if (this.programDetails.target_collection_category && this.userService.userProfile.rootOrgId) {
-       // tslint:disable-next-line:max-line-length
+    if (this.programDetails.target_collection_category && this.userService.userProfile.rootOrgId && (!this.programDetails.target_type || this.programDetails.target_type === 'collections')) {
+      // tslint:disable-next-line:max-line-length
     this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
       this.userService.userProfile.rootOrgId, 'Collection').subscribe(res => {
       const objectCategoryDefinition = res.result.objectCategoryDefinition;
@@ -159,6 +162,7 @@ export class TextbookListComponent implements OnInit {
 
   showTexbooklist (data, contentAggregationData) {
     if (!_.isEmpty(data)) {
+        this.collectionHierarchyService.setProgram(this.programDetails);
         if (contentAggregationData) {
           this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll(contentAggregationData, data);
         } else {
@@ -231,5 +235,77 @@ export class TextbookListComponent implements OnInit {
     }, (err) => {
       this.toasterService.error(this.resourceService.messages.emsg.projects.m0004);
     });
+  }
+
+  getContentsVisibilityStatusText () {
+    this.collectionsCnt = 0;
+    _.map(this.collectionsInput, (content) => {
+      content['contentVisibility'] = this.shouldContentBeVisible(content);
+      content['sourcingStatus'] = this.checkSourcingStatus(content);
+      const temp = this.getStatusText(content)
+      content['resourceStatusText'] = temp[0];
+      content['resourceStatusClass'] = temp[1];
+      if (content.contentVisibility) {
+        this.collectionsCnt++;
+      }
+    });
+  }
+
+  checkSourcingStatus(content) {
+    if (this.programDetails.config.acceptedContents  &&
+         _.includes(this.programDetails.config.acceptedContents || [], content.identifier)) {
+            return 'Approved';
+      } else if (this.programDetails.config.rejectedContents  &&
+              _.includes(this.programDetails.config.rejectedContents || [], content.identifier)) {
+            return 'Rejected';
+      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
+            return 'PendingForCorrections';
+      } else {
+        return null;
+      }
+  }
+  isSourcingOrgReviewer () {
+    return this.userService.isSourcingOrgReviewer(this.programDetails);
+  }
+  getStatusText(content) {
+    const resourceStatus = content.status;
+    const sourcingStatus = content.sourcingStatus;
+    const prevStatus = content.prevStatus;
+    let resourceStatusText,resourceStatusClass; 
+    if (resourceStatus === 'Review') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+      resourceStatusClass = 'sb-color-primary';
+    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      resourceStatusClass = 'sb-color-warning';
+    } else if ( sourcingStatus=== 'Rejected') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      resourceStatusClass = 'sb-color-error';
+    } else if (sourcingStatus === 'Approved') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      resourceStatusClass = 'sb-color-success';
+    } else if (resourceStatus === 'Failed') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Processing') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+      resourceStatusClass = '';
+    } else {
+      resourceStatusText = resourceStatus;
+      resourceStatusClass = 'sb-color-gray-300';
+    }
+    return [resourceStatusText, resourceStatusClass];
+  }
+  shouldContentBeVisible(content) {
+    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
+      return true;
+    }
+    return false;
   }
 }

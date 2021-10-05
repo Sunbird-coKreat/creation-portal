@@ -80,7 +80,6 @@ export class RecursiveTreeComponent implements OnInit {
       // Always return true if no status selected
       return (!selectedStatus.length) || _.includes(selectedStatus, currentStatus)
     }
-
   }
 
   shouldActionMenuBeVisible() {

@@ -1328,10 +1328,10 @@ export class ProgramsService extends DataService implements CanActivate {
     if (program.target_collection_category === null) {
      return plural ? 'Digital Textbooks' : 'Digital Textbook';
     } else  {
-      let collectionCat = '';
-      if (_.isArray(program.target_collection_category)) {
+      let collectionCat = 'Content';
+      if (_.isArray(program.target_collection_category) && !_.isEmpty(program.target_collection_category)) {
         collectionCat = program.target_collection_category[0];
-      } else {
+      } else if (!_.isEmpty(_.get(program, 'target_collection_category'))){
         collectionCat = program.target_collection_category;
       }
 

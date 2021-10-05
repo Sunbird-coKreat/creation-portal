@@ -4,7 +4,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { ReactiveFormsModule } from '@angular/forms';
 import { DatePipe, APP_BASE_HREF } from '@angular/common';
 import { DaysToGoPipe, TextbookListComponent } from '../../../shared-feature';
-import { SharedModule, ResourceService } from '@sunbird/shared';
+import { SharedModule, ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -13,6 +13,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { TelemetryService} from '@sunbird/telemetry';
 import { ProgramsService, RegistryService, UserService, FrameworkService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
+import { SourcingService } from '../../../sourcing/services';
+
 describe('ProgramListComponent', () => {
   let component: ProgramListComponent;
   let fixture: ComponentFixture<ProgramListComponent>;
@@ -30,7 +32,8 @@ describe('ProgramListComponent', () => {
       imports: [ SharedModule.forRoot(), SuiModule,
         TelemetryModule, ReactiveFormsModule , RouterTestingModule, HttpClientTestingModule],
       declarations: [ ProgramListComponent, DaysToGoPipe ],
-      providers: [ DatePipe, ProgramsService, ResourceService, CacheService, RegistryService, FrameworkService,
+      providers: [ DatePipe, ProgramsService, ResourceService, CacheService, RegistryService, FrameworkService, 
+        ToasterService, ConfigService, NavigationHelperService, SourcingService, 
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }, { provide: Router, useValue: routerStub },
          TelemetryService, UserService, {provide: APP_BASE_HREF, useValue: '/'},
          ],

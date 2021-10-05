@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
 import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
@@ -8,7 +8,7 @@ import { ProgramStageService } from '../../../program/services';
 import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { SourcingService } from '../../services';
-
+import { Subject} from 'rxjs';
 import * as _ from 'lodash-es';
 import { map} from 'rxjs/operators';
 import { ThrowStmt } from '@angular/compiler';
@@ -18,7 +18,7 @@ import { ThrowStmt } from '@angular/compiler';
   templateUrl: './question-set-editor.component.html',
   styleUrls: ['./question-set-editor.component.scss']
 })
-export class QuestionSetEditorComponent implements OnInit {
+export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   @Input() questionSetEditorComponentInput: IContentEditorComponentInput;
   questionSetEditorInput: any;
   editorConfig: any;
@@ -35,6 +35,7 @@ export class QuestionSetEditorComponent implements OnInit {
   public programContext: any;
   public unitIdentifier: string;
   public telemetryPageId: string;
+  private onComponentDestroy$ = new Subject<any>();
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -337,10 +338,10 @@ export class QuestionSetEditorComponent implements OnInit {
       this.requestCorrectionsBySourcing(event.identifier, event.comment)
       break;
     case "sourcingApprove":
-      this.helperService.manageSourcingActions('accept', this.sessionContext, this.unitIdentifier, this.collectionDetails);
+      this.helperService.manageSourcingActions('accept', this.sessionContext, this.programContext, this.unitIdentifier, this.collectionDetails);
       break;
     case "sourcingReject": 
-      this.helperService.manageSourcingActions('reject', this.sessionContext, this.unitIdentifier, this.collectionDetails, event.comment);
+      this.helperService.manageSourcingActions('reject', this.sessionContext, this.programContext, this.unitIdentifier, this.collectionDetails, event.comment);
       break;
       case "backContent": 
       this.programsService.emitHeaderEvent(true);
@@ -420,5 +421,10 @@ export class QuestionSetEditorComponent implements OnInit {
         .subscribe((res) => {  });
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 }

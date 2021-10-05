@@ -262,9 +262,14 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
 							</th>
-							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Pending'">
+							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')">
 								<span>
 									{{resourceService.frmelmnts.lbl.sampleContentCount}}
+								</span>
+							</th>
+							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
+								<span>
+									Status
 								</span>
 							</th>
 							<th class="w-5">&nbsp;</th>
@@ -277,10 +282,22 @@
 							<td>{{contributorTextbook?.medium}}</td>
 							<td>{{contributorTextbook?.gradeLevel}}</td>
 							<td>{{contributorTextbook?.subject}}</td>
-							<td *ngIf="contributor?.nominationData?.status == 'Pending'">{{contributorTextbook?.totalSampleContent || 0}}</td>
+							<td *ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')">{{contributorTextbook?.totalSampleContent || 0}}</td>
+							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
+								<span>
+									{{contributorTextbook?.status}}
+								</span>
+							</th>
 							<td data-label="Actions">
+								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" 
+								*ngIf="programContext?.target_type === 'searchCriteria'" (click)="openContent(contributorTextbook)"
+								appTelemetryInteract
+  [telemetryInteractEdata]="getTelemetryInteractEdata('view_sample_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+  [telemetryInteractObject]="telemetryInteractObject"
+  [telemetryInteractCdata]="telemetryInteractCdata"
+  [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
 								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false "
-									*ngIf="contributor?.nominationData?.status == 'Pending'" (click)="viewContribution(contributorTextbook)"
+									*ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')" (click)="viewContribution(contributorTextbook)"
 									appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('view_sample_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
       [telemetryInteractObject]="telemetryInteractObject"

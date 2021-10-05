@@ -107,6 +107,7 @@ export class FrameworkService {
     };
     return this.learnerService.get(channelOptions);
   }
+
   public getFrameworkCategories(framework: string) {
     const frameworkOptions = {
       url: this.configService.urlConFig.URLS.FRAMEWORK.READ + '/' + framework
@@ -220,6 +221,25 @@ export class FrameworkService {
     });
   }
 
+  getFrameworkData(channel?, type?, identifier?, systemDefault?) {
+    const option = {
+      url: `${this.configService.urlConFig.URLS.COMPOSITE.SEARCH}`,
+      data: {
+        request: {
+            filters: {
+                objectType: 'Framework',
+                status: ['Live'],
+                ...(type && {type}),
+                ...(identifier && {identifier}),
+                ...(channel && {channel}),
+                ...(systemDefault && {systemDefault})
+            }
+        }
+    }
+      };
+    return this.learnerService.post(option);
+  }
+
   public readChannel(hashTagId?) {
     const channelKey =  hashTagId ? hashTagId : this.userService.hashTagId;
     const channelData = this.cacheService.get(channelKey);
@@ -235,7 +255,6 @@ export class FrameworkService {
 
   public readFramworkCategories(framework?: string) {
     const channelData = this.cacheService.get(this.userService.hashTagId);
-    const frameworkData = this.cacheService.get(this.userService.hashTagId);
     let frameWorkToGet;
     if (!framework) {
         const defaultFrameworkInCache = this.cacheService.get(_.get(channelData, 'defaultFramework'));

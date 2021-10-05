@@ -79,7 +79,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     private configService: ConfigService,
     private userService: UserService,
     private _zone: NgZone,
-    private tenantService: TenantService,
     private telemetryService: TelemetryService,
     private router: Router,
     private navigationHelperService: NavigationHelperService,
@@ -210,7 +209,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
     this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    this.visibility['showSourcingActionButtons'] = this.canSourcingReviewerPerformActions();
+    this.visibility['showSourcingActionButtons'] =  this.helperService.canSourcingReviewerPerformActions(this.contentData, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
     this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
@@ -255,16 +254,6 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     return !!(this.router.url.includes('/contribute') && !this.contentData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentData.createdBy);
   }
 
-  canSourcingReviewerPerformActions() {
-    // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/sourcing')
-    && !this.contentData.sampleContent === true && this.resourceStatus === 'Live'
-    && this.userService.userid !== this.contentData.createdBy
-    && this.resourceStatus === 'Live' && !this.sourcingReviewStatus &&
-    (this.originCollectionData.status === 'Draft' && this.selectedOriginUnitStatus === 'Draft')
-    && this.programsService.isProjectLive(this.programContext));
-  }
-
   getContentMetadata() {
     const option = {
       url: 'content/v3/read/' + this.contentEditorComponentInput.contentId
@@ -296,7 +285,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       this.handleContentStatusText();
       this.handlePreview();
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
-        this.fetchFrameWorkDetails();
+        this.helperService.fetchProgramFramework(this.sessionContext);
       }
       this.fetchCategoryDetails();
         } else {

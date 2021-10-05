@@ -7,7 +7,11 @@ import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } f
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
 import { CacheService } from 'ng2-cache-service';
+import { ActivatedRoute, Router} from '@angular/router';
+import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';
+import { UUID } from 'angular2-uuid';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -24,12 +28,15 @@ export class HelperService {
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
+  private _telemetryPageId: any;
+  private _telemetryInteractCdata: any;
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService, public learnerService: LearnerService) { }
+    public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute,
+    private sourcingService: SourcingService, private router: Router) { }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -48,9 +55,11 @@ export class HelperService {
     });
   }
 
-  getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta) {
+  getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, programTargetType?) {
+
+    if (!programTargetType || programTargetType === 'collections') {
     // tslint:disable-next-line:max-line-length
-    const categoryDefinition$ = this.programsService.getCollectionCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId)
+    const categoryDefinition$ = this.programsService.getCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId, 'Collection')
       .pipe(
         switchMap((response: any) => {
           const targetCollectionFormData = _.get(response, 'result.objectCategoryDefinition.forms.childMetadata.properties');
@@ -63,15 +72,23 @@ export class HelperService {
           return of(targetCollectionFormData);
         })
       );
-
-    categoryDefinition$.subscribe(
-      (response) => {
-        console.log(response);
-        this.selectedCategoryMetaData = response;
-        this._categoryMetaData$.next(response);
-      }
-    );
-
+      categoryDefinition$.subscribe(
+        (response) => {
+          this.selectedCategoryMetaData = response;
+          this._categoryMetaData$.next(response);
+        }
+      );
+    } else if(programTargetType === 'searchCriteria'){
+      const contentCategoryDefinition$ = this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType).pipe(map((data) => {
+        return _.get(data, 'result.objectCategoryDefinition.forms.update.properties');
+      }));
+      contentCategoryDefinition$.subscribe(
+        (response) => {
+          this.selectedCategoryMetaData = response;
+          this._categoryMetaData$.next(response);
+        }
+      );
+    }
   }
 
   set selectedCategoryMetaData(data) {
@@ -778,14 +795,18 @@ export class HelperService {
       }
   }
 
-  fetchRootMetaData(sharedContext, selectedSharedContext) {
+  fetchRootMetaData(sharedContext, selectedSharedContext, programTargetType?) {
     return sharedContext.reduce((obj, context) => {
-              return { ...obj, ...(this.getContextObj(context, selectedSharedContext)) };
+              return { ...obj, ...(this.getContextObj(context, selectedSharedContext, programTargetType)) };
             }, {});
   }
 
-  getContextObj(context, selectedSharedContext) {
-    if (context === 'topic') { // Here topic is fetched from unitLevel meta
+  getContextObj(context, selectedSharedContext, programTargetType?) {
+    if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria')) { // Here topic is fetched from unitLevel meta
+      const fieldMustbeString = ['framework', 'board'];
+      if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
+        return {[context]:_.first(selectedSharedContext[context])}
+      }
       return {[context]: selectedSharedContext[context]};
     } else {
       return {[context]: this._selectedCollectionMetaData[context]};
@@ -809,38 +830,147 @@ export class HelperService {
     }));
   }
 
-  manageSourcingActions (action, sessionContext, unitIdentifier, contentData, rejectComment = '', isMetadataOverridden =  false) {
-    const hierarchyObj  = _.get(sessionContext.hierarchyObj, 'hierarchy');
-    if (hierarchyObj) {
-      const rootOriginInfo = _.get(_.get(hierarchyObj, sessionContext.collection), 'originData');
-      let channel =  rootOriginInfo && rootOriginInfo.channel;
-      if (_.isUndefined(channel)) {
-        const originInfo = _.get(_.get(hierarchyObj, unitIdentifier), 'originData');
-        channel = originInfo && originInfo.channel;
-      }
-      const originData = {
-        textbookOriginId: _.get(_.get(hierarchyObj, sessionContext.collection), 'origin'),
-        unitOriginId: _.get(_.get(hierarchyObj, unitIdentifier), 'origin'),
-        channel: channel
-      };
-      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
-        if (action === 'accept') {
-          action = isMetadataOverridden ? 'acceptWithChanges' : 'accept';
-          // tslint:disable-next-line:max-line-length
-          this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData);
-        } else if (action === 'reject' && rejectComment.length) {
-          // tslint:disable-next-line:max-line-length
-          this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData, rejectComment);
+  manageSourcingActions (action, sessionContext, programContext, unitIdentifier, contentData, rejectComment = '', isMetadataOverridden =  false) {
+    if (!_.get(programContext, 'target_type') || programContext.target_type === 'collections') {
+      const hierarchyObj  = _.get(sessionContext.hierarchyObj, 'hierarchy');
+      if (hierarchyObj) {
+        const rootOriginInfo = _.get(_.get(hierarchyObj, sessionContext.collection), 'originData');
+        let channel =  rootOriginInfo && rootOriginInfo.channel;
+        if (_.isUndefined(channel)) {
+          const originInfo = _.get(_.get(hierarchyObj, unitIdentifier), 'originData');
+          channel = originInfo && originInfo.channel;
+        }
+        const originData = {
+          textbookOriginId: _.get(_.get(hierarchyObj, sessionContext.collection), 'origin'),
+          unitOriginId: _.get(_.get(hierarchyObj, unitIdentifier), 'origin'),
+          channel: channel
+        };
+        if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
+          if (action === 'accept') {
+            action = isMetadataOverridden ? 'acceptWithChanges' : 'accept';
+            // tslint:disable-next-line:max-line-length
+            this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData);
+          } else if (action === 'reject' && rejectComment.length) {
+            // tslint:disable-next-line:max-line-length
+            this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData, rejectComment);
+          }
+        } else {
+          action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+          this.toasterService.error(this.resourceService.messages.fmsg.m00100);
+          console.error('origin data missing');
         }
       } else {
-        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
+        action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
         this.toasterService.error(this.resourceService.messages.fmsg.m00100);
         console.error('origin data missing');
       }
+    } else if (programContext.target_type === 'searchCriteria') {
+      if (this.checkIfContentisWithProgram(contentData.identifier, programContext)) { return; }
+      if (action === 'accept' || action === 'acceptWithChanges') {
+        this.publishContentOnOrigin(action, contentData.identifier, contentData, programContext);
+      } else {
+        const me = this;
+        setTimeout(() => {
+          me.attachContentToProgram(action, contentData.identifier, programContext, rejectComment);
+        }, 1000);
+      }
+    }
+  }
+  attachContentToProgram(action, contentId, programContext, rejectedComments?) {
+    let request = {
+      program_id: programContext.program_id,
+      config: _.get(programContext, 'config')
+    };
+      // tslint:disable-next-line:max-line-length
+    if (action === 'accept' || action === 'acceptWithChanges') {
+      request.config['acceptedContents'] = _.uniq([...request.config.acceptedContents || [], contentId]);
     } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
-      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-      console.error('origin data missing');
+      request.config['rejectedContents'] = _.uniq([...request.config.rejectedContents || [], contentId]);
+    }
+
+    if (action === 'reject' && rejectedComments) {
+      // tslint:disable-next-line:max-line-length
+      request.config['sourcingRejectedComments'] = request.config.sourcingRejectedComments && _.isString(request.config.sourcingRejectedComments) ? JSON.parse(request.config.sourcingRejectedComments) : request.config.sourcingRejectedComments || {};
+      request.config['sourcingRejectedComments'][contentId] = rejectedComments;
+    }
+
+    this.programsService.updateProgram(request).subscribe(() => {
+        if (action === 'accept' || action === 'acceptWithChanges') {
+          this.toasterService.success(this.resourceService.messages.smsg.m0066);
+        } else if (action === 'reject') {
+          this.toasterService.success(this.resourceService.messages.smsg.m0067);
+        }
+        this.sendNotification.next(_.capitalize(action));
+        this.programStageService.removeLastStage();
+    }, (err) => {
+      this.acceptContent_errMsg(action);
+    });
+  }
+
+  publishContentOnOrigin(action, contentId, contentMetaData, programContext) {
+    // const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
+    // if (_.isString(channel)) {
+    //   contentMetaData['createdFor'] = [channel];
+    // } else if (_.isArray(channel)) {
+    //   contentMetaData['createdFor'] = channel;
+    // }
+
+    // @Todo remove after testing
+    // this.sendNotification.next(_.capitalize(action));
+    
+    // tslint:disable-next-line:max-line-length
+    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+    ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+
+    const reqFormat = {
+      source: `${baseUrl}/api/content/v1/read/${contentMetaData.identifier}`,
+      metadata: {..._.pick(contentMetaData, ['framework']),
+                  ..._.pick(contentMetaData, ['channel']),
+                  ..._.pick(contentMetaData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
+                    ...{'lastPublishedBy': this.userService.userProfile.userId}}
+    };
+
+    const reqOption = {
+      url: this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT_V1,
+      data: {
+        request: {
+          content: [
+            reqFormat
+          ]
+        }
+      }
+    };
+    if (_.get(contentMetaData, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
+      reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
+      reqOption.data.request['questionset'] = {};
+      reqOption.data.request['questionset'] = reqOption.data.request.content;
+      _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
+      delete reqOption.data.request.content;
+    }
+    return this.learnerService.post(reqOption).subscribe((res: any) => {
+      if (res && res.result) {
+        const me = this;
+        setTimeout(() => {
+          me.attachContentToProgram(action, contentId, programContext);
+        }, 1000);
+      }
+    }, err => {
+      this.acceptContent_errMsg(action);
+    }); 
+  }
+  checkIfContentisWithProgram(contentId, programContext) {
+    let msg;
+    if (_.includes(programContext.config.acceptedContents, contentId)) {
+      msg = this.resourceService.messages.emsg.contentAcceptedForProgram;
+    } else if (_.includes(programContext.config.rejectedContents, contentId)) {
+      msg = this.resourceService.messages.emsg.contentRejectedForProgram;
+    }
+   if (msg) {
+      this.toasterService.error(msg)
+      this.programStageService.removeLastStage();
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -1053,5 +1183,125 @@ export class HelperService {
       sourceCategoryValuesMap[category.code] = this.convertNameToIdentifier(framework, category.value, key, category.code, targetCollectionFrameworksData, 'name');
     });
     return sourceCategoryValuesMap;
+  }
+
+  fetchProgramFramework(sessionContext) {
+    if (sessionContext.framework) {
+      this.frameworkService.initialize(sessionContext.framework);
+      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
+        if (frameworkDetails && !frameworkDetails.err) {
+          sessionContext.frameworkData = frameworkDetails.frameworkdata[sessionContext.framework].categories;
+          sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
+        }
+      }, error => {
+        const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+        this.toasterService.error(errorMes || 'Fetching framework details failed');
+        const errInfo = {
+          errorMsg: 'Fetching framework details failed',
+          telemetryPageId: _.get(this.activatedRoute,'snapshot.data.telemetry.pageid'),
+          telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}, {id: sessionContext.programId , type: 'project'}],
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+      });
+    }
+  }
+
+  isOpenForNomination(programDetails) {
+    const today = moment();
+    const validNomDate = moment(programDetails.nomination_enddate).isSameOrAfter(today, 'day') && this.programsService.isProjectLive(programDetails);
+    const ifOnlyforDefaultOrg = (programDetails.status === 'Unlisted' && _.get(this.userService, 'userProfile.rootOrgId') === _.get(programDetails, 'rootorg_id'));
+    return validNomDate && ( ifOnlyforDefaultOrg || programDetails.status === 'Live');
+  }
+
+  canAcceptContribution(programDetails) {
+    const contributionendDate  = moment(programDetails.content_submission_enddate);
+    const endDate  = moment(programDetails.enddate);
+    const today = moment();
+    return (contributionendDate.isSameOrAfter(today, 'day') && this.programsService.isProjectLive(programDetails)) ? true : false;
+  }
+  /**
+   * @param {*} type - is it content, questionset or question
+   * @param {*} value - user input in the CSV row
+   * @param {*} key - CSV cell identifier
+   * @param {*} code - corresponding system level code for `key`
+   * @param {*} collectionMeta - target collection metadata
+   * @returns - returns user input in the framework_code_value format.
+   * @memberof HelperService
+   */
+  //createContent (type, mimeType, primaryCategory, program, nominationDetails, sharedMetaData, appIcon?, collectionId?, unitId?, questionCategory?) {
+  createContent (componentInput, mimeType?) {
+    const sessionContext  = _.get(componentInput, 'sessionContext');
+    const templateDetails  = _.get(componentInput, 'templateDetails');
+    const unitIdentifier  = _.get(componentInput, 'unitIdentifier');
+    const programContext = _.get(componentInput, 'programContext');
+    const selectedSharedContext = _.get(componentInput, 'selectedSharedContext');
+    const sharedContext = _.get(componentInput, 'programContext.config.sharedContext');
+    const nominationDetails = _.get(sessionContext, 'nominationDetails');
+    const collectionId =  _.get(sessionContext, 'collection');
+    let creator = this.userService.userProfile.firstName; 
+    if (!_.isEmpty(this.userService.userProfile.lastName)) {
+      creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+    }
+    const sharedMetaData = this.fetchRootMetaData(sharedContext, selectedSharedContext, programContext.target_type);
+    _.merge(sharedMetaData, sessionContext.targetCollectionFrameworksData);
+
+    let obj= {
+      'name': 'Untitled',
+      'code': UUID.UUID(),
+      'mimeType': mimeType || templateDetails.mimeType[0],
+      'createdBy': this.userService.userid,
+      'primaryCategory': templateDetails.name,
+      'creator': creator,
+      'author': creator,
+      'programId': programContext.program_id,
+      ...(nominationDetails &&
+        nominationDetails.organisation_id &&
+        {'organisationId': nominationDetails.organisation_id || null}),
+        ...(_.pickBy(sharedMetaData, _.identity))
+    }
+    if (collectionId && unitIdentifier) {
+      obj['collectionId'] = collectionId;
+      obj['unitIdentifiers'] = [unitIdentifier];
+    }
+    if (sessionContext.sampleContent) {
+     obj['sampleContent'] = true;
+    }
+    if (_.get(templateDetails, 'appIcon')) {
+      obj['appIcon'] = _.get(templateDetails, 'appIcon');
+    }
+    if (_.get(templateDetails, 'modeOfCreation') === 'question') {
+      obj['questionCategories'] =  [templateDetails.questionCategory];
+    }
+    const option = { 
+      url: 'content/v3/create',
+      header: {
+        'X-Channel-Id': programContext.rootorg_id
+      },
+      data: { request: {} }
+    }
+    
+    if (_.get(templateDetails, 'modeOfCreation') === 'questionset') {
+      option.url = 'questionset/v1/create';
+      option.data.request['questionset'] = {};
+      option.data.request['questionset'] = obj;      
+    } else {
+      option.data.request['content'] = {};
+      option.data.request['content'] = obj; 
+    }
+    
+    return this.actionService.post(option);
+  }
+
+  canSourcingReviewerPerformActions(contentMetaData, sourcingReviewStatus, programContext, originCollectionData, selectedOriginUnitStatus) {
+    const resourceStatus = contentMetaData.status;
+    // tslint:disable-next-line:max-line-length
+    const flag = !!(this.router.url.includes('/sourcing')
+    && !contentMetaData.sampleContent === true && resourceStatus === 'Live' && !sourcingReviewStatus 
+    && this.userService.userid !== contentMetaData.createdBy && this.programsService.isProjectLive(programContext));
+    if (!programContext.target_type || programContext.target_type === 'collections') {
+      return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
+    } 
+    return flag;
   }
 }

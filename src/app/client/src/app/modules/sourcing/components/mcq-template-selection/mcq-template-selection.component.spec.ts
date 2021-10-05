@@ -9,7 +9,7 @@ import { SharedModule, ResourceService, ConfigService, BrowserCacheTtlService, T
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 
-describe('BulkApprovalComponent', () => {
+describe('McqTemplateSelectionComponent', () => {
   let component: McqTemplateSelectionComponent;
   let fixture: ComponentFixture<McqTemplateSelectionComponent>;
 

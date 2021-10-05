@@ -1,9 +1,9 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
 import { catchError, map, finalize, tap } from 'rxjs/operators';
-import { throwError, forkJoin } from 'rxjs';
+import { throwError, forkJoin, Subject} from 'rxjs';
 import { TelemetryService, IImpressionEventInput} from '@sunbird/telemetry';
 import { ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
@@ -15,7 +15,7 @@ import { SourcingService } from '../../services';
   templateUrl: './mvc-library.component.html',
   styleUrls: ['./mvc-library.component.scss']
 })
-export class MvcLibraryComponent implements OnInit, AfterViewInit {
+export class MvcLibraryComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public telemetryImpression: IImpressionEventInput;
   public sessionContext: any;
@@ -41,6 +41,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public showAddedContent: Boolean = true;
   public uniqueId: string;
   public telemetryPageId: string;
+  private onComponentDestroy$ = new Subject<any>();
 
   constructor(
     public programTelemetryService: ProgramTelemetryService, private telemetryService: TelemetryService,
@@ -60,6 +61,11 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
       this.prepareTelemetryEvents();
       this.initialize();
     });
+  }
+
+  ngOnDestroy() {
+    this.onComponentDestroy$.next();
+    this.onComponentDestroy$.complete();
   }
 
   prepareTelemetryEvents() {

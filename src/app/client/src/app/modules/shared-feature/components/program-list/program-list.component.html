@@ -1,9 +1,40 @@
-<div class="ui container pb-48">
-  <div class="sb-pageSection my-24">
+<sui-tabset *ngIf="!isContributor && issourcingOrgAdmin">
+  <div class="ui pointing secondary menu sb-bg-color-primary-100">
+    <div class="ui container">
+      <div class="p-0 m-0 d-flex">
+        <a class="item" [isActive]="forTargetType === 'collections'"  suiTabHeader="1"  (click)="forTargetType='collections';getProgramsListByRole()"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('collections', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectContributions)"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forCollections }}
+        </a>
+        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="forTargetType='searchCriteria';getProgramsListByRole()"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forSearchCriteria }}
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="1">
+    <ng-container *ngTemplateOutlet="projectList"></ng-container>
+  </div> 
+  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
+    <ng-container *ngTemplateOutlet="projectList"></ng-container>
+  </div>    
+</sui-tabset>
+<div *ngIf="isContributor  || !issourcingOrgAdmin">
+  <ng-container *ngTemplateOutlet="projectList"></ng-container>
+</div>
+<ng-template #projectList>
+<div class="ui container pt-10 m-0">
     <div class="d-flex flex-ai-center flex-jc-space-between">
       <div class="sb-pageSection-header mb-0">
         <h4 class="sb-pageSection-title">
-          <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService?.frmelmnts?.lbl?.myPrograms }} </span>
+          <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</span>
           <span *ngIf="activeAllProgramsMenu && programsService.checkforshowAllPrograms()">{{ resourceService?.frmelmnts?.lbl?.explorePrograms }} </span>
          </h4>
          <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning"
@@ -16,12 +47,12 @@
           {{filtersAppliedCount}} {{resourceService?.frmelmnts?.lbl?.filtersApplied}}
         </div>
         <button type="button" appTelemetryInteract
-          [telemetryInteractEdata]="getTelemetryInteractEdata('apply_filter', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-          [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-          [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
-          (click)="showFiltersModal = true">
-          <i class="filter icon"></i>
-          {{resourceService?.frmelmnts?.btn?.applyFilter}}
+	  [telemetryInteractEdata]="getTelemetryInteractEdata('apply_filter', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+	  [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+	  [telemetryInteractPdata]="telemetryInteractPdata" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10"
+	  (click)="showFiltersModal = true">
+	  <i class="filter icon"></i>
+	  {{resourceService?.frmelmnts?.btn?.applyFilter}}
         </button>
       </div>
       <!-- <button routerLink="sourcing/create-program" *ngIf="this.router.url.includes('/sourcing')" class="sb-btn sb-btn-normal sb-btn-primary"><i class="plus outline icon"></i> Add New Program</button> -->
@@ -82,8 +113,9 @@
                   <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                     {{program?.name}}
                   </div>
-                  <div class="sb__ellipsis sb__ellipsis--three">{{ getProgramTextbooksCount(program) }}</div>
-                  <div *ngIf="activeMyProgramsMenu && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--three" *ngIf="program?.target_type === 'searchCriteria'">{{ getProgramInfo(program, 'framework') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--three"*ngIf="!program.target_type || program?.target_type === 'collections'">{{ getProgramTextbooksCount(program) }}</div>
+                  <div *ngIf="activeMyProgramsMenu && (!program.target_type || program?.target_type === 'collections') && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                   <div *ngIf = "program.notificationData" class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex mt-5">
                     <div><i class="icon bell"></i></div>
                     <div class="text-inherit">
@@ -244,8 +276,8 @@
         </ng-template>
       <!-- </ng-container> -->
     </div>
-  </div>
 </div>
+</ng-template>
 <sui-modal *ngIf="showCloseModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
   class="sb-modal" appBodyScroll (dismissed)="showCloseModal = false" #modal>
   <div class="sb-modal-header">
