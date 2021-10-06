@@ -1258,11 +1258,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   createQuestionSet() {
       const timeStamp = this.interceptionTime.replace(':', '.').split('.');
       const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+      let obj = this.interceptionMetaData.items.find(obj => obj.interceptionPoint === getTimeStamp)
       if (getTimeStamp > this.totalDuration) {
         this.toasterService.error('Selected Timestamp is not valid');
         return false;
       } else if (this.interceptionTime === '00:00') {
         this.toasterService.error('Please select a Timestamp');
+        return false;
+      }else if(obj !== undefined){
+        this.toasterService.warning('Please choose a different timestamp. A Question set already exists in the choosen timestamp');
         return false;
       } else {
         this.showquestionCreationUploadModal = false;
