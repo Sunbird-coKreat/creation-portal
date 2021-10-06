@@ -112,7 +112,7 @@
 <div class="ui container py-10" *ngIf="currentLastStageInService !== 'questionSetEditorComponent'">
 <div class="d-flex">
 <div class="d-flex flex-jc-space-between practical-header__content w-100">
-  <div class="middle-section-set" *ngIf="showPreview">
+  <div [ngClass]="{'middle-section-set': !enableInteractivity, 'middle-section-set-interactive': enableInteractivity}" *ngIf="showPreview">
     <div class="ui container msg-box">
       <div class="msg-box__content">
         <div class="container msg-box__content__blank-box">
