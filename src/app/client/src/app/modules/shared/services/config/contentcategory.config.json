@@ -81,7 +81,7 @@
             "pdfFiles": "pdf",
             "defaultfileSize": 50
         },
-        "defaultfileSize": 150,
+        "defaultfileSize": 50,
         "defaultVideoSize": 15000
     }
 }
