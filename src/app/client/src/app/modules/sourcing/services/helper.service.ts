@@ -171,6 +171,18 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  reviewQuestionSet(contentId): Observable<ServerResponse> {
+    const option = {
+      url: `questionset/v1/review/${contentId}`,
+      data: {
+        'request': {
+          'questionset': {}
+        }
+      }
+    };
+    return this.actionService.post(option);
+  }
+
   retireContent(contentId): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
@@ -331,6 +343,46 @@ export class HelperService {
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
+  }
+
+  publishQuestionSetToConsumption(questionSetId) {
+    const option = {
+      url: 'questionset/v1/read/' + questionSetId,
+      param: { 'mode': 'edit' }
+    };
+
+    return this.actionService.get(option).pipe(
+      mergeMap((res: any) => {
+        const questionSetData  = res.result.questionset;
+
+        const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
+        if (_.isString(channel)) {
+          questionSetData['createdFor'] = [channel];
+        } else if (_.isArray(channel)) {
+          questionSetData['createdFor'] = channel;
+        }
+
+        const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+              ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+
+        const reqFormat = {
+                source: `https://dock.sunbirded.org/api/questionset/v1/read/${questionSetData.identifier}`,
+                metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
+                          ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
+                          ..._.pick(questionSetData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
+                          ...{'lastPublishedBy': this.userService.userProfile.userId}}
+        };
+
+        const reqOption = {
+          url: this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1,
+          data: {
+            request: {
+              questionset: [ reqFormat ]
+            }
+          }
+        };
+      return this.learnerService.post(reqOption);
+    }));
   }
 
   attachContentToTextbook(action, collectionId, contentId, data, rejectedComments?) {

@@ -986,6 +986,24 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   sendForReview() {
+    if (this.contentMetaData.interceptionPoints) {
+      const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
+      if (interceptionPoints) {
+        const questionSetPublishReq = interceptionPoints.map(interceptionData => {
+          return this.helperService.reviewQuestionSet(interceptionData.identifier);
+        });
+        forkJoin(questionSetPublishReq).subscribe(data => {
+          this.reviewAndAddResourceToHierarchy();
+        });
+      } else {
+        this.reviewAndAddResourceToHierarchy();
+      }
+    } else {
+      this.reviewAndAddResourceToHierarchy();
+    }
+  }
+
+  reviewAndAddResourceToHierarchy() {
     this.helperService.reviewContent(this.contentMetaData.identifier)
        .subscribe((res) => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -1072,6 +1090,32 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   publishContent() {
+    if (this.contentMetaData.interceptionPoints) {
+      const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
+      if (interceptionPoints) {
+        const questionSetPublishReq = interceptionPoints.map(interceptionData => {
+          return this.helperService.publishQuestionSet(interceptionData.identifier, this.userService.userProfile.userId);
+        });
+        forkJoin(questionSetPublishReq).subscribe(data => {
+          this.publishAndAddResourceToHierarchy();
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00102,
+            // tslint:disable-next-line:max-line-length
+            // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.sourcingService.apiErrorHandling(err, errInfo);
+        });
+      } else {
+        this.publishAndAddResourceToHierarchy();
+      }
+    } else {
+      this.publishAndAddResourceToHierarchy();
+    }
+  }
+
+  publishAndAddResourceToHierarchy() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -1170,7 +1214,33 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (action === 'reject' && this.FormControl.value.rejectComment.length) {
       rejectComment = this.FormControl.value.rejectComment;
     }
-    this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+
+    if (this.contentMetaData.interceptionPoints) {
+      const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
+      if (interceptionPoints) {
+        const questionSetPublishReq = interceptionPoints.map(interceptionData => {
+          return this.helperService.publishQuestionSetToConsumption(interceptionData.identifier);
+        });
+        forkJoin(questionSetPublishReq).subscribe(data => {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00102,
+            // tslint:disable-next-line:max-line-length
+            // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.sourcingService.apiErrorHandling(err, errInfo);
+        });
+      } else {
+        // tslint:disable-next-line:max-line-length
+        this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+      }
+    } else {
+      // tslint:disable-next-line:max-line-length
+      this.helperService.manageSourcingActions(action, this.sessionContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+    }
   }
 
   ngOnDestroy() {
@@ -1247,7 +1317,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // console.log('in app: ', JSON.stringify(event));
   }
   eventHandler(event) {
-    this.totalDuration = event.target.player.player_.cache_.duration;
+    if (_.isUndefined(this.totalDuration) && event.target) {
+      this.totalDuration = _.get(event.target, 'player.player_.cache_.duration');
+    }
     if (event.type && event.type === 'timeupdate') {
       this.unFormatedinterceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime * 10) / 10);
     } else if (event.type && event.type === 'ended') {
