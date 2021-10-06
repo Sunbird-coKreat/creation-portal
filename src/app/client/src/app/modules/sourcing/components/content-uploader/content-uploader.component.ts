@@ -1258,14 +1258,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   createQuestionSet() {
       const timeStamp = this.interceptionTime.replace(':', '.').split('.');
       const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
-      let obj = this.interceptionMetaData.items.find(obj => obj.interceptionPoint === getTimeStamp)
+      // tslint:disable-next-line:max-line-length
+      const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === getTimeStamp);
       if (getTimeStamp > this.totalDuration) {
         this.toasterService.error('Selected Timestamp is not valid');
         return false;
       } else if (this.interceptionTime === '00:00') {
         this.toasterService.error('Please select a Timestamp');
         return false;
-      }else if(obj !== undefined){
+      } else if (enteredTimeStamp !== undefined) {
         this.toasterService.warning('Please choose a different timestamp. A Question set already exists in the choosen timestamp');
         return false;
       } else {
@@ -1488,6 +1489,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
         env : this.activeRoute.snapshot.data.telemetry.env, request: option
        };
+      this.showConfirmationModal = false;
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     }))
     .subscribe(result => {
@@ -1519,16 +1521,17 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             env : this.activeRoute.snapshot.data.telemetry.env,
             request: option
           };
+          this.showConfirmationModal = false;
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
-      .subscribe(result => {
-        console.log(result);
+      .subscribe( result => {
+        this.showConfirmationModal = false;
         this.toasterService.success('Successfully deleted QuestionSet');
+        this.getUploadedContentMeta(this.contentMetaData.identifier);
       });
     });
-    this.showConfirmationModal = false;
-    this.getUploadedContentMeta(this.contentMetaData.identifier);
   }
+
   public openQuestionSetEditModal(data, event) {
     event.stopPropagation();
     this.selectedQuestionSetEdit = data;
@@ -1539,27 +1542,27 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public  editInterceptionDetails() {
     const timeStamp = this.interceptionTime.replace(':', '.').split('.');
     const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
-    if(getTimeStamp > this.totalDuration){
+    if (getTimeStamp > this.totalDuration) {
       this.toasterService.error('Selected Timestamp is not valid');
       return false;
-    } else if(this.interceptionTime === "00:00"){
+    } else if (this.interceptionTime === '00:00') {
       this.toasterService.error('Please select a Timestamp');
       return false;
-    }else{
-      let updatedInterceptionData = []
-      let obj = this.interceptionMetaData.items.find(obj => obj.interceptionPoint === getTimeStamp)
-      if(obj === undefined){
+    } else {
+      const updatedInterceptionData = [];
+      const obj = this.interceptionMetaData.items.find(data => data.interceptionPoint === getTimeStamp);
+      if (obj === undefined) {
         this.interceptionMetaData.items.map(item => {
-          if(item.identifier === this.selectedQuestionSetEdit.identifier){
+          if (item.identifier === this.selectedQuestionSetEdit.identifier) {
             updatedInterceptionData.push({
               'type': 'QuestionSet',
               'interceptionPoint': getTimeStamp,
               'identifier': this.selectedQuestionSetEdit.identifier
-            })
-          }else{
-            updatedInterceptionData.push(item)
+            });
+          } else {
+            updatedInterceptionData.push(item);
           }
-        })
+        });
         this.interceptionData = {
           url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
           data: {
@@ -1586,17 +1589,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         .subscribe(result => {
           console.log(result);
           this.showQuestionSetEditModal = false;
-          this.handleQuestionSetPreview(this.selectedQuestionSetEdit)
+          this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
         });
       } else {
-        console.log(this.selectedQuestionSetEdit)
-        if(obj && obj.identifier !== this.selectedQuestionSetEdit.identifier){
+        if (obj && obj.identifier !== this.selectedQuestionSetEdit.identifier) {
           this.toasterService.success('Selected timestamp cannot  updated since another question set is already present');
           this.showQuestionSetEditModal = false;
-          this.handleQuestionSetPreview(obj)
-        }else{
+          this.handleQuestionSetPreview(obj);
+        } else {
           this.showQuestionSetEditModal = false;
-          this.handleQuestionSetPreview(this.selectedQuestionSetEdit)
+          this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
         }
       }
     }
