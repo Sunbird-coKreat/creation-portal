@@ -61,6 +61,7 @@ module.exports = function (app) {
       '/action/questionset/v1/read/*',
       '/action/question/v1/read/*',
       '/action/questionset/v1/hierarchy/*',
+      '/action/questionset/v1/retire/*'
       ],
         proxy(contentURL, {
         proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
