@@ -864,6 +864,10 @@ var programConfig = {
     'medium',
     'gradeLevel',
     'subject',
+    'boardIds',
+    'mediumIds',
+    'gradeLevelIds',
+    'subjectIds',
     'topic'
   ]
 };

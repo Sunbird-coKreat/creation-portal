@@ -117,7 +117,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private deviceId: string;
   private buildNumber: string;
   private portalVersion: string;
-
+  public defaultFileSize: any;
+  public defaultVideoSize: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -132,10 +133,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.deviceId = deviceId ? deviceId.value : '';
     this.buildNumber = buildNumber ? buildNumber.value : '1.0';
     this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
+     (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
+    this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
+    (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
   }
 
   ngOnInit() {
-    this.setUserAccess();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -143,6 +147,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.setUserAccess();
     this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
     this.currentRootOrgID = this.userService.rootOrgId;
@@ -1044,71 +1049,25 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.showResourceTemplatePopup = false;
     this.sessionContext['templateDetails'] =  event.templateDetails;
     if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
-      this.templateDetails = event.templateDetails;
-      let creator = this.userProfile.firstName;
-      if (!_.isEmpty(this.userProfile.lastName)) {
-        creator = this.userProfile.firstName + ' ' + this.userProfile.lastName;
+      const creationInput  = {
+        sessionContext: this.sessionContext,
+        unitIdentifier: this.unitIdentifier,
+        templateDetails: event.templateDetails,
+        selectedSharedContext: this.selectedSharedContext,
+        contentId: this.contentId,
+        originCollectionData: this.originalCollectionData,
+        action: 'creation',
+        programContext: _.get(this.chapterListComponentInput, 'programContext')
       }
-
-      let targetCollectionFrameworksData = {};
-      targetCollectionFrameworksData = this.helperService.setFrameworkCategories(this.collection);
-
-      const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
-      _.merge(sharedMetaData, targetCollectionFrameworksData);
-      const option = {
-        url: `content/v3/create`,
-        header: {
-          'X-Channel-Id': this.programContext.rootorg_id
-        },
-        data: {
-          request: {
-            content: {
-              'name': 'Untitled',
-              'code': UUID.UUID(),
-              'mimeType': this.templateDetails.mimeType[0],
-              'createdBy': this.userService.userid,
-              'primaryCategory': this.templateDetails.name,
-              'creator': creator,
-              'author': creator,
-              'programId': this.sessionContext.programId,
-              'collectionId': this.sessionContext.collection,
-              'unitIdentifiers': [this.unitIdentifier],
-              ...(this.sessionContext.nominationDetails &&
-                this.sessionContext.nominationDetails.organisation_id &&
-                {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
-              ...(_.pickBy(sharedMetaData, _.identity))
-            }
-          }
-        }
-      };
-      if (this.sampleContent) {
-        option.data.request.content.sampleContent = this.sampleContent;
-      }
-      if (_.get(this.templateDetails, 'modeOfCreation') === 'question') {
-        option.data.request.content.questionCategories =  [this.templateDetails.questionCategory];
-      }
-      if (_.get(this.templateDetails, 'appIcon')) {
-        option.data.request.content.appIcon = _.get(this.templateDetails, 'appIcon');
-      }
-
-      let createRes;
-      if (_.get(this.templateDetails, 'modeOfCreation') === 'questionset') {
-        option.url = 'questionset/v1/create';
-        option.data.request['questionset'] = {};
-        option.data.request['questionset'] = option.data.request.content;
-        delete option.data.request.content;
-        createRes = this.actionService.post(option);
-      } else {
-        createRes = this.actionService.post(option);
-      }
-
-      createRes.pipe(map((res: any) => res.result), catchError(err => {
+      
+      const createContentReq = this.helperService.createContent(creationInput);
+      createContentReq.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
           telemetryPageId: this.telemetryPageId,
           telemetryCdata : this.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
-          request: option
+          request: {}
         };
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
@@ -1130,34 +1089,33 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   handlePreview(event) {
-        this.templateDetails = {
-          'name' : event.content.primaryCategory
-        };
-        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-        const acceptedFile = appEditorConfig[event.content.mimeType];
-        this.templateDetails['filesConfig'] = {};
-        this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
-        this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
-        this.templateDetails.questionCategories = event.content.questionCategories;
-        if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
-          this.templateDetails.onClick = 'questionSetComponent';
-        } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
-          this.templateDetails.onClick = 'editorComponent';
-        } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
-          this.templateDetails.onClick = 'questionSetComponent';
-        } else if (event.content.mimeType === 'application/vnd.sunbird.questionset'){
-          this.templateDetails.onClick = 'questionSetEditorComponent';
-        } else {
-          this.templateDetails.onClick = 'uploadComponent';
-        }
-        this.componentLoadHandler('preview',
-        this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
-        this.programsService.emitHeaderEvent(false)
-
-    // }, (error)=> {
-    //   this.toasterService.error(this.resourceService.messages.emsg.m0027);
-    //   return false;
-    // });
+    this.templateDetails = {
+      'name' : event.content.primaryCategory
+    };
+    const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    const acceptedFile = appEditorConfig[event.content.mimeType];
+    this.templateDetails['filesConfig'] = {};
+    this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
+    this.templateDetails.filesConfig['size'] = {
+      defaultfileSize:  this.defaultFileSize,
+      defaultVideoSize:  this.defaultVideoSize
+    }
+    ;
+    this.templateDetails.questionCategories = event.content.questionCategories;
+    if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
+      this.templateDetails.onClick = 'questionSetComponent';
+    } else if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(event.content.questionCategories)) {
+      this.templateDetails.onClick = 'editorComponent';
+    } else if (event.content.mimeType === 'application/vnd.ekstep.quml-archive') {
+      this.templateDetails.onClick = 'questionSetComponent';
+    } else if (event.content.mimeType === 'application/vnd.sunbird.questionset'){
+      this.templateDetails.onClick = 'questionSetEditorComponent';
+    } else {
+      this.templateDetails.onClick = 'uploadComponent';
+    }
+    this.componentLoadHandler('preview',
+    this.programComponentsService.getComponentInstance(this.templateDetails.onClick), this.templateDetails.onClick, event);
+    this.programsService.emitHeaderEvent(false)
   }
 
   componentLoadHandler(action, component, componentName, event?) {

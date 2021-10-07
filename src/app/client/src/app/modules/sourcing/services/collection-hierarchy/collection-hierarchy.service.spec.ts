@@ -213,7 +213,7 @@ const errorInitiate = false;
         {identifier: 'do_12345', name: 'pqrst'}]};
     spyOn(collectionHierarchyService, 'getAllAcceptedContentsCount').and.callThrough();
     const liveContentsCounts = collectionHierarchyService.getAllAcceptedContentsCount(textbookMeta);
-    expect(liveContentsCounts).toEqual(2);
+    expect(liveContentsCounts.length).toEqual(2);
   });
 
   it('#getAllPendingForApprovalCount() should return liveContentsCounts', () => {

@@ -1,13 +1,17 @@
 import { TestBed, fakeAsync } from '@angular/core/testing';
 import { HelperService } from './helper.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CoreModule, ActionService, ContentService, ProgramsService,
-  FrameworkService, PublicDataService } from '@sunbird/core';
-import { SharedModule, ToasterService, ResourceService } from '@sunbird/shared';
+import { ContentService, ActionService, PublicDataService, ProgramsService, NotificationService, UserService,
+  FrameworkService, LearnerService, CoreModule } from '@sunbird/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SharedModule, ConfigService, ToasterService, ResourceService } from '@sunbird/shared';
+import { ProgramStageService } from '../../program/services';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClient } from '@angular/common/http';
 import { of as observableOf, throwError as observableError } from 'rxjs';
 import { childMetaFormData } from './sourcing/helper.service.spec.data';
+import { CacheService } from 'ng2-cache-service';
+import { SourcingService } from '../../sourcing/services';
 
 describe('HelperService', () => {
   const resourceBundle = {
@@ -18,6 +22,28 @@ describe('HelperService', () => {
       }
     }
   };
+  const userServiceStub = {
+    userid: 'abcd1234',
+    userProfile : {
+      userid: 'abcd1234'
+    }
+  };
+  const fakeActivatedRoute = {
+    snapshot: {
+      params: {
+        programId: '6835f250-1fe1-11ea-93ea-2dffbaedca40'
+      },
+      data: {
+        telemetry: {
+          env: 'programs',
+          pageid: 'program'
+        }
+      }
+    }
+  };
+  class RouterStub {
+    navigate = jasmine.createSpy('navigate');
+  }
   let helperService;
   let actionService;
   let contentService;
@@ -29,11 +55,25 @@ describe('HelperService', () => {
     TestBed.configureTestingModule({
       imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
       providers: [
+        HelperService,
+        ConfigService,
+        ContentService,
+        PublicDataService,
         ActionService,
         TelemetryService,
         ToasterService,
+        ProgramStageService,
+        ProgramsService,
+        NotificationService,
+        CacheService, 
+        FrameworkService, 
+        LearnerService,  
         HttpClient,
-        {provide: ResourceService, useValue: resourceBundle}
+        SourcingService,
+        { provide: UserService, useValue: userServiceStub },
+        { provide: ResourceService, useValue: resourceBundle },
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        { provide: Router, useClass: RouterStub },
       ]
     });
     helperService = TestBed.get(HelperService);

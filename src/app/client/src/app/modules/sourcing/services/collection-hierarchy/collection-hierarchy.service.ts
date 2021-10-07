@@ -15,14 +15,17 @@ export class CollectionHierarchyService {
   public chapterCount = 0;
   public sampleDataCount = 0;
   public currentUserID;
-
+  private _programDetails;
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
     private programsService: ProgramsService, public learnerService: LearnerService) {
       this.currentUserID = this.userService.userProfile.userId;
      }
-
+  
+  setProgram(programDetails){
+    this._programDetails = programDetails;
+  }
 
   removeResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
     const req = {
@@ -99,7 +102,7 @@ export class CollectionHierarchyService {
     return this.actionService.get(req);
   }
 
-  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?) {
+  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true) {
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
@@ -112,12 +115,17 @@ export class CollectionHierarchyService {
           filters: {
             programId: programId,
             objectType: 'collection',
-            status: ['Draft'],
+            status: ['Draft', 'Live'],
             primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
-          }
+          },
+          fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution'],
+          limit: 1000
         }
       }
     };
+    if (allFields) {
+      delete(option.data.request.fields);
+    }
     if (!isUndefined(preferencefilters)) {
         if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
           option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
@@ -163,7 +171,7 @@ export class CollectionHierarchyService {
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
     const collectionsByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
 
-    if (!_.isUndefined(collections)) {
+    if (!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, orgLevelDataWithReject);
     }
     return {
@@ -199,13 +207,14 @@ export class CollectionHierarchyService {
   getSourcingOrgStatus(collections, orgContents) {
     const liveContents = _.has(orgContents, 'Live') ? orgContents.Live : [];
     let acceptedOrgContents, rejectedOrgContents , pendingOrgContents , mvcContributions = [];
-
-    if(collections && collections.length) {
-      _.map(collections, textbook => {
-        if(_.has(textbook, 'mvcContributions')) {
-          mvcContributions.push(...textbook.mvcContributions);
-        }
-     })
+    if (!this._programDetails || (this._programDetails && this._programDetails.target_type === 'collections')) {
+      if(collections && collections.length) {
+        _.map(collections, textbook => {
+          if(_.has(textbook, 'mvcContributions')) {
+            mvcContributions.push(...textbook.mvcContributions);
+          }
+        })
+      }
     }
 
     if (liveContents.length || (mvcContributions && mvcContributions.length)) {
@@ -214,12 +223,18 @@ export class CollectionHierarchyService {
       if (mvcContributions && mvcContributions.length) { // this is to get acceptedContents and rejectedContents counts for mvc
         liveContentIds.push(...mvcContributions);
       }
-      const allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
-      const allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
+      let allAcceptedContentIds, allRejectedContentIds = [];
+      if (this._programDetails && this._programDetails.target_type === 'searchCriteria') {
+        allAcceptedContentIds = _.uniq(this._programDetails.config.acceptedContents);
+        allRejectedContentIds = _.uniq(this._programDetails.config.rejectedContents);
+      } else {
+        allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
+        allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
+      }
       acceptedOrgContents = _.intersection(liveContentIds, allAcceptedContentIds);
       rejectedOrgContents = _.intersection(liveContentIds, allRejectedContentIds);
       pendingOrgContents = _.difference(liveContentIds, _.concat(acceptedOrgContents, rejectedOrgContents));
-      }
+    }
 
       const meta = {
         accepted: acceptedOrgContents ? acceptedOrgContents.length : 0, // converting to string to enable table sorting
@@ -293,8 +308,8 @@ export class CollectionHierarchyService {
     });
     return collectionWithReject;
   }
-
-  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?) {
+  
+  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?, allFields=false) {
     const option = {
       url: 'composite/v3/search',
       data: {
@@ -306,23 +321,25 @@ export class CollectionHierarchyService {
             mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
             contentType: {'!=': 'Asset'}
           },
-          fields: [
-                  'name',
-                  'identifier',
-                  'programId',
-                  'mimeType',
-                  'status',
-                  'sampleContent',
-                  'createdBy',
-                  'organisationId',
-                  'collectionId',
-                  'prevStatus',
-                  'contentType'
-                ],
         }
       }
     };
-
+    if (!allFields) {
+      option.data.request['fields'] = [
+        'name',
+        'identifier',
+        'programId',
+        'mimeType',
+        'status',
+        'sampleContent',
+        'createdBy',
+        'organisationId',
+        'collectionId',
+        'prevStatus',
+        'contentType',
+        'primaryCategory'
+      ]
+    }
     if (!_.isUndefined(organisationId)) {
       option.data.request.filters['organisationId'] = organisationId;
     } else if (!_.isUndefined(userId)) {
@@ -336,8 +353,6 @@ export class CollectionHierarchyService {
       option.data.request['not_exists'] = ['sampleContent'];
       option.data.request['limit'] = 10000;
     }
-
-
     if (!_.isUndefined(onlyCount)) {
       option.data.request['limit'] = 0;
     }
@@ -396,7 +411,7 @@ export class CollectionHierarchyService {
   getAllAcceptedContentsCount(textbookMeta, collections?) {
     let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
     if (_.isUndefined(collections)) {
-      return liveContents.length;
+      return liveContents;
     }
 
     if(collections && collections.length) { // for getting  mvc contents

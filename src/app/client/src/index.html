@@ -25,6 +25,12 @@
   <% if (portalCloudStorageUrl) { %>
     <input type="hidden" id="portalCloudStorageUrl" value="<%=portalCloudStorageUrl%>" />
   <% } %>
+  <% if (dockDefaultFileSize) { %>
+    <input type="hidden" id="dockDefaultFileSize" value="<%=dockDefaultFileSize%>" />
+  <% } %>
+  <% if (dockDefaultVideoSize) { %>
+    <input type="hidden" id="dockDefaultVideoSize" value="<%=dockDefaultVideoSize%>" />
+  <% } %>
   <% if (defaultTenant) { %>
   <input type="hidden" id="defaultTenant" value="<%=defaultTenant%>" />
   <% } %>

@@ -1,12 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
-import { PublicDataService, UserService, ActionService, FrameworkService, ProgramsService, LearnerService } from '@sunbird/core';
-import { ConfigService, ResourceService, ToasterService, NavigationHelperService, BrowserCacheTtlService,
-  ServerResponse } from '@sunbird/shared';
+import { UserService, ActionService, ProgramsService, LearnerService } from '@sunbird/core';
+import { ConfigService, ResourceService, ToasterService } from '@sunbird/shared';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
 import { CacheService } from 'ng2-cache-service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import * as _ from 'lodash-es';
 import { map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -42,12 +40,11 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   @Input() originalCollectionData;
   @Output() updateToc = new EventEmitter<any>();
 
-  constructor(public resourceService: ResourceService, private bulkJobService: BulkJobService,
-    private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
-    private userService: UserService, private programsService: ProgramsService, private httpClient: HttpClient,
-    public toasterService: ToasterService, public publicDataService: PublicDataService, private helperService: HelperService,
-    private actionService: ActionService, public programTelemetryService: ProgramTelemetryService, public configService: ConfigService,
-    public learnerService: LearnerService) { }
+  constructor(public resourceService: ResourceService, public bulkJobService: BulkJobService,
+    public cacheService: CacheService, public userService: UserService, public programsService: ProgramsService,
+    public toasterService: ToasterService, public helperService: HelperService,
+    public actionService: ActionService, public programTelemetryService: ProgramTelemetryService, 
+    public configService: ConfigService, public learnerService: LearnerService) { }
 
   ngOnInit() {
     this.checkBulkApproveHistory();

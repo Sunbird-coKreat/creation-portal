@@ -7,10 +7,8 @@ import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ProgramRoutingModule } from './program-routing.module';
-import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
 import { ContributorProfilePopupComponent } from './components/contributor-profile-popup/contributor-profile-popup.component';
-import { ProgramHeaderComponent } from './components/program-header/program-header.component';
 import { CreateProgramComponent } from './components/create-program/create-program.component';
 import { ProgramNominationsComponent } from './components/program-nominations/program-nominations.component';
 import { ListContributorTextbooksComponent } from './components/list-contributor-textbooks/list-contributor-textbooks.component';
@@ -27,8 +25,8 @@ import { ContributorsListComponent } from './components/contributors-list/contri
 @NgModule({
   declarations: [
     // tslint:disable-next-line:max-line-length
-    ProgramComponent, OnboardPopupComponent,
-    ProgramHeaderComponent, CreateProgramComponent,
+    OnboardPopupComponent,
+    CreateProgramComponent,
     ProgramNominationsComponent,
     ListContributorTextbooksComponent, ContributorProfilePopupComponent, OrgUserListComponent, OrgReportsComponent, ContributorsListComponent],
   imports: [
@@ -48,7 +46,6 @@ import { ContributorsListComponent } from './components/contributors-list/contri
     DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent])
   ],
   exports: [
-    ProgramComponent,
     OnboardPopupComponent
   ]
 })

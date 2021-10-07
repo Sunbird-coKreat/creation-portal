@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { of as observableOf,  throwError as observableThrowError, } from 'rxjs';
-import { ConfigService, ToasterService, SharedModule} from '@sunbird/shared';
+import { ConfigService, ToasterService, SharedModule,  ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { ActionService, ProgramsService, ContentService } from '@sunbird/core';
 import { APP_BASE_HREF } from '@angular/common';
 import { SourcingService } from '../../services';
@@ -12,6 +12,8 @@ import { DatePipe } from '@angular/common';
 import { TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
 import { MvcLibraryComponent } from './mvc-library.component';
 import { mockMvcLibraryData } from './mvc-library.component.spec.data';
+import { ProgramTelemetryService } from '../../../program/services';
+import { UserService } from '@sunbird/core';
 
 describe('MvcLibraryComponent', () => {
   let component: MvcLibraryComponent;
@@ -27,13 +29,22 @@ describe('MvcLibraryComponent', () => {
       }
     }
   };
+  const UserServiceStub = {
+    userid: '874ed8a5-782e-4f6c-8f36-e0288455901e',
+    userProfile: {
+      firstName: 'Creator',
+      lastName: 'ekstep'
+    },
+    slug: 'custchannel'
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot()],
       declarations: [ MvcLibraryComponent ],
-      providers: [{ provide: Router }, { provide: ActivatedRoute, useValue: fakeActivatedRoute }, ConfigService,
+      providers: [{ provide: ActivatedRoute, useValue: fakeActivatedRoute }, ConfigService, ProgramTelemetryService,
+        ContentService, ResourceService, NavigationHelperService,
         {provide: APP_BASE_HREF, useValue: '/'}, ToasterService, TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
-        DatePipe, ActionService, ProgramsService, SourcingService],
+        DatePipe, ActionService, ProgramsService, SourcingService, { provide: UserService, useValue: UserServiceStub }],
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();

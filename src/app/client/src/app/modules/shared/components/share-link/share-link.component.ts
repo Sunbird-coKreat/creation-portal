@@ -31,7 +31,7 @@ export class ShareLinkComponent implements OnInit {
   /**
   *input for telemetryShare;
   */
-  @Input() telemetryShareData: Array<ITelemetryShare>;
+  @Input() telemetryShareData: Array<ITelemetryShare> = [];
   /**
   *Output for Sharelink;
   */
@@ -76,7 +76,9 @@ export class ShareLinkComponent implements OnInit {
   */
   initializeModal() {
     setTimeout(() => {
-      this.copyLinkButton.nativeElement.click();
+      if (this.copyLinkButton) {
+        this.copyLinkButton.nativeElement.click();
+      }
     }, 300);
     this.telemetryShare = {
       type: 'Link',

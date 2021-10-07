@@ -328,7 +328,10 @@ export const contentUploadComponentInput = {
               }
             ]
           }
-        ]
+        ],
+        name: "NCFCOPY",
+        identifier: 'NCFCOPY',
+        code: 'NCFCOPY'
       }
     }
   };

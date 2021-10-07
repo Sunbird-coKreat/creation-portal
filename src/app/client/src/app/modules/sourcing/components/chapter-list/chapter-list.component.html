@@ -16,7 +16,7 @@
                                                               <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
                                                       </svg>
                                               </i>
-                                              {{resourceService.frmelmnts.btn.back}}
+                                              {{resourceService?.frmelmnts?.btn?.back}}
                     </button>
           <div class="d-flex chapterlist-header pt-5">
           <div class="d-flex mr-auto">
@@ -191,7 +191,7 @@
         <div class="ui container sb-textbook-details-container mb-24">
           <div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
-            <span class="w-30 font-italic">{{resourceService.frmelmnts.lbl.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | interpolate:'{contentTypeUnit}': firstLevelFolderLabel}} </span>
+            <span class="w-30 font-italic">{{resourceService?.frmelmnts?.lbl?.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | interpolate:'{contentTypeUnit}': firstLevelFolderLabel}} </span>
             <div class="d-flex">
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
                 <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
@@ -256,7 +256,7 @@
 															<use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
 													</svg>
 											</i>
-											{{resourceService.frmelmnts.btn.back}}
+											{{resourceService?.frmelmnts?.btn?.back}}
 									</button>
   <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"></app-no-result>
 </div>

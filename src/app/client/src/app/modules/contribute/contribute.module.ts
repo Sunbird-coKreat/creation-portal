@@ -8,7 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContributeRoutingModule } from './contibute-routing.module';
 import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
-import { ProgramHeaderComponent } from './components/program-header/program-header.component';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
@@ -28,7 +27,6 @@ import { QumlPlayerService } from '../sourcing';
   declarations: [
     ProgramComponent,
     OnboardPopupComponent,
-    ProgramHeaderComponent,
     OrgUserListComponent,
     MyContentComponent],
   imports: [

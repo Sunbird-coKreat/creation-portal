@@ -322,3 +322,16 @@ export const chunkedUserList  = [
 }
 ]
 ]
+
+export const telemetryData =  {
+    context: {
+        env: 'workspace'
+    },
+    edata: {
+        type: 'list',
+        pageid: '',
+        subtype: 'scroll',
+        uri: '',
+        visits: []
+    }
+}
