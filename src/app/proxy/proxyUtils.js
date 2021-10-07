@@ -6,7 +6,11 @@ const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
 const _ = require('lodash')
 const ApiInterceptor = require('sb_api_interceptor')
+<<<<<<< HEAD
 const { getAuthToken } = require('../helpers/kongTokenHelper')
+=======
+const { getAuthToken } = require('../helpers/kongTokenHelper');
+>>>>>>> e97fe11626b50fe119ff90e86333354c455f0c01
 
 
 const keyCloakConfig = {
