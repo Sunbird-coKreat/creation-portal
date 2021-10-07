@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { UserService, ProgramsService, ActionService, FrameworkService } from '@sunbird/core';
+import { PublicDataService, UserService, ProgramsService, ActionService, FrameworkService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, IUserProfile } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
@@ -71,6 +71,7 @@ export class BulkUploadComponent implements OnInit {
   public userProfile: IUserProfile;
   public unsubscribe = new Subject<void>();
   constructor(
+    private publicDataService: PublicDataService,
     private userService: UserService,
     private resourceService: ResourceService,
     private toasterService: ToasterService,
@@ -233,10 +234,11 @@ export class BulkUploadComponent implements OnInit {
         }
 
         const req = {
-          url: `content/v3/hierarchy/${this.sessionContext.collection}`,
+          url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_GET + this.sessionContext.collection,
           param: { 'mode': 'edit' }
         };
-        this.actionService.get(req).subscribe((response) => {
+
+        this.publicDataService.get(req).subscribe((response) => {
           const children = [];
           _.forEach(response.result.content.children, (child) => {
             if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||

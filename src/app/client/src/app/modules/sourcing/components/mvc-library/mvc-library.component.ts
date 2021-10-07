@@ -5,7 +5,7 @@ import { UUID } from 'angular2-uuid';
 import { catchError, map, finalize, tap } from 'rxjs/operators';
 import { throwError, forkJoin } from 'rxjs';
 import { TelemetryService, IImpressionEventInput} from '@sunbird/telemetry';
-import { ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
+import { PublicDataService, ContentService, ActionService, ProgramsService, UserService } from '@sunbird/core';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { SourcingService } from '../../services';
@@ -43,6 +43,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
 
   constructor(
+    private publicDataService: PublicDataService,
     public programTelemetryService: ProgramTelemetryService, private telemetryService: TelemetryService,
     private contentService: ContentService, public configService: ConfigService, private actionService: ActionService,
     private sourcingService: SourcingService, private programsService: ProgramsService,
@@ -109,7 +110,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
     this.telemetryPageId = _.get(this.route, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
- 
+
 
   initialize() {
     forkJoin([this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()]).subscribe(
@@ -130,12 +131,12 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit {
   }
 
   getCollectionHierarchy(identifier: string) {
-    const hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+    const hierarchyUrl = this.configService.urlConFig.URLS.CONTENT.HIERARCHY_GET + identifier;
     const req = {
       url: hierarchyUrl,
       param: { 'mode': 'edit' }
     };
-    return this.actionService.get(req).pipe(map((data: any) => data.result.content));
+    return this.publicDataService.get(req).pipe(map((data: any) => data.result.content));
   }
 
   getProgramDetails() {

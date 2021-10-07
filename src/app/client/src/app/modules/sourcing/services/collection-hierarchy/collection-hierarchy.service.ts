@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, catchError, isEmpty } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
-import { ActionService, UserService, ProgramsService, LearnerService} from '@sunbird/core';
+import { PublicDataService, ActionService, UserService, ProgramsService, LearnerService} from '@sunbird/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
@@ -16,7 +16,8 @@ export class CollectionHierarchyService {
   public sampleDataCount = 0;
   public currentUserID;
 
-  constructor(private actionService: ActionService, private configService: ConfigService,
+  constructor(private publicDataService: PublicDataService,
+    private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
     private programsService: ProgramsService, public learnerService: LearnerService) {
@@ -83,20 +84,20 @@ export class CollectionHierarchyService {
   getCollectionHierarchy(collectionIds) {
     const hierarchyRequest =  _.map(collectionIds, id => {
       const req = {
-        url: 'content/v3/hierarchy/' + id,
+        url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_GET + id,
         param: { 'mode': 'edit' }
       };
-      return this.actionService.get(req);
+      return this.publicDataService.get(req);
     });
     return forkJoin(hierarchyRequest);
   }
 
   getCollectionHierarchyDetails(collectionId) {
     const req = {
-      url: 'content/v3/hierarchy/' + collectionId,
+      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_GET + collectionId,
       param: { 'mode': 'edit' }
     };
-    return this.actionService.get(req);
+    return this.publicDataService.get(req);
   }
 
   getCollectionWithProgramId(programId, primaryCategory, preferencefilters?) {

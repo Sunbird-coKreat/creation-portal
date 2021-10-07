@@ -1,6 +1,6 @@
 /**
  * @file - Responsible for generating and accessing user kong token
- * @since release-4.3.0
+ * @since release-4.4.0
  * @version 1.0
  */
 'use strict';

@@ -537,7 +537,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
     const instance = this;
     let hierarchy;
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+    let hierarchyUrl = this.configService.urlConFig.URLS.CONTENT.HIERARCHY_GET  + identifier;
     if (unitIdentifier) {
       hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
     }
@@ -546,7 +546,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       param: { 'mode': 'edit' }
     };
      return new Promise((resolve) => {
-    this.actionService.get(req).pipe(catchError(err => {
+    this.publicDataService.get(req).pipe(catchError(err => {
       const errInfo = {
         errorMsg: 'Fetching TextBook details failed',
         telemetryPageId: this.telemetryPageId,
