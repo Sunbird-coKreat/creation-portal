@@ -668,6 +668,15 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
+    '/action/questionset/v1/retire/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
+      ]
+    },
     '/action/questionset/v1/read/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -761,6 +770,7 @@ const API_LIST = {
     '/action/questionset/v1/update/:do_id',
     '/action/questionset/v1/publish/:do_id',
     '/action/questionset/v1/reject/:do_id',
+    '/action/questionset/v1/retire/:do_id',
     '/action/questionset/v1/read/:do_id',
     '/action/questionset/v1/hierarchy/:do_id',
     '/action/question/v1/read/:do_id',
