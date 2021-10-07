@@ -88,7 +88,7 @@
 							</button>
 							<button class="sb-btn sb-btn-normal sb-btn-primary mx-10" *ngIf="visibility.showProgramLevelContentUpload"
 									(click)="showResourceTemplate();" appTelemetryInteract
-									[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sampleUpload', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+									[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 									[telemetryInteractObject]="telemetryInteractObject"
 									[telemetryInteractCdata]="telemetryInteractCdata"
 									[telemetryInteractPdata]="telemetryInteractPdata">Create/Upload Content</button>
@@ -215,31 +215,31 @@
 						<div class="sb-pagination">
 							<a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_first_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId)"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_list_first_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId)"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">First</a>
 							<a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="NavigateToPage(pager.currentPage - 1)" 
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_previous_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage - 1]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_list_previous_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage - 1]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
 							<a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="NavigateToPage(page)" class="sb-item"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_pagination', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [page]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_list_pagination', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [page]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
 							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.currentPage + 1)"  class="sb-item"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_next_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage + 1]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_list_next_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.currentPage + 1]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">Next</a>
 							<a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"  class="sb-item"
 							appTelemetryInteract
-										[telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrg_list_last_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.totalPages]})"
+										[telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_list_last_page', configService.telemetryLabels.eventType.click, undefined, telemetryPageId, {values: [pager.totalPages]})"
 										[telemetryInteractObject]="telemetryInteractObject"
 										[telemetryInteractCdata]="telemetryInteractCdata"
 										[telemetryInteractPdata]="telemetryInteractPdata">Last</a>
@@ -276,7 +276,7 @@
 				<div *ngIf="visibility.showProgramLevelSampleUpload">
 					<button class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="nominationIsInProcess || !(selectedContentTypes.length)"
 							(click)="showResourceTemplate();" appTelemetryInteract
-							[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('sampleUpload', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+							[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_sample', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="telemetryInteractCdata"
 							[telemetryInteractPdata]="telemetryInteractPdata">Create/Upload Sample</button>
@@ -558,7 +558,7 @@
       <div class="sb-checkbox sb-checkbox-primary">
           <input class="checking" [checked]="checkIfSelected(contenttype)" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}"
           appTelemetryInteract
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('content_type_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
           [telemetryInteractObject]="telemetryInteractObject"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata">

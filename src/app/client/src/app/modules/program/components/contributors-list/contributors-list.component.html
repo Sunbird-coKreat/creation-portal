@@ -11,7 +11,10 @@
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
       <button class="sb-btn sb-btn-normal" (click)="getData()"
-        [disabled]="showLoader">{{resource?.frmelmnts?.lbl?.search}}</button>
+        [disabled]="showLoader" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('search',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.lbl?.search}}</button>
     </div>
     <div class="w-100 ml-20">
       <label class="d-block">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.types}}
@@ -103,12 +106,12 @@
 <div class="sb-modal-actions">
   <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn"
     class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()" appTelemetryInteract
-    [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_save-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('save',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
     [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.save}}</button>
     <button
     class="sb-btn sb-btn-normal" (click)="close()" appTelemetryInteract
-    [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_close-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('close',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
     [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.close}}</button>
   </div>

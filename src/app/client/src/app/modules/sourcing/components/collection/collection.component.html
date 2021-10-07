@@ -270,7 +270,7 @@
       <div class="sb-checkbox sb-checkbox-primary">
           <input class="checking" [checked]="checkIfSelected(contenttype)" (change)="toggle(contenttype);" (click)="$event.stopPropagation()" type="checkbox" id="{{i+1}}"
           appTelemetryInteract
-          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('contentType_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('content_type_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contenttype.name],key:'dialog_id',value:'select_content_types'})"
           [telemetryInteractObject]="telemetryInteractObject"
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata">
