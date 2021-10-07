@@ -34,6 +34,7 @@ let envVariables = {
   sunbird_explore_button_visibility: env.sunbird_explore_button_visibility || 'true',
   sunbird_help_link_visibility: env.sunbird_help_link_visibility || 'false',
   sunbird_portal_user_upload_ref_link: env.sunbird_portal_user_upload_ref_link || 'http://www.sunbird.org/features-documentation/register_user',
+  sunbird_kong_refresh_token_api: env.sunbird_kong_refresh_token_api || '',
   ENABLE_PERMISSION_CHECK: env.sunbird_enabless_permission_check || 0,
   CONFIG_SERVICE_ENABLED: env.config_service_enabled || false,
   CRYPTO_ENCRYPTION_KEY: env.crypto_encryption_key || '030702bc8696b8ee2aa71b9f13e4251e',
