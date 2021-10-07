@@ -89,7 +89,7 @@
                 <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
                     <a class="item" [isActive]="activeTab === 'textbook'"  suiTabHeader="2"  (click)="resetStatusFilter('textbook')"
                     appTelemetryInteract
-                    [telemetryInteractEdata]="getTelemetryInteractEdata(targetCollections.replace(' ', '_').toLowerCase(), config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
+                    [telemetryInteractEdata]="getTelemetryInteractEdata(targetCollections?.replace(' ', '_').toLowerCase(), config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectContributions)"
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{targetCollections}}
@@ -621,7 +621,7 @@
                                     <td>{{resourceService.frmelmnts.lbl.TextbookLevelReportDescription | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{TARGET_NAME}': targetCollection}} </td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('textbookLevelReport')"
                                         appTelemetryInteract
-                                    [telemetryInteractEdata]="getTelemetryInteractEdata((targetCollection.replace(' ', '_')).toLowerCase() + '_level_content_report',config.telemetryLabels.eventType.click ,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                    [telemetryInteractEdata]="getTelemetryInteractEdata((targetCollection?.replace(' ', '_')).toLowerCase() + '_level_content_report',config.telemetryLabels.eventType.click ,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                     [telemetryInteractObject]="telemetryInteractObject"
                                     [telemetryInteractCdata]="telemetryInteractCdata"
                                     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
@@ -631,7 +631,7 @@
                                     <td>{{resourceService.frmelmnts.lbl.ChapterLevelReportDescription | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{FIRST_LEVEL_FOLDER}': firstLevelFolderLabel}}</td>
                                     <td class="text-center"><button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('chapterLevelReport')"
                                         appTelemetryInteract
-                                        [telemetryInteractEdata]="getTelemetryInteractEdata(firstLevelFolderLabel.replace(' ', '_').toLowerCase() + '_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                        [telemetryInteractEdata]="getTelemetryInteractEdata(firstLevelFolderLabel?.replace(' ', '_').toLowerCase() + '_level_content_report', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                                         [telemetryInteractObject]="telemetryInteractObject"
                                         [telemetryInteractCdata]="telemetryInteractCdata"
                                         [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>

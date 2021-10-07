@@ -13,7 +13,7 @@
 		</a>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary my-10"
 		(click)="showTextbookFiltersModal = true" appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_' + targetCollections.replace(' ', '_').toLowerCase(),
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('filter_' + targetCollections?.replace(' ', '_').toLowerCase(),
 		configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,
 		telemetryPageId)"
 		[telemetryInteractObject]="telemetryInteractObject"
@@ -26,7 +26,7 @@
 		</button>
 		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10"
 		(click)="downloadCSV()" appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_' + targetCollections.replace(' ', '_').toLowerCase() + '_details',
+		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_' + targetCollections?.replace(' ', '_').toLowerCase() + '_details',
 		configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,
 		telemetryPageId)"
 		[telemetryInteractObject]="telemetryInteractObject"
