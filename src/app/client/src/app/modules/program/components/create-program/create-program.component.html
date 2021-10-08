@@ -842,6 +842,33 @@
 	<div class="ui grid" [formGroup]="form">
 		<div class="three wide column" *ngIf="projectTargetType == 'searchCriteria'">
 			<div class="field">
+				<label class="d-block">{{resource?.frmelmnts?.lbl?.targetFramework}} 
+					<i class="pull-right question circle link icon pull-right" suiPopup
+						popupDelay="500" [popupPlacement]="'left'"
+						popupText="{{resource?.frmelmnts?.lbl?.selectFramework}}"></i>
+				</label>
+				<sui-select placeholder="{{resource?.frmelmnts?.lbl?.selectFramework}}"
+					class="selection p-5" formControlName="frameworkList"
+					[options]="programScope['frameworkList']"
+					labelField="name"
+					(ngModelChange)="getFrameworkDetailsOnSelect()" #frameworkList
+					appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('targetFramework', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">
+					<sui-select-option *ngFor="let targetFramework of frameworkList.filteredOptions"
+						[value]="targetFramework" appTelemetryInteract
+						[telemetryInteractEdata]="getTelemetryInteractEdata('targetFramework', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [targetFramework]})"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata">
+					</sui-select-option>
+				</sui-select>
+			</div>
+		</div>
+		<div class="three wide column" *ngIf="projectTargetType == 'searchCriteria'">
+			<div class="field">
 				<label class="d-block">{{resource?.frmelmnts?.lbl?.board}}
 					<i class="pull-right question circle link icon pull-right" suiPopup
 						popupDelay="500" [popupPlacement]="'left'"
@@ -866,10 +893,6 @@
 						[telemetryInteractPdata]="telemetryInteractPdata">
 					</sui-select-option>
 				</sui-select>
-
-				<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
-						This field is required
-					</div-->
 			</div>
 		</div>
 		<div class="three wide column">
@@ -898,10 +921,6 @@
 						[telemetryInteractPdata]="telemetryInteractPdata">
 					</sui-select-option>
 				</sui-multi-select>
-
-				<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['medium'].errors && createProgramForm.controls['medium'].errors.required && (!createProgramForm.controls['medium'].pristine || formIsInvalid)">
-						This field is required
-					</div-->
 			</div>
 		</div>
 		<div class="three wide column">
@@ -956,9 +975,56 @@
 						[telemetryInteractPdata]="telemetryInteractPdata">
 					</sui-select-option>
 				</sui-multi-select>
-				<!--div class="ui pointing red basic label below " *ngIf="createProgramForm.controls['subject'].errors && createProgramForm.controls['subject'].errors.required && (!createProgramForm.controls['subject'].pristine || formIsInvalid)">
-						This field is required
-					</div-->
+			</div>
+		</div>
+		<div class="three wide column" *ngIf="projectTargetType == 'searchCriteria'">
+			<div class="field">
+				<label class="d-block">{{resource?.frmelmnts?.lbl?.topics}}  
+					<i class="pull-right question circle link icon pull-right" suiPopup
+						popupDelay="500" [popupPlacement]="'left'"
+						popupText="{{resource?.frmelmnts?.lbl?.topics}}"></i>
+				</label>
+				<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectTopic}}"
+					class="selection p-5" formControlName="topic" labelField="name"
+					[hasLabels]="true" [options]="programScope['topic']"
+					#topics appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('topic', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">
+					<sui-select-option *ngFor="let topic of topics.filteredOptions"
+						[value]="topic" appTelemetryInteract
+						[telemetryInteractEdata]="getTelemetryInteractEdata('topic', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [topic.name]})"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata">
+					</sui-select-option>
+				</sui-multi-select>
+			</div>
+		</div>
+		<div class="three wide column" *ngIf="projectTargetType == 'searchCriteria'">
+			<div class="field">
+				<label class="d-block"> {{resource?.frmelmnts?.lbl?.developmentGoal}} 
+					<i class="pull-right question circle link icon pull-right" suiPopup
+						popupDelay="500" [popupPlacement]="'left'"
+						popupText="{{resource?.frmelmnts?.lbl?.developmentGoal}}"></i>
+				</label>
+				<sui-multi-select placeholder="{{resource?.frmelmnts?.lbl?.selectDevelopmentGoal}}"
+					class="selection p-5" formControlName="developmentGoal" labelField="name"
+					[hasLabels]="true" [options]="programScope['developmentGoal']"
+					#developmentGoal appTelemetryInteract
+					[telemetryInteractEdata]="getTelemetryInteractEdata('developmentGoal', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+					[telemetryInteractObject]="telemetryInteractObject"
+					[telemetryInteractCdata]="telemetryInteractCdata"
+					[telemetryInteractPdata]="telemetryInteractPdata">
+					<sui-select-option *ngFor="let goal of developmentGoal.filteredOptions"
+						[value]="goal" appTelemetryInteract
+						[telemetryInteractEdata]="getTelemetryInteractEdata('developmentGoal', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [goal.name]})"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata">
+					</sui-select-option>
+				</sui-multi-select>
 			</div>
 		</div>
 		<div class="three wide column pt-30" *ngIf="!projectTargetType || projectTargetType == 'collections'">

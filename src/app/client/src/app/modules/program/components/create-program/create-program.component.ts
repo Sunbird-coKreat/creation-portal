@@ -222,10 +222,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.projectScopeForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
       framework: [],
+      frameworkList: [],
       board: [],
       medium: [],
       gradeLevel: [],  
       subject: [],
+      topic: [],
+      developmentGoal: [],
       targetPrimaryCategories: [null, Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
     });
@@ -234,6 +237,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
      // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     }
     this.setProjectScopeDetails();
+  }
+  getFrameworkDetailsOnSelect() {
+      this.getFramewok(this.projectScopeForm.value.frameworkList.name).subscribe(
+        (response) => {
+          if (!response) {
+            this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
+            return false;
+          } else {
+            this.initializeFrameworkForTatgetType(response.identifier);
+          }
+      });
   }
   setProjectScopeDetails() {
     this.programScope['targetPrimaryCategories'] = [];
@@ -247,6 +261,24 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (channelData) {
         this.programScope['userChannelData'] = channelData;
         if (this.projectTargetType === 'searchCriteria') {
+          this.programScope['frameworkList'] = [{
+            "name": "TPD",
+            "relation": "hasSequenceMember",
+            "identifier": "nit_tpd",
+            "description": "nit_tpd Framework",
+            "objectType": "Framework",
+            "status": "Live",
+            "type": "TPD"
+          },
+          {
+            "name": "K-12",
+            "relation": "hasSequenceMember",
+            "identifier": "nit_k-12",
+            "description": "nit_k-12 Framework",
+            "objectType": "Framework",
+            "status": "Live",
+            "type": "K-12"
+          }];
           this.getFramewok().subscribe(
             (response) => {
               if (!response) {
@@ -302,16 +334,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
   }
 
-  getFramewok () {
+  getFramewok (frameworkType?) {
     // Get K-12 framework
     const channelFrameworks = _.get(this.programScope['userChannelData'], 'frameworks');
     const frameworkTypeGroup = _.groupBy(channelFrameworks, 'type');
-    if (!_.isEmpty(_.get(frameworkTypeGroup, 'K-12'))) {
-      const ret = _.first(_.get(frameworkTypeGroup, 'K-12'));
+    if (!_.isEmpty(_.get(frameworkTypeGroup, frameworkType))) {
+      const ret = _.first(_.get(frameworkTypeGroup, frameworkType));
       return of(ret);
     } else {
       // get systemDefault framework
-      return this.frameworkService.getFrameworkData(undefined, 'K-12', undefined, "Yes").pipe(map((response) => {
+      return this.frameworkService.getFrameworkData(undefined, frameworkType, undefined, "Yes").pipe(map((response) => {
         return _.first(_.get(response, 'result.Framework'));
       }));
     }
@@ -322,12 +354,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['medium'] = [];
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
+    this.programScope['topic'] = [];
+    this.programScope['developmentGoal'] = [];
     this.projectScopeForm.controls['framework'].setValue([this.programScope.framework.identifier]);
     if (this.projectScopeForm && this.projectTargetType === 'collections') {
       this.projectScopeForm.controls['board'].setValue('');
       this.projectScopeForm.controls['medium'].setValue('');
       this.projectScopeForm.controls['gradeLevel'].setValue('');
       this.projectScopeForm.controls['subject'].setValue('');
+      this.projectScopeForm.controls['topic'].setValue('');
+      this.projectScopeForm.controls['developmentGoal'].setValue('');
       const board = _.find(this.programScope.framework.categories, (element) => {
         return element.code === 'board';
       });
@@ -389,7 +425,22 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       });
       this.projectScopeForm.controls['subject'].setValue(selectedsubjects);
+
+      const selectedTopics =  _.filter(this.programScope.topic, (temp) => {
+        if (_.includes(_.get(this.programDetails, 'config.topic'), temp.name)) {
+          return temp;
+        }
+      });
+      this.projectScopeForm.controls['topic'].setValue(selectedTopics);
+
+      const developmentGoal =  _.filter(this.programScope.developmentGoal, (temp) => {
+        if (_.includes(_.get(this.programDetails, 'config.developmentGoal'), temp.name)) {
+          return temp;
+        }
+      });
+      this.projectScopeForm.controls['topic'].setValue(developmentGoal);
     }
+    console.log(this.programScope, 'programScope');
   }
 
   initiateDocumentUploadModal() {
