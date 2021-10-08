@@ -11,6 +11,6 @@ export * from './textbook-list/textbook-list.component';
 export * from './program-list/program-list.component';
 export * from './org-users-list/org-users-list.component';
 export * from './project-filter/project-filter.component';
-
-
+export * from './program-header/program-header.component';
+export * from './resource-template/resource-template.component';
 

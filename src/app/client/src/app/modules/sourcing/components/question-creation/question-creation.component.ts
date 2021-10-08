@@ -640,7 +640,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   }
 
   canReviewContent() {
-    return !!(this.roles.currentRoles.includes('REVIEWER')
+    return !!(this.sessionContext.currentRoles.includes('REVIEWER')
       && this.sessionContext.resourceStatus === 'Review'
       && this.programsService.checkForContentSubmissionDate(this.sessionContext.programContext)
       && this.router.url.includes('/contribute')

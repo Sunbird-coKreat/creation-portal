@@ -1,6 +1,7 @@
 export const chapterListComponentInput = {
   sessionContext: {
     framework: 'NCFCOPY',
+    currentRoles: ['CONTRIBUTOR'],
     currentRole: 'CONTRIBUTOR',
     programId: '31ab2990-7892-11e9-8a02-93c5c62c03f1',
     program: 'CBSE 2',
@@ -14,6 +15,7 @@ export const chapterListComponentInput = {
     currentRoleId: 1,
     collection: 'do_1127639035982479361130',
     collectionName: 'बाल रामकथा(HINDHI)',
+    lastOpenedUnitParent: 'do_1127639059664568321138',
     topicList: [
       {
         identifier: 'ncfcopy_topic_topic1',
@@ -25,7 +27,115 @@ export const chapterListComponentInput = {
         category: 'topic',
         status: 'Live'
       }
-    ]
+    ],
+    nominationDetails: {
+      "id": 15468,
+      "program_id": "abcd1234",
+      "user_id": "abcd-e018-4859-a0a8-e842650b9d64",
+      "organisation_id": "abcd-42a7-44c8-84f4-8cfea235f07d",
+      "status": "Approved",
+      "content_types": null,
+      "targetprimarycategories": [
+          {
+              "name": "eTextbook",
+              "identifier": "obj-cat:etextbook_content_all",
+              "targetObjectType": "Content"
+          },
+          {
+              "name": "Explanation Content",
+              "identifier": "obj-cat:explanation-content_content_all",
+              "targetObjectType": "Content"
+          },
+          {
+              "name": "Learning Resource",
+              "identifier": "obj-cat:learning-resource_content_all",
+              "targetObjectType": "Content"
+          },
+          {
+              "name": "Teacher Resource",
+              "identifier": "obj-cat:teacher-resource_content_all",
+              "targetObjectType": "Content"
+          }
+      ],
+      "targetprimarycategorynames": [
+          "eTextbook",
+          "Explanation Content",
+          "Learning Resource",
+          "Teacher Resource"
+      ],
+      "collection_ids": [
+          "do_11337024881991680011182"
+      ],
+      "rolemapping": null,
+      "userData": {
+          "osUpdatedAt": "2021-09-16T01:35:47.356Z",
+          "lastName": "",
+          "enrolledDate": "2020-08-24T11:24:10.893Z",
+          "@type": "User",
+          "subject": [
+              "Tamil",
+              "English",
+              "Computer Applications",
+              "Mathematics",
+              "Environmental Studies",
+              "Hindi",
+              "null",
+              "Science",
+              "Geography",
+              "Urdu"
+          ],
+          "roles": [
+              "admin",
+              "sourcing_reviewer"
+          ],
+          "channel": "01309282781705830427",
+          "osid": "179b8dcd-ad56-42fd-83d1-9459bb8e4489",
+          "medium": [
+              "English",
+              "Tamil",
+              "Hindi",
+              "null",
+              "Kannada"
+          ],
+          "userId": "5a587cc1-e018-4859-a0a8-e842650b9d64",
+          "firstName": "N11",
+          "gradeLevel": [
+              "Class 7",
+              "Class 2",
+              "Class 1",
+              "Class 10",
+              "Class 3",
+              "Class 9",
+              "Class 4",
+              "Class 6",
+              "Class 5",
+              "Class 8",
+              "Grade 1",
+              "Grade 2",
+              "Grade 6"
+          ],
+          "osCreatedAt": "2021-09-16T01:35:47.356Z"
+      },
+      "orgData": {
+          "osUpdatedAt": "2020-08-24T11:23:53.873Z",
+          "code": "NIT",
+          "osCreatedAt": "2020-08-24T11:23:53.873Z",
+          "createdBy": "9e41deb1-daf3-4e0d-b45d-cfcad7291af9",
+          "@type": "Org",
+          "name": "NIT",
+          "description": "NIT",
+          "osid": "e7328d77-42a7-44c8-84f4-8cfea235f07d",
+          "type": [
+              "contribute",
+              "sourcing"
+          ],
+          "orgId": "01309282781705830427"
+      }
+    },
+    telemetryPageDetails: {
+      telemetryPageId: 'dummyPage',
+      telemetryInteractCdata: {}
+    }
   },
   collection: {
     name: 'बाल रामकथा(HINDHI)',
@@ -262,11 +372,110 @@ export const chapterListComponentInput = {
       roles: ['CONTRIBUTOR']
     }
   },
-  role: {
+  roles: {
     currentRole: 'CONTRIBUTOR'
   }
 };
-
+export const frameWorkData = {
+  'err': null,
+  'frameworkdata': {
+    'NCFCOPY': {
+      'identifier': 'NCFCOPY',
+      'code': 'NCFCOPY',
+      'translations': '{"hi":"एनसीएफ कॉपी","ka":"ncf ನಕಲಿಸಿ"}',
+      'name': 'AP Board',
+      'description': ' NCF framework..',
+      'categories': [
+        {
+          'identifier': 'ncfcopy_board',
+          'code': 'board',
+          'terms': [
+            {
+              'associations': [
+                {
+                  'identifier': 'ncfcopy_gradelevel_kindergarten',
+                  'code': 'kindergarten',
+                  'translations': '{"hi":"बाल विहार"}',
+                  'name': 'Kindergarten',
+                  'description': '',
+                  'category': 'gradeLevel',
+                  'status': 'Live'
+                },
+              ],
+              'identifier': 'ncfcopy_board_ncert',
+              'code': 'ncert',
+              'translations': null,
+              'name': 'NCERT',
+              'description': '',
+              'index': 1,
+              'category': 'board',
+              'status': 'Live'
+            },
+          ],
+          'translations': null,
+          'name': 'Curriculum',
+          'description': '',
+          'index': 1,
+          'status': 'Live'
+        },
+        {
+          'identifier': 'ncfcopy_medium',
+          'code': 'medium',
+          'translations': '{"hi":"मध्यम"}',
+          'name': 'Medium',
+          'description': '',
+          'index': 2,
+          'status': 'Live'
+        },
+        {
+          'identifier': 'ncfcopy_subject',
+          'code': 'subject',
+          'terms': [
+            {
+              'identifier': 'ncfcopy_subject_mathematics',
+              'code': 'mathematics',
+              'children': [
+                {
+                  'identifier': 'ncfcopy_subject_arithmetics',
+                  'code': 'arithmetics',
+                  'translations': null,
+                  'name': 'Arithmetics',
+                  'description': 'Arithmetics',
+                  'index': 1,
+                  'category': 'subject',
+                  'status': 'Live'
+                }
+              ],
+              'translations': null,
+              'name': 'Math',
+              'description': 'Mathematics',
+              'index': 1,
+              'category': 'subject',
+              'status': 'Live'
+            },
+            {
+              'identifier': 'ncfcopy_subject_malayalam',
+              'code': 'malayalam',
+              'translations': null,
+              'name': 'Malayalam',
+              'description': '',
+              'index': 22,
+              'category': 'subject',
+              'status': 'Live'
+            }
+          ],
+          'translations': '{"hi":"विषय"}',
+          'name': 'Subject',
+          'description': '',
+          'index': 4,
+          'status': 'Live'
+        },
+      ],
+      'type': 'K-12',
+      'objectType': 'Framework'
+    }
+  }
+};
 export const responseSample = {
   result: {
     content: {

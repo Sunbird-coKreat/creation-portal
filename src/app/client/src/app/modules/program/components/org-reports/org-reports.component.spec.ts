@@ -11,7 +11,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import {mockData} from './org-reports.component.spec.data'
-
+import { ProgramTelemetryService } from '../../../program/services';
+import { SourcingService } from '../../../sourcing/services';
 
 describe('OrgReportsComponent', () => {
   let component: OrgReportsComponent;
@@ -32,7 +33,8 @@ describe('OrgReportsComponent', () => {
       imports: [HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [ OrgReportsComponent ],
-      providers: [ ToasterService, ResourceService, NavigationHelperService, ConfigService,
+      providers: [ ToasterService, ResourceService, NavigationHelperService, ConfigService, UsageService, 
+        ProgramTelemetryService, SourcingService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }, { provide: Router, useValue: routerStub },
         {provide: APP_BASE_HREF, useValue: '/'}, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
         {provide: UserService, useValue: userServiceStub}, { provide: ResourceService, useValue: resourceBundle }

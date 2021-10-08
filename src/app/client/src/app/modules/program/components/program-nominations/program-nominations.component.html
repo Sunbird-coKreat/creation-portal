@@ -2,25 +2,27 @@
     <div class="sb-bg-color-primary-0 practical-header py-16">
             <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
                     <div class="practical-header__title w-20">
-                        <h5 class="m-0 p-0 font-weight-bold d-inline-block break-word">{{ programDetails?.name }} </h5>
-                        <i class="info circle link icon" suiPopup
-                                [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-                            <ng-template #popupTemplate>
-                                <div class="content">
-                                    <div class="textbook-details ml-8">
-                                        <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
-                                        <div class="content">
-                                            <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
-                                        </div>
-                                        <hr />
-                                        <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
-                                        <div class="content">
-                                            <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
-                                        </div>
+                        <h5 class="m-0 p-0 pb-10 font-weight-bold d-inline-block break-word">{{ programDetails?.name }} </h5>
+                        <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
+                        <ng-template #popupTemplate>
+                            <div class="content">
+                                <div class="textbook-details ml-8">
+                                    <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
+                                    <div class="content">
+                                        <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+                                    </div>
+                                    <hr />
+                                    <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
+                                    <div class="content">
+                                        <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
                                     </div>
                                 </div>
-                            </ng-template>
-                        <p class="fs-0-785 font-weight-normal pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
+                            </div>
+                        </ng-template>
+                        <div *ngIf="programDetails?.target_type==='searchCriteria'" class="sb-color-warning pb-10 pb-10">
+                            <span class="font-weight-bold">{{ programDetails?.config.framework.join(', ') }}</span>
+                        </div>
+                        <p class="fs-0-785 font-weight-normal pt-10 bt-1 pr-10 sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }} </p>
                     </div>
                     <div class="sb-meta-data-container sb-meta-data-column px-10 w-20">
                             <label class="mb-0">{{resourceService?.frmelmnts?.lbl?.contentType}}</label>
@@ -91,7 +93,7 @@
                     [telemetryInteractObject]="telemetryInteractObject"
                     [telemetryInteractCdata]="telemetryInteractCdata"
                     [telemetryInteractPdata]="telemetryInteractPdata">{{targetCollections}}
-                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8">{{ collectionsCount }}</span>
+                        <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-8 px-8" *ngIf="!programDetails?.target_type || programDetails?.target_type==='collections'">{{ collectionsCount }}</span>
                     </a>
                     <a class="item" *ngIf="programDetails?.status !== 'Unlisted'" [isActive]="activeTab === 'nomination'"  suiTabHeader="1"  (click)="resetStatusFilter('nomination')"
                     appTelemetryInteract

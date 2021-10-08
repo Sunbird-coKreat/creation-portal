@@ -5,13 +5,14 @@ import { ResourceTemplateComponent } from './resource-template.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import {
-  ResourceService, ToasterService, ConfigService, BrowserCacheTtlService} from '@sunbird/shared';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { CacheService } from 'ng2-cache-service';
 import { throwError } from 'rxjs';
+import { ProgramTelemetryService } from '../../../program/services';
+import { ConfigService, ResourceService, ToasterService, BrowserCacheTtlService } from '@sunbird/shared';
+import { UserService, ProgramsService } from '@sunbird/core';
 
 const routerStub = {
   navigate: jasmine.createSpy('navigate')
@@ -25,6 +26,9 @@ const fakeActivatedRoute = {
       telemetry: { env: 'programs' }
     }
   }
+};
+const userStub = {
+  user_id: 'abcd1234'
 };
 const resourceBundle = {
   messages: {
@@ -42,10 +46,11 @@ describe('ResourceTemplateComponent', () => {
     TestBed.configureTestingModule({
       imports: [SuiModule, TelemetryModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [ResourceTemplateComponent],
-      providers: [ConfigService, TelemetryService, ResourceService, CacheService, BrowserCacheTtlService, ToasterService, DatePipe,
+      providers: [ ProgramTelemetryService, ConfigService, TelemetryService, ResourceService, CacheService, BrowserCacheTtlService, ToasterService, DatePipe, ProgramsService, DatePipe,
         { provide: Router, useValue: routerStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: ResourceService, useValue: resourceBundle },
+        { provide: UserService, useValue: userStub },
         { provide: APP_BASE_HREF, useValue: '/' }]
     })
       .compileComponents();

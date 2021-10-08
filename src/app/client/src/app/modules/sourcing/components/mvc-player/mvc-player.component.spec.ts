@@ -15,7 +15,7 @@ import { mockMvcPlayerData } from './mvc-player.component.spec.data';
 import { RouterTestingModule } from '@angular/router/testing';
 import { from } from 'rxjs';
 
-describe('MvcPlayerComponent', () => {
+xdescribe('MvcPlayerComponent', () => {
   let component: MvcPlayerComponent;
   let fixture: ComponentFixture<MvcPlayerComponent>;
   let debugElement: DebugElement;

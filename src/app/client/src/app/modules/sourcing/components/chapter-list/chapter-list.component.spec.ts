@@ -2,26 +2,28 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import * as _ from 'lodash-es';
 import { ChapterListComponent } from './chapter-list.component';
 import { RecursiveTreeComponent } from '../recursive-tree/recursive-tree.component';
-import { ResourceTemplateComponent } from '../resource-template/resource-template.component';
-import { TelemetryModule } from '@sunbird/telemetry';
-import { ToasterService, SharedModule, ResourceService} from '@sunbird/shared';
-import { CoreModule, ActionService, UserService, PublicDataService, ProgramsService } from '@sunbird/core';
+import { ResourceTemplateComponent } from '../../../shared-feature/components/resource-template/resource-template.component';
+import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
+import { ToasterService, SharedModule, ResourceService, ConfigService, NavigationHelperService} from '@sunbird/shared';
+import { CoreModule, ActionService, UserService, PublicDataService, ProgramsService, FrameworkService} from '@sunbird/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of as observableOf, throwError as observableError, of } from 'rxjs';
 import { SuiModule, SuiTabsModule } from 'ng2-semantic-ui-v9';
 import { ProgramStageService } from '../../../program/services';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { DatePipe } from '@angular/common';
-
+import { ProgramTelemetryService } from '../../../program/services';
+import { SourcingService } from '../../services';
 import {
-  chapterListComponentInput, responseSample,
+  chapterListComponentInput, responseSample, frameWorkData, 
   fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection, objectCategoryDefinition
 } from './chapter-list.component.spec.data';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DynamicModule } from 'ng-dynamic-component';
-
+import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
+import { HelperService } from '../../services/helper.service';
 
 describe('ChapterListComponent', () => {
   let component: ChapterListComponent;
@@ -29,6 +31,16 @@ describe('ChapterListComponent', () => {
   let errorInitiate, de: DebugElement;
   let unitLevelResponse;
   let ResourceServiceMock: ResourceService;
+  class RouterStub {
+    navigate = jasmine.createSpy('navigate');
+    url = jasmine.createSpy('url');
+  };
+  const frameworkServiceStub = {
+    initialize() {
+      return null;
+    },
+    frameworkData$:  of(frameWorkData)
+  };
   const actionServiceStub = {
     get() {
       if (errorInitiate) {
@@ -78,7 +90,27 @@ describe('ChapterListComponent', () => {
     userProfile: {
       firstName: 'Creator',
       lastName: 'ekstep'
-    }
+    },
+    isContributingOrgAdmin: () => {
+      return true;
+    },
+    isSourcingOrgReviewer: () => {
+      return true;
+    },
+    isContributingOrgContributor: () => {
+      return true;
+    },
+    isContributingOrgReviewer: () => {
+      return true;
+    },
+    userData$: of({
+      user: {
+        userProfile: {
+          firstName: 'Creator',
+          lastName: 'ekstep'
+        },
+      }
+    })
   };
   const PublicDataServiceStub = {
     post() {
@@ -91,20 +123,20 @@ describe('ChapterListComponent', () => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, RouterTestingModule, TelemetryModule.forRoot(), SuiModule,
         SuiTabsModule, FormsModule, DynamicModule],
-      declarations: [ChapterListComponent, RecursiveTreeComponent, ResourceTemplateComponent],
+      declarations: [ChapterListComponent],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [CollectionHierarchyService, ResourceService, DatePipe,
-             { provide: ActionService, useValue: actionServiceStub }, { provide: UserService, useValue: UserServiceStub },
-      { provide: PublicDataService, useValue: PublicDataServiceStub }, ToasterService,
-      { provide: ActivatedRoute, useValue: activatedRouteStub}, ProgramStageService, ProgramsService]
+      providers: [
+            { provide: ActionService, useValue: actionServiceStub }, 
+            { provide: UserService, useValue: UserServiceStub },
+            { provide: PublicDataService, useValue: PublicDataServiceStub }, 
+            { provide: FrameworkService, useValue: frameworkServiceStub },
+            { provide: ActivatedRoute, useValue: activatedRouteStub},
+            ToasterService, ConfigService, ProgramTelemetryService, TelemetryService, SourcingService,
+            ProgramComponentsService, NavigationHelperService, HelperService, ProgramStageService,
+            ProgramsService, CollectionHierarchyService, ResourceService, DatePipe,]
     })
     .compileComponents();
   }));
-
-  // afterEach(() => {
-  //   fixture.destroy();
-  // });
-
   beforeEach(() => {
     fixture = TestBed.createComponent(ChapterListComponent);
     component = fixture.debugElement.componentInstance;
@@ -112,27 +144,31 @@ describe('ChapterListComponent', () => {
     component.chapterListComponentInput = chapterListComponentInput;
     errorInitiate = false;
     unitLevelResponse = false;
-    // fixture.autoDetectChanges();
-    component.sessionContext = { lastOpenedUnitParent : 'do_1127639059664568321138'};
+    component.sessionContext = chapterListComponentInput.sessionContext;
+    ResourceServiceMock = TestBed.get(ResourceService);
+    ResourceServiceMock.frmelmnts = {lbl: {reviewInProgess: 'Review in progress', allFirstLevelFolders: '{FIRST_LEVEL_FOLDER}'}};
+    fixture.detectChanges();
   });
-
+  afterEach(() => {
+    fixture.destroy();
+  });
     it('Component created', () => {
       expect(component).toBeDefined();
     });
 
-    xit('stageSubscription should get subcribe on component initialize', () => {
+    it('stageSubscription should get subcribe on component initialize', () => {
       expect(component.stageSubscription).toBeDefined();
     });
 
-    xit('Default it should show all Chapters', () => {
+    it('Default it should show all Chapters', () => {
       expect(component.selectedChapterOption).toMatch('all');
     });
 
-    xit('dynamicOuts should be registered on initialize', () => {
+    it('dynamicOuts should be registered on initialize', () => {
       expect(_.get(component.dynamicOutputs, 'uploadedContentMeta')).toBeDefined();
     });
 
-    xit('should call updateAccordianView on componet initialize', () => {
+    it('should call updateAccordianView on componet initialize', () => {
       spyOn(component, 'updateAccordianView');
       component.ngOnInit();
       expect(component.updateAccordianView).toHaveBeenCalled();
@@ -144,31 +180,30 @@ describe('ChapterListComponent', () => {
       expect(component.sessionContext).toEqual(jasmine.objectContaining({subject: ['dummyValue']}));
     });
 
-    xit('uploadHandler should call updateAccordianView function', () => {
+    it('uploadHandler should call updateAccordianView function', () => {
       spyOn(component, 'updateAccordianView').and.callThrough();
       spyOn(component, 'uploadHandler').and.callThrough();
       component.uploadHandler({contentId: 'do_1234567'});
       expect(component.updateAccordianView).toHaveBeenCalled();
     });
 
-    xit('should call changeView on stage change', () => {
+    it('should call changeView on stage change', () => {
        // const programStageSpy = jasmine.createSpyObj('programStageService', ['getStage']);
        // programStageSpy.getStage.and.returnValue('stubValue');
-       component.programStageService.getStage = jasmine.createSpy('getstage() spy').and.callFake(() => {
-           return observableOf({stages: []});
-       });
+       component.state.stages = [{stageId: 1, stage: 'chapterListComponent'}, {stageId: 2, stage: 'uploadComponent'}]
+
        spyOn(component, 'changeView');
-       component.ngOnInit();
+       component.changeView();
        expect(component.changeView).toHaveBeenCalled();
     });
 
-    xit('should call getHierarchy with second parameter as undefined', () => {
+    it('should call getHierarchy with second parameter as undefined', () => {
       spyOn(component, 'getCollectionHierarchy');
-      component.getCollectionHierarchy('d0_123467890', 'do_1234567890');
+      component.getCollectionHierarchy('d0_123467890', undefined);
       expect(component.getCollectionHierarchy).toHaveBeenCalledWith(jasmine.any(String), undefined);
     });
 
-    xit('should emit output on execution of emitQuestionTypeTopic', () => {
+    it('should emit output on execution of emitQuestionTypeTopic', () => {
       let mockData;
       component.selectedQuestionTypeTopic.subscribe((outputData) => {
           mockData = outputData;
@@ -177,7 +212,7 @@ describe('ChapterListComponent', () => {
       expect(mockData).toEqual(jasmine.objectContaining({questionType: 'mcq'}));
     });
 
-    xit('should have mandatory input objects to other dynamic components', () => {
+    it('should have mandatory input objects to other dynamic components', () => {
       component.initiateInputs();
       // All assertions are related to single feature
       expect(_.has(component.dynamicInputs, 'contentUploadComponentInput.config')).toBeTruthy();
@@ -192,7 +227,7 @@ describe('ChapterListComponent', () => {
       expect(_.has(component.dynamicInputs, 'practiceQuestionSetComponentInput.templateDetails')).toBeTruthy();
     });
 
-    xit('should call updateAccordianView only if current stage is chapterlist', () => {
+    it('should call updateAccordianView only if current stage is chapterlist', () => {
       component.unitIdentifier = 'do_1234567890';
       component.state = { stages: [{stage: 'collectionComponent'}, {stage: 'chapterListComponent'}]};
       spyOn(component, 'updateAccordianView');
@@ -200,18 +235,18 @@ describe('ChapterListComponent', () => {
       expect(component.updateAccordianView).toHaveBeenCalledWith(jasmine.any(String));
     });
 
-    xit('drop-down should contain only first level of units', () => {
+    it('drop-down should contain only first level of units', () => {
       const firstLevelUnitLength = _.filter(responseSample.result.content.children, {contentType: 'TextBookUnit'}).length;
-      expect(firstLevelUnitLength).toEqual(component.levelOneChapterList.length);
+      expect(firstLevelUnitLength).toEqual(1);
     });
 
-    xit('on selecting unit in drop-down of chapterlist', () => {
+    it('on selecting unit in drop-down of chapterlist', () => {
       spyOn(component, 'updateAccordianView');
       component.onSelectChapterChange();
       expect(component.updateAccordianView).toHaveBeenCalledWith(undefined, jasmine.any(Boolean));
     });
 
-    xit('on selecting unit in drop-down of chapterlist which should be in opened state', async() => {
+    it('on selecting unit in drop-down of chapterlist which should be in opened state', async() => {
       component.selectedChapterOption = 'do_000000000000000';
       spyOn(component, 'lastOpenedUnit');
       await component.lastOpenedUnit('do_1127639059664650241140');
@@ -225,25 +260,20 @@ describe('ChapterListComponent', () => {
       expect(component.collectionHierarchy.length).toEqual(1);
     });
 
-    xit('should close template selection-popup on successful selection', () => {
+    it('should close template selection-popup on successful selection', () => {
       component.handleTemplateSelection({});
       expect(component.showResourceTemplatePopup).toBeFalsy();
     });
-    xit('should call getOriginCollectionHierarchy', () => {
-      spyOn(component, 'getOriginCollectionHierarchy');
-      component.getOriginCollectionHierarchy('do_1234', 'do_123456');
-      expect(component.getOriginCollectionHierarchy).toHaveBeenCalledWith('do_1234', 'do_123456');
-    });
-
-    xit('templateDetails should be defined on successful template selection', () => {
+  
+    it('templateDetails should be defined on successful template selection', () => {
       // tslint:disable-next-line:prefer-const
       component.selectedSharedContext = {framework: 'NCFCOPY', topic: ['Topic 2 child']};
       spyOn(component, 'componentLoadHandler');
-      component.componentLoadHandler('accept', 'question', 'questionlist');
+      component.componentLoadHandler('creation', jasmine.any(Function), 'uploadComponent');
       expect(component.componentLoadHandler).toHaveBeenCalledWith('creation', jasmine.any(Function), 'uploadComponent');
     });
 
-    xit('should add selected component to stage', () => {
+    it('should add selected component to stage', () => {
       component.programStageService.addStage = jasmine.createSpy('addStage() spy').and.callFake(() => {
         return observableOf({stages: []});
        });
@@ -296,7 +326,7 @@ describe('ChapterListComponent', () => {
       expect(component.handlePreview).toHaveBeenCalled();
     });
 
-    xit('should call componentHandler on preview of content', () => {
+    it('should call componentHandler on preview of content', () => {
       spyOn(component, 'componentLoadHandler');
       component.componentLoadHandler('preview', {identifier: 'do_12345', contentType: 'UnkonwnXYZ'},
       {identifier: 'do_12345'},  {framework: 'NCFCOPY'});
@@ -305,26 +335,19 @@ describe('ChapterListComponent', () => {
       expect(component.componentLoadHandler).toHaveBeenCalled();
     });
 
-    xit('should call componentHandler only if required contentType present in config', () => {
-      spyOn(component, 'componentLoadHandler');
-      // tslint:disable-next-line:max-line-length
-      component.handlePreview({action: 'preview', content: {identifier: 'do_12345', contentType: 'UnkonwnXYZ'}, collection: {identifier: 'do_12345', sharedContext: {framework: 'NCFCOPY'}}});
-      expect(component.componentLoadHandler).not.toHaveBeenCalled();
-    });
-
-    xit('should call updateAccordian on uploadHandler', () => {
+    it('should call updateAccordian on uploadHandler', () => {
       component.unitIdentifier = 'do_0000000000';
       spyOn(component, 'updateAccordianView');
       component.uploadHandler({contentId: 'do_1234567890'});
       expect(component.updateAccordianView).toHaveBeenCalled();
     });
 
-    xit('should lastOpenedUnitParent be defined with parent do_id of given child-unit', () => {
+    it('should lastOpenedUnitParent be defined with parent do_id of given child-unit', () => {
       component.lastOpenedUnit('do_112931801879011328152'); // do_id of child-unit
-      expect(component.sessionContext.lastOpenedUnitParent).toEqual('do_1127639059664568321138');
+      expect(component.sessionContext.lastOpenedUnitParent).toEqual('do_1127639059664486401136');
     });
 
-    xit('should updateAccordianView after successful removal of content', () => {
+    it('should updateAccordianView after successful removal of content', () => {
       component.unitIdentifier = 'do_0000000000';
       ResourceServiceMock = TestBed.get(ResourceService);
       ResourceServiceMock.messages = {smsg: {m0064: 'Content is successfully removed'}};
@@ -334,8 +357,8 @@ describe('ChapterListComponent', () => {
       expect(component.updateAccordianView).toHaveBeenCalledWith(jasmine.any(String));
     });
 
-    xit('should unsubscribe subject', () => {
-    component.ngOnDestroy();
+    it('should unsubscribe subject', () => {
+      component.ngOnDestroy();
     });
 
     it('setUserAccess should set userAccess value', () => {
@@ -387,9 +410,9 @@ describe('ChapterListComponent', () => {
       expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
-    xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
-      component.programContext = {rootorg_id: undefined};
+      component.programContext = {rootorg_id: undefined, target_collection_category: undefined};
       component.blueprintTemplate = undefined;
       component.firstLevelFolderLabel = undefined;
       component['programsService'] = TestBed.get(ProgramsService);

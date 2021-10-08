@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { TestBed } from '@angular/core/testing';
 import { SourcingService } from './sourcing.service';
 import { CoreModule, ActionService, ContentService } from '@sunbird/core';
-import { SharedModule, ToasterService } from '@sunbird/shared';
+import { SharedModule, ToasterService, ConfigService } from '@sunbird/shared';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClient } from '@angular/common/http';
 describe('SourcingService', () => {
@@ -26,7 +26,7 @@ describe('SourcingService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
-      providers: [ActionService, TelemetryService, ToasterService, HttpClient]
+      providers: [ SourcingService, ActionService, TelemetryService, ToasterService, HttpClient, ConfigService, ContentService ]
     });
     sourcingService = TestBed.get(SourcingService);
     actionService   = TestBed.get(ActionService);
