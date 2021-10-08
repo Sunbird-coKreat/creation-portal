@@ -309,4 +309,10 @@ describe('MyContentComponent', () => {
     expect(result).toBe(5796);
   });
 
+  it('#getTelemetryInteractEdata() should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('download_report',
+    'click', 'launch', 'sourcing_my_projects', undefined);
+    expect(returnObj).not.toContain(undefined);
+  });
 });
