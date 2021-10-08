@@ -19,7 +19,6 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { HelperService } from '../../services/helper.service';
 import { HttpClient } from '@angular/common/http';
 import { ProgramTelemetryService } from '../../../program/services';
-
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
   resourceTemplateComponentInput?: IResourceTemplateComponentInput;
@@ -109,8 +108,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public targetCollection: string;
   public unsubscribe = new Subject<void>();
   public firstLevelFolderLabel: string;
-  public viewOldBlueprint: boolean;
-  public viewNewBlueprint: boolean;
   public detailBlueprintFormConfig:any;
 
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
@@ -206,6 +203,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
   ]
 
+    this.fetchBlueprintTemplate();
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
   }
@@ -329,6 +327,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         understand: 0,
         apply: 0
       };
+
       if (this.localBlueprint.questionTypes) {
         _.forEach(this.localBlueprint.questionTypes, (value, key) => {
           value = parseInt(value);
@@ -360,7 +359,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         })
         this.localBlueprint.count.topics = this.localBlueprint.topics && this.localBlueprint.topics.length;
         this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningOutcomes && this.localBlueprint.learningOutcomes.length;
-        this.viewOldBlueprint = true;
       } else {
         _.forEach(this.localBlueprint, (value, key) => {
           value = parseInt(value);
@@ -394,50 +392,71 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         })
         this.localBlueprint.count.topics = this.localBlueprint.topic && this.localBlueprint.topic.length;
         this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningoutcome && this.localBlueprint.learningoutcome.length;
-        this.viewNewBlueprint = true;
       }
     }
   }
 
+  mapBlueprintData(blueprintCreate){
+    let isOldBlueprintForm = false;
+    blueprintCreate.properties.forEach(element => {
+      if(element.fields == undefined){
+        isOldBlueprintForm = true;
+      }
+    });
+    let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
+    let localBlueprintData = _.get(localBlueprintMap, `${this.collection && this.collection.code}`);
+
+    if (isOldBlueprintForm){
+      _.forEach(localBlueprintData, (prop, key) => {
+          if (key === 'learningOutcomes'){
+            localBlueprintData['learningoutcome'] = _.map(prop, data => {
+              return data.name;
+            });
+          }
+          if (key === 'topics'){
+            localBlueprintData['topic'] = _.map(prop, data => {
+              return data.name;
+            });
+          }
+          _.forEach(prop, (element, keyValue) => {
+            if (key === "questionTypes" || key === "learningLevels"){
+              localBlueprintData[keyValue] = element;
+            }
+          });
+      });
+    }
+    return localBlueprintData;
+  }
   fetchBlueprintTemplate(): void {
     let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
     let localBlueprintData = _.get(localBlueprintMap, `${this.collection && this.collection.code}`);
 
-    if (!_.isEmpty(localBlueprintData) && localBlueprintData.questionTypes != undefined) {
+    if (!_.isEmpty(localBlueprintData)) {
       this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
         let templateDetails = res.result.objectCategoryDefinition;
         if(templateDetails && templateDetails.forms) {
+          let blueprintData = this.mapBlueprintData(templateDetails.forms.blueprintCreate);
           this.blueprintTemplate = templateDetails.forms.blueprintCreate;
-          if(this.blueprintTemplate && this.blueprintTemplate.properties) {
-            _.forEach(this.blueprintTemplate.properties, (prop) => {
-              prop.editable = false;
-            })
-          }
+          this.detailBlueprintFormConfig = this.blueprintTemplate.properties;
+          this.detailBlueprintFormConfig = this.helperService.initializeSbFormFields(this.sessionContext, this.detailBlueprintFormConfig);
+          this.detailBlueprintFormConfig.forEach((element) => {
+            if(element.fields) {
+              element.fields.forEach(field => {
+                field.editable = false;
+                field.default = blueprintData[field.code];
+                if (field.code === "learningoutcome" || field.code === "learningOutcomes")
+                {
+                  field.inputType = 'nestedselect';
+                  field.default = blueprintData[field.code];
+                  delete field.depends;
+                }
+              });
+            }
+          });
           this.setLocalBlueprint();
         }
       })
-   } else {
-    this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
-      let templateDetails = res.result.objectCategoryDefinition;
-      if(templateDetails && templateDetails.forms) {
-        this.blueprintTemplate = templateDetails.forms.blueprintCreate;
-        this.detailBlueprintFormConfig = this.blueprintTemplate.properties;
-        this.detailBlueprintFormConfig.forEach((element) => {
-          if(element.fields) {
-            element.fields.forEach(field => {
-              field.editable = false;
-              field.default = localBlueprintData[field.code];
-              if (field.code === "topics" || field.code === "learningOutcomes")
-              field.range =  _.map(localBlueprintData[field.code], data => {
-                return {name: data};
-              });
-            });
-          }
-        });
-        this.setLocalBlueprint();
-        }
-      })
-    }
+   }
   }
 
   viewBlueprint(): void {

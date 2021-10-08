@@ -288,29 +288,12 @@
 		{{resourceService?.frmelmnts?.lbl?.viewBlueprint}}
 	</div>
 	<div class="sb-modal-content">
-		<div class="segment mt-5 pb-30 pt-10">
-			<form class="ui form sb-dock-dropdown">
-				<div class="ui grid">
-					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
-						<div class="field">
-							<label class="d-inline-block fs-0-785 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
-							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  [ngClass]="{ 'disabled':!property.editable}" [disabled]="!property.editable">
-							<div *ngIf="property.inputType === 'multiSelect' && !property.children" class="p-5">
-                <span *ngFor="let option of localBlueprint[property.code]" class="blueprint-chip fs-0-785 mr-5 mb-5" suiPopup
-                popupText="{{option.name}}">{{option.name}}</span>
-              </div>
-							<div *ngIf="property.children" class="d-flex">
-								<div *ngFor="let child of property.children" class="px-10 w-17-5 fs-0-785">
-									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
-									<input class="sb-form-control" name="{{child.code}}"	[disabled]="!property.editable" [ngClass]="{ 'disabled':!property.editable}"	[(ngModel)]="localBlueprint[property.code][child.code]" />
-								</div>
-							</div>
-							<input class="sb-form-control"  *ngIf="property.inputType === 'select' && !property.children"	name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]" [ngClass]="{ 'disabled':!property.editable}" [disabled]="!property.editable" />
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
+    <div>
+      <app-content-data-form
+      #formData
+      [formFieldProperties]="detailBlueprintFormConfig">
+      </app-content-data-form>
+    </div>
 	</div>
 	<div class="sb-modal-actions">
 		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="viewBlueprintFlag = false"  [disabled]="btnDoneDisabled">
