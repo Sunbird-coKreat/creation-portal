@@ -19,7 +19,7 @@
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata">
-			<i class="filter icon"></i>
+			<i class="filter icon" aria-hidden="true"></i>
 			<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
 			<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': targetCollections}}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
@@ -32,7 +32,7 @@
 		[telemetryInteractObject]="telemetryInteractObject"
 		[telemetryInteractCdata]="telemetryInteractCdata"
 		[telemetryInteractPdata]="telemetryInteractPdata">
-			<i class="download icon"></i>
+			<i class="download icon" aria-hidden="true"></i>
 			{{resourceService.frmelmnts.lbl.downloadProjectDetails | interpolate:'{TARGET_NAME}': targetCollection}}
 		</button>
 	</div>
