@@ -77,7 +77,7 @@ describe('ContributorsListComponent', () => {
     expect(component.getData).toHaveBeenCalled();
   });
 
-  it('getOrgList should call the registryService.getOrgList', () => {
+  xit('getOrgList should call the registryService.getOrgList', () => {
     component.orgList = [];
     const registryService = TestBed.get(RegistryService);
     spyOn(registryService, 'getOrgList').and.returnValue(of(mockData.orgList));
