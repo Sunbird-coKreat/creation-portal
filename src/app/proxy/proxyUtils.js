@@ -6,8 +6,6 @@ const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
 const _ = require('lodash')
 const ApiInterceptor = require('sb_api_interceptor')
-const { getAuthToken } = require('../helpers/kongTokenHelper')
-
 
 const keyCloakConfig = {
   'authServerUrl': envHelper.PORTAL_AUTH_SERVER_URL,
@@ -59,8 +57,10 @@ const decorateSunbirdRequestHeaders = function () {
     if(!srcReq.get('X-App-Id')){
       proxyReqOpts.headers['X-App-Id'] = appId
     }
-
-    proxyReqOpts.headers['x-authenticated-user-token'] = getAuthToken(srcReq)
+    if (srcReq.kauth && srcReq.kauth.grant && srcReq.kauth.grant.access_token &&
+    srcReq.kauth.grant.access_token.token) {
+      proxyReqOpts.headers['x-authenticated-user-token'] = srcReq.kauth.grant.access_token.token
+    }
     proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
     proxyReqOpts.rejectUnauthorized = false
     return proxyReqOpts
