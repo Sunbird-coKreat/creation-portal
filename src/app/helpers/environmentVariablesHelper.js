@@ -34,6 +34,8 @@ let envVariables = {
   sunbird_explore_button_visibility: env.sunbird_explore_button_visibility || 'true',
   sunbird_help_link_visibility: env.sunbird_help_link_visibility || 'false',
   sunbird_portal_user_upload_ref_link: env.sunbird_portal_user_upload_ref_link || 'http://www.sunbird.org/features-documentation/register_user',
+  sunbird_kong_refresh_token_api: env.sunbird_kong_refresh_token_api || '',
+  USE_SUNBIRD_KONG_TOKEN: env.use_sunbird_kong_token || 'true',
   ENABLE_PERMISSION_CHECK: env.sunbird_enabless_permission_check || 0,
   CONFIG_SERVICE_ENABLED: env.config_service_enabled || false,
   CRYPTO_ENCRYPTION_KEY: env.crypto_encryption_key || '030702bc8696b8ee2aa71b9f13e4251e',
@@ -48,11 +50,11 @@ let envVariables = {
   DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url,
   DOCK_QUESTIONSET_ENABLE: env.dock_questionSet_enable || 'true',
   DOCK_SMS_URL: env.dock_sms_url || 'https://vdn.diksha.gov.in',
-  DOCK_DEFAULT_FILE_SIZE: env.dock_default_file_size || 150,
-  DOCK_DEFAULT_VIDEO_SIZE: env.dock_default_video_size || 15000,
   SUNBIRD_PROTO: env.sunbird_base_proto,
   OPENSABER_SERVICE_URL: env.opensaber_service_url || 'http://opensaber-service:8080',
-
+  DOCK_DEFAULT_FILE_SIZE: env.dock_default_file_size || 150,
+  DOCK_DEFAULT_VIDEO_SIZE: env.dock_default_video_size || 15000,
+  
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
   PORTAL_API_CACHE_TTL: env.sunbird_api_response_cache_ttl || '600',
