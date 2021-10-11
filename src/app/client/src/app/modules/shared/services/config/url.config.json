@@ -98,6 +98,9 @@
       "HIERARCHY_ADD": "content/v3/hierarchy/add",
       "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
     },
+    "COLLECTION": {
+      "HIERARCHY_GET": "collection/v1/hierarchy/"
+    },
     "QUESTIONSET" : {
       "GET": "questionset/v1/read",
       "HIERARCHY_READ": "questionset/v1/hierarchy"
@@ -263,7 +266,7 @@
       "CONFIGURATION_SEARCH": "program/v1/configuration/search",
       "PREFERENCE_READ": "program/v1/preference/read",
       "PREFERENCE_ADD": "program/v1/preference/create",
-      "FEED_SEARCH":"program/v1/feed/search"   
+      "FEED_SEARCH":"program/v1/feed/search"
     },
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",

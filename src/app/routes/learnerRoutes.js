@@ -153,6 +153,30 @@ module.exports = function (app) {
     checkForValidUser()
   )
 
+  app.all('/learner/collection/v1/hierarchy/*',
+  permissionsHelper.checkPermission(),
+  proxy(learnerURL, {
+    limit: reqDataLimitOfContentUpload,
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+    proxyReqPathResolver: function (req) {
+      let urlParam = req.originalUrl.replace('/learner/', '')
+      console.log('/learner/collection/v1/hierarchy  ', require('url').parse(learnerURL + urlParam).path);
+      return require('url').parse(learnerURL + urlParam).path
+
+    },
+    userResDecorator: function (proxyRes, proxyResData,  req, res) {
+      try {
+        logger.info({msg: '/learner/collection/v1/hierarchy/* called'});
+        let data = JSON.parse(proxyResData.toString('utf8'))
+        if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+        else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+      } catch (err) {
+        logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+        return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res);
+      }
+    }
+  }))
+
   app.all('/learner/*',
     healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
     isAPIWhitelisted.isAllowed(),
