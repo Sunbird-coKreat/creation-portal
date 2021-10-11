@@ -55,7 +55,9 @@
               "src/assets/styles/styles.scss",
               "./node_modules/common-consumption-styles/assets/_styles.scss",
               "./node_modules/katex/dist/katex.min.css",
-              "node_modules/video.js/dist/video-js.min.css"
+              "node_modules/video.js/dist/video-js.min.css",
+              "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -70,7 +72,12 @@
               "src/assets/libs/semantic.min.js",
               "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js",
               "./node_modules/katex/dist/katex.min.js",
-              {"inject":false,
+              "node_modules/video.js/dist/video.js",
+              "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs-markers.js",
+              "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
+              {
+                "inject": false,
                 "input": "src/assets/libs/semantic-ui-tree-picker/semantic-ui-tree-picker.js",
                 "bundleName": "semanticTreePicker"
               }
@@ -214,7 +221,11 @@
             "polyfills": "projects/desktop/src/polyfills.ts",
             "tsConfig": "projects/desktop/tsconfig.app.json",
             "assets": [
-              { "glob": "**/*", "input": "./src/assets", "output": "./assets" },
+              {
+                "glob": "**/*",
+                "input": "./src/assets",
+                "output": "./assets"
+              },
               {
                 "glob": "**/*.*",
                 "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
@@ -300,7 +311,11 @@
             "tsConfig": "projects/desktop/tsconfig.spec.json",
             "karmaConfig": "projects/desktop/karma.conf.js",
             "assets": [
-              { "glob": "**/*", "input": "./src/assets", "output": "./assets" }
+              {
+                "glob": "**/*",
+                "input": "./src/assets",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",

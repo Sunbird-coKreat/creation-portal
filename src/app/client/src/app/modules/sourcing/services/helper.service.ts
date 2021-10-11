@@ -188,6 +188,18 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  reviewQuestionSet(contentId): Observable<ServerResponse> {
+    const option = {
+      url: `questionset/v1/review/${contentId}`,
+      data: {
+        'request': {
+          'questionset': {}
+        }
+      }
+    };
+    return this.actionService.post(option);
+  }
+
   retireContent(contentId): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
@@ -348,6 +360,46 @@ export class HelperService {
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
+  }
+
+  publishQuestionSetToConsumption(questionSetId) {
+    const option = {
+      url: 'questionset/v1/read/' + questionSetId,
+      param: { 'mode': 'edit' }
+    };
+
+    return this.actionService.get(option).pipe(
+      mergeMap((res: any) => {
+        const questionSetData  = res.result.questionset;
+
+        const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
+        if (_.isString(channel)) {
+          questionSetData['createdFor'] = [channel];
+        } else if (_.isArray(channel)) {
+          questionSetData['createdFor'] = channel;
+        }
+
+        const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+              ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+
+        const reqFormat = {
+            source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`,
+            metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
+                          ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
+                          ..._.pick(questionSetData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
+                          ...{'lastPublishedBy': this.userService.userProfile.userId}}
+        };
+
+        const reqOption = {
+          url: this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1,
+          data: {
+            request: {
+              questionset: [ reqFormat ]
+            }
+          }
+        };
+      return this.learnerService.post(reqOption);
+    }));
   }
 
   attachContentToTextbook(action, collectionId, contentId, data, rejectedComments?) {
@@ -830,6 +882,7 @@ export class HelperService {
     }));
   }
 
+  // tslint:disable-next-line:max-line-length
   manageSourcingActions (action, sessionContext, programContext, unitIdentifier, contentData, rejectComment = '', isMetadataOverridden =  false) {
     if (!_.get(programContext, 'target_type') || programContext.target_type === 'collections') {
       const hierarchyObj  = _.get(sessionContext.hierarchyObj, 'hierarchy');
@@ -917,7 +970,7 @@ export class HelperService {
 
     // @Todo remove after testing
     // this.sendNotification.next(_.capitalize(action));
-    
+
     // tslint:disable-next-line:max-line-length
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
@@ -956,7 +1009,7 @@ export class HelperService {
       }
     }, err => {
       this.acceptContent_errMsg(action);
-    }); 
+    });
   }
   checkIfContentisWithProgram(contentId, programContext) {
     let msg;
@@ -1191,7 +1244,7 @@ export class HelperService {
       this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
         if (frameworkDetails && !frameworkDetails.err) {
           sessionContext.frameworkData = frameworkDetails.frameworkdata[sessionContext.framework].categories;
-          sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
+          sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms');
         }
       }, error => {
         const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -1239,7 +1292,7 @@ export class HelperService {
     const sharedContext = _.get(componentInput, 'programContext.config.sharedContext');
     const nominationDetails = _.get(sessionContext, 'nominationDetails');
     const collectionId =  _.get(sessionContext, 'collection');
-    let creator = this.userService.userProfile.firstName; 
+    let creator = this.userService.userProfile.firstName;
     if (!_.isEmpty(this.userService.userProfile.lastName)) {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
@@ -1273,23 +1326,23 @@ export class HelperService {
     if (_.get(templateDetails, 'modeOfCreation') === 'question') {
       obj['questionCategories'] =  [templateDetails.questionCategory];
     }
-    const option = { 
+    const option = {
       url: 'content/v3/create',
       header: {
         'X-Channel-Id': programContext.rootorg_id
       },
       data: { request: {} }
-    }
-    
+    };
+
     if (_.get(templateDetails, 'modeOfCreation') === 'questionset') {
       option.url = 'questionset/v1/create';
       option.data.request['questionset'] = {};
-      option.data.request['questionset'] = obj;      
+      option.data.request['questionset'] = obj;
     } else {
       option.data.request['content'] = {};
-      option.data.request['content'] = obj; 
+      option.data.request['content'] = obj;
     }
-    
+
     return this.actionService.post(option);
   }
 
@@ -1297,11 +1350,11 @@ export class HelperService {
     const resourceStatus = contentMetaData.status;
     // tslint:disable-next-line:max-line-length
     const flag = !!(this.router.url.includes('/sourcing')
-    && !contentMetaData.sampleContent === true && resourceStatus === 'Live' && !sourcingReviewStatus 
+    && !contentMetaData.sampleContent === true && resourceStatus === 'Live' && !sourcingReviewStatus
     && this.userService.userid !== contentMetaData.createdBy && this.programsService.isProjectLive(programContext));
     if (!programContext.target_type || programContext.target_type === 'collections') {
       return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
-    } 
+    }
     return flag;
   }
 }
