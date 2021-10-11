@@ -1406,7 +1406,7 @@ export class ProgramsService extends DataService implements CanActivate {
     param: { 'mode': 'edit' }
   };
 
-  return this.publicDataService.get(req).pipe(
+  return this.learnerService.get(req).pipe(
     mergeMap((data: ServerResponse) => {
       if (data.responseCode !== 'OK') {
         return throwError(data);
