@@ -921,6 +921,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         });
         forkJoin(questionSetPublishReq).subscribe(data => {
           this.reviewAndAddResourceToHierarchy();
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00102,
+            // tslint:disable-next-line:max-line-length
+            // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.sourcingService.apiErrorHandling(err, errInfo);
+          this.getUploadedContentMeta(this.contentMetaData.identifier);
         });
       } else {
         this.reviewAndAddResourceToHierarchy();
@@ -1040,6 +1049,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             env : this.activeRoute.snapshot.data.telemetry.env
           };
           this.sourcingService.apiErrorHandling(err, errInfo);
+          this.getUploadedContentMeta(this.contentMetaData.identifier);
         });
       } else {
         this.publishAndAddResourceToHierarchy();
@@ -1273,18 +1283,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   createQuestionSet() {
       const timeStamp = this.interceptionTime.replace(':', '.').split('.');
       const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
-      // tslint:disable-next-line:max-line-length
-      const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === getTimeStamp);
-      if (getTimeStamp > this.totalDuration) {
-        this.toasterService.error('Selected Timestamp is not valid');
-        return false;
-      } else if (this.interceptionTime === '00:00') {
-        this.toasterService.error('Please select a Timestamp');
-        return false;
-      } else if (enteredTimeStamp !== undefined) {
-        this.toasterService.warning('Please choose a different timestamp. A Question set already exists in the choosen timestamp');
-        return false;
-      } else {
+      const isTimeValid = this.validateEnteredTime(timeStamp);
+      if (isTimeValid) {
         this.showquestionCreationUploadModal = false;
         let creator = this.userService.userProfile.firstName;
         if (!_.isEmpty(this.userService.userProfile.lastName)) {
@@ -1379,10 +1379,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                     request: option
                   };
                   return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-              }))
-              .subscribe(result => {
-                console.log(result);
-              });
+              })).subscribe();
 
           });
         }, (err) => {
@@ -1556,66 +1553,49 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   public  editInterceptionDetails() {
     const timeStamp = this.interceptionTime.replace(':', '.').split('.');
-    const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
-    if (getTimeStamp > this.totalDuration) {
-      this.toasterService.error('Selected Timestamp is not valid');
-      return false;
-    } else if (this.interceptionTime === '00:00') {
-      this.toasterService.error('Please select a Timestamp');
-      return false;
-    } else {
+    const isTimeValid = this.validateEnteredTime(timeStamp);
+    if (isTimeValid) {
       const updatedInterceptionData = [];
-      const obj = this.interceptionMetaData.items.find(data => data.interceptionPoint === getTimeStamp);
-      if (obj === undefined) {
-        this.interceptionMetaData.items.map(item => {
-          if (item.identifier === this.selectedQuestionSetEdit.identifier) {
-            updatedInterceptionData.push({
-              'type': 'QuestionSet',
-              'interceptionPoint': getTimeStamp,
-              'identifier': this.selectedQuestionSetEdit.identifier
-            });
-          } else {
-            updatedInterceptionData.push(item);
-          }
-        });
-        this.interceptionData = {
-          url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
-          data: {
-            request : {
-              content : {
-                versionKey : this.contentMetaData.versionKey,
-                interceptionPoints : {
-                  items : updatedInterceptionData
-                },
-                interceptionType: 'Timestamp'
-              }
+      const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+      this.interceptionMetaData.items.map(item => {
+        if (item.identifier === this.selectedQuestionSetEdit.identifier) {
+          updatedInterceptionData.push({
+            'type': 'QuestionSet',
+            'interceptionPoint': getTimeStamp,
+            'identifier': this.selectedQuestionSetEdit.identifier
+          });
+        } else {
+          updatedInterceptionData.push(item);
+        }
+      });
+      this.interceptionData = {
+        url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+        data: {
+          request : {
+            content : {
+              versionKey : this.contentMetaData.versionKey,
+              interceptionPoints : {
+                items : updatedInterceptionData
+              },
+              interceptionType: 'Timestamp'
             }
           }
-        };
-        this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
-            const errInfo = {
-              errorMsg: 'Unable to Delete Interception Point, Please Try Again',
-              telemetryPageId: this.telemetryPageId,
-              telemetryCdata : this.telemetryInteractCdata,
-              env : this.activeRoute.snapshot.data.telemetry.env,
-            };
-            return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-        }))
-        .subscribe(result => {
-          console.log(result);
-          this.showQuestionSetEditModal = false;
-          this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
-        });
-      } else {
-        if (obj && obj.identifier !== this.selectedQuestionSetEdit.identifier) {
-          this.toasterService.success('Selected timestamp cannot  updated since another question set is already present');
-          this.showQuestionSetEditModal = false;
-          this.handleQuestionSetPreview(obj);
-        } else {
-          this.showQuestionSetEditModal = false;
-          this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
         }
-      }
+      };
+      this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+          const errInfo = {
+            errorMsg: 'Unable to Delete Interception Point, Please Try Again',
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+          };
+          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      }))
+      .subscribe(result => {
+        console.log(result);
+        this.showQuestionSetEditModal = false;
+        this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
+      });
     }
   }
 
@@ -1655,6 +1635,24 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           host: this.baseUrl
         };
     });
+  }
+
+  public validateEnteredTime(timeStamp) {
+    const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+    // tslint:disable-next-line:max-line-length
+    const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === timeStamp);
+    if (getTimeStamp > this.totalDuration) {
+      this.toasterService.error('Selected Timestamp is not valid');
+      return false;
+    } else if (this.interceptionTime === '00:00') {
+      this.toasterService.error('Please select a Timestamp');
+      return false;
+    } else if (enteredTimeStamp !== undefined) {
+      this.toasterService.warning('Please choose a different timestamp. A Question set already exists in the choosen timestamp');
+      return false;
+    } else {
+      return true;
+    }
   }
   // interactive video Change END
 }
