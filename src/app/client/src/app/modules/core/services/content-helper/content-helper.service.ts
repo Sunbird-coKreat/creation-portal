@@ -91,11 +91,13 @@ export class ContentHelperService {
           }))
           .subscribe(result => {
             this._contentId = result.identifier;
+            this.programsService.emitHeaderEvent(false);
             // tslint:disable-next-line:max-line-length
             this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
           });
       } else if (event.templateDetails) {
         this._templateDetails = event.templateDetails;
+        this.programsService.emitHeaderEvent(false);
         // tslint:disable-next-line:max-line-length
         this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
       }
@@ -125,6 +127,7 @@ export class ContentHelperService {
       } else {
         this._templateDetails.onClick = 'uploadComponent';
       }
+      this.programsService.emitHeaderEvent(false);
       this.componentLoadHandler('preview',
       // tslint:disable-next-line:max-line-length
       this.programComponentsService.getComponentInstance(this._templateDetails.onClick), this._templateDetails.onClick, {'content': content});
