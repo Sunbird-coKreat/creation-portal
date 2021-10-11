@@ -742,6 +742,12 @@ const API_LIST = {
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
+    },
+    'learner/course/v1/hierarchy/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
     }
   },
   URL_PATTERN: [
@@ -779,7 +785,8 @@ const API_LIST = {
     '/action/question/v1/update/:do_id',
     '/content/content/v1/read/:do_id',
     '/content/questionset/v1/read/:do_id',
-    '/learner/user/v1/exists/phone/:phone'
+    '/learner/user/v1/exists/phone/:phone',
+    'learner/course/v1/hierarchy/:do_id'
   ]
 }
 module.exports = API_LIST;
