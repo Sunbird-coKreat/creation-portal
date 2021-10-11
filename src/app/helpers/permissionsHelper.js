@@ -9,7 +9,6 @@ const enablePermissionCheck = envHelper.ENABLE_PERMISSION_CHECK
 const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const telemetryHelper = require('./telemetryHelper')
 const logger = require('sb_logger_util_v2');
-const { getAuthToken } = require('../helpers/kongTokenHelper')
 
 let PERMISSIONS_HELPER = {
   ROLES_URLS: {
@@ -135,7 +134,7 @@ let PERMISSIONS_HELPER = {
         'content-type': 'application/json',
         'accept': 'application/json',
         'Authorization': 'Bearer ' + apiAuthToken,
-        'x-authenticated-user-token': getAuthToken(reqObj)
+        'x-authenticated-user-token': reqObj.kauth.grant.access_token.token
       },
       json: true
     }
