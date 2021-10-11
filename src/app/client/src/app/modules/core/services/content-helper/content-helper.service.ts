@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from '@sunbird/shared';
-import { UserService, ActionService } from '@sunbird/core';
+import { UserService, ActionService , ProgramsService} from '@sunbird/core';
 import { ActivatedRoute } from '@angular/router';
 import { throwError, BehaviorSubject, Observable} from 'rxjs';
 import { map, catchError, skipWhile } from 'rxjs/operators';
@@ -31,10 +31,17 @@ export class ContentHelperService {
   private _component$ = new BehaviorSubject(undefined);
   public readonly currentOpenedComponent$: Observable<any> = this._component$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
-
+  public defaultFileSize: any;
+  public defaultVideoSize: any;
   constructor(private configService: ConfigService, private programComponentsService: ProgramComponentsService,
     private programStageService: ProgramStageService, private userService: UserService, private helperService: HelperService,
-    public actionService: ActionService, public activatedRoute: ActivatedRoute, private sourcingService: SourcingService) { }
+    private programsService: ProgramsService,
+    public actionService: ActionService, public activatedRoute: ActivatedRoute, private sourcingService: SourcingService) {
+      this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
+      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
+     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
+     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
+     }
 
     initialize(programDetails, sessionContext) {
       this._sessionContext = _.cloneDeep(sessionContext);
@@ -102,7 +109,10 @@ export class ContentHelperService {
       const acceptedFile = appEditorConfig[content.mimeType];
       this._templateDetails['filesConfig'] = {};
       this._templateDetails.filesConfig['accepted'] = acceptedFile || '';
-      this._templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+      this._templateDetails.filesConfig['size'] = {
+        defaultfileSize:  this.defaultFileSize,
+        defaultVideoSize: this.defaultVideoSize
+      };
       this._templateDetails.questionCategories = content.questionCategories;
       if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(content.questionCategories)) {
         this._templateDetails.onClick = 'questionSetComponent';
