@@ -99,7 +99,7 @@
       "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
     },
     "COLLECTION": {
-      "HIERARCHY_GET": "collection/v1/hierarchy/"
+      "HIERARCHY_GET": "course/v1/hierarchy/"
     },
     "QUESTIONSET" : {
       "GET": "questionset/v1/read",

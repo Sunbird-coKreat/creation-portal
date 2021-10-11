@@ -126,7 +126,7 @@
       <div class="middle-question-set" *ngIf="videoFileFormat && this.enableInteractivity && this.visibility && this.visibility.showSubmit">
         <button  class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8 addQuestionSet" id="addQuestionSet"
         suiPopup popupText="Add a new Question" [popupPlacement]="'top'" (click)="addInterception()">
-                Add a new Question
+        {{resourceService?.frmelmnts?.btn?.interactive?.video?.addNewQuestionSet}}
         </button>
         <div class="show-interactive-question-set">
           <ul class="question-ul" *ngIf="interceptionMetaData?.items?.length> 0">
@@ -147,18 +147,18 @@
 
 <sui-modal *ngIf="showquestionCreationUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
-  <div class="sb-modal-header">Select Interception Point</div>
+  <div class="sb-modal-header">{{resourceService?.frmelmnts?.btn?.interactive?.video?.selectInterceptionPoint}}</div>
   <div class="sb-modal-content">
     <form #FormControl="ngForm" class="ui form">
-      <div class = "lableDiv">Question TimeStamp</div>
+      <div class = "lableDiv">{{resourceService?.frmelmnts?.btn?.interactive?.video?.questionTimeStamp}}</div>
         <div class="d-flex">
           <div class="timeDiv">
             <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
           </div>
         </div>
        <div class="sb-modal-actions">
-          <button type="submit" class="sb-btn sb-btn-normal" (click)="createQuestionSet()">  Create Question Set </button>
-          <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal sb-btn-outline-primary">  Cancel </button>
+          <button type="submit" class="sb-btn sb-btn-normal" (click)="createQuestionSet()">  {{resourceService?.frmelmnts?.btn?.interactive?.video?.createQuestionSet}} </button>
+          <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal sb-btn-outline-primary">  {{resourceService?.frmelmnts?.btn?.interactive?.video?.cancel}} </button>
        </div>
     </form>
   </div>
@@ -166,18 +166,18 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
 
 <sui-modal *ngIf="showQuestionSetEditModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeQuestionSetEditModal()" #modal >
-  <div class="sb-modal-header">Update Interception Point</div>
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.btn?.interactive?.video?.updateInterceptionPoint}}</div>
   <div class="sb-modal-content">
     <form #FormControl="ngForm" class="ui form">
-      <div class = "lableDiv">Question TimeStamp</div>
+      <div class = "lableDiv"> {{resourceService?.frmelmnts?.btn?.interactive?.video?.questionTimeStamp}}</div>
       <div class="d-flex">
         <div class="timeDiv">
           <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
         </div>
       </div>
       <div class="sb-modal-actions">
-        <button type="submit" class="sb-btn sb-btn-normal" (click)="editInterceptionDetails()">  Update Question Set </button>
-        <button (click)="closeQuestionSetEditModal()" class="sb-btn sb-btn-normal" >  Cancel </button>
+        <button type="submit" class="sb-btn sb-btn-normal" (click)="editInterceptionDetails()">  {{resourceService?.frmelmnts?.btn?.interactive?.video?.updateQuestionSet}} </button>
+        <button (click)="closeQuestionSetEditModal()" class="sb-btn sb-btn-normal" >   {{resourceService?.frmelmnts?.btn?.interactive?.video?.cancel}} </button>
       </div>
     </form>
   </div>
@@ -185,13 +185,13 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeQuestionSe
 
 <sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
-  <div class="sb-modal-header">Confirmation</div>
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.btn?.interactive?.video?.confirmation}} </div>
   <div class="sb-modal-content">
     <form #FormControl="ngForm" class="ui form">
-      <div class = "lableDiv">Do you really want to delete this QuestionSet?</div>
+      <div class = "lableDiv">{{resourceService?.frmelmnts?.btn?.interactive?.video?.confirmationQuestion}}</div>
       <div class="sb-modal-actions">
-        <button type="submit" class="sb-btn sb-btn-normal" (click)="deleteQuestionSet()">  Delete </button>
-        <button (click)="closeConfirmationModal()" class="sb-btn sb-btn-normal" >  Close </button>
+        <button type="submit" class="sb-btn sb-btn-normal" (click)="deleteQuestionSet()">  {{resourceService?.frmelmnts?.btn?.interactive?.video?.delete}} </button>
+        <button (click)="closeConfirmationModal()" class="sb-btn sb-btn-normal" >  {{resourceService?.frmelmnts?.btn?.interactive?.video?.close}} </button>
       </div>
     </form>
   </div>
@@ -199,7 +199,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
 
 <sui-modal *ngIf="showQuestionSetPreview" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
-  <div class="sb-modal-header">QuestionSet Preview</div>
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.btn?.interactive?.video?.questionSetPreview}} </div>
   <div class="sb-modal-content">
     <div class="aspectratio" data-ratio="16:9">
       <div class="content-player">

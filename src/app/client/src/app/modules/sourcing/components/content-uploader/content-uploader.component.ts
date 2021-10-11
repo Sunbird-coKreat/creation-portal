@@ -923,7 +923,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.reviewAndAddResourceToHierarchy();
         }, (err) => {
           const errInfo = {
-            errorMsg: this.resourceService.messages.fmsg.m00102,
+            errorMsg: this.resourceService.messages.fmsg.m0099,
             // tslint:disable-next-line:max-line-length
             // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
             env : this.activeRoute.snapshot.data.telemetry.env
@@ -1329,7 +1329,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           }
           this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
             const errInfo = {
-              errorMsg: 'Unable to create contentId, Please Try Again',
+              errorMsg: this.resourceService.messages.emsg.interactive.video.create,
               telemetryPageId: this.telemetryPageId,
               telemetryCdata : this.telemetryInteractCdata,
               env : this.activeRoute.snapshot.data.telemetry.env,
@@ -1372,7 +1372,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               };
               this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
                   const errInfo = {
-                    errorMsg: 'Unable to create contentId, Please Try Again',
+                    errorMsg: this.resourceService.messages.emsg.interactive.video.updateInterception,
                     telemetryPageId: this.telemetryPageId,
                     telemetryCdata : this.telemetryInteractCdata,
                     env : this.activeRoute.snapshot.data.telemetry.env,
@@ -1384,7 +1384,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           });
         }, (err) => {
           const errInfo = {
-            errorMsg: 'QuestionSet primary category not defined at channle, Please Try Again',
+            errorMsg: this.resourceService.messages.emsg.interactive.video.primaryCategory,
             telemetryPageId: this.telemetryPageId,
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activeRoute.snapshot.data.telemetry.env
@@ -1499,7 +1499,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     };
     this.actionService.delete(option).pipe(map((res: any) => res.result), catchError(err => {
       const errInfo = {
-        errorMsg: 'Unable to Delete QuestionSet, Please Try Again',
+        errorMsg: this.resourceService.messages.emsg.interactive.video.delete,
         telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
         env : this.activeRoute.snapshot.data.telemetry.env, request: option
        };
@@ -1528,7 +1528,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
           const errInfo = {
-            errorMsg: 'Unable to Delete Interception Point, Please Try Again',
+            errorMsg: this.resourceService.messages.emsg.interactive.video.delete,
             telemetryPageId: this.telemetryPageId,
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activeRoute.snapshot.data.telemetry.env,
@@ -1538,7 +1538,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       })).subscribe( result => {
         this.showConfirmationModal = false;
-        this.toasterService.success('Successfully deleted QuestionSet');
+        this.toasterService.success(this.resourceService.messages.smsg.interactive.video.delete);
         this.getUploadedContentMeta(this.contentMetaData.identifier);
       });
     });
@@ -1584,7 +1584,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
           const errInfo = {
-            errorMsg: 'Unable to Delete Interception Point, Please Try Again',
+            errorMsg: this.resourceService.messages.emsg.interactive.video.update,
             telemetryPageId: this.telemetryPageId,
             telemetryCdata : this.telemetryInteractCdata,
             env : this.activeRoute.snapshot.data.telemetry.env,
@@ -1642,13 +1642,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === timeStamp);
     if (getTimeStamp > this.totalDuration) {
-      this.toasterService.error('Selected Timestamp is not valid');
+      this.toasterService.error(this.resourceService.messages.emsg.interactive.video.invalid);
       return false;
     } else if (this.interceptionTime === '00:00') {
-      this.toasterService.error('Please select a Timestamp');
+      this.toasterService.error(this.resourceService.messages.emsg.interactive.video.selectTimestamp);
       return false;
     } else if (enteredTimeStamp !== undefined) {
-      this.toasterService.warning('Please choose a different timestamp. A Question set already exists in the choosen timestamp');
+      this.toasterService.warning(this.resourceService.messages.emsg.interactive.video.diffTimestamp);
       return false;
     } else {
       return true;
