@@ -108,7 +108,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   };
   public selectedContributorsCnt: number = 0;
   public allowToModifyContributors:boolean = true;
-  public firstLevelFolderLabel: string;
   public blueprintFormConfig:any;
   public formstatus: any;
   constructor(
@@ -1409,7 +1408,7 @@ showTexbooklist(showTextBookSelector = true) {
 
   initEditBlueprintForm(collection) {
     let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
-    this.blueprintFormConfig = this.programsService.initializeFormFields(this.frameworkCategories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
+    this.blueprintFormConfig = this.programsService.initializeFormFields(this.programScope.framework.categories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
 
     this.blueprintFormConfig.forEach((element) => {
       if(element.fields) {
