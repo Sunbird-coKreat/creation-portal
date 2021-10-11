@@ -1401,15 +1401,17 @@ export class ProgramsService extends DataService implements CanActivate {
   * @returns API response
   */
  getHierarchyFromOrigin(identifier) : Observable<ServerResponse> {
-   const hierarchyUrl = '/action/content/v3/hierarchy/' + identifier + '?mode=edit';
-   const originUrl = this.getContentOriginEnvironment();
-   const url =  originUrl + hierarchyUrl ;
-   return this.http.get(url).pipe(
-     mergeMap((data: ServerResponse) => {
-       if (data.responseCode !== 'OK') {
-         return throwError(data);
-       }
-       return of(data);
+  const req = {
+    url: this.config.urlConFig.URLS.COLLECTION.HIERARCHY_GET + identifier,
+    param: { 'mode': 'edit' }
+  };
+
+  return this.publicDataService.get(req).pipe(
+    mergeMap((data: ServerResponse) => {
+      if (data.responseCode !== 'OK') {
+        return throwError(data);
+      }
+      return of(data);
    }));
  }
 
