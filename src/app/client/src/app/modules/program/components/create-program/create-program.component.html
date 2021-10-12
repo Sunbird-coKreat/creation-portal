@@ -835,9 +835,9 @@
 				<label class="d-block">{{resource?.frmelmnts?.lbl?.board}}
 					<i class="pull-right question circle link icon pull-right" suiPopup
 						popupDelay="500" [popupPlacement]="'left'"
-						popupText="{{resource?.frmelmnts?.lbl?.selectBoard}}"></i>
+						popupText="{{resource?.frmelmnts?.lbl?.profile?.selectBoard}}"></i>
 				</label>
-				<sui-select placeholder="{{resource?.frmelmnts?.lbl?.selectBoard}}"
+				<sui-select placeholder="{{resource?.frmelmnts?.lbl?.profile?.selectBoard}}"
 					class="selection p-5" formControlName="board"
 					[options]="programScope['board']"
 					labelField="name"
