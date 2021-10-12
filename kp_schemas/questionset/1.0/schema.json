@@ -612,21 +612,12 @@
       "format": "url"
     },
     "acceptedContributions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }      
+      "type": "array",     
     },
     "rejectedContributions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }      
+      "type": "array",     
     },
     "reusedContributions": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }      
+      "type": "array"
     }
 }
