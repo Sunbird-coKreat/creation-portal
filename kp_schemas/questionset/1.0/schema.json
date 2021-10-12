@@ -610,6 +610,23 @@
     "appIcon": {
       "type": "string",
       "format": "url"
+    },
+    "acceptedContributions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }      
+    },
+    "rejectedContributions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }      
+    },
+    "reusedContributions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }      
     }
-  }
 }
