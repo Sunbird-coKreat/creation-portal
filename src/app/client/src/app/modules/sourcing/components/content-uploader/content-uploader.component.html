@@ -1,4 +1,8 @@
-<div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart">
+<div class="twelve wide column sb-bg-white"  *ngIf="currentLastStageInService === 'questionSetEditorComponent'">
+  <ndc-dynamic [ndcDynamicComponent]="creationComponent" [ndcDynamicInputs]="dynamicInputs"></ndc-dynamic>
+</div>
+
+<div class="sb-bg-color-gray-0" [appTelemetryImpression]="telemetryImpression" [appTelemetryStart]="telemetryStart" *ngIf="currentLastStageInService !== 'questionSetEditorComponent'">
   <div class="sb-bg-color-primary">
     <div class="ui container py-15">
         <button class="sb-btn sb-btn-primary sb-btn-xs back-btn px-0 hover-none fs-0-92 font-weight-bold"
@@ -10,7 +14,7 @@
             {{resourceService?.frmelmnts?.btn?.back}}
         </button>
     </div>
-</div>
+  </div>
   <div class="ui container py-10">
         <div class="d-flex">
           <div class="d-flex flex-ai-center flex-jc-space-between practical-header__content w-100">
@@ -59,9 +63,7 @@
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >
-              Replace File
-              </button>
+              >Replace File</button>
               <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='requestChanges';showRequestChangesPopup = true;"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('request_changes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
@@ -111,17 +113,113 @@
         </div>
   </div>
 </div>
-<div class="middle-section-set" *ngIf="showPreview">
-    <div class="ui container msg-box">
-      <div class="msg-box__content">
-        <div class="container msg-box__content__blank-box">
-            <app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+
+<!-- / ADD interactive QuestionSets/ Start -->
+<div class="ui container py-10" *ngIf="currentLastStageInService !== 'questionSetEditorComponent'">
+  <div class="d-flex">
+    <div class="d-flex flex-jc-space-between practical-header__content w-100">
+      <div [ngClass]="{'middle-section-set': (!enableInteractivity || !this.visibility.showSubmit), 'middle-section-set-interactive': enableInteractivity && this.visibility.showSubmit }" *ngIf="showPreview">
+        <div class="ui container msg-box">
+          <div class="msg-box__content">
+            <div class="container msg-box__content__blank-box">
+                <sunbird-video-player *ngIf="videoFileFormat" [playerConfig]="playerConfig" (telemetryEvent)="telemetryEvent($event)" (playerEvent)="eventHandler($event)"></sunbird-video-player>
+                <app-player  *ngIf="!videoFileFormat" class="content-player"  [playerConfig]="playerConfig"></app-player>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="middle-question-set" *ngIf="videoFileFormat && this.enableInteractivity && this.visibility && this.visibility.showSubmit">
+        <button  class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8 addQuestionSet" id="addQuestionSet"
+        suiPopup popupText="Add a new Question" [popupPlacement]="'top'" (click)="addInterception()">
+        {{resourceService?.frmelmnts?.lbl?.interactive?.video?.addNewQuestionSet}}
+        </button>
+        <div class="show-interactive-question-set">
+          <ul class="question-ul" *ngIf="interceptionMetaData?.items?.length> 0">
+              <li class="question-li" *ngFor="let interceptionPoint of interceptionMetaData?.items">
+                  <div class="background-set" (click)="previewQuestionSet(interceptionPoint)">
+                      <div class="timer-div">{{format(interceptionPoint.interceptionPoint)}}</div>
+                      <div class="question-set-name">{{interactiveQuestionSets[interceptionPoint.identifier]}}</div>
+                      <div class="edit-div" (click)="openQuestionSetEditModal(interceptionPoint, $event)"><i class="edit icon edit-icon"></i></div>
+                      <div class="delete-div" (click)="handleQuestionSetDelete(interceptionPoint, $event)"><i class="delete icon delete-icon"></i></div>
+                  </div>
+              </li>
+          </ul>
         </div>
       </div>
     </div>
+  </div>
 </div>
 
-<!-- <div> -->
+<sui-modal *ngIf="showquestionCreationUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+  <div class="sb-modal-header">{{resourceService?.frmelmnts?.lbl?.interactive?.video?.selectInterceptionPoint}}</div>
+  <div class="sb-modal-content">
+    <form #FormControl="ngForm" class="ui form">
+      <div class = "lableDiv">{{resourceService?.frmelmnts?.lbl?.interactive?.video?.questionTimeStamp}}</div>
+        <div class="d-flex">
+          <div class="timeDiv">
+            <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
+          </div>
+        </div>
+       <div class="sb-modal-actions">
+          <button type="submit" class="sb-btn sb-btn-normal" (click)="createQuestionSet()">  {{resourceService?.frmelmnts?.lbl?.interactive?.video?.createQuestionSet}} </button>
+          <button (click)="closeQuestionCreationUploadModal()" class="sb-btn sb-btn-normal sb-btn-outline-primary">  {{resourceService?.frmelmnts?.lbl?.interactive?.video?.cancel}} </button>
+       </div>
+    </form>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showQuestionSetEditModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeQuestionSetEditModal()" #modal >
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.lbl?.interactive?.video?.updateInterceptionPoint}}</div>
+  <div class="sb-modal-content">
+    <form #FormControl="ngForm" class="ui form">
+      <div class = "lableDiv"> {{resourceService?.frmelmnts?.lbl?.interactive?.video?.questionTimeStamp}}</div>
+      <div class="d-flex">
+        <div class="timeDiv">
+          <input class="sb-form-control-tab" placeholder="00:00" [(ngModel)]="interceptionTime" name="interceptionTime">
+        </div>
+      </div>
+      <div class="sb-modal-actions">
+        <button type="submit" class="sb-btn sb-btn-normal" (click)="editInterceptionDetails()">  {{resourceService?.frmelmnts?.lbl?.interactive?.video?.updateQuestionSet}} </button>
+        <button (click)="closeQuestionSetEditModal()" class="sb-btn sb-btn-normal" >   {{resourceService?.frmelmnts?.lbl?.interactive?.video?.cancel}} </button>
+      </div>
+    </form>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.lbl?.interactive?.video?.confirmation}} </div>
+  <div class="sb-modal-content">
+    <form #FormControl="ngForm" class="ui form">
+      <div class = "lableDiv">{{resourceService?.frmelmnts?.lbl?.interactive?.video?.confirmationQuestion}}</div>
+      <div class="sb-modal-actions">
+        <button type="submit" class="sb-btn sb-btn-normal" (click)="deleteQuestionSet()">  {{resourceService?.frmelmnts?.lbl?.interactive?.video?.delete}} </button>
+        <button (click)="closeConfirmationModal()" class="sb-btn sb-btn-normal" >  {{resourceService?.frmelmnts?.lbl?.interactive?.video?.close}} </button>
+      </div>
+    </form>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showQuestionSetPreview" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.lbl?.interactive?.video?.questionSetPreview}} </div>
+  <div class="sb-modal-content">
+    <div class="aspectratio" data-ratio="16:9">
+      <div class="content-player">
+        <div class="w-100 h-100">
+          <div class="contentViewerIframeShadow">
+            <quml-main-player [playerConfig]="qumlPlayerConfig"></quml-main-player>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sui-modal>
+<!-- ADD interactive QuestionSets END -->
+
+
 <sui-modal *ngIf="showUploadModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
     class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
     <div type="text/template" id="qq-template-validation" #fineUploaderUI>
@@ -226,8 +324,7 @@
         [telemetryInteractPdata]="telemetryInteractPdata"
       >Cancel</button>
     </div>
-  </sui-modal>
-<!-- </div> -->
+</sui-modal>
 
 <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
@@ -299,8 +396,7 @@
   </div> -->
 </sui-modal>
 
-<!--  edit metadata --> 
-
+<!--  edit metadata -->
 <sui-modal *ngIf="showEditMetaForm" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'"
     class="sb-modal sb-z-index99" appBodyScroll (dismissed)="showEditMetaForm= false">
     <i class="icon close" (click)="showEditMetaForm= false" tabindex="0"></i>
