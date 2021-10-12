@@ -226,7 +226,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       medium: [],
       gradeLevel: [],
       subject: [],
-      targetPrimaryCategories: [null, Validators.required],
+      targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
     });
     if (this.projectTargetType === 'collections') {

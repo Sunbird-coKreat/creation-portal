@@ -269,7 +269,7 @@
 										</ng-template>
 
 										<div class="ui pointing red basic label below "
-											*ngIf="projectScopeForm.controls['targetPrimaryCategories'].errors && projectScopeForm.controls['targetPrimaryCategories'].errors.required && (!projectScopeForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
+											*ngIf="projectScopeForm.controls['targetPrimaryCategories'].errors && projectScopeForm.controls['targetPrimaryCategories']?.errors?.required && (!projectScopeForm.controls['targetPrimaryCategories']?.pristine || formIsInvalid)">
 											{{resource?.frmelmnts?.lbl?.contentTypesRequired }}
 										</div>
 									</div>
@@ -795,7 +795,7 @@
 	</div>
 </sui-modal>
 
-<sui-modal *ngIf="isFormValueSet.projectTargetForm && openProjectTargetTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="isFormValueSet.projectTargetForm && openProjectTargetTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
       [size]="'normal'" class="sb-modal" appBodyScroll
       (dismissed)="closeprojectTargetTypeModal();" #projectTargetTypeModal>
       <div class="sb-modal-header">
@@ -806,25 +806,11 @@
 			{{resource?.frmelmnts?.projectSource?.heading}}
 			<div class="sb-radio-btn-checkbox sb-radio-btn-primary mt-30 mb-30">
 				<input type="radio" formControlName="target_type" id="collections" value="collections" />
-				<label for="collections">{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.lbl}}
-					<div class="sb-color-gray-200 fsmall font-italic mt-10 my-5">
-						{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.desc}}
-					</div>
-					<div class="fxsmall mb-10">
-						{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.steps}}
-					</div>
-				</label>
+				<label for="collections">{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.lbl}}</label>
 			</div>
 			<div class="sb-radio-btn-checkbox sb-radio-btn-primary mt-30 mb-30">
 				<input type="radio" formControlName="target_type" value="searchCriteria" id="searchCriteria" />
-				<label for="searchCriteria">{{resource?.frmelmnts?.projectSource?.foraFramework?.lbl}}
-					<div class="sb-color-gray-200 fsmall font-italic mt-10 my-5">
-						{{resource?.frmelmnts?.projectSource?.foraFramework?.desc}}
-					</div>
-					<div class="fxsmall mb-10">
-						{{resource?.frmelmnts?.projectSource?.foraFramework?.steps}}
-					</div>
-				</label>
+				<label for="searchCriteria">{{resource?.frmelmnts?.projectSource?.foraFramework?.lbl}}</label>
 			</div>
 		  </form>
       </div>
