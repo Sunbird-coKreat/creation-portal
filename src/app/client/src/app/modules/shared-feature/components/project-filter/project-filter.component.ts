@@ -20,6 +20,7 @@ export class ProjectFilterComponent implements OnInit {
   @Input() programs;
   @Input() telemetryPageId;
   @Input() filtersAppliedCount;
+  @Input() forTargetType;
   @Output() dismiss = new EventEmitter<any>();
   @Output() applyFilters = new EventEmitter<any>();
   public initialProgramDetails = [];
@@ -281,7 +282,11 @@ export class ProjectFilterComponent implements OnInit {
     let appliedFilters: any;
     switch (this.activeUser) {
       case 'sourcingOrgAdmin':
-        appliedFilters = this.cacheService.get('sourcingMyProgramAppliedFilters');
+        if (this.forTargetType === 'searchCriteria') {
+          appliedFilters = this.cacheService.get('sourcingMyProgramAppliedFiltersSearchCriteria');
+        } else {
+          appliedFilters = this.cacheService.get('sourcingMyProgramAppliedFilters');
+        }
         this.setAppliedFilters(appliedFilters);
         break;
       case 'contributeOrgAdminAllProject':
@@ -366,7 +371,13 @@ export class ProjectFilterComponent implements OnInit {
     const filterLocalStorage = resetFilter ? [] : this.setPreferences; // this is to check set or reset condition
     switch (this.activeUser) {
       case 'sourcingOrgAdmin':
-        this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage); break;
+        if (this.forTargetType === 'searchCriteria') {
+         this.setPreferences['target_collection_category'] = [];
+          this.cacheService.set('sourcingMyProgramAppliedFiltersSearchCriteria', filterLocalStorage); 
+        } else {
+          this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage);
+        }
+        break;
       case 'contributeOrgAdminAllProject':
         this.cacheService.set('contributeAllProgramAppliedFilters', filterLocalStorage); break;
       case 'contributeOrgAdminMyProject':

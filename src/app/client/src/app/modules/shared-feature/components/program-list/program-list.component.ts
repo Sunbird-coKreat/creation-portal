@@ -57,6 +57,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public impressionEventTriggered: Boolean = false;
   public userProfile = this.userService.userProfile;
   public forTargetType = 'collections';
+  public activeTab='';
 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -136,7 +137,17 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.isContributor = this.router.url.includes('/contribute');
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true);
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
-
+    this.activatedRoute.queryParamMap
+    .subscribe(params => {
+      const tabName = !_.isEmpty(params.get('targetType')) ? params.get('targetType') : 'collections';
+      this.forTargetType = (tabName === 'noCollections') ? 'searchCriteria' : 'collections'; 
+      this.getProgramsListByRole();
+    });
+  }
+  setActiveTab(targetType) {
+    this.forTargetType = targetType;
+    const tabName = (targetType === 'collections') ? 'collections' : 'noCollections'
+    this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { targetType: tabName }, queryParamsHandling: 'merge' });
     this.getProgramsListByRole();
   }
 
@@ -168,7 +179,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.showLoader = false;
       }
     } else {
-      const applyFilters = this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
+      const applyFilters = (this.forTargetType === 'searchCriteria') ? this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFiltersSearchCriteria') : this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
   }
