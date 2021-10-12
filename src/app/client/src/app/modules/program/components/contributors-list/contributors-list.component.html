@@ -11,7 +11,10 @@
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
       <button class="sb-btn sb-btn-normal" (click)="getData()"
-        [disabled]="showLoader">{{resource?.frmelmnts?.lbl?.search}}</button>
+        [disabled]="showLoader" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('search',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.lbl?.search}}</button>
     </div>
     <div class="w-100 ml-20">
       <label class="d-block">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.types}}
@@ -68,27 +71,27 @@
     class="sb-pagination-container flex-jc-flex-start pt-16">
     <div class="sb-pagination">
       <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="navigateToPage(1)" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_fist-page', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_fist_page', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">First</a>
       <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="navigateToPage(pager.currentPage - 1)"
         appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
       <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="navigateToPage(page)"
         class="sb-item" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
       <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="navigateToPage(pager.currentPage + 1)"
         class="sb-item" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
       <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="navigateToPage(pager.totalPages)"
         class="sb-item" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
     </div>
@@ -103,12 +106,12 @@
 <div class="sb-modal-actions">
   <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn"
     class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()" appTelemetryInteract
-    [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_save-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('save',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
     [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.save}}</button>
     <button
     class="sb-btn sb-btn-normal" (click)="close()" appTelemetryInteract
-    [telemetryInteractEdata]="getTelemetryInteractEdata('contributorOrgUser_list_close-btn',configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+    [telemetryInteractEdata]="getTelemetryInteractEdata('close',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
     [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.close}}</button>
   </div>

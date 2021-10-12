@@ -123,4 +123,26 @@ describe('MainHeaderComponent', () => {
     component.ngOnDestroy();
     expect(component.unSubscribeShowSubHeader.unsubscribe).toHaveBeenCalled();
   });
+
+  it('#getLogoutInteractEdata() should return logout interact data', () => {
+    component.pageId = 'my_projects';
+    spyOn(component, 'getLogoutInteractEdata').and.callThrough();
+    const interactData = component.getLogoutInteractEdata();
+    expect(interactData.id).toEqual('logout');
+  });
+
+  it('getTelemetryInteractEdata should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('manage_users', 'click', 'launch', 'sourcing_my_projects', undefined);
+    expect(returnObj).not.toContain(undefined);
+  });
+
+  it('#setInteractEventData() should define signUpInteractEdata and enterDialCodeInteractEdata', () => {
+    component.signUpInteractEdata = undefined;
+    component.enterDialCodeInteractEdata = undefined;
+    spyOn(component, 'setInteractEventData').and.callThrough();
+    component.setInteractEventData();
+    expect(component.signUpInteractEdata).toBeDefined();
+    expect(component.enterDialCodeInteractEdata).toBeDefined();
+  });
 });
