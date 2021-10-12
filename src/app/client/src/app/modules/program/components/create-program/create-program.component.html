@@ -791,7 +791,7 @@
 	</div>
 </sui-modal>
 
-<sui-modal *ngIf="isFormValueSet.projectTargetForm && openProjectTargetTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="isFormValueSet.projectTargetForm && openProjectTargetTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
       [size]="'normal'" class="sb-modal" appBodyScroll
       (dismissed)="closeprojectTargetTypeModal();" #projectTargetTypeModal>
       <div class="sb-modal-header">
