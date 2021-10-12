@@ -1034,7 +1034,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.generateTelemetryEndEvent('update');
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
-          this.router.navigate(['/sourcing']);
+          const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+          this.router.navigate(['/sourcing'],
+            {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
         },
         (err) => {
           console.log(err, err);
@@ -1577,7 +1579,9 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
               this.resource.messages.smsg.program.draft.message);
-            this.router.navigate(['/sourcing']);
+            const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+            this.router.navigate(['/sourcing'],
+              {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           } else {
             const errInfo = {
               errorMsg: this.resource.messages.emsg.m0005,
@@ -1677,7 +1681,9 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-            this.router.navigate(['/sourcing']);
+              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              this.router.navigate(['/sourcing'],
+                {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
           err => {
             this.disableCreateProgramBtn = false;
@@ -1696,7 +1702,9 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-            this.router.navigate(['/sourcing']);
+              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              this.router.navigate(['/sourcing'],
+                {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
           err => {
             this.disableCreateProgramBtn = false;
