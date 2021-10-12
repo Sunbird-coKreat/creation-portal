@@ -155,7 +155,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.disableUpload = (this.editPublished && _.get(this.programDetails, 'guidelines_url')) ? true : false;
       //this.isOpenNominations = (this.programDetails && _.get(this.programDetails, 'type') === 'public') ? true : false;
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-      
+
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
       if (this.selectedTargetCollection) {
@@ -167,7 +167,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.initializeCreateProgramForm();
       if (!_.isEmpty(this.programDetails.target_type)) {
         this.projectTargetType = this.programDetails.target_type;
-        this.openProjectTargetTypeModal = false;        
+        this.openProjectTargetTypeModal = false;
         //this.fetchFrameWorkDetails();
       } else {
         this.initializeProjectTargetTypeForm();
@@ -224,7 +224,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       framework: [],
       board: [],
       medium: [],
-      gradeLevel: [],  
+      gradeLevel: [],
       subject: [],
       targetPrimaryCategories: [null, Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
@@ -241,7 +241,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if ((this.projectTargetType === 'collections')) {
       this.initializeFrameworkForTatgetType('')
-    } 
+    }
     const channelData$ = this.frameworkService.readChannel();
     channelData$.subscribe((channelData) => {
       if (channelData) {
@@ -395,7 +395,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initiateDocumentUploadModal() {
     this.showDocumentUploader = true;
     this.loading = false;
-    this.isClosable = true; 
+    this.isClosable = true;
     return setTimeout(() => {
       this.initiateUploadModal();
     }, 0);
@@ -874,12 +874,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     // }
     programData['target_type'] = this.projectTargetType;
     programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'collections') ? [this.projectScopeForm.value.target_collection_category] : [];
-    
+
     // if (this.userBoard) {
     // // tslint:disable-next-line: max-line-length
     // _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'board' }).defaultValue = this.userBoard;
     // }
-    
+
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
@@ -930,7 +930,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (!this.programConfig['blueprintMap']) {
       this.programConfig['blueprintMap'] = this.localBlueprintMap;
     }
-    
+
     delete programData.defaultContributeOrgReview;
     delete programData.gradeLevel;
     delete programData.medium;
@@ -1177,35 +1177,36 @@ showTexbooklist(showTextBookSelector = true) {
       this.programConfig['gradeLevelIds'] = [];
       this.programConfig['mediumIds'] = [];
       this.programConfig['subjectIds'] = [];
+      // tslint:disable-next-line:max-line-length
       this.programConfig['framework'] = _.isArray(this.projectScopeForm.value.framework) ? this.projectScopeForm.value.framework : [this.projectScopeForm.value.framework];
-      if(_.isArray(this.projectScopeForm.value.board)) {
+      if (_.get(this.projectScopeForm, 'value') && _.isArray(this.projectScopeForm.value.board)) {
         this.programConfig['board'] = _.map(this.projectScopeForm.value.board, (board) => {
           this.programConfig['boardIds'].push(board.identifier);
           return board.name;
         });
-      } else {
+      } else if (_.get(this.projectScopeForm, 'value.board')) {
         this.programConfig['board'] = [this.projectScopeForm.value.board.name];
-        this.programConfig['boardIds'] = [this.projectScopeForm.value.board.identifier]
+        this.programConfig['boardIds'] = [this.projectScopeForm.value.board.identifier];
       }
-
-      this.programConfig['gradeLevel'] =  _.map(this.projectScopeForm.value.gradeLevel, (gradeLevel) => {
-        this.programConfig['gradeLevelIds'].push(gradeLevel.identifier);
-        return gradeLevel.name;
-      });
-      this.programConfig['medium'] =  _.map(this.projectScopeForm.value.medium, (medium) => {
-        this.programConfig['mediumIds'].push(medium.identifier);
-        return medium.name;
-      });
-      this.programConfig['subject'] = 
-      this.programConfig['subject'] =  _.map(this.projectScopeForm.value.subject, (subject) => {
-        this.programConfig['subjectIds'].push(subject.identifier);
-        return subject.name;
-      });
-      this.programConfig['frameworkObj'] = { 
+      if (_.get(this.projectScopeForm, 'value')) {
+        this.programConfig['gradeLevel'] = _.map(this.projectScopeForm.value.gradeLevel, (gradeLevel) => {
+          this.programConfig['gradeLevelIds'].push(gradeLevel.identifier);
+          return gradeLevel.name;
+        });
+        this.programConfig['medium'] =  _.map(this.projectScopeForm.value.medium, (medium) => {
+          this.programConfig['mediumIds'].push(medium.identifier);
+          return medium.name;
+        });
+        this.programConfig['subject'] =  _.map(this.projectScopeForm.value.subject, (subject) => {
+          this.programConfig['subjectIds'].push(subject.identifier);
+          return subject.name;
+        });
+      }
+      this.programConfig['frameworkObj'] = {
         identifier : this.programScope.framework.identifier,
-        code: this.programScope.framework.code, 
+        code: this.programScope.framework.code,
         type: this.programScope.framework.type
-      }
+      };
     }
   }
 
