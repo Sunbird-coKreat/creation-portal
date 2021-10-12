@@ -134,11 +134,16 @@ let PERMISSIONS_HELPER = {
         'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
         'content-type': 'application/json',
         'accept': 'application/json',
-        'Authorization': 'Bearer ' + apiAuthToken,
-        'x-authenticated-user-token': getAuthToken(reqObj)
+        'Authorization': 'Bearer ' + apiAuthToken
       },
       json: true
     }
+
+    let xAuthUserToken = getAuthToken(reqObj);
+    if (xAuthUserToken) {
+      options.headers['x-authenticated-user-token'] = xAuthUserToken
+    }
+
     const telemetryData = {reqObj: reqObj,
       options: options,
       uri: 'user/v1/read',

@@ -32,12 +32,16 @@ module.exports = {
       url: learnerURL + 'user/v1/update/logintime',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + learnerAuthorization,
-        'x-authenticated-user-token': token
+        'Authorization': 'Bearer ' + learnerAuthorization
       },
       body: data,
       json: true
     }
+
+    if (token) {
+      options.headers['x-authenticated-user-token'] = token
+    }
+
     const telemetryData = {reqObj: req,
       options: options,
       uri: 'user/v1/update/logintime',
