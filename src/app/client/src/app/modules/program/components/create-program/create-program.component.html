@@ -78,7 +78,7 @@
 										class="fs-0-92">{{resource?.frmelmnts?.lbl?.howToGetContributionsToThisProject}}</label>
 									<div class="sb-field mt-4 d-flex">
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input type="radio" formControlName="type" id="type_public" value="public" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('public', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+											<input type="radio" formControlName="type" id="type_public" value="public" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_anyone', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata"/>
@@ -86,7 +86,7 @@
 										</div>
                     					<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<div> 
-												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('public', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_a_selected_set_of_contributors', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata"/>
@@ -108,7 +108,7 @@
 											</span>
                     					</div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input type="radio" formControlName="type" id="type_private" value="private" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('private', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+											<input type="radio" formControlName="type" id="type_private" value="private" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_your_organization_only', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 											[telemetryInteractObject]="telemetryInteractObject"
 											[telemetryInteractCdata]="telemetryInteractCdata"
 											[telemetryInteractPdata]="telemetryInteractPdata"/>
@@ -122,7 +122,11 @@
 									<input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
 										name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
 										[checked]="defaultContributeOrgReviewChecked"
-										(change)="defaultContributeOrgReviewChanged($event)">
+										(change)="defaultContributeOrgReviewChanged($event)" appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('skip_two_level_review', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.radioButton, telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 									<label
 										for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
 								</div>

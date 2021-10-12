@@ -27,7 +27,8 @@ describe('OnboardPopupComponent', () => {
         SuiAccordionModule, TelemetryModule.forRoot(),
         HttpClientTestingModule],
       declarations: [ OnboardPopupComponent ],
-      providers: [ResourceService, ToasterService, BrowserCacheTtlService, CacheService, ConfigService, {provide: APP_BASE_HREF, useValue: '/'}]
+      providers: [ResourceService, ToasterService, BrowserCacheTtlService, CacheService,
+        ConfigService, {provide: APP_BASE_HREF, useValue: '/'}]
     })
     .compileComponents();
   }));
@@ -39,6 +40,20 @@ describe('OnboardPopupComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('#ngOnInit() should set formFieldOptions value', () => {
+    component.formFieldOptions = [];
+    component.programDetails = {
+      config: {
+        onBoardingForm: {
+          fields: [{dummy: 'dummy'}]
+        }
+      }
+    };
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.formFieldOptions.length).toEqual(1);
   });
 
 });

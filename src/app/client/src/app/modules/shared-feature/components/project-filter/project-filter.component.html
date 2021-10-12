@@ -99,7 +99,7 @@
                   placeholder="{{resourceService?.frmelmnts?.lbl?.selectTargetCollection}}" class="selection p-5 b-100"
                   #targetCollectionCategories
                   appTelemetryInteract
-                  [telemetryInteractEdata]="getTelemetryInteractEdata('target_collection_category', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.singleSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                  [telemetryInteractEdata]="getTelemetryInteractEdata('target_collection_category', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
                   [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
                   [telemetryInteractPdata]="telemetryInteractPdata">
                 <sui-select-option *ngFor="let targetCollectionCategory of targetCollectionCategories.filteredOptions" [value]="targetCollectionCategory">
