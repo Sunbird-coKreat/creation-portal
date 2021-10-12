@@ -66,4 +66,10 @@ xdescribe('OrgUserListComponent', () => {
      expect(component.contributorOrgUsers).toBe(userDetail.result.response.content);
      expect(component.orgUserscnt).toBe(userDetail.result.response.content.length);
     });
+  it('#getTelemetryInteractEdata() should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('copy_link',
+    'click', 'launch', 'sourcing_my_projects', undefined);
+    expect(returnObj).not.toContain(undefined);
+    });
 });

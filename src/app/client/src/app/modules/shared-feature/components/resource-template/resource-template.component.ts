@@ -32,9 +32,16 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public selectedtemplateDetails;
   public showModeofCreationModal = false;
   public showQuestionTypeModal = false;
+  public defaultFileSize: any;
+  public defaultVideoSize: any;
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
     public configService: ConfigService, public resourceService: ResourceService,
-    private programsService: ProgramsService, private toasterService: ToasterService) { }
+    private programsService: ProgramsService, private toasterService: ToasterService) {
+      this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
+      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
+     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
+     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
+     }
 
 
   ngOnInit() {
@@ -151,7 +158,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
     this.selectedtemplateDetails['filesConfig'] = {};
     this.selectedtemplateDetails.filesConfig['accepted'] = (!_.isEmpty(filesConfig)) ? _.join(_.compact(filesConfig), ', ') : '';
-    this.selectedtemplateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+    this.selectedtemplateDetails.filesConfig['size'] = {
+      defaultfileSize:  this.defaultFileSize,
+      defaultVideoSize: this.defaultVideoSize
+    };
     this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
   }
 

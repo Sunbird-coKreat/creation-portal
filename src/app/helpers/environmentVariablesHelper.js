@@ -48,6 +48,8 @@ let envVariables = {
   DOCK_PROGRAM_SERVICE_URL: env.dock_program_service_url,
   DOCK_QUESTIONSET_ENABLE: env.dock_questionSet_enable || 'true',
   DOCK_SMS_URL: env.dock_sms_url || 'https://vdn.diksha.gov.in',
+  DOCK_DEFAULT_FILE_SIZE: env.dock_default_file_size || 150,
+  DOCK_DEFAULT_VIDEO_SIZE: env.dock_default_video_size || 15000,
   SUNBIRD_PROTO: env.sunbird_base_proto,
   OPENSABER_SERVICE_URL: env.opensaber_service_url || 'http://opensaber-service:8080',
 

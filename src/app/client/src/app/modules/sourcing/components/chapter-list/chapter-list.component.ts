@@ -117,7 +117,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private deviceId: string;
   private buildNumber: string;
   private portalVersion: string;
-
+  public defaultFileSize: any;
+  public defaultVideoSize: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -132,6 +133,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.deviceId = deviceId ? deviceId.value : '';
     this.buildNumber = buildNumber ? buildNumber.value : '1.0';
     this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
+     (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
+    this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
+    (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
   }
 
   ngOnInit() {
@@ -1091,7 +1096,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const acceptedFile = appEditorConfig[event.content.mimeType];
     this.templateDetails['filesConfig'] = {};
     this.templateDetails.filesConfig['accepted'] = acceptedFile || '';
-    this.templateDetails.filesConfig['size'] = this.configService.contentCategoryConfig.sourcingConfig.defaultfileSize;
+    this.templateDetails.filesConfig['size'] = {
+      defaultfileSize:  this.defaultFileSize,
+      defaultVideoSize:  this.defaultVideoSize
+    }
+    ;
     this.templateDetails.questionCategories = event.content.questionCategories;
     if (event.content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(event.content.questionCategories)) {
       this.templateDetails.onClick = 'questionSetComponent';

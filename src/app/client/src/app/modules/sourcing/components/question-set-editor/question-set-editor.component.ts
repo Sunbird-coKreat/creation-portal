@@ -36,10 +36,12 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public unitIdentifier: string;
   public telemetryPageId: string;
   private onComponentDestroy$ = new Subject<any>();
+  public hideSubmitForReviewBtn = false;
 
+  public defaultFileSize: any;
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
-    private frameworkService: FrameworkService, private programsService: ProgramsService, 
+    private frameworkService: FrameworkService, private programsService: ProgramsService,
     private contentService: ContentService, public toasterService: ToasterService,
     private resourceService: ResourceService, private programStageService: ProgramStageService,
     private helperService: HelperService, private collectionHierarchyService: CollectionHierarchyService,
@@ -50,6 +52,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       this.deviceId = deviceId ? deviceId.value : '';
       this.buildNumber = buildNumber ? buildNumber.value : '1.0';
       this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+      this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
+      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
      }
 
   ngOnInit() {
@@ -58,10 +62,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.programContext = _.get(this.questionSetEditorComponentInput, 'programContext');
     this.unitIdentifier  = _.get(this.questionSetEditorComponentInput, 'unitIdentifier');
+    this.hideSubmitForReviewBtn = _.get(this.questionSetEditorComponentInput, 'hideSubmitForReviewBtn') || false;
 
-    // this.telemetryPageId = _.get(this.questionSetEditorInput, 'telemetryPageDetails.telemetryPageId');
-    // this.templateDetails  = _.get(this.questionSetEditorInput, 'templateDetails');
-    // 
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
     };
@@ -69,7 +71,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.getCollectionDetails().subscribe(data => {
       this.collectionDetails = data.result.questionset;
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
-      //this.getFrameWorkDetails();
+      // this.getFrameWorkDetails();
       this.setEditorConfig();
       this.showLoader = false;
     });
@@ -79,67 +81,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     const req = {
       url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${this.editorParams.questionSetId}?mode=edit`
     };
-    return this.contentService.get(req).pipe(map((response: any) => {return response}));
+    return this.contentService.get(req).pipe(map((response: any) => response));
   }
-  
-  /*getFrameWorkDetails() {
-    if (this.programContext.rootorg_id) {
-      this.helperService.fetchChannelData(this.programContext.rootorg_id);
-    }
-    this.programsService.getCategoryDefinition(this.collectionDetails.primaryCategory, this.programContext.rootorg_id, 'QuestionSet')
-    .subscribe(data => {
-      // tslint:disable-next-line:max-line-length
-      if (_.get(data, 'result.objectCategoryDefinition.objectMetadata.config')) {
-        this.hierarchyConfig = _.get(data, 'result.objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection');
-        if (!_.isEmpty(this.hierarchyConfig.children)) {
-          this.hierarchyConfig.children = this.getPrimaryCategoryData(this.hierarchyConfig.children);
-        }
-        if (!_.isEmpty(this.hierarchyConfig.hierarchy)) {
-          _.forEach(this.hierarchyConfig.hierarchy, (hierarchyValue) => {
-            if (_.get(hierarchyValue, 'children')) {
-              hierarchyValue['children'] = this.getPrimaryCategoryData(_.get(hierarchyValue, 'children'));
-            }
-          });
-        }
-      }
-      if (!this.showQuestionEditor) {
-        this.setEditorConfig();
-        this.editorConfig.context['framework'] = _.get(this.collectionDetails, 'framework');
-        if (_.get(this.collectionDetails, 'primaryCategory') && _.get(this.collectionDetails, 'primaryCategory') !== 'Curriculum Course') {
-          this.editorConfig.context['targetFWIds'] = _.get(this.collectionDetails, 'targetFWIds');
-        }
-        this.showLoader = false;
-      } else {
-        this.setEditorConfig();
-        this.showLoader = false;
-      }
-    }, err => {
-      this.toasterService.error(this.resourceService.messages.emsg.m0015);
-    });
-  }*/
-
-  /*getPrimaryCategoryData(childrenData) {
-    _.forEach(childrenData, (value, key) => {
-      if (_.isEmpty(value)) {
-        switch (key) {
-          case 'Question':
-            childrenData[key] = this.frameworkService['_channelData'].questionPrimaryCategories
-            || this.configService.appConfig.WORKSPACE.questionPrimaryCategories;
-            break;
-          case 'Content':
-            childrenData[key] = this.frameworkService['_channelData'].contentPrimaryCategories || [];
-            break;
-          case 'Collection':
-            childrenData[key] = this.frameworkService['_channelData'].collectionPrimaryCategories || [];
-            break;
-          case 'QuestionSet':
-            childrenData[key] = this.frameworkService['_channelData'].questionsetPrimaryCategories || [];
-            break;
-        }
-      }
-    });
-    return childrenData;
-  }*/
 
   setEditorConfig() {
     // tslint:disable-next-line:max-line-length
@@ -179,6 +122,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         channelData: this.frameworkService['_channelData'],
         cloudStorageUrls : this.userService.cloudStorageUrls,
         labels: {
+          // tslint:disable-next-line:max-line-length
           submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
           publish_collection_btn_label: this.resourceService.frmelmnts.btn.submitForApproval,
           sourcing_approve_collection_btn_label: this.resourceService.frmelmnts.btn.publishToConsume,
@@ -187,12 +131,20 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       },
       config: {
         primaryCategory: this.collectionDetails.primaryCategory,
-        objectType: "QuestionSet",
+        objectType: 'QuestionSet',
         mode: this.getEditorMode(),
         setDefaultCopyRight: false,
-        showOriginPreviewUrl: false, 
-        showSourcingStatus: false, 
-        showCorrectionComments: false
+        showOriginPreviewUrl: false,
+        showSourcingStatus: false,
+        showCorrectionComments: false,
+        hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
+        assetConfig: {
+            video: {
+              size: this.defaultFileSize,
+              sizeType: 'MB',
+              accepted: 'mp4, webm'
+            }
+        }
       }
     };
     if (this.showQuestionEditor) {
@@ -212,11 +164,11 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     if (submissionDateFlag && this.canSubmit()) {
       return 'edit';
     }
-    
+
     if (submissionDateFlag && this.canReviewContent()) {
       return 'orgReview';
     }
-      
+
     if (this.canSourcingReviewerPerformActions()) {
       return 'sourcingReview';
     }
@@ -234,7 +186,9 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     const sourcingReviewStatus = _.get(this.questionSetEditorComponentInput, 'sourcingStatus') || '';
     if (sourcingReviewStatus === 'Approved') {
       this.editorConfig.config.showOriginPreviewUrl = true;
+      // tslint:disable-next-line:max-line-length
       if (!_.isEmpty(this.sessionContext.contentOrigins) && !_.isEmpty(this.sessionContext.contentOrigins[this.editorParams.questionSetId])) {
+        // tslint:disable-next-line:max-line-length
         this.editorConfig.context.originPreviewUrl =  this.helperService.getQuestionSetOriginUrl(this.sessionContext.contentOrigins[this.editorParams.questionSetId].identifier);
       }
     }
@@ -324,32 +278,34 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
 
   editorEventListener(event) {
    switch (event.action) {
-    case "submitContent" : 
+    case 'submitContent' :
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content
       if (this.helperService.isIndividualAndNotSample(this.sessionContext.currentOrgRole, this.sessionContext.sampleContent)) {
         this.publishQuestionSet(event.identifier);
-      }
-      else {
+      } else {
        this.programStageService.removeLastStage();
        this.programsService.emitHeaderEvent(true);
       }
       break;
-    case "sendForCorrections": 
+    case 'sendForCorrections':
       this.requestCorrectionsBySourcing(event.identifier, event.comment)
       break;
-    case "sourcingApprove":
+    case 'sourcingApprove':
+      // tslint:disable-next-line:max-line-length
       this.helperService.manageSourcingActions('accept', this.sessionContext, this.programContext, this.unitIdentifier, this.collectionDetails);
       break;
-    case "sourcingReject": 
+    case 'sourcingReject':
+      // tslint:disable-next-line:max-line-length
       this.helperService.manageSourcingActions('reject', this.sessionContext, this.programContext, this.unitIdentifier, this.collectionDetails, event.comment);
       break;
-      case "backContent": 
+    case 'backContent':
       this.programsService.emitHeaderEvent(true);
       this.programStageService.removeLastStage();
       break;
-    case "saveCollection": // saving as draft
-    default: this.programStageService.removeLastStage();
-             this.programsService.emitHeaderEvent(true);
+    case 'saveCollection': // saving as draft
+    default:
+      this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
       break;
    }
   }
@@ -378,7 +334,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
 
   requestCorrectionsBySourcing(questionsetId, rejectComment) {
     if (rejectComment) {
-      this.helperService.updateQuestionSetStatus(questionsetId, "Draft", rejectComment)
+      this.helperService.updateQuestionSetStatus(questionsetId, 'Draft', rejectComment)
       .subscribe(res => {
         this.contentStatusNotify('Reject');
         this.toasterService.success(this.resourceService.messages.smsg.m0069);
@@ -409,6 +365,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       };
       this.notificationService.onAfterContentStatusChange(notificationForContributor)
       .subscribe((res) => {  });
+      // tslint:disable-next-line:max-line-length
       if (!_.isEmpty(this.sessionContext.nominationDetails) && !_.isEmpty(this.sessionContext.nominationDetails.user_id) && status !== 'Request') {
         const notificationForPublisher = {
           user_id: this.sessionContext.nominationDetails.user_id,

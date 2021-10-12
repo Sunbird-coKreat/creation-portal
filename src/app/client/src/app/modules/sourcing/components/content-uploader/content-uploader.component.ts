@@ -1,13 +1,14 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
   AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
-import { ToasterService, ConfigService, ResourceService, NavigationHelperService, BrowserCacheTtlService } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService, NavigationHelperService,
+  BrowserCacheTtlService, HttpOptions } from '@sunbird/shared';
 import { UserService, ActionService, PlayerService, FrameworkService, NotificationService,
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, filter, take, takeUntil } from 'rxjs/operators';
-import { throwError, Observable, Subject } from 'rxjs';
+import { catchError, map, filter, take, takeUntil, tap } from 'rxjs/operators';
+import { throwError, Observable, Subject, forkJoin } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -19,6 +20,11 @@ import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/tel
 import { UUID } from 'angular2-uuid';
 import { CacheService } from 'ng2-cache-service';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
+import { InitialState } from '../../interfaces';
+interface IDynamicInput {
+  questionSetEditorComponentInput?: any;
+}
 
 @Component({
   selector: 'app-content-uploader',
@@ -112,8 +118,35 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public formstatus: any;
   public formInputData: any;
 
+  // interactive video
+  public unFormatedinterceptionTime;
+  public interceptionTime: any = '00:00';
+  public interceptionMetaData: any;
+  public showquestionCreationUploadModal: boolean;
+  public creationComponent;
+  public dynamicInputs: IDynamicInput;
+  public questionSetId: any;
+  public contentId: any;
+  public interceptionData: any;
+  public currentLastStageInService: any;
+  public currentStage: any;
+  public stageSubscription: any;
+  public state: InitialState = {
+    stages: []
+  };
+  public interactiveQuestionSets = {};
+  public showConfirmationModal = false;
+  public selectedQuestionSet: any;
+  public showQuestionSetEditModal = false;
+  public totalDuration: any;
+  public selectedQuestionSetEdit: any;
+  public baseUrl: string;
+  public showQuestionSetPreview = false;
+  public qumlPlayerConfig;
+  public enableInteractivity = false;
+
   constructor(public toasterService: ToasterService, private userService: UserService,
-    public actionService: ActionService, public playerService: PlayerService, 
+    public actionService: ActionService, public playerService: PlayerService,
     public configService: ConfigService, private sourcingService: SourcingService, public frameworkService: FrameworkService,
     public programStageService: ProgramStageService, private helperService: HelperService,
     private collectionHierarchyService: CollectionHierarchyService, private cd: ChangeDetectorRef,
@@ -122,7 +155,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
     private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
-    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService) { }
+    private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
+    public programComponentsService: ProgramComponentsService) {
+      this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
+      ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
+    }
 
   ngOnInit() {
     this.config = _.get(this.contentUploadComponentInput, 'config');
@@ -154,6 +191,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const targetFWIds = _.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds');
     if (!_.isUndefined(targetFWIds)) {
       this.helperService.setTargetFrameWorkData(targetFWIds);
+    }
+    this.videoSizeLimit = this.formatBytes(_.toNumber(this.templateDetails.filesConfig.size.defaultVideoSize) * 1024 * 1024);
+    // interactive video
+    this.currentStage = 'contentUploaderComponent';
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+      this.state.stages = state.stages;
+      this.changeView();
+    });
+    if (_.has(this.templateDetails, 'objectMetadata.config.enableInteractivity')) {
+      this.enableInteractivity = _.get(this.templateDetails, 'objectMetadata.config.enableInteractivity');
+    } else {
+      this.programsService.getCategoryDefinition(_.get(this.templateDetails, 'name'),
+        this.programContext.rootorg_id, 'Content').subscribe((res) => {
+          this.enableInteractivity = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.enableInteractivity');
+      });
     }
    }
 
@@ -206,7 +258,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   ngAfterViewInit() {
     if (_.get(this.contentUploadComponentInput, 'action') !== 'preview') {
-      this.fetchFileSizeLimit();
+      this.showUploadModal = true;
+      this.initiateUploadModal();
     }
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
@@ -411,31 +464,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return acceptedFiles.toString();
   }
 
-  fetchFileSizeLimit() {
-    if (!this.cacheService.get('contentVideoSize')) {
-      const request = {
-        key: 'contentVideoSize',
-        status: 'active'
-      };
-      this.helperService.getProgramConfiguration(request).subscribe(res => {
-        this.showUploadModal = true;
-        this.initiateUploadModal();
-        if (_.get(res, 'result.configuration.value')) {
-          this.videoSizeLimit = this.formatBytes(_.toNumber(_.get(res, 'result.configuration.value')) * 1024 * 1024);
-          this.cacheService.set(request.key  , res.result.configuration.value,
-            { maxAge: this.browserCacheTtlService.browserCacheTtl });
-        }
-      }, err => {
-        this.showUploadModal = true;
-        this.initiateUploadModal();
-        this.toasterService.error('Unable to fetch size Limit...Please try later!');
-      });
-    } else {
-      this.showUploadModal = true;
-      this.initiateUploadModal();
-      this.videoSizeLimit = this.formatBytes(_.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024);
-    }
-  }
 
   segregateFileTypes() {
     const extns = (!_.includes(this.templateDetails.filesConfig.accepted, ',')) ?
@@ -448,20 +476,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   checkFileSizeLimit(fileUpload, mimeType) {
     if (this.videoFileFormat) {
-      if (this.cacheService.get('contentVideoSize')) {
-        const val = _.toNumber(this.cacheService.get('contentVideoSize')) * 1024 * 1024;
+        const val = _.toNumber(this.templateDetails.filesConfig.size.defaultVideoSize) * 1024 * 1024;
         if (this.uploader.getSize(0) < val) {
           this.uploadByURL(fileUpload, mimeType);
         } else {
           this.handleSizeLimitError(this.formatBytes(val));
         }
-      } else {
-        this.handleSizeLimitError('');
-      }
-    } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size) * 1024 * 1024)) {
+    } else if (this.uploader.getSize(0) < (_.toNumber(this.templateDetails.filesConfig.size.defaultfileSize) * 1024 * 1024)) {
       this.uploadByURL(fileUpload, mimeType);
     } else {
-      this.handleSizeLimitError(`${this.templateDetails.filesConfig.size} MB`);
+      this.handleSizeLimitError(`${this.templateDetails.filesConfig.size.defaultfileSize} MB`);
     }
   }
 
@@ -510,7 +534,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.loading = true;
     if (fileUpload && !this.uploadInprogress && !this.contentMetaData && !this.contentUploadComponentInput.contentId) {
       const createContentReq = this.helperService.createContent(this.contentUploadComponentInput, mimeType);
-     
+
       createContentReq.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: 'Unable to create contentId, Please Try Again',
@@ -520,19 +544,19 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.programStageService.removeLastStage();
         this.programsService.emitHeaderEvent(true);
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-      }))
-        .subscribe(result => {
-          if (!_.get(this.programContext, 'target_type') || _.get(this.programContext, 'target_type') === 'collections') {
-            this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
-              .subscribe(() => {
-                this.uploadFile(mimeType, result.node_id);
-              }, (err) => {
-                this.programStageService.removeLastStage();
-              });
-            } else {
-              this.uploadFile(mimeType, result.identifier);
-            }
-        });
+      })).subscribe(result => {
+        this.contentId = result.identifier;
+        if (!_.get(this.programContext, 'target_type') || _.get(this.programContext, 'target_type') === 'collections') {
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, result.identifier)
+            .subscribe(() => {
+              this.uploadFile(mimeType, result.node_id);
+            }, (err) => {
+              this.programStageService.removeLastStage();
+            });
+        } else {
+          this.uploadFile(mimeType, result.identifier);
+        }
+      });
     } else if (!this.uploadInprogress) {
       this.uploadFile(mimeType, this.contentMetaData ? this.contentMetaData.identifier : this.contentUploadComponentInput.contentId);
     }
@@ -654,10 +678,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
 
   getUploadedContentMeta(contentId) {
+    this.showPreview = false;
     const option = {
       url: 'content/v3/read/' + contentId
     };
     this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
+      this.showPreview = true;
       const errInfo = {
         errorMsg: 'Unable to read the Content, Please Try Again',
         telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
@@ -665,11 +691,31 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
       return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
   })).subscribe(res => {
+    this.showPreview = true;
+      this.interceptionMetaData = _.get(res, 'interceptionPoints');
+      if (!_.isEmpty(this.interceptionMetaData)) {
+        this.getInteractiveQuestionSet().subscribe(
+          (response) => {
+            const questionSets = _.get(response, 'result.QuestionSet');
+            if (!_.isEmpty(questionSets)) {
+              _.forEach(questionSets, questionSet => {
+                this.interactiveQuestionSets[questionSet.identifier] = [questionSet.name];
+              });
+            }
+          }
+        );
+      }
+      this.contentId = res.identifier;
       const contentDetails = {
         contentId: contentId,
         contentData: res
       };
       this.contentMetaData = res;
+      if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
+        this.videoFileFormat = true;
+      } else {
+        this.videoFileFormat = false;
+      }
       this.editTitle = this.contentMetaData.name || '' ;
       this.resourceStatus = this.contentMetaData.status;
       if (this.resourceStatus === 'Review') {
@@ -712,7 +758,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
       this.showUploadModal = false;
       if (!this.contentMetaData.artifactUrl) {
-        this.fetchFileSizeLimit();
+        this.showUploadModal = true;
+        this.initiateUploadModal();
       }
       this.loading = false;
       this.handleActionButtons();
@@ -732,11 +779,18 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.showPreview = true;
       this.showUploadModal = false;
       this.changeFile_instance = false;
+      this.showquestionCreationUploadModal = false;
+      this.showConfirmationModal = false;
+      this.showQuestionSetEditModal = false;
     } else if (this.modal && this.modal.deny && this.showUploadModal) {
       this.modal.deny();
       this.programStageService.removeLastStage();
       this.programsService.emitHeaderEvent(true);
     }
+    this.showquestionCreationUploadModal = false;
+    this.showConfirmationModal = false;
+    this.showQuestionSetEditModal = false;
+    this.showQuestionSetPreview = false;
     if (this.videoFileFormat) {
       this.azureUploadFileService.abortUpload();
     }
@@ -859,6 +913,33 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   sendForReview() {
+    if (this.contentMetaData.interceptionPoints) {
+      const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
+      if (interceptionPoints) {
+        const questionSetPublishReq = interceptionPoints.map(interceptionData => {
+          return this.helperService.reviewQuestionSet(interceptionData.identifier);
+        });
+        forkJoin(questionSetPublishReq).subscribe(data => {
+          this.reviewAndAddResourceToHierarchy();
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m0099,
+            // tslint:disable-next-line:max-line-length
+            // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.sourcingService.apiErrorHandling(err, errInfo);
+          this.getUploadedContentMeta(this.contentMetaData.identifier);
+        });
+      } else {
+        this.reviewAndAddResourceToHierarchy();
+      }
+    } else {
+      this.reviewAndAddResourceToHierarchy();
+    }
+  }
+
+  reviewAndAddResourceToHierarchy() {
     this.helperService.reviewContent(this.contentMetaData.identifier)
        .subscribe((res) => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -952,6 +1033,33 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   publishContent() {
+    if (this.contentMetaData.interceptionPoints) {
+      const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
+      if (interceptionPoints) {
+        const questionSetPublishReq = interceptionPoints.map(interceptionData => {
+          return this.helperService.publishQuestionSet(interceptionData.identifier, this.userService.userProfile.userId);
+        });
+        forkJoin(questionSetPublishReq).subscribe(data => {
+          this.publishAndAddResourceToHierarchy();
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00102,
+            // tslint:disable-next-line:max-line-length
+            // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.sourcingService.apiErrorHandling(err, errInfo);
+          this.getUploadedContentMeta(this.contentMetaData.identifier);
+        });
+      } else {
+        this.publishAndAddResourceToHierarchy();
+      }
+    } else {
+      this.publishAndAddResourceToHierarchy();
+    }
+  }
+
+  publishAndAddResourceToHierarchy() {
     this.helperService.publishContent(this.contentMetaData.identifier, this.userService.userProfile.userId)
        .subscribe(res => {
         if (this.sessionContext.collection && this.unitIdentifier) {
@@ -1035,7 +1143,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   changeFile() {
     this.changeFile_instance = true;
     this.uploadButton = false;
-    this.fetchFileSizeLimit();
+    this.showUploadModal = true;
+    this.initiateUploadModal();
   }
 
   getContentStatus(contentId) {
@@ -1057,7 +1166,32 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (action === 'reject' && this.FormControl.value.rejectComment.length) {
       rejectComment = this.FormControl.value.rejectComment;
     }
-    this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+    if (this.contentMetaData.interceptionPoints) {
+      const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
+      if (interceptionPoints) {
+        const questionSetPublishReq = interceptionPoints.map(interceptionData => {
+          return this.helperService.publishQuestionSetToConsumption(interceptionData.identifier);
+        });
+        forkJoin(questionSetPublishReq).subscribe(data => {
+          // tslint:disable-next-line:max-line-length
+          this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00102,
+            // tslint:disable-next-line:max-line-length
+            // telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          this.sourcingService.apiErrorHandling(err, errInfo);
+        });
+      } else {
+        // tslint:disable-next-line:max-line-length
+        this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+      }
+    } else {
+      // tslint:disable-next-line:max-line-length
+      this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.unitIdentifier, this.contentMetaData, rejectComment, this.isMetadataOverridden);
+    }
   }
 
   ngOnDestroy() {
@@ -1104,4 +1238,421 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   getFormData(event) {
     this.formInputData = event;
   }
+
+  // interactive video Change start
+  format(time) {
+    // tslint:disable-next-line:no-bitwise
+    const hrs = ~~(time / 3600);
+    // tslint:disable-next-line:no-bitwise
+    const mins = ~~((time % 3600) / 60);
+    // tslint:disable-next-line:no-bitwise
+    const secs = ~~time % 60;
+
+    // Output like "1:01" or "4:03:59" or "123:03:59"
+    let ret = '';
+    if (hrs > 0) {
+        ret += '' + hrs + ':' + (mins < 10 ? '0' : '');
+    }
+    ret += '' + String(mins).padStart(2, '0') + ':' + (secs < 10 ? '0' : '');
+    ret += '' + secs;
+    return ret;
+  }
+
+  addInterception() {
+    this.showquestionCreationUploadModal = true;
+    if (this.unFormatedinterceptionTime !== '') {
+      this.interceptionTime = this.format(this.unFormatedinterceptionTime);
+    }
+  }
+
+  telemetryEvent(event) {
+    // console.log('in app: ', JSON.stringify(event));
+  }
+
+  eventHandler(event) {
+    if (_.isUndefined(this.totalDuration) && event.target) {
+      this.totalDuration = _.get(event.target, 'player.player_.cache_.duration');
+    }
+    if (event.type && event.type === 'timeupdate') {
+      this.unFormatedinterceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime * 10) / 10);
+    } else if (event.type && event.type === 'ended') {
+      this.interceptionTime = '00:00';
+    }
+  }
+
+  createQuestionSet() {
+      const timeStamp = this.interceptionTime.replace(':', '.').split('.');
+      const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+      const isTimeValid = this.validateEnteredTime(timeStamp);
+      if (isTimeValid) {
+        this.showquestionCreationUploadModal = false;
+        let creator = this.userService.userProfile.firstName;
+        if (!_.isEmpty(this.userService.userProfile.lastName)) {
+          creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
+        }
+        const rootorgId = _.get(this.programContext, 'rootorg_id');
+        this.frameworkService.readChannel(rootorgId).subscribe(channelData => {
+          const channelCats = _.get(channelData, 'primaryCategories');
+          const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+          const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+          const primaryCategories  = _.map(questionSetCategories, 'name');
+          const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+          _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
+          const option = {
+            url: `questionset/v1/create`,
+            header: {
+              'X-Channel-Id': this.programContext.rootorg_id
+            },
+            data: {
+              request: {
+                questionset: {
+                  'name': 'Untitled',
+                  'code': UUID.UUID(),
+                  'mimeType': 'application/vnd.sunbird.questionset',
+                  'createdBy': this.userService.userid,
+                  'primaryCategory': primaryCategories[0],
+                  'creator': creator,
+                  'author': creator,
+                  'programId': this.sessionContext.programId,
+                  'collectionId': this.sessionContext.collection,
+                  'unitIdentifiers': [this.unitIdentifier],
+                  ...(this.sessionContext.nominationDetails &&
+                    this.sessionContext.nominationDetails.organisation_id &&
+                    {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
+                  ...(_.pickBy(sharedMetaData, _.identity))
+                }
+              }
+            }
+          };
+          if (this.sessionContext.sampleContent) {
+            option.data.request.questionset.sampleContent = this.sessionContext.sampleConten;
+          }
+          this.actionService.post(option).pipe(map((res: any) => res.result), catchError(err => {
+            const errInfo = {
+              errorMsg: this.resourceService.messages.emsg.interactive.video.create,
+              telemetryPageId: this.telemetryPageId,
+              telemetryCdata : this.telemetryInteractCdata,
+              env : this.activeRoute.snapshot.data.telemetry.env,
+              request: option
+            };
+            return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+          })).subscribe(result => {
+              this.questionSetId = result.identifier;
+              this.programsService.emitHeaderEvent(false);
+              // tslint:disable-next-line:max-line-length
+              this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance('questionSetEditorComponent'), 'questionSetEditorComponent');
+              let interceptionPoints = [];
+              if (this.interceptionMetaData && Object.keys(this.interceptionMetaData).length === 0) {
+                interceptionPoints.push({
+                  'type': 'QuestionSet',
+                  'interceptionPoint': getTimeStamp,
+                  'identifier': this.questionSetId
+                });
+              } else {
+                interceptionPoints = this.interceptionMetaData.items;
+                interceptionPoints.push({
+                  'type': 'QuestionSet',
+                  'interceptionPoint': getTimeStamp,
+                  'identifier': this.questionSetId
+                });
+              }
+              this.interceptionData = {
+                url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+                data: {
+                  request : {
+                    content : {
+                      versionKey : this.contentMetaData.versionKey,
+                      interceptionPoints : {
+                        items : interceptionPoints
+                      },
+                      interceptionType: 'Timestamp'
+                    }
+                  }
+                }
+              };
+              this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+                  const errInfo = {
+                    errorMsg: this.resourceService.messages.emsg.interactive.video.updateInterception,
+                    telemetryPageId: this.telemetryPageId,
+                    telemetryCdata : this.telemetryInteractCdata,
+                    env : this.activeRoute.snapshot.data.telemetry.env,
+                    request: option
+                  };
+                  return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+              })).subscribe();
+
+          });
+        }, (err) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.emsg.interactive.video.primaryCategory,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env
+          };
+          return throwError(this.sourcingService.apiErrorHandling({}, errInfo));
+        });
+      }
+  }
+
+  componentLoadHandler(action, component, componentName, event?) {
+    this.initiateInputs(action, (event ? event.content : undefined));
+    this.creationComponent = component;
+    this.programStageService.addStage(componentName);
+  }
+
+  public initiateInputs(action?, content?) {
+    const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
+    this.dynamicInputs = {
+      questionSetEditorComponentInput: {
+        contentId: action === 'preview' ? content.identifier : this.questionSetId,
+        action: action,
+        content: content,
+        sessionContext: this.sessionContext,
+        unitIdentifier: this.unitIdentifier,
+        programContext: this.programContext,
+        originCollectionData: this.originCollectionData,
+        sourcingStatus: sourcingStatus,
+        selectedSharedContext: this.selectedSharedContext,
+        hideSubmitForReviewBtn: true
+      }
+    };
+  }
+
+  changeView() {
+    this.currentLastStageInService = this.programStageService.getLastStage();
+    if (!_.isEmpty(this.state.stages)) {
+      const lastStage = _.last(this.state.stages).stage;
+      if (lastStage === 'uploadComponent') {
+        this.currentStage = 'contentUploaderComponent';
+      }
+    }
+    if (this.currentStage === 'contentUploaderComponent') {
+      this.getUploadedContentMeta(this.contentMetaData.identifier);
+    } else if (this.currentLastStageInService === 'questionSetEditorComponent') {
+      this.currentStage = 'questionSetEditorComponent';
+    } else {
+      this.currentStage = '';
+    }
+  }
+
+  handleQuestionSetPreview(e) {
+    if (this.contentMetaData && this.contentMetaData.status && this.contentMetaData.status.toLowerCase() !== 'draft') {
+      return;
+    }
+    const event = {
+      action: 'preview',
+      content: {
+        identifier: e.identifier
+      }
+    };
+    this.componentLoadHandler('preview',
+    this.programComponentsService.getComponentInstance('questionSetEditorComponent'), 'questionSetEditorComponent', event);
+  }
+
+  public getInteractiveQuestionSet() {
+    const httpOptions: HttpOptions = {
+      headers: {
+        'content-type': 'application/json',
+      }
+    };
+    const option = {
+      url: 'composite/v3/search',
+      data: {
+        request: {
+          filters: {
+            status: [],
+            identifier: _.map(this.interceptionMetaData.items, 'identifier')
+          },
+          fields: ['name']
+        }
+      }
+    };
+    const req = {
+      url: option.url,
+      data: option.data,
+    };
+    return this.actionService.post(req);
+  }
+
+  public closeQuestionCreationUploadModal() {
+    this.showquestionCreationUploadModal = false;
+  }
+
+  public handleQuestionSetDelete(data, event) {
+    event.stopPropagation();
+    this.selectedQuestionSet = {} ;
+    this.showConfirmationModal = true;
+    this.selectedQuestionSet = data;
+  }
+
+  public closeConfirmationModal() {
+    this.selectedQuestionSet  = {};
+    this.showConfirmationModal = false;
+  }
+
+  public deleteQuestionSet() {
+    const option = {
+      url : `questionset/v1/retire/${this.selectedQuestionSet.identifier}`,
+      header: {
+        'X-Channel-Id': this.programContext.rootorg_id
+      }
+    };
+    this.actionService.delete(option).pipe(map((res: any) => res.result), catchError(err => {
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.interactive.video.delete,
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+       };
+      this.showConfirmationModal = false;
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+    })).subscribe(result => {
+      const currentInterceptionPoint = [];
+      this.interceptionMetaData.items.map(item => {
+        if (item.identifier !== this.selectedQuestionSet.identifier) {
+          currentInterceptionPoint.push(item);
+        }
+      });
+      this.interceptionData = {
+        url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+        data: {
+          request : {
+            content : {
+              versionKey : this.contentMetaData.versionKey,
+              interceptionPoints : {
+                items : currentInterceptionPoint
+              },
+              interceptionType: 'Timestamp'
+            }
+          }
+        }
+      };
+      this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.emsg.interactive.video.delete,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+            request: option
+          };
+          this.showConfirmationModal = false;
+          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      })).subscribe( result => {
+        this.showConfirmationModal = false;
+        this.toasterService.success(this.resourceService.messages.smsg.interactive.video.delete);
+        this.getUploadedContentMeta(this.contentMetaData.identifier);
+      });
+    });
+  }
+
+  public openQuestionSetEditModal(data, event) {
+    event.stopPropagation();
+    this.selectedQuestionSetEdit = data;
+    this.interceptionTime = this.format(data.interceptionPoint);
+    this.showQuestionSetEditModal = true;
+  }
+
+  public  editInterceptionDetails() {
+    const timeStamp = this.interceptionTime.replace(':', '.').split('.');
+    const isTimeValid = this.validateEnteredTime(timeStamp);
+    if (isTimeValid) {
+      const updatedInterceptionData = [];
+      const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+      this.interceptionMetaData.items.map(item => {
+        if (item.identifier === this.selectedQuestionSetEdit.identifier) {
+          updatedInterceptionData.push({
+            'type': 'QuestionSet',
+            'interceptionPoint': getTimeStamp,
+            'identifier': this.selectedQuestionSetEdit.identifier
+          });
+        } else {
+          updatedInterceptionData.push(item);
+        }
+      });
+      this.interceptionData = {
+        url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.contentId}`,
+        data: {
+          request : {
+            content : {
+              versionKey : this.contentMetaData.versionKey,
+              interceptionPoints : {
+                items : updatedInterceptionData
+              },
+              interceptionType: 'Timestamp'
+            }
+          }
+        }
+      };
+      this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.emsg.interactive.video.update,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activeRoute.snapshot.data.telemetry.env,
+          };
+          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      }))
+      .subscribe(result => {
+        console.log(result);
+        this.showQuestionSetEditModal = false;
+        this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
+      });
+    }
+  }
+
+  public closeQuestionSetEditModal() {
+    this.showQuestionSetEditModal = false;
+  }
+
+  public previewQuestionSet(data) {
+    const option = {
+      params: {
+        mode: 'edit'
+      }
+    };
+    // tslint:disable-next-line:max-line-length
+    forkJoin([this.playerService.getQuestionSetHierarchy(data.identifier, option), this.playerService.getQuestionSetRead(data.identifier, option)])
+      .subscribe(([hierarchyRes, questionSetData]: any) => {
+        this.showQuestionSetPreview = true;
+        const questionSet = _.get(hierarchyRes, 'result.questionSet');
+        questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
+        const contentDetails = {
+            contentId: data.identifier,
+            contentData: questionSet
+        };
+        this.qumlPlayerConfig = this.playerService.getConfig(contentDetails);
+        this.qumlPlayerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
+        this.qumlPlayerConfig.context = {
+          ...this.qumlPlayerConfig.context,
+          cdata: this.telemetryInteractCdata,
+          userData: {
+            firstName: this.userService.userProfile.firstName,
+            lastName : !_.isEmpty(this.userService.userProfile.lastName) ? this.userService.userProfile.lastName : '',
+          },
+          endpoint: '/data/v3/telemetry',
+          mode: 'play',
+          env: 'question_editor',
+          threshold: 3,
+          host: this.baseUrl
+        };
+    });
+  }
+
+  public validateEnteredTime(timeStamp) {
+    const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
+    // tslint:disable-next-line:max-line-length
+    const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === timeStamp);
+    if (getTimeStamp > this.totalDuration) {
+      this.toasterService.error(this.resourceService.messages.emsg.interactive.video.invalid);
+      return false;
+    } else if (this.interceptionTime === '00:00') {
+      this.toasterService.error(this.resourceService.messages.emsg.interactive.video.selectTimestamp);
+      return false;
+    } else if (enteredTimeStamp !== undefined) {
+      this.toasterService.warning(this.resourceService.messages.emsg.interactive.video.diffTimestamp);
+      return false;
+    } else {
+      return true;
+    }
+  }
+  // interactive video Change END
 }

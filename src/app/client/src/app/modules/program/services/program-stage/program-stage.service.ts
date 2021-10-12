@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+import * as _ from 'lodash-es';
 
 interface InitialState {
   stages: Array<{}>;
@@ -68,5 +69,10 @@ export class ProgramStageService {
 
   getStage(): Observable<any> {
     return this.stageObservable.asObservable();
+  }
+
+  getLastStage() {
+    const {stages} = this.stagesInService;
+    return _.get(_.last(stages), 'stage');
   }
 }

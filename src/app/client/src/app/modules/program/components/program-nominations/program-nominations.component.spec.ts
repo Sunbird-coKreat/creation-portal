@@ -365,4 +365,10 @@ describe('ProgramNominationsComponent', () => {
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
     });
+    it('#getTelemetryInteractEdata() should return object with defined value', () => {
+      spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+      const returnObj = component.getTelemetryInteractEdata('download_contribution_details',
+      'click', 'launch', 'sourcing_my_projects', undefined);
+      expect(returnObj).not.toContain(undefined);
+    });
 });
