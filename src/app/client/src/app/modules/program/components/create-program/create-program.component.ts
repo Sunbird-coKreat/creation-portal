@@ -954,7 +954,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     } else {
       if (!this.editPublished && this.projectTargetType === 'collections') {
         programData['collection_ids'] = [];
-        if (!_.isEmpty(this.projectScopeForm.value.pcollections)) {
+        if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['framework'] = config.framework;
           this.programConfig['board'] = config.board;
