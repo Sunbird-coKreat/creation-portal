@@ -50,7 +50,7 @@
                   [telemetryInteractPdata]="telemetryInteractPdata"
                     >View Comments</a>
                   </span>
-                  <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved'" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+                  <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
                   href="{{originPreviewUrl}}" target="_blank" appTelemetryInteract
                   [telemetryInteractEdata]="{id: 'view_this_content_on_diksha', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
                   [telemetryInteractObject]="telemetryInteractObject"
