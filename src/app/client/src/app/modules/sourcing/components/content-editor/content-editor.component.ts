@@ -437,7 +437,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
-      && (this.selectedOriginUnitStatus === 'Draft')) {
+      && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentData);
       this.contentEditRole = 'REVIEWER';
     }

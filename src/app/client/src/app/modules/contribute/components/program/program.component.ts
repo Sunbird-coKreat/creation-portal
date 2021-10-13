@@ -230,41 +230,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
   }
-  getStatusText(content) {
-    const resourceStatus = content.status;
-    const sourcingStatus = content.sourcingStatus;
-    const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass;
-    if (resourceStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-      resourceStatusClass = 'sb-color-primary';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      resourceStatusClass = 'sb-color-warning';
-    } else if ( sourcingStatus=== 'Rejected') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-      resourceStatusClass = 'sb-color-error';
-    } else if (sourcingStatus === 'Approved') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      resourceStatusClass = 'sb-color-success';
-    } else if (resourceStatus === 'Failed') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Processing') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
-      resourceStatusClass = '';
-    } else {
-      resourceStatusText = resourceStatus;
-      resourceStatusClass = 'sb-color-gray-300';
-    }
-    return [resourceStatusText, resourceStatusClass];
-  }
   shouldContentBeVisible(content) {
     const hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
     const hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
@@ -666,7 +631,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         _.map(this.contributorTextbooks, (content) => {
           content['contentVisibility'] = this.shouldContentBeVisible(content);
           content['sourcingStatus'] = this.checkSourcingStatus(content);
-          const temp = this.getStatusText(content)
+          const temp = this.helperService.getContentDisplayStatus(content)
           content['resourceStatusText'] = temp[0];
           content['resourceStatusClass'] = temp[1];
           if (content.contentVisibility) {
