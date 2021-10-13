@@ -106,6 +106,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public nominationIsInProcess: boolean = false;
   public showNominateModal: boolean = false;
   public contentCount = 0;
+  public showConfirmationModal = false;
+
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -1077,6 +1079,32 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   toggleUploadSampleButton(collection) {
     collection.isSelected = !collection.isSelected;
+  }
+  showContentDeleteModal(content) {
+    this.contentId = content.identifier;
+    this.showConfirmationModal = true;
+  }
+  deleteContent() {
+    this.helperService.retireContent(this.contentId)
+      .subscribe(
+        (response) => {
+          if (response && response.result && response.result.node_id) {
+            this.toasterService.success(this.resourceService.messages.smsg.m0064);
+          } else {
+            this.toasterService.error(this.resourceService.messages.fmsg.m00103);
+          }
+          this.showConfirmationModal = false;
+        },
+        (error) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00103,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env,
+          };
+          this.sourcingService.apiErrorHandling(error, errInfo);
+        }
+      );
   }
   changeView() {
     if (!_.isEmpty(this.state.stages)) {

@@ -328,18 +328,19 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-10 " *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
-					<th class="w-20" *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
+					<th class="w-10" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
+					<th *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
 						<span *ngIf="currentNominationStatus !== 'Approved'">Sample Content</span>
 						<span *ngIf="currentNominationStatus === 'Approved'">{{resourceService.frmelmnts.lbl.contentStatus}}</span>
 					</th>
-					<th *ngIf="programDetails?.target_type === 'searchCriteria'">
+					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
 						<span>{{ resourceService.frmelmnts.lbl.creator }}</span>			
 					</th>
-					<th class="w-20" *ngIf="programDetails?.target_type === 'searchCriteria'">
+					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
 						<span>{{ resourceService.frmelmnts.lbl.status }}</span>			
 					</th>
-					<th class="w-10"></th>
+					<th class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
+					<th class="w-10" *ngIf="programDetails?.target_type === 'collections'"></th>
 				</tr>
 			</thead>
 			<tbody class="sb-table-body">
@@ -389,12 +390,19 @@
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
 							</div>
 							<button *ngIf="visibility.showContentLevelOpen"
-							type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
 							(click)="openContent(contributorTextbook)" appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_content')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
+							<button *ngIf="visibility.showContentLevelOpen && contributorTextbook.status === 'Draft'"
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
+							(click)="showContentDeleteModal(contributorTextbook)" appTelemetryInteract
+							[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
+							[telemetryInteractObject]="telemetryInteractObject"
+							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_content')"
+							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.delete}}</button>
 
 							<button *ngIf="visibility.showCollectionLevelUploadContent"
 							type="button"  class="sb-btn sb-btn-normal sb-btn-outline-primary"
@@ -602,6 +610,34 @@
   </button>
 	</div>
   </sui-modal>
+  <sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+  [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showConfirmationModal = false" #modal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.confirm}}
+  </div>
+  <div class="sb-modal-content">
+      <div class="sb-publish-content">
+        <div class="review-modal-list">
+          {{resourceService.frmelmnts.lbl.areYouSureWantToDeleteContent}}
+      </div>
+      </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="deleteContent()"
+    appTelemetryInteract
+				[telemetryInteractEdata]="getTelemetryInteractEdata('yes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId,{key:'dialog_id',value:'confirm_delete_content'})"
+				[telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.yes}} </button>
+    <button type="button" class="sb-btn sb-btn-normal sb-btn-primary" (click)="showConfirmationModal = false"
+    appTelemetryInteract
+    [telemetryInteractEdata]="getTelemetryInteractEdata('no', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel,telemetryPageId,{key:'dialog_id',value:'confirm_delete_content'})"
+    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(contentId, 'Content', '1.0', {l1:sessionContext.collection,l2:unitIdentifier})"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts.btn.no}} </button>
+  </div>
+</sui-modal>
+
 <app-resource-template *ngIf='showResourceTemplatePopup'
   [resourceTemplateComponentInput]="resourceTemplateComponentInput"
   (templateSelection)="handleTemplateSelection($event)">
