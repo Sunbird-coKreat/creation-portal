@@ -4,13 +4,19 @@ import * as _ from 'lodash-es';
 import { QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
 import { CsModule } from '@project-sunbird/client-services';
+import { PublicPlayerService } from '@sunbird/public';
+import { map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { CsLibInitializerService } from './../../../../service/CsLibInitializer/cs-lib-initializer.service';
 @Injectable({ providedIn: 'root' })
 
 export class QumlPlayerService implements QuestionCursor, EditorCursor {
   private questionMap =  new Map();
   private contentCsService: any;
-  constructor(public csLibInitializerService: CsLibInitializerService) {
+  constructor(public csLibInitializerService: CsLibInitializerService,
+    public playerService: PublicPlayerService,
+    private http: HttpClient) {
     if (!CsModule.instance.isInitialised) {
       this.csLibInitializerService.initializeCs();
     }
@@ -42,8 +48,22 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
   clearQuestionMap() {
     this.questionMap.clear();
   }
+
   getQuestionSet(identifier) {
-    return of(identifier);
+    const hierarchy =  this.http.get('action/questionset/v1/hierarchy/' + identifier + '?mode=edit');
+    const questionSet = this.http.get(`action/questionset/v1/read/${identifier}?fields=instructions`);
+    return (
+      forkJoin([hierarchy, questionSet]).pipe(
+          map(res => {
+              let questionSet =  _.get(res[0], 'result.questionSet');
+              const instructions =  _.get(res[1], 'result.questionset.instructions');
+              if (questionSet && instructions) {
+                  // tslint:disable-next-line:no-unused-expression
+                  questionSet['instructions'] = instructions;
+              }
+              return {questionSet};
+          })
+      ));
   }
 
   getAllQuestionSet(identifiers: string[]): Observable<any> {

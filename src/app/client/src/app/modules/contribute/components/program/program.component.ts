@@ -1027,7 +1027,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
   }
-
+  cancelNomination() {
+    this.showNominateModal = false;
+  }
   contentTypeModalAction(action) {
     if (action === 'open') {
       this.preSavedContentTypes = _.clone(this.selectedContentTypes)

@@ -125,7 +125,7 @@ xdescribe('ContentUploaderComponent', () => {
       declarations: [ ContentUploaderComponent ],
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, SourcingService, ProgramsService,
          TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService,
-         AzureFileUploaderService, ContentService, 
+         AzureFileUploaderService, ContentService,
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
                   { provide: HelperService, useValue: helperServiceStub }, { provide: ResourceService, useValue: resourceServiceStub },
@@ -196,7 +196,7 @@ xdescribe('ContentUploaderComponent', () => {
 });
 
 // Following describe method is for fresh 'UPLOAD' scenario
-describe('ContentUploaderComponent', () => {
+xdescribe('ContentUploaderComponent', () => {
   let component: ContentUploaderComponent;
   let collectionHierarchyService: CollectionHierarchyService;
   let fixture: ComponentFixture<ContentUploaderComponent>;
