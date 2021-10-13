@@ -57,7 +57,8 @@
               "./node_modules/katex/dist/katex.min.css",
               "node_modules/video.js/dist/video-js.min.css",
               "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
-              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css"
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
+              "src/assets/libs/iziModal/css/iziModal.min.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -67,6 +68,7 @@
             "scripts": [
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
+              "src/assets/libs/iziModal/js/iziModal.min.js",
               "node_modules/slick-carousel/slick/slick.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/assets/libs/semantic.min.js",
