@@ -37,7 +37,7 @@
           <span *ngIf="!isContributor || activeMyProgramsMenu">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</span>
           <span *ngIf="activeAllProgramsMenu && programsService.checkforshowAllPrograms()">{{ resourceService?.frmelmnts?.lbl?.explorePrograms }} </span>
          </h4>
-         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning"
+         <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
          *ngIf="!showLoader && programs !== undefined && programs.length">{{count}}
         </span>
       </div>
