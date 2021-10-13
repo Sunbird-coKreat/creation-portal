@@ -1035,6 +1035,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return true;
       } else if (content.status === 'Live' && content.sourceURL) {
         return true;
+      } else if ((content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' )) && this.sessionContext['addFromLibraryBetaEnabled']) {
+        return true;
       }
     }
     return false;
@@ -1059,7 +1061,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         action: 'creation',
         programContext: _.get(this.chapterListComponentInput, 'programContext')
       }
-      
+
       const createContentReq = this.helperService.createContent(creationInput);
       createContentReq.pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
@@ -1396,7 +1398,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     };
     if (status && status.length > 0) {
       contents = _.filter(contents, leaf => {
-        if (prevStatus && leaf.status === 'Draft' && (leaf.prevStatus === 'Review' || leaf.prevStatus === 'Live')) {
+        if (this.sessionContext['addFromLibraryBetaEnabled']) {
+          return true;
+        } else if (prevStatus && leaf.status === 'Draft' && (leaf.prevStatus === 'Review' || leaf.prevStatus === 'Live')) {
           return true;
         } else {
           return _.includes(status, leaf.status);
@@ -1409,7 +1413,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
 
     let leaves;
-    if (this.router.url.includes('/sourcing')) {
+    if (this.sessionContext['addFromLibraryBetaEnabled']) {
+      return contents;
+    } else if (this.router.url.includes('/sourcing')) {
       leaves = _.concat(_.filter(contents, filter));
     } else {
       leaves = _.concat(_.filter(contents, filter), _.filter(contents, 'sourceURL'));
