@@ -239,14 +239,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     const sourcingReviewStatus = _.get(this.questionSetEditorInput, 'sourcingStatus') || '';
     const originCollectionData = _.get(this.questionSetEditorInput, 'originCollectionData');
     const selectedOriginUnitStatus = _.get(this.questionSetEditorInput, 'content.originUnitStatus');
-
-    // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/sourcing')
-    && !this.collectionDetails.sampleContent === true && resourceStatus === 'live'
-    && this.userService.userid !== this.collectionDetails.createdBy
-    && resourceStatus === 'live' && !sourcingReviewStatus &&
-    (originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
-    && this.programsService.isProjectLive(this.programContext));
+    return this.helperService.canSourcingReviewerPerformActions(this.collectionDetails, sourcingReviewStatus, this.programContext, originCollectionData, selectedOriginUnitStatus);
   }
 
   getEditableFields() {
