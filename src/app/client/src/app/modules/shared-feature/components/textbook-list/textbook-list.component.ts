@@ -8,6 +8,7 @@ import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@ang
 import * as _ from 'lodash-es';
 import { isEmpty } from 'rxjs/operators';
 import {ProgramTelemetryService} from '../../../program/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-textbook-list',
@@ -61,7 +62,7 @@ export class TextbookListComponent implements OnInit {
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService, private formBuilder: FormBuilder, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService
+    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService
   )  {
     this.sbFormBuilder = formBuilder;
   }
@@ -242,7 +243,7 @@ export class TextbookListComponent implements OnInit {
     _.map(this.collectionsInput, (content) => {
       content['contentVisibility'] = this.shouldContentBeVisible(content);
       content['sourcingStatus'] = this.checkSourcingStatus(content);
-      const temp = this.getStatusText(content)
+      const temp = this.helperService.getContentDisplayStatus(content)
       content['resourceStatusText'] = temp[0];
       content['resourceStatusClass'] = temp[1];
       if (content.contentVisibility) {
@@ -267,41 +268,7 @@ export class TextbookListComponent implements OnInit {
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
   }
-  getStatusText(content) {
-    const resourceStatus = content.status;
-    const sourcingStatus = content.sourcingStatus;
-    const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass; 
-    if (resourceStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-      resourceStatusClass = 'sb-color-primary';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      resourceStatusClass = 'sb-color-warning';
-    } else if ( sourcingStatus=== 'Rejected') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-      resourceStatusClass = 'sb-color-error';
-    } else if (sourcingStatus === 'Approved') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      resourceStatusClass = 'sb-color-success';
-    } else if (resourceStatus === 'Failed') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Processing') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
-      resourceStatusClass = '';
-    } else {
-      resourceStatusText = resourceStatus;
-      resourceStatusClass = 'sb-color-gray-300';
-    }
-    return [resourceStatusText, resourceStatusClass];
-  }
+
   shouldContentBeVisible(content) {
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
       return true;

@@ -758,6 +758,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     Object.keys(formGroup.controls).forEach(field => {
       const control = formGroup.get(field);
       control.markAsTouched();
+      control.markAsDirty();
     });
   }
 
@@ -1595,8 +1596,8 @@ showTexbooklist(showTextBookSelector = true) {
         };
         this.saveProgram(cb);
       } else if (!this.createProgramForm.valid) {
-        //this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);
+        window.scrollTo(0,0);
         return false;
       }
   }

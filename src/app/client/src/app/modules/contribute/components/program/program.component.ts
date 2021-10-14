@@ -106,6 +106,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public nominationIsInProcess: boolean = false;
   public showNominateModal: boolean = false;
   public contentCount = 0;
+  public showConfirmationModal = false;
+
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -227,41 +229,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
-  }
-  getStatusText(content) {
-    const resourceStatus = content.status;
-    const sourcingStatus = content.sourcingStatus;
-    const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass;
-    if (resourceStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-      resourceStatusClass = 'sb-color-primary';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      resourceStatusClass = 'sb-color-warning';
-    } else if ( sourcingStatus=== 'Rejected') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-      resourceStatusClass = 'sb-color-error';
-    } else if (sourcingStatus === 'Approved') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      resourceStatusClass = 'sb-color-success';
-    } else if (resourceStatus === 'Failed') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Processing') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
-      resourceStatusClass = '';
-    } else {
-      resourceStatusText = resourceStatus;
-      resourceStatusClass = 'sb-color-gray-300';
-    }
-    return [resourceStatusText, resourceStatusClass];
   }
   shouldContentBeVisible(content) {
     const hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
@@ -664,7 +631,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         _.map(this.contributorTextbooks, (content) => {
           content['contentVisibility'] = this.shouldContentBeVisible(content);
           content['sourcingStatus'] = this.checkSourcingStatus(content);
-          const temp = this.getStatusText(content)
+          const temp = this.helperService.getContentDisplayStatus(content)
           content['resourceStatusText'] = temp[0];
           content['resourceStatusClass'] = temp[1];
           if (content.contentVisibility) {
@@ -1077,6 +1044,32 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   toggleUploadSampleButton(collection) {
     collection.isSelected = !collection.isSelected;
+  }
+  showContentDeleteModal(content) {
+    this.contentId = content.identifier;
+    this.showConfirmationModal = true;
+  }
+  deleteContent() {
+    this.helperService.retireContent(this.contentId)
+      .subscribe(
+        (response) => {
+          if (response && response.result && response.result.node_id) {
+            this.toasterService.success(this.resourceService.messages.smsg.m0064);
+          } else {
+            this.toasterService.error(this.resourceService.messages.fmsg.m00103);
+          }
+          this.showConfirmationModal = false;
+        },
+        (error) => {
+          const errInfo = {
+            errorMsg: this.resourceService.messages.fmsg.m00103,
+            telemetryPageId: this.telemetryPageId,
+            telemetryCdata : this.telemetryInteractCdata,
+            env : this.activatedRoute.snapshot.data.telemetry.env,
+          };
+          this.sourcingService.apiErrorHandling(error, errInfo);
+        }
+      );
   }
   changeView() {
     if (!_.isEmpty(this.state.stages)) {

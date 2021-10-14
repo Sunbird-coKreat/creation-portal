@@ -1346,6 +1346,42 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  getContentDisplayStatus(content) {
+    const resourceStatus = content.status;
+    const sourcingStatus = content.sourcingStatus;
+    const prevStatus = content.prevStatus;
+    let resourceStatusText,resourceStatusClass; 
+    if (resourceStatus === 'Review') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
+      resourceStatusClass = 'sb-color-primary';
+    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
+      resourceStatusClass = 'sb-color-primary';
+    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
+      resourceStatusClass = 'sb-color-warning';
+    } else if ( sourcingStatus=== 'Rejected') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
+      resourceStatusClass = 'sb-color-error';
+    } else if (sourcingStatus === 'Approved') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
+      resourceStatusClass = 'sb-color-success';
+    } else if (resourceStatus === 'Failed') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
+      resourceStatusClass = 'sb-color-error';
+    } else if (resourceStatus === 'Processing') {
+      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
+      resourceStatusClass = '';
+    } else {
+      resourceStatusText = resourceStatus;
+      resourceStatusClass = 'sb-color-gray-400';
+    }
+    return [resourceStatusText, resourceStatusClass];
+  }
+
   canSourcingReviewerPerformActions(contentMetaData, sourcingReviewStatus, programContext, originCollectionData, selectedOriginUnitStatus) {
     const resourceStatus = contentMetaData.status;
     // tslint:disable-next-line:max-line-length
