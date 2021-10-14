@@ -106,7 +106,7 @@
 									<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span>
 							</td>
 							<td class="fsmall"  *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">
-								<span [ngClass]="data.resourceStatusClass">{{ data.creator }}</span>
+								<span>{{ data.creator }}</span>
 							</td>
 							<td class="fsmall"  *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">
 								<span [ngClass]="data.resourceStatusClass">{{ data.resourceStatusText }}</span>

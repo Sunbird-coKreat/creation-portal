@@ -65,6 +65,7 @@ export class ContributorsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.getPageId();
     this.telemetryInteractCdata = [
       { id: this.userService.channel, type: "sourcing_organization" },
     ];

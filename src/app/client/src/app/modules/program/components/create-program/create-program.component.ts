@@ -226,7 +226,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       medium: [],
       gradeLevel: [],
       subject: [],
-      targetPrimaryCategories: [null, Validators.required],
+      targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
     });
     if (this.projectTargetType === 'collections') {
@@ -758,6 +758,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     Object.keys(formGroup.controls).forEach(field => {
       const control = formGroup.get(field);
       control.markAsTouched();
+      control.markAsDirty();
     });
   }
 
@@ -954,7 +955,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     } else {
       if (!this.editPublished && this.projectTargetType === 'collections') {
         programData['collection_ids'] = [];
-        if (!_.isEmpty(this.projectScopeForm.value.pcollections)) {
+        if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['framework'] = config.framework;
           this.programConfig['board'] = config.board;
@@ -1034,7 +1035,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.generateTelemetryEndEvent('update');
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
-          this.router.navigate(['/sourcing']);
+          const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+          this.router.navigate(['/sourcing'],
+            {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
         },
         (err) => {
           console.log(err, err);
@@ -1577,7 +1580,9 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
               this.resource.messages.smsg.program.draft.message);
-            this.router.navigate(['/sourcing']);
+            const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+            this.router.navigate(['/sourcing'],
+              {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           } else {
             const errInfo = {
               errorMsg: this.resource.messages.emsg.m0005,
@@ -1591,8 +1596,8 @@ showTexbooklist(showTextBookSelector = true) {
         };
         this.saveProgram(cb);
       } else if (!this.createProgramForm.valid) {
-        //this.formIsInvalid = true;
         this.validateAllFormFields(this.createProgramForm);
+        window.scrollTo(0,0);
         return false;
       }
   }
@@ -1677,7 +1682,9 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-            this.router.navigate(['/sourcing']);
+              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              this.router.navigate(['/sourcing'],
+                {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
           err => {
             this.disableCreateProgramBtn = false;
@@ -1696,7 +1703,9 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-            this.router.navigate(['/sourcing']);
+              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              this.router.navigate(['/sourcing'],
+                {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
           err => {
             this.disableCreateProgramBtn = false;

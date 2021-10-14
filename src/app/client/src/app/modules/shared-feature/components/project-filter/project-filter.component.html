@@ -91,7 +91,7 @@
               </sui-multi-select>
             </div>
           </div>
-          <div class="six wide column py-10">
+          <div class="six wide column py-10" *ngIf="forTargetType=='collections'">
             <div class="field">
               <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.targetCollection}}</label>
                 <sui-multi-select formControlName="target_collection_category" [(ngModel)]="setPreferences['target_collection_category']"

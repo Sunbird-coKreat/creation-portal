@@ -37,7 +37,9 @@ import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/su
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
-import {ResourceLibraryModule} from "@samagra-x/sunbird-resource-library";
+import { ResourceLibraryModule } from "@samagra-x/sunbird-resource-library";
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
+
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -71,7 +73,7 @@ import {ResourceLibraryModule} from "@samagra-x/sunbird-resource-library";
     NgInviewModule,
     CollectionEditorLibraryModule,
     CarouselModule.forRoot(),
-    ResourceLibraryModule
+    ResourceLibraryModule, SunbirdVideoPlayerModule
   ],
   providers: [
     { provide: QuestionCursor, useExisting: QumlPlayerService },

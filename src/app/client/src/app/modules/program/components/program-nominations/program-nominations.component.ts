@@ -894,7 +894,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-    if (this.currentStage !== 'programNominations') {
+    if (this.currentStage !== 'programNominations' && this.currentStage !== 'chapterListComponent') {
       this.contentHelperService.dynamicInputs$.subscribe((res)=> {
         this.dynamicInputs = res;
       });

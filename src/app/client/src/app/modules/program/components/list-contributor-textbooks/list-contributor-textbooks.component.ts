@@ -68,6 +68,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public telemetryPageId: string;
   public targetCollections: string;
   private onComponentDestroy$ = new Subject<any>();
+  public collectionsCnt = 0;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
     public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router, 
@@ -186,6 +187,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
     }));
   }
+  shouldContentBeVisible(content) {
+    const isSourcingOrgReviewer = this.userService.isSourcingOrgReviewer(this.programDetails);
+    const sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
+    if (isSourcingOrgReviewer && sourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
+      return true;
+    }
+    return false;
+  }
   getProgramContents() {
     let sampleValue, organisation_id, individualUserId, onlyCount, contentStatusCounts;
     const currentNominationStatus = this.contributor.nominationData.status;
@@ -203,6 +212,18 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
           contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
         this.contributorTextbooks = _.cloneDeep(contents);
+        this.collectionsCnt = (sampleValue) ? this.contributorTextbooks.length : 0;
+        _.map(this.contributorTextbooks, (content) => {
+          content['contentVisibility'] = (sampleValue) ? true : this.shouldContentBeVisible(content);
+          if (!sampleValue) {
+            const temp = this.helperService.getContentDisplayStatus(content)
+            content['resourceStatusText'] = temp[0];
+            content['resourceStatusClass'] = temp[1];
+            if (content.contentVisibility) {
+              this.collectionsCnt++;
+            }
+          }
+        });
         if (this.userService.isUserBelongsToOrg()) {
             contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId());
         } else {
@@ -266,6 +287,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
               // tslint:disable-next-line:max-line-length
               this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(contentStatusCounts, contributorTextbooks);
               this.tempSortTextbooks = this.contributorTextbooks;
+              this.collectionsCnt = this.contributorTextbooks.length;
               this.sortCollection(this.sortColumn);
               this.showLoader = false;
             } else {

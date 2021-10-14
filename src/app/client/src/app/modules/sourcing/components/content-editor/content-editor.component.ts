@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
-import * as iziModal from 'izimodal/js/iziModal';
+// import * as iziModal from 'izimodal/js/iziModal';
 import { NavigationHelperService, ResourceService, ConfigService, ToasterService, IUserProfile } from '@sunbird/shared';
 import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService,
   ActionService } from '@sunbird/core';
@@ -14,7 +14,7 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
 import { NgForm } from '@angular/forms';
-jQuery.fn.iziModal = iziModal;
+// jQuery.fn.iziModal = iziModal;
 
 @Component({
   selector: 'app-content-editor',
@@ -437,7 +437,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
-      && (this.selectedOriginUnitStatus === 'Draft')) {
+      && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentData);
       this.contentEditRole = 'REVIEWER';
     }

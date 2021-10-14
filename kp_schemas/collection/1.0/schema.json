@@ -999,6 +999,9 @@
     "rejectedContents": {
       "type": "array"
     },
+    "reusedContributions": {
+      "type": "array"
+    },
     "chapterCount": {
       "type": "number"
     },
