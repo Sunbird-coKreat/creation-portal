@@ -168,4 +168,16 @@ export class RecursiveTreeComponent implements OnInit {
     this.router.navigateByUrl(`/contribute/program/${this.sessionContext.programId}/textbook/${this.sessionContext.collection}/${identifier}`);
   }
 
+  getIndex(collection, currentIndex) {
+    let serialNumber = 1;
+    for (let i = 0; i < currentIndex; i++) {
+      const content = collection.leaf[i];
+      // tslint:disable-next-line:max-line-length
+      if (content.contentVisibility === true && this.includes(this.sourcingOrgReviewer, this.selectedStatus, content.sourcingStatus || content.status)) {
+        serialNumber++;
+      }
+    }
+    return serialNumber;
+  }
+
 }
