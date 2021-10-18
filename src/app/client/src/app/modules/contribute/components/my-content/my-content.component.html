@@ -83,7 +83,7 @@
                     class="d-block width-100 font-weight-normal">{{resourceService.frmelmnts.lbl.usageDetails}}</label>
                 <div class="d-flex">
                     <dl class="pr-10 mb-0">
-                        <dt class="fs-1-286 font-weight-bold py-10">{{usageDetailsCount.totalPlays}}</dt>
+                        <!-- <dt class="fs-1-286 font-weight-bold py-10">{{usageDetailsCount.totalPlays}}</dt> -->
                         <dd>{{resourceService.frmelmnts.lbl.totalPlays}}</dd>
                     </dl>
                     <dl class="pr-10 mb-0">
@@ -365,13 +365,35 @@
                             <div class="d-flex">
                                 <div class="pr-20 w-40" *ngIf="item.value?.board.length > 0">
                                     <label
-                                        class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
-                                    <div class="fs-0-92">{{item.value.board}}</div>
+                                    class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
+                                    <div class="fs-0-92">
+                                        {{ item.value.board | slice:0:2 }}
+                                        <span class="d-none" [attr.id]="'boardList' + i">
+                                            <ng-container *ngFor="let item of item.value.board | slice:2">
+                                                ,{{ item }}
+                                            </ng-container>
+                                        </span>
+                                    </div>
+                                    <small class="cursor-pointer" [attr.id]="'boardBtn' + i"
+                                    (click)="onExpand(i, 'board');"
+                                    *ngIf="item.value.board.length > 2">+{{item.value.board.length
+                                    - 2}} more</small>
                                 </div>
                                 <div class="pr-20 w-40" *ngIf="item?.value?.medium.length > 0">
                                     <label
                                         class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-                                    <div class="fs-0-92">{{item.value.medium}}</div>
+                                    <div class="fs-0-92">
+                                        {{ item.value.medium | slice:0:2 }}
+                                        <span class="d-none" [attr.id]="'mediumList' + i">
+                                            <ng-container *ngFor="let item of item.value.medium | slice:2">
+                                                ,{{ item }}
+                                            </ng-container>
+                                        </span>
+                                    </div>
+                                    <small class="cursor-pointer" [attr.id]="'mediumBtn' + i"
+                                        (click)="onExpand(i, 'medium');"
+                                        *ngIf="item.value.medium.length > 2">+{{item.value.medium.length
+                                        - 2}} more</small>
                                 </div>
                                 <div class="pr-20 w-40" *ngIf="item?.value?.gradeLevel.length > 0">
                                     <label
