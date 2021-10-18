@@ -119,6 +119,9 @@ let envVariables = {
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
   sunbird_primary_bundle_language: env.sunbird_portal_primary_bundle_language || 'en',
 
+  // generic editor question set and coleections children contents limit
+  SUNBIRD_QUESTIONSET_CHILDREN_LIMIT: env.sunbird_questionset_children_limit || 500,
+  SUNBIRD_COLLECTION_CHILDREN_LIMIT: env.sunbird_collection_children_limit || 1200,
 
   // Service(s) Base URL(s)
   learner_Service_Local_BaseUrl: env.sunbird_learner_service_local_base_url || 'http://learner-service:9000',

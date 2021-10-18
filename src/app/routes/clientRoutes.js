@@ -148,6 +148,8 @@ function getLocals(req) {
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;
   locals.slug = slug || '';
   locals.enableQuestionSetEditor = envHelper.DOCK_QUESTIONSET_ENABLE;
+  locals.sunbirdQuestionSetChildrenLimit = envHelper.sunbird_questionset_children_limit,
+  locals.sunbirdCollectionChildrenLimit =  envHelper.sunbird_collection_children_limit,
   locals.dockSmsUrl = envHelper.DOCK_SMS_URL;
   return locals
 }
