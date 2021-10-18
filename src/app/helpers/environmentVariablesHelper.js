@@ -52,7 +52,9 @@ let envVariables = {
   DOCK_DEFAULT_VIDEO_SIZE: env.dock_default_video_size || 15000,
   SUNBIRD_PROTO: env.sunbird_base_proto,
   OPENSABER_SERVICE_URL: env.opensaber_service_url || 'http://opensaber-service:8080',
-
+  USE_SUNBIRD_KONG_TOKEN: env.use_sunbird_kong_token || 'true',
+  sunbird_kong_refresh_token_api: env.sunbird_kong_refresh_token_api || '',
+  
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
   PORTAL_API_CACHE_TTL: env.sunbird_api_response_cache_ttl || '600',
