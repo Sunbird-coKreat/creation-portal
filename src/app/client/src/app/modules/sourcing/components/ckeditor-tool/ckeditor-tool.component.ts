@@ -41,6 +41,7 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
   uploader;
   initialized = false;
   public assetProxyUrl = '/assets/public/';
+  public defaultFileSize: any;
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -58,6 +59,8 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
     this.publicDataService = publicDataService;
     this.toasterService = toasterService;
     this.resourceService = resourceService;
+    this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
+    (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
   }
   assetConfig: any = this.configService.contentCategoryConfig.sourcingConfig.asset;
   myAssets = [];
@@ -178,10 +181,10 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
         allowedExtensions: this.assetConfig.videoFiles.split(', '),
         acceptFiles: this.acceptVideoType,
         itemLimit: 1,
-        sizeLimit: _.toNumber(this.assetConfig.defaultfileSize) * 1024 * 1024  // 52428800  = 50 MB = 50 * 1024 * 1024 bytes
+        sizeLimit: _.toNumber(this.defaultFileSize) * 1024 * 1024  // 157286400  = 150 MB = 150 * 1024 * 1024 bytes
       },
       messages: {
-        sizeError: `{file} is too large, maximum file size is ${this.assetConfig.defaultfileSize} MB.`,
+        sizeError: `{file} is too large, maximum file size is ${this.defaultFileSize} MB.`,
         typeError: `Invalid content type (supported type: ${this.assetConfig.videoFiles})`
       },
       callbacks: {
