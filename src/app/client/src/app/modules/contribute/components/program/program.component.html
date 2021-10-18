@@ -344,8 +344,13 @@
 					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
 						<span>{{ resourceService.frmelmnts.lbl.creator }}</span>			
 					</th>
-					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
-						<span>{{ resourceService.frmelmnts.lbl.status }}</span>			
+					<th class="w-10 cursor-pointer sb-sorting" *ngIf="programDetails?.target_type === 'searchCriteria'" (click)="sortCollection('resourceStatusText')">
+						{{ resourceService.frmelmnts.lbl.status }}
+						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
+						<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
+							<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+						</span>
 					</th>
 					<th class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
 					<th class="w-10" *ngIf="programDetails?.target_type === 'collections'"></th>
