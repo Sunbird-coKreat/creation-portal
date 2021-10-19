@@ -1005,7 +1005,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       //delete prgData.program_end_date;
       delete prgData.targetPrimaryCategories;
 
-      if (prgData.type !== 'public') {
+      if (prgData.type && prgData.type !== 'public') {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
