@@ -22,6 +22,7 @@ import { HelperService } from '../../../sourcing/services/helper.service';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 const errorInitiate = false;
 const userServiceStub = {
@@ -136,6 +137,7 @@ describe('ProgramNominationsComponent', () => {
         NavigationHelperService, CollectionHierarchyService, ContentHelperService,
         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
       ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));
 
