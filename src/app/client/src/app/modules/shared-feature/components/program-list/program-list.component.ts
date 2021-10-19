@@ -626,7 +626,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       if (type === 'framework' && _.has(program, 'config.frameworkObj') && !_.isEmpty(program.config.frameworkObj)) {
         paramName = 'frameworkObj';
       }
-      return this.getCorrectedValue(program.config[paramName], false);
+      const temp = this.getCorrectedValue(program.config[paramName], false);
+      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
     } else {
       if (type === 'framework' && _.has(program, 'frameworkObj') && !_.isEmpty(program.frameworkObj)) {
         paramName = 'frameworkObj';

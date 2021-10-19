@@ -317,7 +317,7 @@ export class CollectionHierarchyService {
           filters: {
             objectType: ['content', 'questionset'],
             programId: programId,
-            status: [],
+            status: ['Draft', 'Review', 'Live', 'Processing'],
             mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
             contentType: {'!=': 'Asset'}
           },
