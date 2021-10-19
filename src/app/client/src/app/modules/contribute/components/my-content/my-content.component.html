@@ -366,7 +366,7 @@
                                 <div class="pr-20 w-40" *ngIf="item.value?.board.length > 0">
                                     <label
                                     class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.boards}}</label>
-                                    <div class="fs-0-92">
+                                    <div class="fnormal">
                                         {{ item.value.board | slice:0:2 }}
                                         <span class="d-none" [attr.id]="'boardList' + i">
                                             <ng-container *ngFor="let item of item.value.board | slice:2">
@@ -382,7 +382,7 @@
                                 <div class="pr-20 w-40" *ngIf="item?.value?.medium.length > 0">
                                     <label
                                         class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-                                    <div class="fs-0-92">
+                                    <div class="fnormal">
                                         {{ item.value.medium | slice:0:2 }}
                                         <span class="d-none" [attr.id]="'mediumList' + i">
                                             <ng-container *ngFor="let item of item.value.medium | slice:2">
@@ -398,7 +398,7 @@
                                 <div class="pr-20 w-40" *ngIf="item?.value?.gradeLevel.length > 0">
                                     <label
                                         class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-                                    <div class="fs-0-92">
+                                    <div class="fnormal">
                                         {{ item.value.gradeLevel | slice:0:2 }}
                                         <span class="d-none" [attr.id]="'gradeLevelList' + i">
                                             <ng-container *ngFor="let item of item.value.gradeLevel | slice:2">
@@ -414,7 +414,7 @@
                                 <div class="pr-20 w-40" *ngIf="item?.value?.subject.length > 0">
                                     <label
                                         class="d-block fsmall font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-                                    <div class="fs-0-92">
+                                    <div class="fnormal">
                                         {{ item.value.subject | slice:0:2 }}
                                         <span class="d-none" [attr.id]="'subjectList' + i">
                                             <ng-container *ngFor="let item of item.value.subject | slice:2">
