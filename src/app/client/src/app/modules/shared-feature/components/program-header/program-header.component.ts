@@ -42,9 +42,11 @@ export class ProgramHeaderComponent implements OnInit{
       this.programContentTypes = (!_.isEmpty(this.programDetails.targetprimarycategories)) ? _.join(_.map(this.programDetails.targetprimarycategories, 'name'), ', ') : _.join(this.programDetails.content_types, ', ');
       this.setActiveDate();
       this.setTargetCollectionValue();
-      this.checkIfshowSkipReview();
+      if (!this.programsService.ifSourcingInstance) { 
+        this.checkIfshowSkipReview();
+      }
     }
-    if (!_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
+    if (!this.programsService.ifSourcingInstance && !_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
       this.canNominate = this.helperService.isOpenForNomination(this.programDetails);
     }
   }

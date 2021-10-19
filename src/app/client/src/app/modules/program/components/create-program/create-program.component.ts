@@ -1208,7 +1208,8 @@ showTexbooklist(showTextBookSelector = true) {
       this.programConfig['frameworkObj'] = {
         identifier : this.programScope.framework.identifier,
         code: this.programScope.framework.code,
-        type: this.programScope.framework.type
+        type: this.programScope.framework.type,
+        name : this.programScope.framework.name,
       };
     }
   }
