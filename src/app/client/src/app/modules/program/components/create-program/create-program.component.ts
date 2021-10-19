@@ -1005,7 +1005,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       //delete prgData.program_end_date;
       delete prgData.targetPrimaryCategories;
 
-      if (prgData.type !== 'public') {
+      if (prgData.type && prgData.type !== 'public') {
         delete prgData.nomination_enddate;
         delete prgData.shortlisting_enddate;
       }
@@ -1208,7 +1208,8 @@ showTexbooklist(showTextBookSelector = true) {
       this.programConfig['frameworkObj'] = {
         identifier : this.programScope.framework.identifier,
         code: this.programScope.framework.code,
-        type: this.programScope.framework.type
+        type: this.programScope.framework.type,
+        name : this.programScope.framework.name,
       };
     }
   }
