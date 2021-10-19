@@ -561,6 +561,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
      });
     } else {
       this.showLoader = false;
+      this.getContentMetadata();
     }
   }
 
