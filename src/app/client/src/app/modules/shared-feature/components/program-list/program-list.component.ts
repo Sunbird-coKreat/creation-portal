@@ -621,17 +621,25 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramInfo(program, type) {
+    let paramName = type;
     if (program && program.config) {
-      return this.getCorrectedValue(program.config[type], false);
+      if (type === 'framework' && _.has(program, 'config.frameworkObj') && !_.isEmpty(program.config.frameworkObj)) {
+        paramName = 'frameworkObj';
+      }
+      return this.getCorrectedValue(program.config[paramName], false);
     } else {
-      return this.getCorrectedValue(program[type], true);
+      if (type === 'framework' && _.has(program, 'frameworkObj') && !_.isEmpty(program.frameworkObj)) {
+        paramName = 'frameworkObj';
+      } 
+      const temp = this.getCorrectedValue(program[paramName], true);
+      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
     }
   }
 
   getCorrectedValue(value, isJsonString) {
     try {
       const newparse = (isJsonString) ? JSON.parse(value) : value;
-      return _.join(_.compact(_.uniq(newparse)), ', ');
+      return (_.isArray(newparse)) ? _.join(_.compact(_.uniq(newparse)), ', ') : newparse;
     }
     catch {
       return value;

@@ -1,39 +1,43 @@
 <!-- <app-program-header *ngIf="!showLoader" [headerComponentInput]="headerComponentInput" (emitTabChange)="tabChangeHandler($event)" [appTelemetryImpression]="telemetryImpression"></app-program-header> -->
 
-<div *ngIf="currentStage === 'programComponent' && programDetails" class="ui container">
+<div *ngIf="currentStage === 'programComponent' && programDetails">
 
   <!-- <ng-container *ngIf="!showLoader && (!nominated || nominationDetails?.status === 'Initiated'); else nominatedBlock">
     <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
   </ng-container>
   <ng-template #nominatedBlock> -->
-	<app-program-header *ngIf="!loaders.showProgramHeaderLoader"
-	[programDetails]="programDetails" [nominationDetails]="nominationDetails" [roles]="roles" [telemetryPageId]="telemetryPageId" > </app-program-header>
-	<div *ngIf="!loaders.showCollectionListLoader && visibility.showNominate" class="bt-1 w-100 py-20">
-		<div class="d-inline-block br-2 pr-20">
-		<button type="button" (click)="showContentTypeModal= true; contentTypeModalAction('open')" class="sb-btn sb-btn-normal sb-btn-outline-primary" appTelemetryInteract
-		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select_content_types', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-		[telemetryInteractObject]="telemetryInteractObject"
-		[telemetryInteractCdata]="telemetryInteractCdata"
-		[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.contentTypes}}</button>
-		</div>
-		<div class="d-inline-block pl-20">
-			<div *ngIf="nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
-				<button *ngIf="programDetails?.target_type === 'searchCriteria'" class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length)"
-					(click)="showNominateModal= true;" appTelemetryInteract
-					[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nominate', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-					[telemetryInteractObject]="telemetryInteractObject"
-					[telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.nominate}}</button>
-				<button *ngIf="!programDetails.target_type || programDetails.target_type === 'collections'" class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
-					(click)="showNominateModal= true;" appTelemetryInteract
-					[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nominate', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-					[telemetryInteractObject]="telemetryInteractObject"
-					[telemetryInteractCdata]="telemetryInteractCdata"
-					[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.nominate}}</button>
+<div class="sb-bg-color-primary-0 py-16">
+	<div class="ui container">
+		<app-program-header *ngIf="!loaders.showProgramHeaderLoader"
+		[programDetails]="programDetails" [nominationDetails]="nominationDetails" [roles]="roles" [telemetryPageId]="telemetryPageId" > </app-program-header>
+		<div *ngIf="!loaders.showCollectionListLoader && visibility.showNominate" class="bt-1 w-100 py-20">
+			<div class="d-inline-block br-2 pr-20">
+				<button type="button" (click)="showContentTypeModal= true; contentTypeModalAction('open')" class="sb-btn sb-btn-normal sb-btn-outline-primary" appTelemetryInteract
+				[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select_content_types', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+				[telemetryInteractObject]="telemetryInteractObject"
+				[telemetryInteractCdata]="telemetryInteractCdata"
+				[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.contentTypes}}</button>
 			</div>
+			<div class="d-inline-block pl-20">
+				<div *ngIf="nominationDetails?.status === 'Pending' || 'Initiated'" class="d-inline-block">
+					<button *ngIf="programDetails?.target_type === 'searchCriteria'" class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length)"
+						(click)="showNominateModal= true;" appTelemetryInteract
+						[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nominate', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.nominate}}</button>
+					<button *ngIf="!programDetails.target_type || programDetails.target_type === 'collections'" class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="!(selectedContentTypes.length && selectedCollectionIds.length)"
+						(click)="showNominateModal= true;" appTelemetryInteract
+						[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('nominate', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+						[telemetryInteractObject]="telemetryInteractObject"
+						[telemetryInteractCdata]="telemetryInteractCdata"
+						[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.nominate}}</button>
+				</div>
+			</div>
+			<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage.replace('{TARGET_NAME}', targetCollections | lowercase)}}</div>
 		</div>
-		<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage.replace('{TARGET_NAME}', targetCollections | lowercase)}}</div>
 	</div>
+</div>
 	<div class="sb-bg-color-primary-100" *ngIf="nominationDetails?.id && nominationDetails?.status !== 'Initiated'">
 		<sui-tabset>
 			<div class="ui pointing secondary menu sb-bg-color-primary-100">
@@ -280,7 +284,7 @@
 								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_sample', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">Create/Upload Sample</button>
+								[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.lbl?.noCollectionsProject?.sampleUpload }}</button>
 					</div>
 				</div>
 			</div>
@@ -346,7 +350,7 @@
 					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
 						<span>{{ resourceService.frmelmnts.lbl.creator }}</span>			
 					</th>
-					<th class="w-10 cursor-pointer sb-sorting" *ngIf="programDetails?.target_type === 'searchCriteria'" (click)="sortCollection('resourceStatusText')">
+					<th class="w-10 cursor-pointer sb-sorting" *ngIf="programDetails?.target_type === 'searchCriteria' && (currentNominationStatus === 'Approved')" (click)="sortCollection('resourceStatusText')">
 						{{ resourceService.frmelmnts.lbl.status }}
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
 						<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
@@ -384,10 +388,10 @@
 						<td *ngIf="programDetails?.target_type === 'searchCriteria'">
 							<span>{{ contributorTextbook.creator }}</span>			
 						</td>
-						<td *ngIf="programDetails?.target_type === 'searchCriteria'">
+						<td *ngIf="programDetails?.target_type === 'searchCriteria' && (currentNominationStatus === 'Approved')">
 							<span [ngClass]="contributorTextbook.resourceStatusClass">{{ contributorTextbook.resourceStatusText }}</span>			
 						</td>
-						<td>
+						<td class="text-right">
 							<div class="d-flex" *ngIf="visibility.showCollectionLevelSampleUpload">
 								<div *ngIf="(contributorTextbook.totalSampleContent === undefined || contributorTextbook.totalSampleContent === 0)" class="sb-checkbox-primary d-flex flex-ai-center"
 									appTelemetryInteract
@@ -627,7 +631,7 @@
   </button>
 	</div>
   </sui-modal>
-  <sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="showConfirmationModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll (dismissed)="showConfirmationModal = false" #modal>
   <div class="sb-modal-header">
     {{resourceService.frmelmnts.lbl.confirm}}
