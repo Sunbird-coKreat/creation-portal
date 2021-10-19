@@ -1159,8 +1159,9 @@ export class HelperService {
     const masterCategoryIds = [...orgFrameworkFieldIds, ...targetFrameworkFieldIds];
     const masterCategoryCodes = [...orgFrameworkFieldCodes, ...targetFrameworkFieldCodes];
     const framework = this.frameworkService.frameworkData[targetCollectionFrameworksData.framework];
+    // tslint:disable-next-line:max-line-length
+    const targetFramework = targetCollectionFrameworksData.targetFWIds && this.frameworkService.frameworkData[_.first(targetCollectionFrameworksData.targetFWIds)];
 
-    const targetFramework = this.frameworkService.frameworkData[_.first(targetCollectionFrameworksData.targetFWIds)];
 
     _.forEach(formFieldProperties, field => {
           if (_.has(targetCollectionFrameworksData, 'framework') && !_.has(field, 'sourceCategory')
@@ -1176,7 +1177,7 @@ export class HelperService {
               invalidFormConfig = true;
               return false;
           } else if (_.has(targetCollectionFrameworksData, 'targetFWIds') && _.has(field, 'sourceCategory')
-            && _.includes(field.code, 'target') && _.includes(masterCategoryIds, field.code)
+            && _.includes(field.code, 'target') && _.includes(masterCategoryIds, field.code) && targetFramework
             && !_.includes(_.map(targetFramework.categories, 'code'), field.sourceCategory)) {
               console.error(field, 'is not in targetframework: ', targetCollectionFrameworksData.targetFWIds);
               invalidFormConfig = true;
@@ -1350,7 +1351,7 @@ export class HelperService {
     const resourceStatus = content.status;
     const sourcingStatus = content.sourcingStatus;
     const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass; 
+    let resourceStatusText,resourceStatusClass;
     if (resourceStatus === 'Review') {
       resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
       resourceStatusClass = 'sb-color-primary';

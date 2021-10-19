@@ -248,7 +248,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       objectType: this.resourceDetails.objectType
     };
 
-    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
   }
 
   public preprareTelemetryEvents() {

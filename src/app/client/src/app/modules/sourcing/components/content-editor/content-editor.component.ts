@@ -341,7 +341,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       objectType: this.contentData.objectType
     };
 
-    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
   }
 
   handleContentStatusText() {
@@ -550,14 +550,18 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     this.showPreview = true;
     // tslint:disable-next-line:max-line-length
-    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
-       this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
-    .subscribe((res) => {
-      this.getContentMetadata();
-    }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-      this.getDetails();
-    });
+    if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
+      this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
+        this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
+     .subscribe((res) => {
+       this.getContentMetadata();
+     }, (err) => {
+       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+       this.getDetails();
+     });
+    } else {
+      this.showLoader = false;
+    }
   }
 
   saveMetadataForm(cb?) {
@@ -573,9 +577,21 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       };
 
       this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentData.identifier).subscribe((res) => {
-        // tslint:disable-next-line:max-line-length
-        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-        .subscribe((data) => {
+        if (this.sessionContext.collection && this.unitIdentifier) {
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+          .subscribe((data) => {
+            this.showEditMetaForm = false;
+            if (cb) {
+              cb.call(this);
+            } else {
+              this.getContentMetadata();
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            }
+          }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          });
+        } else {
           this.showEditMetaForm = false;
           if (cb) {
             cb.call(this);
@@ -583,9 +599,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.getContentMetadata();
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }
-        }, (err) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-        });
+        }
       }, err => {
         this.toasterService.error(this.resourceService.messages.fmsg.m0098);
       });
