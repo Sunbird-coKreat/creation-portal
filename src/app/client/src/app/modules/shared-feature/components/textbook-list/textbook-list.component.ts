@@ -193,26 +193,44 @@ export class TextbookListComponent implements OnInit {
         }
       }
     };
+    if (_.get(this.programDetails, 'target_type') && this.programDetails.target_type === 'searchCriteria') {
+      req.data.request.filters['targetType'] = 'searchCriteria';
+    }
     return this.programsService.post(req).subscribe((res) => {
       if (res.result && res.result.tableData && res.result.tableData.length) {
         try {
-        const headers = [
-          this.resourceService.frmelmnts.lbl.projectName,
-          // tslint:disable-next-line:max-line-length
-          this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
-          this.resourceService.frmelmnts.lbl.profile.Medium,
-          this.resourceService.frmelmnts.lbl.profile.Classes,
-          this.resourceService.frmelmnts.lbl.profile.Subjects,
-          this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
-          this.resourceService.frmelmnts.lbl.nominationReceived,
-          this.resourceService.frmelmnts.lbl.samplesRecieved,
-          this.resourceService.frmelmnts.lbl.nominationAccepted,
-          this.resourceService.frmelmnts.lbl.contributionReceived,
-          this.resourceService.frmelmnts.lbl.contributionApproved,
-          this.resourceService.frmelmnts.lbl.contributionRejected,
-          this.resourceService.frmelmnts.lbl.contributionPending,
-          this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
-        ];
+        let headers;
+        if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+          headers = [
+            this.resourceService.frmelmnts.lbl.projectName,
+            // tslint:disable-next-line:max-line-length
+            this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
+            this.resourceService.frmelmnts.lbl.profile.Medium,
+            this.resourceService.frmelmnts.lbl.profile.Classes,
+            this.resourceService.frmelmnts.lbl.profile.Subjects,
+            this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
+            this.resourceService.frmelmnts.lbl.nominationReceived,
+            this.resourceService.frmelmnts.lbl.samplesRecieved,
+            this.resourceService.frmelmnts.lbl.nominationAccepted,
+            this.resourceService.frmelmnts.lbl.contributionReceived,
+            this.resourceService.frmelmnts.lbl.contributionApproved,
+            this.resourceService.frmelmnts.lbl.contributionRejected,
+            this.resourceService.frmelmnts.lbl.contributionPending,
+            this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
+          ];
+        } else {
+          headers = [
+            this.resourceService.frmelmnts.lbl.projectName,
+            this.resourceService.frmelmnts.lbl.contentname,
+            this.resourceService.frmelmnts.lbl.framework,
+            this.resourceService.frmelmnts.lbl.board,
+            this.resourceService.frmelmnts.lbl.medium,
+            this.resourceService.frmelmnts.lbl.Class,
+            this.resourceService.frmelmnts.lbl.subject,
+            this.resourceService.frmelmnts.lbl.creator,
+            this.resourceService.frmelmnts.lbl.status,
+          ];
+        }
         const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
         const tableData = [];
         if (_.isArray(resObj) && resObj.length) {

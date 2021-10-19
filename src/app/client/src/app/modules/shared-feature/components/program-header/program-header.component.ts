@@ -44,7 +44,7 @@ export class ProgramHeaderComponent implements OnInit{
       this.setTargetCollectionValue();
       this.checkIfshowSkipReview();
     }
-    if (!this.programsService.ifSourcingInstance && !_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
+    if (!this.programsService.ifSourcingInstance() && !_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
       this.canNominate = this.helperService.isOpenForNomination(this.programDetails);
     }
   }
