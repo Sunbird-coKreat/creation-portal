@@ -439,7 +439,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getProgramCollection (preferencefilters?) {
-    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters, false).pipe(
+    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters, true).pipe(
       tap((response: any) => {
         if (response && response.result) {
           this.programCollections = response.result.content || [];
@@ -935,7 +935,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.sessionContext.programId = this.programDetails.program_id;
     this.sessionContext.collection = collection.identifier;
     this.sessionContext.collectionName = collection.name;
-    this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
+    // tslint:disable-next-line:max-line-length
+    this.sessionContext.targetCollectionPrimaryCategory = _.has(collection, 'primaryCategory') ? _.get(collection, 'primaryCategory')
+    : (_.has(this.programDetails, 'target_collection_category') ? this.programDetails.target_collection_category[0] : undefined);
     this.sessionContext.telemetryPageDetails = {
       telemetryPageId : this.config.telemetryLabels.pageId.sourcing.projectTargetCollection,
       telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
