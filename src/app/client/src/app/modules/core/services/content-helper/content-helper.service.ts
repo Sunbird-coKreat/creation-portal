@@ -98,6 +98,7 @@ export class ContentHelperService {
       } else if (event.templateDetails) {
         this._templateDetails = event.templateDetails;
         this.programsService.emitHeaderEvent(false);
+        this._contentId = undefined;
         // tslint:disable-next-line:max-line-length
         this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
       }
