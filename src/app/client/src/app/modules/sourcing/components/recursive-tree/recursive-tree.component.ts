@@ -14,7 +14,6 @@ import { HelperService } from '../../services/helper.service';
 export class RecursiveTreeComponent implements OnInit {
 
   @Input() collectionUnits;
-  @Input() reusedContributions;
   @Input() selectedChapter;
   @Input() programContext;
   @Input() sessionContext;
