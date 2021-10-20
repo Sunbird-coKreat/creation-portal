@@ -725,6 +725,10 @@
           "id": "sunbird.portal",
           "ver": "1.8.0",
           "pid": "sunbird-portal"
+        },
+        "userData": {
+          "firstName": "Test",
+          "lastName": "Test"
         }
       },
       "config": {

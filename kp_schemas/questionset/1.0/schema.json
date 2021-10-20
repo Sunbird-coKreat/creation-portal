@@ -74,6 +74,10 @@
         "default": "Student"
       }
     },
+    "posterImage": {
+      "type": "string",
+      "format": "url"
+    },
     "author": {
       "type": "string"
     },
@@ -606,6 +610,14 @@
     "appIcon": {
       "type": "string",
       "format": "url"
+    },
+    "acceptedContributions": {
+      "type": "array",     
+    },
+    "rejectedContributions": {
+      "type": "array",     
+    },
+    "reusedContributions": {
+      "type": "array"
     }
-  }
 }

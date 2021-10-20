@@ -113,11 +113,19 @@ const getKongAccessToken = (req, cb) => {
 };
 
 const getAuthToken = (req) => {
-  if (USE_SUNBIRD_KONG_TOKEN === "true") {
-    if (req.session && req.session.userAccessToken) {
-      return req.session.userAccessToken;
-    }
-  } else {
+  if (USE_SUNBIRD_KONG_TOKEN === "true" && req.session && req.session.userAccessToken) {
+    _log(
+      req,
+      "Using KONG_TOKEN refresh_token"
+    );
+
+    return req.session.userAccessToken;
+  } else if (req.kauth && req.kauth.grant && req.kauth.grant.access_token && req.kauth.grant.access_token.token) {
+    _log(
+      req,
+      "Using Keycloalk default access token"
+    );
+
     return req.kauth.grant.access_token.token;
   }
 };

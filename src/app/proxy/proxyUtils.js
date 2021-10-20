@@ -8,7 +8,6 @@ const _ = require('lodash')
 const ApiInterceptor = require('sb_api_interceptor')
 const { getAuthToken } = require('../helpers/kongTokenHelper')
 
-
 const keyCloakConfig = {
   'authServerUrl': envHelper.PORTAL_AUTH_SERVER_URL,
   'realm': envHelper.KEY_CLOAK_REALM,
@@ -60,7 +59,11 @@ const decorateSunbirdRequestHeaders = function () {
       proxyReqOpts.headers['X-App-Id'] = appId
     }
 
-    proxyReqOpts.headers['x-authenticated-user-token'] = getAuthToken(srcReq)
+    let xAuthUserToken = getAuthToken(srcReq)
+    if (xAuthUserToken) {
+      proxyReqOpts.headers['x-authenticated-user-token'] = xAuthUserToken
+    }
+
     proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
     proxyReqOpts.rejectUnauthorized = false
     return proxyReqOpts

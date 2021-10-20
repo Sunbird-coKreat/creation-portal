@@ -105,5 +105,17 @@ describe('OrgReportsComponent', () => {
     expect(toasterService.error).toHaveBeenCalledWith(resourceService.messages.emsg.m0076);
   });
 
+  it('#getPageId() should return pageId', () => {
+    spyOn(component, 'getPageId').and.callThrough();
+    const pageId = component.getPageId();
+    expect(pageId).toBeDefined();
+  });
+
+  it('#getTelemetryInteractEdata() should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('download_collection_level_content_gap_report',
+    'click', 'launch', 'sourcing_my_projects', undefined);
+    expect(returnObj).not.toContain(undefined);
+  });
 
 });

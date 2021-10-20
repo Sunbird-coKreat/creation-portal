@@ -8,6 +8,7 @@ import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@ang
 import * as _ from 'lodash-es';
 import { isEmpty } from 'rxjs/operators';
 import {ProgramTelemetryService} from '../../../program/services';
+import { HelperService } from '../../../sourcing/services/helper.service';
 
 @Component({
   selector: 'app-textbook-list',
@@ -61,7 +62,7 @@ export class TextbookListComponent implements OnInit {
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService, private formBuilder: FormBuilder, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService
+    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService
   )  {
     this.sbFormBuilder = formBuilder;
   }
@@ -192,26 +193,44 @@ export class TextbookListComponent implements OnInit {
         }
       }
     };
+    if (_.get(this.programDetails, 'target_type') && this.programDetails.target_type === 'searchCriteria') {
+      req.data.request.filters['targetType'] = 'searchCriteria';
+    }
     return this.programsService.post(req).subscribe((res) => {
       if (res.result && res.result.tableData && res.result.tableData.length) {
         try {
-        const headers = [
-          this.resourceService.frmelmnts.lbl.projectName,
-          // tslint:disable-next-line:max-line-length
-          this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
-          this.resourceService.frmelmnts.lbl.profile.Medium,
-          this.resourceService.frmelmnts.lbl.profile.Classes,
-          this.resourceService.frmelmnts.lbl.profile.Subjects,
-          this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
-          this.resourceService.frmelmnts.lbl.nominationReceived,
-          this.resourceService.frmelmnts.lbl.samplesRecieved,
-          this.resourceService.frmelmnts.lbl.nominationAccepted,
-          this.resourceService.frmelmnts.lbl.contributionReceived,
-          this.resourceService.frmelmnts.lbl.contributionApproved,
-          this.resourceService.frmelmnts.lbl.contributionRejected,
-          this.resourceService.frmelmnts.lbl.contributionPending,
-          this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
-        ];
+        let headers;
+        if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+          headers = [
+            this.resourceService.frmelmnts.lbl.projectName,
+            // tslint:disable-next-line:max-line-length
+            this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
+            this.resourceService.frmelmnts.lbl.profile.Medium,
+            this.resourceService.frmelmnts.lbl.profile.Classes,
+            this.resourceService.frmelmnts.lbl.profile.Subjects,
+            this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
+            this.resourceService.frmelmnts.lbl.nominationReceived,
+            this.resourceService.frmelmnts.lbl.samplesRecieved,
+            this.resourceService.frmelmnts.lbl.nominationAccepted,
+            this.resourceService.frmelmnts.lbl.contributionReceived,
+            this.resourceService.frmelmnts.lbl.contributionApproved,
+            this.resourceService.frmelmnts.lbl.contributionRejected,
+            this.resourceService.frmelmnts.lbl.contributionPending,
+            this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
+          ];
+        } else {
+          headers = [
+            this.resourceService.frmelmnts.lbl.projectName,
+            this.resourceService.frmelmnts.lbl.contentname,
+            this.resourceService.frmelmnts.lbl.framework,
+            this.resourceService.frmelmnts.lbl.board,
+            this.resourceService.frmelmnts.lbl.medium,
+            this.resourceService.frmelmnts.lbl.Class,
+            this.resourceService.frmelmnts.lbl.subject,
+            this.resourceService.frmelmnts.lbl.creator,
+            this.resourceService.frmelmnts.lbl.status,
+          ];
+        }
         const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
         const tableData = [];
         if (_.isArray(resObj) && resObj.length) {
@@ -242,7 +261,7 @@ export class TextbookListComponent implements OnInit {
     _.map(this.collectionsInput, (content) => {
       content['contentVisibility'] = this.shouldContentBeVisible(content);
       content['sourcingStatus'] = this.checkSourcingStatus(content);
-      const temp = this.getStatusText(content)
+      const temp = this.helperService.getContentDisplayStatus(content)
       content['resourceStatusText'] = temp[0];
       content['resourceStatusClass'] = temp[1];
       if (content.contentVisibility) {
@@ -267,41 +286,7 @@ export class TextbookListComponent implements OnInit {
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
   }
-  getStatusText(content) {
-    const resourceStatus = content.status;
-    const sourcingStatus = content.sourcingStatus;
-    const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass; 
-    if (resourceStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-      resourceStatusClass = 'sb-color-primary';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      resourceStatusClass = 'sb-color-warning';
-    } else if ( sourcingStatus=== 'Rejected') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-      resourceStatusClass = 'sb-color-error';
-    } else if (sourcingStatus === 'Approved') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      resourceStatusClass = 'sb-color-success';
-    } else if (resourceStatus === 'Failed') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Processing') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
-      resourceStatusClass = '';
-    } else {
-      resourceStatusText = resourceStatus;
-      resourceStatusClass = 'sb-color-gray-300';
-    }
-    return [resourceStatusText, resourceStatusClass];
-  }
+
   shouldContentBeVisible(content) {
     if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
       return true;

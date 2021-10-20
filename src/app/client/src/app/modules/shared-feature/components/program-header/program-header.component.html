@@ -1,43 +1,51 @@
-<div class="sb-bg-color-primary-0 practical-header py-16">
-  <div class="practical-header__content pt-10">
-    <div class="ui grid">
-      <div class="three wide column">
+  <div class="practical-header__content">
+    <div class="ui grid pt-10">
+      <div class="four wide column">
         <div class="practical-header__title ">
           <h5 class="m-0 p-0 pb-10 font-weight-bold d-inline-block break-word">{{ programDetails?.name }} </h5>
-          <i class="info circle link icon" suiPopup [popupTemplate]="popupTemplate" popupDelay="1000"></i>
-            <ng-template #popupTemplate>
-              <div class="content">
-                <div class="textbook-details ml-8">
-                  <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.mediums }}</strong></div>
-                  <div class="content">
-                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.medium.join(', ') }}</label>
+          <div *ngIf="programDetails?.target_type==='searchCriteria'" class="sb-color-warning pb-10">
+            <span class="font-weight-bold">{{ programDetails?.config.framework.join(', ') }}</span>
+          </div>
+          <div class="text-capitalize bt-1 bb-1 py-10">
+            <div class="ui grid">
+              <div class="row">
+                <div class="three wide column d-inline-block">
+                  <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ resourceService?.frmelmnts?.lbl?.board }}</label>
+                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.board}}" popupText="{{ programDetails?.config.board.join(', ') }}">
+                    {{ programDetails?.config.board.join(', ') }}
                   </div>
-                  <hr />
-                  <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.class }}</strong></div>
-                  <div class="content">
-                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.gradeLevel.join(', ') }}</label>
+                </div>
+                <div class="three wide column d-inline-block">
+                  <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ resourceService?.frmelmnts?.lbl?.medium }}</label>
+                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ programDetails?.config.medium.join(', ') }}">
+                    {{ programDetails?.config.medium.join(', ') }}
                   </div>
-                  <hr />
-                  <div class="header"><strong>{{ resourceService?.frmelmnts?.lbl?.subjects }}</strong></div>
-                  <div class="content">
-                    <label class="d-block fsmall font-weight-normal mb-0">{{ programDetails?.config.subject.join(', ') }}</label>
+                </div>
+                <div class="three wide column d-inline-block">
+                  <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ resourceService?.frmelmnts?.lbl?.class }}</label>
+                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.class}}" popupText="{{ programDetails?.config.gradeLevel.join(', ') }}">
+                    {{ programDetails?.config.gradeLevel.join(', ') }}
+                  </div>
+                </div>
+                <div class="three wide column d-inline-block">
+                  <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ resourceService?.frmelmnts?.lbl?.subject }}</label>
+                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ programDetails?.config.subject.join(', ') }}">
+                    {{ programDetails?.config.subject.join(', ') }}
                   </div>
                 </div>
               </div>
-            </ng-template>
-          <div *ngIf="programDetails?.target_type==='searchCriteria'" class="sb-color-warning pb-10 pb-10">
-            <span class="font-weight-bold">{{ programDetails?.config.framework.join(', ') }}</span>
+            </div>
           </div>
-          <p class="fs-0-785 pt-10 bt-1 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
+          <p class="fs-0-785 pt-10 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
         </div>
       </div>
-      <div class="nine wide column pl-20">
-        <div class="d-flex  practical-header__content py-10">
+      <div class="eight wide column pl-20">
+        <div class="d-flex  practical-header__content">
           <div class="sb-meta-data-container sb-meta-data-column px-10 w-50">
             <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
             <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
           </div>
-          <div class="program-timeline px-10">
+          <div class="program-timeline px-10 py-10">
             <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
             <div class="status" [class.active]="activeDate === 'nomination_enddate'">
               <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
@@ -82,17 +90,17 @@
           <div class="sb-meta-data-container sb-meta-data-column">
             <div class="px-10">
               <div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
-                <label class="m-0">{{ resourceService.frmelmnts.lbl.status }}</label>
-                <p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
+                <label class="m-0 mr-10">{{ resourceService.frmelmnts.lbl.status }}</label>
+                <span [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</span>
               </div>
             </div>
             <div class="px-10" *ngIf="nominationDetails?.status=='Rejected'">
               <label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
-              <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
+              <span class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</span>
             </div>
             <div class="px-10" *ngIf="showSkipReview">
               <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
-              <label class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</label>
+              <span class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</span>
             </div>
           </div>
           
@@ -121,7 +129,6 @@
       </div>
     </div>
   </div>
-</div>
 
 
   

@@ -257,7 +257,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             });
         } else {
           this.programCollections = _.cloneDeep(this.contentAggregationData);
-          this.showDashboardLoader =  false;
+          this.getNominationList();
         }
       } else {
         this.getNominationList();
@@ -466,34 +466,47 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getDashboardData(approvedNominations) {
     // tslint:disable-next-line:max-line-length
-        if (!_.isEmpty(this.contentAggregationData) || (approvedNominations.length && !_.isEmpty(this.programCollections))) {
+        if (!_.isEmpty(this.contentAggregationData) || approvedNominations.length) {
           const contents = _.cloneDeep(this.contentAggregationData);
+          let dashboardData;
           this.contributionDashboardData = _.map(approvedNominations, nomination => {
             if (nomination.organisation_id) {
+              if ((!this.programDetails.target_type || this.programDetails.target_type === 'collections') && !_.isEmpty(this.programCollections)) {
               // tslint:disable-next-line:max-line-length
-              const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
-              // This is enable sorting table. So duping the data at the root of the dashboardData object
-              dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-              dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-              dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-              dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
-              return {
-                ...dashboardData,
-                contributorDetails: nomination,
-                type: 'org'
-              };
+                dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id, this.programCollections));
+              } else {
+                dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCounts(contents, nomination.organisation_id));
+              }
+              if (dashboardData) {
+                // This is enable sorting table. So duping the data at the root of the dashboardData object
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
+                return {
+                  ...dashboardData,
+                  contributorDetails: nomination,
+                  type: 'org'
+                };
+              }
             } else {
               // tslint:disable-next-line:max-line-length
-              const dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
-              dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
-              dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
-              dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
-              dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
-              return {
-                ...dashboardData,
-                contributorDetails: nomination,
-                type: 'individual'
-              };
+              if ((!this.programDetails.target_type || this.programDetails.target_type === 'collections') && !_.isEmpty(this.programCollections)) {
+                dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id, this.programCollections));
+              } else {
+                dashboardData = _.cloneDeep(this.collectionHierarchyService.getContentCountsForIndividual(contents, nomination.user_id));
+              }
+              if (dashboardData) {
+                dashboardData['sourcingPending'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['pending'];
+                dashboardData['sourcingAccepted'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['accepted'];
+                dashboardData['sourcingRejected'] = dashboardData.sourcingOrgStatus && dashboardData.sourcingOrgStatus['rejected'];
+                dashboardData['contributorName'] = this.setContributorName(nomination, nomination.organisation_id ? true : false);
+                return {
+                  ...dashboardData,
+                  contributorDetails: nomination,
+                  type: 'individual'
+                };
+              }
             }
           });
           this.getOverAllCounts(this.contributionDashboardData);
@@ -765,7 +778,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         });
       } else {
         this.programCollections = _.cloneDeep(this.contentAggregationData);
-        this.showDashboardLoader = false;
+        this.getNominationList();
       }
     }
 
@@ -894,7 +907,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-    if (this.currentStage !== 'programNominations') {
+    if (this.currentStage !== 'programNominations' && this.currentStage !== 'chapterListComponent') {
       this.contentHelperService.dynamicInputs$.subscribe((res)=> {
         this.dynamicInputs = res;
       });

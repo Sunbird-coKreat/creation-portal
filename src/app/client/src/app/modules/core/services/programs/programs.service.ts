@@ -1424,6 +1424,9 @@ export class ProgramsService extends DataService implements CanActivate {
     };
     return this.get(req);
   }
+  ifSourcingInstance() {
+    return !!(this.router.url.includes('/sourcing'));
+  }
   emitHeaderEvent(status) {
     this.headerEventOnNewEditor.emit(status);
   }

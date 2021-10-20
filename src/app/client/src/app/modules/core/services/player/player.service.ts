@@ -228,11 +228,14 @@ export class PlayerService {
     }));
   }
 
-  getQuestionSetHierarchy(contentId: string) {
-    const req = {
+  getQuestionSetHierarchy(contentId: string, option: any = { params: {} }) {
+    let req = {
         url: `${this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_READ}/${contentId}`,
-        // param: { mode: 'edit' }
+        param: {}
     };
+    if (option && !_.isEmpty(option.params)) {
+      req.param = option.params;
+    }
     return this.actionService.get(req).pipe(map((response: ServerResponse) => {
         return response;
     }));

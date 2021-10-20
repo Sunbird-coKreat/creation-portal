@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, NgZone, Renderer2, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
-import * as iziModal from 'izimodal/js/iziModal';
+// import * as iziModal from 'izimodal/js/iziModal';
 import { NavigationHelperService, ResourceService, ConfigService, ToasterService, IUserProfile } from '@sunbird/shared';
 import { UserService, TenantService, FrameworkService, PlayerService, NotificationService, ProgramsService,
   ActionService } from '@sunbird/core';
@@ -14,7 +14,7 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
 import { NgForm } from '@angular/forms';
-jQuery.fn.iziModal = iziModal;
+// jQuery.fn.iziModal = iziModal;
 
 @Component({
   selector: 'app-content-editor',
@@ -341,7 +341,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       objectType: this.contentData.objectType
     };
 
-    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
+    this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
   }
 
   handleContentStatusText() {
@@ -437,7 +437,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
-      && (this.selectedOriginUnitStatus === 'Draft')) {
+      && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
       this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentData);
       this.contentEditRole = 'REVIEWER';
     }
@@ -550,14 +550,19 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     this.showPreview = true;
     // tslint:disable-next-line:max-line-length
-    this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
-       this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
-    .subscribe((res) => {
+    if (this.sessionContext.collection && this.contentEditorComponentInput.unitIdentifier) {
+      this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection,
+        this.contentEditorComponentInput.unitIdentifier, this.contentEditorComponentInput.contentId)
+     .subscribe((res) => {
+       this.getContentMetadata();
+     }, (err) => {
+       this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+       this.getDetails();
+     });
+    } else {
+      this.showLoader = false;
       this.getContentMetadata();
-    }, (err) => {
-      this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-      this.getDetails();
-    });
+    }
   }
 
   saveMetadataForm(cb?) {
@@ -573,9 +578,21 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       };
 
       this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentData.identifier).subscribe((res) => {
-        // tslint:disable-next-line:max-line-length
-        this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
-        .subscribe((data) => {
+        if (this.sessionContext.collection && this.unitIdentifier) {
+          // tslint:disable-next-line:max-line-length
+          this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
+          .subscribe((data) => {
+            this.showEditMetaForm = false;
+            if (cb) {
+              cb.call(this);
+            } else {
+              this.getContentMetadata();
+              this.toasterService.success(this.resourceService.messages.smsg.m0060);
+            }
+          }, (err) => {
+            this.toasterService.error(this.resourceService.messages.fmsg.m0098);
+          });
+        } else {
           this.showEditMetaForm = false;
           if (cb) {
             cb.call(this);
@@ -583,9 +600,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.getContentMetadata();
             this.toasterService.success(this.resourceService.messages.smsg.m0060);
           }
-        }, (err) => {
-          this.toasterService.error(this.resourceService.messages.fmsg.m0098);
-        });
+        }
       }, err => {
         this.toasterService.error(this.resourceService.messages.fmsg.m0098);
       });

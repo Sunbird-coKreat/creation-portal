@@ -40,11 +40,13 @@ const authenticated = function (request, next) {
   }
   const postLoginRequest = [];
   postLoginRequest.push(function (callback) {
-    getKongAccessToken(request, callback);
-  });
-  postLoginRequest.push(function (callback) {
     permissionsHelper.getCurrentUserRoles(request, callback)
   });
+
+  postLoginRequest.push(function (callback) {
+    getKongAccessToken(request, callback);
+  });
+
   postLoginRequest.push(function (callback) {
     permissionsHelper.getSourcingUserRoles(request, callback)
   });

@@ -44,21 +44,24 @@ export class ProgramHeaderComponent implements OnInit{
       this.setTargetCollectionValue();
       this.checkIfshowSkipReview();
     }
-    if (!_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
+    if (!this.programsService.ifSourcingInstance() && !_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
       this.canNominate = this.helperService.isOpenForNomination(this.programDetails);
     }
   }
   checkIfshowSkipReview() {
     const skipTwoLevelReview = !!(_.get(this.programDetails, 'config.defaultContributeOrgReview') === false);
-    const restrictedProject = !!(_.get(this.programDetails, 'type') == 'restricted');
+    if (this.programsService.ifSourcingInstance()) { 
+      this.showSkipReview = skipTwoLevelReview;
+    } else {
+      const restrictedProject = !!(_.get(this.programDetails, 'type') == 'restricted');
+      const showSkipReview = skipTwoLevelReview && !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
+      skipTwoLevelReview);
+    
+      const currentOrgRole = _.first(this.userService.getUserOrgRole());
 
-    const showSkipReview = skipTwoLevelReview && !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
-    skipTwoLevelReview);
-   
-    const currentOrgRole = _.first(this.userService.getUserOrgRole());
-
-    this.showSkipReview = (showSkipReview || (restrictedProject && skipTwoLevelReview && !!(currentOrgRole !== "individual") &&  
-      !!(this.roles.currentRoles.includes("CONTRIBUTOR") || this.roles.currentRoles.includes("REVIEWER") || currentOrgRole === 'admin')));
+      this.showSkipReview = (showSkipReview || (restrictedProject && skipTwoLevelReview && !!(currentOrgRole !== "individual") &&  
+        !!(this.roles.currentRoles.includes("CONTRIBUTOR") || this.roles.currentRoles.includes("REVIEWER") || currentOrgRole === 'admin')));
+    }
   }
   setTargetCollectionValue() {
     if (!_.isUndefined(this.programDetails)) {

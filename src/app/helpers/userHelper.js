@@ -8,12 +8,12 @@ const uuidv1 = require('uuid/v1');
 const requestPromise = require('request-promise'); //  'request' npm package with Promise support
 const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const logger = require('sb_logger_util_v2');
-const { getAuthToken } = require('../helpers/kongTokenHelper');
+const { getAuthToken } = require('../helpers/kongTokenHelper')
 
 module.exports = {
   updateLoginTime: function (req, callback) {
     var data = this.prepareRequestBody(req)
-    var token = getAuthToken(req)
+    var token = getAuthToken(req);
     this.sendUpdateTimeReq(req, token, data, function (err, status) {
       callback(err, status)
     })
@@ -32,12 +32,16 @@ module.exports = {
       url: learnerURL + 'user/v1/update/logintime',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + learnerAuthorization,
-        'x-authenticated-user-token': token
+        'Authorization': 'Bearer ' + learnerAuthorization
       },
       body: data,
       json: true
     }
+
+    if (token) {
+      options.headers['x-authenticated-user-token'] = token
+    }
+
     const telemetryData = {reqObj: req,
       options: options,
       uri: 'user/v1/update/logintime',
