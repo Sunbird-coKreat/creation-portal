@@ -932,19 +932,22 @@ export class HelperService {
   attachContentToProgram(action, contentId, programContext, rejectedComments?) {
     let request = {
       program_id: programContext.program_id,
-      config: _.get(programContext, 'config')
+      acceptedContents: programContext.acceptedContents,
+      rejectedContents: programContext.rejectedContents,
+      sourcingRejectedComments: programContext.rejectedContents,
+      //config: _.get(programContext, 'config')
     };
       // tslint:disable-next-line:max-line-length
     if (action === 'accept' || action === 'acceptWithChanges') {
-      request.config['acceptedContents'] = _.uniq([...request.config.acceptedContents || [], contentId]);
+      request['acceptedContents'] = _.uniq([...request.acceptedContents || [], contentId]);
     } else {
-      request.config['rejectedContents'] = _.uniq([...request.config.rejectedContents || [], contentId]);
+      request['rejectedContents'] = _.uniq([...request.rejectedContents || [], contentId]);
     }
 
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
-      request.config['sourcingRejectedComments'] = request.config.sourcingRejectedComments && _.isString(request.config.sourcingRejectedComments) ? JSON.parse(request.config.sourcingRejectedComments) : request.config.sourcingRejectedComments || {};
-      request.config['sourcingRejectedComments'][contentId] = rejectedComments;
+      request['sourcingRejectedComments'] = request.sourcingRejectedComments && _.isString(request.sourcingRejectedComments) ? JSON.parse(request.sourcingRejectedComments) : request.sourcingRejectedComments || {};
+      request['sourcingRejectedComments'][contentId] = rejectedComments;
     }
 
     this.programsService.updateProgram(request).subscribe(() => {
@@ -1013,9 +1016,9 @@ export class HelperService {
   }
   checkIfContentisWithProgram(contentId, programContext) {
     let msg;
-    if (_.includes(programContext.config.acceptedContents, contentId)) {
+    if (_.includes(programContext.acceptedContents, contentId)) {
       msg = this.resourceService.messages.emsg.contentAcceptedForProgram;
-    } else if (_.includes(programContext.config.rejectedContents, contentId)) {
+    } else if (_.includes(programContext.rejectedContents, contentId)) {
       msg = this.resourceService.messages.emsg.contentRejectedForProgram;
     }
    if (msg) {

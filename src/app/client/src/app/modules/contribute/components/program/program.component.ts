@@ -308,7 +308,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
-
+ 
   setProgramRole() {
     //const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
     //if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus)) {
@@ -320,6 +320,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
         } else {
           this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+        }
+
+        const defaultContributeOrgReview = _.get(this.programDetails, 'config.defaultContributeOrgReview');
+        const programType = _.get(this.programDetails, 'type');
+        const isContributingOrgContributor = this.userService.isContributingOrgContributor(this.sessionContext.nominationDetails);
+        const isDefaultContributingOrg = this.userService.isDefaultContributingOrg(this.programDetails);;
+        if (defaultContributeOrgReview === false && (programType === 'restricted' || 
+        (isContributingOrgContributor && isDefaultContributingOrg && _.get(this.sessionContext, 'currentRoles').includes('CONTRIBUTOR') && this.currentNominationStatus === 'Approved'))) {
+          this.sessionContext.currentOrgRole = 'individual';
         }
       } else {
         this.sessionContext.currentRoles = ['CONTRIBUTOR'];
