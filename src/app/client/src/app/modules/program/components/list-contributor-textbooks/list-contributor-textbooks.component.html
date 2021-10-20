@@ -206,7 +206,7 @@
 				<div class="d-flex flex-ai-center flex-jc-space-between">
 					<div class="sb-pageSection-header pt-16">
 						<h4 class="sb-pageSection-title">{{resourceService.frmelmnts.lbl.listOfTextbooks | interpolate:'{TARGET_NAME}': targetCollections}} </h4>
-						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ contributorTextbooks?.length || 0 }}</span>
+						<span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ collectionsCnt || 0 }}</span>
 					</div>
 					<div class="">
 						<button class="sb-btn sb-btn-normal sb-btn-secondary mr-8"
@@ -234,6 +234,14 @@
 								{{resourceService.frmelmnts.lbl.title}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 								<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+								</span>
+							</th>
+							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
+								{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
+								<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
@@ -269,50 +277,50 @@
 							</th>
 							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
 								<span>
-									Status
+									{{resourceService.frmelmnts.lbl.status}}
 								</span>
 							</th>
 							<th class="w-5">&nbsp;</th>
 						</tr>
 					</thead>
-					<tbody class="sb-table-body" *ngIf="contributorTextbooks?.length">
-
-						<tr *ngFor="let contributorTextbook of contributorTextbooks">
-							<td>{{contributorTextbook?.name}}</td>
-							<td>{{contributorTextbook?.medium}}</td>
-							<td>{{contributorTextbook?.gradeLevel}}</td>
-							<td>{{contributorTextbook?.subject}}</td>
-							<td *ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')">{{contributorTextbook?.totalSampleContent || 0}}</td>
-							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
-								<span>
-									{{contributorTextbook?.status}}
-								</span>
-							</th>
-							<td data-label="Actions">
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" 
-								*ngIf="programContext?.target_type === 'searchCriteria'" (click)="openContent(contributorTextbook)"
-								appTelemetryInteract
-  [telemetryInteractEdata]="getTelemetryInteractEdata('view_sample_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-  [telemetryInteractObject]="telemetryInteractObject"
-  [telemetryInteractCdata]="telemetryInteractCdata"
-  [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false "
-									*ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')" (click)="viewContribution(contributorTextbook)"
-									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view_sample_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
-								<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
-									*ngIf="contributor?.nominationData?.status == 'Approved'"
-									(click)="viewContribution(contributorTextbook)"
-									appTelemetryInteract
-      [telemetryInteractEdata]="getTelemetryInteractEdata('view_contributions', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, telemetryPageId)"
-      [telemetryInteractObject]="telemetryInteractObject"
-      [telemetryInteractCdata]="telemetryInteractCdata"
-      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContributions}}</button>
-							</td>
-						</tr>
+					<tbody class="sb-table-body" *ngIf="collectionsCnt">
+						<ng-container *ngFor="let contributorTextbook of contributorTextbooks">  
+							<tr *ngIf="contributorTextbook?.contentVisibility === undefined || contributorTextbook?.contentVisibility">
+								<td>{{contributorTextbook?.name}}</td>
+								<td>{{contributorTextbook?.board}}</td>
+								<td>{{contributorTextbook?.medium}}</td>
+								<td>{{contributorTextbook?.gradeLevel}}</td>
+								<td>{{contributorTextbook?.subject}}</td>
+								<td *ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')">{{contributorTextbook?.totalSampleContent || 0}}</td>
+								<td class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
+									<span [ngClass]="contributorTextbook.resourceStatusClass">{{ contributorTextbook.resourceStatusText }}</span>
+								</td>
+								<td data-label="Actions">
+									<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" 
+										*ngIf="programContext?.target_type === 'searchCriteria'" (click)="openContent(contributorTextbook)"
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
+									<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5" [disabled]="contributorTextbook?.totalSampleContent === 0 ? true : false "
+										*ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')" (click)="viewContribution(contributorTextbook)"
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('view_sample_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewSampleContent}}</button>
+									<button class="sb-btn sb-btn-xs sb-btn-outline-primary m-5"
+										*ngIf="contributor?.nominationData?.status == 'Approved' && (!programContext.target_type || programContext.target_type === 'collections')"
+										(click)="viewContribution(contributorTextbook)"
+										appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('view_contributions', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContributions}}</button>
+								</td>
+							</tr>
+						</ng-container>
 					</tbody>
 				</table>
 			</div>

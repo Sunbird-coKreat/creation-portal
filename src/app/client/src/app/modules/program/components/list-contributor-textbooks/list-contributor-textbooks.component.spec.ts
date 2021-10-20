@@ -47,7 +47,7 @@ const errorInitiate = false;
       },
       data: {
         telemetry: {
-          env: 'workspace', pageid: 'workspace-content-draft', subtype: 'scroll', type: 'list',
+          env: 'workspace', pageid: 'list-contributor', subtype: 'scroll', type: 'list',
           object: { type: '', ver: '1.0' }
         }
       }
@@ -116,6 +116,19 @@ const errorInitiate = false;
     spyOn(component, 'setFrameworkCategories').and.callThrough();
     component.setFrameworkCategories(collection);
     expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
+  });
+
+  it('#getPageId() should return pageId', () => {
+    spyOn(component, 'getPageId').and.callThrough();
+    const pageId = component.getPageId();
+    expect(pageId).toBeDefined();
+  });
+
+  it('#getTelemetryInteractEdata() should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('download_collection_level_content_gap_report',
+    'click', 'launch', 'sourcing_my_projects', undefined);
+    expect(returnObj).not.toContain(undefined);
   });
 
 });

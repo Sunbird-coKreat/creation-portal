@@ -149,6 +149,8 @@ function getLocals(req) {
   locals.slug = slug || '';
   locals.enableQuestionSetEditor = envHelper.DOCK_QUESTIONSET_ENABLE;
   locals.dockSmsUrl = envHelper.DOCK_SMS_URL;
+  locals.dockDefaultFileSize = envHelper.DOCK_DEFAULT_FILE_SIZE;
+  locals.dockDefaultVideoSize = envHelper.DOCK_DEFAULT_VIDEO_SIZE;
   return locals
 }
 

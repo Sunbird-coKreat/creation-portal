@@ -347,4 +347,11 @@ describe('ProgramComponent', () => {
     component.setFrameworkCategories(collection);
     expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
   });
+
+  it('#getTelemetryInteractEdata() should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('select_content_types',
+    'click', 'launch', 'sourcing_my_projects', undefined);
+    expect(returnObj).not.toContain(undefined);
+  });
 });

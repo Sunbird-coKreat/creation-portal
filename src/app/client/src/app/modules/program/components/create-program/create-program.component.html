@@ -78,7 +78,7 @@
 										class="fs-0-92">{{resource?.frmelmnts?.lbl?.howToGetContributionsToThisProject}}</label>
 									<div class="sb-field mt-4 d-flex">
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input type="radio" formControlName="type" id="type_public" value="public" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('public', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+											<input type="radio" formControlName="type" id="type_public" value="public" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_anyone', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata"/>
@@ -86,7 +86,7 @@
 										</div>
                     					<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
 											<div> 
-												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('public', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_a_selected_set_of_contributors', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata"/>
@@ -108,7 +108,7 @@
 											</span>
                     					</div>
 										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<input type="radio" formControlName="type" id="type_private" value="private" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('private', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
+											<input type="radio" formControlName="type" id="type_private" value="private" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_your_organization_only', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 											[telemetryInteractObject]="telemetryInteractObject"
 											[telemetryInteractCdata]="telemetryInteractCdata"
 											[telemetryInteractPdata]="telemetryInteractPdata"/>
@@ -122,7 +122,11 @@
 									<input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
 										name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
 										[checked]="defaultContributeOrgReviewChecked"
-										(change)="defaultContributeOrgReviewChanged($event)">
+										(change)="defaultContributeOrgReviewChanged($event)" appTelemetryInteract
+										[telemetryInteractEdata]="getTelemetryInteractEdata('skip_two_level_review', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.radioButton, telemetryPageId)"
+										[telemetryInteractObject]="telemetryInteractObject"
+										[telemetryInteractCdata]="telemetryInteractCdata"
+										[telemetryInteractPdata]="telemetryInteractPdata">
 									<label
 										for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
 								</div>
@@ -265,7 +269,7 @@
 										</ng-template>
 
 										<div class="ui pointing red basic label below "
-											*ngIf="projectScopeForm.controls['targetPrimaryCategories'].errors && projectScopeForm.controls['targetPrimaryCategories'].errors.required && (!projectScopeForm.controls['targetPrimaryCategories'].pristine || formIsInvalid)">
+											*ngIf="projectScopeForm.controls['targetPrimaryCategories'].errors && projectScopeForm.controls['targetPrimaryCategories']?.errors?.required && (!projectScopeForm.controls['targetPrimaryCategories']?.pristine || formIsInvalid)">
 											{{resource?.frmelmnts?.lbl?.contentTypesRequired }}
 										</div>
 									</div>
@@ -653,6 +657,7 @@
 			<!-- New upload image design section ends here -->
 		</div>
 	</div>
+	<div class="sb-modal-actions"></div>
 </sui-modal>
 <sui-modal *ngIf="selectChapter" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 	class="sb-modal" appBodyScroll (dismissed)="this.selectChapter = false" #modal>
@@ -791,7 +796,7 @@
 	</div>
 </sui-modal>
 
-<sui-modal *ngIf="isFormValueSet.projectTargetForm && openProjectTargetTypeModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="isFormValueSet.projectTargetForm && openProjectTargetTypeModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
       [size]="'normal'" class="sb-modal" appBodyScroll
       (dismissed)="closeprojectTargetTypeModal();" #projectTargetTypeModal>
       <div class="sb-modal-header">
@@ -802,25 +807,11 @@
 			{{resource?.frmelmnts?.projectSource?.heading}}
 			<div class="sb-radio-btn-checkbox sb-radio-btn-primary mt-30 mb-30">
 				<input type="radio" formControlName="target_type" id="collections" value="collections" />
-				<label for="collections">{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.lbl}}
-					<div class="sb-color-gray-200 fsmall font-italic mt-10 my-5">
-						{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.desc}}
-					</div>
-					<div class="fxsmall mb-10">
-						{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.steps}}
-					</div>
-				</label>
+				<label for="collections">{{resource?.frmelmnts?.projectSource?.foraTargetCollection?.lbl}}</label>
 			</div>
 			<div class="sb-radio-btn-checkbox sb-radio-btn-primary mt-30 mb-30">
 				<input type="radio" formControlName="target_type" value="searchCriteria" id="searchCriteria" />
-				<label for="framework">{{resource?.frmelmnts?.projectSource?.foraFramework?.lbl}}
-					<div class="sb-color-gray-200 fsmall font-italic mt-10 my-5">
-						{{resource?.frmelmnts?.projectSource?.foraFramework?.desc}}
-					</div>
-					<div class="fxsmall mb-10">
-						{{resource?.frmelmnts?.projectSource?.foraFramework?.steps}}
-					</div>
-				</label>
+				<label for="searchCriteria">{{resource?.frmelmnts?.projectSource?.foraFramework?.lbl}}</label>
 			</div>
 		  </form>
       </div>
@@ -845,9 +836,9 @@
 				<label class="d-block">{{resource?.frmelmnts?.lbl?.board}}
 					<i class="pull-right question circle link icon pull-right" suiPopup
 						popupDelay="500" [popupPlacement]="'left'"
-						popupText="{{resource?.frmelmnts?.lbl?.selectBoard}}"></i>
+						popupText="{{resource?.frmelmnts?.lbl?.profile?.selectBoard}}"></i>
 				</label>
-				<sui-select placeholder="{{resource?.frmelmnts?.lbl?.selectBoard}}"
+				<sui-select placeholder="{{resource?.frmelmnts?.lbl?.profile?.selectBoard}}"
 					class="selection p-5" formControlName="board"
 					[options]="programScope['board']"
 					labelField="name"

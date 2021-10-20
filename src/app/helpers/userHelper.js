@@ -8,11 +8,12 @@ const uuidv1 = require('uuid/v1');
 const requestPromise = require('request-promise'); //  'request' npm package with Promise support
 const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const logger = require('sb_logger_util_v2');
+const { getAuthToken } = require('../helpers/kongTokenHelper')
 
 module.exports = {
   updateLoginTime: function (req, callback) {
     var data = this.prepareRequestBody(req)
-    var token = req.kauth.grant.access_token.token
+    var token = getAuthToken(req);
     this.sendUpdateTimeReq(req, token, data, function (err, status) {
       callback(err, status)
     })
@@ -31,12 +32,16 @@ module.exports = {
       url: learnerURL + 'user/v1/update/logintime',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + learnerAuthorization,
-        'x-authenticated-user-token': token
+        'Authorization': 'Bearer ' + learnerAuthorization
       },
       body: data,
       json: true
     }
+
+    if (token) {
+      options.headers['x-authenticated-user-token'] = token
+    }
+
     const telemetryData = {reqObj: req,
       options: options,
       uri: 'user/v1/update/logintime',
@@ -44,7 +49,7 @@ module.exports = {
       id: data.request.userId,
       userId: data.request.userId}
     // telemetryHelper.logAPICallEvent(telemetryData)
-    /* istanbul ignore next  */  
+    /* istanbul ignore next  */
     request(options, function (error, response, body) {
       telemetryData.statusCode = _.get(response, 'statusCode');
       if (callback) {

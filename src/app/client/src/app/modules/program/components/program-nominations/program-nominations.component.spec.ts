@@ -22,6 +22,7 @@ import { HelperService } from '../../../sourcing/services/helper.service';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 const errorInitiate = false;
 const userServiceStub = {
@@ -136,6 +137,7 @@ describe('ProgramNominationsComponent', () => {
         NavigationHelperService, CollectionHierarchyService, ContentHelperService,
         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
       ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   }));
 
@@ -364,5 +366,11 @@ describe('ProgramNominationsComponent', () => {
       spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
+    });
+    it('#getTelemetryInteractEdata() should return object with defined value', () => {
+      spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+      const returnObj = component.getTelemetryInteractEdata('download_contribution_details',
+      'click', 'launch', 'sourcing_my_projects', undefined);
+      expect(returnObj).not.toContain(undefined);
     });
 });
