@@ -225,8 +225,8 @@ export class CollectionHierarchyService {
       }
       let allAcceptedContentIds, allRejectedContentIds = [];
       if (this._programDetails && this._programDetails.target_type === 'searchCriteria') {
-        allAcceptedContentIds = _.uniq(this._programDetails.acceptedContents);
-        allRejectedContentIds = _.uniq(this._programDetails.rejectedContents);
+        allAcceptedContentIds = _.uniq(this._programDetails.acceptedcontents);
+        allRejectedContentIds = _.uniq(this._programDetails.rejectedcontents);
       } else {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));

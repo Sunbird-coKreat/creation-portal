@@ -271,11 +271,11 @@ export class TextbookListComponent implements OnInit {
   }
 
   checkSourcingStatus(content) {
-    if (this.programDetails.acceptedContents  &&
-         _.includes(this.programDetails.acceptedContents || [], content.identifier)) {
+    if (this.programDetails.acceptedcontents  &&
+         _.includes(this.programDetails.acceptedcontents || [], content.identifier)) {
             return 'Approved';
-      } else if (this.programDetails.rejectedContents  &&
-              _.includes(this.programDetails.rejectedContents || [], content.identifier)) {
+      } else if (this.programDetails.rejectedcontents  &&
+              _.includes(this.programDetails.rejectedcontents || [], content.identifier)) {
             return 'Rejected';
       } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
             return 'PendingForCorrections';

@@ -1001,6 +1001,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               contentId: res.result.node_id
             });
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.m0062);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
+          this.uploadedContentMeta.emit({
+            contentId: res.result.content_id
+          });
         }
       }, (err) => {
         const errInfo = {

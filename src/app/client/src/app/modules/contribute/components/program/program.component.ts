@@ -211,11 +211,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   checkSourcingStatus(content) {
-    if (this.programDetails.acceptedContents  &&
-         _.includes(this.programDetails.acceptedContents || [], content.identifier)) {
+    if (this.programDetails.acceptedcontents  &&
+         _.includes(this.programDetails.acceptedcontents || [], content.identifier)) {
             return 'Approved';
-      } else if (this.programDetails.rejectedContents  &&
-              _.includes(this.programDetails.rejectedContents || [], content.identifier)) {
+      } else if (this.programDetails.rejectedcontents  &&
+              _.includes(this.programDetails.rejectedcontents || [], content.identifier)) {
             return 'Rejected';
       } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
             return 'PendingForCorrections';
@@ -985,7 +985,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showCollectionLevelUploadContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
     this.visibility['showViewContribution'] = this.currentNominationStatus === 'Approved' && !canAcceptContribution && isProgramForCollections;
     this.visibility['showReviewContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
-    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending' || this.currentNominationStatus === 'Approved') && isProgramForNoCollections;
+    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
+    //this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
   }
 
   getCollectionCategoryDefinition() {
