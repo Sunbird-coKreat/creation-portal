@@ -9,13 +9,20 @@
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forCollections }}
         </a>
+        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="setActiveTab('questionSets')"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forQuestionSets }}
+        </a>
         <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="setActiveTab('searchCriteria')"
         appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forSearchCriteria }}
-        </a>
+        </a>  
       </div>
     </div>
   </div>

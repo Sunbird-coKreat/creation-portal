@@ -7,7 +7,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Inp
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-import { SourcingService } from './../../../sourcing/services';
+import { SourcingService, HelperService } from './../../../sourcing/services';
 import { programConfigObj } from './programconfig';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -15,6 +15,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
+import { IContentEditorComponentInput } from '../../../sourcing/interfaces';
 
 @Component({
   selector: 'app-create-program',
@@ -35,6 +36,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     projectScopeForm: false,
     projectTargetForm: false
   };
+  public collectionEditorVisible: Boolean = false;
   public editPublished = false;
   public choosedTextBook: any;
   public selectChapter = false;
@@ -94,6 +96,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+  public questionSetEditorComponentInput: IContentEditorComponentInput;
   public openProjectTargetTypeModal= false;
   private projectTargetType: string = null;
   public firstLevelFolderLabel: string;
@@ -123,6 +126,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private sourcingService: SourcingService,
     private sbFormBuilder: FormBuilder,
     private navigationHelperService: NavigationHelperService,
+    private helperService: HelperService,
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
@@ -154,7 +158,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.pageStartTime = Date.now();
   }
 
-  getProgramDetails() {
+  getProgramDetails() {    
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
@@ -200,7 +204,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       'target_type': [this.projectTargetType, Validators.required]
     });
     this.isFormValueSet.projectTargetForm = true;
-  }
+}
 
   initializeCreateProgramForm() {
     const nominationEndDate = _.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null;
@@ -250,46 +254,54 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['collectionCategories'] = [];
 
     if ((this.projectTargetType === 'collections')) {
-      this.initializeFrameworkForTatgetType('')
+      this.initializeFrameworkForTargetType('')
     }
     const channelData$ = this.frameworkService.readChannel();
     channelData$.subscribe((channelData) => {
       if (channelData) {
         this.programScope['userChannelData'] = channelData;
-        if (this.projectTargetType === 'searchCriteria') {
+        if (this.projectTargetType === 'searchCriteria' || this.projectTargetType === 'questionSets') {
           this.getFramewok().subscribe(
             (response) => {
               if (!response) {
                 this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
                 return false;
               } else {
-                this.initializeFrameworkForTatgetType(response.identifier);
+                this.initializeFrameworkForTargetType(response.identifier);
               }
           });
         }
         const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
         const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
         const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
-        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-        this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
+        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');     
+        const questionCategories = _.get(channeltargetObjectTypeGroup, 'Question');   
         if (_.toLower(this.enableQuestionSetEditor) === 'true') {
           this.programScope['targetPrimaryObjects'] = questionSetCategories;
           this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
         }
+        if (this.projectTargetType === 'questionSets') {
+          this.programScope['collectionCategories'] = _.map(questionSetCategories, 'name');
+          this.programScope['targetPrimaryObjects'] = questionCategories;
+          this.programScope['targetPrimaryCategories']  = _.map(questionCategories, 'name');
+        }
         // tslint:disable-next-line:max-line-length
-        this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
-          if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
-            this.programScope['targetPrimaryCategories'].push(o.name);
-            return o;
-          }
-        }));
+        if(this.projectTargetType !== 'questionSets') {
+          this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
+          this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+            if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+              this.programScope['targetPrimaryCategories'].push(o.name);
+              return o;
+            }
+          }));
+        }
         // tslint:disable-next-line:max-line-length
         this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
         this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
       }
     });
   }
-  initializeFrameworkForTatgetType (frameworkName) {
+  initializeFrameworkForTargetType (frameworkName) {
     //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
     this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
 
@@ -356,7 +368,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.programScope.framework.categories.forEach((element) => {
+    this.programScope.framework.categories?.forEach((element) => {
       const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
         result.push(value);
         return result;
@@ -453,6 +465,42 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
     this.fineUploaderUI.nativeElement.remove();
+  }
+
+  initiateCollectionEditor() {
+  
+    this.initializeCollectionEditorInput();
+    const createContentReq = this.helperService.createContent(this.questionSetEditorComponentInput);
+    createContentReq.pipe(map((res: any) => res.result), catchError(
+      err => {
+       const errInfo = {
+        errorMsg: 'Unable to create contentId, Please Try Again',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: {}
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      }))
+      .subscribe(result => {
+        this.questionSetEditorComponentInput.contentId = result.identifier;
+        this.programsService.emitHeaderEvent(false);
+        // tslint:disable-next-line:max-line-length
+        // this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+      });
+    this.collectionEditorVisible = true;
+  }
+
+  initializeCollectionEditorInput() {
+    this.questionSetEditorComponentInput['sessionContext'] = undefined;
+    this.questionSetEditorComponentInput['templateDetails'] = 
+      {
+        name: this.programScope['selectedTargetCollectionObject']?.name,
+        modeOfCreation: _.lowerCase(this.programScope['selectedTargetCollectionObject']?.targetObjectType),
+      };
+    this.questionSetEditorComponentInput['selectedSharedContext'] = this.programScope;
+    this.questionSetEditorComponentInput['action'] = 'creation';
+    this.questionSetEditorComponentInput['programContext'] = this.programDetails;
   }
 
   uploadContent() {
@@ -1055,7 +1103,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.generateTelemetryEndEvent('update');
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
-          const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+          let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+          if(this.projectTargetType === 'questionSets') tab = 'questionSets';
           this.router.navigate(['/sourcing'],
             {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
         },
@@ -1073,10 +1122,16 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 onChangeTargetCollectionCategory() {
   this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
+  this.setSelectedTargetCollectionObject();
   this.showTexbooklist(true);
   this.projectScopeForm.value.pcollections = [];
   this.getCollectionCategoryDefinition();
   this.tempCollections = [];
+}
+
+setSelectedTargetCollectionObject() {
+  const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
+  this.programScope['selectedTargetCollectionObject'] = _.find(channelCats, { name: this.selectedTargetCollection });
 }
 showTexbooklist(showTextBookSelector = true) {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
@@ -1617,7 +1672,8 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
               this.resource.messages.smsg.program.draft.message);
-            const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+            let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+            if(this.projectTargetType === 'questionSets') tab = 'questionSets';
             this.router.navigate(['/sourcing'],
               {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           } else {
@@ -1719,7 +1775,8 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              if(this.projectTargetType === 'questionSets') tab = 'questionSets';
               this.router.navigate(['/sourcing'],
                 {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
@@ -1740,7 +1797,8 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              if(this.projectTargetType === 'questionSets') tab = 'questionSets';
               this.router.navigate(['/sourcing'],
                 {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },

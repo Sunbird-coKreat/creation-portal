@@ -5,6 +5,7 @@ export interface IContentEditorComponentInput {
     action?: string;
     content?: any;
     sessionContext?: ISessionContext;
+    templateDetails?: any;
     unitIdentifier?: string;
     programContext?: any;
     originCollectionData: any;
