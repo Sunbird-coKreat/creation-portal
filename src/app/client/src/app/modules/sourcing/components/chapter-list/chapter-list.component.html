@@ -109,10 +109,6 @@
                 <dt>{{countData['mycontribution']}}</dt>
                 <dd>My Content</dd>
               </dl>
-              <dl *ngIf="sessionContext['addFromLibraryBetaEnabled']" class="sb-meta-data">
-                <dt>{{reusedContributions.length}}</dt>
-                <dd>Added From Library</dd>
-              </dl>
               <dl *ngIf="hasAccessForContributor" class="sb-meta-data">
                 <dt>{{countData['reject']}}</dt>
                 <dd>Rejected</dd>
@@ -215,7 +211,7 @@
           </div>
           <div class="sb-chapterlist">
             <sui-accordion class="styled fluid sb-accordion sb-chapterlist-accordion" [closeOthers]="true">
-              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption" [originalCollectionData]="originalCollectionData" [reusedContributions]="reusedContributions"
+              <app-recursive-tree [collectionUnits]="collectionHierarchy" [level]="1" [programContext]="programContext" [sessionContext]="sessionContext" [selectedChapter]="selectedChapterOption" [originalCollectionData]="originalCollectionData"
               [selectedStatus]="selectedStatusOptions" (nodeMeta)="showResourceTemplate($event)"></app-recursive-tree>
             </sui-accordion>
           </div>
