@@ -854,7 +854,7 @@ export class HelperService {
   }
 
   getContextObj(context, selectedSharedContext, programTargetType?) {
-    if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria')) { // Here topic is fetched from unitLevel meta
+    if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria' || programTargetType === 'questionSets')) { // Here topic is fetched from unitLevel meta
       const fieldMustbeString = ['framework', 'board'];
       if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
         return {[context]:_.first(selectedSharedContext[context])}
