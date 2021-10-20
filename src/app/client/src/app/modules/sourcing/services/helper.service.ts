@@ -272,8 +272,8 @@ export class HelperService {
   }
 
   checkIfContentPublishedOrRejected(data, action, contentId) {
-    if ((action === 'accept' && _.includes(data.acceptedContents, contentId))
-      || (action === 'reject' && _.includes(data.rejectedContents, contentId))) {
+    if ((action === 'accept' && _.includes(data.acceptedcontents, contentId))
+      || (action === 'reject' && _.includes(data.rejectedcontents, contentId))) {
       action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00104) :
         this.toasterService.error(this.resourceService.messages.fmsg.m00105);
       this.programStageService.removeLastStage();
@@ -411,15 +411,15 @@ export class HelperService {
 
     // tslint:disable-next-line:max-line-length
     if (action === 'accept' || action === 'acceptWithChanges') {
-      request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]);
+      request.content['acceptedcontents'] = _.uniq([...data.acceptedcontents || [], contentId]);
     } else {
-      request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
+      request.content['rejectedcontents'] = _.uniq([...data.rejectedcontents || [], contentId]);
     }
 
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
-      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
-      request.content['sourcingRejectedComments'][contentId] = rejectedComments;
+      request.content['sourcingrejectedcomments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
+      request.content['sourcingrejectedcomments'][contentId] = rejectedComments;
     }
 
     this.updateContent(request, collectionId).subscribe(() => {
@@ -931,23 +931,19 @@ export class HelperService {
   }
   attachContentToProgram(action, contentId, programContext, rejectedComments?) {
     let request = {
-      program_id: programContext.program_id,
-      acceptedContents: programContext.acceptedContents,
-      rejectedContents: programContext.rejectedContents,
-      sourcingRejectedComments: programContext.rejectedContents,
-      //config: _.get(programContext, 'config')
+      program_id: programContext.program_id
     };
       // tslint:disable-next-line:max-line-length
     if (action === 'accept' || action === 'acceptWithChanges') {
-      request['acceptedContents'] = _.uniq([...request.acceptedContents || [], contentId]);
+      request['acceptedcontents'] = _.uniq([...programContext.acceptedcontents || [], contentId]);
     } else {
-      request['rejectedContents'] = _.uniq([...request.rejectedContents || [], contentId]);
+      request['rejectedcontents'] = _.uniq([...programContext.rejectedcontents || [], contentId]);
     }
 
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
-      request['sourcingRejectedComments'] = request.sourcingRejectedComments && _.isString(request.sourcingRejectedComments) ? JSON.parse(request.sourcingRejectedComments) : request.sourcingRejectedComments || {};
-      request['sourcingRejectedComments'][contentId] = rejectedComments;
+      request['sourcingrejectedcomments'] = programContext.sourcingrejectedcomments && _.isString(programContext.sourcingrejectedcomments) ? JSON.parse(programContext.sourcingrejectedcomments) : programContext.sourcingrejectedcomments || {};
+      request['sourcingrejectedcomments'][contentId] = rejectedComments;
     }
 
     this.programsService.updateProgram(request).subscribe(() => {

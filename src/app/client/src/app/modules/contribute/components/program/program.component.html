@@ -415,10 +415,10 @@
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_content')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
 							
-							<button *ngIf="visibility.showContentLevelOpen && contributorTextbook.status === 'Draft' && (contributorTextbook.prevStatus !== 'Live' || contributorTextbook.prevStatus !== 'Review')"
+							<button *ngIf="visibility.showContentLevelOpen && contributorTextbook.status === 'Draft' && (contributorTextbook.prevStatus !== 'Live' && contributorTextbook.prevStatus !== 'Review')"
 							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
 							(click)="showContentDeleteModal(contributorTextbook)" appTelemetryInteract
-							[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
+							[telemetryInteractEdata]="getTelemetryInteractEdata('delete_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_content')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.delete}}</button>
