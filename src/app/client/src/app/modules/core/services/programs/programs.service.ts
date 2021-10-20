@@ -1442,8 +1442,8 @@ export class ProgramsService extends DataService implements CanActivate {
 
     const nonFrameworkFields = ['additionalCategories', 'license'];
       // tslint:disable-next-line:max-line-length
-      if (_.has(choosedTextBook, 'framework') && !_.isEmpty(this.frameworkService.frameworkData[choosedTextBook.framework])) {
-        categoryMasterList =  this.frameworkService.frameworkData[choosedTextBook.framework];
+      if (_.has(choosedTextBook, 'framework') && !_.isEmpty(frameworkCategories)) {
+        categoryMasterList =  frameworkCategories;
         // tslint:disable-next-line:max-line-length
         _.forEach(formFieldProperties, (element) => {
           _.forEach(element.fields, (field) => {

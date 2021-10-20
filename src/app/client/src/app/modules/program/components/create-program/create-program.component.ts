@@ -288,6 +288,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeFrameworkForTatgetType (frameworkName) {
     //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
     this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
+
       if (frameworkData) {
         //this.projectScopeForm.controls['framework'].setValue([frameworkData.identifier]);
         this.programScope['framework'] = frameworkData;
@@ -1409,13 +1410,12 @@ showTexbooklist(showTextBookSelector = true) {
   initEditBlueprintForm(collection) {
     let savedBluePrintData = _.get(this.programDetails, 'config.blueprintMap');
     this.blueprintFormConfig = this.programsService.initializeFormFields(this.programScope.framework.categories, this.blueprintFormConfig, savedBluePrintData[this.choosedTextBook.code], this.choosedTextBook);
-
     this.blueprintFormConfig.forEach((element) => {
       if(element.fields) {
         element.fields.forEach(field => {
           if (field.code === "topics" || field.code === "learningOutcomes" || field.code === "topic" || field.code === "learningoutcome"){
             field.default='';
-          }
+          }else{field.default = '0';}
         });
       }
     })
