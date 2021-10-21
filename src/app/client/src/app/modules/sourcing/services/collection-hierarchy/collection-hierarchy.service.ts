@@ -118,7 +118,7 @@ export class CollectionHierarchyService {
             status: ['Draft', 'Live'],
             primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           },
-          fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution'],
+          fields: ['name', 'gradeLevel', 'mimeType', 'medium', 'subject', 'status', 'chapterCount', 'chapterCountForContribution', 'primaryCategory'],
           limit: 1000
         }
       }
@@ -225,8 +225,8 @@ export class CollectionHierarchyService {
       }
       let allAcceptedContentIds, allRejectedContentIds = [];
       if (this._programDetails && this._programDetails.target_type === 'searchCriteria') {
-        allAcceptedContentIds = _.uniq(this._programDetails.config.acceptedContents);
-        allRejectedContentIds = _.uniq(this._programDetails.config.rejectedContents);
+        allAcceptedContentIds = _.uniq(this._programDetails.acceptedcontents);
+        allRejectedContentIds = _.uniq(this._programDetails.rejectedcontents);
       } else {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));

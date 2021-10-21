@@ -8,9 +8,8 @@ import { ConfigService, ResourceService, ToasterService, NavigationHelperService
 import * as _ from 'lodash-es';
 import { map, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
-
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
-import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
+import { ChapterListComponent } from '../../../sourcing/components';
 import { ICollectionComponentInput, IDashboardComponentInput,
   IPagination, IChapterListComponentInput} from '../../../sourcing/interfaces';
 import { InitialState, ISessionContext, IUserParticipantDetails } from '../../interfaces';
@@ -130,6 +129,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
+    this.sessionContext.telemetryPageDetails = {
+      telemetryPageId : this.telemetryPageId,
+      telemetryInteractCdata: this.telemetryInteractCdata
+    };
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
@@ -211,11 +214,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   checkSourcingStatus(content) {
-    if (this.programDetails.acceptedContents  &&
-         _.includes(this.programDetails.acceptedContents || [], content.identifier)) {
+    if (this.programDetails.acceptedcontents  &&
+         _.includes(this.programDetails.acceptedcontents || [], content.identifier)) {
             return 'Approved';
-      } else if (this.programDetails.rejectedContents  &&
-              _.includes(this.programDetails.rejectedContents || [], content.identifier)) {
+      } else if (this.programDetails.rejectedcontents  &&
+              _.includes(this.programDetails.rejectedcontents || [], content.identifier)) {
             return 'Rejected';
       } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
             return 'PendingForCorrections';
@@ -290,6 +293,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.setifSampleInSession();
       if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
         this.contentHelperService.initialize(this.programDetails, this.sessionContext);
+      } else {
+        this.contentHelperService.currentProgramDetails = this.programDetails;
       }
       this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
@@ -308,7 +313,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
-
+ 
   setProgramRole() {
     //const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
     //if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus)) {
@@ -320,6 +325,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.currentRoles = this.userService.getMyRoleForProgram(this.nominationDetails);
         } else {
           this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+        }
+
+        const defaultContributeOrgReview = _.get(this.programDetails, 'config.defaultContributeOrgReview');
+        const programType = _.get(this.programDetails, 'type');
+        const isContributingOrgContributor = this.userService.isContributingOrgContributor(this.sessionContext.nominationDetails);
+        const isDefaultContributingOrg = this.userService.isDefaultContributingOrg(this.programDetails);;
+        if (defaultContributeOrgReview === false && (programType === 'restricted' || 
+        (isContributingOrgContributor && isDefaultContributingOrg && _.get(this.sessionContext, 'currentRoles').includes('CONTRIBUTOR') && this.currentNominationStatus === 'Approved'))) {
+          this.sessionContext.currentOrgRole = 'individual';
         }
       } else {
         this.sessionContext.currentRoles = ['CONTRIBUTOR'];
@@ -976,7 +990,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showCollectionLevelUploadContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
     this.visibility['showViewContribution'] = this.currentNominationStatus === 'Approved' && !canAcceptContribution && isProgramForCollections;
     this.visibility['showReviewContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
-    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || this.currentNominationStatus === 'Initiated' || this.currentNominationStatus === 'Pending' || this.currentNominationStatus === 'Approved') && isProgramForNoCollections;
+    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
+    this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
   }
 
   getCollectionCategoryDefinition() {

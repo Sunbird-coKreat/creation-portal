@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { UserService, ProgramsService, ActionService, FrameworkService } from '@sunbird/core';
+import { UserService, ProgramsService, ActionService, FrameworkService, ContentHelperService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, IUserProfile } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
@@ -10,6 +10,7 @@ import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -79,6 +80,7 @@ export class BulkUploadComponent implements OnInit {
     private helperService: HelperService,
     public actionService: ActionService,
     public frameworkService: FrameworkService,
+    public contentHelperService: ContentHelperService,
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
@@ -177,22 +179,22 @@ export class BulkUploadComponent implements OnInit {
     const reqData = {
       filters: {
         program_id: _.get(this.programContext, 'program_id', ''),
-        collection_id: _.get(this.sessionContext, 'collection', ''),
         type: 'bulk_upload',
         createdby: _.get(this.userService, 'userid', '')
       },
       limit: 1
     };
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      reqData.filters['collection_id']= _.get(this.sessionContext, 'collection', '')
+    }
     this.bulkJobService.getBulkOperationStatus(reqData)
       .subscribe((statusResponse) => {
         const count = _.get(statusResponse, 'result.count', 0);
         if (!count) {
           return;
         }
-
         this.process = _.first(_.get(statusResponse, 'result.process', []));
         this.oldProcessStatus = this.process.status;
-        // console.log('process', JSON.stringify(this.process));
         this.searchContentWithProcessId();
         this.bulkUploadState = 5;
       }, (error) => {
@@ -477,12 +479,14 @@ export class BulkUploadComponent implements OnInit {
       { name: 'File Format', inputName: 'fileFormat', required: true, requiredError, headerError, in: this.bulkUploadConfig.fileFormats, inError },
       { name: 'File Path', inputName: 'source', required: true, requiredError, headerError, unique: true, uniqueError, isUrl: true, urlError },
       { name: 'Content Type', inputName: 'contentType', required: true, requiredError, headerError, in: contentTypes, inError },
-      { name: 'Level 1 Textbook Unit', inputName: 'level1', required: true, requiredError, headerError },
-      { name: 'Level 2 Textbook Unit', inputName: 'level2', headerError },
-      { name: 'Level 3 Textbook Unit', inputName: 'level3', headerError },
-      { name: 'Level 4 Textbook Unit', inputName: 'level4', headerError },
     ];
 
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      headers.push ({ name: 'Level 1 Textbook Unit', inputName: 'level1', required: true, requiredError, headerError });
+      headers.push ({ name: 'Level 2 Textbook Unit', inputName: 'level2', required: false, requiredError, headerError });
+      headers.push ({ name: 'Level 3 Textbook Unit', inputName: 'level3', required: false, requiredError, headerError });
+      headers.push ({ name: 'Level 4 Textbook Unit', inputName: 'level4', required: false, requiredError, headerError });
+    }
      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
        return {
@@ -505,39 +509,40 @@ export class BulkUploadComponent implements OnInit {
 
     this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
     const validateRow = (row, rowIndex) => {
-      if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
-        const name = headers.find((r) => r.inputName === 'level1').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
-        return;
-      } else if (_.isEmpty(row.level3) && !_.isEmpty(row.level4)) {
-        const name = headers.find((r) => r.inputName === 'level3').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
+      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+        if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
+          const name = headers.find((r) => r.inputName === 'level1').name || '';
+          this.setError(`${name} is missing at row: ${rowIndex}`);
+          return;
+        } else if (_.isEmpty(row.level3) && !_.isEmpty(row.level4)) {
+          const name = headers.find((r) => r.inputName === 'level3').name || '';
+          this.setError(`${name} is missing at row: ${rowIndex}`);
 
-        if (_.isEmpty(row.level2)) {
+          if (_.isEmpty(row.level2)) {
+            const name = headers.find((r) => r.inputName === 'level2').name || '';
+            this.setError(`${name} is missing at row: ${rowIndex}`);
+          }
+
+          if (_.isEmpty(row.level1)) {
+            const name = headers.find((r) => r.inputName === 'level1').name || '';
+            this.setError(`${name} is missing at row: ${rowIndex}`);
+          }
+          return;
+        } else if (_.isEmpty(row.level2) && !_.isEmpty(row.level3)) {
           const name = headers.find((r) => r.inputName === 'level2').name || '';
           this.setError(`${name} is missing at row: ${rowIndex}`);
-        }
 
-        if (_.isEmpty(row.level1)) {
+          if (_.isEmpty(row.level1)) {
+            const name = headers.find((r) => r.inputName === 'level1').name || '';
+            this.setError(`${name} is missing at row: ${rowIndex}`);
+          }
+          return;
+        } else if (_.isEmpty(row.level1) && !_.isEmpty(row.level2)) {
           const name = headers.find((r) => r.inputName === 'level1').name || '';
           this.setError(`${name} is missing at row: ${rowIndex}`);
+          return;
         }
-        return;
-      } else if (_.isEmpty(row.level2) && !_.isEmpty(row.level3)) {
-        const name = headers.find((r) => r.inputName === 'level2').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
-
-        if (_.isEmpty(row.level1)) {
-          const name = headers.find((r) => r.inputName === 'level1').name || '';
-          this.setError(`${name} is missing at row: ${rowIndex}`);
-        }
-        return;
-      } else if (_.isEmpty(row.level1) && !_.isEmpty(row.level2)) {
-        const name = headers.find((r) => r.inputName === 'level1').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
-        return;
       }
-
       // Validate the textbook level units
       const keys = ['level1', 'level2', 'level3', 'level4'];
       _.map(keys, key => {
@@ -682,18 +687,20 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getContentObject(row) {
-    const unitName = row.level4 || row.level3 || row.level2 || row.level1;
-    const unitId = this.getUnitIdFromName(row);
     const userId = _.get(this.userService, 'userid');
-    const collectionId = _.get(this.sessionContext, 'collection', '');
     const source = this.getDownloadableLink(row.source);
     const license = _.get(row, 'license');
     const organisationId =  _.get(this.sessionContext, 'nominationDetails.organisation_id');
-
-    const reqBody = this.sharedContext.reduce((obj, context) => {
-      return { ...obj, [context]: this.sessionContext[context] };
-    }, {});
-    let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      const reqBody = this.sharedContext.reduce((obj, context) => {
+        return { ...obj, [context]: this.sessionContext[context] };
+      }, {});
+    } else {
+      const reqBody = this.sharedContext.reduce((obj, context) => {
+        return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context)};
+      }, {});
+    }
+    let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.programContext.target_type);
 
     let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
     frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
@@ -723,21 +730,24 @@ export class BulkUploadComponent implements OnInit {
         primaryCategory: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
-        collectionId: collectionId,
-        programId: _.get(this.sessionContext, 'programId', ''),
-        unitIdentifiers: [unitId],
+        programId: this.programContext.program_id,
         copyright: row.copyright,
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
         ...(_.pickBy(sharedMetaData, i => !_.isEmpty(i))),
         ...(_.pickBy(frameworkMetaData, i => !_.isEmpty(i)))
-      },
-      collection: [{
-        identifier: collectionId,
-        unitId: unitId
-      }]
+      }
     };
+
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      content.metadata.collectionId = _.get(this.sessionContext, 'collection', '');
+      content.metadata.unitIdentifiers = this.getUnitIdFromName(row);
+      content['collection'] = [{
+        identifier: content.metadata.collectionId,
+        unitId: content.metadata.unitIdentifiers
+      }]
+    }
 
     if (!_.isEmpty(license)) {
       content.metadata.license = license;
