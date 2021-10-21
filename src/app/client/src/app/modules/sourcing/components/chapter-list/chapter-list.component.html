@@ -196,7 +196,7 @@
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
                 <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
               </div>
-              <app-bulk-upload
+                <app-bulk-upload
                 *ngIf="showBulkUploadOption()"
                 [sharedContext]="sharedContext"
                 [sessionContext]="sessionContext"

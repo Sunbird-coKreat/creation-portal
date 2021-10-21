@@ -67,6 +67,9 @@ export class ContentHelperService {
       this._dynamicInputs = input;
       this._dynamicInputs$.next(input);
     }
+    set currentProgramDetails(programDetails) {
+      this._programDetails = programDetails;
+    }
     handleContentCreation(event) {
       this._sessionContext['templateDetails'] =  event.templateDetails;
       if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
