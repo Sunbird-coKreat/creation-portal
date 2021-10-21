@@ -1,11 +1,4 @@
-<!-- <app-program-header *ngIf="!showLoader" [headerComponentInput]="headerComponentInput" (emitTabChange)="tabChangeHandler($event)" [appTelemetryImpression]="telemetryImpression"></app-program-header> -->
-
 <div *ngIf="currentStage === 'programComponent' && programDetails">
-
-  <!-- <ng-container *ngIf="!showLoader && (!nominated || nominationDetails?.status === 'Initiated'); else nominatedBlock">
-    <ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
-  </ng-container>
-  <ng-template #nominatedBlock> -->
 <div class="sb-bg-color-primary-0 py-16">
 	<div class="ui container">
 		<app-program-header *ngIf="!loaders.showProgramHeaderLoader"
@@ -57,6 +50,48 @@
 
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
+					<div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15">
+						<div class="w-40 pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document mt-10">
+							<div *ngIf="currentNominationStatus === 'Approved' && isContributingOrgAdmin">
+								<div *ngIf="isContributingOrgAdmin" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
+								<div *ngIf="isContributingOrgAdmin" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
+								<div *ngIf="isContributingOrgAdmin" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+								<div *ngIf="isContributingOrgAdmin" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.live || 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div>
+								<!-- <div *ngIf="isContributingOrgAdmin" class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
+								<div *ngIf="isContributingOrgAdmin" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.pending|| 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div> -->
+							</div>
+						</div>
+						<div class="d-flex text-right">
+							<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isContributingOrgAdmin}"
+							appTelemetryInteract
+							[telemetryInteractEdata]="getTelemetryInteractEdata('view_content_guidelines_document', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+							[telemetryInteractObject]="telemetryInteractObject"
+							[telemetryInteractCdata]="telemetryInteractCdata"
+							[telemetryInteractPdata]="telemetryInteractPdata">
+								<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
+								{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
+							</a>
+							<button *ngIf="(!programDetails.target_type || programDetails.target_type === 'collections') && (isContributingOrgAdmin || sessionContext?.currentRoles?.includes('REVIEWER'))" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+							appTelemetryInteract
+							[telemetryInteractEdata]="getTelemetryInteractEdata(textbookFiltersApplied ? 'modify_filters' : 'filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+							[telemetryInteractObject]="telemetryInteractObject"
+							[telemetryInteractCdata]="telemetryInteractCdata"
+							[telemetryInteractPdata]="telemetryInteractPdata"> <i class="filter icon"></i>
+								<i [ngClass]="{'sb-dock-circle': textbookFiltersApplied}"></i>
+								<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': targetCollections }}</span>
+								<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
+							</button>
+							<button class="sb-btn sb-btn-normal sb-btn-primary mx-10" *ngIf="visibility.showProgramLevelContentUpload"
+									(click)="showResourceTemplate();" appTelemetryInteract
+									[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+									[telemetryInteractObject]="telemetryInteractObject"
+									[telemetryInteractCdata]="telemetryInteractCdata"
+									[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts?.lbl?.noCollectionsProject?.contentUpload }}</button>
+							<app-bulk-upload *ngIf="visibility.showProgramLevelBulkUpload"
+								[sharedContext]="programDetails.config.sharedContext" [sessionContext]="sessionContext" [programContext]="programDetails">
+								</app-bulk-upload>
+						</div>
+					</div>
 					<div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document ui grid mt-10">
 						<div class="twelve wide tablet five wide computer column">
 							<div *ngIf="currentNominationStatus === 'Approved' && isContributingOrgAdmin">
@@ -93,7 +128,10 @@
 									[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 									[telemetryInteractObject]="telemetryInteractObject"
 									[telemetryInteractCdata]="telemetryInteractCdata"
-									[telemetryInteractPdata]="telemetryInteractPdata">Create/Upload Content</button>
+									[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts?.lbl?.noCollectionsProject?.contentUpload }}</button>
+							<app-bulk-upload *ngIf="visibility.showProgramLevelBulkUpload"
+								[sharedContext]="programDetails.config.sharedContext" [sessionContext]="sessionContext" [programContext]="programDetails">
+								</app-bulk-upload>
 						</div>
 					</div>
 					<div class="sb-pageSection pt-5">
