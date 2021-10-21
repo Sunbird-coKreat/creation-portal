@@ -37,6 +37,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public telemetryPageId: string;
   private onComponentDestroy$ = new Subject<any>();
   public hideSubmitForReviewBtn = false;
+  public enableQuestionCreation = true;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -60,6 +61,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.programContext = _.get(this.questionSetEditorComponentInput, 'programContext');
     this.unitIdentifier  = _.get(this.questionSetEditorComponentInput, 'unitIdentifier');
     this.hideSubmitForReviewBtn = _.get(this.questionSetEditorComponentInput, 'hideSubmitForReviewBtn') || false;
+    this.enableQuestionCreation = _.isUndefined(_.get(this.questionSetEditorComponentInput, 'enableQuestionCreation')) ? true : 
+      _.get(this.questionSetEditorComponentInput, 'enableQuestionCreation');
 
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
@@ -67,7 +70,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.userProfile = this.userService.userProfile;
     this.getCollectionDetails().subscribe(data => {
       this.collectionDetails = data.result.questionset;
-      this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
+      this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' && this.enableQuestionCreation ? true : false;
       // this.getFrameWorkDetails();
       this.setEditorConfig();
       this.showLoader = false;
@@ -134,6 +137,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false,
+        enableQuestionCreation: this.enableQuestionCreation, 
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
       }
     };
@@ -149,6 +153,11 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   private getEditorMode() {
     const contentStatus = this.collectionDetails.status.toLowerCase();
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
+    // If loggedin user is an orgAdmin and project status is draft
+    if(this.canModifyProjects()) {
+      return 'edit';
+    }
 
     // If loggedin user is a contentCreator and content status is draft
     if (submissionDateFlag && this.canSubmit()) {
@@ -253,6 +262,12 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     const resourceStatus = this.collectionDetails.status.toLowerCase();
     // tslint:disable-next-line:max-line-length
     return !!(this.hasAccessFor(['CONTRIBUTOR']) && resourceStatus === 'draft' && this.userService.userid === this.collectionDetails.createdBy);
+  }
+
+  canModifyProjects() {
+    const programStatus = this.programContext.status.toLowerCase();
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor(['ORG_ADMIN']) && programStatus === 'draft' && this.userService.userid === this.programContext.createdBy);
   }
 
   hasAccessFor(roles: Array<string>) {

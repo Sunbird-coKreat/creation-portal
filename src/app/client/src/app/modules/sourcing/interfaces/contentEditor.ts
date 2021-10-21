@@ -11,4 +11,6 @@ export interface IContentEditorComponentInput {
     originCollectionData: any;
     sourcingStatus: string;
     selectedSharedContext: any;
+    hideSubmitForReviewBtn?: boolean;
+    enableQuestionCreation?: boolean;
 }
