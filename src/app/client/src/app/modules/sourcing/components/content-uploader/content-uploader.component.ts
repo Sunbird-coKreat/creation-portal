@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef,
-  AfterViewInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+  AfterViewInit, ChangeDetectorRef, OnDestroy , ViewRef } from '@angular/core';
 import { FineUploader } from 'fine-uploader';
 import { ToasterService, ConfigService, ResourceService, NavigationHelperService,
   BrowserCacheTtlService, HttpOptions } from '@sunbird/shared';
@@ -177,7 +177,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (_.get(this.contentUploadComponentInput, 'action') === 'preview') {
       this.showUploadModal = false;
       this.showPreview = true;
-      this.cd.detectChanges();
+      if (!(this.cd as ViewRef).destroyed) {
+        this.cd.detectChanges();
+      }
       this.getUploadedContentMeta(_.get(this.contentUploadComponentInput, 'contentId'));
     }
     this.segregateFileTypes();
@@ -770,7 +772,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
       this.fetchCategoryDetails();
       this.getTelemetryData();
-      this.cd.detectChanges();
+      if (!(this.cd as ViewRef).destroyed) {
+        this.cd.detectChanges();
+      }
     });
   }
 
@@ -996,6 +1000,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             this.uploadedContentMeta.emit({
               contentId: res.result.node_id
             });
+          });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.m0062);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
+          this.uploadedContentMeta.emit({
+            contentId: res.result.content_id
           });
         }
       }, (err) => {

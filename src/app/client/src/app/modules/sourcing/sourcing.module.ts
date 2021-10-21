@@ -79,6 +79,6 @@ import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ SanitizeHtmlPipe ]
+  exports: [ BulkUploadComponent, SanitizeHtmlPipe ]
 })
 export class SourcingModule { }
