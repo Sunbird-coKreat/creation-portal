@@ -460,31 +460,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.fineUploaderUI.nativeElement.remove();
   }
 
-  initiateCollectionEditor() {
-  
-    this.initializeCollectionEditorInput();
-    const createContentReq = this.helperService.createContent(this.questionSetEditorComponentInput);
-    createContentReq.pipe(map((res: any) => res.result), catchError(
-      err => {
-       const errInfo = {
-        errorMsg: 'Unable to create contentId, Please Try Again',
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: {}
-      };
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-      }))
-      .subscribe(result => {
-        this.questionSetEditorComponentInput.contentId = result.identifier;
-        this.programsService.emitHeaderEvent(false);
-        // tslint:disable-next-line:max-line-length
-        // this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
-        this.collectionEditorVisible = true;
-      });
-
-  }
-
   initializeCollectionEditorInput() {
     this.setFrameworkAttributesToconfig();    
     const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
@@ -505,8 +480,54 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.questionSetEditorComponentInput['action'] = 'creation';
     this.questionSetEditorComponentInput['programContext'] = this.programDetails;
     this.questionSetEditorComponentInput['enableQuestionCreation'] = false;
+    this.questionSetEditorComponentInput['setDefaultCopyright'] = true;
     this.questionSetEditorComponentInput['hideSubmitForReviewBtn'] = true;
   }
+  
+  initiateCollectionEditor(identifier?) {  
+    this.initializeCollectionEditorInput();
+    if(_.isEmpty(identifier)) {
+    const createContentReq = this.helperService.createContent(this.questionSetEditorComponentInput);
+    createContentReq.pipe(map((res: any) => res.result), catchError(
+      err => {
+       const errInfo = {
+        errorMsg: 'Unable to create contentId, Please Try Again',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: {}
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      }))
+      .subscribe(result => {
+        this.questionSetEditorComponentInput.contentId = result.identifier;
+        this.programsService.emitHeaderEvent(false);        
+        this.collectionEditorVisible = true;
+      });
+    } else {
+        this.questionSetEditorComponentInput.contentId = identifier;
+        this.programsService.emitHeaderEvent(false);        
+        this.collectionEditorVisible = true;
+    }
+  }
+
+  collectionEditorEventListener(event) {
+    console.log(event);
+    switch (event.action) {           
+     case 'backContent':
+       this.collectionEditorVisible = false;
+       this.navigateTo(2);
+      break;
+     case 'saveContent':
+       this.collectionEditorVisible = false;
+       this.navigateTo(2);
+       this.onCollectionCheck(event.collection, true);
+      break;
+     default:
+        this.collectionEditorVisible = false;
+        break;      
+    }
+   }
 
   uploadContent() {
     if (this.uploader.getFile(0) == null) {

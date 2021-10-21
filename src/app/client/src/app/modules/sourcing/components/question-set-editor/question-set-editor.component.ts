@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
 import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
@@ -20,6 +20,7 @@ import { ThrowStmt } from '@angular/compiler';
 })
 export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   @Input() questionSetEditorComponentInput: IContentEditorComponentInput;
+  @Output() eventEmitter = new EventEmitter<any>();
   questionSetEditorInput: any;
   editorConfig: any;
   editorParams: any;
@@ -38,6 +39,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   private onComponentDestroy$ = new Subject<any>();
   public hideSubmitForReviewBtn = false;
   public enableQuestionCreation = true;
+  public setDefaultCopyright = false;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -61,6 +63,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.programContext = _.get(this.questionSetEditorComponentInput, 'programContext');
     this.unitIdentifier  = _.get(this.questionSetEditorComponentInput, 'unitIdentifier');
     this.hideSubmitForReviewBtn = _.get(this.questionSetEditorComponentInput, 'hideSubmitForReviewBtn') || false;
+    this.setDefaultCopyright = _.get(this.questionSetEditorComponentInput, 'setDefaultCopyright') || false;
     this.enableQuestionCreation = _.isUndefined(_.get(this.questionSetEditorComponentInput, 'enableQuestionCreation')) ? true : 
       _.get(this.questionSetEditorComponentInput, 'enableQuestionCreation');
 
@@ -133,12 +136,12 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         primaryCategory: this.collectionDetails.primaryCategory,
         objectType: 'QuestionSet',
         mode: this.getEditorMode(),
-        setDefaultCopyRight: false,
+        setDefaultCopyRight: this.setDefaultCopyright,
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false,
         enableQuestionCreation: this.enableQuestionCreation, 
-        hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
+        hideSubmitForReviewBtn: this.hideSubmitForReviewBtn
       }
     };
     if (this.showQuestionEditor) {
@@ -267,7 +270,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   canModifyProjects() {
     const programStatus = this.programContext.status.toLowerCase();
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['ORG_ADMIN']) && programStatus === 'draft' && this.userService.userid === this.programContext.createdBy);
+    return !!(this.hasAccessFor(['ORG_ADMIN']) && programStatus === 'draft' && this.userService.userid === this.programContext.createdby);
   }
 
   hasAccessFor(roles: Array<string>) {
@@ -275,6 +278,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   editorEventListener(event) {
+   console.log(event);
    switch (event.action) {
     case 'submitContent' :
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content
@@ -300,6 +304,9 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       this.programsService.emitHeaderEvent(true);
       this.programStageService.removeLastStage();
       break;
+    case 'saveContent':
+      this.programsService.emitHeaderEvent(true);
+      if(this.enableQuestionCreation === false) this.eventEmitter.emit(event)
     case 'saveCollection': // saving as draft
     default:
       this.programStageService.removeLastStage();
