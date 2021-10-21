@@ -639,6 +639,13 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
           }, (err) => {
             this.toasterService.error(this.resourceService.messages.fmsg.m0099);
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.m0061);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
+          this.uploadedContentMeta.emit({
+            contentId: res.result.content_id
+          });
         }
        }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m0099);
@@ -658,6 +665,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.programStageService.removeLastStage();
             this.programsService.emitHeaderEvent(true);
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.m0062);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
         }
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00100);
@@ -676,6 +687,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
             this.programStageService.removeLastStage();
             this.programsService.emitHeaderEvent(true);
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.m0063);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
         }
       }, (err) => {
         this.toasterService.error(this.resourceService.messages.fmsg.m00101);
