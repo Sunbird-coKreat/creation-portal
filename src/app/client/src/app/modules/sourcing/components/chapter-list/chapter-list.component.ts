@@ -19,7 +19,6 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { HelperService } from '../../services/helper.service';
 import { HttpClient } from '@angular/common/http';
 import { ProgramTelemetryService } from '../../../program/services';
-
 interface IDynamicInput {
   contentUploadComponentInput?: IContentUploadComponentInput;
   resourceTemplateComponentInput?: IResourceTemplateComponentInput;
@@ -109,7 +108,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public targetCollection: string;
   public unsubscribe = new Subject<void>();
   public firstLevelFolderLabel: string;
-
+  public detailBlueprintFormConfig:any;
   public addFormLibraryInput = {};
   public reusedContributions = [];
   editorConfig: any;
@@ -222,6 +221,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       }
   ]
 
+    this.fetchBlueprintTemplate();
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
   }
@@ -345,37 +345,136 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         understand: 0,
         apply: 0
       };
-      _.forEach(this.localBlueprint.questionTypes, (value, key) => {
-        value = parseInt(value);
-        this.localBlueprint.count.total = this.localBlueprint.count.total + value;
-        if(key === "LA" || key === "SA" || key === "VSA") {
-          if(key === "LA") this.localBlueprint.count.la = this.localBlueprint.count.la + value;
-          if(key === "SA") this.localBlueprint.count.sa = this.localBlueprint.count.sa + value;
-          if(key === "VSA") this.localBlueprint.count.vsa = this.localBlueprint.count.vsa + value;
-          this.localBlueprint.count.subjective = this.localBlueprint.count.subjective + value;
-        }
-        else if(key === "MCQ") {
-          this.localBlueprint.count.multipleChoice = this.localBlueprint.count.multipleChoice + value;
-        }
-        else if(key === "Objective") {
-          this.localBlueprint.count.objective = this.localBlueprint.count.objective + value;
-        }
-      })
-      _.forEach(this.localBlueprint.learningLevels, (value, key) => {
-        value = parseInt(value);
-        if(key === "apply") {
-          this.localBlueprint.count.apply = this.localBlueprint.count.apply + value;
-        }
-        else if(key === "remember") {
-          this.localBlueprint.count.remember = this.localBlueprint.count.remember + value;
-        }
-        else if(key === "understand") {
-          this.localBlueprint.count.understand = this.localBlueprint.count.understand + value;
-        }
-      })
-      this.localBlueprint.count.topics = this.localBlueprint.topics && this.localBlueprint.topics.length;
-      this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningOutcomes && this.localBlueprint.learningOutcomes.length;
+
+      if (this.localBlueprint.questionTypes) {
+        _.forEach(this.localBlueprint.questionTypes, (value, key) => {
+          value = parseInt(value);
+          this.localBlueprint.count.total = this.localBlueprint.count.total + value;
+          if(key === "LA" || key === "SA" || key === "VSA") {
+            if(key === "LA") this.localBlueprint.count.la = this.localBlueprint.count.la + value;
+            if(key === "SA") this.localBlueprint.count.sa = this.localBlueprint.count.sa + value;
+            if(key === "VSA") this.localBlueprint.count.vsa = this.localBlueprint.count.vsa + value;
+            this.localBlueprint.count.subjective = this.localBlueprint.count.subjective + value;
+          }
+          else if(key === "MCQ") {
+            this.localBlueprint.count.multipleChoice = this.localBlueprint.count.multipleChoice + value;
+          }
+          else if(key === "Objective") {
+            this.localBlueprint.count.objective = this.localBlueprint.count.objective + value;
+          }
+        })
+        _.forEach(this.localBlueprint.learningLevels, (value, key) => {
+          value = parseInt(value);
+          if(key === "apply") {
+            this.localBlueprint.count.apply = this.localBlueprint.count.apply + value;
+          }
+          else if(key === "remember") {
+            this.localBlueprint.count.remember = this.localBlueprint.count.remember + value;
+          }
+          else if(key === "understand") {
+            this.localBlueprint.count.understand = this.localBlueprint.count.understand + value;
+          }
+        })
+        this.localBlueprint.count.topics = this.localBlueprint.topics && this.localBlueprint.topics.length;
+        this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningOutcomes && this.localBlueprint.learningOutcomes.length;
+      } else {
+        _.forEach(this.localBlueprint, (value, key) => {
+          value = parseInt(value);
+          if(key === "LA" || key === "SA" || key === "VSA") {
+            this.localBlueprint.count.total = this.localBlueprint.count.total + value;
+            if(key === "LA") this.localBlueprint.count.la = this.localBlueprint.count.la + value;
+            if(key === "SA") this.localBlueprint.count.sa = this.localBlueprint.count.sa + value;
+            if(key === "VSA") this.localBlueprint.count.vsa = this.localBlueprint.count.vsa + value;
+            this.localBlueprint.count.subjective = this.localBlueprint.count.subjective + value;
+          }
+          else if(key === "MCQ") {
+            this.localBlueprint.count.total = this.localBlueprint.count.total + value;
+            this.localBlueprint.count.multipleChoice = this.localBlueprint.count.multipleChoice + value;
+          }
+          else if(key === "Objective") {
+            this.localBlueprint.count.total = this.localBlueprint.count.total + value;
+            this.localBlueprint.count.objective = this.localBlueprint.count.objective + value;
+          }
+        })
+        _.forEach(this.localBlueprint, (value, key) => {
+          value = parseInt(value);
+          if(key === "apply") {
+            this.localBlueprint.count.apply = this.localBlueprint.count.apply + value;
+          }
+          else if(key === "remember") {
+            this.localBlueprint.count.remember = this.localBlueprint.count.remember + value;
+          }
+          else if(key === "understand") {
+            this.localBlueprint.count.understand = this.localBlueprint.count.understand + value;
+          }
+        })
+        this.localBlueprint.count.topics = this.localBlueprint.topic && this.localBlueprint.topic.length;
+        this.localBlueprint.count.learningOutcomes = this.localBlueprint.learningoutcome && this.localBlueprint.learningoutcome.length;
+      }
     }
+  }
+
+  mapBlueprintData(blueprintCreate){
+    let isOldBlueprintForm = false;
+    blueprintCreate.properties.forEach(element => {
+      if(element.fields == undefined){
+        isOldBlueprintForm = true;
+      }
+    });
+    let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
+    let localBlueprintData = _.get(localBlueprintMap, `${this.collection && this.collection.code}`);
+
+    if (isOldBlueprintForm){
+      _.forEach(localBlueprintData, (prop, key) => {
+          if (key === 'learningOutcomes'){
+            localBlueprintData['learningoutcome'] = _.map(prop, data => {
+              return data.name;
+            });
+          }
+          if (key === 'topics'){
+            localBlueprintData['topic'] = _.map(prop, data => {
+              return data.name;
+            });
+          }
+          _.forEach(prop, (element, keyValue) => {
+            if (key === "questionTypes" || key === "learningLevels"){
+              localBlueprintData[keyValue] = element;
+            }
+          });
+      });
+    }
+    return localBlueprintData;
+  }
+  fetchBlueprintTemplate(): void {
+    let localBlueprintMap = _.get(this.programContext, "config.blueprintMap");
+    let localBlueprintData = _.get(localBlueprintMap, `${this.collection && this.collection.code}`);
+
+    if (!_.isEmpty(localBlueprintData)) {
+      this.programsService.getCollectionCategoryDefinition((this.collection && this.collection.primaryCategory)|| 'Question paper', this.programContext.rootorg_id).subscribe(res => {
+        let templateDetails = res.result.objectCategoryDefinition;
+        if(templateDetails && templateDetails.forms) {
+          let blueprintData = this.mapBlueprintData(templateDetails.forms.blueprintCreate);
+          this.blueprintTemplate = templateDetails.forms.blueprintCreate;
+          this.detailBlueprintFormConfig = this.blueprintTemplate.properties;
+          this.detailBlueprintFormConfig = this.helperService.initializeSbFormFields(this.sessionContext, this.detailBlueprintFormConfig);
+          this.detailBlueprintFormConfig.forEach((element) => {
+            if(element.fields) {
+              element.fields.forEach(field => {
+                field.editable = false;
+                field.default = blueprintData[field.code];
+                if (field.code === "learningoutcome" || field.code === "learningOutcomes")
+                {
+                  field.inputType = 'nestedselect';
+                  field.default = blueprintData[field.code];
+                  delete field.depends;
+                }
+              });
+            }
+          });
+          this.setLocalBlueprint();
+        }
+      })
+   }
   }
 
   viewBlueprint(): void {
@@ -400,13 +499,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }
 
-        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
-          this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
-          this.sessionContext['addFromLibraryBetaEnabled'] = this.collectionSourcingConfig.addFromLibraryBetaEnabled;
-        }
-
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
-          this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -415,7 +508,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
           this.setLocalBlueprint();
         }
-
         this.levelOneChapterList.push({
           identifier: 'all',
           // tslint:disable-next-line:max-line-length
@@ -888,13 +980,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             if(data.bloomsLevel && data.bloomsLevel.length) {
               _.forEach(data.bloomsLevel, (bl)=> {
                 bl = bl.toLowerCase();
-                if(bl === "remember") {
+                if(bl === "knowledge" || bl === "remember") {
                 this.countData['remember'] = this.countData['remember'] + 1;
                 }
-                else if(bl === "understand") {
+                else if(bl === "understanding" || bl === "understand") {
                   this.countData['understand'] = this.countData['understand'] + 1;
                 }
-                else if(bl === "apply") {
+                else if(bl === "application" || bl === "apply") {
                   this.countData['apply'] = this.countData['apply'] + 1;
                 }
               })
@@ -906,17 +998,26 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                   else {
                     this.localUniqueTopicsList.push(topic);
                     this.countData['topics'] = this.countData['topics'] + 1;
-                    this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
+                    if (this.localBlueprint.questionTypes) {
+                      this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topics, {name: topic})
+                    }else{
+                      this.topicsInsideBlueprint = this.topicsInsideBlueprint && _.some(this.localBlueprint.topic, {name: topic})
+                    }
                   }
                 })
               }
+
               if(data.learningOutcome && data.learningOutcome.length) {
                 _.forEach(data.learningOutcome, (lo)=> {
                   if(_.includes(this.localUniqueLearningOutcomesList, lo)) return;
                   else {
                     this.localUniqueLearningOutcomesList.push(lo);
                     this.countData['learningOutcomes'] = this.countData['learningOutcomes'] + 1;
-                    this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
+                    if (this.localBlueprint.questionTypes) {
+                      this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningOutcomes, {name: lo})
+                    }else{
+                      this.learningOutcomesInsideBlueprint = this.learningOutcomesInsideBlueprint && _.some(this.localBlueprint.learningoutcome, {name: lo})
+                    }
                   }
                 })
               }
@@ -1160,10 +1261,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       case 'preview':
         this.contentId = event.content.identifier;
         this.handlePreview(event);
-        break;
-      case 'addFromLibrary':
-        this.currentStage = 'addFromLibrary';
-        this.setAddLibraryInput();
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
@@ -1647,7 +1744,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   isSkipTwoLevelReviewEnabled() {
     return !!(_.get(this.programContext, 'config.defaultContributeOrgReview') === false);
   }
-
   onLibraryChange(event) {
     switch (event.action) {
       case 'add':
@@ -1690,5 +1786,4 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       searchFormConfig: this.searchConfig.properties
     };
   }
-
 }
