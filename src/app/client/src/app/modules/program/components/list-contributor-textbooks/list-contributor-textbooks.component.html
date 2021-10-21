@@ -275,8 +275,7 @@
 									{{resourceService.frmelmnts.lbl.sampleContentCount}}
 								</span>
 							</th>
-							<th class="w-5 cursor-pointer sb-sorting" *ngIf="contributor?.nominationData?.status == 'Approved'
-							&& programContext?.target_type === 'searchCriteria'" (click)="sortCollection('resourceStatusText')">
+							<th class="w-5 cursor-pointer sb-sorting" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'" (click)="sortCollection('resourceStatusText')">
 							{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
 								<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
