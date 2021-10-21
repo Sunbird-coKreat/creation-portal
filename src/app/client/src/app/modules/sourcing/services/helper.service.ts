@@ -856,6 +856,7 @@ export class HelperService {
   getContextObj(context, selectedSharedContext, programTargetType?) {
     if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria' || programTargetType === 'questionSets')) { // Here topic is fetched from unitLevel meta
       const fieldMustbeString = ['framework', 'board'];
+      // These fields are required to be strings in the create request object
       if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
         return {[context]:_.first(selectedSharedContext[context])}
       }
@@ -1298,7 +1299,7 @@ export class HelperService {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const sharedMetaData = this.fetchRootMetaData(sharedContext, selectedSharedContext, programContext.target_type);
-    _.merge(sharedMetaData, sessionContext.targetCollectionFrameworksData);
+    _.merge(sharedMetaData, sessionContext?.targetCollectionFrameworksData);
 
     let obj= {
       'name': 'Untitled',
@@ -1318,7 +1319,7 @@ export class HelperService {
       obj['collectionId'] = collectionId;
       obj['unitIdentifiers'] = [unitIdentifier];
     }
-    if (sessionContext.sampleContent) {
+    if (sessionContext?.sampleContent) {
      obj['sampleContent'] = true;
     }
     if (_.get(templateDetails, 'appIcon')) {

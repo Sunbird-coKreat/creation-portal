@@ -93,7 +93,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
-  public questionSetEditorComponentInput: IContentEditorComponentInput;
+  public questionSetEditorComponentInput: IContentEditorComponentInput = {
+    originCollectionData: undefined,
+    sourcingStatus: undefined,
+    selectedSharedContext: undefined
+  };
   public openProjectTargetTypeModal= false;
   private projectTargetType: string = null;
   public firstLevelFolderLabel: string;
@@ -476,20 +480,32 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.programsService.emitHeaderEvent(false);
         // tslint:disable-next-line:max-line-length
         // this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+        this.collectionEditorVisible = true;
       });
-    this.collectionEditorVisible = true;
+
   }
 
   initializeCollectionEditorInput() {
-    this.questionSetEditorComponentInput['sessionContext'] = undefined;
+    this.setFrameworkAttributesToconfig();    
+    const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
+    const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
+
+    this.questionSetEditorComponentInput['sessionContext'] = {
+      currentRoles: this.userService.userProfile.userRoles,
+    };
     this.questionSetEditorComponentInput['templateDetails'] = 
       {
-        name: this.programScope['selectedTargetCollectionObject']?.name,
-        modeOfCreation: _.lowerCase(this.programScope['selectedTargetCollectionObject']?.targetObjectType),
+        name: selectedTargetCollectionObject?.name,
+        modeOfCreation: objType,
+        mimeType: [_.get(_.find(this.configService.contentCategoryConfig.sourcingConfig.editor, {
+          type: objType
+        }), 'mimetype', 'application/vnd.sunbird.questionset')]
       };
-    this.questionSetEditorComponentInput['selectedSharedContext'] = this.programScope;
+    this.questionSetEditorComponentInput['selectedSharedContext'] = this.programConfig;
     this.questionSetEditorComponentInput['action'] = 'creation';
     this.questionSetEditorComponentInput['programContext'] = this.programDetails;
+    this.questionSetEditorComponentInput['enableQuestionCreation'] = false;
+    this.questionSetEditorComponentInput['hideSubmitForReviewBtn'] = true;
   }
 
   uploadContent() {
@@ -783,7 +799,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   getCollectionCategoryDefinition() {
     if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
-      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
+      let objType = _.get(this.programScope, 'selectedTargetCollectionObject.targetObjectType');
+      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, objType || 'Collection').subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
@@ -1103,9 +1120,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 onChangeTargetCollectionCategory() {
   this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
   this.setSelectedTargetCollectionObject();
-  this.showTexbooklist(true);
-  this.projectScopeForm.value.pcollections = [];
+    
+  if(this.projectTargetType !== 'questionSets') { 
+    this.showTexbooklist(true);    
+  }
   this.getCollectionCategoryDefinition();
+  this.projectScopeForm.value.pcollections = [];  
   this.tempCollections = [];
 }
 
@@ -1230,7 +1250,7 @@ showTexbooklist(showTextBookSelector = true) {
     return collections;
   }
   setFrameworkAttributesToconfig() {
-    if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
+    if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria' || this.projectTargetType === 'questionSets') {
       this.programConfig['boardIds'] = [];
       this.programConfig['gradeLevelIds'] = [];
       this.programConfig['mediumIds'] = [];
