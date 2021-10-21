@@ -1412,6 +1412,7 @@ export class HelperService {
                 field.range = _.map(frameworkCategories.terms, 'name');
               }else{
                 field.range = frameworkCategories.terms;
+                field.terms = frameworkCategories.terms;
               }
         }
          if (field.code === "learningOutcome") {
