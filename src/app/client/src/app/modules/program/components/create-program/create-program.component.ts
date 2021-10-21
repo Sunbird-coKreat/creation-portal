@@ -179,6 +179,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.initializeProjectTargetTypeForm();
         this.openProjectTargetTypeModal = true;
       }
+
+      if (!_.isEmpty(_.get(this.programDetails, 'config.contributors'))) {
+        this.setPreSelectedContributors(_.get(this.programDetails, 'config.contributors'));
+      }
     }, error => {
       const errInfo = {
         errorMsg:  'Fetching program details failed',
@@ -1767,7 +1771,7 @@ showTexbooklist(showTextBookSelector = true) {
     this.getCollectionCategoryDefinition();
     this.blueprintFormConfig = this.blueprintTemplate.properties;
   }
-  
+
   getFormattedData(formValue, fieldGroups) {
     // tslint:disable-next-line:only-arrow-functions
     const truthyformValue = _.pickBy(formValue, function(value, key) {
