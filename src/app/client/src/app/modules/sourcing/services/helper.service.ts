@@ -954,6 +954,7 @@ export class HelperService {
         }
         this.sendNotification.next(_.capitalize(action));
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
@@ -1020,6 +1021,7 @@ export class HelperService {
    if (msg) {
       this.toasterService.error(msg)
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
       return true;
     } else {
       return false;
