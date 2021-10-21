@@ -275,9 +275,13 @@
 									{{resourceService.frmelmnts.lbl.sampleContentCount}}
 								</span>
 							</th>
-							<th class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
-								<span>
-									{{resourceService.frmelmnts.lbl.status}}
+							<th class="w-5 cursor-pointer sb-sorting" *ngIf="contributor?.nominationData?.status == 'Approved'
+							&& programContext?.target_type === 'searchCriteria'" (click)="sortCollection('resourceStatusText')">
+							{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
+								<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
+									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
 							</th>
 							<th class="w-5">&nbsp;</th>
