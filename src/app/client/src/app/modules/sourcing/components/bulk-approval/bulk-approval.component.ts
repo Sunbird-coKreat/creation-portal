@@ -201,7 +201,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
         }
         reqFormat['metadata'] = {
           ..._.pick(item, ['framework', 'channel', 'name', 'code', 'mimeType', 'contentType', 'createdFor']),
-          ...{lastPublishedBy: this.userService.userProfile.userId}
+          ...{lastPublishedBy: this.userService.userProfile.userId}}
       }
       if (!_.isEmpty(reqFormat)) {
         if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
@@ -403,25 +403,32 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   prepareTableData() {
     const failedContent = _.filter(this.dikshaContents, content => content.status === 'Failed');
-    this.unitsInLevel = _.map(failedContent, content => {
-      return this.findFolderLevel(this.storedCollectionData, content.origin);
-    });
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      this.unitsInLevel = _.map(failedContent, content => {
+        return this.findFolderLevel(this.storedCollectionData, content.origin);
+      });
+    }
 
     try {
-      const headers = [
-       // tslint:disable-next-line:max-line-length
-       'identifier', 'name', 'contentType', 'Level 1 Textbook Unit', 'Level 2 Textbook Unit', 'Level 3 Textbook Unit', 'Level 4 Textbook Unit'
-      ];
+      const headers = ['identifier', 'name', 'contentType'];
+      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+        headers.push('Level 1 Textbook Unit');
+        headers.push('Level 2 Textbook Unit');
+        headers.push('Level 3 Textbook Unit');
+        headers.push('Level 4 Textbook Unit');
+      }
       const tableData = _.map(failedContent, (con, i) => {
         const result = _.pick(con, ['identifier', 'name', 'primaryCategory']);
-        const folderStructure = this.unitsInLevel[i];
-        this.unitGroup = [];
-        this.tree(folderStructure);
-        if (this.unitGroup && this.unitGroup.length) {
-          result['Level 1 Textbook Unit'] = this.unitGroup[0] && this.unitGroup[0].name || '';
-          result['Level 2 Textbook Unit'] = this.unitGroup[1] && this.unitGroup[1].name || '';
-          result['Level 3 Textbook Unit'] = this.unitGroup[2] && this.unitGroup[2].name || '';
-          result['Level 4 Textbook Unit'] = this.unitGroup[3] && this.unitGroup[3].name || '';
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const folderStructure = this.unitsInLevel[i];
+          this.unitGroup = [];
+          this.tree(folderStructure);
+          if (this.unitGroup && this.unitGroup.length) {
+            result['Level 1 Textbook Unit'] = this.unitGroup[0] && this.unitGroup[0].name || '';
+            result['Level 2 Textbook Unit'] = this.unitGroup[1] && this.unitGroup[1].name || '';
+            result['Level 3 Textbook Unit'] = this.unitGroup[2] && this.unitGroup[2].name || '';
+            result['Level 4 Textbook Unit'] = this.unitGroup[3] && this.unitGroup[3].name || '';
+          }
         }
         return result;
       });
