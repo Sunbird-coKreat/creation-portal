@@ -247,14 +247,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
 
-    if ((this.projectTargetType === 'collections')) {
+    if ((this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
       this.initializeFrameworkForTargetType('')
     }
     const channelData$ = this.frameworkService.readChannel();
     channelData$.subscribe((channelData) => {
       if (channelData) {
         this.programScope['userChannelData'] = channelData;
-        if (this.projectTargetType === 'searchCriteria' || this.projectTargetType === 'questionSets') {
+        if (this.projectTargetType === 'searchCriteria') {
           this.getFramewok().subscribe(
             (response) => {
               if (!response) {
@@ -292,6 +292,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         // tslint:disable-next-line:max-line-length
         this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
         this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
+        this.setSelectedTargetCollectionObject();
       }
     });
   }
@@ -339,7 +340,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
     this.projectScopeForm.controls['framework'].setValue([this.programScope.framework.identifier]);
-    if (this.projectScopeForm && this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') {
+    if (this.projectScopeForm && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
       this.projectScopeForm.controls['board'].setValue('');
       this.projectScopeForm.controls['medium'].setValue('');
       this.projectScopeForm.controls['gradeLevel'].setValue('');
@@ -1276,7 +1277,7 @@ showTexbooklist(showTextBookSelector = true) {
     return collections;
   }
   setFrameworkAttributesToconfig() {
-    if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria' || this.projectTargetType === 'questionSets') {
+    if (this.isFormValueSet.projectScopeForm && (this.projectTargetType === 'searchCriteria' || this.projectTargetType === 'questionSets')) {
       this.programConfig['boardIds'] = [];
       this.programConfig['gradeLevelIds'] = [];
       this.programConfig['mediumIds'] = [];
