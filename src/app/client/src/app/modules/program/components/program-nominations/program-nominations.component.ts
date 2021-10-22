@@ -103,6 +103,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public targetCollection: string;
   public targetCollections: string;
   public firstLevelFolderLabel: string;
+  public showBulkApprovalButton: Boolean = false;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -121,6 +122,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.getProgramDetails();
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.sessionContext.telemetryPageDetails = {
+      telemetryInteractCdata: this.telemetryInteractCdata,
+      telemetryPageId: this.telemetryPageId
+    }
     this.telemetryInteractObject = {};
     this.roles = [{name: 'REVIEWER'}, {name: 'NONE'}];
     this.roleNames = _.map(this.roles, 'name');
@@ -175,7 +180,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     return _.includes(this.userProfile.userRoles, 'ORG_ADMIN') &&
     this.router.url.includes('/sourcing');
   }
-
+  showBulkUpload() {
+    const isProgramForNoCollections = !!(this.programDetails.target_type && this.programDetails.target_type === 'searchCriteria')
+    const isSourcingSide = this.programsService.ifSourcingInstance();
+    const canAcceptContribution = this.helperService.canAcceptContribution(this.programDetails);;
+    return isSourcingSide && isProgramForNoCollections && canAcceptContribution;
+  }
   ngOnDestroy() {
     if (this.stageSubscription) {
       this.stageSubscription.unsubscribe();
@@ -466,6 +476,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getDashboardData(approvedNominations) {
     // tslint:disable-next-line:max-line-length
+        this.collectionHierarchyService.setProgram(this.programDetails);
         if (!_.isEmpty(this.contentAggregationData) || approvedNominations.length) {
           const contents = _.cloneDeep(this.contentAggregationData);
           let dashboardData;
@@ -593,10 +604,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.helperService.fetchProgramFramework(this.sessionContext);
-
+      this.showBulkApprovalButton = this.showBulkUpload();
       this.setTargetCollectionValue();
 
-      forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData()).subscribe(
+      forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
             this.checkActiveTab();
         },
@@ -935,9 +946,31 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  openContent(content) {
-    this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-    this.contentHelperService.openContent(content);
+  async openContent(content) {
+      this.contentHelperService.initialize(this.programDetails, this.sessionContext);
+      this.contentHelperService.openContent(content);
+  }
+  getOriginForApprovedContents() {
+    if (!_.isEmpty(this.programDetails.acceptedcontents)) {
+      const originRes = this.collectionHierarchyService.getOriginForApprovedContents(this.programDetails.acceptedcontents);
+      return originRes.pipe(
+        tap((response: any) => {
+        if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
+         const allRes = _.compact(_.concat(_.get(response, 'result.content'), _.get(response, 'result.QuestionSet')));
+          this.sessionContext['contentOrigins'] = {};
+          _.forEach(allRes, (obj) => {
+            if (obj.status == 'Live') {
+              this.sessionContext['contentOrigins'][obj.origin] = obj;
+            }
+          });
+        }
+        }),catchError((error) => {
+        console.log('Getting origin data failed');
+        return of(false);
+      }));
+    } else {
+      return of([]);
+    }
   }
   viewContribution(collection) {
     if (this.programDetails.target_type === 'searchCriteria') {
@@ -953,10 +986,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       telemetryPageId : this.config.telemetryLabels.pageId.sourcing.projectTargetCollection,
       telemetryInteractCdata: [...this.telemetryInteractCdata, { 'id': collection.identifier, 'type': 'linked_collection'}]
     };
-    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context, collection)};
-    }, {});
-    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
+    const collectionSharedProperties = this.helperService.getSharedProperties(this.programDetails, collection)
+    this.sessionContext = _.assign(this.sessionContext, collectionSharedProperties);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
@@ -971,7 +1002,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programStageService.addStage('chapterListComponent');
     this.setFrameworkCategories(collection);
   }
-
+/*
   getSharedContextObjectProperty(property) {
     if (property === 'channel') {
        return _.get(this.programDetails, 'config.scope.channel');
@@ -990,7 +1021,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   checkArrayCondition(param) {
     // tslint:disable-next-line:max-line-length
     this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
-  }
+  }*/
 
   public isEmptyObject(obj) {
     return !!(_.isEmpty(obj));

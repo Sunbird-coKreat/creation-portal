@@ -6,8 +6,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { UUID } from 'angular2-uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { map, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
+import { throwError, of } from 'rxjs';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../sourcing/components';
 import { ICollectionComponentInput, IDashboardComponentInput,
@@ -179,10 +179,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   getProgramDetails() {
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
-      /*this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
-      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
-      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
-      this.programContentTypes = (!_.isEmpty(this.programDetails.targetprimarycategories)) ? _.join(_.map(this.programDetails.targetprimarycategories, 'name'), ', ') : _.join(this.programDetails.content_types, ', ');*/
       this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
       this.roles =_.get(this.programDetails, 'config.roles');
       this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
@@ -213,60 +209,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
     }
   }
-  checkSourcingStatus(content) {
-    if (this.programDetails.acceptedcontents  &&
-         _.includes(this.programDetails.acceptedcontents || [], content.identifier)) {
-            return 'Approved';
-      } else if (this.programDetails.rejectedcontents  &&
-              _.includes(this.programDetails.rejectedcontents || [], content.identifier)) {
-            return 'Rejected';
-      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            return 'PendingForCorrections';
-      } else {
-        return null;
-      }
-  }
+ 
 
-  hasAccessFor(roles: Array<string>) {
-    return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
-  }
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
   }
-  shouldContentBeVisible(content) {
-    const hasAccessForContributor =  this.hasAccessFor(['CONTRIBUTOR']);
-    const hasAccessForReviewer =  this.hasAccessFor(['REVIEWER']);
-    const hasAccessForBoth =  hasAccessForContributor && hasAccessForReviewer;
-    const currentUserID = this.userService.userid;
-    const contributingOrgAdmin = this.userService.isContributingOrgAdmin();
-    const myOrgId = (this.userService.userRegistryData
-      && this.userService.userProfile.userRegData
-      && this.userService.userProfile.userRegData.User_Org
-      && this.userService.userProfile.userRegData.User_Org.orgId) ? this.userService.userProfile.userRegData.User_Org.orgId : '';
-    if ((this.currentNominationStatus && _.includes(['Approved', 'Rejected'], this.currentNominationStatus))
-      && content.sampleContent === true) {
-      return false;
-    // tslint:disable-next-line:max-line-length
-    } else if (hasAccessForBoth) {
-      if (( (_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && currentUserID !== content.createdBy && content.organisationId === myOrgId) || currentUserID === content.createdBy) {
-        return true;
-      } else if (content.status === 'Live' && content.sourceURL) {
-        return true;
-      }
-    } else if (hasAccessForReviewer && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
-    && currentUserID !== content.createdBy
-    && content.organisationId === myOrgId) {
-      return true;
-    } else if (hasAccessForContributor && currentUserID === content.createdBy) {
-      return true;
-    } else if (contributingOrgAdmin && content.organisationId === myOrgId) {
-      return true;
-    } else if (content.status === 'Live' && content.sourceURL) {
-      return true;
-    }
-    return false;
-  }
-
+  
   getNominationStatus() {
     const filters = {
       program_id: this.activatedRoute.snapshot.params.programId
@@ -291,17 +239,19 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.setProgramRole();
       this.handleActionButtons();
       this.setifSampleInSession();
-      if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
+      this.sessionContext['selectedSharedProperties'] = this.helperService.getSharedProperties(this.programDetails);
+      this.sessionContext = _.assign(this.sessionContext, this.sessionContext['selectedSharedProperties']);
+      /*if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
         this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-      } else {
-        this.contentHelperService.currentProgramDetails = this.programDetails;
-      }
+      }*/
       this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
       if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
         this.getProgramCollections();
-      } else {
-        this.getProgramContents();
+      } else if (this.programDetails.target_type == 'searchCriteria') {
+        this.getOriginForApprovedContents().subscribe((res) => {
+          this.getProgramContents();
+        })
       }
     }, error => {
       const errInfo = {
@@ -625,6 +575,28 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sortColumnOrgUsers = column;
     this.sortUsersList(this.allContributorOrgUsers);
   }
+  getOriginForApprovedContents() {
+    if (!_.isEmpty(this.programDetails.acceptedcontents)) {
+      const originRes = this.collectionHierarchyService.getOriginForApprovedContents(this.programDetails.acceptedcontents);
+      return originRes.pipe(
+        tap((response: any) => {
+        if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
+         const allRes = _.compact(_.concat(_.get(response, 'result.content'), _.get(response, 'result.QuestionSet')));
+          this.sessionContext['contentOrigins'] = {};
+          _.forEach(allRes, (obj) => {
+            if (obj.status == 'Live') {
+              this.sessionContext['contentOrigins'][obj.origin] = obj;
+            }
+          });
+        }
+        }),catchError((error) => {
+        console.log('Getting origin data failed');
+        return of(false);
+      }));
+    } else {
+      return of([]);
+    }
+  }
   getProgramContents() {
     let sampleValue, organisation_id, individualUserId, onlyCount;
     if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
@@ -643,9 +615,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         this.contributorTextbooks = _.cloneDeep(contents);
         _.map(this.contributorTextbooks, (content) => {
-          content['contentVisibility'] = this.shouldContentBeVisible(content);
-          content['sourcingStatus'] = this.checkSourcingStatus(content);
-          const temp = this.helperService.getContentDisplayStatus(content)
+          content['contentVisibility'] = this.contentHelperService.shouldContentBeVisible(content, this.programDetails, this.currentNominationStatus, this.sessionContext.currentRoles);
+          content['sourcingStatus'] = this.contentHelperService.checkSourcingStatus(content, this.programDetails);
+          const temp = this.contentHelperService.getContentDisplayStatus(content)
           content['resourceStatusText'] = temp[0];
           content['resourceStatusClass'] = temp[1];
           if (content.contentVisibility) {
@@ -791,13 +763,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.setFrameworkCategories(collection);
-    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context, collection)};
-    }, {});
-    /*this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: collection[context] || this.sharedContext[context]};
-    }, this.sharedContext);*/
-    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
+    const collectionSharedProperties = this.helperService.getSharedProperties(this.programDetails, collection)
+    this.sessionContext = _.assign(this.sessionContext, collectionSharedProperties);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
@@ -813,6 +780,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openContent(content) {
+    this.contentHelperService.initialize(this.programDetails, this.sessionContext);
     this.contentHelperService.openContent(content);
   }
 
@@ -983,6 +951,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const canAcceptContribution = this.helperService.canAcceptContribution(this.programDetails);
     const isProgramForCollections = !!(!this.programDetails.target_type || this.programDetails.target_type === 'collections')
     const isProgramForNoCollections = !!(this.programDetails.target_type && this.programDetails.target_type === 'searchCriteria')
+    const isSourcingSide = this.programsService.ifSourcingInstance();
     this.visibility['showNominate'] = isOpenForNomination && (!_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated');
     this.visibility['showProgramLevelSampleUpload'] = this.visibility['showNominate'] && isProgramForNoCollections;
     this.visibility['showProgramLevelContentUpload'] = this.currentNominationStatus === 'Approved' && isProgramForNoCollections && this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution;

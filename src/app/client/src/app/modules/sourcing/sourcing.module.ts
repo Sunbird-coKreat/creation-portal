@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SanitizeHtmlPipe } from './pipe/sanitize-html.pipe';
 import { QuestionListComponent,
   QuestionCreationComponent, ChapterListComponent, McqCreationComponent, McqTemplateSelectionComponent,
-  CkeditorToolComponent, QuestionPreviewComponent, BulkUploadComponent } from './components';
+  CkeditorToolComponent, QuestionPreviewComponent, BulkUploadComponent, BulkApprovalComponent } from './components';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { SharedModule } from '@sunbird/shared';
@@ -23,7 +23,6 @@ import { CollectionHierarchyService } from './services/collection-hierarchy/coll
 import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
-import { BulkApprovalComponent } from './components/bulk-approval/bulk-approval.component';
 import { CoreModule } from '@sunbird/core';
 import {SourcingRoutingModule} from './sourcing-routing.module';
 import { MvcLibraryComponent } from './components/mvc-library/mvc-library.component';
@@ -79,6 +78,6 @@ import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ BulkUploadComponent, SanitizeHtmlPipe ]
+  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe ]
 })
 export class SourcingModule { }

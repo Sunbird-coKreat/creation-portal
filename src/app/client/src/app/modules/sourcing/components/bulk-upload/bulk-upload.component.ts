@@ -162,7 +162,7 @@ export class BulkUploadComponent implements OnInit {
       unit.identifier = identifier;
       return (unit.root === false && unit.mimeType === 'application/vnd.ekstep.content-collection')
     }).map((unit) => {
-      return { identifier: unit.identifier, name: unit.name, parent: unit.parent }
+      return { identifier: unit.identifier, name: _.trim(unit.name), parent: unit.parent }
     });
   }
 
@@ -597,7 +597,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getTextbookUnitIdFromName(name) {
-    const unit = _.find(this.levels, { name: name });
+    const unit = _.find(this.levels, { "name": name });
     return _.get(unit, 'identifier', '');
   }
 
@@ -691,15 +691,9 @@ export class BulkUploadComponent implements OnInit {
     const source = this.getDownloadableLink(row.source);
     const license = _.get(row, 'license');
     const organisationId =  _.get(this.sessionContext, 'nominationDetails.organisation_id');
-    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
-      const reqBody = this.sharedContext.reduce((obj, context) => {
-        return { ...obj, [context]: this.sessionContext[context] };
-      }, {});
-    } else {
-      const reqBody = this.sharedContext.reduce((obj, context) => {
-        return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context)};
-      }, {});
-    }
+    /*const reqBody = this.sharedContext.reduce((obj, context) => {
+      return { ...obj, [context]: this.sessionContext[context] };
+    }, {});*/
     let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.programContext.target_type);
 
     let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
@@ -741,11 +735,13 @@ export class BulkUploadComponent implements OnInit {
     };
 
     if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
-      content.metadata.collectionId = _.get(this.sessionContext, 'collection', '');
-      content.metadata.unitIdentifiers = this.getUnitIdFromName(row);
+      const unitId = this.getUnitIdFromName(row);
+      const collectionId = _.get(this.sessionContext, 'collection', '');
+      content.metadata.collectionId = collectionId;
+      content.metadata.unitIdentifiers = [unitId];
       content['collection'] = [{
-        identifier: content.metadata.collectionId,
-        unitId: content.metadata.unitIdentifiers
+        identifier: collectionId,
+        unitId: unitId
       }]
     }
 

@@ -1,6 +1,6 @@
 import { ResourceService, ToasterService, ConfigService  } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { ProgramsService, ActionService, UserService } from '@sunbird/core';
+import { ProgramsService, ActionService, UserService, ContentHelperService} from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
@@ -62,7 +62,7 @@ export class TextbookListComponent implements OnInit {
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService, private formBuilder: FormBuilder, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService
+    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService, public contentHelperService: ContentHelperService
   )  {
     this.sbFormBuilder = formBuilder;
   }
@@ -161,7 +161,7 @@ export class TextbookListComponent implements OnInit {
     this.textbookFiltersApplied = false;
   }
 
-  showTexbooklist (data, contentAggregationData) {
+  async showTexbooklist (data, contentAggregationData) {
     if (!_.isEmpty(data)) {
         this.collectionHierarchyService.setProgram(this.programDetails);
         if (contentAggregationData) {
@@ -177,7 +177,7 @@ export class TextbookListComponent implements OnInit {
       this.showLoader = false;
     }
   }
-
+ 
   viewContribution(collection) {
     this.selectedCollection.emit(collection);
   }
@@ -259,38 +259,14 @@ export class TextbookListComponent implements OnInit {
   getContentsVisibilityStatusText () {
     this.collectionsCnt = 0;
     _.map(this.collectionsInput, (content) => {
-      content['contentVisibility'] = this.shouldContentBeVisible(content);
-      content['sourcingStatus'] = this.checkSourcingStatus(content);
-      const temp = this.helperService.getContentDisplayStatus(content)
+      content['contentVisibility'] = this.contentHelperService.shouldContentBeVisible(content, this.programDetails);
+      content['sourcingStatus'] = this.contentHelperService.checkSourcingStatus(content, this.programDetails);
+      const temp = this.contentHelperService.getContentDisplayStatus(content)
       content['resourceStatusText'] = temp[0];
       content['resourceStatusClass'] = temp[1];
       if (content.contentVisibility) {
         this.collectionsCnt++;
       }
     });
-  }
-
-  checkSourcingStatus(content) {
-    if (this.programDetails.acceptedcontents  &&
-         _.includes(this.programDetails.acceptedcontents || [], content.identifier)) {
-            return 'Approved';
-      } else if (this.programDetails.rejectedcontents  &&
-              _.includes(this.programDetails.rejectedcontents || [], content.identifier)) {
-            return 'Rejected';
-      } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
-            return 'PendingForCorrections';
-      } else {
-        return null;
-      }
-  }
-  isSourcingOrgReviewer () {
-    return this.userService.isSourcingOrgReviewer(this.programDetails);
-  }
-
-  shouldContentBeVisible(content) {
-    if (this.isSourcingOrgReviewer() && this.sourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
-      return true;
-    }
-    return false;
   }
 }
