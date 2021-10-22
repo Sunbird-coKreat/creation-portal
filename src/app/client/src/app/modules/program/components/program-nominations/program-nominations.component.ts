@@ -180,7 +180,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     return _.includes(this.userProfile.userRoles, 'ORG_ADMIN') &&
     this.router.url.includes('/sourcing');
   }
-  showBulkUpload() {
+  showBulkApproval() {
     const isProgramForNoCollections = !!(this.programDetails.target_type && this.programDetails.target_type === 'searchCriteria')
     const isSourcingSide = this.programsService.ifSourcingInstance();
     const canAcceptContribution = this.helperService.canAcceptContribution(this.programDetails);;
@@ -604,7 +604,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.helperService.fetchProgramFramework(this.sessionContext);
-      this.showBulkApprovalButton = this.showBulkUpload();
+      this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
 
       forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
@@ -946,7 +946,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  async openContent(content) {
+  openContent(content) {
       this.contentHelperService.initialize(this.programDetails, this.sessionContext);
       this.contentHelperService.openContent(content);
   }

@@ -597,7 +597,7 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getTextbookUnitIdFromName(name) {
-    const unit = _.find(this.levels, { "name": name });
+    const unit = _.find(this.levels, { name: name });
     return _.get(unit, 'identifier', '');
   }
 

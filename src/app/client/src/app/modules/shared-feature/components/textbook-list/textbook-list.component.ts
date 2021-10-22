@@ -161,7 +161,7 @@ export class TextbookListComponent implements OnInit {
     this.textbookFiltersApplied = false;
   }
 
-  async showTexbooklist (data, contentAggregationData) {
+  showTexbooklist (data, contentAggregationData) {
     if (!_.isEmpty(data)) {
         this.collectionHierarchyService.setProgram(this.programDetails);
         if (contentAggregationData) {
