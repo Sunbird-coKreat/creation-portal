@@ -241,9 +241,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.setifSampleInSession();
       this.sessionContext['selectedSharedProperties'] = this.helperService.getSharedProperties(this.programDetails);
       this.sessionContext = _.assign(this.sessionContext, this.sessionContext['selectedSharedProperties']);
-      /*if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
-        this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-      }*/
       this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
       if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
@@ -929,6 +926,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
+    this.contentHelperService.initialize(this.programDetails, this.sessionContext);
     this.contentHelperService.handleContentCreation(event);
   }
 
