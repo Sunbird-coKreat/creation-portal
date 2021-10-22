@@ -395,7 +395,7 @@
 									<input type="checkbox" [checked]="contributorTextbook.isSelected || contributorTextbook.totalSampleContent" [disabled]="!(selectedContentTypes.length)" name="{{contributorTextbook.identifier}}" (click)="selectCollectionForNomination(contributorTextbook);">
 									<label>&nbsp;</label>
 								</div>
-								<button type="button" [disabled]="nominationIsInProcess || !selectedContentTypes.length || !contributorTextbook.isSelected" (click)="uploadSampleContent(contributorTextbook)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10" 
+								<button type="button" [disabled]="nominationIsInProcess || !selectedContentTypes.length || !contributorTextbook.isSelected" (click)="uploadSampleContent(contributorTextbook)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10 ml-10" 
 								appTelemetryInteract
 								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_sample', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 								[telemetryInteractObject]="telemetryInteractObject"
@@ -403,7 +403,7 @@
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
 							</div>
 							<button *ngIf="visibility.showContentLevelOpen"
-							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs my-5"
 							(click)="openContent(contributorTextbook)" appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"

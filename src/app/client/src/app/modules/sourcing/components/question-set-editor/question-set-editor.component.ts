@@ -38,7 +38,6 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   private onComponentDestroy$ = new Subject<any>();
   public hideSubmitForReviewBtn = false;
 
-  public defaultFileSize: any;
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
     private frameworkService: FrameworkService, private programsService: ProgramsService,
@@ -52,8 +51,6 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       this.deviceId = deviceId ? deviceId.value : '';
       this.buildNumber = buildNumber ? buildNumber.value : '1.0';
       this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
-      this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
-      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
      }
 
   ngOnInit() {
@@ -138,13 +135,6 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         showSourcingStatus: false,
         showCorrectionComments: false,
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
-        assetConfig: {
-            video: {
-              size: this.defaultFileSize,
-              sizeType: 'MB',
-              accepted: 'mp4, webm'
-            }
-        }
       }
     };
     if (this.showQuestionEditor) {
