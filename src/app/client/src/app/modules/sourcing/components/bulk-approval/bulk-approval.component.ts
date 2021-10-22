@@ -197,7 +197,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
         reqFormat['metadata'] = {
           ..._.pick(item, ['framework', 'channel', 'name', 'code', 'mimeType', 'contentType', 'createdFor']),
           ...{lastPublishedBy: this.userService.userProfile.userId},
-          ...{createdFor: item.channel}}
+          ...{createdFor: _.isString(item.channel) ? [item.channel] :item.channel }}
       }
       if (!_.isEmpty(reqFormat)) {
         if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
