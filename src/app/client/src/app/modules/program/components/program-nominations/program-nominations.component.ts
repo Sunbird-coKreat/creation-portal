@@ -797,7 +797,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.logTelemetryImpressionEvent();
     }
   }
-
+  bulkApprovalSuccess(e) {
+    this.checkActiveTab();
+  }
   readRolesOfOrgUsers(orgUsers) {
     if (_.isEmpty(orgUsers)) {
       return false;
