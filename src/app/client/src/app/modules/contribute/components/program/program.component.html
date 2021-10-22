@@ -88,8 +88,7 @@
 									[telemetryInteractCdata]="telemetryInteractCdata"
 									[telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService.frmelmnts?.lbl?.noCollectionsProject?.contentUpload }}</button>
 							<app-bulk-upload *ngIf="visibility.showProgramLevelBulkUpload"
-								[sharedContext]="programDetails.config.sharedContext" [sessionContext]="sessionContext" [programContext]="programDetails">
-								</app-bulk-upload>
+								[sharedContext]="programDetails.config.sharedContext" [sessionContext]="sessionContext" [programContext]="programDetails"></app-bulk-upload>
 						</div>
 					</div>
 					<div class="sb-pageSection pt-5">
@@ -404,15 +403,15 @@
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
 							</div>
 							<button *ngIf="visibility.showContentLevelOpen"
-							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs my-5"
 							(click)="openContent(contributorTextbook)" appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_content')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
 							
-							<button *ngIf="visibility.showContentLevelOpen && contributorTextbook.status === 'Draft' && (contributorTextbook.prevStatus !== 'Live' && contributorTextbook.prevStatus !== 'Review')"
-							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
+							<button *ngIf="visibility.showContentLevelOpen && contributorTextbook.status === 'Draft' && contributorTextbook.prevStatus !== 'Live' && contributorTextbook.prevStatus !== 'Review' && userService.userid === contributorTextbook.createdBy" 
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs my-5"
 							(click)="showContentDeleteModal(contributorTextbook)" appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('delete_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"

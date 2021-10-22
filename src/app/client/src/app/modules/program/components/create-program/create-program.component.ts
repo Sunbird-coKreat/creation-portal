@@ -174,6 +174,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.initializeProjectTargetTypeForm();
         this.openProjectTargetTypeModal = true;
       }
+
+      if (!_.isEmpty(_.get(this.programDetails, 'config.contributors'))) {
+        this.setPreSelectedContributors(_.get(this.programDetails, 'config.contributors'));
+      }
     }, error => {
       const errInfo = {
         errorMsg:  'Fetching program details failed',

@@ -858,7 +858,46 @@ export class HelperService {
         return nomContentTypes;
       }
   }
+  getSharedProperties(programDetails, collection?) {
+    const selectedSharedContext = programDetails.config.sharedContext.reduce((obj, context) => {
+      return {...obj, [context]: this.getSharedContextObjectProperty(programDetails, context, collection)};
+    }, {});
+    return selectedSharedContext;
+  }
+  getSharedContextObjectProperty(programDetails, property, collection?) {
+    let ret;
+    switch (property) {
+      case 'channel':
+        ret =  _.get(programDetails, 'rootorg_id');
+        break;
+      case 'topic':
+        ret = null;
+        break;
+      default:
+        ret =  _.get(programDetails, `config.${property}`);
+        break;
+    }
+    if (collection) {
+      ret = collection[property] || ret;
+    }
+    if (_.includes(['gradeLevel', 'medium', 'subject'], property)) {
+      ret = _.isArray(ret) ? ret : _.split(ret, ',');
+    }
+    return ret || null;
 
+    /*if (property === 'channel') {
+       return _.get(this.programDetails, 'rootorg_id');
+    } else if ( property === 'topic' ) {
+      return null;
+    } else {
+      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
+      const filters =  collectionComComponent.config.filters;
+      const explicitProperty =  _.find(filters.explicit, {'code': property});
+      const implicitProperty =  _.find(filters.implicit, {'code': property});
+      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
+       explicitProperty.range || explicitProperty.defaultValue;
+    }*/
+  }
   fetchRootMetaData(sharedContext, selectedSharedContext, programTargetType?) {
     return sharedContext.reduce((obj, context) => {
               return { ...obj, ...(this.getContextObj(context, selectedSharedContext, programTargetType)) };
@@ -966,6 +1005,7 @@ export class HelperService {
         }
         this.sendNotification.next(_.capitalize(action));
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
     }, (err) => {
       this.acceptContent_errMsg(action);
     });
@@ -1032,6 +1072,7 @@ export class HelperService {
    if (msg) {
       this.toasterService.error(msg)
       this.programStageService.removeLastStage();
+      this.programsService.emitHeaderEvent(true);
       return true;
     } else {
       return false;
@@ -1356,42 +1397,6 @@ export class HelperService {
     }
 
     return this.actionService.post(option);
-  }
-
-  getContentDisplayStatus(content) {
-    const resourceStatus = content.status;
-    const sourcingStatus = content.sourcingStatus;
-    const prevStatus = content.prevStatus;
-    let resourceStatusText,resourceStatusClass;
-    if (resourceStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-      resourceStatusClass = 'sb-color-primary';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Review') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Draft' && prevStatus === 'Live') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.correctionsPending;
-      resourceStatusClass = 'sb-color-primary';
-    } else if (resourceStatus === 'Live' && _.isEmpty(sourcingStatus)) {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      resourceStatusClass = 'sb-color-warning';
-    } else if ( sourcingStatus=== 'Rejected') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
-      resourceStatusClass = 'sb-color-error';
-    } else if (sourcingStatus === 'Approved') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.approved;
-      resourceStatusClass = 'sb-color-success';
-    } else if (resourceStatus === 'Failed') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.failed;
-      resourceStatusClass = 'sb-color-error';
-    } else if (resourceStatus === 'Processing') {
-      resourceStatusText = this.resourceService.frmelmnts.lbl.processing;
-      resourceStatusClass = '';
-    } else {
-      resourceStatusText = resourceStatus;
-      resourceStatusClass = 'sb-color-gray-400';
-    }
-    return [resourceStatusText, resourceStatusClass];
   }
 
   canSourcingReviewerPerformActions(contentMetaData, sourcingReviewStatus, programContext, originCollectionData, selectedOriginUnitStatus) {

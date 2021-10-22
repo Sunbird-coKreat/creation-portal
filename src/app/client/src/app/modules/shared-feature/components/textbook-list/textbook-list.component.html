@@ -50,6 +50,13 @@
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
+						<th class="cursor-pointer sb-sorting" (click)="sortCollection('board')">{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
+							<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+							</span>
+						</th>
 						<th class="cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
 							<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
@@ -89,6 +96,11 @@
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
 									{{data.name}}
+								</div>
+							</td>
+							<td>
+								<div>
+									{{data.board}}
 								</div>
 							</td>
 							<td>

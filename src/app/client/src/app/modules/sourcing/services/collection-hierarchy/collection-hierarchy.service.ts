@@ -185,7 +185,7 @@ export class CollectionHierarchyService {
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
       mvcContributionsCount: this.getMvcContentCounts(collections),
-      ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
+      ...((!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) && {sourcingOrgStatus : sourcingOrgStatus})
     };
   }
   getMvcContentCounts(collections) {
@@ -263,7 +263,7 @@ export class CollectionHierarchyService {
     tempcontentGroupByStatus['correctionsPending'] = _.has(contentGroupByStatus, 'Draft') ?
     this.getRejectOrDraft(contentGroupByStatus['Draft'], 'correctionsPending') : [];
     const contentGroupByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
-    if (!_.isUndefined(collections)) {
+    if (!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, contentGroupByStatus);
     }
     return  {
@@ -275,7 +275,7 @@ export class CollectionHierarchyService {
       correctionsPending: _.has(tempcontentGroupByStatus, 'correctionsPending') ? tempcontentGroupByStatus.correctionsPending.length : 0,
       live: _.has(contentGroupByStatus, 'Live') ? contentGroupByStatus.Live.length : 0,
       individualStatusForSample: contentGroupByStatusForSample,
-      ...(!_.isUndefined(collections) && {sourcingOrgStatus : sourcingOrgStatus})
+      ...((!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) && {sourcingOrgStatus : sourcingOrgStatus})
      };
   }
 

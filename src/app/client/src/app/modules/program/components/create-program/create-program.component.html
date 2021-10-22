@@ -87,7 +87,7 @@
 											</div>
 										</div>
                     					<div class="sb-radio-btn-checkbox sb-radio-btn-primary mr-10">
-											<div [ngClass]="(editPublished) ? 'disabled field':''"> 
+											<div [ngClass]="(editPublished) ? 'disabled field':''">
 												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_a_selected_set_of_contributors', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
@@ -101,7 +101,7 @@
 													class="sb-color-primary">{{resource?.frmelmnts?.lbl?.selectToContributor}}</span>
 												<div *ngIf="selectedContributorsCnt > 0" class="px-0 d-inline-block">
 													<em><span>{{selectedContributorsCnt}}</span>&nbsp;
-														<span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.added}}</span></em>
+														<span>{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.added}}</span></em>
 													<div class="sb-dock-icon-tooltip d-inline-block">
 														<i class="icon edit sb-color-primary ui px-5"
 															data-tooltip="Modify"></i>
