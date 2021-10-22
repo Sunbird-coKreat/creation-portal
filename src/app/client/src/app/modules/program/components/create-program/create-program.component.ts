@@ -970,7 +970,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //   _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.programConfig.framework;
     // }
     programData['target_type'] = this.projectTargetType;
-    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') ? [this.projectScopeForm.value.target_collection_category] : [];
+    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) ? [this.projectScopeForm.value.target_collection_category] : [];
 
     // if (this.userBoard) {
     // // tslint:disable-next-line: max-line-length
