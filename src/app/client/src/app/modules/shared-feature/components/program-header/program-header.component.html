@@ -1,6 +1,6 @@
   <div class="practical-header__content">
     <div class="ui grid pt-10">
-      <div class="four wide column">
+      <div class="three wide column">
         <div class="practical-header__title ">
           <h5 class="m-0 p-0 pb-10 font-weight-bold d-inline-block break-word">{{ programDetails?.name }} </h5>
           <div *ngIf="programDetails?.target_type==='searchCriteria'" class="sb-color-warning pb-10">
@@ -39,7 +39,7 @@
           <p class="fs-0-785 pt-10 font-weight-normal sb__ellipsis sb__ellipsis--three">{{ programDetails?.description }}</p>
         </div>
       </div>
-      <div class="eight wide column pl-20">
+      <div class="nine wide column pl-20">
         <div class="d-flex  practical-header__content">
           <div class="sb-meta-data-container sb-meta-data-column px-10 w-50">
             <label class="m-0">{{ resourceService.frmelmnts.lbl.contentType}}</label>
@@ -91,23 +91,22 @@
             <div class="px-10">
               <div class='practical-sb-buttons' *ngIf="nominationDetails && nominationDetails.status">
                 <label class="m-0 mr-10">{{ resourceService.frmelmnts.lbl.status }}</label>
-                <span [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</span>
+                <p [ngClass]="{'sb-color-success':nominationDetails.status == 'Approved','sb-color-error':nominationDetails.status == 'Rejected','sb-color-warning':nominationDetails.status == 'Pending'}">{{ nominationDetails?.status }}</p>
               </div>
             </div>
             <div class="px-10" *ngIf="nominationDetails?.status=='Rejected'">
               <label class="m-0">{{ resourceService.frmelmnts.lbl.reasonsForRejection }}</label>
-              <span class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</span>
-            </div>
-            <div class="px-10" *ngIf="showSkipReview">
-              <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
-              <span class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</span>
+              <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.reasonsForRejection}}" popupText="{{nominationDetails?.feedback}}">{{ nominationDetails?.feedback }}</p>
             </div>
           </div>
-          
+        </div>
+        <div class="pb-20 w-100 text-right"  *ngIf="showSkipReview">
+          <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
+          <span class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</span>
         </div>
         <div *ngIf="canNominate">
           <hr class="my-10">
-          <div class="d-flex sb-steps flex-jc-flex-end pt-10">
+          <div class="d-flex sb-steps flex-jc-flex-end pt-10 pb-10">
             <div class="fs-0-92 pr-30">
               {{resourceService.frmelmnts.lbl.nominationProcess}}
             </div>

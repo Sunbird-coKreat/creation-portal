@@ -77,15 +77,17 @@
 									<label
 										class="fs-0-92">{{resource?.frmelmnts?.lbl?.howToGetContributionsToThisProject}}</label>
 									<div class="sb-field mt-4 d-flex">
-										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary mr-10">
+											<div [ngClass]="(editPublished) ? 'disabled field':''">
 											<input type="radio" formControlName="type" id="type_public" value="public" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_anyone', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
 												[telemetryInteractPdata]="telemetryInteractPdata"/>
 											<label for="type_public">{{resource?.frmelmnts?.lbl?.contributionFromAnyOne}}</label>
+											</div>
 										</div>
-                    					<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-											<div> 
+                    					<div class="sb-radio-btn-checkbox sb-radio-btn-primary mr-10">
+											<div [ngClass]="(editPublished) ? 'disabled field':''">
 												<input type="radio" formControlName="type" id="type_restricted" value="restricted" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_a_selected_set_of_contributors', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 												[telemetryInteractObject]="telemetryInteractObject"
 												[telemetryInteractCdata]="telemetryInteractCdata"
@@ -99,7 +101,7 @@
 													class="sb-color-primary">{{resource?.frmelmnts?.lbl?.selectToContributor}}</span>
 												<div *ngIf="selectedContributorsCnt > 0" class="px-0 d-inline-block">
 													<em><span>{{selectedContributorsCnt}}</span>&nbsp;
-														<span>{{resource?.frmelmnts?.lbl?.createProject?.contributor?.added}}</span></em>
+														<span>{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.added}}</span></em>
 													<div class="sb-dock-icon-tooltip d-inline-block">
 														<i class="icon edit sb-color-primary ui px-5"
 															data-tooltip="Modify"></i>
@@ -107,12 +109,14 @@
 												</div>
 											</span>
                     					</div>
-										<div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+										<div class="sb-radio-btn-checkbox sb-radio-btn-primary mr-10">
+											<div [ngClass]="(editPublished) ? 'disabled field':''">
 											<input type="radio" formControlName="type" id="type_private" value="private" appTelemetryInteract [telemetryInteractEdata]="getTelemetryInteractEdata('from_your_organization_only', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.radioButton,telemetryPageId)"
 											[telemetryInteractObject]="telemetryInteractObject"
 											[telemetryInteractCdata]="telemetryInteractCdata"
 											[telemetryInteractPdata]="telemetryInteractPdata"/>
 											<label for="type_private">{{resource?.frmelmnts?.lbl?.contributionFromYourOrgOnly}}</label>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -725,48 +729,13 @@
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
 	<div class="sb-modal-content">
-		<div class="segment mt-5 pb-30 pt-10">
-			<form class="ui form sb-dock-dropdown">
-				<div class="ui grid">
-					<div *ngFor="let property of blueprintTemplate.properties" class="{{property.renderingHints?.semanticColumnWidth || 'six'}} wide column py-10">
-						<div class="field">
-							<label class="d-inline-block fs-0-925 font-weight-normal mr-4">{{property.label}}</label><span class="sb-color-red" *ngIf="(property.required == true)">*</span>
-							<input *ngIf="property.inputType === 'text'" type="text" class="sb-form-control" name="{{property.code}}" [(ngModel)]="localBlueprint[property.code]"  	autofocus />
-							<sui-multi-select #multiselect *ngIf="property.inputType === 'multiSelect' && !property.children" class="selection p-5 b-100 min-w-0"
-								[isSearchable]=true (selectedOptionsChange)="property.code === 'topics' ? onChangeTopics() : null"
-								name="{{property.code}}"
-								[options]="property.options ? property.options : []"
-								[(ngModel)]="localBlueprint[property.code]"
-								labelField="name"
-								>
-								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
-							</sui-multi-select>
-							<div *ngIf="property.children" class="d-flex">
-								<div *ngFor="let child of property.children" class="pl-10 w-60">
-									<label class="d-block fs-0-785 font-weight-normal">{{child.label}}</label>
-									<input #nestedText type="text" class="sb-form-control" name="{{child.code}}" [(ngModel)]="localBlueprint[property.code][child.code]"  />
-									<!-- <sui-select class="selection p-5 b-100 min-w-0" #nestedSelect
-									name="{{child.code}}"
-									[isSearchable]=false (selectedOptionChange)="onChangeBlueprint()"
-									[options]="property.options ? property.options : []"
-									[(ngModel)]="localBlueprint[property.code][child.code]">
-										<sui-select-option *ngFor="let option of nestedSelect.filteredOptions" [value]="option" ></sui-select-option>
-									</sui-select> -->
-								</div>
-							</div>
-							<sui-select class="selection p-5 b-100 min-w-0" #select *ngIf="property.inputType === 'select' && !property.children"
-								[isSearchable]=true
-								[options]="property.options ? property.options : questionCountRange"
-								name="{{property.code}}"
-								[(ngModel)]="localBlueprint[property.code]">
-								<sui-select-option *ngFor="let option of select.filteredOptions" [value]="option.name ? option.name : option" ></sui-select-option>
-							</sui-select>
-						</div>
-					</div>
-					<label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{totalQuestions() || 0}}</label>
-				</div>
-			</form>
-		</div>
+		<app-content-data-form
+		#formData
+		(formStatus)="formStatusEventListener($event)"
+		(formInputData)="getFormData($event)"
+		[formFieldProperties]="blueprintFormConfig">
+	  </app-content-data-form>
+	  <label class="fs-0-92 twelve wide column text-gray">{{resource?.frmelmnts.lbl?.totalQuestions}}: {{totalQuestions() || 0}}</label>
 	</div>
 	<div class="sb-modal-actions">
 		<button class="sb-btn sb-btn-normal sb-btn-primary" (click)="mapBlueprintToId()" [disabled]="btnDoneDisabled">

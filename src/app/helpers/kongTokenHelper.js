@@ -97,7 +97,9 @@ const getKongAccessToken = (req, cb) => {
             "KONG_TOKEN refresh_token :: API Failed to generate kong auth token for session id [ " +
               _.get(req, "sessionID") || "no_key" + " ]. Error => " + error
           );
-          cb(error);
+          cb();
+          // @Todo -> Remove comment once RBAC implemented
+          // cb(error);
         });
     } catch (error) {
       _log(
