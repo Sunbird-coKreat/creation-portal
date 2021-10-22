@@ -473,7 +473,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   initializeCollectionEditorInput() {
-    this.setFrameworkAttributesToconfig();    
+    this.setFrameworkAttributes();    
     const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
     const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
 
@@ -488,7 +488,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           type: objType
         }), 'mimetype', 'application/vnd.sunbird.questionset')]
       };
-    this.questionSetEditorComponentInput['selectedSharedContext'] = this.programConfig;
+    this.questionSetEditorComponentInput['selectedSharedContext'] = this.programScope;
     this.questionSetEditorComponentInput['action'] = 'creation';
     this.questionSetEditorComponentInput['programContext'] = this.programDetails;
     this.questionSetEditorComponentInput['enableQuestionCreation'] = false;
@@ -831,8 +831,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   getCollectionCategoryDefinition() {
     if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
-      let objType = _.get(this.programScope, 'selectedTargetCollectionObject.targetObjectType');
-      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, objType || 'Collection').subscribe(res => {
+      let objType = this.projectTargetType === 'questionSets' ? 'QuestionSet' : 'Collection';
+      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, objType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
@@ -1297,7 +1297,7 @@ showTexbooklist(showTextBookSelector = true) {
     return collections;
   }
   setFrameworkAttributesToconfig() {
-    if (this.isFormValueSet.projectScopeForm && (this.projectTargetType === 'searchCriteria' || this.projectTargetType === 'questionSets')) {
+    if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
       this.programConfig['boardIds'] = [];
       this.programConfig['gradeLevelIds'] = [];
       this.programConfig['mediumIds'] = [];
