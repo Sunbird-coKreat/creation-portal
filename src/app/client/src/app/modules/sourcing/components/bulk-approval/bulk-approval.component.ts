@@ -194,10 +194,14 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
           }
         ];
       } else if(this.programContext.target_type === 'searchCriteria') {
+        if (_.isString(item.channel)) {
+          item['createdFor'] = [item.channel];
+        } else if (_.isArray(item.channel)) {
+          item['createdFor'] = item.channel;
+        }
         reqFormat['metadata'] = {
           ..._.pick(item, ['framework', 'channel', 'name', 'code', 'mimeType', 'contentType', 'createdFor']),
-          ...{lastPublishedBy: this.userService.userProfile.userId},
-          ...{createdFor: item.channel}}
+          ...{lastPublishedBy: this.userService.userProfile.userId}
       }
       if (!_.isEmpty(reqFormat)) {
         if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
