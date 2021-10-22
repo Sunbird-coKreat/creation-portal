@@ -9,12 +9,12 @@ import { InitialState, ISessionContext, IUserParticipantDetails } from '../../in
 import { ProgramStageService } from '../../services/';
 import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
-import { tap, filter, first, map } from 'rxjs/operators';
+import { tap, filter, first, map, catchError } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 @Component({
   selector: 'app-list-contributor-textbooks',
@@ -105,13 +105,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.sessionContext.nominationDetails = this.selectedNominationDetails && this.selectedNominationDetails.nominationData;
       this.setActiveDate();
       this.setProgramRole();
-      if (!_.get(this.programDetails.target_type) || this.programDetails.target_type == 'searchCriteria') {
-        this.contentHelperService.initialize(this.programContext, this.sessionContext);
-      }
+  
       if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
         this.getProgramTextbooks();
-      } else {
-        this.getProgramContents();
+      } else if (this.programDetails.target_type == 'searchCriteria') {
+        this.getOriginForApprovedContents().subscribe((res) => {
+          this.getProgramContents();
+        })
       }
       this.getNominationCounts();
       this.roles = _.get(this.programContext, 'config.roles');
@@ -187,14 +187,29 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
     }));
   }
-  shouldContentBeVisible(content) {
-    const isSourcingOrgReviewer = this.userService.isSourcingOrgReviewer(this.programDetails);
-    const sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
-    if (isSourcingOrgReviewer && sourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
-      return true;
+  getOriginForApprovedContents() {
+    if (!_.isEmpty(this.programDetails.acceptedcontents)) {
+      const originRes = this.collectionHierarchyService.getOriginForApprovedContents(this.programDetails.acceptedcontents);
+      return originRes.pipe(
+        tap((response: any) => {
+        if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
+         const allRes = _.compact(_.concat(_.get(response, 'result.content'), _.get(response, 'result.QuestionSet')));
+          this.sessionContext['contentOrigins'] = {};
+          _.forEach(allRes, (obj) => {
+            if (obj.status == 'Live') {
+              this.sessionContext['contentOrigins'][obj.origin] = obj;
+            }
+          });
+        }
+        }),catchError((error) => {
+        console.log('Getting origin data failed');
+        return of(false);
+      }));
+    } else {
+      return of([]);
     }
-    return false;
   }
+ 
   getProgramContents() {
     let sampleValue, organisation_id, individualUserId, onlyCount, contentStatusCounts;
     const currentNominationStatus = this.contributor.nominationData.status;
@@ -214,9 +229,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         this.contributorTextbooks = _.cloneDeep(contents);
         this.collectionsCnt = (sampleValue) ? this.contributorTextbooks.length : 0;
         _.map(this.contributorTextbooks, (content) => {
-          content['contentVisibility'] = (sampleValue) ? true : this.shouldContentBeVisible(content);
+          content['contentVisibility'] = (sampleValue) ? true : this.contentHelperService.shouldContentBeVisible(content, this.programDetails);
           if (!sampleValue) {
-            const temp = this.helperService.getContentDisplayStatus(content)
+            content['sourcingStatus'] = this.contentHelperService.checkSourcingStatus(content, this.programDetails);
+            const temp = this.contentHelperService.getContentDisplayStatus(content)
             content['resourceStatusText'] = temp[0];
             content['resourceStatusClass'] = temp[1];
             if (content.contentVisibility) {
@@ -347,6 +363,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     return this.telemetryPageId;
   }
   openContent(content) {
+    this.contentHelperService.initialize(this.programContext, this.sessionContext);
     this.contentHelperService.openContent(content);
   }
 
@@ -366,10 +383,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.sessionContext.collection =  collection.identifier;
     this.sessionContext.collectionName = collection.name;
     this.sessionContext.targetCollectionPrimaryCategory = _.get(collection, 'primaryCategory');
-    this.sharedContext = this.programDetails.config.sharedContext.reduce((obj, context) => {
-      return {...obj, [context]: this.contentHelperService.getSharedContextObjectProperty(context, collection)};
-    }, {});
-    this.sessionContext = _.assign(this.sessionContext, this.sharedContext);
+    const collectionSharedProperties = this.helperService.getSharedProperties(this.programDetails, collection)
+    this.sessionContext = _.assign(this.sessionContext, collectionSharedProperties);
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
