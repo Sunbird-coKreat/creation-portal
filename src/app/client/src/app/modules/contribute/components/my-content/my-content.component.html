@@ -92,7 +92,7 @@
                     </dl>
                     <dl class="mb-0">
                         <dt class="fs-1-286 font-weight-bold py-10"><i class="icon star sb-color-yellow fs-0-785" aria-hidden="true"></i>
-                            {{usageDetailsCount.averageRating}}
+                            {{usageDetailsCount.noOfContentHavingAverageRating !== 0 ? (usageDetailsCount.averageRating / usageDetailsCount.noOfContentHavingAverageRating | number: '1.0-0') : '0'}}
                         </dt>
                         <dd>{{resourceService.frmelmnts.lbl.averageRating}}</dd>
                     </dl>
