@@ -303,6 +303,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     case 'backContent':
       this.programsService.emitHeaderEvent(true);
       this.programStageService.removeLastStage();
+      if(this.enableQuestionCreation === false) this.eventEmitter.emit(event)
       break;
     case 'saveContent':
       this.programsService.emitHeaderEvent(true);
