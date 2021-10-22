@@ -10,3 +10,5 @@ export * from './content-uploader/content-uploader.component';
 export * from './dashboard/dashboard.component';
 export * from './collection/collection.component';
 export * from './bulk-upload/bulk-upload.component';
+export * from './bulk-approval/bulk-approval.component';
+

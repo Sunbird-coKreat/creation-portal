@@ -52,8 +52,12 @@
                 </div>
             </div>
             <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
+                
                 <app-loader *ngIf='showTextbookLoader'></app-loader>
                 <div *ngIf="!showTextbookLoader && contentAggregationData && !isEmptyObject(programDetails)" class="ui container p-0 m-0">
+                    <div *ngIf="showBulkApprovalButton" class="d-flex flex-jc-flex-end pt-10">
+                        <app-bulk-approval [programContext]="programDetails" [sessionContext]="sessionContext" [programContents]="programCollections" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
+                    </div>
                     <app-textbook-list [programDetails]="programDetails" [telemetryPageId]="telemetryPageId" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
                 </div>
             </div>
