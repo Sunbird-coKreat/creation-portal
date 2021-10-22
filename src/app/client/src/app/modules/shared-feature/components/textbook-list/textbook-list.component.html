@@ -73,7 +73,13 @@
 						</th>
 						<th *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
 						<th *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">{{ resourceService.frmelmnts.lbl.creator }}</th>
-						<th>{{resourceService.frmelmnts.lbl.status}}</th>
+						<th class="cursor-pointer sb-sorting" (click)="sortCollection('resourceStatusText')">{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
+							<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+							</span>
+						</th>
 						<th>&nbsp;</th>
 					</tr>
 				</thead>

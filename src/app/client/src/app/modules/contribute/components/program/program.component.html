@@ -404,7 +404,7 @@
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.uploadSample}}</button>
 							</div>
 							<button *ngIf="visibility.showContentLevelOpen"
-							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs my-5"
 							(click)="openContent(contributorTextbook)" appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('open_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"
@@ -412,7 +412,7 @@
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.open}}</button>
 							
 							<button *ngIf="visibility.showContentLevelOpen && contributorTextbook.status === 'Draft' && (contributorTextbook.prevStatus !== 'Live' && contributorTextbook.prevStatus !== 'Review')"
-							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs"
+							type="button"  class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs my-5"
 							(click)="showContentDeleteModal(contributorTextbook)" appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('delete_content', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [contributorTextbook.identifier]})"
 							[telemetryInteractObject]="telemetryInteractObject"
