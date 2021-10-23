@@ -134,6 +134,7 @@
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
+            <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
             <span class="item-name"> {{content.name}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status" *ngIf="!content.sampleContent">
