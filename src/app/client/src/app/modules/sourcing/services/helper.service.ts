@@ -577,20 +577,12 @@ export class HelperService {
     });
     _.forEach(formFields, field => {
       if (field.dataType === 'list') {
-        if (_.isString(trimmedValue[field.code]) && field.code !== 'bloomsLevel') {
+        if (_.isString(trimmedValue[field.code])) {
           trimmedValue[field.code] = _.split(trimmedValue[field.code], ',');
-        }else if(field.code === 'bloomsLevel')
-        {
-          trimmedValue[field.code] = _.isArray(trimmedValue[field.code]) ? trimmedValue[field.code] : trimmedValue[field.code].name;
         }
-      } else if (field.dataType === 'text' ) {
-        if (_.isArray(trimmedValue[field.code]) && field.code !== 'topic' && field.code !== 'learningOutcome') {
+      } else if (field.dataType === 'text') {
+        if (_.isArray(trimmedValue[field.code])) {
           trimmedValue[field.code] = _.join(trimmedValue[field.code]);
-        }else if(field.code === 'learningOutcome' || field.code === 'bloomsLevel')
-        {
-          trimmedValue[field.code] = _.isString(trimmedValue[field.code]) ? [trimmedValue[field.code]]: [trimmedValue[field.code].name];
-        }else if (field.code === 'topic'){
-          trimmedValue[field.code] = _.isString(trimmedValue[field.code]) ? [trimmedValue[field.code]]:trimmedValue[field.code];
         }
       }
     });
@@ -772,11 +764,7 @@ export class HelperService {
       _.forEach(formFieldProperties, (formFieldCategory) => {
         const requiredData = _.get(contentMetadata, formFieldCategory.code);
         if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
-          // if (formFieldCategory.code === 'bloomsLevel'){
-          //   formFieldCategory.default = JSON.parse(requiredData).name;
-          // }else{
-            formFieldCategory.default = requiredData;
-          // }
+          formFieldCategory.default = requiredData;
         }
         if (_.isEmpty(requiredData) && requiredData !== 'Untitled') {
           // tslint:disable-next-line:max-line-length
