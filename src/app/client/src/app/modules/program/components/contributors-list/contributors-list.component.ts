@@ -1,3 +1,4 @@
+import { catchError, filter } from 'rxjs/operators';
 import { UserService } from "./../../../core/services/user/user.service";
 import { RegistryService, ProgramsService } from "@sunbird/core";
 import { Component, Input, OnInit } from "@angular/core";
@@ -13,6 +14,8 @@ import { Output, EventEmitter } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { SourcingService } from "./../../../sourcing/services";
 import { CacheService } from 'ng2-cache-service';
+import { forkJoin, of } from 'rxjs';
+import { forEach, uniqBy } from 'lodash';
 
 @Component({
   selector: "app-contributors-list",
@@ -48,8 +51,8 @@ export class ContributorsListComponent implements OnInit {
   public telemetryInteractPdata: any;
   public contributorTypes: string[] = ["Organisation", "Individual"];
   public contributorType: string = "Organisation";
-  public isIndLoaded = false;
-  public isOrgLoaded = false;
+  // public isIndLoaded = false;
+  // public isOrgLoaded = false;
   public osLimit = 500;
   public orgLastPage = false;
   public indLastPage = false;
@@ -92,56 +95,55 @@ export class ContributorsListComponent implements OnInit {
       this.selectedContributors.User = this.preSelectedContributors['User'];
     }
 
-    this.getData(true);
+    this.getData(true, true);
   }
 
-
   getOrgList(limit = this.osLimit, offset = 0, filter?) {
-    const  reqFilter = {
-      ...filter
-    };
-
-    if (this.searchInput) {
-      reqFilter["name"] = {
-        "contains": _.trim(this.searchInput)
+    return new Promise ((resolve, reject) => {
+      const  reqFilter = {
+        ...filter
       };
-    }
 
-    this.registryService.getOrgList(limit, offset, reqFilter).subscribe(
-      (data) => {
-        this.orgLastPage = !!(_.get(data, "result.Org").length < this.osLimit);
-        if (!_.isEmpty(_.get(data, "result.Org"))) {
-          // this.orgList = this.orgList.concat(_.get(data, "result.Org"));
-          let orgList = _.get(data, "result.Org");
-          // offset = offset + this.osLimit;
-          // this.getOrgList(limit, offset);
-        // } else {
-          orgList = _.filter(
-            orgList,
-            (org) => org.orgId !== this.userService.rootOrgId
-          );
-          // Org creator user open saber ids
-          this.getOrgCreatorInfo(orgList);
-        } else {
-          this.hideLoader();
-        }
-      },
-      (error) => {
-        console.log("Get org list", JSON.stringify(error));
-        if (error.response && error.response.data) {
-          console.log(`Get org list ==>`, JSON.stringify(error.response.data));
-        }
-
-        const errInfo = {
-          errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
-          telemetryPageId: this.getPageId(),
-          telemetryCdata: this.telemetryInteractCdata,
-          env: this.activatedRoute.snapshot.data.telemetry.env,
-          request: { entityType: ["Org"] },
+      if (this.searchInput) {
+        reqFilter["name"] = {
+          "contains": _.trim(this.searchInput)
         };
-        this.sourcingService.apiErrorHandling(error, errInfo);
       }
-    );
+
+      this.registryService.getOrgList(limit, offset, reqFilter).subscribe(
+        (data) => {
+          this.orgLastPage = !!(_.get(data, "result.Org").length < this.osLimit);
+          if (!_.isEmpty(_.get(data, "result.Org"))) {
+            let orgList = _.get(data, "result.Org");
+            orgList = _.filter(
+              orgList,
+              (org) => org.orgId !== this.userService.rootOrgId
+            );
+            // Org creator user open saber ids
+            this.getOrgCreatorInfo(orgList, resolve, reject);
+          } else {
+            this.hideLoader();
+            resolve ([]);
+          }
+        },
+        (error) => {
+          console.log("Get org list", JSON.stringify(error));
+          if (error.response && error.response.data) {
+            console.log(`Get org list ==>`, JSON.stringify(error.response.data));
+          }
+
+          const errInfo = {
+            errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
+            telemetryPageId: this.getPageId(),
+            telemetryCdata: this.telemetryInteractCdata,
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            request: { entityType: ["Org"] },
+          };
+          this.sourcingService.apiErrorHandling(error, errInfo);
+          reject(error);
+        }
+      );
+    });
   }
 
   getPageId() {
@@ -152,7 +154,7 @@ export class ContributorsListComponent implements OnInit {
     return this.telemetryPageId;
   }
 
-  getOrgCreatorInfo(orgList) {
+  getOrgCreatorInfo(orgList, resolve, reject) {
     const orgCreatorOsIds = _.map(orgList, (org) => org.createdBy);
     this.registryService.getUserdetailsByOsIds(orgCreatorOsIds).subscribe(
       (data) => {
@@ -191,23 +193,23 @@ export class ContributorsListComponent implements OnInit {
                 return org;
               });
 
-              this.orgList = this.orgList.concat(orgList);
-              if (!_.isEmpty(this.orgList)) {
-                this.programsService.setSessionCache({
-                  name: 'orgList',
-                  value: this.orgList
-                });
-              }
+              // this.orgList = this.orgList.concat(orgList);
+              // if (!_.isEmpty(this.orgList)) {
+              //   this.programsService.setSessionCache({
+              //     name: 'orgList',
+              //     value: this.orgList
+              //   });
+              // }
 
-              this.orgList = this.setSelected(this.orgList, 'Org');
-              this.isOrgLoaded = true;
-              this.showFilteredResults();
+              orgList = this.setSelected(orgList, 'Org');
+              // this.isOrgLoaded = true;
+              resolve(orgList);
             },
             (err) => {
               console.log("Get org list", JSON.stringify(err));
+              reject(err);
             }
           );
-        // }
       },
       (error) => {
         console.log("Get org creator", JSON.stringify(error));
@@ -225,6 +227,7 @@ export class ContributorsListComponent implements OnInit {
           request: { entityType: ["User"], filters: { osid: { or: [] } } },
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
+        reject(error);
       }
     );
   }
@@ -239,11 +242,31 @@ export class ContributorsListComponent implements OnInit {
 
       switch (this.contributorType) {
         case "Organisation":
-          this.getOrgList(this.osLimit, (this.pageNumber - 1) * this.osLimit);
+          this.getOrgList(this.osLimit, (this.pageNumber - 1) * this.osLimit).then(list => {
+            list = this.applySort(list, this.orgSortColumn);
+            let contributors = [];
+            this.paginatedList.forEach(element => {
+              contributors = contributors.concat(element);
+            });
+            contributors = contributors.concat(list);
+            this.showFilteredResults(contributors);
+          }, error => {
+            console.log("Something went wrong", error);
+          });
           break;
 
         case "Individual":
-          this.getIndividualList(this.osLimit, (this.pageNumber - 1) * this.osLimit);
+          this.getIndividualList(this.osLimit, (this.pageNumber - 1) * this.osLimit).then(list => {
+            let contributors = [];
+            this.paginatedList.forEach(element => {
+              contributors = contributors.concat(element);
+            });
+            contributors = contributors.concat(list);
+            this.showFilteredResults(contributors);
+          }, error => {
+            console.log("Something went wrong", error);
+          });
+
           break;
       }
     }
@@ -271,24 +294,16 @@ export class ContributorsListComponent implements OnInit {
 
   clearSearch() {
     this.searchInput = "";
-    this.getData(true);
+    this.getData(true, true);
   }
 
-  showFilteredResults() {
+  showFilteredResults(list) {
     if (this.contributorType === "Organisation") {
-      // this.contributorList = this.applySearchFilter(this.orgList, "name");
-      this.contributorList = this.applySort(
-        this.orgList,
-        this.orgSortColumn
-      );
+      // this.contributorList = this.applySort(list, this.orgSortColumn);
     } else {
-      // this.contributorList = this.applyIndSearchFilter(this.indList);
-      this.contributorList = this.applySort(
-        this.indList,
-        this.indSortColumn
-      );
+      // this.contributorList = this.applySort(list, this.indSortColumn);
     }
-    this.contributorList = this.applyPagination(this.contributorList);
+    this.contributorList = this.applyPagination(list);
     this.hideLoader();
   }
 
@@ -309,23 +324,6 @@ export class ContributorsListComponent implements OnInit {
     }
   }
 
-  // Search the option and return match result
-  applyIndSearchFilter(list) {
-    if (this.searchInput) {
-      const searchStr = this.searchInput.toLocaleLowerCase();
-      return list.filter((item) => {
-        const firstName = _.get(item, 'firstName') ? _.get(item, 'firstName').toString().toLocaleLowerCase() : "";
-        const lastName = _.get(item, 'lastName') ? _.get(item, 'lastName').toString().toLocaleLowerCase() : "";
-        const fullName = firstName + " " + lastName;
-        if (firstName.includes(searchStr) || lastName.includes(searchStr) || fullName.includes(searchStr)) {
-          return item;
-        }
-      });
-    } else {
-      return list;
-    }
-  }
-
   applySort(list, sortColumn) {
     if (!this.direction) {
       return this.sortBySelected(list);
@@ -338,7 +336,6 @@ export class ContributorsListComponent implements OnInit {
     );
   }
 
-  // @Todo fix this function to show sorted records at top of the list
   sortBySelected(list) {
     const checked = _.filter(list, (obj) => obj.isChecked) || [];
     const unchecked = _.filter(list, (obj) => !obj.isChecked) || [];
@@ -377,30 +374,6 @@ export class ContributorsListComponent implements OnInit {
     );
   }
   save() {
-    // if (!_.isEmpty(this.orgList)) {
-    //   this.selectedContributors["Org"] = _.map(
-    //     _.filter(this.orgList, (org) => org.isChecked),
-    //     (org) => {
-    //       return {
-    //         ..._.pick(org, "osid", "isChecked"),
-    //         User: _.pick(org.User, "userId", "maskedEmail", "maskedPhone"),
-    //       };
-    //     }
-    //   );
-    // }
-
-    // if (!_.isEmpty(this.indList)) {
-    //   this.selectedContributors["User"] = _.map(
-    //     _.filter(this.indList, (ind) => ind.isChecked),
-    //     (ind) => {
-    //       return {
-    //         ..._.pick(ind, "osid", "isChecked"),
-    //         User: _.pick(ind.User, "userId", "maskedEmail", "maskedPhone"),
-    //       };
-    //     }
-    //   );
-    // }
-
     this.onContributorSave.emit(this.selectedContributors);
   }
 
@@ -408,10 +381,17 @@ export class ContributorsListComponent implements OnInit {
     this.onContributorClose.emit();
   }
 
-  // @Todo - fix this function
   sortList() {
     this.direction = this.direction === "asc" ? "desc" : "asc";
-    // this.getData();
+    switch (this.contributorType) {
+      case "Organisation":
+        this.contributorList = this.applySort(this.contributorList, this.orgSortColumn);
+        break;
+
+      case "Individual":
+        this.contributorList = this.applySort(this.contributorList, this.indSortColumn);
+      break;
+    }
   }
 
   getUsers(usersIds) {
@@ -495,128 +475,174 @@ export class ContributorsListComponent implements OnInit {
     return _.uniq(contributorList, obj => obj.osid);
   }
 
-  getIndividualList(limit = this.osLimit, offset = 0) {
-    const filters = { "roles": { "contains": "individual" } };
-
-    if (this.searchInput) {
-      filters["firstName"] = {
-        "contains": _.trim(this.searchInput)
-      };
-    }
-
-    this.registryService.getUserList(limit, offset, filters).subscribe(
-      (data) => {
-        this.indLastPage = !!(_.get(data, "result.User").length < this.osLimit);
-        if (!_.isEmpty(_.get(data, "result.User"))) {
-          let osUserList = _.get(data, "result.User");
-          const userIds = _.map(osUserList, (ind) => ind.userId);
-
-          // Get all users profile
-          this.getUsers(userIds).then(
-            (res) => {
-              osUserList = _.map(osUserList, (obj) => {
-                // Attach user details in User Obj
-                obj.User = _.find(res, (user) => {
-                  if (user.identifier == _.get(obj, "userId")) {
-                    user['userId'] = _.get(user, 'identifier');
-                    delete user.identifier;
-                    return user;
-                  }
-                });
-                return obj;
-              });
-
-              this.indList = this.indList.concat(osUserList);
-              if (!_.isEmpty(this.indList)) {
-                this.programsService.setSessionCache({
-                  name: 'indList',
-                  value: this.indList
-                });
-              }
-
-              this.indList = this.setSelected(this.indList, 'User');
-              this.isIndLoaded = true;
-              this.showFilteredResults();
-            },
-            (err) => {
-              console.log("Get individual list", JSON.stringify(err));
-            }
-          );
-        }
-        else {
-          this.indList = this.setSelected(this.indList, 'User');
-          this.showFilteredResults();
-        }
-      },
-      (error) => {
-        console.log("Get individual list", JSON.stringify(error));
-        if (error.response && error.response.data) {
-          console.log(
-            `Get individual list ==>`,
-            JSON.stringify(error.response.data)
-          );
-        }
-
-        const errInfo = {
-          errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
-          telemetryPageId: this.getPageId(),
-          telemetryCdata: this.telemetryInteractCdata,
-          env: this.activatedRoute.snapshot.data.telemetry.env,
-          request: { entityType: ["User"] },
+  getIndividualList(limit = this.osLimit, offset = 0, filter?) {
+    return new Promise((resovle, reject)=> {
+      let reqFilters = { "roles": { "contains": "individual" } };
+      if (this.searchInput) {
+        reqFilters["firstName"] = {
+          "contains": _.trim(this.searchInput)
         };
-        this.sourcingService.apiErrorHandling(error, errInfo);
       }
-    );
+
+      if (filter) {
+        reqFilters = {
+          ...reqFilters,
+          ...filter
+        }
+      }
+
+      this.registryService.getUserList(limit, offset, reqFilters).subscribe(
+        (data) => {
+          this.indLastPage = !!(_.get(data, "result.User").length < this.osLimit);
+          if (!_.isEmpty(_.get(data, "result.User"))) {
+            let osUserList = _.get(data, "result.User");
+            const userIds = _.map(osUserList, (ind) => ind.userId);
+
+            // Get all users profile
+            this.getUsers(userIds).then(
+              (res) => {
+                osUserList = _.map(osUserList, (obj) => {
+                  // Attach user details in User Obj
+                  obj.User = _.find(res, (user) => {
+                    if (user.identifier == _.get(obj, "userId")) {
+                      user['userId'] = _.get(user, 'identifier');
+                      delete user.identifier;
+                      return user;
+                    }
+                  });
+                  return obj;
+                });
+
+                // this.indList = this.indList.concat(osUserList);
+                // if (!_.isEmpty(this.indList)) {
+                //   this.programsService.setSessionCache({
+                //     name: 'indList',
+                //     value: this.indList
+                //   });
+                // }
+
+                osUserList = this.setSelected(osUserList, 'User');
+                resovle(osUserList);
+                // this.isIndLoaded = true;
+                // this.showFilteredResults();
+              },
+              (err) => {
+                console.log("Get individual list", JSON.stringify(err));
+                reject(err);
+              }
+            );
+          }
+          else {
+            this.hideLoader();
+            // this.indList = this.setSelected(this.indList, 'User');
+            // this.showFilteredResults();
+          }
+        },
+        (error) => {
+          console.log("Get individual list", JSON.stringify(error));
+          if (error.response && error.response.data) {
+            console.log(
+              `Get individual list ==>`,
+              JSON.stringify(error.response.data)
+            );
+          }
+
+          const errInfo = {
+            errorMsg: this.resource.messages.fmsg.contributorjoin.m0001,
+            telemetryPageId: this.getPageId(),
+            telemetryCdata: this.telemetryInteractCdata,
+            env: this.activatedRoute.snapshot.data.telemetry.env,
+            request: { entityType: ["User"] },
+          };
+          this.sourcingService.apiErrorHandling(error, errInfo);
+          reject(error);
+        }
+      );
+    });
   }
 
-  getData(clearList?) {
+  getData(clearList?, selectedAtTop?) {
     this.displayLoader();
     switch (this.contributorType) {
       case "Organisation":
         if (clearList) {
           this.orgList = [];
         }
-        this.getOrgList();
+
+        if (this.preSelectedContributors['Org'].length > 0 && selectedAtTop) {
+          const orgOsIds = _.map(this.preSelectedContributors['Org'], org => org.osid);
+          const limit = orgOsIds.length;
+          const offset = 0;
+          const filter = {
+            "osid": {
+              "or": orgOsIds
+            }
+          };
+
+         const response = forkJoin({
+           selectedOrgs: this.getOrgList(limit, offset, filter),
+           orgs: this.getOrgList()}
+           ).pipe(catchError(error => of(error)));
+
+         response.subscribe(response => {
+           let orgList = response.selectedOrgs.concat(response.orgs);
+           orgList = _.uniqBy(orgList, org => org.osid);
+           orgList = this.applySort(orgList, this.orgSortColumn);
+           this.showFilteredResults(orgList);
+         }, error => {
+           console.log("Something went wrong", JSON.stringify(error));
+         });
+
+        } else {
+          this.getOrgList().then(orgList => {
+            orgList = this.applySort(orgList, this.orgSortColumn);
+            this.showFilteredResults(orgList);
+          },error => {
+            console.log("Something went wrong", JSON.stringify(error));
+          });
+        }
+
       break;
 
       case "Individual":
         if (clearList) {
           this.indList = [];
         }
-        this.getIndividualList();
+
+        if (this.preSelectedContributors['User'].length > 0 && selectedAtTop) {
+          const userOsIds = _.map(this.preSelectedContributors['User'], ind => ind.osid);
+          const limit = userOsIds.length;
+          const offset = 0;
+          const filter = {
+            "osid": {
+              "or": userOsIds
+            }
+          };
+
+         const response = forkJoin({
+           selectedInds: this.getIndividualList(limit, offset, filter),
+           inds: this.getIndividualList()}
+           ).pipe(catchError(error => of(error)));
+
+         response.subscribe(response => {
+           let indList = response.selectedInds.concat(response.inds);
+           indList = _.uniqBy(indList, ind => ind.osid);
+           indList = this.applySort(indList, this.indSortColumn);
+           this.showFilteredResults(indList);
+         }, error => {
+           console.log("Something went wrong", JSON.stringify(error));
+         });
+
+        } else {
+          this.getIndividualList().then(list => {
+            list = this.applySort(list, this.indSortColumn);
+            this.showFilteredResults(list);
+          }, error => {
+            console.log("Something went wrong", JSON.stringify(error));
+          })
+        }
+
       break;
-    }
-  }
-
-  getOrgs() {
-    if (this.isOrgLoaded) {
-      this.showFilteredResults();
-    } else {
-      const cachedOrgList = this.cacheService.get('orgList');
-      if (cachedOrgList) {
-        this.orgList = this.setSelected(cachedOrgList, 'Org');
-        this.showFilteredResults();
-        this.isOrgLoaded = true;
-      } else {
-        this.orgList = [];
-        this.getOrgList();
-      }
-    }
-  }
-
-  getIndividuals() {
-    if (this.isIndLoaded) {
-      this.showFilteredResults();
-    } else {
-      const cachedindList = this.cacheService.get('indList');
-      if (cachedindList) {
-        this.indList = this.setSelected(cachedindList, 'User');
-        this.showFilteredResults();
-        this.isIndLoaded = true;
-      } else {
-        this.indList = [];
-        this.getIndividualList(this.osLimit, 0);
-      }
     }
   }
 
