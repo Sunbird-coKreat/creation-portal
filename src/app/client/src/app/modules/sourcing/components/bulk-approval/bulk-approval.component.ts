@@ -345,7 +345,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
           program_id: this.programContext.program_id
         };
           // tslint:disable-next-line:max-line-length
-        request['acceptedcontents'] = _.compact(_.uniq([...this.programContext.acceptedContents || [],
+        request['acceptedcontents'] = _.compact(_.uniq([...this.programContext.acceptedcontents || [],
           ..._.map(this.approvalPending, 'identifier')]));  
         this.programsService.updateProgram(request).subscribe(() => {
           this.updateToc.emit('bulkApproval_completed');
