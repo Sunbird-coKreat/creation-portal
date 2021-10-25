@@ -146,7 +146,7 @@
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
               <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
-              <strong *ngIf="reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
+              <strong *ngIf="sessionContext['addFromLibraryBetaEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
