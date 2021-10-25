@@ -8,7 +8,7 @@
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.bulkUploadContent}}</button>
   <div class="divider mx-10" *ngIf="process?.status === 'completed'"></div>
-  <div class="d-flex flex-dc ml-20 pl-10">
+  <div class="d-flex flex-dc">
     <div class="sb-color-gray-400" *ngIf="process?.status === 'completed'">{{resourceService?.frmelmnts?.lbl?.lastUploaded}} : {{ process?.updatedon | dateFormat: 'D MMMM YYYY' }}</div>
     <div *ngIf="process?.status === 'processing'">
       <div class="relative ml-20 pl-5">
