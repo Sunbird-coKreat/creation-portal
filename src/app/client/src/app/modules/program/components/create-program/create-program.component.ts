@@ -15,7 +15,6 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
-import { formConfiguration } from '../create-program/data';
 
 @Component({
   selector: 'app-create-program',
