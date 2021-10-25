@@ -10,7 +10,7 @@
           placeholder="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.search}}" />
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
-      <button class="sb-btn sb-btn-normal" (click)="getData(true)"
+      <button class="sb-btn sb-btn-normal" (click)="getData()"
         [disabled]="showLoader" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('search',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
@@ -21,7 +21,7 @@
         <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" [popupPlacement]="'left'"
 					popupText="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.tooltip}}"></i>
       </label>
-      <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData(true, true)"
+      <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData(true)"
         [options]="contributorTypes" #types [isDisabled]="showLoader">
         <sui-select-option *ngFor="let option of contributorTypes;" [value]="option">
         </sui-select-option>

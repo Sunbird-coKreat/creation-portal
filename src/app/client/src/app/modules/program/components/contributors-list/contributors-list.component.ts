@@ -26,7 +26,6 @@ export class ContributorsListComponent implements OnInit {
   direction = "";
   orgSortColumn = "name";
   indSortColumn = "firstName";
-  orgList: any = [];
   indList: any = [];
   contributorList: any = [];
   paginatedList: any = [];
@@ -51,8 +50,6 @@ export class ContributorsListComponent implements OnInit {
   public telemetryInteractPdata: any;
   public contributorTypes: string[] = ["Organisation", "Individual"];
   public contributorType: string = "Organisation";
-  // public isIndLoaded = false;
-  // public isOrgLoaded = false;
   public osLimit = 500;
   public orgLastPage = false;
   public indLastPage = false;
@@ -95,7 +92,7 @@ export class ContributorsListComponent implements OnInit {
       this.selectedContributors.User = this.preSelectedContributors['User'];
     }
 
-    this.getData(true, true);
+    this.getData(true);
   }
 
   getOrgList(limit = this.osLimit, offset = 0, filter?) {
@@ -193,16 +190,7 @@ export class ContributorsListComponent implements OnInit {
                 return org;
               });
 
-              // this.orgList = this.orgList.concat(orgList);
-              // if (!_.isEmpty(this.orgList)) {
-              //   this.programsService.setSessionCache({
-              //     name: 'orgList',
-              //     value: this.orgList
-              //   });
-              // }
-
               orgList = this.setSelected(orgList, 'Org');
-              // this.isOrgLoaded = true;
               resolve(orgList);
             },
             (err) => {
@@ -294,14 +282,12 @@ export class ContributorsListComponent implements OnInit {
 
   clearSearch() {
     this.searchInput = "";
-    this.getData(true, true);
+    this.getData(true);
   }
 
   showFilteredResults(list) {
     if (this.contributorType === "Organisation") {
-      // this.contributorList = this.applySort(list, this.orgSortColumn);
     } else {
-      // this.contributorList = this.applySort(list, this.indSortColumn);
     }
     this.contributorList = this.applyPagination(list);
     this.hideLoader();
@@ -513,18 +499,8 @@ export class ContributorsListComponent implements OnInit {
                   return obj;
                 });
 
-                // this.indList = this.indList.concat(osUserList);
-                // if (!_.isEmpty(this.indList)) {
-                //   this.programsService.setSessionCache({
-                //     name: 'indList',
-                //     value: this.indList
-                //   });
-                // }
-
                 osUserList = this.setSelected(osUserList, 'User');
                 resovle(osUserList);
-                // this.isIndLoaded = true;
-                // this.showFilteredResults();
               },
               (err) => {
                 console.log("Get individual list", JSON.stringify(err));
@@ -534,8 +510,6 @@ export class ContributorsListComponent implements OnInit {
           }
           else {
             this.hideLoader();
-            // this.indList = this.setSelected(this.indList, 'User');
-            // this.showFilteredResults();
           }
         },
         (error) => {
@@ -561,14 +535,10 @@ export class ContributorsListComponent implements OnInit {
     });
   }
 
-  getData(clearList?, selectedAtTop?) {
+  getData(selectedAtTop?) {
     this.displayLoader();
     switch (this.contributorType) {
       case "Organisation":
-        if (clearList) {
-          this.orgList = [];
-        }
-
         if (this.preSelectedContributors['Org'].length > 0 && selectedAtTop) {
           const orgOsIds = _.map(this.preSelectedContributors['Org'], org => org.osid);
           const limit = orgOsIds.length;
@@ -605,10 +575,6 @@ export class ContributorsListComponent implements OnInit {
       break;
 
       case "Individual":
-        if (clearList) {
-          this.indList = [];
-        }
-
         if (this.preSelectedContributors['User'].length > 0 && selectedAtTop) {
           const userOsIds = _.map(this.preSelectedContributors['User'], ind => ind.osid);
           const limit = userOsIds.length;
