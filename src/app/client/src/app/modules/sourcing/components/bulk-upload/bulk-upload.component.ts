@@ -723,6 +723,9 @@ export class BulkUploadComponent implements OnInit {
     if (!_.isEmpty(frameworkMetaData)) {
       const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
       sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+      if (_.isArray(sharedMetaData.board)) {
+        sharedMetaData.board = _.first(sharedMetaData.board);
+      }
     }
     let creatorName = this.userProfile.firstName;
       if (!_.isEmpty(this.userProfile.lastName)) {
