@@ -969,6 +969,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         } else {
           this.generateTelemetryEndEvent('submit');
           this.toasterService.success(this.resourceService.messages.smsg.m0061);
+          this.programsService.emitHeaderEvent(true);
           this.programStageService.removeLastStage();
           this.uploadedContentMeta.emit({
             contentId: res.result.content_id
@@ -1089,6 +1090,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.generateTelemetryEndEvent('publish');
           this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
           this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
           this.uploadedContentMeta.emit({
             contentId: res.result.identifier
           });

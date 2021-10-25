@@ -8,6 +8,7 @@ import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 import { map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { ItemsetService } from '../../services/itemset/itemset.service';
 
 @Component({
   selector: 'app-bulk-approval',
@@ -34,10 +35,12 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   public telemetryInteractObject: any;
   public telemetryPageId: string;
   public disableBulkApprove = false;
+  public buttonDisabled = false;
   @Input() programContext;
   @Input() sessionContext;
   @Input() storedCollectionData;
   @Input() originalCollectionData;
+  @Input() programContents;
   @Output() updateToc = new EventEmitter<any>();
 
   constructor(public resourceService: ResourceService, public bulkJobService: BulkJobService,
@@ -48,8 +51,14 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.checkBulkApproveHistory();
-    this.checkOriginFolderStatus([this.originalCollectionData]);
-    this.approvalPendingContents([this.storedCollectionData]);
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      this.checkOriginFolderStatus([this.originalCollectionData]);
+      this.approvalPendingContents([this.storedCollectionData]);
+      this.buttonDisabled = !!(!this.originalCollectionData || this.originalCollectionData && this.originalCollectionData.status !== 'Draft')
+    } else {
+      this.getProgramaAprovalPendingContents(this.programContents);
+    }
+
     this.initialized = true;
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
@@ -62,13 +71,26 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   ngOnChanges() {
     if (this.initialized) {
       this.approvalPending = [];
-      this.approvalPendingContents([this.storedCollectionData]);
+      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+        this.approvalPendingContents([this.storedCollectionData]);
+      }
       if (this.approvalPending && this.approvalPending.length) {
         if (!this.bulkApprove || this.bulkApprove && this.bulkApprove.status !== 'processing') {
           this.showBulkApprovalButton = true;
         }
       }
     }
+  }
+
+  getProgramaAprovalPendingContents(contents) {
+    _.forEach(contents, obj => {
+      if (obj.status === 'Live' && this.checkApprovalPending(obj)) {
+        const content = _.pick(obj, ['name', 'channel', 'code', 'mimeType', 'framework', 'contentType', 'identifier', 'parent']);
+        if (!_.find(this.approvalPending, cont => cont.identifier === content.identifier)) {
+          this.approvalPending.push(content);
+        }
+      }
+    });
   }
 
   approvalPendingContents(hierarchy) {
@@ -108,8 +130,14 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   }
 
   checkApprovalPending(content) {
-    const reviewedContents = [...this.storedCollectionData.acceptedContents || [],
-                                    ...this.storedCollectionData.rejectedContents || []];
+    let reviewedContents;
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      reviewedContents = [...this.storedCollectionData.acceptedContents || [],
+                                      ...this.storedCollectionData.rejectedContents || []];
+    } else {
+      reviewedContents = [...this.programContext.acceptedcontents || [],
+                                      ...this.programContext.rejectedcontents || []];
+    }
     if (reviewedContents && reviewedContents.length &&
       _.includes(reviewedContents, content.identifier)) {
          return false;
@@ -147,14 +175,14 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     const contents = [];
     const questionSets = [];
     const temp = _.compact(_.map(this.approvalPending, item => {
-      if (item.originUnitId) {
+      const reqFormat = {};
+      if ((!this.programContext.target_type || this.programContext.target_type === 'collections') && item.originUnitId) { 
         const channel =  _.get(this.storedCollectionData.originData, 'channel');
         if (_.isString(channel)) {
           item['createdFor'] = [channel];
         } else if (_.isArray(channel)) {
           item['createdFor'] = channel;
         }
-        const reqFormat = {};
         reqFormat['metadata'] = {..._.pick(this.storedCollectionData, ['framework']),
                         ..._.pick(_.get(this.storedCollectionData, 'originData'), ['channel']),
                           ..._.pick(item, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
@@ -165,7 +193,17 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
             unitId: item.originUnitId
           }
         ];
-
+      } else if(this.programContext.target_type === 'searchCriteria') {
+        if (_.isString(item.channel)) {
+          item['createdFor'] = [item.channel];
+        } else if (_.isArray(item.channel)) {
+          item['createdFor'] = item.channel;
+        }
+        reqFormat['metadata'] = {
+          ..._.pick(item, ['framework', 'channel', 'name', 'code', 'mimeType', 'contentType', 'createdFor']),
+          ...{lastPublishedBy: this.userService.userProfile.userId}}
+      }
+      if (!_.isEmpty(reqFormat)) {
         if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
           reqFormat['source'] = `${baseUrl}/api/questionset/v1/read/${item.identifier}`;
           questionSets.push(reqFormat);
@@ -249,6 +287,9 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       createdby: this.userService.userProfile.userId,
       createdon: new Date()
     };
+    if (_.get(this.programContext,'target_type') && this.programContext.target_type === 'searchCriteria') {
+      delete(reqData.collection_id);
+    }
     this.bulkJobService.createBulkJob(reqData).subscribe(res => {
       this.bulkApprove = reqData;
       this.bulkJobService.setProcess(this.bulkApprove);
@@ -278,26 +319,42 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   }
 
   updateCollection() {
-    const option = {
-      url: 'content/v3/read/' + this.sessionContext.collection,
-      param: { 'mode': 'edit', 'fields': 'acceptedContents,versionKey' }
-    };
-    this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
-      const request = {
-        content: {
-          'versionKey': data.versionKey
-        }
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      const option = {
+        url: 'content/v3/read/' + this.sessionContext.collection,
+        param: { 'mode': 'edit', 'fields': 'acceptedContents,versionKey' }
       };
-      // tslint:disable-next-line:max-line-length
-      request.content['acceptedContents'] = _.compact(_.uniq([...this.storedCollectionData.acceptedContents || [],
+      this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
+        const request = {
+          content: {
+            'versionKey': data.versionKey
+          }
+        };
+        // tslint:disable-next-line:max-line-length
+        request.content['acceptedContents'] = _.compact(_.uniq([...this.storedCollectionData.acceptedContents || [],
                                             ..._.map(_.filter(this.approvalPending, content => content.originUnitId), 'identifier')]));
-      this.helperService.updateContent(request, this.sessionContext.collection).subscribe(res => {
+        this.helperService.updateContent(request, this.sessionContext.collection).subscribe(res => {
         this.updateToc.emit('bulkApproval_completed');
         this.showBulkApprovalButton = false;
-      }, err => {
-        this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
+        }, err => {
+          this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
+        });
       });
-    });
+    } else if (this.programContext.target_type === 'searchCriteria') {
+        let request = {
+          program_id: this.programContext.program_id
+        };
+          // tslint:disable-next-line:max-line-length
+        request['acceptedcontents'] = _.compact(_.uniq([...this.programContext.acceptedContents || [],
+          ..._.map(this.approvalPending, 'identifier')]));  
+        this.programsService.updateProgram(request).subscribe(() => {
+          this.updateToc.emit('bulkApproval_completed');
+          this.showBulkApprovalButton = false;
+        }, (err) => {
+          this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
+
+        });
+    }
   }
 
   viewBulkApprovalStatus() {
@@ -346,25 +403,32 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
 
   prepareTableData() {
     const failedContent = _.filter(this.dikshaContents, content => content.status === 'Failed');
-    this.unitsInLevel = _.map(failedContent, content => {
-      return this.findFolderLevel(this.storedCollectionData, content.origin);
-    });
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      this.unitsInLevel = _.map(failedContent, content => {
+        return this.findFolderLevel(this.storedCollectionData, content.origin);
+      });
+    }
 
     try {
-      const headers = [
-       // tslint:disable-next-line:max-line-length
-       'identifier', 'name', 'contentType', 'Level 1 Textbook Unit', 'Level 2 Textbook Unit', 'Level 3 Textbook Unit', 'Level 4 Textbook Unit'
-      ];
+      const headers = ['identifier', 'name', 'contentType'];
+      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+        headers.push('Level 1 Textbook Unit');
+        headers.push('Level 2 Textbook Unit');
+        headers.push('Level 3 Textbook Unit');
+        headers.push('Level 4 Textbook Unit');
+      }
       const tableData = _.map(failedContent, (con, i) => {
         const result = _.pick(con, ['identifier', 'name', 'primaryCategory']);
-        const folderStructure = this.unitsInLevel[i];
-        this.unitGroup = [];
-        this.tree(folderStructure);
-        if (this.unitGroup && this.unitGroup.length) {
-          result['Level 1 Textbook Unit'] = this.unitGroup[0] && this.unitGroup[0].name || '';
-          result['Level 2 Textbook Unit'] = this.unitGroup[1] && this.unitGroup[1].name || '';
-          result['Level 3 Textbook Unit'] = this.unitGroup[2] && this.unitGroup[2].name || '';
-          result['Level 4 Textbook Unit'] = this.unitGroup[3] && this.unitGroup[3].name || '';
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const folderStructure = this.unitsInLevel[i];
+          this.unitGroup = [];
+          this.tree(folderStructure);
+          if (this.unitGroup && this.unitGroup.length) {
+            result['Level 1 Textbook Unit'] = this.unitGroup[0] && this.unitGroup[0].name || '';
+            result['Level 2 Textbook Unit'] = this.unitGroup[1] && this.unitGroup[1].name || '';
+            result['Level 3 Textbook Unit'] = this.unitGroup[2] && this.unitGroup[2].name || '';
+            result['Level 4 Textbook Unit'] = this.unitGroup[3] && this.unitGroup[3].name || '';
+          }
         }
         return result;
       });
