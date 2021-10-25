@@ -40,7 +40,7 @@
                     [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.contributionDashboard}}
                     </a>
-                    <a class="item" *ngIf="!programDetails?.target_type ||  programDetails?.target_type === 'Collections'" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
+                    <a class="item" *ngIf="!programDetails?.target_type ||  (programDetails?.target_type === 'Collections' || programDetails?.target_type === 'questionSets')" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('reports', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectReports)"
                     [telemetryInteractObject]="telemetryInteractObject"
@@ -526,7 +526,7 @@
                     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
                 </div>
             </div>
-            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5" *ngIf="!programDetails?.target_type ||  programDetails?.target_type === 'Collections'">
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5" *ngIf="!programDetails?.target_type || (programDetails?.target_type === 'Collections' || programDetails?.target_type === 'questionSets')">
                 <div class="ui container pt-24 m-0">
                     <div class="sb-table-responsive">
                         <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">

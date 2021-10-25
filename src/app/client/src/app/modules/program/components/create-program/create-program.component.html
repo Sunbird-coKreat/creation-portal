@@ -1,6 +1,6 @@
 <ng-container *ngIf="collectionEditorVisible; else programPage">
 	<app-question-set-editor
-	 	[questionSetEditorComponentInput]="questionSetEditorComponentInput" (eventEmitter)="collectionEditorEventListener($event)"
+	 	[questionSetEditorComponentInput]="questionSetEditorComponentInput" (collectionEditorEventEmitter)="collectionEditorEventListener($event)"
 	></app-question-set-editor>
   </ng-container>
 <ng-template #programPage>
@@ -346,10 +346,10 @@
 									</div-->
 									<div class="six wide column" *ngIf="projectTargetType == 'collections'">
 										<div class="required field">
-											<label class="d-block">{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}
+											<label class="d-block">{{resource?.frmelmnts?.lbl?.selectTargetCollection}}
 											<i class="pull-right question circle link icon pull-right" suiPopup
 												popupDelay="500" [popupPlacement]="'left'"
-												popupText="{{resource?.frmelmnts?.lbl?.select?.Target?.Collection}}"></i>
+												popupText="{{resource?.frmelmnts?.lbl?.selectTargetCollection}}"></i>
 										</label>
 										<sui-select formControlName="target_collection_category" class="selecttarget"  placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
 										(selectedOptionChange)="onChangeTargetCollectionCategory()" [(ngModel)]="selectedTargetCollection" [options]="programScope['collectionCategories']"  #targetCollections>
@@ -450,22 +450,22 @@
 											</ng-template>
 										</div>
 									</div>	
-									<div class="six wide column pull-right">
+									<!-- <div class="six wide column pull-right">
 										<button
 										  class="sb-btn sb-btn-normal sb-btn-outline-primary mr-8"										  
 										  (click)="initiateCollectionEditor()"
 										>
 										  <i class="plus icon"></i> {{ resource?.frmelmnts?.lbl?.addNewTargetObject }}
 										</button>										
-									</div>									
+									</div>									 -->
 								</div>
 								<div class="ui grid">
 									<div class="twelve wide column" *ngIf="projectTargetType == 'collections' && showProgramScope">
 										<ng-container *ngTemplateOutlet="frameworkAttributes; context: {form: projectScopeForm}"></ng-container>
 									</div>
-									<div class="twelve wide column" *ngIf="projectTargetType == 'collections' || projectTargetType === 'questionSets' && showProgramScope">
+									<div class="twelve wide column" *ngIf="(projectTargetType === 'collections' || projectTargetType === 'questionSets') && showProgramScope">
 										<div class="ui grid">
-											<div class="seven wide column" *ngIf="!projectTargetType === 'questionSets'">
+											<div class="seven wide column" *ngIf="projectTargetType !== 'questionSets'">
 												<div class="sb-table-responsive sb-dock-textbook-table">
 													<table class="sb-table sb-table-striped sb-table-sortable"
 														*ngIf="stepNo == 2">
@@ -578,13 +578,16 @@
 													</table>
 												</div>
 											</div>
-											<div [ngClass]="{'five wide column': projectTargetType === 'collections', 'tweleve wide column': projectTargetType === 'questionSets'}">
+											<div [ngClass]="{'five': projectTargetType === 'collections', 'tweleve': projectTargetType === 'questionSets', 'wide': true, 'column': true}">
 												<div class="sb-bg-white b-1-100 br-4 o-y-auto">
-													<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
-														{{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [projectScopeForm.value.target_collection_category]}, 'plural'))}}
-													</h5>
+													<div [ngClass]="{'d-flex flex-jc-space-between': projectTargetType === 'questionSets'}">
+														<h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
+															{{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [projectScopeForm.value.target_collection_category]}, 'plural'))}}
+														</h5>
+														<button *ngIf="projectTargetType === 'questionSets' && tempCollections.length"class="mr-10 my-10 sb-btn sb-btn-normal sb-btn-secondary" (click)="initiateCollectionEditor()">{{resource.frmelmnts.lbl.addNewTargetObject}}</button>
+													</div>
 													<hr class="mt-0">
-													<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
+													<div class="o-y-auto fs-0-92 text-capitalize" [ngClass]="{'maxmin-h-375': projectTargetType === 'collections', 'max-h-375 min-height-auto': projectTargetType === 'questionSets'}">
 														<div class="sb-program-collection ui container"
 															*ngFor="let tempCollection of tempCollections">
 															<div class="ui grid">
@@ -606,7 +609,7 @@
 																	</small>
 																</div>
 																<div class="four wide column px-0 mt-5">
-																	<div class="sb-color-gray-400 fxsmall text-lowercase">
+																	<div *ngIf="projectTargetType !== 'questionSets'"class="sb-color-gray-400 fxsmall text-lowercase">
 																		{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | lowercase}}
 																	</div>
 																	<div *ngIf="tempCollection.selected && projectTargetType !== 'questionSets'"
@@ -619,7 +622,7 @@
 																		class="sb-color-primary fxsmall cursor-pointer text-none"
 																		(click)="initiateCollectionEditor(tempCollection.identifier);">
 																		<i
-																			class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editTargetObjectType | interpolate:'{TARGET_OBJECT_TYPE}' : programScope['selectedTargetCollectionObject'] | titlecase}}
+																			class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editTargetObjectType | interpolate:'{TARGET_OBJECT_TYPE}' : programScope['selectedTargetCollectionObject']?.name | titlecase}}
 																	</div>
 																	<div *ngIf="blueprintTemplate"
 																		class="sb-color-primary fxsmall cursor-pointer text-none"
@@ -638,9 +641,16 @@
 																	<i class="close outline icon sb-color-red-100" suiPopup
 																		popupHeader="close"></i>
 																</div>
-																<hr class="row p-0 mt-0">
+																<hr class="row p-0 mt-0">																
 															</div>
 														</div>
+														<div class="ui container" *ngIf="projectTargetType === 'questionSets' && !tempCollections.length" [appTelemetryImpression]="telemetryImpression">
+															<div class="collection-add__no-result flex-dc flex-ai-jc-center">
+															  <h6 class="font-weight-bold">{{resource.frmelmnts.lbl.noCollectionsAddedToProject | interpolate: '{TARGET_OBJECT_TYPE}': projectScopeForm.value.target_collection_category }}</h6>
+															  <img alt="No Content available" class="mt-16" src="assets/images/offline-desktop.svg">															  
+															  <button class="sb-btn sb-btn-secondary sb-btn-normal my-10" (click)="initiateCollectionEditor()">{{resource.frmelmnts.lbl.addNewTargetObject}}</button>
+															</div>
+														  </div>
 													</div>
 												</div>
 											</div>

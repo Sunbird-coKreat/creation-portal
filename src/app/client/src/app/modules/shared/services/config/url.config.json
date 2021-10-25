@@ -103,7 +103,12 @@
     },
     "QUESTIONSET" : {
       "GET": "questionset/v1/read",
-      "HIERARCHY_READ": "questionset/v1/hierarchy"
+      "HIERARCHY_READ": "questionset/v1/hierarchy",
+      "HIERARCHY_ADD": "questionset/v1/add",
+      "HIERARCHY_REMOVE": "questionset/v1/remove"
+    },
+    "QUESTION" : {
+      "READ": "question/v1/read"
     },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",
