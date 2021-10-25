@@ -1,0 +1,17 @@
+Name of the Content,Description of the content,Keywords,Audience,Author,Copyright,License,Attributions,Icon File Path,File Format,File Path,Content Type
+"Upto 200 or 250 characters. Ideally less than 60 characters 
+(Please enter the text)","Upto 400 or 500 characters. Ideally 160 to 200 characters.
+(Please enter the text)",,Student Or Teacher Or Administrator,The person or organization who has authored the content,Person or Organization who owns the copyright. Default name is DIKSHA tenant.,"One of the supported licenses in DIKSHA.
+If this is empty, default to the default license configured for the tenant",List of persons or organizations who have contributed to this content.,"Publicly accessible URL of the Icon file.
+A square thumbnail that helps identify the content easily. All images need to be in 1:1 (Square dimension) so that they do not get distorted.
+Min 128 x 128 px and Max 1 MB file size.
+","PDF
+HTML
+EPUB
+H5P
+Video (mp4 and webM)
+","Publicly accessible URL of the file.
+File size limits:
+50 MB for all file types (Except video)
+15 GB for videos","List of valid content types
+This is a mandatory field."
