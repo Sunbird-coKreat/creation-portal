@@ -78,7 +78,7 @@
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
+						<th *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets' ">{{firstLevelFolderLabel}}</th>
 						<th *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">{{ resourceService.frmelmnts.lbl.creator }}</th>
 						<th class="cursor-pointer sb-sorting" (click)="sortCollection('resourceStatusText')">{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
@@ -118,8 +118,8 @@
 									{{data.subject}}
 								</div>
 							</td>
-							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
-							<td class="fsmall"  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">
+							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
+							<td class="fsmall"  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'">
 								<span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}
 									<span class="sb-color-warning"> {{ resourceService?.frmelmnts?.lbl?.approvalPending }}</span></span>
 							</td>

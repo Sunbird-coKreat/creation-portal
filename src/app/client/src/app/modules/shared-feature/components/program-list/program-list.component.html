@@ -16,7 +16,7 @@
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forQuestionSets }}
         </a>
-        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="setActiveTab('searchCriteria')"
+        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="3"  (click)="setActiveTab('searchCriteria')"
         appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
         [telemetryInteractObject]="telemetryInteractObject"
@@ -31,7 +31,10 @@
   </div> 
   <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
     <ng-container *ngTemplateOutlet="projectList"></ng-container>
-  </div>    
+  </div>
+  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+    <ng-container *ngTemplateOutlet="projectList"></ng-container>
+  </div>        
 </sui-tabset>
 <div *ngIf="isContributor  || !issourcingOrgAdmin">
   <ng-container *ngTemplateOutlet="projectList"></ng-container>

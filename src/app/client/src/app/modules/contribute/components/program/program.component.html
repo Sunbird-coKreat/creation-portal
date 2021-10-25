@@ -71,7 +71,7 @@
 								<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 								{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 							</a>
-							<button *ngIf="(!programDetails.target_type || programDetails.target_type === 'collections') && (isContributingOrgAdmin || sessionContext?.currentRoles?.includes('REVIEWER'))" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+							<button *ngIf="(!programDetails.target_type || programDetails.target_type === 'collections' || programDetails?.target_type === 'questionSets') && (isContributingOrgAdmin || sessionContext?.currentRoles?.includes('REVIEWER'))" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
 							appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata(textbookFiltersApplied ? 'modify_filters' : 'filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 							[telemetryInteractObject]="telemetryInteractObject"
@@ -335,8 +335,8 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-10" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
-					<th *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
+					<th class="w-10" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'">{{firstLevelFolderLabel}}</th>
+					<th *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')">
 						<span *ngIf="currentNominationStatus !== 'Approved'">Sample Content</span>
 						<span *ngIf="currentNominationStatus === 'Approved'">{{resourceService.frmelmnts.lbl.contentStatus}}</span>
 					</th>
@@ -352,7 +352,7 @@
 						</span>
 					</th>
 					<th class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
-					<th class="w-10" *ngIf="programDetails?.target_type === 'collections'"></th>
+					<th class="w-10" *ngIf="programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'"></th>
 				</tr>
 			</thead>
 			<tbody class="sb-table-body">
@@ -365,10 +365,10 @@
 						<td>{{contributorTextbook.medium}}</td>
 						<td>{{contributorTextbook.gradeLevel}}</td>
 						<td>{{contributorTextbook.subject}}</td>
-						<td *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">
+						<td *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>
-						<td *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
+						<td *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')">
 							<div class="text-capitalize fs-0-785">
 								<span *ngIf="currentNominationStatus !== 'Approved'"> {{contributorTextbook.totalSampleContent || 0 }}</span>
 								<div *ngIf="currentNominationStatus === 'Approved'">

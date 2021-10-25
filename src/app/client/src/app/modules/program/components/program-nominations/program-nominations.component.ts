@@ -16,6 +16,7 @@ import { forkJoin, of } from 'rxjs';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { collection } from '../list-contributor-textbooks/data';
 
 @Component({
   selector: 'app-program-nominations',
@@ -448,11 +449,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       });
   }
 
-  getProgramCollection (preferencefilters?) {
-    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).pipe(
+  getProgramCollection (preferencefilters?, target_type?) {
+    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters, true, target_type).pipe(
       tap((response: any) => {
         if (response && response.result) {
-          this.programCollections = response.result.content || [];
+          let objectType = 'content';
+          if(target_type && target_type === 'questionSets') objectType = 'QuestionSet';
+          this.programCollections = response.result[objectType] || [];
         }
       }),
       catchError(err => {
@@ -642,10 +645,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getCollectionCategoryDefinition() {
-    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId && (!this.programDetails.target_type || this.programDetails.target_type === 'collections')) {
+    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId && (!this.programDetails.target_type || this.programDetails.target_type === 'collections' || this.programDetails.target_type === 'questionSets')) {
       // tslint:disable-next-line:max-line-length
+      let objectType = _.get(this.programDetails, 'target_type') === 'questionSets' ? 'QuestionSet' : 'Collection';
       this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
-        this.userProfile.rootOrgId, 'Collection').subscribe(res => {
+        this.userProfile.rootOrgId, objectType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
@@ -713,6 +717,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }, _.isUndefined);
   }
 
+  getCollectionsAddedToProgram() {
+    let collectionsAddedToProgram = _.filter(this.programCollections, 
+      (collection) => _.indexOf(this.programDetails.collection_ids, collection.identifier) !== -1
+    )
+    return collectionsAddedToProgram || [];
+  }
+
   checkActiveTab() {
     this.activatedRoute.queryParamMap
       .subscribe(params => {
@@ -722,18 +733,21 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.setTelemetryPageId(this.activeTab);
     this.showLoader = false;
     if (this.activeTab === 'textbook') {
-      this.showTextbookLoader = true;
-      if(!this.programDetails.target_type ||  this.programDetails.target_type === 'collections'){
+      this.showTextbookLoader = true;      
+      if(!this.programDetails.target_type || this.programDetails.target_type === 'collections' || this.programDetails.target_type === 'questionSets' ){
         this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
           (prefres) => {
             let preffilter = {};
             if (prefres.result !== null || prefres.result !== undefined) {
               this.userPreferences = prefres.result;
               preffilter = _.get(this.userPreferences, 'sourcing_preference');
-            }
-            this.getProgramCollection(preffilter).subscribe((res) => {
+            }                     
+            this.getProgramCollection(preffilter, _.get(this.programDetails, 'target_type')).subscribe((res) => {
               this.showTextbookLoader  =  false;
-              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
+              if (_.get(this.programDetails, 'target_type') === 'questionSets') {              
+                this.programCollections = this.getCollectionsAddedToProgram();
+              }
+              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');              
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
               this.logTelemetryImpressionEvent();

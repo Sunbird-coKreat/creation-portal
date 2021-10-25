@@ -102,19 +102,21 @@ export class CollectionHierarchyService {
     return this.actionService.get(req);
   }
 
-  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true) {
+  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true, target_type?) {
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
       }
     };
+    let objectType = 'collection';
+    if(target_type === 'questionSets') objectType = 'QuestionSet';
     const option = {
       url: 'composite/v3/search',
       data: {
         request: {
           filters: {
             programId: programId,
-            objectType: 'collection',
+            objectType: objectType,
             status: ['Draft', 'Live'],
             primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           },
