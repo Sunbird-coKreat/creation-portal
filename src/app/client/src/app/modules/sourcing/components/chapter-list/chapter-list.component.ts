@@ -194,7 +194,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         this.uploadHandler(contentMeta);
       },
       collectionEditorEventEmitter: (event) => {
-        this.collectionEditorListener(event);
+        this.collectionEditorEventListener(event);
       }
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
