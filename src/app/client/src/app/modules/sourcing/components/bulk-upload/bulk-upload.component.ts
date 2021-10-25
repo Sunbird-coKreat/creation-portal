@@ -495,27 +495,39 @@ export class BulkUploadComponent implements OnInit {
       headers.push ({ name: 'Level 3 Textbook Unit', inputName: 'level3', required: false, requiredError, headerError });
       headers.push ({ name: 'Level 4 Textbook Unit', inputName: 'level4', required: false, requiredError, headerError });
     }
-     const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
-       _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+    if (this.programContext.target_type === 'searchCriteria') {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+      this.allowedDynamicColumns = [...orgFrameworkCategories];
+    } else {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+
+      const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
+        _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
        return {
-         name: `Org_FW_${category.code}`,
-         inputName: category.orgIdFieldName,
+         name: `Target_FW_${category.code}`,
+         inputName: category.targetIdFieldName,
          isArray: true,
          headerError
        };
      }) : [];
-
-     const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
-       _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
-      return {
-        name: `Target_FW_${category.code}`,
-        inputName: category.targetIdFieldName,
-        isArray: true,
-        headerError
-      };
-    }) : [];
-
-    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+     this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+    }
     const validateRow = (row, rowIndex) => {
       if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
         if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
