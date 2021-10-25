@@ -1000,12 +1000,12 @@ export class HelperService {
   }
 
   publishContentOnOrigin(action, contentId, contentMetaData, programContext) {
-    // const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
-    // if (_.isString(channel)) {
-    //   contentMetaData['createdFor'] = [channel];
-    // } else if (_.isArray(channel)) {
-    //   contentMetaData['createdFor'] = channel;
-    // }
+    const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
+    if (_.isString(channel)) {
+      contentMetaData['createdFor'] = [channel];
+    } else if (_.isArray(channel)) {
+      contentMetaData['createdFor'] = channel;
+    }
 
     // @Todo remove after testing
     // this.sendNotification.next(_.capitalize(action));
