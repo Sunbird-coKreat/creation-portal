@@ -65,6 +65,11 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    border: none;
+  }
+
+  .item-sno {
+    flex: 0.5;
   }
 
   .item-status {

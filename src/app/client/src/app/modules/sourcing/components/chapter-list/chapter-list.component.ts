@@ -868,7 +868,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         return treeItem;
       });
-      return tree;
+      // Sorting leaf node based on created time
+      return _.orderBy(tree, (node) => {
+        return new Date(node.createdOn);
+      });
     }
   }
 
@@ -1057,6 +1060,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       organisationId: _.has(node, 'organisationId') ? node.organisationId : null,
       prevStatus: node.prevStatus || null,
       sourceURL : node.sourceURL,
+      createdOn : node.createdOn,
       sampleContent: node.sampleContent || null,
       sharedContext: {
         ...sharedMeta
@@ -1128,7 +1132,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         } else if (content.status === 'Live' && content.sourceURL) {
           return true;
         }
-      } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ))
+      } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || content.status === 'Processing')
       && this.currentUserID !== content.createdBy
       && content.organisationId === this.myOrgId) {
         return true;
