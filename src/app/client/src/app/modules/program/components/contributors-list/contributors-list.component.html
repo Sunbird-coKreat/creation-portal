@@ -10,7 +10,7 @@
           placeholder="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.search}}" />
         <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
       </div>
-      <button class="sb-btn sb-btn-normal" (click)="getData()"
+      <button class="sb-btn sb-btn-normal" (click)="getData(true)"
         [disabled]="showLoader" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('search',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
@@ -21,7 +21,7 @@
         <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" [popupPlacement]="'left'"
 					popupText="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.tooltip}}"></i>
       </label>
-      <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData()"
+      <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData(true)"
         [options]="contributorTypes" #types [isDisabled]="showLoader">
         <sui-select-option *ngFor="let option of contributorTypes;" [value]="option">
         </sui-select-option>
@@ -50,7 +50,7 @@
           <td>
             <div [ngClass]="(contributor.isDisabled) ? 'disabled field':''" class="sb-checkbox sb-checkbox-primary">
               <input id="{{contributor.osid}}" [disabled]="contributor.isDisabled" type="checkbox"
-                value="{{contributor.osid}}" [(ngModel)]="contributor.isChecked">
+                value="{{contributor.osid}}" [(ngModel)]="contributor.isChecked" (click)="updateSelection(contributor, $event)">
               <label *ngIf="contributorType == 'Organisation'; else indName" for="{{contributor.osid}}"
                 class="sb__ellipsis sb__ellipsis--three">{{contributor?.name}}</label>
               <ng-template #indName>
@@ -67,7 +67,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="listCnt > 0 && pager.totalPages > 1 && !showLoader"
+  <div *ngIf="listCnt > 0 && !showLoader"
     class="sb-pagination-container flex-jc-flex-start pt-16">
     <div class="sb-pagination">
       <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="navigateToPage(1)" appTelemetryInteract
@@ -84,18 +84,19 @@
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
-      <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="navigateToPage(pager.currentPage + 1)"
+      <a *ngIf="contributorType =='Organisation'" [ngClass]="{disabled:orgLastPage}" (click)="navigateToPage(pager.currentPage + 1)"
         class="sb-item" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
-      <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="navigateToPage(pager.totalPages)"
+      <a *ngIf="contributorType =='Individual'" [ngClass]="{disabled:indLastPage}" (click)="navigateToPage(pager.currentPage + 1)"
         class="sb-item" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
-    </div>
+        [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
+      </div>
   </div>
+
   <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
     <app-loader></app-loader>
   </div>

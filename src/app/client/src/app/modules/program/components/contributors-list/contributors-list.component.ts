@@ -51,6 +51,8 @@ export class ContributorsListComponent implements OnInit {
   public isIndLoaded = false;
   public isOrgLoaded = false;
   public osLimit = 500;
+  public orgLastPage = false;
+  public indLastPage = false;
 
   constructor(
     public resource: ResourceService,
@@ -74,25 +76,54 @@ export class ContributorsListComponent implements OnInit {
       pid: this.configService.appConfig.TELEMETRY.PID,
     };
     this.telemetryInteractObject = {};
-    this.pageLimit = this.registryService.programUserPageLimit;
-    this.getData();
+    this.pageLimit = this.osLimit;
+
+    if (this.preSelectedContributors['Org'].length > 0) {
+      if (!this.selectedContributors.Org) {
+        this.selectedContributors.Org = [];
+      }
+      this.selectedContributors.Org = this.preSelectedContributors['Org'];
+    }
+
+    if (this.preSelectedContributors['User'].length > 0) {
+      if (!this.selectedContributors.User) {
+        this.selectedContributors.User = [];
+      }
+      this.selectedContributors.User = this.preSelectedContributors['User'];
+    }
+
+    this.getData(true);
   }
 
-  getOrgList(limit = this.osLimit, offset = 0) {
-    this.registryService.getOrgList(limit, offset).subscribe(
+
+  getOrgList(limit = this.osLimit, offset = 0, filter?) {
+    const  reqFilter = {
+      ...filter
+    };
+
+    if (this.searchInput) {
+      reqFilter["name"] = {
+        "contains": _.trim(this.searchInput)
+      };
+    }
+
+    this.registryService.getOrgList(limit, offset, reqFilter).subscribe(
       (data) => {
+        this.orgLastPage = !!(_.get(data, "result.Org").length < this.osLimit);
         if (!_.isEmpty(_.get(data, "result.Org"))) {
-          this.orgList = this.orgList.concat(_.get(data, "result.Org"));
-          offset = offset + this.osLimit;
-          this.getOrgList(limit, offset);
-        } else {
-          this.orgList = _.filter(
-            this.orgList,
+          // this.orgList = this.orgList.concat(_.get(data, "result.Org"));
+          let orgList = _.get(data, "result.Org");
+          // offset = offset + this.osLimit;
+          // this.getOrgList(limit, offset);
+        // } else {
+          orgList = _.filter(
+            orgList,
             (org) => org.orgId !== this.userService.rootOrgId
           );
           // Org creator user open saber ids
-          const osOrgUsers = _.chunk(_.map(this.orgList, (org) => org.createdBy), this.osLimit);
-          this.getOrgCreatorInfo(osOrgUsers);
+          this.getOrgCreatorInfo(orgList);
+        } else {
+          this.hideLoader();
         }
       },
       (error) => {
@@ -121,18 +152,16 @@ export class ContributorsListComponent implements OnInit {
     return this.telemetryPageId;
   }
 
-  getOrgCreatorInfo(orgCreatorOsIds, orgCreators = [], index = 0) {
-    this.registryService.getUserdetailsByOsIds(orgCreatorOsIds[index]).subscribe(
+  getOrgCreatorInfo(orgList) {
+    const orgCreatorOsIds = _.map(orgList, (org) => org.createdBy);
+    this.registryService.getUserdetailsByOsIds(orgCreatorOsIds).subscribe(
       (data) => {
-        index++;
-        orgCreators = orgCreators.concat(_.get(data, "result.User"));
-
-        if (index < orgCreatorOsIds.length) {
-          this.getOrgCreatorInfo(orgCreatorOsIds, orgCreators, index);
-        } else {
+          let orgCreators = _.get(data, "result.User");
           const orgCreatorIds = _.map(orgCreators, (user) => user.userId) || [];
-          this.orgList = _.compact(
-            _.map(this.orgList, (org) => {
+
+          // Add user in Org.User
+          orgList = _.compact(
+            _.map(orgList, (org) => {
               org.User = _.find(orgCreators, (user) => {
                 if (user.osid == org.createdBy) {
                   return user;
@@ -147,7 +176,7 @@ export class ContributorsListComponent implements OnInit {
           // Get all users profile
           this.getUsers(orgCreatorIds).then(
             (res) => {
-              this.orgList = _.map(this.orgList, (org) => {
+              orgList = _.map(orgList, (org) => {
                 let userInfo = _.find(res,
                   (user) => {
                     if (user.identifier == _.get(org, "User.userId")) {
@@ -162,12 +191,14 @@ export class ContributorsListComponent implements OnInit {
                 return org;
               });
 
+              this.orgList = this.orgList.concat(orgList);
               if (!_.isEmpty(this.orgList)) {
                 this.programsService.setSessionCache({
                   name: 'orgList',
                   value: this.orgList
                 });
               }
+
               this.orgList = this.setSelected(this.orgList, 'Org');
               this.isOrgLoaded = true;
               this.showFilteredResults();
@@ -176,7 +207,7 @@ export class ContributorsListComponent implements OnInit {
               console.log("Get org list", JSON.stringify(err));
             }
           );
-        }
+        // }
       },
       (error) => {
         console.log("Get org creator", JSON.stringify(error));
@@ -199,16 +230,31 @@ export class ContributorsListComponent implements OnInit {
   }
 
   navigateToPage(page: number): undefined | void {
-    if (page < 1 || page > this.pager.totalPages) {
-      return;
-    }
     this.pageNumber = page;
-    this.contributorList = this.paginatedList[this.pageNumber - 1];
-    this.pager = this.paginationService.getPager(
-      this.listCnt,
-      this.pageNumber,
-      this.pageLimit
-    );
+
+    if (_.isEmpty(this.paginatedList[this.pageNumber - 1])) {
+      this.showLoader = true;
+      this.isDisabledSaveBtn = true;
+      this.contributorList = [];
+
+      switch (this.contributorType) {
+        case "Organisation":
+          this.getOrgList(this.osLimit, (this.pageNumber - 1) * this.osLimit);
+          break;
+
+        case "Individual":
+          this.getIndividualList(this.osLimit, (this.pageNumber - 1) * this.osLimit);
+          break;
+      }
+    }
+    else {
+      this.contributorList = this.paginatedList[this.pageNumber - 1];
+      this.pager = this.paginationService.getPager(
+        this.listCnt,
+        this.pageNumber,
+        this.pageLimit
+      );
+    }
   }
 
   displayLoader() {
@@ -225,20 +271,20 @@ export class ContributorsListComponent implements OnInit {
 
   clearSearch() {
     this.searchInput = "";
-    this.getData();
+    this.getData(true);
   }
 
   showFilteredResults() {
     if (this.contributorType === "Organisation") {
-      this.contributorList = this.applySearchFilter(this.orgList, "name");
+      // this.contributorList = this.applySearchFilter(this.orgList, "name");
       this.contributorList = this.applySort(
-        this.contributorList,
+        this.orgList,
         this.orgSortColumn
       );
     } else {
-      this.contributorList = this.applyIndSearchFilter(this.indList);
+      // this.contributorList = this.applyIndSearchFilter(this.indList);
       this.contributorList = this.applySort(
-        this.contributorList,
+        this.indList,
         this.indSortColumn
       );
     }
@@ -292,6 +338,7 @@ export class ContributorsListComponent implements OnInit {
     );
   }
 
+  // @Todo fix this function to show sorted records at top of the list
   sortBySelected(list) {
     const checked = _.filter(list, (obj) => obj.isChecked) || [];
     const unchecked = _.filter(list, (obj) => !obj.isChecked) || [];
@@ -330,29 +377,29 @@ export class ContributorsListComponent implements OnInit {
     );
   }
   save() {
-    if (!_.isEmpty(this.orgList)) {
-      this.selectedContributors["Org"] = _.map(
-        _.filter(this.orgList, (org) => org.isChecked),
-        (org) => {
-          return {
-            ..._.pick(org, "osid", "isChecked"),
-            User: _.pick(org.User, "userId", "maskedEmail", "maskedPhone"),
-          };
-        }
-      );
-    }
+    // if (!_.isEmpty(this.orgList)) {
+    //   this.selectedContributors["Org"] = _.map(
+    //     _.filter(this.orgList, (org) => org.isChecked),
+    //     (org) => {
+    //       return {
+    //         ..._.pick(org, "osid", "isChecked"),
+    //         User: _.pick(org.User, "userId", "maskedEmail", "maskedPhone"),
+    //       };
+    //     }
+    //   );
+    // }
 
-    if (!_.isEmpty(this.indList)) {
-      this.selectedContributors["User"] = _.map(
-        _.filter(this.indList, (ind) => ind.isChecked),
-        (ind) => {
-          return {
-            ..._.pick(ind, "osid", "isChecked"),
-            User: _.pick(ind.User, "userId", "maskedEmail", "maskedPhone"),
-          };
-        }
-      );
-    }
+    // if (!_.isEmpty(this.indList)) {
+    //   this.selectedContributors["User"] = _.map(
+    //     _.filter(this.indList, (ind) => ind.isChecked),
+    //     (ind) => {
+    //       return {
+    //         ..._.pick(ind, "osid", "isChecked"),
+    //         User: _.pick(ind.User, "userId", "maskedEmail", "maskedPhone"),
+    //       };
+    //     }
+    //   );
+    // }
 
     this.onContributorSave.emit(this.selectedContributors);
   }
@@ -361,9 +408,10 @@ export class ContributorsListComponent implements OnInit {
     this.onContributorClose.emit();
   }
 
+  // @Todo - fix this function
   sortList() {
     this.direction = this.direction === "asc" ? "desc" : "asc";
-    this.getData();
+    // this.getData();
   }
 
   getUsers(usersIds) {
@@ -449,20 +497,24 @@ export class ContributorsListComponent implements OnInit {
 
   getIndividualList(limit = this.osLimit, offset = 0) {
     const filters = { "roles": { "contains": "individual" } };
+
+    if (this.searchInput) {
+      filters["firstName"] = {
+        "contains": _.trim(this.searchInput)
+      };
+    }
+
     this.registryService.getUserList(limit, offset, filters).subscribe(
       (data) => {
+        this.indLastPage = !!(_.get(data, "result.User").length < this.osLimit);
         if (!_.isEmpty(_.get(data, "result.User"))) {
-          this.indList = this.indList.concat(_.get(data, "result.User"));
-          offset = offset + this.osLimit;
-          this.getIndividualList(limit, offset);
-        } else {
-          // Get user ids
-          const userIds = _.map(this.indList, (ind) => ind.userId);
+          let osUserList = _.get(data, "result.User");
+          const userIds = _.map(osUserList, (ind) => ind.userId);
 
           // Get all users profile
           this.getUsers(userIds).then(
             (res) => {
-              this.indList = _.map(this.indList, (obj) => {
+              osUserList = _.map(osUserList, (obj) => {
                 // Attach user details in User Obj
                 obj.User = _.find(res, (user) => {
                   if (user.identifier == _.get(obj, "userId")) {
@@ -474,12 +526,14 @@ export class ContributorsListComponent implements OnInit {
                 return obj;
               });
 
+              this.indList = this.indList.concat(osUserList);
               if (!_.isEmpty(this.indList)) {
                 this.programsService.setSessionCache({
                   name: 'indList',
                   value: this.indList
                 });
               }
+
               this.indList = this.setSelected(this.indList, 'User');
               this.isIndLoaded = true;
               this.showFilteredResults();
@@ -488,6 +542,10 @@ export class ContributorsListComponent implements OnInit {
               console.log("Get individual list", JSON.stringify(err));
             }
           );
+        }
+        else {
+          this.indList = this.setSelected(this.indList, 'User');
+          this.showFilteredResults();
         }
       },
       (error) => {
@@ -511,16 +569,22 @@ export class ContributorsListComponent implements OnInit {
     );
   }
 
-  getData() {
+  getData(clearList?) {
     this.displayLoader();
     switch (this.contributorType) {
       case "Organisation":
-        this.getOrgs();
-        break;
+        if (clearList) {
+          this.orgList = [];
+        }
+        this.getOrgList();
+      break;
 
       case "Individual":
-        this.getIndividuals();
-        break;
+        if (clearList) {
+          this.indList = [];
+        }
+        this.getIndividualList();
+      break;
     }
   }
 
@@ -551,8 +615,41 @@ export class ContributorsListComponent implements OnInit {
         this.isIndLoaded = true;
       } else {
         this.indList = [];
-        this.getIndividualList();
+        this.getIndividualList(this.osLimit, 0);
       }
+    }
+  }
+
+  updateSelection(contributor, event) {
+    switch (this.contributorType) {
+      case "Organisation":
+        if (event.target.checked) {
+          if (!this.selectedContributors["Org"]) {
+            this.selectedContributors["Org"] = [];
+          }
+          this.selectedContributors["Org"].push({
+            ..._.pick(contributor, "osid", "isChecked"),
+            User: _.pick(contributor.User, "userId", "maskedEmail", "maskedPhone"),
+          });
+        } else {
+          _.remove(this.selectedContributors["Org"], {osid: event.target.value});
+        }
+        break;
+
+      case "Individual":
+        if (event.target.checked) {
+          if (!this.selectedContributors["User"]) {
+            this.selectedContributors["User"] = [];
+          }
+
+          this.selectedContributors["User"].push({
+            ..._.pick(contributor, "osid", "isChecked"),
+            User: _.pick(contributor.User, "userId", "maskedEmail", "maskedPhone"),
+          })
+        } else {
+          _.remove(this.selectedContributors["User"], {osid: event.target.value});
+        }
+        break;
     }
   }
 }

@@ -1046,7 +1046,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         prgData['content_submission_enddate'].setHours(23,59,59);
       }
 
-      if (prgData.type === 'restricted') {
+      if (this.programDetails.type === 'restricted') {
         prgData['config'] = _.get(this.programDetails, 'config');
         prgData.config['contributors'] = this.selectedContributors;
       }
@@ -1852,6 +1852,7 @@ showTexbooklist(showTextBookSelector = true) {
       this.selectedContributors.Org = _.get(contributors, 'Org');
       this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
         return {
+          ...org,
           osid: org.osid,
           isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
         }
@@ -1862,6 +1863,7 @@ showTexbooklist(showTextBookSelector = true) {
       this.selectedContributors.User = _.get(contributors, 'User');
       this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
         return {
+          ...user,
           osid: user.osid,
           isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
         }
