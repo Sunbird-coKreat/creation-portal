@@ -85,6 +85,10 @@ export class BulkUploadComponent implements OnInit {
   ) { }
 
    ngOnInit() {
+    if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
+      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
+    }
+
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))
       .subscribe((user: any) => {
@@ -233,29 +237,28 @@ export class BulkUploadComponent implements OnInit {
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = 'completed';
         }
+        this.calculateCompletionPercentage();
+        if (this.oldProcessStatus !== this.process.status) {
+          this.updateJob();
+        }
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const req = {
+            url: `content/v3/hierarchy/${this.sessionContext.collection}`,
+            param: { 'mode': 'edit' }
+          };
+          this.actionService.get(req).subscribe((response) => {
+            const children = [];
+            _.forEach(response.result.content.children, (child) => {
+              if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+              (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
+                children.push(child);
+              }
+            });
 
-        const req = {
-          url: `content/v3/hierarchy/${this.sessionContext.collection}`,
-          param: { 'mode': 'edit' }
-        };
-        this.actionService.get(req).subscribe((response) => {
-          const children = [];
-          _.forEach(response.result.content.children, (child) => {
-            if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
-            (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
-              children.push(child);
-            }
+            response.result.content.children = children;
+            this.storedCollectionData = response.result.content;
           });
-
-          response.result.content.children = children;
-          this.storedCollectionData = response.result.content;
-          this.calculateCompletionPercentage();
-          // console.log('updated process:', JSON.stringify(this.process));
-          if (this.oldProcessStatus !== this.process.status) {
-            this.updateJob();
-          }
-
-        });
+        }
       }
     }, (error) => {
       console.log(error);
@@ -289,6 +292,9 @@ export class BulkUploadComponent implements OnInit {
     }
 
     try {
+      if (!this.uploadCsvConfig) {
+        this.setBulkUploadCsvConfig();
+      }
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
       headers.push('Status');
       headers.push('Reason for failure');
