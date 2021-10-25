@@ -108,21 +108,41 @@ export class HelperService {
     return this._selectedCollectionMetaData;
   }
 
-  checkIfCollectionFolder(data) {
-    // tslint:disable-next-line:max-line-length
-    if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Parent') {
-      return true;
+  checkIfCollectionFolder(data, target_type?) {    
+    if(target_type === 'questionSets') {
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.sunbird.questionset' && data.visibility === 'Parent') {
+        return true;
+      } 
+      else {
+        return false;
+      }
     } else {
-      return false;
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Parent') {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
-  checkIfMainCollection (data) {
-    // tslint:disable-next-line:max-line-length
-    if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Default') {
-      return true;
+  checkIfMainCollection (data, target_type?) {
+    if(target_type === 'questionSets') {
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.sunbird.questionset' && _.includes(['Default', 'Private'], data.visibility)) {
+        return true;
+      } 
+      else {
+        return false;
+      }
     } else {
-      return false;
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Default') {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -896,10 +916,18 @@ export class HelperService {
     if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria' || programTargetType === 'questionSets')) { // Here topic is fetched from unitLevel meta
       const fieldMustbeString = ['framework', 'board'];
       // These fields are required to be strings in the create request object
-      if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
-        return {[context]:_.first(selectedSharedContext[context])}
+      if (programTargetType === 'questionSets') {
+        if(_.includes(fieldMustbeString, context)) {
+          return {[context]: selectedSharedContext[context] }
+        }
+        else { return { [context]: [] } }
       }
-      return {[context]: selectedSharedContext[context]};
+      else {
+        if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
+          return {[context]:_.first(selectedSharedContext[context])}
+        }
+        return {[context]: selectedSharedContext[context]};
+      }
     } else {
       return {[context]: this._selectedCollectionMetaData[context]};
     }
@@ -1367,7 +1395,17 @@ export class HelperService {
     }
     if (_.get(templateDetails, 'modeOfCreation') === 'question') {
       obj['questionCategories'] =  [templateDetails.questionCategory];
-    }
+      if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {        
+        delete obj.programId;
+        delete obj.creator;
+        delete obj.organisationId;
+        delete obj.collectionId;
+        delete obj.unitIdentifiers;
+        delete obj.questionCategories;
+
+        obj.interactionTypes = _.get(templateDetails, 'interactionTypes');
+      }
+    }   
     const option = {
       url: 'content/v3/create',
       header: {
@@ -1380,7 +1418,12 @@ export class HelperService {
       option.url = 'questionset/v1/create';
       option.data.request['questionset'] = {};
       option.data.request['questionset'] = obj;
-    } else {
+    } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
+      option.url = 'question/v1/create';      
+      option.data.request['question'] = {};
+      option.data.request['question'] = obj;      
+    }
+    else {
       option.data.request['content'] = {};
       option.data.request['content'] = obj;
     }

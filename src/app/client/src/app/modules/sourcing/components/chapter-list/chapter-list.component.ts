@@ -109,6 +109,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public unsubscribe = new Subject<void>();
   public firstLevelFolderLabel: string;
   public detailBlueprintFormConfig:any;
+  public projectTargetType: string = '';
   public addFormLibraryInput = {};
   public reusedContributions = [];
   editorConfig: any;
@@ -165,6 +166,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.projectTargetType = _.get(this.programContext, 'target_type');
     this.myOrgId = (this.userService.userRegistryData
       && this.userProfile.userRegData
       && this.userProfile.userRegData.User_Org
@@ -190,6 +192,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.dynamicOutputs = {
       uploadedContentMeta: (contentMeta) => {
         this.uploadHandler(contentMeta);
+      },
+      collectionEditorEventEmitter: (event) => {
+        this.collectionEditorListener(event);
       }
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
@@ -281,7 +286,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
-      const acceptedContents = _.get(this.storedCollectionData, 'acceptedContents', []);
+      let acceptedContentsAttribute = 'acceptedContents';
+      if(this.projectTargetType === 'questionSets') acceptedContentsAttribute = 'acceptedContributions';
+      const acceptedContents = _.get(this.storedCollectionData, acceptedContentsAttribute, []);
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -300,6 +307,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (_.get(response, 'result.count') && _.get(response, 'result.count') > 0) {
           this.sessionContext['contentOrigins'] = {};
           _.forEach( _.get(response, 'result.content'), (obj) => {
+            if (obj.status == 'Live') {
+              this.sessionContext['contentOrigins'][obj.origin] = obj;
+            }
+          });
+          _.forEach( _.get(response, 'result.Question'), (obj) => {
             if (obj.status == 'Live') {
               this.sessionContext['contentOrigins'][obj.origin] = obj;
             }
@@ -487,9 +499,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   getCollectionCategoryDefinition() {
     if (this.programContext.target_collection_category && this.programContext.rootorg_id) {
+      let objectType = 'Collection';
+      if(this.projectTargetType === 'questionSets') objectType = 'Question Set';
       // tslint:disable-next-line:max-line-length
       this.programsService.getCategoryDefinition(this.programContext.target_collection_category[0], this.programContext.rootorg_id,
-        'Collection').subscribe(res => {
+        objectType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         // tslint:disable-next-line:max-line-length
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
@@ -605,7 +619,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext
       },
       questionSetEditorComponentInput: {
-        contentId: this.contentId,
+        contentId: this.projectTargetType === 'questionSets' ? undefined : this.contentId,
         action: action,
         content: content,
         sessionContext: this.sessionContext,
@@ -635,7 +649,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
     const instance = this;
     let hierarchy;
+    let objectType = 'content';
     let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+    if(this.projectTargetType === 'questionSets') {
+      hierarchyUrl = `${this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_READ}/${identifier}`;
+      objectType = 'questionSet';
+    }
+
+    
     if (unitIdentifier) {
       hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
     }
@@ -657,15 +678,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }))
       .subscribe((response) => {
         const children = [];
-        _.forEach(response.result.content.children, (child) => {
+        _.forEach(response.result[objectType].children, (child) => {
           if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
           (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
             children.push(child);
           }
         });
 
-        response.result.content.children = children;
-        this.collectionData = response.result.content;
+        response.result[objectType].children = children;
+        this.collectionData = response.result[objectType];
         this.reusedContributions = _.get(this.collectionData, 'reusedContributions') || [];
         this.storedCollectionData = unitIdentifier ?  this.storedCollectionData : _.cloneDeep(this.collectionData);
         if (this.storedCollectionData['channel'] !== this.programContext.rootorg_id) {
@@ -702,7 +723,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         instance.countData['topics'] = 0;
         instance.countData['learningOutcomes'] = 0;
 
-        if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default') {
+        if (this.router.url.includes('/sourcing') && this.collectionData && this.collectionData.visibility === 'Default' && this.collectionData.origin) {
           this.programsService.getHierarchyFromOrigin(this.collectionData.origin).subscribe(async res => {
             const content = _.get(res, 'result.content');
             this.originalCollectionData = content;
@@ -778,11 +799,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.sessionContext['sampleContent'] = false;
       this.getContentStatusCount(data);
     }
-    if (!this.checkIfMainCollection(data)) {
+    if (!this.checkIfMainCollection(data, this.projectTargetType)) {
       const rootMeta = _.pick(data, this.sharedContext);
       const rootTree = this.generateNodeMeta(data, rootMeta);
       const isFolderExist = _.find(data.children, (child) => {
-        return (this.checkIfCollectionFolder(child));
+        return (this.checkIfCollectionFolder(child, this.projectTargetType));
       });
       if (isFolderExist) {
         const children = this.getUnitWithChildren(data, identifier);
@@ -806,21 +827,31 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
-  checkIfCollectionFolder(data) {
-    return this.helperService.checkIfCollectionFolder(data);
+  checkIfCollectionFolder(data, target_type?) {
+    return this.helperService.checkIfCollectionFolder(data, target_type);
   }
 
-  checkIfMainCollection (data) {
-      return this.helperService.checkIfMainCollection(data);
+  checkIfMainCollection (data, target_type?) {
+      return this.helperService.checkIfMainCollection(data, target_type);
   }
 
   getTreeChildren(children) {
+    if(this.projectTargetType === 'questionSets') {
+      return children && children.filter(function (item) {
+        return item.mimeType === 'application/vnd.sunbird.questionset' && item.visibility === "Parent";
+      });
+    }    
     return children && children.filter(function (item) {
       return item.mimeType === 'application/vnd.ekstep.content-collection' && item.visibility === "Parent";
     });
   }
 
   getTreeLeaf(children) {
+    if(this.projectTargetType === 'questionSets') {
+      return children && children.filter(function (item) {
+        return item.mimeType !== 'application/vnd.sunbird.questionset';
+      });
+    }
     return children && children.filter(function (item) {
       return item.mimeType !== 'application/vnd.ekstep.content-collection';
     });
@@ -843,7 +874,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       'children': _.map(data.children, (child) => {
         return child.identifier;
       }),
-      'root': this.checkIfMainCollection(data) ? true : false,
+      'root': this.checkIfMainCollection(data, this.projectTargetType) ? true : false,
       'origin': data.origin,
       'originData': data.originData,
       'parent': data.parent || ''
@@ -1157,7 +1188,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
     this.sessionContext['templateDetails'] =  event.templateDetails;
-    if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
+    if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent' || this.projectTargetType === 'questionSets')) {
       const creationInput  = {
         sessionContext: this.sessionContext,
         unitIdentifier: this.unitIdentifier,
@@ -1189,7 +1220,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
-    } else if (event.templateDetails) {
+    } else if(this.projectTargetType === 'questionSets') {      
+      this.programsService.emitHeaderEvent(false)
+      // tslint:disable-next-line:max-line-length
+      this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+    }
+    else if (event.templateDetails) {
       this.templateDetails = event.templateDetails;
       this.programsService.emitHeaderEvent(false)
       // tslint:disable-next-line:max-line-length
@@ -1356,6 +1392,15 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.updateAccordianView(this.unitIdentifier);
     }
   }
+
+  collectionEditorEventListener(event) {
+    console.log(event);
+    switch (event.action) {              
+     case 'saveContent':
+       console.log(event.identifier);
+       break;
+    }
+   }
 
   lastOpenedUnit(unitId) {
     this.collectionHierarchy.forEach((parentunit) => {
