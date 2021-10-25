@@ -282,9 +282,11 @@ export class BulkUploadComponent implements OnInit {
   }
 
   downloadReport() {
-    this.unitsInLevel = _.map(this.contents, content => {
-      return this.findFolderLevel(this.storedCollectionData, content.identifier);
-    });
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      this.unitsInLevel = _.map(this.contents, content => {
+        return this.findFolderLevel(this.storedCollectionData, content.identifier);
+      });
+    }
 
     try {
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
@@ -305,21 +307,21 @@ export class BulkUploadComponent implements OnInit {
         result['fileFormat'] = this.getFileFormat(_.get(content, 'mimeType', ''));
         result['source'] = _.get(content, 'source', '');
         result['contentType'] = _.get(content, 'primaryCategory');
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const folderStructure = this.unitsInLevel[i];
+          this.unitGroup = [];
+          this.tree(folderStructure);
 
-        const folderStructure = this.unitsInLevel[i];
-        this.unitGroup = [];
-        this.tree(folderStructure);
-
-        result['level1'] = '';
-        result['level2'] = '';
-        result['level3'] = '';
-        result['level4'] = '';
-
-        if (this.unitGroup.length > 0) {
-          result['level1'] = _.get(this.unitGroup, '[0].name', '');
-          result['level2'] = _.get(this.unitGroup, '[1].name', '');
-          result['level3'] = _.get(this.unitGroup, '[2].name', '');
-          result['level4'] = _.get(this.unitGroup, '[3].name', '');
+          result['level1'] = '';
+          result['level2'] = '';
+          result['level3'] = '';
+          result['level4'] = '';
+          if (this.unitGroup.length > 0) {
+            result['level1'] = _.get(this.unitGroup, '[0].name', '');
+            result['level2'] = _.get(this.unitGroup, '[1].name', '');
+            result['level3'] = _.get(this.unitGroup, '[2].name', '');
+            result['level4'] = _.get(this.unitGroup, '[3].name', '');
+          }
         }
 
         let status = _.get(content, 'status', '');
@@ -331,9 +333,9 @@ export class BulkUploadComponent implements OnInit {
 
         return result;
       });
-
+      const fileName = _.get(this.storedCollectionData, 'name') ? `Bulk Upload ${this.storedCollectionData.name.trim()}` : `Bulk Upload ${this.programContext.name.trim()}`;
       const csvDownloadConfig = {
-        filename: `Bulk Upload ${this.storedCollectionData.name.trim()}`,
+        filename: fileName,
         tableData: tableData,
         headers: headers,
         showTitle: false
