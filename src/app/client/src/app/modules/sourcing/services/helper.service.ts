@@ -1285,10 +1285,9 @@ export class HelperService {
 
   fetchProgramFramework(sessionContext) {
     if (sessionContext.framework) {
-      this.frameworkService.initialize(sessionContext.framework);
-      this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
-        if (frameworkDetails && !frameworkDetails.err) {
-          sessionContext.frameworkData = frameworkDetails.frameworkdata[sessionContext.framework].categories;
+      this.frameworkService.readFramworkCategories(sessionContext.framework).subscribe((frameworkData) => {
+        if (frameworkData) {
+          sessionContext.frameworkData = frameworkData.categories;
           sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms');
         }
       }, error => {

@@ -613,12 +613,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
-      this.helperService.fetchProgramFramework(this.sessionContext);
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
 
-      forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
+      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(), 
+              this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
+            const frameworkRes = _.first(response);
+            this.sessionContext.frameworkData = frameworkRes.categories;
+            this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
             this.checkActiveTab();
         },
         (error) => {
