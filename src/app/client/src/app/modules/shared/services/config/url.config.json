@@ -108,7 +108,8 @@
       "HIERARCHY_REMOVE": "questionset/v1/remove"
     },
     "QUESTION" : {
-      "READ": "question/v1/read"
+      "READ": "question/v1/read",
+      "RETIRE": "question/v1/retire"
     },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",
