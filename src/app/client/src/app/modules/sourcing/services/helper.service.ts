@@ -12,6 +12,7 @@ import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';
 import { UUID } from 'angular2-uuid';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,7 @@ export class HelperService {
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
     public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute,
+    public httpClient: HttpClient,
     private sourcingService: SourcingService, private router: Router) { }
 
   initialize(programDetails) {
@@ -918,6 +920,15 @@ export class HelperService {
     };
     return this.publicDataService.get(req).pipe(map((response: ServerResponse) => {
         return response;
+    }));
+  }
+
+  getDynamicHeaders(configUrl){
+    const req = {
+      url: `${configUrl}/schemas/collection/1.0/config.json`,
+    };
+    return this.httpClient.get(req.url).pipe(map((response) => {
+      return response;
     }));
   }
 

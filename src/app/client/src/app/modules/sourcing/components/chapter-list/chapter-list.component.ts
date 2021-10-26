@@ -120,6 +120,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private portalVersion: string;
   public defaultFileSize: any;
   public defaultVideoSize: any;
+  dynamicHeaders = [];
+  configUrl;
+  tags = [];
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -138,12 +141,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
+    this.configUrl =  (<HTMLInputElement>document.getElementById('cloudStorageUrls')) ?
+    (<HTMLInputElement>document.getElementById('cloudStorageUrls')).value : "";
   }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
+    });    
+    this.helperService.getDynamicHeaders(this.configUrl).subscribe((state: any) => {
+      if(_.has(state, "headers")){
+        this.dynamicHeaders = state.headers;
+      }
     });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
@@ -223,7 +233,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   ]
 
     this.selectedStatusOptions = ["Live", "Approved"];
-    this.displayPrintPreview = _.get(this.collection, 'printable', false);
+    this.displayPrintPreview = _.get(this.collection, 'printable', false);    
   }
 
   setUserAccess() {
@@ -441,6 +451,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
           this.setLocalBlueprint();
         }
+
+        if (_.has(objectCategoryDefinition, "forms.childMetadata.properties") && this.frameworkService.orgFrameworkCategories) {
+          _.forEach(this.frameworkService.orgFrameworkCategories, (orgFrameworkCategory) => {
+            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {              
+              if(prop.code == orgFrameworkCategory.code && prop.editable){                               
+                this.tags.push(prop.code);                              
+              }              
+            });
+          });
+        }
+
         this.levelOneChapterList.push({
           identifier: 'all',
           // tslint:disable-next-line:max-line-length
@@ -989,7 +1010,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       sampleContent: node.sampleContent || null,
       sharedContext: {
         ...sharedMeta
-      }
+      },
+      learningOutcome: node.learningOutcome,
     };
     return nodeMeta;
   }
