@@ -16,6 +16,7 @@ export class CollectionHierarchyService {
   public sampleDataCount = 0;
   public currentUserID;
   private _programDetails;
+  private _preferencefilters;
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
@@ -331,7 +332,40 @@ export class CollectionHierarchyService {
     });
     return collectionWithReject;
   }
-  
+  set preferencefilters(preferences) {
+    this._preferencefilters = preferences;
+  }
+  getnonCollectionProgramContents(programId) {
+    const option = {
+      url: 'composite/v3/search',
+      data: {
+        request: {
+          filters: {
+            objectType: ['content', 'questionset'],
+            programId: programId,
+            status: ['Draft', 'Review', 'Live', 'Processing'],
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
+            contentType: {'!=': 'Asset'}
+          },
+          not_exists: ['sampleContent'],
+          limit: 10000
+        }
+      }
+    };
+    if (!isUndefined(this._preferencefilters)) {
+      if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
+        option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'gradeLevel'))) {
+        option.data.request.filters['gradeLevel'] = _.get(this._preferencefilters, 'gradeLevel');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'subject'))) {
+        option.data.request.filters['subject'] = _.get(this._preferencefilters, 'subject');
+      }
+    }
+
+    return this.actionService.post(option);
+  }
   getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?, allFields=false) {
     const option = {
       url: 'composite/v3/search',
@@ -379,6 +413,19 @@ export class CollectionHierarchyService {
     if (!_.isUndefined(onlyCount)) {
       option.data.request['limit'] = 0;
     }
+
+    if (!isUndefined(this._preferencefilters)) {
+      if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
+        option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'gradeLevel'))) {
+        option.data.request.filters['gradeLevel'] = _.get(this._preferencefilters, 'gradeLevel');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'subject'))) {
+        option.data.request.filters['subject'] = _.get(this._preferencefilters, 'subject');
+      }
+    }
+
     return this.actionService.post(option);
   }
 

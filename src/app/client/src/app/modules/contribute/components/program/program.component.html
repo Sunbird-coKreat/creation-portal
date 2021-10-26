@@ -71,7 +71,7 @@
 								<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 								{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 							</a>
-							<button *ngIf="(!programDetails.target_type || programDetails.target_type === 'collections' || programDetails?.target_type === 'questionSets') && (isContributingOrgAdmin || sessionContext?.currentRoles?.includes('REVIEWER'))" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+							<button *ngIf="visibility.showFilter" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
 							appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata(textbookFiltersApplied ? 'modify_filters' : 'filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 							[telemetryInteractObject]="telemetryInteractObject"
@@ -466,7 +466,7 @@
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
 							<sui-multi-select class="selection p-5 b-100"
 							formControlName="medium" #mediums
-							[options]="programDetails.config.medium"
+							[options]="prefernceFormOptions['medium']"
 							[(ngModel)]="setPreferences['medium']"
 								appTelemetryInteract
 								[telemetryInteractEdata]="getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
@@ -487,7 +487,7 @@
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
 							<sui-multi-select class="selection p-5 b-100"
 							formControlName="subject" #subjects
-							[options]="programDetails.config.subject"
+							[options]="prefernceFormOptions['subject']"
 							[(ngModel)]="setPreferences['subject']"
 							appTelemetryInteract
 								[telemetryInteractEdata]="getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
@@ -507,7 +507,7 @@
 							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
 							<sui-multi-select formControlName="gradeLevel"
 							class="selection p-5 b-100" #gradeLevels
-							[options]="programDetails.config.gradeLevel"
+							[options]="prefernceFormOptions['gradeLevel']"
 							[(ngModel)]="setPreferences['gradeLevel']"
 							appTelemetryInteract
 								[telemetryInteractEdata]="getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"

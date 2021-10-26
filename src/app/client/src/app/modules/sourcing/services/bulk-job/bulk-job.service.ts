@@ -26,7 +26,11 @@ export class BulkJobService {
     return this.programsService.post(req).pipe(tap((res: any) => {
       if (res.result && res.result.process && res.result.process.length) {
         _.forEach(res.result.process, process => {
-          const cachedProcess = this.cacheService.get(process.type + '_' + process.collection_id);
+          let bulkApproveParam = process.type + '_' + process.program_id;
+          if (process.collection_id) {
+            bulkApproveParam = process.type + '_' + process.collection_id;
+          }
+          const cachedProcess = this.cacheService.get(bulkApproveParam);
           if (cachedProcess && new Date(process.updatedon) > new Date(cachedProcess.updatedon)) {
             this.setProcess(process);
           } else if (!cachedProcess) {
@@ -38,7 +42,11 @@ export class BulkJobService {
   }
 
   setProcess(process) {
-    this.cacheService.set(process.type + '_' + process.collection_id, process,
+    let bulkApproveParam = process.type + '_' + process.program_id;
+    if (process.collection_id) {
+      bulkApproveParam = process.type + '_' + process.collection_id;
+    }
+    this.cacheService.set(bulkApproveParam, process,
     { maxAge: this.browserCacheTtlService.browserCacheTtl });
   }
 

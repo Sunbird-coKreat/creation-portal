@@ -78,7 +78,6 @@ describe('CreateProgramComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateProgramComponent);
     component = fixture.componentInstance;
-    // fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -170,7 +169,7 @@ describe('CreateProgramComponent', () => {
       getName(data) { return 'sample.pdf'; },
       reset() {}
     };
-    
+
     const sourcingService = TestBed.get(SourcingService);
     spyOn(sourcingService, 'generateAssetCreateRequest').and.returnValue({});
     spyOn(sourcingService, 'createMediaAsset').and.returnValue(of({result: {node_id: '12345'}}));

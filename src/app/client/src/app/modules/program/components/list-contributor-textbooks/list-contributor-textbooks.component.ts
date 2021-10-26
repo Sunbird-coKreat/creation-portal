@@ -309,6 +309,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
             } else {
               this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus([], contributorTextbooks);
               this.tempSortTextbooks = this.contributorTextbooks;
+              this.collectionsCnt = this.contributorTextbooks.length;
               this.sortCollection(this.sortColumn);
               this.showLoader = false;
             }

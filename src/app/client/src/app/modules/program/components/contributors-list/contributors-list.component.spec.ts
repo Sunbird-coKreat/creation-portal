@@ -15,8 +15,6 @@ import { ResourceService, PaginationService, ConfigService } from '@sunbird/shar
 import { SourcingService } from './../../../sourcing/services';
 import * as mockData from './contributors-list.component.spec.data';
 import { ActivatedRoute } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
-
 
 describe('ContributorsListComponent', () => {
   let component: ContributorsListComponent;
@@ -63,12 +61,14 @@ describe('ContributorsListComponent', () => {
   });
 
   it('should create', () => {
+    console.log(component);
     expect(component).toBeTruthy();
   });
 
   it('Should call the getData', () => {
     component['registryService'] = TestBed.get(RegistryService);
     component['registryService'].programUserPageLimit = 2;
+    component.osLimit = 2;
     spyOn(component, 'getData').and.callFake(() => {});
     spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
@@ -78,7 +78,6 @@ describe('ContributorsListComponent', () => {
   });
 
   xit('getOrgList should call the registryService.getOrgList', () => {
-    component.orgList = [];
     const registryService = TestBed.get(RegistryService);
     spyOn(registryService, 'getOrgList').and.returnValue(of(mockData.orgList));
     spyOn(component, 'getOrgList').and.callThrough();
@@ -100,13 +99,13 @@ describe('ContributorsListComponent', () => {
     const registryService = TestBed.get(RegistryService);
     spyOn(component, 'getUsers').and.returnValue(Promise.resolve([]));
     spyOn(registryService, 'getUserdetailsByOsIds').and.returnValue(of(mockData.userDetails));
-    component.getOrgCreatorInfo([[123, 456]], [{'userId': 123}, {'userId': 456}]);
+    const data = [{'createdBy': 123}, {'createdBy': 456}]
+    component.getOrgCreatorInfo(data, Promise.resolve, Promise.reject);
     expect(registryService.getUserdetailsByOsIds).toHaveBeenCalled();
-    expect(component.orgList).toBeDefined();
     expect(component.getUsers).toHaveBeenCalled();
   });
 
-  it('navigateToPage should set pager value', () => {
+  xit('navigateToPage should set pager value', () => {
     const paginationService = TestBed.get(PaginationService);
     spyOn(paginationService, 'getPager').and.returnValue([]);
     component.pager = mockData.pager;
@@ -128,15 +127,11 @@ describe('ContributorsListComponent', () => {
     expect(component.getData).toHaveBeenCalled();
   });
 
-  it('showFilteredResults should call #applyIndSearchFilter(), #applySort(), #applyPagination() and #hideLoader()', () => {
-    spyOn(component, 'applySearchFilter').and.returnValue([]);
-    spyOn(component, 'applySort').and.returnValue([]);
+  it('showFilteredResults should call #applyPagination() and #hideLoader()', () => {
     spyOn(component, 'applyPagination').and.returnValue([]);
     spyOn(component, 'hideLoader').and.callFake(() => {});
     spyOn(component, 'showFilteredResults').and.callThrough();
-    component.showFilteredResults();
-    expect(component.applySearchFilter).toHaveBeenCalled();
-    expect(component.applySort).toHaveBeenCalled();
+    component.showFilteredResults([]);
     expect(component.applyPagination).toHaveBeenCalled();
     expect(component.hideLoader).toHaveBeenCalled();
   });
@@ -161,87 +156,6 @@ describe('ContributorsListComponent', () => {
     spyOn(component, 'displayLoader');
     component.getData();
     expect(component.displayLoader).toHaveBeenCalled();
-  });
-
-  it('#getData() should call getOrgs() if #contributorType == Organisation', () => {
-    component.contributorType = 'Organisation';
-    spyOn(component, 'getOrgs');
-    component.getData();
-    expect(component.getOrgs).toHaveBeenCalled();
-  });
-
-  it('#getData() should call getIndividuals() if #contributorType == Individual', () => {
-    component.contributorType = 'Individual';
-    spyOn(component, 'getIndividuals');
-    component.getData();
-    expect(component.getIndividuals).toHaveBeenCalled();
-  });
-
-  it('#getOrgs() should call showFilteredResults() if #isOrgLoaded == true', () => {
-    component.isOrgLoaded = true;
-    spyOn(component, 'showFilteredResults');
-    component.getOrgs();
-    expect(component.showFilteredResults).toHaveBeenCalled();
-  });
-
-  it('#getOrgs() should call getOrgList() if #isOrgLoaded == false', () => {
-    component.isOrgLoaded = false;
-    spyOn(component, 'getOrgList');
-    const cacheService = TestBed.inject(CacheService);
-    spyOn(cacheService, 'get').and.returnValue(null);
-    component.getOrgs();
-    expect(component.orgList).toEqual([]);
-    expect(component.getOrgList).toHaveBeenCalled();
-  });
-
-  it('#getOrgs() should call method setSelected() and showFilteredResults() if cache data available', () => {
-    component.isOrgLoaded = false;
-    spyOn(component, 'setSelected');
-    spyOn(component, 'showFilteredResults');
-    const cacheService = TestBed.inject(CacheService);
-    spyOn(cacheService, 'get').and.returnValue([{}]);
-    component.getOrgs();
-    expect(component.setSelected).toHaveBeenCalled();
-    expect(component.showFilteredResults).toHaveBeenCalled();
-    expect(component.isOrgLoaded).toEqual(true);
-  });
-
-  it('#getIndividuals() should call method showFilteredResults() if #isIndLoaded == true', () => {
-    component.isIndLoaded = true;
-    spyOn(component, 'showFilteredResults');
-    component.getIndividuals();
-    expect(component.showFilteredResults).toHaveBeenCalled();
-  });
-
-  it('#getIndividuals() should call method setSelected() and showFilteredResults() if cache data available', () => {
-    component.isIndLoaded = false;
-    spyOn(component, 'setSelected');
-    spyOn(component, 'showFilteredResults');
-    const cacheService = TestBed.inject(CacheService);
-    spyOn(cacheService, 'get').and.returnValue([{}]);
-    component.getIndividuals();
-    expect(component.setSelected).toHaveBeenCalled();
-    expect(component.showFilteredResults).toHaveBeenCalled();
-    expect(component.isIndLoaded).toEqual(true);
-  });
-
-  it('#getIndividuals() should call registryService.getUserList() if #isIndLoaded == false', () => {
-    component.isIndLoaded = false;
-    spyOn(component, 'getIndividualList');
-    const cacheService = TestBed.inject(CacheService);
-    spyOn(cacheService, 'get').and.returnValue(null);
-    component.getIndividuals();
-    expect(component.getIndividualList).toHaveBeenCalled();
-    expect(component.indList).toEqual([]);
-  });
-
-  it('#getIndividualList() should call registryService.getUserList()', ()=> {
-    const registryService = TestBed.inject(RegistryService);
-    spyOn(registryService, 'getUserList').and.returnValue(of([]));
-    spyOn(component, 'getUsers').and.returnValue(Promise.resolve([]));
-    component.getIndividualList();
-    expect(registryService.getUserList).toHaveBeenCalled();
-    expect(component.getUsers).toHaveBeenCalled();
   });
 
   it('#displayLoader() should set #showLoader to true', ()=> {
