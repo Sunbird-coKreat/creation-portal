@@ -19,6 +19,7 @@ import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@s
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { isEmpty } from 'lodash';
 
 
 interface IDynamicInput {
@@ -106,7 +107,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public showNominateModal: boolean = false;
   public contentCount = 0;
   public showConfirmationModal = false;
-
+  public prefernceFormOptions = {};
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -187,20 +188,20 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.roleNames = _.map(this.rolesWithNone, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
-      this.helperService.fetchProgramFramework(this.sessionContext);
-      this.getNominationStatus();
-      this.setTargetCollectionValue();
-      this.getCollectionCategoryDefinition();
+      this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
+        if (frameworkData) {
+          this.sessionContext.frameworkData = frameworkData.categories;
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
+          this.getNominationStatus();
+          this.setTargetCollectionValue();
+          this.getCollectionCategoryDefinition();
+        }
+      }, error => {
+        this.raiseError(error, 'Fetching framework details failed')
+      });
     }, error => {
       // TODO: navigate to program list page
-      const errInfo = {
-        errorMsg: this.resourceService.messages.emsg.project.m0001,
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: {}
-      };
-      this.sourcingService.apiErrorHandling(error, errInfo);
+      this.raiseError(error, this.resourceService.messages.emsg.project.m0001)
     });
   }
 
@@ -249,7 +250,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       } else if (this.programDetails.target_type == 'searchCriteria') {
         forkJoin(this.getUserProgramPreferences(),this.getOriginForApprovedContents(), this.getProgramContentAggregation()).subscribe((res) => {
           const preferences = _.get(_.first(res), 'result');
-          this.getProgramContents(preferences);
+          this.getProgramContents(_.get(preferences, 'contributor_preference'));
         })
       }
     }, error => {
@@ -306,7 +307,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       subject: [],
       gradeLevel: [],
     });
-
+    this.sessionContext.frameworkData.forEach((element) => {
+      if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
+        this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
+      }
+    });
     const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
     return req.pipe(
       tap((res) => {
@@ -339,27 +344,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   getProgramCollections() {
     const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
     if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus) && (this.isContributingOrgAdmin || this.sessionContext.currentRoles.includes('REVIEWER'))) {
-      this.prefernceForm = this.sbFormBuilder.group({
-        medium: [],
-        subject: [],
-        gradeLevel: [],
-      });
-      this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
+      this.getUserProgramPreferences().subscribe(
         (prefres) => {
-          let preffilter = {};
-          if (prefres.result !== null || prefres.result !== undefined) {
-            this.userPreferences = prefres.result;
-            preffilter = _.get(this.userPreferences, 'contributor_preference');
-          }
-          if (!_.isEmpty(this.userPreferences.contributor_preference)) {
-            this.textbookFiltersApplied = true;
-            // tslint:disable-next-line: max-line-length
-            this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-            // tslint:disable-next-line: max-line-length
-            this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-            // tslint:disable-next-line: max-line-length
-            this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
-          }
+          let preffilter = _.get(prefres, 'result.contributor_preference');
           this.fetchProgramCollections(preffilter);
       }, (err) => { // TODO: navigate to program list page
         this.fetchProgramCollections();
@@ -1139,6 +1126,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       );
   }
+  raiseError(error, errorMsg) {
+    const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+    this.toasterService.error(errorMes || errorMsg);
+    const errInfo = {
+      errorMsg:  errorMsg,
+      telemetryPageId: _.get(this.activatedRoute,'snapshot.data.telemetry.pageid'),
+      telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.sessionContext.programId , type: 'project'}],
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+    };
+    this.sourcingService.apiErrorHandling(error, errInfo);
+  }
+
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;

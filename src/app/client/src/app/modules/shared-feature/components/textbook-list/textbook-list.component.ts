@@ -20,6 +20,7 @@ export class TextbookListComponent implements OnInit {
   @Input() programDetails: any = {};
   @Input() contentAggregationInput: Array<any> = [];
   @Input() userPreferences: any = {};
+  @Input() frameworkCategories: any = {};
   @Input() telemetryPageId;
   public programId: string;
   public config: any;
@@ -45,10 +46,6 @@ export class TextbookListComponent implements OnInit {
   sbFormBuilder: FormBuilder;
   showTextbookFiltersModal = false;
   setPreferences = {};
-  /*mediums:any[];
-  classes:any[];
-  subjects:any[];
-  buttonLabel = this.resourceService.frmelmnts.lbl.addFilters;*/
   textbookFiltersApplied = false;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -56,7 +53,7 @@ export class TextbookListComponent implements OnInit {
   public targetCollection: string;
   public targetCollections: string;
   public firstLevelFolderLabel: string;
-
+  public prefernceFormOptions = {};
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
@@ -99,9 +96,11 @@ export class TextbookListComponent implements OnInit {
         this.setPreferences['gradeLevel'] = (this.userPreferences.sourcing_preference.gradeLevel) ? this.userPreferences.sourcing_preference.gradeLevel : [];
       }
     }
-    /*this.mediums =  _.compact(this.programDetails.config.medium);
-    this.classes = _.compact(this.programDetails.config.gradeLevel);
-    this.subjects = _.compact(this.programDetails.config.subject);*/
+    this.frameworkCategories.forEach((element) => {
+      if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
+        this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
+      }
+    });
     this.prefernceForm = this.sbFormBuilder.group({
       medium: [],
       subject: [],
