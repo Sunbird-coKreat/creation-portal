@@ -71,7 +71,7 @@
 								<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 								{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
 							</a>
-							<button *ngIf="(!programDetails.target_type || programDetails.target_type === 'collections') && (isContributingOrgAdmin || sessionContext?.currentRoles?.includes('REVIEWER'))" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
+							<button *ngIf="visibility.showFilter" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" (click)="showTextbookFiltersModal = true"
 							appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata(textbookFiltersApplied ? 'modify_filters' : 'filter_collections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 							[telemetryInteractObject]="telemetryInteractObject"
