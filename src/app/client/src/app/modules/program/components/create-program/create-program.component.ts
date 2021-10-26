@@ -475,9 +475,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeSelectedSharedContext(target_type) {
     if(target_type === 'questionSets') {
       if(this.isFormValueSet.projectScopeForm && this.projectScopeForm.controls) {
-        const board = this.projectScopeForm.controls.board.value;
+        let board = this.projectScopeForm.controls.board.value;
         let framework = this.projectScopeForm.controls.framework.value;
         if(_.isArray(framework) && framework.length) framework = _.first(framework);
+        if(_.isArray(board) && board.length) board = _.first(board);
         return {
           'board': board,
           'framework': framework
