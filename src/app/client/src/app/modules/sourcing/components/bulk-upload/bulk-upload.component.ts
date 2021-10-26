@@ -85,6 +85,10 @@ export class BulkUploadComponent implements OnInit {
   ) { }
 
    ngOnInit() {
+    if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
+      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
+    }
+
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))
       .subscribe((user: any) => {
@@ -233,29 +237,28 @@ export class BulkUploadComponent implements OnInit {
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = 'completed';
         }
+        this.calculateCompletionPercentage();
+        if (this.oldProcessStatus !== this.process.status) {
+          this.updateJob();
+        }
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const req = {
+            url: `content/v3/hierarchy/${this.sessionContext.collection}`,
+            param: { 'mode': 'edit' }
+          };
+          this.actionService.get(req).subscribe((response) => {
+            const children = [];
+            _.forEach(response.result.content.children, (child) => {
+              if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+              (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
+                children.push(child);
+              }
+            });
 
-        const req = {
-          url: `content/v3/hierarchy/${this.sessionContext.collection}`,
-          param: { 'mode': 'edit' }
-        };
-        this.actionService.get(req).subscribe((response) => {
-          const children = [];
-          _.forEach(response.result.content.children, (child) => {
-            if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
-            (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
-              children.push(child);
-            }
+            response.result.content.children = children;
+            this.storedCollectionData = response.result.content;
           });
-
-          response.result.content.children = children;
-          this.storedCollectionData = response.result.content;
-          this.calculateCompletionPercentage();
-          // console.log('updated process:', JSON.stringify(this.process));
-          if (this.oldProcessStatus !== this.process.status) {
-            this.updateJob();
-          }
-
-        });
+        }
       }
     }, (error) => {
       console.log(error);
@@ -289,6 +292,9 @@ export class BulkUploadComponent implements OnInit {
     }
 
     try {
+      if (!this.uploadCsvConfig) {
+        this.setBulkUploadCsvConfig();
+      }
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
       headers.push('Status');
       headers.push('Reason for failure');
@@ -489,27 +495,39 @@ export class BulkUploadComponent implements OnInit {
       headers.push ({ name: 'Level 3 Textbook Unit', inputName: 'level3', required: false, requiredError, headerError });
       headers.push ({ name: 'Level 4 Textbook Unit', inputName: 'level4', required: false, requiredError, headerError });
     }
-     const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
-       _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+    if (this.programContext.target_type === 'searchCriteria') {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+      this.allowedDynamicColumns = [...orgFrameworkCategories];
+    } else {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+
+      const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
+        _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
        return {
-         name: `Org_FW_${category.code}`,
-         inputName: category.orgIdFieldName,
+         name: `Target_FW_${category.code}`,
+         inputName: category.targetIdFieldName,
          isArray: true,
          headerError
        };
      }) : [];
-
-     const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
-       _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
-      return {
-        name: `Target_FW_${category.code}`,
-        inputName: category.targetIdFieldName,
-        isArray: true,
-        headerError
-      };
-    }) : [];
-
-    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+     this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+    }
     const validateRow = (row, rowIndex) => {
       if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
         if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
@@ -705,6 +723,9 @@ export class BulkUploadComponent implements OnInit {
     if (!_.isEmpty(frameworkMetaData)) {
       const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
       sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+      if (_.isArray(sharedMetaData.board)) {
+        sharedMetaData.board = _.first(sharedMetaData.board);
+      }
     }
     let creatorName = this.userProfile.firstName;
       if (!_.isEmpty(this.userProfile.lastName)) {

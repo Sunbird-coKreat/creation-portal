@@ -411,15 +411,15 @@ export class HelperService {
 
     // tslint:disable-next-line:max-line-length
     if (action === 'accept' || action === 'acceptWithChanges') {
-      request.content['acceptedcontents'] = _.uniq([...data.acceptedcontents || [], contentId]);
+      request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]);
     } else {
-      request.content['rejectedcontents'] = _.uniq([...data.rejectedcontents || [], contentId]);
+      request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
     }
 
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
-      request.content['sourcingrejectedcomments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
-      request.content['sourcingrejectedcomments'][contentId] = rejectedComments;
+      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
+      request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
 
     this.updateContent(request, collectionId).subscribe(() => {
@@ -1000,12 +1000,16 @@ export class HelperService {
   }
 
   publishContentOnOrigin(action, contentId, contentMetaData, programContext) {
-    // const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
-    // if (_.isString(channel)) {
-    //   contentMetaData['createdFor'] = [channel];
-    // } else if (_.isArray(channel)) {
-    //   contentMetaData['createdFor'] = channel;
-    // }
+    if (programContext.target_type === 'searchCriteria') {
+      contentMetaData['createdFor'] = [programContext.rootorg_id];
+    } else {
+      const channel =  _.get(this._selectedCollectionMetaData, 'originData.channel');
+      if (_.isString(channel)) {
+        contentMetaData['createdFor'] = [channel];
+      } else if (_.isArray(channel)) {
+        contentMetaData['createdFor'] = channel;
+      }
+    }
 
     // @Todo remove after testing
     // this.sendNotification.next(_.capitalize(action));
