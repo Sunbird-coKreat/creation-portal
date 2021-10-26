@@ -307,11 +307,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       subject: [],
       gradeLevel: [],
     });
-    this.sessionContext.frameworkData.forEach((element) => {
-      if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
-        this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
-      }
-    });
+    if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+      this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
+      this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
+      this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
+    } else if (this.programDetails.target_type === 'searchCriteria') {
+      this.sessionContext.frameworkData.forEach((element) => {
+        if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
+          this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
+        }
+      });
+    }
     const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
     return req.pipe(
       tap((res) => {

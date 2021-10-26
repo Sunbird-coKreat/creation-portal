@@ -459,7 +459,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.collectionHierarchyService.preferencefilters = preferencefilters;
       return this.collectionHierarchyService.getnonCollectionProgramContents(this.programId).pipe(
         tap((response: any) => {
-          if (response && response.result && (response.result.content || response.result.QuestionSet)) {
+          if (response && response.result) {
             this.programCollections = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
           }
         }),
