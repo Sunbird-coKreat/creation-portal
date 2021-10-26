@@ -19,7 +19,8 @@ import { DeviceDetectorModule } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
 import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
+// import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
+import { CollectionEditorLibraryModule, EditorCursor } from 'v-collection-editor-library';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
 @NgModule({
   declarations: [

@@ -185,6 +185,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.rolesWithNone = _.cloneDeep(this.roles);
       this.rolesWithNone.push({'id': 4, 'name': 'NONE', 'defaultTab': 4, 'tabs': [4]});
       this.roleNames = _.map(this.rolesWithNone, 'name');
+      this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.helperService.fetchProgramFramework(this.sessionContext);
       this.getNominationStatus();

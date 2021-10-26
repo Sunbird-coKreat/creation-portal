@@ -598,6 +598,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     };
     this.programsService.get(req).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.sessionContext.programId = this.programDetails.program_id;
       this.getCollectionCategoryDefinition();
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
