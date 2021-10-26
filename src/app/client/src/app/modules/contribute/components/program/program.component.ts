@@ -618,17 +618,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return of([]);
     }
   }
-  getContentAggregation () {
-    let sampleValue, organisation_id, individualUserId, onlyCount;
-    if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
-        sampleValue = true;
-      if (this.userService.isUserBelongsToOrg()) {
-        organisation_id = this.userService.getUserOrgId();
-      } else {
-        individualUserId = this.userService.userid;
-      }
-    }
-  }
 
   getProgramContentAggregation() {
     let sampleValue, organisation_id, individualUserId, onlyCount;
