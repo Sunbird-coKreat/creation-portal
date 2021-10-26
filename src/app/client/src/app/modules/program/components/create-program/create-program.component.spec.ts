@@ -13,7 +13,7 @@ import { of, Subject, throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Validators, FormGroupName, FormsModule, FormBuilder, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
-import { SourcingService } from './../../../sourcing/services';
+import { SourcingService, HelperService } from './../../../sourcing/services';
 import { UserService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
@@ -63,7 +63,7 @@ describe('CreateProgramComponent', () => {
       providers: [ToasterService, CacheService, ConfigService, DatePipe,
         ProgramsService, DataService, FrameworkService, ActionService,
         Component, ViewChild, Validators, FormGroupName, FormBuilder, NavigationHelperService,
-        SourcingService, ProgramTelemetryService, TelemetryService, 
+        SourcingService, ProgramTelemetryService, TelemetryService, HelperService,
         DeviceDetectorService,
         Subject,
        { provide: Router, useValue: routerStub },

@@ -133,7 +133,7 @@ describe('ResourceTemplateComponent', () => {
     component.selectedtemplateDetails = {
       modeOfCreation: 'question',
       onClick: '',
-      mimetype: '',
+      mimetype: 'application/vnd.ekstep.upload-archive',
       editors: [{ mimeType: 'application/vnd.ekstep.upload-archive', 'type': 'question' }]
     };
     component.showQuestionTypeModal = false;
@@ -141,6 +141,19 @@ describe('ResourceTemplateComponent', () => {
     component.submit();
     expect(component.selectedtemplateDetails).toBeDefined();
     expect(component.selectedtemplateDetails.onClick).toBe('questionSetComponent');
+  });
+  it('#submit() Should call collection editor for QuML question creation', () => {
+    component.selectedtemplateDetails = {
+      modeOfCreation: 'question',
+      onClick: '',
+      mimetype: 'application/vnd.sunbird.question',
+      editors: [{ mimeType: 'application/vnd.sunbird.question', 'type': 'question' }]
+    };
+    component.showQuestionTypeModal = false;
+    component.showModeofCreationModal = false;
+    component.submit();
+    expect(component.selectedtemplateDetails).toBeDefined();
+    expect(component.selectedtemplateDetails.onClick).toBe('questionSetEditorComponent');
   });
   it('#submit() Should call submit for upload', () => {
     component.selectedtemplateDetails = {
