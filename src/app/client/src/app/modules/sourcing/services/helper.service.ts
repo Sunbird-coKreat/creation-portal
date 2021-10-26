@@ -411,15 +411,15 @@ export class HelperService {
 
     // tslint:disable-next-line:max-line-length
     if (action === 'accept' || action === 'acceptWithChanges') {
-      request.content['acceptedcontents'] = _.uniq([...data.acceptedcontents || [], contentId]);
+      request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]);
     } else {
-      request.content['rejectedcontents'] = _.uniq([...data.rejectedcontents || [], contentId]);
+      request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
     }
 
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
-      request.content['sourcingrejectedcomments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
-      request.content['sourcingrejectedcomments'][contentId] = rejectedComments;
+      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
+      request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
 
     this.updateContent(request, collectionId).subscribe(() => {
@@ -1397,36 +1397,5 @@ export class HelperService {
       return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
     }
     return flag;
-  }
-
-  initializeSbFormFields(sessionContext, formFieldProperties) {
-    let categoryMasterList;
-    const nonFrameworkFields = ['additionalCategories', 'license'];
-    // tslint:disable-next-line:max-line-length
-    if (_.has(sessionContext.targetCollectionFrameworksData, 'framework') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework])) {
-      categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework];
-      _.forEach(categoryMasterList.categories, (frameworkCategories) => {
-       _.forEach(formFieldProperties, (element) => {
-        _.forEach(element.fields, (field) => {
-         // tslint:disable-next-line:max-line-length
-         if (field.code === "learningoutcome") {
-           field.code = "learningOutcome";
-         }
-          if ((frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
-              if (field.code === "learningOutcome") {
-                field.range = _.map(frameworkCategories.terms, 'name');
-              }else{
-                field.range = frameworkCategories.terms;
-                field.terms = frameworkCategories.terms;
-              }
-        }
-         if (field.code === "learningOutcome") {
-          field.code = "learningoutcome";
-        }
-        });
-       });
-     });
-    }
-    return formFieldProperties;
   }
 }
