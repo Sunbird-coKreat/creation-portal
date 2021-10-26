@@ -411,15 +411,15 @@ export class HelperService {
 
     // tslint:disable-next-line:max-line-length
     if (action === 'accept' || action === 'acceptWithChanges') {
-      request.content['acceptedcontents'] = _.uniq([...data.acceptedcontents || [], contentId]);
+      request.content['acceptedContents'] = _.uniq([...data.acceptedContents || [], contentId]);
     } else {
-      request.content['rejectedcontents'] = _.uniq([...data.rejectedcontents || [], contentId]);
+      request.content['rejectedContents'] = _.uniq([...data.rejectedContents || [], contentId]);
     }
 
     if (action === 'reject' && rejectedComments) {
       // tslint:disable-next-line:max-line-length
-      request.content['sourcingrejectedcomments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
-      request.content['sourcingrejectedcomments'][contentId] = rejectedComments;
+      request.content['sourcingRejectedComments'] = data.sourcingRejectedComments && _.isString(data.sourcingRejectedComments) ? JSON.parse(data.sourcingRejectedComments) : data.sourcingRejectedComments || {};
+      request.content['sourcingRejectedComments'][contentId] = rejectedComments;
     }
 
     this.updateContent(request, collectionId).subscribe(() => {
@@ -1000,12 +1000,16 @@ export class HelperService {
   }
 
   publishContentOnOrigin(action, contentId, contentMetaData, programContext) {
-    // const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
-    // if (_.isString(channel)) {
-    //   contentMetaData['createdFor'] = [channel];
-    // } else if (_.isArray(channel)) {
-    //   contentMetaData['createdFor'] = channel;
-    // }
+    if (programContext.target_type === 'searchCriteria') {
+      contentMetaData['createdFor'] = [programContext.rootorg_id];
+    } else {
+      const channel =  _.get(this._selectedCollectionMetaData, 'originData.channel');
+      if (_.isString(channel)) {
+        contentMetaData['createdFor'] = [channel];
+      } else if (_.isArray(channel)) {
+        contentMetaData['createdFor'] = channel;
+      }
+    }
 
     // @Todo remove after testing
     // this.sendNotification.next(_.capitalize(action));
@@ -1155,6 +1159,26 @@ export class HelperService {
       this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData, 'identifier');
     });
     return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
+  }
+
+  getFormattedFrameworkMetaWithOutCollection(row, sessionContext) {
+    const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
+    const framework = _.first(_.get(sessionContext, 'framework'));
+    this.flattenedFrameworkCategories[framework] = {};
+    // tslint:disable-next-line:max-line-length
+    const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
+    _.forEach(orgFrameworkCategories, item => {
+      const terms = _.get(item, 'terms');
+      this.flattenedFrameworkCategories[framework][item.code] = terms || [];
+    });
+    _.forEach(organisationFrameworkUserInput, (value, key) => {
+      const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
+        'orgIdFieldName': key
+      }), 'code');
+      organisationFrameworkUserInput[key] = this.hasEmptyElement(value) ? _.get(sessionContext.frameworkData, key) || [] :
+      this.convertNameToIdentifier(framework, value, key, code, sessionContext.frameworkData, 'identifier');
+    });
+    return {...organisationFrameworkUserInput};
   }
 
 /**
@@ -1397,36 +1421,5 @@ export class HelperService {
       return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
     }
     return flag;
-  }
-
-  initializeSbFormFields(sessionContext, formFieldProperties) {
-    let categoryMasterList;
-    const nonFrameworkFields = ['additionalCategories', 'license'];
-    // tslint:disable-next-line:max-line-length
-    if (_.has(sessionContext.targetCollectionFrameworksData, 'framework') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework])) {
-      categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework];
-      _.forEach(categoryMasterList.categories, (frameworkCategories) => {
-       _.forEach(formFieldProperties, (element) => {
-        _.forEach(element.fields, (field) => {
-         // tslint:disable-next-line:max-line-length
-         if (field.code === "learningoutcome") {
-           field.code = "learningOutcome";
-         }
-          if ((frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
-              if (field.code === "learningOutcome") {
-                field.range = _.map(frameworkCategories.terms, 'name');
-              }else{
-                field.range = frameworkCategories.terms;
-                field.terms = frameworkCategories.terms;
-              }
-        }
-         if (field.code === "learningOutcome") {
-          field.code = "learningoutcome";
-        }
-        });
-       });
-     });
-    }
-    return formFieldProperties;
   }
 }

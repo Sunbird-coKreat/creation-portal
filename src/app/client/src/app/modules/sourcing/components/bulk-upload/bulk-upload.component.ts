@@ -85,6 +85,10 @@ export class BulkUploadComponent implements OnInit {
   ) { }
 
    ngOnInit() {
+    if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
+      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
+    }
+
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))
       .subscribe((user: any) => {
@@ -233,29 +237,28 @@ export class BulkUploadComponent implements OnInit {
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = 'completed';
         }
+        this.calculateCompletionPercentage();
+        if (this.oldProcessStatus !== this.process.status) {
+          this.updateJob();
+        }
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const req = {
+            url: `content/v3/hierarchy/${this.sessionContext.collection}`,
+            param: { 'mode': 'edit' }
+          };
+          this.actionService.get(req).subscribe((response) => {
+            const children = [];
+            _.forEach(response.result.content.children, (child) => {
+              if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+              (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
+                children.push(child);
+              }
+            });
 
-        const req = {
-          url: `content/v3/hierarchy/${this.sessionContext.collection}`,
-          param: { 'mode': 'edit' }
-        };
-        this.actionService.get(req).subscribe((response) => {
-          const children = [];
-          _.forEach(response.result.content.children, (child) => {
-            if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
-            (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
-              children.push(child);
-            }
+            response.result.content.children = children;
+            this.storedCollectionData = response.result.content;
           });
-
-          response.result.content.children = children;
-          this.storedCollectionData = response.result.content;
-          this.calculateCompletionPercentage();
-          // console.log('updated process:', JSON.stringify(this.process));
-          if (this.oldProcessStatus !== this.process.status) {
-            this.updateJob();
-          }
-
-        });
+        }
       }
     }, (error) => {
       console.log(error);
@@ -282,11 +285,16 @@ export class BulkUploadComponent implements OnInit {
   }
 
   downloadReport() {
-    this.unitsInLevel = _.map(this.contents, content => {
-      return this.findFolderLevel(this.storedCollectionData, content.identifier);
-    });
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      this.unitsInLevel = _.map(this.contents, content => {
+        return this.findFolderLevel(this.storedCollectionData, content.identifier);
+      });
+    }
 
     try {
+      if (!this.uploadCsvConfig) {
+        this.setBulkUploadCsvConfig();
+      }
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
       headers.push('Status');
       headers.push('Reason for failure');
@@ -305,21 +313,21 @@ export class BulkUploadComponent implements OnInit {
         result['fileFormat'] = this.getFileFormat(_.get(content, 'mimeType', ''));
         result['source'] = _.get(content, 'source', '');
         result['contentType'] = _.get(content, 'primaryCategory');
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const folderStructure = this.unitsInLevel[i];
+          this.unitGroup = [];
+          this.tree(folderStructure);
 
-        const folderStructure = this.unitsInLevel[i];
-        this.unitGroup = [];
-        this.tree(folderStructure);
-
-        result['level1'] = '';
-        result['level2'] = '';
-        result['level3'] = '';
-        result['level4'] = '';
-
-        if (this.unitGroup.length > 0) {
-          result['level1'] = _.get(this.unitGroup, '[0].name', '');
-          result['level2'] = _.get(this.unitGroup, '[1].name', '');
-          result['level3'] = _.get(this.unitGroup, '[2].name', '');
-          result['level4'] = _.get(this.unitGroup, '[3].name', '');
+          result['level1'] = '';
+          result['level2'] = '';
+          result['level3'] = '';
+          result['level4'] = '';
+          if (this.unitGroup.length > 0) {
+            result['level1'] = _.get(this.unitGroup, '[0].name', '');
+            result['level2'] = _.get(this.unitGroup, '[1].name', '');
+            result['level3'] = _.get(this.unitGroup, '[2].name', '');
+            result['level4'] = _.get(this.unitGroup, '[3].name', '');
+          }
         }
 
         let status = _.get(content, 'status', '');
@@ -331,9 +339,9 @@ export class BulkUploadComponent implements OnInit {
 
         return result;
       });
-
+      const fileName = _.get(this.storedCollectionData, 'name') ? `Bulk Upload ${this.storedCollectionData.name.trim()}` : `Bulk Upload ${this.programContext.name.trim()}`;
       const csvDownloadConfig = {
-        filename: `Bulk Upload ${this.storedCollectionData.name.trim()}`,
+        filename: fileName,
         tableData: tableData,
         headers: headers,
         showTitle: false
@@ -487,27 +495,39 @@ export class BulkUploadComponent implements OnInit {
       headers.push ({ name: 'Level 3 Textbook Unit', inputName: 'level3', required: false, requiredError, headerError });
       headers.push ({ name: 'Level 4 Textbook Unit', inputName: 'level4', required: false, requiredError, headerError });
     }
-     const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
-       _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+    if (this.programContext.target_type === 'searchCriteria') {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+      this.allowedDynamicColumns = [...orgFrameworkCategories];
+    } else {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+
+      const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
+        _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
        return {
-         name: `Org_FW_${category.code}`,
-         inputName: category.orgIdFieldName,
+         name: `Target_FW_${category.code}`,
+         inputName: category.targetIdFieldName,
          isArray: true,
          headerError
        };
      }) : [];
-
-     const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
-       _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
-      return {
-        name: `Target_FW_${category.code}`,
-        inputName: category.targetIdFieldName,
-        isArray: true,
-        headerError
-      };
-    }) : [];
-
-    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+     this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+    }
     const validateRow = (row, rowIndex) => {
       if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
         if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
@@ -695,15 +715,35 @@ export class BulkUploadComponent implements OnInit {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});*/
     let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.programContext.target_type);
-
-    let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
-    frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
-    frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
-
-    if (!_.isEmpty(frameworkMetaData)) {
-      const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
-      sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+    let frameworkMetaData;
+    if (this.programContext.target_type === 'searchCriteria') {
+      frameworkMetaData = this.helperService.getFormattedFrameworkMetaWithOutCollection(row, this.sessionContext);
+      frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+      const framework = _.isArray(this.sessionContext.framework) ? _.first(this.sessionContext.framework) : this.sessionContext.framework;
+      frameworkMetaData = Object.assign({}, {framework: framework}, frameworkMetaData);
+      if (!_.isEmpty(frameworkMetaData)) {
+        const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, {framework: framework});
+        sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+        if (_.isArray(sharedMetaData.board)) {
+          sharedMetaData.board = _.first(sharedMetaData.board);
+        }
+      }
+    } else {
+      // tslint:disable-next-line:max-line-length
+      frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
+      frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+      frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
+      if (!_.isEmpty(frameworkMetaData)) {
+        const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
+        sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+        if (_.isArray(sharedMetaData.board)) {
+          sharedMetaData.board = _.first(sharedMetaData.board);
+        }
+      }
     }
+
+
+
     let creatorName = this.userProfile.firstName;
       if (!_.isEmpty(this.userProfile.lastName)) {
         creatorName = this.userProfile.firstName + ' ' + this.userProfile.lastName;

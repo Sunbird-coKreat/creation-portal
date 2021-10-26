@@ -345,7 +345,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
           program_id: this.programContext.program_id
         };
           // tslint:disable-next-line:max-line-length
-        request['acceptedcontents'] = _.compact(_.uniq([...this.programContext.acceptedContents || [],
+        request['acceptedcontents'] = _.compact(_.uniq([...this.programContext.acceptedcontents || [],
           ..._.map(this.approvalPending, 'identifier')]));  
         this.programsService.updateProgram(request).subscribe(() => {
           this.updateToc.emit('bulkApproval_completed');
@@ -459,7 +459,13 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   }
 
   checkBulkApproveHistory() {
-    this.bulkApprove = this.cacheService.get('bulk_approval_' + this.sessionContext.collection);
+    let bulkApproveParam;
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      bulkApproveParam = 'bulk_approval_' + this.sessionContext.collection;
+    } else if (this.programContext.target_type === 'searchCriteria') {
+      bulkApproveParam = 'bulk_approval_' + this.sessionContext.programId;
+    }
+    this.bulkApprove = this.cacheService.get(bulkApproveParam);
     if (this.bulkApprove) {
       if (this.bulkApprove.status === 'processing') {
       } else {
@@ -468,13 +474,16 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     } else {
       const reqData = {
         filters: {
-          program_id: this.programContext.program_id,
-          collection_id: this.sessionContext.collection
-        }
+          program_id: this.programContext.program_id        }
       };
+
+      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+        reqData.filters['collection_id'] = this.sessionContext.collection;
+      }
+
       this.bulkJobService.getBulkOperationStatus(reqData).subscribe(res => {
         if (res.result && res.result.process && res.result.process.length) {
-          this.bulkApprove = this.cacheService.get('bulk_approval_' + this.sessionContext.collection);
+          this.bulkApprove = this.cacheService.get(bulkApproveParam);
         }
         if (!this.bulkApprove || this.bulkApprove && this.bulkApprove.status !== 'processing') {
           this.showBulkApprovalButton = true;
