@@ -7,7 +7,7 @@ import { UUID } from 'angular2-uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { map, catchError, tap } from 'rxjs/operators';
-import { throwError, of } from 'rxjs';
+import { throwError, of, forkJoin } from 'rxjs';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../sourcing/components';
 import { ICollectionComponentInput, IDashboardComponentInput,
@@ -19,6 +19,7 @@ import { IImpressionEventInput, IInteractEventEdata, TelemetryService } from '@s
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { isEmpty } from 'lodash';
 
 
 interface IDynamicInput {
@@ -106,7 +107,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public showNominateModal: boolean = false;
   public contentCount = 0;
   public showConfirmationModal = false;
-
+  public prefernceFormOptions = {};
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -187,20 +188,20 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.roleNames = _.map(this.rolesWithNone, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
-      this.helperService.fetchProgramFramework(this.sessionContext);
-      this.getNominationStatus();
-      this.setTargetCollectionValue();
-      this.getCollectionCategoryDefinition();
+      this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
+        if (frameworkData) {
+          this.sessionContext.frameworkData = frameworkData.categories;
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
+          this.getNominationStatus();
+          this.setTargetCollectionValue();
+          this.getCollectionCategoryDefinition();
+        }
+      }, error => {
+        this.raiseError(error, 'Fetching framework details failed')
+      });
     }, error => {
       // TODO: navigate to program list page
-      const errInfo = {
-        errorMsg: this.resourceService.messages.emsg.project.m0001,
-        telemetryPageId: this.telemetryPageId,
-        telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env,
-        request: {}
-      };
-      this.sourcingService.apiErrorHandling(error, errInfo);
+      this.raiseError(error, this.resourceService.messages.emsg.project.m0001)
     });
   }
 
@@ -247,8 +248,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
         this.getProgramCollections();
       } else if (this.programDetails.target_type == 'searchCriteria') {
-        this.getOriginForApprovedContents().subscribe((res) => {
-          this.getProgramContents();
+        forkJoin(this.getUserProgramPreferences(),this.getOriginForApprovedContents(), this.getProgramContentAggregation()).subscribe((res) => {
+          const preferences = _.get(_.first(res), 'result');
+          this.getProgramContents(_.get(preferences, 'contributor_preference'));
         })
       }
     }, error => {
@@ -299,31 +301,52 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sessionContext['sampleContent'] = false;
     }
   }
+  getUserProgramPreferences() {
+    this.prefernceForm = this.sbFormBuilder.group({
+      medium: [],
+      subject: [],
+      gradeLevel: [],
+    });
+    this.sessionContext.frameworkData.forEach((element) => {
+      if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
+        this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
+      }
+    });
+    const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
+    return req.pipe(
+      tap((res) => {
+        let prefres = _.get(res, 'result')
+        if (prefres !== null || prefres !== undefined) {
+          this.userPreferences = prefres;
+        }
+        if (!_.isEmpty(this.userPreferences.contributor_preference)) {
+          this.textbookFiltersApplied = true;
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+          // tslint:disable-next-line: max-line-length
+          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+        }
+      }),catchError((error) => {
+        const errInfo = {
+          errorMsg: 'Fetching Preferences  failed',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+        console.log('Getting origin data failed');
+        return of(false);
+      }));
+  }
 
   getProgramCollections() {
     const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
     if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus) && (this.isContributingOrgAdmin || this.sessionContext.currentRoles.includes('REVIEWER'))) {
-      this.prefernceForm = this.sbFormBuilder.group({
-        medium: [],
-        subject: [],
-        gradeLevel: [],
-      });
-      this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId).subscribe(
+      this.getUserProgramPreferences().subscribe(
         (prefres) => {
-          let preffilter = {};
-          if (prefres.result !== null || prefres.result !== undefined) {
-            this.userPreferences = prefres.result;
-            preffilter = _.get(this.userPreferences, 'contributor_preference');
-          }
-          if (!_.isEmpty(this.userPreferences.contributor_preference)) {
-            this.textbookFiltersApplied = true;
-            // tslint:disable-next-line: max-line-length
-            this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-            // tslint:disable-next-line: max-line-length
-            this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-            // tslint:disable-next-line: max-line-length
-            this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
-          }
+          let preffilter = _.get(prefres, 'result.contributor_preference');
           this.fetchProgramCollections(preffilter);
       }, (err) => { // TODO: navigate to program list page
         this.fetchProgramCollections();
@@ -595,7 +618,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       return of([]);
     }
   }
-  getProgramContents() {
+
+  getProgramContentAggregation() {
     let sampleValue, organisation_id, individualUserId, onlyCount;
     if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
         sampleValue = true;
@@ -605,12 +629,50 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         individualUserId = this.userService.userid;
       }
     }
+    return this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId, onlyCount, true).pipe(
+      tap((response) => {
+        let contents = [];
+        if (response && _.get(response, 'result') && (_.get(response, 'result.content')|| _.get(response, 'result.QuestionSet'))) {
+          contents = _.compact(_.concat(_.get(response, 'result.QuestionSet'), _.get(response, 'result.content')));
+        }
+        if (this.userService.isUserBelongsToOrg()) {
+          this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId());
+        } else {
+          // tslint:disable-next-line:max-line-length
+          this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid);
+        }
+      }), catchError((error) => {
+        this.loaders.showCollectionListLoader= false;
+        this.logTelemetryImpressionEvent([], 'contents');
+        const errInfo = {
+          errorMsg: 'Fetching textbooks failed. Please try again...',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+        return of(false);
+      }));
+  }
+
+  getProgramContents(preferences?) {
+    let sampleValue, organisation_id, individualUserId, onlyCount;
+    if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
+        sampleValue = true;
+      if (this.userService.isUserBelongsToOrg()) {
+        organisation_id = this.userService.getUserOrgId();
+      } else {
+        individualUserId = this.userService.userid;
+      }
+    }
+    this.collectionHierarchyService.preferencefilters = preferences;
     this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId, onlyCount, true).subscribe(
       (response) => {
         let contents = [];
         if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
           contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
+        this.contentCount = 0;
         this.contributorTextbooks = _.cloneDeep(contents);
         _.map(this.contributorTextbooks, (content) => {
           content['contentVisibility'] = this.contentHelperService.shouldContentBeVisible(content, this.programDetails, this.currentNominationStatus, this.sessionContext.currentRoles);
@@ -622,13 +684,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
             this.contentCount++;
           }
         });
-
-        if (this.userService.isUserBelongsToOrg()) {
-            this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId());
-        } else {
-          // tslint:disable-next-line:max-line-length
-          this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid);
-        }
         this.tempSortTextbooks = this.contributorTextbooks;
         this.loaders.showCollectionListLoader= false;
         this.logTelemetryImpressionEvent(this.contributorTextbooks, 'contents');
@@ -819,7 +874,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
     });
-    this.fetchProgramCollections(preferences);
+    if (this.programDetails.target_type === 'searchCriteria') {
+      this.getProgramContents(preferences);
+    }
+    else {
+      this.fetchProgramCollections(preferences);
+    }
   }
 
   applyTextbookFilters() {
@@ -960,6 +1020,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showReviewContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
     this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
+    this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
   }
 
   getCollectionCategoryDefinition() {
@@ -1054,6 +1115,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       );
   }
+  raiseError(error, errorMsg) {
+    const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+    this.toasterService.error(errorMes || errorMsg);
+    const errInfo = {
+      errorMsg:  errorMsg,
+      telemetryPageId: _.get(this.activatedRoute,'snapshot.data.telemetry.pageid'),
+      telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.sessionContext.programId , type: 'project'}],
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+    };
+    this.sourcingService.apiErrorHandling(error, errInfo);
+  }
+
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;

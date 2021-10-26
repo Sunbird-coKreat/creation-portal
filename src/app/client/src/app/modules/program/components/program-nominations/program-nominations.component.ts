@@ -257,18 +257,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (tab === 'contributionDashboard' && !_.includes(this.visitedTab, 'contributionDashboard')) {
       this.showDashboardLoader =  true;
       if (_.isEmpty(this.programCollections)) {
-        if (!this.programDetails.target_type || this.programDetails.target_type === 'collections'){
-          this.getProgramCollection().subscribe(
-            (res) => { this.getNominationList(); },
-            (err) => { // TODO: navigate to program list page
-              this.showDashboardLoader =  false;
-              const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
-              this.toasterService.warning(errorMes || 'Fetching textbooks failed');
-            });
-        } else {
-          this.programCollections = _.cloneDeep(this.contentAggregationData);
-          this.getNominationList();
-        }
+        this.getProgramCollection().subscribe(
+        (res) => { this.getNominationList(); },
+        (err) => { // TODO: navigate to program list page
+          this.showDashboardLoader =  false;
+          const errorMes = typeof _.get(err, 'error.params.errmsg') === 'string' && _.get(err, 'error.params.errmsg');
+          this.toasterService.warning(errorMes || 'Fetching textbooks failed');
+        });
       } else {
         this.getNominationList();
       }
@@ -449,16 +444,30 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getProgramCollection (preferencefilters?) {
-    return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).pipe(
-      tap((response: any) => {
-        if (response && response.result) {
-          this.programCollections = response.result.content || [];
-        }
-      }),
-      catchError(err => {
-        return of(err);
-      })
-    );
+    if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+      return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).pipe(
+        tap((response: any) => {
+          if (response && response.result) {
+            this.programCollections = response.result.content || [];
+          }
+        }),
+        catchError(err => {
+          return of(err);
+        })
+      );
+    } else if (this.programDetails.target_type === 'searchCriteria') {
+      this.collectionHierarchyService.preferencefilters = preferencefilters;
+      return this.collectionHierarchyService.getnonCollectionProgramContents(this.programId).pipe(
+        tap((response: any) => {
+          if (response && response.result && (response.result.content || response.result.QuestionSet)) {
+            this.programCollections = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
+          }
+        }),
+        catchError(err => {
+          return of(false);
+        })
+      );
+    } 
   }
 
   getcontentAggregationData() {
@@ -604,12 +613,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
-      this.helperService.fetchProgramFramework(this.sessionContext);
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
 
-      forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
+      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(), 
+              this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
+            const frameworkRes = _.first(response);
+            this.sessionContext.frameworkData = frameworkRes.categories;
+            this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
             this.checkActiveTab();
         },
         (error) => {
@@ -726,7 +738,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.showLoader = false;
     if (this.activeTab === 'textbook') {
       this.showTextbookLoader = true;
-      if(!this.programDetails.target_type ||  this.programDetails.target_type === 'collections'){
         this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId).subscribe(
           (prefres) => {
             let preffilter = {};
@@ -750,19 +761,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
               this.sourcingService.apiErrorHandling(err, errInfo);
             });
         }, (err) => { // TODO: navigate to program list page
-          this.showTextbookLoader  =  false;
-          const errInfo = {
-            errorMsg: 'Fetching Preferences  failed',
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : this.telemetryInteractCdata,
-            env : this.activatedRoute.snapshot.data.telemetry.env,
-          };
-          this.sourcingService.apiErrorHandling(err, errInfo);
-        });
-      } else if (this.programDetails.target_type === 'searchCriteria') {
-        this.programCollections = _.cloneDeep(this.contentAggregationData);
         this.showTextbookLoader  =  false;
-      }
+        const errInfo = {
+          errorMsg: 'Fetching Preferences  failed',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+      });
     }
 
     if (this.activeTab === 'nomination') {
@@ -778,24 +785,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (this.activeTab === 'contributionDashboard') {
       this.showDashboardLoader =  true;
       this.logTelemetryImpressionEvent();
-      if (!this.programDetails.target_type || this.programDetails.target_type === 'collections'){
-        this.getProgramCollection().subscribe(
-        (res) => { this.getNominationList(); },
-        (err) => { // TODO: navigate to program list page
-          const errInfo = {
-            errorMsg: 'Fetching textbooks failed',
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : this.telemetryInteractCdata,
-            env : this.activatedRoute.snapshot.data.telemetry.env,
-          };
-          this.sourcingService.apiErrorHandling(err, errInfo);
-        });
-      } else {
-        this.programCollections = _.cloneDeep(this.contentAggregationData);
-        this.getNominationList();
-      }
+      this.getProgramCollection().subscribe(
+      (res) => { this.getNominationList(); },
+      (err) => { // TODO: navigate to program list page
+        const errInfo = {
+          errorMsg: 'Fetching textbooks failed',
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+      });
     }
-
     if (this.activeTab === 'report') {
       this.logTelemetryImpressionEvent();
     }

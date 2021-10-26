@@ -304,6 +304,10 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
             this.programStageService.removeLastStage();
             this.programsService.emitHeaderEvent(true);
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
         }
       }, (err) => {
         const errInfo = {
