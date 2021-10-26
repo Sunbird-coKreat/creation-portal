@@ -541,6 +541,7 @@ describe('CreateProgramComponent', () => {
 
   it('editBlueprint should call getCollectionHierarchy', () => {
     component.textbooks = ['1234'];
+    component.blueprintTemplate = {"properties": {}};
     spyOn(component, 'getCollectionHierarchy').and.callFake(() => {});
     spyOn(component, 'editBlueprint').and.callThrough();
     component.editBlueprint({identifier: '12345'});
@@ -550,6 +551,7 @@ describe('CreateProgramComponent', () => {
 
   it('editBlueprint should call initEditBlueprintForm', () => {
     component.textbooks['12345'] = {};
+    component.blueprintTemplate = {"properties": {}};
     spyOn(component, 'initEditBlueprintForm').and.callFake(() => {});
     spyOn(component, 'editBlueprint').and.callThrough();
     component.editBlueprint({identifier: '12345'});
