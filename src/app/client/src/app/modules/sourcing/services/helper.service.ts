@@ -577,12 +577,20 @@ export class HelperService {
     });
     _.forEach(formFields, field => {
       if (field.dataType === 'list') {
-        if (_.isString(trimmedValue[field.code])) {
+        if (_.isString(trimmedValue[field.code]) && field.code !== 'bloomsLevel') {
           trimmedValue[field.code] = _.split(trimmedValue[field.code], ',');
+        }else if(field.code === 'bloomsLevel')
+        {
+          trimmedValue[field.code] = _.isArray(trimmedValue[field.code]) ? trimmedValue[field.code] : trimmedValue[field.code].name;
         }
       } else if (field.dataType === 'text') {
-        if (_.isArray(trimmedValue[field.code])) {
+        if (_.isArray(trimmedValue[field.code]) && field.code !== 'topic' && field.code !== 'learningOutcome') {
           trimmedValue[field.code] = _.join(trimmedValue[field.code]);
+        }else if(field.code === 'learningOutcome' || field.code === 'bloomsLevel')
+        {
+          trimmedValue[field.code] = _.isString(trimmedValue[field.code]) ? [trimmedValue[field.code]]: [trimmedValue[field.code].name];
+        }else if (field.code === 'topic'){
+          trimmedValue[field.code] = _.isString(trimmedValue[field.code]) ? [trimmedValue[field.code]]:trimmedValue[field.code];
         }
       }
     });
@@ -1397,5 +1405,36 @@ export class HelperService {
       return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
     }
     return flag;
+  }
+
+  initializeSbFormFields(sessionContext, formFieldProperties) {
+    let categoryMasterList;
+    const nonFrameworkFields = ['additionalCategories', 'license'];
+    // tslint:disable-next-line:max-line-length
+    if (_.has(sessionContext.targetCollectionFrameworksData, 'framework') && !_.isEmpty(this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework])) {
+      categoryMasterList = this.frameworkService.frameworkData[sessionContext.targetCollectionFrameworksData.framework];
+      _.forEach(categoryMasterList.categories, (frameworkCategories) => {
+       _.forEach(formFieldProperties, (element) => {
+        _.forEach(element.fields, (field) => {
+         // tslint:disable-next-line:max-line-length
+         if (field.code === "learningoutcome") {
+           field.code = "learningOutcome";
+         }
+          if ((frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) && !_.includes(field.code, 'target') && !_.includes(nonFrameworkFields, field.code)) {
+              if (field.code === "learningOutcome") {
+                field.range = _.map(frameworkCategories.terms, 'name');
+              }else{
+                field.range = frameworkCategories.terms;
+                field.terms = frameworkCategories.terms;
+              }
+        }
+         if (field.code === "learningOutcome") {
+          field.code = "learningoutcome";
+        }
+        });
+       });
+     });
+    }
+    return formFieldProperties;
   }
 }
