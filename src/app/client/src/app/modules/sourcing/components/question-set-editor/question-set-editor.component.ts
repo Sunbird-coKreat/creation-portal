@@ -334,8 +334,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
   }
 
-  editorEventListener(event) {
-   console.log(event);
+  editorEventListener(event) {   
    switch (event.action) {
     case 'submitContent' :
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content

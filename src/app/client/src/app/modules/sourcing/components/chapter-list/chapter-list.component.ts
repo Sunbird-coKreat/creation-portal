@@ -1422,15 +1422,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
   }
 
-  collectionEditorEventListener(event) {
-    console.log(event);
-    switch (event.action) {              
-     case 'saveContent':
-       console.log(event.identifier);
-       break;
-    }
-   }
-
   lastOpenedUnit(unitId) {
     this.collectionHierarchy.forEach((parentunit) => {
         if (parentunit.identifier === unitId) {
