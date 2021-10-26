@@ -958,7 +958,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility = {};
     const isOpenForNomination = this.helperService.isOpenForNomination(this.programDetails);
     const canAcceptContribution = this.helperService.canAcceptContribution(this.programDetails);
-    const isProgramForCollections = !!(!this.programDetails.target_type || this.programDetails.target_type === 'collections' || this.programDetails.target_type === 'questionSets')
+    const isProgramForCollections = !!(!this.programDetails.target_type || _.includes(['collections', 'questionSets'], this.programDetails.target_type));
     const isProgramForNoCollections = !!(this.programDetails.target_type && this.programDetails.target_type === 'searchCriteria')
     const isSourcingSide = this.programsService.ifSourcingInstance();
     this.visibility['showNominate'] = isOpenForNomination && (!_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated');
