@@ -1,4 +1,4 @@
-Name of the Content,Description of the content,Keywords,Audience,Author,Copyright,License,Attributions,Icon File Path,File Format,File Path,Content Type,Org_FW_board,Org_FW_medium,Org_FW_gradeLevel,Org_FW_subject,Org_FW_topic
+Name of the Content,Description of the content,Keywords,Audience,Author,Copyright,License,Attributions,Icon File Path,File Format,File Path,Content Type,Org_FW_board,Org_FW_gradeLevel,Org_FW_medium,Org_FW_subject,Org_FW_topic
 "Upto 200 or 250 characters. Ideally less than 60 characters 
 (Please enter the text)","Upto 400 or 500 characters. Ideally 160 to 200 characters.
 (Please enter the text)",,Student Or Teacher Or Administrator,The person or organization who has authored the content,Person or Organization who owns the copyright. Default name is DIKSHA tenant.,"One of the supported licenses in DIKSHA.
