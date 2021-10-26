@@ -50,8 +50,8 @@ export class ContributorsListComponent implements OnInit {
   public contributorTypes: string[] = ["Organisation", "Individual"];
   public contributorType: string = "Organisation";
   public osLimit = 500;
-  public orgLastPage = false;
-  public indLastPage = false;
+  public orgLastPage = true;
+  public indLastPage = true;
 
   constructor(
     public resource: ResourceService,
@@ -123,7 +123,6 @@ export class ContributorsListComponent implements OnInit {
             this.getOrgCreatorInfo(orgList, resolve, reject);
           } else {
             this.orgLastPage = true;
-            this.hideLoader();
             resolve ([]);
           }
         },
@@ -298,6 +297,7 @@ export class ContributorsListComponent implements OnInit {
 
   clearSearch() {
     this.searchInput = "";
+    this.paginatedList = [];
     this.getData(true);
   }
 
@@ -523,7 +523,7 @@ export class ContributorsListComponent implements OnInit {
           }
           else {
             this.indLastPage = true;
-            this.hideLoader();
+            resovle([]);
           }
         },
         (error) => {
@@ -551,6 +551,8 @@ export class ContributorsListComponent implements OnInit {
 
   getData(selectedAtTop?) {
     this.displayLoader();
+    this.paginatedList = [];
+    this.contributorList = [];
     switch (this.contributorType) {
       case "Organisation":
         if (this.preSelectedContributors
