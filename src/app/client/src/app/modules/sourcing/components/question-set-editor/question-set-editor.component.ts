@@ -167,14 +167,14 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     };
     if (this.showQuestionEditor || this.enableQuestionCreation) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;      
-    }
+    }   
+    this.getEditableFields();
+    this.getCorrectionComments();
+    this.getDikshaPreviewUrl();    
+    this.getStatustoShow();
     if (_.get(this.programContext, 'target_type') === 'questionSets') {
       this.setQuestionModeConfig() 
     }
-    this.getEditableFields();
-    this.getCorrectionComments();
-    this.getDikshaPreviewUrl();
-    this.getStatustoShow();
   }
 
   private getObjectType() {
@@ -205,6 +205,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorConfig.config.objectType = 'Question';
     this.editorConfig.config.mode = 'edit';
     this.editorConfig.config.isReadOnlyMode = false;
+    this.editorConfig.config.showSourcingStatus = false;
     delete this.editorConfig.config.enableQuestionCreation;
   }
 
