@@ -125,6 +125,15 @@
     </div>
     <div content>
       <div class="chapter-lists level1" *ngIf="collection.leaf">
+        <div class="header chapter-lists--item">
+          <span class="item-name item-sno">S.No</span>
+          <span class="item-name">Name</span>
+          <ng-container *ngFor="let header of dynamicHeaders">
+            <span class="item-name">{{header.label}}</span>
+          </ng-container>
+          <span class="item-status">Contributor</span>
+          <span class="item-status">Status</span>
+        </div>
         <ng-container *ngFor="let content of collection.leaf; let ind = index">
           <div class="chapter-lists--item"
           *ngIf="content.contentVisibility === true && includes(sourcingOrgReviewer, selectedStatus, content.sourcingStatus || content.status)"
@@ -134,8 +143,15 @@
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
-            <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
-            <span class="item-name"> {{content.name}}</span>
+            <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>            
+            <span class="item-name"> {{content.name}}<br />
+              <ng-container *ngFor="let tag of tags">
+                <span *ngIf="content[tag]" class="item-tag">{{content[tag]}}</span>
+              </ng-container>
+            </span>
+            <ng-container *ngFor="let header of dynamicHeaders">
+              <span class="item-name">{{content[header.key] || '-'}}</span>
+            </ng-container>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-status" *ngIf="!content.sampleContent">
               <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
@@ -147,7 +163,7 @@
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
               <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
-              <strong *ngIf="reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
+              <strong *ngIf="sessionContext['addFromLibraryBetaEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"

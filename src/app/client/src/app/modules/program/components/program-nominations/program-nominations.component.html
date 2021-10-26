@@ -86,13 +86,13 @@
                             <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ nominatedTextbook || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                         </div>
                         <div class="br-1 text-right flex-grow-1 bl-2"> {{resourceService.frmelmnts.lbl.contentType}}:
-                          <span suiPopup [popupTemplate]="contentTotalTemplate" popupDelay="1000" class="cursor-pointer">
+                          <span suiPopup [popupTemplate]="contentTotalTemplate" popupDelay="1000"[popupPlacement]="'top right'" class="cursor-pointer">
                                <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ totalContentTypeCount || 0}}</span> {{resourceService.frmelmnts.lbl.total}}
                             </span>
                             <ng-template #contentTotalTemplate>
                                     <p class="my-0 fs-0-785">{{programContentTypes}} </p>
                             </ng-template>
-                            <span suiPopup [popupTemplate]="contentTypeTemplate" popupDelay="1000" class="cursor-pointer">
+                            <span suiPopup [popupPlacement]="'top right'" [popupTemplate]="contentTypeTemplate" popupDelay="1000" class="cursor-pointer">
                                <span class="fs-1-286 font-weight-bold sb-color-gray-400 pl-10 pr-5">{{ totalContentTypeCount || 0}}</span> {{resourceService.frmelmnts.lbl.nominated}}
                             </span>
                             <ng-template #contentTypeTemplate>

@@ -632,6 +632,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.totalContentTypeCount = programContentTypesArr.length;
       const currentRoles = _.filter(this.programDetails.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
+      this.sessionContext['selectedSharedProperties'] = this.helperService.getSharedProperties(this.programDetails);
+      this.sessionContext = _.assign(this.sessionContext, this.sessionContext['selectedSharedProperties']);
     }, error => {
       const errInfo = {
         errorMsg: this.resourceService.messages.emsg.project.m0001,
