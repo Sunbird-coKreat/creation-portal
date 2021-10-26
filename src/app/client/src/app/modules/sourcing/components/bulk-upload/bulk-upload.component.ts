@@ -715,18 +715,35 @@ export class BulkUploadComponent implements OnInit {
       return { ...obj, [context]: this.sessionContext[context] };
     }, {});*/
     let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.programContext.target_type);
-
-    let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
-    frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
-    frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
-
-    if (!_.isEmpty(frameworkMetaData)) {
-      const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
-      sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
-      if (_.isArray(sharedMetaData.board)) {
-        sharedMetaData.board = _.first(sharedMetaData.board);
+    let frameworkMetaData;
+    if (this.programContext.target_type === 'searchCriteria') {
+      frameworkMetaData = this.helperService.getFormattedFrameworkMetaWithOutCollection(row, this.sessionContext);
+      frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+      const framework = _.isArray(this.sessionContext.framework) ? _.first(this.sessionContext.framework) : this.sessionContext.framework;
+      frameworkMetaData = Object.assign({}, {framework: framework}, frameworkMetaData);
+      if (!_.isEmpty(frameworkMetaData)) {
+        const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, {framework: framework});
+        sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+        if (_.isArray(sharedMetaData.board)) {
+          sharedMetaData.board = _.first(sharedMetaData.board);
+        }
+      }
+    } else {
+      // tslint:disable-next-line:max-line-length
+      frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
+      frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+      frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
+      if (!_.isEmpty(frameworkMetaData)) {
+        const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
+        sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+        if (_.isArray(sharedMetaData.board)) {
+          sharedMetaData.board = _.first(sharedMetaData.board);
+        }
       }
     }
+
+
+
     let creatorName = this.userProfile.firstName;
       if (!_.isEmpty(this.userProfile.lastName)) {
         creatorName = this.userProfile.firstName + ' ' + this.userProfile.lastName;
