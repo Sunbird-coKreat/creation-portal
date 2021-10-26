@@ -190,7 +190,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorConfig.context.framework = _.get(this.sessionContext, 'framework');    
  
     this.editorConfig.config.mimeType = _.get(this.collectionDetails, 'mimeType');
-    this.editorConfig.config.isReadOnlyMode = this.getEditorMode() === 'edit' ? false : true;      
+    this.editorConfig.config.isReadOnlyMode = this.editorConfig.config.mode === 'edit' ? false : true;
+    this.editorConfig.config.showSourcingStatus = this.editorConfig.config.mode === 'edit' ? false : true;
     this.editorConfig.config.interactionType = _.get(this.collectionDetails, 'interactionTypes[0]');    
 
     if(_.isUndefined(this.editorParams.questionId)) {
