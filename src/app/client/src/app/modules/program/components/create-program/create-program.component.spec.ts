@@ -78,7 +78,6 @@ describe('CreateProgramComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateProgramComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
