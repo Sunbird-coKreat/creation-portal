@@ -206,10 +206,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.dynamicOutputs = {
       uploadedContentMeta: (contentMeta) => {
         this.uploadHandler(contentMeta);
-      },
-      collectionEditorEventEmitter: (event) => {
-        this.collectionEditorEventListener(event);
-      }
+      }     
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     if (this.programContext['status'] === 'Unlisted') {
