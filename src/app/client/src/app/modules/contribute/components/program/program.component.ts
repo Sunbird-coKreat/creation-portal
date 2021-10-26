@@ -108,6 +108,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contentCount = 0;
   public showConfirmationModal = false;
   public prefernceFormOptions = {};
+  
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -188,14 +189,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.roleNames = _.map(this.rolesWithNone, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
+      this.frameworkService.initialize(this.sessionContext.framework);
       this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
         if (frameworkData) {
           this.sessionContext.frameworkData = frameworkData.categories;
-          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
-          this.getNominationStatus();
-          this.setTargetCollectionValue();
-          this.getCollectionCategoryDefinition();
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
         }
+        this.getNominationStatus();
+        this.setTargetCollectionValue();
+        this.getCollectionCategoryDefinition();
       }, error => {
         this.raiseError(error, 'Fetching framework details failed')
       });
@@ -307,11 +309,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       subject: [],
       gradeLevel: [],
     });
-    if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
-      this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
-      this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
-      this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
-    } else if (this.programDetails.target_type === 'searchCriteria') {
+
+    this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
+    this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
+    this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
+
+    if (this.programDetails.target_type === 'searchCriteria' && !_.isEmpty(this.sessionContext.frameworkData)) {
       this.sessionContext.frameworkData.forEach((element) => {
         if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
           this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
