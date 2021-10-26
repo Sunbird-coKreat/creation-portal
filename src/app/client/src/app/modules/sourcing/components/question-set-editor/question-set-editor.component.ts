@@ -77,11 +77,20 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     }
     this.userProfile = this.userService.userProfile;
     this.getCollectionDetails().subscribe(data => {
-      this.collectionDetails = data.result.questionset || data.result.question;      
+      this.collectionDetails = data.result.questionset;   
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
       // this.getFrameWorkDetails();
-      this.setEditorConfig();
-      this.showLoader = false;
+      if(_.get(this.programContext, 'target_type') === 'questionSets' && _.get(this.questionSetEditorComponentInput, 'action') !== 'creation') {
+        this.getQuestionDetails().subscribe(data => {
+          this.collectionDetails = data.result.question;
+          this.setEditorConfig();
+          this.showLoader = false;
+        })
+      } 
+      else {
+        this.setEditorConfig();
+        this.showLoader = false;
+      }
     });
   }
 
@@ -89,9 +98,13 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     const req = {
       url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${this.editorParams.questionSetId}?mode=edit`
     };
-    if(_.get(this.programContext, 'target_type') === 'questionSets') {
-      req.url = `${this.configService.urlConFig.URLS.QUESTION.READ}/${this.editorParams.questionId}`
-    }
+    return this.contentService.get(req).pipe(map((response: any) => response));
+  }
+
+  private getQuestionDetails() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${this.editorParams.questionId}`
+    };
     return this.contentService.get(req).pipe(map((response: any) => response));
   }
 
@@ -165,7 +178,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   private getObjectType() {
-    return _.get(this.collectionDetails, 'objectType') || 'QuestionSet'
+      return _.get(this.collectionDetails, 'objectType') || 'QuestionSet'
   }
 
   private setQuestionModeConfig() {
@@ -175,10 +188,24 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorConfig.context.collectionObjectType = _.get(this.sessionContext, 'targetCollectionObjectType');
     this.editorConfig.context.collectionPrimaryCategory = _.get(this.sessionContext, 'targetCollectionPrimaryCategory');
     this.editorConfig.context.framework = _.get(this.sessionContext, 'framework');    
-
+ 
     this.editorConfig.config.mimeType = _.get(this.collectionDetails, 'mimeType');
     this.editorConfig.config.isReadOnlyMode = this.getEditorMode() === 'edit' ? false : true;      
-    this.editorConfig.config.interactionType = _.get(this.collectionDetails, 'interactionTypes[0]');
+    this.editorConfig.config.interactionType = _.get(this.collectionDetails, 'interactionTypes[0]');    
+
+    if(_.isUndefined(this.editorParams.questionId)) {
+      this.setQuestionCreationModeConfigOverrides();    
+    }
+  }
+
+  private setQuestionCreationModeConfigOverrides() {
+    this.editorConfig.config.mimeType = _.get(this.sessionContext, 'templateDetails.mimeType[0]');
+    this.editorConfig.config.primaryCategory = _.get(this.sessionContext, 'templateDetails.name');
+    this.editorConfig.config.interactionType = _.get(this.sessionContext, 'templateDetails.interactionTypes[0]');
+    this.editorConfig.config.objectType = 'Question';
+    this.editorConfig.config.mode = 'edit';
+    this.editorConfig.config.isReadOnlyMode = false;
+    delete this.editorConfig.config.enableQuestionCreation;
   }
 
   private getEditorMode() {

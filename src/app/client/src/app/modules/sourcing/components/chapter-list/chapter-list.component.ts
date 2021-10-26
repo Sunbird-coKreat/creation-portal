@@ -500,7 +500,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   getCollectionCategoryDefinition() {
     if (this.programContext.target_collection_category && this.programContext.rootorg_id) {
       let objectType = 'Collection';
-      if(this.projectTargetType === 'questionSets') objectType = 'Question Set';
+      if(this.projectTargetType === 'questionSets') objectType = 'QuestionSet';
       // tslint:disable-next-line:max-line-length
       this.programsService.getCategoryDefinition(this.programContext.target_collection_category[0], this.programContext.rootorg_id,
         objectType).subscribe(res => {
@@ -579,6 +579,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public initiateInputs(action?, content?) {
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
     this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
+    let contentId = this.contentId;
+    if(this.projectTargetType === 'questionSets') {
+      if(action === 'creation') contentId = undefined;
+    }
     this.dynamicInputs = {
       contentUploadComponentInput: {
         config: _.find(this.programContext.config.components, {'id': 'ng.sunbird.uploadComponent'}),
@@ -619,7 +623,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         selectedSharedContext: this.selectedSharedContext
       },
       questionSetEditorComponentInput: {
-        contentId: this.projectTargetType === 'questionSets' ? undefined : this.contentId,
+        contentId: contentId,
         action: action,
         content: content,
         sessionContext: this.sessionContext,
@@ -1255,7 +1259,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.templateDetails.onClick = 'questionSetComponent';
     } else if (event.content.mimeType === 'application/vnd.sunbird.questionset'){
       this.templateDetails.onClick = 'questionSetEditorComponent';
-    } else {
+    } else if(event.content.mimeType === 'application/vnd.sunbird.question'){
+      this.templateDetails.onClick = 'questionSetEditorComponent';
+    } 
+    else {
       this.templateDetails.onClick = 'uploadComponent';
     }
     this.componentLoadHandler('preview',
@@ -1465,7 +1472,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   removeResourceFromHierarchy() {
-    this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, this.contentId)
+    this.collectionHierarchyService.removeResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, this.contentId, this.projectTargetType)
        .subscribe(() => {
          this.showConfirmationModal = false;
          this.updateAccordianView(this.unitIdentifier);
@@ -1474,26 +1481,26 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        });
   }
 
-  deleteContent() {
-    this.helperService.retireContent(this.contentId)
-      .subscribe(
-        (response) => {
-          if (response && response.result && response.result.node_id) {
-            this.removeResourceFromHierarchy();
-          } else {
-            this.toasterService.error(this.resourceService.messages.fmsg.m00103);
-          }
-        },
-        (error) => {
-          const errInfo = {
-            errorMsg: this.resourceService.messages.fmsg.m00103,
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : this.telemetryInteractCdata,
-            env : this.activeRoute.snapshot.data.telemetry.env,
-          };
-          this.sourcingService.apiErrorHandling(error, errInfo);
+  deleteContent() { 
+  this.helperService.retireContent(this.contentId, this.projectTargetType)
+    .subscribe(
+      (response) => {
+        if (response && response.result && response.result.node_id) {
+          this.removeResourceFromHierarchy();
+        } else {
+          this.toasterService.error(this.resourceService.messages.fmsg.m00103);
         }
-      );
+      },
+      (error) => {
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m00103,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata : this.telemetryInteractCdata,
+          env : this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+      }
+    );    
   }
 
   handleBack() {

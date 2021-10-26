@@ -220,10 +220,13 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
-  retireContent(contentId): Observable<ServerResponse> {
+  retireContent(contentId, target_type?): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
     };
+    if(target_type === 'questionSets') {
+      option.url = this.configService.urlConFig.URLS.QUESTION.RETIRE + '/' + contentId
+    }
     return this.actionService.delete(option);
   }
 

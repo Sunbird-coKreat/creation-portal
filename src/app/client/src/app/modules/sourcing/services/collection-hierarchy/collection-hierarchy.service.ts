@@ -27,17 +27,34 @@ export class CollectionHierarchyService {
     this._programDetails = programDetails;
   }
 
-  removeResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
+  removeResourceToHierarchy(collection, unitIdentifier, contentId, target_type?): Observable<any> {
+    let reqObj, reqQset;
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,
-      data: {
-        'request': {
-          'rootId': collection,
-          'unitId': unitIdentifier,
-          'children': [contentId]
+        url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,
+        data: {
+          'request': {
+            'rootId': collection,
+            'unitId': unitIdentifier,
+            'children': [contentId]
+          }
         }
-      }
-    };
+      };    
+    if(target_type === 'questionSets') {
+      reqQset = {
+        url: this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_REMOVE,
+        data: {
+          'request': {
+            'questionset': 
+            {
+              'rootId': collection,
+              'collectionId': unitIdentifier,
+              'children': [contentId]
+            }
+          }
+        }
+      }      
+    }   
+    reqObj = target_type === 'questionSets' ? req : reqQset;
     return this.actionService.delete(req).pipe(map((data: any) => {
       return data.result;
     }), catchError(err => {
