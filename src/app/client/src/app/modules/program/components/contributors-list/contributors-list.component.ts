@@ -1,4 +1,4 @@
-import { catchError, filter } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { UserService } from "./../../../core/services/user/user.service";
 import { RegistryService, ProgramsService } from "@sunbird/core";
 import { Component, Input, OnInit } from "@angular/core";
