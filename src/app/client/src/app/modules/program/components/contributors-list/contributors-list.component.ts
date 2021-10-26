@@ -15,7 +15,6 @@ import { ActivatedRoute } from "@angular/router";
 import { SourcingService } from "./../../../sourcing/services";
 import { CacheService } from 'ng2-cache-service';
 import { forkJoin, of } from 'rxjs';
-import { forEach, uniqBy } from 'lodash';
 
 @Component({
   selector: "app-contributors-list",
@@ -78,14 +77,18 @@ export class ContributorsListComponent implements OnInit {
     this.telemetryInteractObject = {};
     this.pageLimit = this.osLimit;
 
-    if (this.preSelectedContributors['Org'].length > 0) {
+    if (this.preSelectedContributors
+      && this.preSelectedContributors['Org']
+      && this.preSelectedContributors['Org'].length > 0) {
       if (!this.selectedContributors.Org) {
         this.selectedContributors.Org = [];
       }
       this.selectedContributors.Org = this.preSelectedContributors['Org'];
     }
 
-    if (this.preSelectedContributors['User'].length > 0) {
+    if (this.preSelectedContributors
+        && this.preSelectedContributors['User']
+        && this.preSelectedContributors['User'].length > 0) {
       if (!this.selectedContributors.User) {
         this.selectedContributors.User = [];
       }
@@ -109,8 +112,8 @@ export class ContributorsListComponent implements OnInit {
 
       this.registryService.getOrgList(limit, offset, reqFilter).subscribe(
         (data) => {
-          this.orgLastPage = !!(_.get(data, "result.Org").length < this.osLimit);
           if (!_.isEmpty(_.get(data, "result.Org"))) {
+            this.orgLastPage = false;
             let orgList = _.get(data, "result.Org");
             orgList = _.filter(
               orgList,
@@ -119,6 +122,7 @@ export class ContributorsListComponent implements OnInit {
             // Org creator user open saber ids
             this.getOrgCreatorInfo(orgList, resolve, reject);
           } else {
+            this.orgLastPage = true;
             this.hideLoader();
             resolve ([]);
           }
@@ -237,6 +241,12 @@ export class ContributorsListComponent implements OnInit {
               contributors = contributors.concat(element);
             });
             contributors = contributors.concat(list);
+            let chunkList = _.chunk(contributors, this.pageLimit);
+
+            if (_.isEmpty(chunkList[this.pageNumber -1])) {
+              this.pageNumber = this.pageNumber - 1;
+            }
+
             this.showFilteredResults(contributors);
           }, error => {
             console.log("Something went wrong", error);
@@ -250,6 +260,12 @@ export class ContributorsListComponent implements OnInit {
               contributors = contributors.concat(element);
             });
             contributors = contributors.concat(list);
+            let chunkList = _.chunk(contributors, this.pageLimit);
+
+            if (_.isEmpty(chunkList[this.pageNumber -1])) {
+              this.pageNumber = this.pageNumber - 1;
+            }
+
             this.showFilteredResults(contributors);
           }, error => {
             console.log("Something went wrong", error);
@@ -479,8 +495,8 @@ export class ContributorsListComponent implements OnInit {
 
       this.registryService.getUserList(limit, offset, reqFilters).subscribe(
         (data) => {
-          this.indLastPage = !!(_.get(data, "result.User").length < this.osLimit);
           if (!_.isEmpty(_.get(data, "result.User"))) {
+            this.indLastPage = false;
             let osUserList = _.get(data, "result.User");
             const userIds = _.map(osUserList, (ind) => ind.userId);
 
@@ -509,6 +525,7 @@ export class ContributorsListComponent implements OnInit {
             );
           }
           else {
+            this.indLastPage = true;
             this.hideLoader();
           }
         },
@@ -539,7 +556,9 @@ export class ContributorsListComponent implements OnInit {
     this.displayLoader();
     switch (this.contributorType) {
       case "Organisation":
-        if (this.preSelectedContributors['Org'].length > 0 && selectedAtTop) {
+        if (this.preSelectedContributors
+            && this.preSelectedContributors['Org']
+            && this.preSelectedContributors['Org'].length > 0 && selectedAtTop) {
           const orgOsIds = _.map(this.preSelectedContributors['Org'], org => org.osid);
           const limit = orgOsIds.length;
           const offset = 0;
@@ -575,7 +594,9 @@ export class ContributorsListComponent implements OnInit {
       break;
 
       case "Individual":
-        if (this.preSelectedContributors['User'].length > 0 && selectedAtTop) {
+        if (this.preSelectedContributors
+            && this.preSelectedContributors['User']
+            && this.preSelectedContributors['User'].length > 0 && selectedAtTop) {
           const userOsIds = _.map(this.preSelectedContributors['User'], ind => ind.osid);
           const limit = userOsIds.length;
           const offset = 0;

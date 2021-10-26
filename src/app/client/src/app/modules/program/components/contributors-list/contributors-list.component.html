@@ -79,11 +79,11 @@
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
-      <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="navigateToPage(page)"
+      <!-- <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" (click)="navigateToPage(page)"
         class="sb-item" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
         [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
+        [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a> -->
       <a *ngIf="contributorType =='Organisation'" [ngClass]="{disabled:orgLastPage}" (click)="navigateToPage(pager.currentPage + 1)"
         class="sb-item" appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
