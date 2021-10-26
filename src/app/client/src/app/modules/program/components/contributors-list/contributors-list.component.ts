@@ -570,8 +570,8 @@ export class ContributorsListComponent implements OnInit {
            orgs: this.getOrgList()}
            ).pipe(catchError(error => of(error)));
 
-         response.subscribe(response => {
-           let orgList = response.selectedOrgs.concat(response.orgs);
+         response.subscribe(rsp => {
+           let orgList = rsp.selectedOrgs.concat(rsp.orgs);
            orgList = _.uniqBy(orgList, org => org.osid);
            orgList = this.applySort(orgList, this.orgSortColumn);
            this.showFilteredResults(orgList);
@@ -608,8 +608,8 @@ export class ContributorsListComponent implements OnInit {
            inds: this.getIndividualList()}
            ).pipe(catchError(error => of(error)));
 
-         response.subscribe(response => {
-           let indList = response.selectedInds.concat(response.inds);
+         response.subscribe(rsp => {
+           let indList = rsp.selectedInds.concat(rsp.inds);
            indList = _.uniqBy(indList, ind => ind.osid);
            indList = this.applySort(indList, this.indSortColumn);
            this.showFilteredResults(indList);
