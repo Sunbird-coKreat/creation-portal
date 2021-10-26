@@ -568,12 +568,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       });
   }
 
-  publishQuestionToConsumption(): void {
-    this.toasterService.info(this.resourceService.messages.smsg.questionset.publishing);
+  publishQuestionToConsumption(): void {    
     let identifier = this.collectionData.identifier;
     this.helperService.publishQuestionSetToConsumption(identifier).subscribe((res) => {
-      if(res.responseCode === 'OK') {
-        this.toasterService.info(this.resourceService.messages.smsg.questionset.published);
+      this.showPublishConfirmationModal = false;
+      if(res.responseCode === 'OK') {        
+        this.toasterService.success(this.resourceService.messages.smsg.questionset.publishing);
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.questionset.failedToPublish)
       });

@@ -403,7 +403,7 @@ export class HelperService {
         }
 
         const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-              ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+              ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org'
 
         const reqFormat = {
             source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`,

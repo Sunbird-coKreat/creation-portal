@@ -60,6 +60,7 @@ module.exports = function (app) {
   app.use([
       '/action/questionset/v1/read/*',
       '/action/question/v1/read/*',
+      '/action/question/v1/retire/*',
       '/action/questionset/v1/hierarchy/*',
       '/action/questionset/v1/retire/*'
       ],
