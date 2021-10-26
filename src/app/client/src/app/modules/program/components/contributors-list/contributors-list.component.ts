@@ -302,9 +302,6 @@ export class ContributorsListComponent implements OnInit {
   }
 
   showFilteredResults(list) {
-    if (this.contributorType === "Organisation") {
-    } else {
-    }
     this.contributorList = this.applyPagination(list);
     this.hideLoader();
   }
