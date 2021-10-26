@@ -45,5 +45,9 @@
       }
     }
   },
-  "schema_restrict_api": false
+  "schema_restrict_api": false,
+  "headers": [
+    {"label": "Question Type", "key": "questionCategories"},
+    {"label": "Skill Tested", "key": "bloomsLevel"}
+  ]
 }

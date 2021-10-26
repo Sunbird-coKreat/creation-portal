@@ -76,6 +76,20 @@
     flex: 1;
   }
 
+  .item-tag{
+    max-width: $base-block-space * 20;
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background: $gray-100;
+    padding: $base-block-space * 0.5;
+    padding: $base-block-space * 0.5 $base-block-space;
+    border-radius: $base-block-space;
+    margin-right: $base-block-space;
+    margin-right: $base-block-space;
+  }
+
   .item-dropdown {
     right: 16px;
     height: 40px;

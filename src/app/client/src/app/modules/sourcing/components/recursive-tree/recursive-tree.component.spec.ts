@@ -17,7 +17,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { recursiveTreeComponentInput } from './recursive-tree.component.spec.data';
 import { TelemetryService, TELEMETRY_PROVIDER } from '../../../telemetry/services/telemetry/telemetry.service';
 import {  NavigationHelperService } from '@sunbird/shared';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
+import { By } from '@angular/platform-browser';
 
 xdescribe('RecursiveTreeComponent', () => {
 
@@ -75,6 +76,7 @@ xdescribe('RecursiveTreeComponent', () => {
     component = fixture.componentInstance;
     component.programContext = recursiveTreeComponentInput.programContext;
     component.sessionContext = recursiveTreeComponentInput.sessionContext;
+    component.dynamicHeaders = recursiveTreeComponentInput.dynamicHeaders;
     fixture.detectChanges();
     component.nodeMeta.subscribe((outputData) => {
       mockResponseData = outputData;
@@ -167,6 +169,14 @@ xdescribe('RecursiveTreeComponent', () => {
       fixture.detectChanges();
       expect(spy).toHaveBeenCalled();
     });
+  });
+
+  it('should check dynamic headers', () => {
+    if(component.dynamicHeaders && component.dynamicHeaders.length == 0){
+      expect(fixture.debugElement.query(By.css('.dynamic-header'))).toBeUndefined(); 
+    }else{
+      expect(fixture.debugElement.query(By.css('.dynamic-header'))).toBeDefined(); 
+    }
   });
 });
 
