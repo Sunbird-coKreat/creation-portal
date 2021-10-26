@@ -7,12 +7,12 @@
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.bulkApproveContent}}</button>
   <div class="divider mx-10" *ngIf="bulkApprove && bulkApprove.status === 'completed' && showBulkApprovalButton"></div>
-  <div class="d-flex flex-dc">
+  <div class="d-flex flex-dc fs-0-785">
     <div *ngIf="bulkApprove && bulkApprove.createdon">{{resourceService.frmelmnts.lbl.lastApproved}}: {{ bulkApprove?.createdon |  date:'LLLL d, yyyy'  }}</div>
     <!-- Loader icon -->
     <div *ngIf="bulkApprove && bulkApprove.status === 'processing'" class="relative">
       <span class="sb-loader sb-success-loader"></span>
-      <span class="sb-color-warning fs-1"suiPopup popupText="Bulk approve of content is in progress, once finished you can initiate another batch">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</span>
+      <span class="sb-color-warning fs-0-92"suiPopup popupText="Bulk approve of content is in progress, once finished you can initiate another batch">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</span>
     </div>
     <a *ngIf="bulkApprove && bulkApprove.status" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()"
     appTelemetryInteract

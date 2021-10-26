@@ -25,12 +25,13 @@ export class ProgramHeaderComponent implements OnInit{
   public canNominate = false;
   public targetCollection;
   public targetCollections;
+  public boardValue;
   // @Output() applyFilters = new EventEmitter<any>();
   // @Input() headerComponentInput: any;
   // @Output() emitTabChange = new EventEmitter<any>();
 
   constructor(public userService: UserService, public configService: ConfigService, public resourceService: ResourceService,
-    public programsService: ProgramsService, public helperService: HelperService) { 
+    public programsService: ProgramsService, public helperService: HelperService) {
    }
 
   ngOnInit() {
@@ -49,6 +50,7 @@ export class ProgramHeaderComponent implements OnInit{
       this.setTargetCollectionValue();
       this.checkIfshowSkipReview();
     }
+    // tslint:disable-next-line:max-line-length
     if (!this.programsService.ifSourcingInstance() && !_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated') {
       this.canNominate = this.helperService.isOpenForNomination(this.programDetails);
     }
@@ -65,16 +67,17 @@ export class ProgramHeaderComponent implements OnInit{
   }
   checkIfshowSkipReview() {
     const skipTwoLevelReview = !!(_.get(this.programDetails, 'config.defaultContributeOrgReview') === false);
-    if (this.programsService.ifSourcingInstance()) { 
+    if (this.programsService.ifSourcingInstance()) {
       this.showSkipReview = skipTwoLevelReview;
     } else {
-      const restrictedProject = !!(_.get(this.programDetails, 'type') == 'restricted');
+      const restrictedProject = !!(_.get(this.programDetails, 'type') === 'restricted');
+      // tslint:disable-next-line:max-line-length
       const showSkipReview = skipTwoLevelReview && !!(_.get(this.userService, 'userProfile.rootOrgId') === _.get(this.programDetails, 'rootorg_id') &&
       skipTwoLevelReview);
-    
+
       const currentOrgRole = _.first(this.userService.getUserOrgRole());
 
-      this.showSkipReview = (showSkipReview || (restrictedProject && skipTwoLevelReview && !!(currentOrgRole !== "individual") &&  
+      this.showSkipReview = (showSkipReview || (restrictedProject && skipTwoLevelReview && !!(currentOrgRole !== "individual") &&
         !!(this.roles.currentRoles.includes("CONTRIBUTOR") || this.roles.currentRoles.includes("REVIEWER") || currentOrgRole === 'admin')));
     }
   }

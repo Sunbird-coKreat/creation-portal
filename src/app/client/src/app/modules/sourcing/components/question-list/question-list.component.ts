@@ -960,6 +960,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
              };
               this.sourcingService.apiErrorHandling(err, errInfo);
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.m0062);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
+          this.uploadedContentMeta.emit({
+            contentId: contentId
+          });
         }
       }, (err) => {
         const errInfo = {
@@ -1299,37 +1306,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   attachContentToTextbook(action) {
-    const hierarchyObj  = _.get(this.sessionContext.hierarchyObj, 'hierarchy');
-    if (hierarchyObj) {
-      const rootOriginInfo = _.get(_.get(hierarchyObj, this.sessionContext.collection), 'originData');
-      let channel =  rootOriginInfo && rootOriginInfo.channel;
-      if (_.isUndefined(channel)) {
-        const originInfo = _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'originData');
-        channel = originInfo && originInfo.channel;
-      }
-      const originData = {
-        textbookOriginId: _.get(_.get(hierarchyObj, this.sessionContext.collection), 'origin'),
-        unitOriginId: _.get(_.get(hierarchyObj, this.sessionContext.textBookUnitIdentifier), 'origin'),
-        channel: channel
-      };
-      if (originData.textbookOriginId && originData.unitOriginId && originData.channel) {
-        if (action === 'accept') {
-          action = this.isMetadataOverridden ? 'acceptWithChanges' : 'accept';
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.resourceDetails);
-        } else if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
-          // tslint:disable-next-line:max-line-length
-          this.helperService.publishContentToDiksha(action, this.sessionContext.collection, this.resourceDetails.identifier, originData, this.resourceDetails, this.FormControl.value.contentRejectComment);
-        }
-      } else {
-        action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
-        this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-        console.error('origin data missing');
-      }
-    } else {
-      action === 'accept' ? this.toasterService.error(this.resourceService.messages.emsg.approvingFailed) :
-      this.toasterService.error(this.resourceService.messages.fmsg.m00100);
-      console.error('origin data missing');
+
+    let rejectComment = '';
+    if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+      rejectComment = this.FormControl.value.rejectComment;
     }
+    // tslint:disable-next-line:max-line-length
+    this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.sessionContext.textBookUnitIdentifier, this.sessionContext.contentMetadata, rejectComment);
   }
 
   showCommentAddedAgainstContent() {
