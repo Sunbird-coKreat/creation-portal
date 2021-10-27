@@ -144,7 +144,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';
         const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});    
-        if(temp.mimeType === 'application/vnd.sunbird.question') {
+        if(temp.mimetype === 'application/vnd.sunbird.question') {
           this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';          
         }    
         this.selectedtemplateDetails.mimeType = [temp.mimetype];       
