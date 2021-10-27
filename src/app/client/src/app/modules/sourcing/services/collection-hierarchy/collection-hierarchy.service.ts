@@ -16,6 +16,7 @@ export class CollectionHierarchyService {
   public sampleDataCount = 0;
   public currentUserID;
   private _programDetails;
+  private _preferencefilters;
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
@@ -27,17 +28,34 @@ export class CollectionHierarchyService {
     this._programDetails = programDetails;
   }
 
-  removeResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
+  removeResourceToHierarchy(collection, unitIdentifier, contentId, target_type?): Observable<any> {
+    let reqObj, reqQset;
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,
-      data: {
-        'request': {
-          'rootId': collection,
-          'unitId': unitIdentifier,
-          'children': [contentId]
+        url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,
+        data: {
+          'request': {
+            'rootId': collection,
+            'unitId': unitIdentifier,
+            'children': [contentId]
+          }
         }
-      }
-    };
+      };    
+    if(target_type === 'questionSets') {
+      reqQset = {
+        url: this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_REMOVE,
+        data: {
+          'request': {
+            'questionset': 
+            {
+              'rootId': collection,
+              'collectionId': unitIdentifier,
+              'children': [contentId]
+            }
+          }
+        }
+      }      
+    }   
+    reqObj = target_type === 'questionSets' ? req : reqQset;
     return this.actionService.delete(req).pipe(map((data: any) => {
       return data.result;
     }), catchError(err => {
@@ -102,19 +120,21 @@ export class CollectionHierarchyService {
     return this.actionService.get(req);
   }
 
-  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true) {
+  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true, target_type?) {
+    let objectType = 'collection';
+    if(target_type && target_type === 'questionSets') objectType = 'QuestionSet';
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
       }
-    };
+    };  
     const option = {
       url: 'composite/v3/search',
       data: {
         request: {
           filters: {
             programId: programId,
-            objectType: 'collection',
+            objectType: objectType,
             status: ['Draft', 'Live'],
             primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           },
@@ -225,9 +245,13 @@ export class CollectionHierarchyService {
       }
       let allAcceptedContentIds, allRejectedContentIds = [];
       if (this._programDetails && this._programDetails.target_type === 'searchCriteria') {
-        allAcceptedContentIds = _.uniq(this._programDetails.acceptedcontents);
-        allRejectedContentIds = _.uniq(this._programDetails.rejectedcontents);
-      } else {
+        allAcceptedContentIds = _.uniq(this._programDetails.config.acceptedContents);
+        allRejectedContentIds = _.uniq(this._programDetails.config.rejectedContents);
+      } else if(this._programDetails && this._programDetails.target_type === 'questionSets') {
+        allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContributions'));
+        allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContributions'));
+      } 
+      else {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
       }
@@ -308,14 +332,47 @@ export class CollectionHierarchyService {
     });
     return collectionWithReject;
   }
-  
-  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?, allFields=false) {
+  set preferencefilters(preferences) {
+    this._preferencefilters = preferences;
+  }
+  getnonCollectionProgramContents(programId) {
     const option = {
       url: 'composite/v3/search',
       data: {
         request: {
           filters: {
             objectType: ['content', 'questionset'],
+            programId: programId,
+            status: ['Draft', 'Review', 'Live', 'Processing'],
+            mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
+            contentType: {'!=': 'Asset'}
+          },
+          not_exists: ['sampleContent'],
+          limit: 10000
+        }
+      }
+    };
+    if (!isUndefined(this._preferencefilters)) {
+      if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
+        option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'gradeLevel'))) {
+        option.data.request.filters['gradeLevel'] = _.get(this._preferencefilters, 'gradeLevel');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'subject'))) {
+        option.data.request.filters['subject'] = _.get(this._preferencefilters, 'subject');
+      }
+    }
+
+    return this.actionService.post(option);
+  }
+  getContentAggregation(programId, sampleContentCheck?, organisationId?, userId?, onlyCount?, allFields=false) {
+    const option = {
+      url: 'composite/v3/search',
+      data: {
+        request: {
+          filters: {
+            objectType: ['content', 'questionset', 'question'],
             programId: programId,
             status: ['Draft', 'Review', 'Live', 'Processing'],
             mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
@@ -356,6 +413,19 @@ export class CollectionHierarchyService {
     if (!_.isUndefined(onlyCount)) {
       option.data.request['limit'] = 0;
     }
+
+    if (!isUndefined(this._preferencefilters)) {
+      if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
+        option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'gradeLevel'))) {
+        option.data.request.filters['gradeLevel'] = _.get(this._preferencefilters, 'gradeLevel');
+      }
+      if (!_.isEmpty(_.get(this._preferencefilters, 'subject'))) {
+        option.data.request.filters['subject'] = _.get(this._preferencefilters, 'subject');
+      }
+    }
+
     return this.actionService.post(option);
   }
 
@@ -431,7 +501,10 @@ export class CollectionHierarchyService {
       return liveContents.length;
     }
 
-    const reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+    let reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+    if(this._programDetails && this._programDetails.target_type === 'questionSets') {
+      reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContributions')), _.flatten(_.map(collections, 'rejectedContributions')));
+    }
 
     if(collections && collections.length) { // for getting  mvc contents
       _.map(collections, textbook => {

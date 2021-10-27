@@ -40,7 +40,7 @@
                     [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.contributionDashboard}}
                     </a>
-                    <a class="item" *ngIf="!programDetails?.target_type ||  programDetails?.target_type === 'collections'" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
+                    <a class="item" *ngIf="!programDetails?.target_type ||  (programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('reports', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectReports)"
                     [telemetryInteractObject]="telemetryInteractObject"
@@ -58,7 +58,7 @@
                     <div *ngIf="showBulkApprovalButton" class="d-flex flex-jc-flex-end pt-10">
                         <app-bulk-approval [programContext]="programDetails" [sessionContext]="sessionContext" [programContents]="programCollections" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
                     </div>
-                    <app-textbook-list [programDetails]="programDetails" [telemetryPageId]="telemetryPageId" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
+                    <app-textbook-list [programDetails]="programDetails" [telemetryPageId]="telemetryPageId" [collectionsInput]="programCollections" [contentAggregationInput]="contentAggregationData" [userPreferences]=userPreferences (selectedCollection)="viewContribution($event)" [frameworkCategories]="sessionContext.frameworkData" (applyTextbookPreference)="applyPreferences($event)"></app-textbook-list>
                 </div>
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
@@ -530,7 +530,7 @@
                     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
                 </div>
             </div>
-            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5" *ngIf="!programDetails?.target_type ||  programDetails?.target_type === 'collections'">
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5" *ngIf="!programDetails?.target_type ||  (programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')">
                 <div class="ui container pt-24 m-0">
                     <div class="sb-table-responsive">
                         <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">

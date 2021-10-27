@@ -68,6 +68,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
           this.toasterService.error(this.resourceService.messages.emsg.m0026);
       } else {
         const supportedMimeTypes = catMetaData.schema.properties.mimeType.enum;
+        const interactionTypes = _.get(catMetaData, 'schema.properties.interactionTypes.items.enum');
         //const supportedMimeTypes = ['application/vnd.ekstep.quml-archive', 'application/vnd.ekstep.h5p-archive'];
 
         let catEditorConfig = !_.isEmpty(_.get(catMetaData, 'config.sourcingConfig.editor')) ? catMetaData.config.sourcingConfig.editor : [];
@@ -91,14 +92,19 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         modeOfCreation = _.uniq(modeOfCreation);
         this.selectedtemplateDetails["editors"] = editorTypes;
         this.selectedtemplateDetails["editorTypes"] = _.uniq(modeOfCreation);
+        this.selectedtemplateDetails["interactionTypes"] = interactionTypes;
         if (modeOfCreation.length > 1) {
           this.showModeofCreationModal = true;
           this.showQuestionTypeModal = false;
         } else {
           this.selectedtemplateDetails["modeOfCreation"] = modeOfCreation[0];
           if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
-            this.showModeofCreationModal = false;
+            this.showModeofCreationModal = false;        
             this.showQuestionTypeModal = true;
+            if(!_.isUndefined(this.selectedtemplateDetails["interactionTypes"])) {
+              this.showQuestionTypeModal = false;
+              this.submit();
+            }
           } else {
             this.submit();
           }
@@ -137,8 +143,11 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         break;
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';
-        const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});
-        this.selectedtemplateDetails.mimeType = [temp.mimetype];
+        const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});    
+        if(temp.mimetype === 'application/vnd.sunbird.question') {
+          this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';          
+        }    
+        this.selectedtemplateDetails.mimeType = [temp.mimetype];       
         break;
       case 'ecml':
         this.selectedtemplateDetails.onClick = 'editorComponent';

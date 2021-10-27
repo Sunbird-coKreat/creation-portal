@@ -7,7 +7,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Inp
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-import { SourcingService } from './../../../sourcing/services';
+import { SourcingService, HelperService } from './../../../sourcing/services';
 import { programConfigObj } from './programconfig';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -15,6 +15,7 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
+import { IContentEditorComponentInput } from '../../../sourcing/interfaces';
 
 @Component({
   selector: 'app-create-program',
@@ -32,6 +33,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     projectScopeForm: false,
     projectTargetForm: false
   };
+  public collectionEditorVisible: Boolean = false;
   public editPublished = false;
   public choosedTextBook: any;
   public selectChapter = false;
@@ -91,6 +93,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
+  public questionSetEditorComponentInput: IContentEditorComponentInput = {
+    originCollectionData: undefined,
+    sourcingStatus: undefined,
+    selectedSharedContext: undefined
+  };
   public openProjectTargetTypeModal= false;
   private projectTargetType: string = null;
   public firstLevelFolderLabel: string;
@@ -105,6 +112,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   };
   public selectedContributorsCnt: number = 0;
   public allowToModifyContributors:boolean = true;
+  private fetchedCategory: string = '';
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -118,6 +126,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private sourcingService: SourcingService,
     private sbFormBuilder: FormBuilder,
     private navigationHelperService: NavigationHelperService,
+    private helperService: HelperService,
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
@@ -148,7 +157,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.pageStartTime = Date.now();
   }
 
-  getProgramDetails() {
+  getProgramDetails() {    
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
@@ -157,10 +166,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
 
       // tslint:disable-next-line: max-line-length
-      this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
-      if (this.selectedTargetCollection) {
-          this.getCollectionCategoryDefinition();
-      }
+      this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';     
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -194,7 +200,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       'target_type': [this.projectTargetType, Validators.required]
     });
     this.isFormValueSet.projectTargetForm = true;
-  }
+}
 
   initializeCreateProgramForm() {
     const nominationEndDate = _.get(this.programDetails, 'nomination_enddate') ? new Date(_.get(this.programDetails, 'nomination_enddate')) : null;
@@ -233,7 +239,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
     });
-    if (this.projectTargetType === 'collections') {
+    if (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
      // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
     }
@@ -243,8 +249,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
 
-    if ((this.projectTargetType === 'collections')) {
-      this.initializeFrameworkForTatgetType('')
+    if ((this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
+      this.initializeFrameworkForTargetType('')
     }
     const channelData$ = this.frameworkService.readChannel();
     channelData$.subscribe((channelData) => {
@@ -257,33 +263,44 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
                 this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
                 return false;
               } else {
-                this.initializeFrameworkForTatgetType(response.identifier);
+                this.initializeFrameworkForTargetType(response.identifier);
               }
           });
         }
         const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
         const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
         const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
-        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
-        this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
+        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');     
+        const questionCategories = _.get(channeltargetObjectTypeGroup, 'Question');   
         if (_.toLower(this.enableQuestionSetEditor) === 'true') {
           this.programScope['targetPrimaryObjects'] = questionSetCategories;
           this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
         }
+        if (this.projectTargetType === 'questionSets') {
+          this.programScope['collectionCategories'] = _.map(questionSetCategories, 'name');
+          this.programScope['targetPrimaryObjects'] = questionCategories;
+          this.programScope['targetPrimaryCategories']  = _.map(questionCategories, 'name');
+        }
         // tslint:disable-next-line:max-line-length
-        this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
-          if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
-            this.programScope['targetPrimaryCategories'].push(o.name);
-            return o;
-          }
-        }));
+        if(this.projectTargetType !== 'questionSets') {
+          this.programScope['collectionCategories'] = _.map(_.get(channeltargetObjectTypeGroup, 'Collection'), 'name');
+          this.programScope['targetPrimaryObjects'] =  _.concat(this.programScope['targetPrimaryObjects'] || [], _.filter(contentCategories, (o) => {
+            if (!_.includes(this.programScope['targetPrimaryCategories'], o.name)) {
+              this.programScope['targetPrimaryCategories'].push(o.name);
+              return o;
+            }
+          }));
+        }
         // tslint:disable-next-line:max-line-length
-        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
+        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];        
         this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
+
+        // set draft collections on projectScope page load
+        this.onChangeTargetCollectionCategory();
       }
     });
   }
-  initializeFrameworkForTatgetType (frameworkName) {
+  initializeFrameworkForTargetType (frameworkName) {
     //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
     this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
       if (frameworkData) {
@@ -327,7 +344,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
     this.projectScopeForm.controls['framework'].setValue([this.programScope.framework.identifier]);
-    if (this.projectScopeForm && this.projectTargetType === 'collections') {
+    if (this.projectScopeForm && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
       this.projectScopeForm.controls['board'].setValue('');
       this.projectScopeForm.controls['medium'].setValue('');
       this.projectScopeForm.controls['gradeLevel'].setValue('');
@@ -349,7 +366,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.programScope.framework.categories.forEach((element) => {
+    this.programScope.framework.categories?.forEach((element) => {
       const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
         result.push(value);
         return result;
@@ -447,6 +464,91 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     });
     this.fineUploaderUI.nativeElement.remove();
   }
+
+  initializeSelectedSharedContext(target_type) {
+    if(target_type === 'questionSets') {
+      if(this.isFormValueSet.projectScopeForm && this.projectScopeForm.controls) {
+        let board = this.projectScopeForm.controls.board.value;
+        let framework = this.projectScopeForm.controls.framework.value;
+        if(_.isArray(framework) && framework.length) framework = _.first(framework);
+        if(_.isArray(board) && board.length) board = _.first(board);
+        return {
+          'board': board,
+          'framework': framework
+        }
+      }      
+    }
+    return {}
+  }
+
+  initializeCollectionEditorInput() {
+    this.setFrameworkAttributes();    
+    const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
+    const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
+
+    this.questionSetEditorComponentInput['sessionContext'] = {
+      currentRoles: this.userService.userProfile.userRoles,
+    };
+    this.questionSetEditorComponentInput['templateDetails'] = 
+      {
+        name: selectedTargetCollectionObject?.name,
+        modeOfCreation: objType,
+        mimeType: [_.get(_.find(this.configService.contentCategoryConfig.sourcingConfig.editor, {
+          type: objType
+        }), 'mimetype', 'application/vnd.sunbird.questionset')]
+      };
+    this.questionSetEditorComponentInput['selectedSharedContext'] = this.initializeSelectedSharedContext(this.projectTargetType);
+    this.questionSetEditorComponentInput['action'] = 'creation';
+    this.questionSetEditorComponentInput['programContext'] = _.merge({ framework: _.get(this.programScope, 'framework.code') }, this.programDetails);
+    this.questionSetEditorComponentInput['enableQuestionCreation'] = false;
+    this.questionSetEditorComponentInput['setDefaultCopyright'] = true;
+    this.questionSetEditorComponentInput['hideSubmitForReviewBtn'] = true;
+  }
+
+  
+  initiateCollectionEditor(identifier?) {  
+    this.initializeCollectionEditorInput();
+    if(_.isEmpty(identifier)) {
+    const createContentReq = this.helperService.createContent(this.questionSetEditorComponentInput);
+    createContentReq.pipe(map((res: any) => res.result), catchError(
+      err => {
+       const errInfo = {
+        errorMsg: 'Unable to create contentId, Please Try Again',
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+        request: {}
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+      }))
+      .subscribe(result => {
+        this.questionSetEditorComponentInput.contentId = result.identifier;
+        this.programsService.emitHeaderEvent(false);        
+        this.collectionEditorVisible = true;
+      });
+    } else {
+        this.questionSetEditorComponentInput.contentId = identifier;
+        this.programsService.emitHeaderEvent(false);        
+        this.collectionEditorVisible = true;
+    }
+  }
+
+  collectionEditorEventListener(event) {
+    console.log(event);
+    switch (event.action) {              
+     case 'saveContent':
+       this.collectionEditorVisible = false;
+       this.navigateTo(2);       
+       this.onCollectionCheck(event.collection, true);
+       this.showProgramScope = true;
+      break;
+     case 'backContent':         
+     default:      
+        this.navigateTo(2);
+        this.collectionEditorVisible = false;
+        break;      
+    }
+   }
 
   uploadContent() {
     if (this.uploader.getFile(0) == null) {
@@ -738,9 +840,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   getCollectionCategoryDefinition() {
-    if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
-      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
+    if (this.selectedTargetCollection && this.userprofile.rootOrgId && this.selectedTargetCollection !== this.fetchedCategory) {
+      let objType = this.projectTargetType === 'questionSets' ? 'QuestionSet' : 'Collection';
+      this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, objType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
+        this.fetchedCategory = _.get(objectCategoryDefinition, 'name');
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
         }
@@ -842,7 +946,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
     this.projectScopeForm.controls['targetPrimaryCategories'].setValidators(Validators.required);
     this.projectScopeForm.controls['targetPrimaryCategories'].updateValueAndValidity();
-    if (this.projectTargetType === 'collections') {
+    if (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
       this.projectScopeForm.controls['target_collection_category'].updateValueAndValidity();
     }
@@ -878,7 +982,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //   _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.programConfig.framework;
     // }
     programData['target_type'] = this.projectTargetType;
-    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'collections') ? [this.projectScopeForm.value.target_collection_category] : [];
+    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) ? [this.projectScopeForm.value.target_collection_category] : [];
 
     // if (this.userBoard) {
     // // tslint:disable-next-line: max-line-length
@@ -957,7 +1061,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-      if (!this.editPublished && this.projectTargetType === 'collections') {
+      if (!this.editPublished && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
         programData['collection_ids'] = [];
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
@@ -1030,7 +1134,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         prgData['content_submission_enddate'].setHours(23,59,59);
       }
 
-      if (prgData.type === 'restricted') {
+      if (this.programDetails.type === 'restricted') {
         prgData['config'] = _.get(this.programDetails, 'config');
         prgData.config['contributors'] = this.selectedContributors;
       }
@@ -1039,7 +1143,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.generateTelemetryEndEvent('update');
           this.toasterService.success(this.resource.messages.smsg.modify.m0001);
-          const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+          let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+          if(this.projectTargetType === 'questionSets') tab = 'questionSets';
           this.router.navigate(['/sourcing'],
             {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
         },
@@ -1055,13 +1160,30 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.validateDates();
   }
+
 onChangeTargetCollectionCategory() {
-  this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
-  this.showTexbooklist(true);
-  this.projectScopeForm.value.pcollections = [];
-  this.getCollectionCategoryDefinition();
+  if(this.projectScopeForm.controls && this.projectScopeForm.value) {
+    this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
+    this.projectScopeForm.value.pcollections = [];  
+    if(this.projectTargetType !== 'questionSets') { 
+      this.showTexbooklist(true);    
+    } else {
+      this.showTexbooklist(false);
+    }
+  }
+  if(this.programScope['userChannelData']) {
+    this.setSelectedTargetCollectionObject();
+  }
+    
+  this.getCollectionCategoryDefinition();  
   this.tempCollections = [];
 }
+
+setSelectedTargetCollectionObject() {
+  const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
+  this.programScope['selectedTargetCollectionObject'] = _.find(channelCats, { name: this.selectedTargetCollection });
+}
+
 showTexbooklist(showTextBookSelector = true) {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
     if (!primaryCategory) {
@@ -1071,7 +1193,7 @@ showTexbooklist(showTextBookSelector = true) {
     const requestData = {
       request: {
         filters: {
-          objectType: 'Collection',
+          objectType: this.projectTargetType === 'questionSets' ? 'QuestionSet' : 'Collection',
           status: ['Draft'],
           primaryCategory: primaryCategory,
           channel: this.userprofile.rootOrgId,
@@ -1089,15 +1211,22 @@ showTexbooklist(showTextBookSelector = true) {
     }
     requestData.request.filters = _.pickBy(requestData.request.filters, function(v,k){return (!_.isEmpty(v))});
 
-    return this.programsService.getCollectionList(requestData).subscribe(
+    if(this.projectTargetType === 'questionSets') {
+      delete requestData.request.not_exists;
+      requestData.request['program_id'] = this.programId;
+    }
+
+    return this.programsService.getCollectionList(requestData, this.projectTargetType).subscribe(
       (res) => {
         if (res.result.count) {
           this.collections = res.result.content;
+          if(this.projectTargetType === 'questionSets') this.collections = res.result.QuestionSet;
           this.showProgramScope = true;
           this.tempSortCollections = this.collections;
           if (!this.filterApplied) {
             this.sortCollection(this.sortColumn);
           }
+
 
           if (!this.editPublished) {
             _.forEach(this.collections, item => {
@@ -1130,6 +1259,15 @@ showTexbooklist(showTextBookSelector = true) {
     );
   }
 
+  updateTempCollections(collection) {
+    let collectionId = collection.identifier;
+    let cIndex = _.findIndex(this.tempCollections, { identifier: collectionId })
+    if(cIndex !== -1) {
+      this.tempCollections[cIndex] = collection;
+    }
+    else this.tempCollections.push(collection);
+  }
+
   onCollectionCheck(collection, isChecked: boolean) {
     const pcollectionsFormArray = <FormArray>this.projectScopeForm.controls.pcollections;
     const collectionId = collection.identifier;
@@ -1140,16 +1278,26 @@ showTexbooklist(showTextBookSelector = true) {
         pcollectionsFormArray.push(new FormControl(collectionId));
         this.tempCollections.push(collection);
 
-        if (!this.textbooks[collectionId]) {
-          this.getCollectionHierarchy(collectionId);
+        if(this.projectTargetType === 'questionSets') {
+          if (!this.textbooks[collectionId]) {            
+            this.textbooks[collectionId] = collection;
+          }
+        } else {
+          if (!this.textbooks[collectionId]) {
+            this.getCollectionHierarchy(collectionId);
+          }
         }
+      }
+      else { // Update already selected questionset during project creation
+        this.textbooks[collectionId] = collection;
+        this.updateTempCollections(collection);
       }
     } else {
       const index = pcollectionsFormArray.controls.findIndex(x => x.value === collectionId);
       pcollectionsFormArray.removeAt(index);
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
-      this.tempCollections.splice(cindex, 1);
+      this.tempCollections.splice(cindex, 1);      
       delete this.textbooks[collectionId];
     }
   }
@@ -1459,7 +1607,7 @@ showTexbooklist(showTextBookSelector = true) {
     this.btnDoneDisabled = false;
   }
 
-  public getCollectionHierarchy(identifier: string) {
+  public getCollectionHierarchy(identifier: string) {  
     return this.programsService.getHierarchyFromOrigin(identifier).subscribe(res => {
       const content = _.get(res, 'result.content');
       this.textbooks[identifier] = {};
@@ -1585,7 +1733,8 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.draft.heading + '</b>',
               this.resource.messages.smsg.program.draft.message);
-            const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+            let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+            if(this.projectTargetType === 'questionSets') tab = 'questionSets';
             this.router.navigate(['/sourcing'],
               {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           } else {
@@ -1658,7 +1807,7 @@ showTexbooklist(showTextBookSelector = true) {
       return false;
     }
 
-    if (this.projectTargetType === 'collections' && _.isEmpty(this.projectScopeForm.value.pcollections)) {
+    if ((this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') && _.isEmpty(this.projectScopeForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
       this.toasterService.warning(this.resource.messages.smsg.selectOneTargetCollection);
       return false;
@@ -1687,7 +1836,8 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              if(this.projectTargetType === 'questionSets') tab = 'questionSets';
               this.router.navigate(['/sourcing'],
                 {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
@@ -1708,7 +1858,8 @@ showTexbooklist(showTextBookSelector = true) {
             this.toasterService.success(
               '<b>' + this.resource.messages.smsg.program.published.heading + '</b>',
               this.resource.messages.smsg.program.published.message);
-              const tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              let tab = (this.projectTargetType === 'searchCriteria') ? 'noCollections' : 'collections';
+              if(this.projectTargetType === 'questionSets') tab = 'questionSets';
               this.router.navigate(['/sourcing'],
                 {queryParams: { targetType: tab }, queryParamsHandling: 'merge' });
           },
@@ -1779,6 +1930,7 @@ showTexbooklist(showTextBookSelector = true) {
       this.selectedContributors.Org = _.get(contributors, 'Org');
       this.preSelectedContributors.Org = _.map(_.get(contributors, 'Org'), org => {
         return {
+          ...org,
           osid: org.osid,
           isDisabled: !_.isEmpty(_.find(disabledContribOrg, { osid: org.osid }))
         }
@@ -1789,6 +1941,7 @@ showTexbooklist(showTextBookSelector = true) {
       this.selectedContributors.User = _.get(contributors, 'User');
       this.preSelectedContributors.User = _.map(_.get(contributors, 'User'), user => {
         return {
+          ...user,
           osid: user.osid,
           isDisabled: !_.isEmpty(_.find(disabledContribUser, { osid: user.osid }))
         }

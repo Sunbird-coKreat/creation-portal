@@ -110,21 +110,41 @@ export class HelperService {
     return this._selectedCollectionMetaData;
   }
 
-  checkIfCollectionFolder(data) {
-    // tslint:disable-next-line:max-line-length
-    if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Parent') {
-      return true;
+  checkIfCollectionFolder(data, target_type?) {    
+    if(target_type === 'questionSets') {
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.sunbird.questionset' && data.visibility === 'Parent') {
+        return true;
+      } 
+      else {
+        return false;
+      }
     } else {
-      return false;
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Parent') {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
-  checkIfMainCollection (data) {
-    // tslint:disable-next-line:max-line-length
-    if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Default') {
-      return true;
+  checkIfMainCollection (data, target_type?) {
+    if(target_type === 'questionSets') {
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.sunbird.questionset' && _.includes(['Default', 'Private'], data.visibility)) {
+        return true;
+      } 
+      else {
+        return false;
+      }
     } else {
-      return false;
+      // tslint:disable-next-line:max-line-length
+      if (data.mimeType === 'application/vnd.ekstep.content-collection' && data.visibility === 'Default') {
+        return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -202,10 +222,13 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
-  retireContent(contentId): Observable<ServerResponse> {
+  retireContent(contentId, target_type?): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.DOCKCONTENT.RETIRE + '/' + contentId
     };
+    if(target_type === 'questionSets') {
+      option.url = this.configService.urlConFig.URLS.QUESTION.RETIRE + '/' + contentId
+    }
     return this.actionService.delete(option);
   }
 
@@ -382,7 +405,7 @@ export class HelperService {
         }
 
         const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-              ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : window.location.origin;
+              ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org'
 
         const reqFormat = {
             source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`,
@@ -895,12 +918,21 @@ export class HelperService {
   }
 
   getContextObj(context, selectedSharedContext, programTargetType?) {
-    if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria')) { // Here topic is fetched from unitLevel meta
+    if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria' || programTargetType === 'questionSets')) { // Here topic is fetched from unitLevel meta
       const fieldMustbeString = ['framework', 'board'];
-      if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
-        return {[context]:_.first(selectedSharedContext[context])}
+      // These fields are required to be strings in the create request object
+      if (programTargetType === 'questionSets') {
+        if(_.includes(fieldMustbeString, context)) {
+          return {[context]: selectedSharedContext[context] }
+        }
+        else { return { [context]: [] } }
       }
-      return {[context]: selectedSharedContext[context]};
+      else {
+        if (_.includes(fieldMustbeString, context) && _.isArray(selectedSharedContext[context])) {
+          return {[context]:_.first(selectedSharedContext[context])}
+        }
+        return {[context]: selectedSharedContext[context]};
+      }
     } else {
       return {[context]: this._selectedCollectionMetaData[context]};
     }
@@ -1011,12 +1043,16 @@ export class HelperService {
   }
 
   publishContentOnOrigin(action, contentId, contentMetaData, programContext) {
-    // const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
-    // if (_.isString(channel)) {
-    //   contentMetaData['createdFor'] = [channel];
-    // } else if (_.isArray(channel)) {
-    //   contentMetaData['createdFor'] = channel;
-    // }
+    if (programContext.target_type === 'searchCriteria') {
+      contentMetaData['createdFor'] = [programContext.rootorg_id];
+    } else {
+      const channel =  _.get(this._selectedCollectionMetaData, 'originData.channel');
+      if (_.isString(channel)) {
+        contentMetaData['createdFor'] = [channel];
+      } else if (_.isArray(channel)) {
+        contentMetaData['createdFor'] = channel;
+      }
+    }
 
     // @Todo remove after testing
     // this.sendNotification.next(_.capitalize(action));
@@ -1166,6 +1202,26 @@ export class HelperService {
       this.convertNameToIdentifier(_.first(targetFWIds), value, key, code, targetCollectionFrameworksData, 'identifier');
     });
     return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
+  }
+
+  getFormattedFrameworkMetaWithOutCollection(row, sessionContext) {
+    const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
+    const framework = _.first(_.get(sessionContext, 'framework'));
+    this.flattenedFrameworkCategories[framework] = {};
+    // tslint:disable-next-line:max-line-length
+    const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
+    _.forEach(orgFrameworkCategories, item => {
+      const terms = _.get(item, 'terms');
+      this.flattenedFrameworkCategories[framework][item.code] = terms || [];
+    });
+    _.forEach(organisationFrameworkUserInput, (value, key) => {
+      const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
+        'orgIdFieldName': key
+      }), 'code');
+      organisationFrameworkUserInput[key] = this.hasEmptyElement(value) ? _.get(sessionContext.frameworkData, key) || [] :
+      this.convertNameToIdentifier(framework, value, key, code, sessionContext.frameworkData, 'identifier');
+    });
+    return {...organisationFrameworkUserInput};
   }
 
 /**
@@ -1349,7 +1405,7 @@ export class HelperService {
       creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
     }
     const sharedMetaData = this.fetchRootMetaData(sharedContext, selectedSharedContext, programContext.target_type);
-    _.merge(sharedMetaData, sessionContext.targetCollectionFrameworksData);
+    _.merge(sharedMetaData, sessionContext?.targetCollectionFrameworksData);
 
     let obj= {
       'name': 'Untitled',
@@ -1369,7 +1425,7 @@ export class HelperService {
       obj['collectionId'] = collectionId;
       obj['unitIdentifiers'] = [unitIdentifier];
     }
-    if (sessionContext.sampleContent) {
+    if (sessionContext?.sampleContent) {
      obj['sampleContent'] = true;
     }
     if (_.get(templateDetails, 'appIcon')) {
@@ -1377,7 +1433,17 @@ export class HelperService {
     }
     if (_.get(templateDetails, 'modeOfCreation') === 'question') {
       obj['questionCategories'] =  [templateDetails.questionCategory];
-    }
+      if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {        
+        delete obj.programId;
+        delete obj.creator;
+        delete obj.organisationId;
+        delete obj.collectionId;
+        delete obj.unitIdentifiers;
+        delete obj.questionCategories;
+
+        obj.interactionTypes = _.get(templateDetails, 'interactionTypes');
+      }
+    }   
     const option = {
       url: 'content/v3/create',
       header: {
@@ -1390,7 +1456,12 @@ export class HelperService {
       option.url = 'questionset/v1/create';
       option.data.request['questionset'] = {};
       option.data.request['questionset'] = obj;
-    } else {
+    } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
+      option.url = 'question/v1/create';      
+      option.data.request['question'] = {};
+      option.data.request['question'] = obj;      
+    }
+    else {
       option.data.request['content'] = {};
       option.data.request['content'] = obj;
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService, FrameworkService, ProgramsService, ContentService, NotificationService } from '@sunbird/core';
 import { IUserProfile, ConfigService, ToasterService, ResourceService,} from '@sunbird/shared';
@@ -20,6 +20,7 @@ import { ThrowStmt } from '@angular/compiler';
 })
 export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   @Input() questionSetEditorComponentInput: IContentEditorComponentInput;
+  @Output() collectionEditorEventEmitter = new EventEmitter<any>();
   questionSetEditorInput: any;
   editorConfig: any;
   editorParams: any;
@@ -37,6 +38,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public telemetryPageId: string;
   private onComponentDestroy$ = new Subject<any>();
   public hideSubmitForReviewBtn = false;
+  public enableQuestionCreation = true;
+  public setDefaultCopyright = false;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -60,23 +63,47 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.programContext = _.get(this.questionSetEditorComponentInput, 'programContext');
     this.unitIdentifier  = _.get(this.questionSetEditorComponentInput, 'unitIdentifier');
     this.hideSubmitForReviewBtn = _.get(this.questionSetEditorComponentInput, 'hideSubmitForReviewBtn') || false;
+    this.setDefaultCopyright = _.get(this.questionSetEditorComponentInput, 'setDefaultCopyright') || false;
+    this.enableQuestionCreation = _.isUndefined(_.get(this.questionSetEditorComponentInput, 'enableQuestionCreation')) ? true : 
+      _.get(this.questionSetEditorComponentInput, 'enableQuestionCreation');
 
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
     };
+    if(_.get(this.programContext, 'target_type') === 'questionSets') {
+      this.editorParams.questionSetId = _.get(this.sessionContext, 'collection');
+      this.editorParams.questionId = _.get(this.questionSetEditorComponentInput, 'contentId');      
+      this.editorParams.unitIdentifier = this.unitIdentifier;
+    }
     this.userProfile = this.userService.userProfile;
     this.getCollectionDetails().subscribe(data => {
-      this.collectionDetails = data.result.questionset;
+      this.collectionDetails = data.result.questionset;   
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
       // this.getFrameWorkDetails();
-      this.setEditorConfig();
-      this.showLoader = false;
+      if(_.get(this.programContext, 'target_type') === 'questionSets' && _.get(this.questionSetEditorComponentInput, 'action') !== 'creation') {
+        this.getQuestionDetails().subscribe(data => {
+          this.collectionDetails = data.result.question;
+          this.setEditorConfig();
+          this.showLoader = false;
+        })
+      } 
+      else {
+        this.setEditorConfig();
+        this.showLoader = false;
+      }
     });
   }
 
   private getCollectionDetails() {
     const req = {
       url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${this.editorParams.questionSetId}?mode=edit`
+    };
+    return this.contentService.get(req).pipe(map((response: any) => response));
+  }
+
+  private getQuestionDetails() {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTION.READ}/${this.editorParams.questionId}`
     };
     return this.contentService.get(req).pipe(map((response: any) => response));
   }
@@ -128,27 +155,70 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       },
       config: {
         primaryCategory: this.collectionDetails.primaryCategory,
-        objectType: 'QuestionSet',
+        objectType: this.getObjectType(),
         mode: this.getEditorMode(),
-        setDefaultCopyRight: false,
+        setDefaultCopyRight: this.setDefaultCopyright,
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false,
-        hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
+        enableQuestionCreation: this.enableQuestionCreation, 
+        hideSubmitForReviewBtn: this.hideSubmitForReviewBtn
       }
     };
-    if (this.showQuestionEditor) {
-      this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
-    }
+    if (this.showQuestionEditor || this.enableQuestionCreation) {
+      this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;      
+    }   
     this.getEditableFields();
     this.getCorrectionComments();
-    this.getDikshaPreviewUrl();
+    this.getDikshaPreviewUrl();    
     this.getStatustoShow();
+    if (_.get(this.programContext, 'target_type') === 'questionSets') {
+      this.setQuestionModeConfig() 
+    }
+  }
+
+  private getObjectType() {
+      return _.get(this.collectionDetails, 'objectType') || 'QuestionSet'
+  }
+
+  private setQuestionModeConfig() {
+    this.editorConfig.context.identifier = this.editorParams.questionId;
+    this.editorConfig.context.collectionIdentifier = this.editorParams.questionSetId;
+    this.editorConfig.context.unitIdentifier = this.editorParams.unitIdentifier;
+    this.editorConfig.context.collectionObjectType = _.get(this.sessionContext, 'targetCollectionObjectType');
+    this.editorConfig.context.collectionPrimaryCategory = _.get(this.sessionContext, 'targetCollectionPrimaryCategory');
+    this.editorConfig.context.framework = _.get(this.sessionContext, 'framework');    
+ 
+    this.editorConfig.config.mimeType = _.get(this.collectionDetails, 'mimeType');
+    this.editorConfig.config.isReadOnlyMode = this.editorConfig.config.mode === 'edit' ? false : true;
+    this.editorConfig.config.showSourcingStatus = this.editorConfig.config.mode === 'edit' ? false : true;
+    this.editorConfig.config.interactionType = _.get(this.collectionDetails, 'interactionTypes[0]');    
+
+    if(_.isUndefined(this.editorParams.questionId)) {
+      this.setQuestionCreationModeConfigOverrides();    
+    }
+  }
+
+  private setQuestionCreationModeConfigOverrides() {
+    this.editorConfig.config.mimeType = _.get(this.sessionContext, 'templateDetails.mimeType[0]');
+    this.editorConfig.config.primaryCategory = _.get(this.sessionContext, 'templateDetails.name');
+    this.editorConfig.config.interactionType = _.get(this.sessionContext, 'templateDetails.interactionTypes[0]');
+    this.editorConfig.config.objectType = 'Question';
+    this.editorConfig.config.mode = 'edit';
+    this.editorConfig.config.isReadOnlyMode = false;
+    this.editorConfig.config.showSourcingStatus = false;
+    this.editorConfig.config.hideSubmitForReviewBtn = true;
+    delete this.editorConfig.config.enableQuestionCreation;
   }
 
   private getEditorMode() {
     const contentStatus = this.collectionDetails.status.toLowerCase();
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
+    // If loggedin user is an orgAdmin and project status is draft
+    if(this.canModifyProjects()) {
+      return 'edit';
+    }
 
     // If loggedin user is a contentCreator and content status is draft
     if (submissionDateFlag && this.canSubmit()) {
@@ -255,11 +325,17 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     return !!(this.hasAccessFor(['CONTRIBUTOR']) && resourceStatus === 'draft' && this.userService.userid === this.collectionDetails.createdBy);
   }
 
+  canModifyProjects() {
+    const programStatus = this.programContext.status.toLowerCase();
+    // tslint:disable-next-line:max-line-length
+    return !!(this.hasAccessFor(['ORG_ADMIN']) && programStatus === 'draft' && this.userService.userid === this.programContext.createdby);
+  }
+
   hasAccessFor(roles: Array<string>) {
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
   }
 
-  editorEventListener(event) {
+  editorEventListener(event) {   
    switch (event.action) {
     case 'submitContent' :
       // collection is sent for review. If individual contributor or contributor of default org and review is disabled publish the content
@@ -284,6 +360,15 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     case 'backContent':
       this.programsService.emitHeaderEvent(true);
       this.programStageService.removeLastStage();
+      if(this.enableQuestionCreation === false) this.collectionEditorEventEmitter.emit(event)
+      break;
+    case 'saveContent':
+      this.programsService.emitHeaderEvent(true);
+      if(this.enableQuestionCreation === false) this.collectionEditorEventEmitter.emit(event)
+      else if(_.get(this.programContext, 'target_type') === 'questionSets') {
+        this.collectionEditorEventEmitter.emit(event)
+        this.programStageService.removeLastStage();
+      }
       break;
     case 'saveCollection': // saving as draft
     default:
@@ -304,6 +389,10 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
             this.programStageService.removeLastStage();
             this.programsService.emitHeaderEvent(true);
           });
+        } else {
+          this.toasterService.success(this.resourceService.messages.smsg.contentAcceptMessage.m0001);
+          this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
         }
       }, (err) => {
         const errInfo = {
