@@ -9,7 +9,7 @@ import { InitialState, ISessionContext, IUserParticipantDetails } from '../../in
 import { ProgramStageService } from '../../services/';
 import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
-import { tap, filter, first, map, catchError } from 'rxjs/operators';
+import { tap, filter, first, map, catchError, take } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
@@ -366,10 +366,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   openContent(content) {
     this.contentHelperService.initialize(this.programContext, this.sessionContext);
     this.contentHelperService.openContent(content);
-    this.contentHelperService.dynamicInputs$.subscribe((res) => {
+    this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res) => {
       this.dynamicInputs = res;
     });
-    this.contentHelperService.currentOpenedComponent$.subscribe((res) => {
+    this.contentHelperService.currentOpenedComponent$.pipe(take(1)).subscribe((res) => {
       this.component = res;
     });
   }
