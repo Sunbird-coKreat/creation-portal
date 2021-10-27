@@ -957,7 +957,7 @@ export class HelperService {
 
   getDynamicHeaders(configUrl){
     const req = {
-      url: `${configUrl}/schemas/collection/1.0/config.json`,
+      url: `${configUrl}schemas/collection/1.0/config.json`,
     };
     return this.httpClient.get(req.url).pipe(map((response) => {
       return response;
