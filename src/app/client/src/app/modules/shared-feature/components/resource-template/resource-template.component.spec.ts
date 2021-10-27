@@ -147,7 +147,7 @@ describe('ResourceTemplateComponent', () => {
       modeOfCreation: 'question',
       onClick: '',
       mimetype: 'application/vnd.sunbird.question',
-      editors: [{ mimeType: 'application/vnd.sunbird.question', 'type': 'question' }]
+      editors: [{ mimetype: 'application/vnd.sunbird.question', 'type': 'question' }]
     };
     component.showQuestionTypeModal = false;
     component.showModeofCreationModal = false;
