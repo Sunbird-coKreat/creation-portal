@@ -126,13 +126,13 @@
     <div content>
       <div class="chapter-lists level1" *ngIf="collection.leaf">
         <div class="header chapter-lists--item">
-          <span class="item-name item-sno">S.No</span>
-          <span class="item-name">Name</span>
+          <span class="item-name item-sno">{{resourceService.frmelmnts.lbl.sno}}</span>
+          <span class="item-name">{{resourceService.frmelmnts.lbl.name}}</span>
           <ng-container *ngFor="let header of dynamicHeaders">
             <span class="item-name">{{header.label}}</span>
           </ng-container>
-          <span class="item-status">Contributor</span>
-          <span class="item-status">Status</span>
+          <span class="item-status">{{resourceService.frmelmnts.lbl.contributor}}</span>
+          <span class="item-status">{{resourceService.frmelmnts.lbl.status}}</span>
         </div>
         <ng-container *ngFor="let content of collection.leaf; let ind = index">
           <div class="chapter-lists--item"
