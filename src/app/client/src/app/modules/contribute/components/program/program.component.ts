@@ -843,12 +843,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   openContent(content) {
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
     this.contentHelperService.openContent(content);
-    this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res)=> {
-      this.dynamicInputs = res;
-    });
-    this.contentHelperService.currentOpenedComponent$.pipe(take(1)).subscribe((res)=> {
-      this.component = res;
-    });
+    this.setContentComponent();
   }
 
   setFrameworkCategories(collection) {
@@ -1003,6 +998,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.showResourceTemplatePopup = false;
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
     this.contentHelperService.handleContentCreation(event);
+    this.setContentComponent();
+  }
+
+  setContentComponent() {
     this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res)=> {
       this.dynamicInputs = res;
     });
