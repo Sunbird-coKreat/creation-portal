@@ -603,19 +603,11 @@
     "requestChanges": {
       "type": "string"
     },
-    "posterImage": {
-      "type": "string",
-      "format": "url"
-    },
-    "appIcon": {
-      "type": "string",
-      "format": "url"
-    },
     "acceptedContributions": {
-      "type": "array",     
+      "type": "array"
     },
     "rejectedContributions": {
-      "type": "array",     
+      "type": "array"
     },
     "reusedContributions": {
       "type": "array"
