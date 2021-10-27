@@ -25,12 +25,7 @@ export class ContentHelperService {
   private _telemetryPageId: any;
   private _telemetryInteractCdata: any;
   private _selectedSharedContext: any;
-  private _dynamicInputs$ = new BehaviorSubject(undefined);
-  public readonly dynamicInputs$: Observable<any> = this._dynamicInputs$
-    .asObservable().pipe(skipWhile(data => data === undefined || data === null));
-  private _component$ = new BehaviorSubject(undefined);
-  public readonly currentOpenedComponent$: Observable<any> = this._component$
-    .asObservable().pipe(skipWhile(data => data === undefined || data === null));
+
   public defaultFileSize: any;
   public defaultVideoSize: any;
   constructor(private configService: ConfigService, private programComponentsService: ProgramComponentsService,
@@ -58,14 +53,12 @@ export class ContentHelperService {
     }
     set currentOpenedComponent(component) {
       this._component = component;
-      //this._component$.next(component);
     }
     get dynamicComponentsInput() {
       return this._dynamicInputs;
     }
     set dynamicComponentsInput(input) {
       this._dynamicInputs = input;
-      //this._dynamicInputs$.next(input);
     }
     set currentProgramDetails(programDetails) {
       this._programDetails = programDetails;
