@@ -150,7 +150,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.openProjectTargetTypeModal = true;
     }
     this.setTelemetryStartData();
-    // this.fetchBlueprintTemplate();
     this.pageStartTime = Date.now();
   }
 
