@@ -207,6 +207,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorConfig.config.mode = 'edit';
     this.editorConfig.config.isReadOnlyMode = false;
     this.editorConfig.config.showSourcingStatus = false;
+    this.editorConfig.config.hideSubmitForReviewBtn = true;
     delete this.editorConfig.config.enableQuestionCreation;
   }
 
