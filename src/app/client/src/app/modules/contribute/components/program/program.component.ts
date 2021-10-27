@@ -6,8 +6,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { UUID } from 'angular2-uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { map, catchError, tap } from 'rxjs/operators';
-import { throwError, of, forkJoin } from 'rxjs';
+import { map, catchError, tap, take } from 'rxjs/operators';
+import { throwError, of, forkJoin, Subject } from 'rxjs';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../sourcing/components';
 import { ICollectionComponentInput, IDashboardComponentInput,
@@ -188,14 +188,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.roleNames = _.map(this.rolesWithNone, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
+      this.frameworkService.initialize(this.sessionContext.framework);
       this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
         if (frameworkData) {
           this.sessionContext.frameworkData = frameworkData.categories;
-          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
-          this.getNominationStatus();
-          this.setTargetCollectionValue();
-          this.getCollectionCategoryDefinition();
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
         }
+        this.getNominationStatus();
+        this.setTargetCollectionValue();
+        this.getCollectionCategoryDefinition();
       }, error => {
         this.raiseError(error, 'Fetching framework details failed')
       });
@@ -307,11 +308,18 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       subject: [],
       gradeLevel: [],
     });
-    this.sessionContext.frameworkData.forEach((element) => {
-      if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
-        this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
-      }
-    });
+
+    this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
+    this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
+    this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
+
+    if (this.programDetails.target_type === 'searchCriteria' && !_.isEmpty(this.sessionContext.frameworkData)) {
+      this.sessionContext.frameworkData.forEach((element) => {
+        if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
+          this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
+        }
+      });
+    }
     const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
     return req.pipe(
       tap((res) => {
@@ -835,6 +843,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   openContent(content) {
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
     this.contentHelperService.openContent(content);
+    this.setContentComponent();
   }
 
   setFrameworkCategories(collection) {
@@ -989,6 +998,16 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.showResourceTemplatePopup = false;
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
     this.contentHelperService.handleContentCreation(event);
+    this.setContentComponent();
+  }
+
+  setContentComponent() {
+    this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res)=> {
+      this.dynamicInputs = res;
+    });
+    this.contentHelperService.currentOpenedComponent$.pipe(take(1)).subscribe((res)=> {
+      this.component = res;
+    });
   }
 
   resourceTemplateInputData() {
@@ -1130,14 +1149,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
-    }
-    if (this.currentStage !== 'programComponent') {
-      this.contentHelperService.dynamicInputs$.subscribe((res)=> {
-        this.dynamicInputs = res;
-      });
-      this.contentHelperService.currentOpenedComponent$.subscribe((res)=> {
-        this.component = res;
-      });
     }
     if (this.sessionContext && this.programDetails && this.currentStage === 'programComponent') {
       this.nominationIsInProcess = false;

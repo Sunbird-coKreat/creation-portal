@@ -33,7 +33,8 @@ const API_LIST = {
     '/content/program/v1/update': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
-        ROLE.ORG_ADMIN
+        ROLE.ORG_ADMIN,
+        ROLE.PUBLIC
       ]
     },
     '/content/program/v1/publish': {

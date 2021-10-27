@@ -6,13 +6,12 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ISessionContext, InitialState, IPagination} from '../../../sourcing/interfaces';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import * as _ from 'lodash-es';
-import { tap, first, catchError, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { tap, first, catchError, takeUntil, take } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
 import * as moment from 'moment';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
 import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { DatePipe } from '@angular/common';
-import { forkJoin, of } from 'rxjs';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
@@ -459,7 +458,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.collectionHierarchyService.preferencefilters = preferencefilters;
       return this.collectionHierarchyService.getnonCollectionProgramContents(this.programId).pipe(
         tap((response: any) => {
-          if (response && response.result && (response.result.content || response.result.QuestionSet)) {
+          if (response && response.result) {
             this.programCollections = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
           }
         }),
@@ -615,12 +614,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
-
+      this.frameworkService.initialize(this.sessionContext.framework);   
       forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(), 
               this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
             const frameworkRes = _.first(response);
-            this.sessionContext.frameworkData = frameworkRes.categories;
+            this.sessionContext.frameworkData = _.get(frameworkRes, 'categories');
             this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
             this.checkActiveTab();
         },
@@ -924,14 +923,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-    if (this.currentStage !== 'programNominations' && this.currentStage !== 'chapterListComponent') {
-      this.contentHelperService.dynamicInputs$.subscribe((res)=> {
-        this.dynamicInputs = res;
-      });
-      this.contentHelperService.currentOpenedComponent$.subscribe((res)=> {
-        this.component = res;
-      });
-    }
   }
 
   applyPreferences(preferences?) {
@@ -955,6 +946,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   openContent(content) {
       this.contentHelperService.initialize(this.programDetails, this.sessionContext);
       this.contentHelperService.openContent(content);
+      this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res)=> {
+        this.dynamicInputs = res;
+      });
+      this.contentHelperService.currentOpenedComponent$.pipe(take(1)).subscribe((res)=> {
+        this.component = res;
+      });
   }
   getOriginForApprovedContents() {
     if (!_.isEmpty(this.programDetails.acceptedcontents)) {

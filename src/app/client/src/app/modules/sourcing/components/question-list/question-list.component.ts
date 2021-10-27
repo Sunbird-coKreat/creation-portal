@@ -885,6 +885,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.generateTelemetryEndEvent('submit');
           this.toasterService.success(this.resourceService.messages.smsg.m0061);
           this.programStageService.removeLastStage();
+          this.programsService.emitHeaderEvent(true);
           this.uploadedContentMeta.emit({
             contentId: contentId
           });
@@ -920,6 +921,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.generateTelemetryEndEvent('submit');
         this.toasterService.success(this.resourceService.messages.smsg.m0061);
         this.programStageService.removeLastStage();
+        this.programsService.emitHeaderEvent(true);
         this.uploadedContentMeta.emit({
           contentId: contentId
         });

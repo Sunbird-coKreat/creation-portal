@@ -824,7 +824,7 @@
         <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="closeprojectTargetTypeModal()">{{resource?.frmelmnts?.btn.cancel}}</button>
       </div>
 </sui-modal>
-<sui-modal *ngIf="showContributorsListModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0"
+<sui-modal *ngIf="showContributorsListModal" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
 [size]="'large'" class="sb-modal" appBodyScroll (dismissed)="closeContributorListPopup()" #modal>
     <app-contributors-list
       [allowToModifyContributors]="allowToModifyContributors"

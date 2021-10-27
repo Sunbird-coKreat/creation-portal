@@ -96,11 +96,17 @@ export class TextbookListComponent implements OnInit {
         this.setPreferences['gradeLevel'] = (this.userPreferences.sourcing_preference.gradeLevel) ? this.userPreferences.sourcing_preference.gradeLevel : [];
       }
     }
-    this.frameworkCategories.forEach((element) => {
-      if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
-        this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
-      }
-    });
+    
+    this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
+    this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
+    this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
+    if (this.programDetails.target_type === 'searchCriteria'  && !_.isEmpty(this.frameworkCategories)) {
+      this.frameworkCategories.forEach((element) => {
+        if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
+          this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
+        }
+      });
+    }
     this.prefernceForm = this.sbFormBuilder.group({
       medium: [],
       subject: [],
