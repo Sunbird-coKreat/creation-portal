@@ -1161,6 +1161,26 @@ export class HelperService {
     return {...organisationFrameworkUserInput, ...targetFrameworkUserInput, ...{targetFWIds}};
   }
 
+  getFormattedFrameworkMetaWithOutCollection(row, sessionContext) {
+    const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
+    const framework = _.first(_.get(sessionContext, 'framework'));
+    this.flattenedFrameworkCategories[framework] = {};
+    // tslint:disable-next-line:max-line-length
+    const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');
+    _.forEach(orgFrameworkCategories, item => {
+      const terms = _.get(item, 'terms');
+      this.flattenedFrameworkCategories[framework][item.code] = terms || [];
+    });
+    _.forEach(organisationFrameworkUserInput, (value, key) => {
+      const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
+        'orgIdFieldName': key
+      }), 'code');
+      organisationFrameworkUserInput[key] = this.hasEmptyElement(value) ? _.get(sessionContext.frameworkData, key) || [] :
+      this.convertNameToIdentifier(framework, value, key, code, sessionContext.frameworkData, 'identifier');
+    });
+    return {...organisationFrameworkUserInput};
+  }
+
 /**
  *
  *
