@@ -842,8 +842,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openContent(content) {
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-    this.contentHelperService.openContent(content);
-    this.setContentComponent();
+    this.contentHelperService.openContent(content).then((response) => {
+      this.setContentComponent(response);
+    }).catch((error) => this.raiseError(error, 'Errror in opening the content componnet'));
   }
 
   setFrameworkCategories(collection) {
@@ -997,17 +998,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-    this.contentHelperService.handleContentCreation(event);
-    this.setContentComponent();
+    this.contentHelperService.handleContentCreation(event).then((response) => {
+      this.setContentComponent(response);
+    }).catch((error) => this.raiseError(error, 'Errror in opening the content componnet'));
   }
 
-  setContentComponent() {
-    this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res)=> {
-      this.dynamicInputs = res;
-    });
-    this.contentHelperService.currentOpenedComponent$.pipe(take(1)).subscribe((res)=> {
-      this.component = res;
-    });
+  setContentComponent(response) {
+    this.dynamicInputs = response.dynamicInputs;
+    this.component = response.currentComponent;
+    this.programStageService.addStage(response.currentComponentName);
   }
 
   resourceTemplateInputData() {

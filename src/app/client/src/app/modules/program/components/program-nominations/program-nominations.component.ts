@@ -945,13 +945,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   openContent(content) {
       this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-      this.contentHelperService.openContent(content);
-      this.contentHelperService.dynamicInputs$.pipe(take(1)).subscribe((res)=> {
-        this.dynamicInputs = res;
-      });
-      this.contentHelperService.currentOpenedComponent$.pipe(take(1)).subscribe((res)=> {
-        this.component = res;
-      });
+      this.contentHelperService.openContent(content).then((response) => {
+        this.dynamicInputs = response['dynamicInputs'];
+        this.component = response['currentComponent'];
+        this.programStageService.addStage(response['currentComponentName']);
+      }).catch((error) => this.toasterService.error('Errror in opening the content componnet'));
   }
   getOriginForApprovedContents() {
     if (!_.isEmpty(this.programDetails.acceptedcontents)) {

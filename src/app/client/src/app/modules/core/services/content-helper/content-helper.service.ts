@@ -58,88 +58,110 @@ export class ContentHelperService {
     }
     set currentOpenedComponent(component) {
       this._component = component;
-      this._component$.next(component);
+      //this._component$.next(component);
     }
     get dynamicComponentsInput() {
       return this._dynamicInputs;
     }
     set dynamicComponentsInput(input) {
       this._dynamicInputs = input;
-      this._dynamicInputs$.next(input);
+      //this._dynamicInputs$.next(input);
     }
     set currentProgramDetails(programDetails) {
       this._programDetails = programDetails;
     }
     handleContentCreation(event) {
-      this._sessionContext['templateDetails'] =  event.templateDetails;
-      if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
-        const creationInput  = {
-          sessionContext: this._sessionContext,
-          templateDetails: event.templateDetails,
-          selectedSharedContext: this._selectedSharedContext,
-          action: 'creation',
-          programContext: this._programDetails,
+      return new Promise((resolve, reject) => {
+        this._sessionContext['templateDetails'] =  event.templateDetails;
+        if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent')) {
+          const creationInput  = {
+            sessionContext: this._sessionContext,
+            templateDetails: event.templateDetails,
+            selectedSharedContext: this._selectedSharedContext,
+            action: 'creation',
+            programContext: this._programDetails,
+          }
+          const createContentReq = this.helperService.createContent(creationInput);
+          createContentReq.pipe(map((res: any) => res.result), catchError(
+              err => {
+              const errInfo = {
+                errorMsg: 'Unable to create contentId, Please Try Again',
+                telemetryPageId: this._telemetryPageId,
+                telemetryCdata : this._telemetryInteractCdata,
+                env : this.activatedRoute.snapshot.data.telemetry.env,
+                request: {}
+              };
+              return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+            }))
+            .subscribe(result => {
+              this._contentId = result.identifier;
+              this.programsService.emitHeaderEvent(false);
+              // tslint:disable-next-line:max-line-length
+              this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+              const ret = {
+                'currentComponent': this.currentOpenedComponent,
+                'dynamicInputs': this.dynamicComponentsInput,
+                'currentComponentName': event.templateDetails.onClick
+              }
+              return resolve(ret);
+            }, (error)=> {
+              return reject (error);
+            });
+        } else if (event.templateDetails) {
+          this._templateDetails = event.templateDetails;
+          this.programsService.emitHeaderEvent(false);
+          this._contentId = undefined;
+          // tslint:disable-next-line:max-line-length
+          this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
+          const ret = {
+            'currentComponent': this.currentOpenedComponent,
+            'dynamicInputs': this.dynamicComponentsInput,
+            'currentComponentName': event.templateDetails.onClick
+          }
+          return resolve(ret);
         }
-        const createContentReq = this.helperService.createContent(creationInput);
-        createContentReq.pipe(map((res: any) => res.result), catchError(
-          err => {
-           const errInfo = {
-            errorMsg: 'Unable to create contentId, Please Try Again',
-            telemetryPageId: this._telemetryPageId,
-            telemetryCdata : this._telemetryInteractCdata,
-            env : this.activatedRoute.snapshot.data.telemetry.env,
-            request: {}
-          };
-          return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-          }))
-          .subscribe(result => {
-            this._contentId = result.identifier;
-            this.programsService.emitHeaderEvent(false);
-            // tslint:disable-next-line:max-line-length
-            this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
-          });
-      } else if (event.templateDetails) {
-        this._templateDetails = event.templateDetails;
-        this.programsService.emitHeaderEvent(false);
-        this._contentId = undefined;
-        // tslint:disable-next-line:max-line-length
-        this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
-      }
+      });
     }
     openContent(content) {
-      this._contentId = content.identifier;
-      this._templateDetails = {
-        'name' : content.primaryCategory
-      };
-      const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-      const acceptedFile = appEditorConfig[content.mimeType];
-      this._templateDetails['filesConfig'] = {};
-      this._templateDetails.filesConfig['accepted'] = acceptedFile || '';
-      this._templateDetails.filesConfig['size'] = {
-        defaultfileSize:  this.defaultFileSize,
-        defaultVideoSize: this.defaultVideoSize
-      };
-      this._templateDetails.questionCategories = content.questionCategories;
-      if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(content.questionCategories)) {
-        this._templateDetails.onClick = 'questionSetComponent';
-      } else if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(content.questionCategories)) {
-        this._templateDetails.onClick = 'editorComponent';
-      } else if (content.mimeType === 'application/vnd.ekstep.quml-archive') {
-        this._templateDetails.onClick = 'questionSetComponent';
-      } else if (content.mimeType === 'application/vnd.sunbird.questionset'){
-        this._templateDetails.onClick = 'questionSetEditorComponent';
-      } else {
-        this._templateDetails.onClick = 'uploadComponent';
-      }
-      this.programsService.emitHeaderEvent(false);
-      this.componentLoadHandler('preview',
-      // tslint:disable-next-line:max-line-length
-      this.programComponentsService.getComponentInstance(this._templateDetails.onClick), this._templateDetails.onClick, {'content': content});
+      return new Promise((resolve, reject) => {
+        this._contentId = content.identifier;
+        this._templateDetails = {
+          'name' : content.primaryCategory
+        };
+        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+        const acceptedFile = appEditorConfig[content.mimeType];
+        this._templateDetails['filesConfig'] = {};
+        this._templateDetails.filesConfig['accepted'] = acceptedFile || '';
+        this._templateDetails.filesConfig['size'] = {
+          defaultfileSize:  this.defaultFileSize,
+          defaultVideoSize: this.defaultVideoSize
+        };
+        this._templateDetails.questionCategories = content.questionCategories;
+        if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(content.questionCategories)) {
+          this._templateDetails.onClick = 'questionSetComponent';
+        } else if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(content.questionCategories)) {
+          this._templateDetails.onClick = 'editorComponent';
+        } else if (content.mimeType === 'application/vnd.ekstep.quml-archive') {
+          this._templateDetails.onClick = 'questionSetComponent';
+        } else if (content.mimeType === 'application/vnd.sunbird.questionset'){
+          this._templateDetails.onClick = 'questionSetEditorComponent';
+        } else {
+          this._templateDetails.onClick = 'uploadComponent';
+        }
+        this.programsService.emitHeaderEvent(false);
+        const componentInstance = this.programComponentsService.getComponentInstance(this._templateDetails.onClick);
+        this.componentLoadHandler('preview', componentInstance, this._templateDetails.onClick, {'content': content})
+        const ret = {
+          'currentComponent': this.currentOpenedComponent,
+          'dynamicInputs': this.dynamicComponentsInput,
+          'currentComponentName': this._templateDetails.onClick
+        }
+        return resolve(ret);
+      });
     }
     componentLoadHandler(action, component, componentName, event?) {
       this.initiateInputs(action, (event ? event.content : undefined));
       this.currentOpenedComponent = component;
-      this.programStageService.addStage(componentName);
     }
     initiateInputs(action?, content?) {
       // this.showLoader = false;
