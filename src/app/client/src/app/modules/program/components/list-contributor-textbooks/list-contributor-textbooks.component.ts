@@ -366,6 +366,12 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   openContent(content) {
     this.contentHelperService.initialize(this.programContext, this.sessionContext);
     this.contentHelperService.openContent(content);
+    this.contentHelperService.dynamicInputs$.subscribe((res) => {
+      this.dynamicInputs = res;
+    });
+    this.contentHelperService.currentOpenedComponent$.subscribe((res) => {
+      this.component = res;
+    });
   }
 
   setProgramRole() {
@@ -468,14 +474,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
-    }
-    if (this.currentStage !== 'listContributorTextbook') {
-      this.contentHelperService.dynamicInputs$.subscribe((res) => {
-        this.dynamicInputs = res;
-      });
-      this.contentHelperService.currentOpenedComponent$.subscribe((res) => {
-        this.component = res;
-      });
     }
   }
   goBack() {
