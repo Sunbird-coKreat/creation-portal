@@ -8,16 +8,16 @@
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService?.frmelmnts?.lbl?.bulkUploadContent}}</button>
   <div class="divider mx-10" *ngIf="process?.status === 'completed'"></div>
-  <div class="d-flex flex-dc">
+  <div class="d-flex flex-dc fs-0-785">
     <div class="sb-color-gray-400" *ngIf="process?.status === 'completed'">{{resourceService?.frmelmnts?.lbl?.lastUploaded}} : {{ process?.updatedon | dateFormat: 'D MMMM YYYY' }}</div>
     <div *ngIf="process?.status === 'processing'">
       <div class="relative ml-20 pl-5">
         <span class="sb-loader sb-success-loader ml-10"></span>
-        <span class="sb-color-warning fs-1" suiPopup
+        <span class="sb-color-warning fs-0-92" suiPopup
           popupText="{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgressHint}}">{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgress}}</span>
       </div>
     </div>
-    <a href="#" class="text-decor-none" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)"
+    <a href="#" class="text-decor-none text-right" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)"
     appTelemetryInteract
     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
     [telemetryInteractObject]="telemetryInteractObject"
