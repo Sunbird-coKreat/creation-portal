@@ -142,8 +142,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
-    this.configUrl =  (<HTMLInputElement>document.getElementById('cloudStorageUrls')) ?
-    (<HTMLInputElement>document.getElementById('cloudStorageUrls')).value : "";
+    this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
+    (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
   }
 
   ngOnInit() {
