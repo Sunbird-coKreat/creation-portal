@@ -305,7 +305,7 @@ export class RegistryService extends DataService {
     this.telemetryService.interact(appTelemetryInteractData);
   }
 
-  public getOrgList(limit?, offset?): Observable<ServerResponse> {
+  public getOrgList(limit?, offset?, filters?): Observable<ServerResponse> {
     const option = {
       url: 'reg/search',
       data: {
@@ -319,7 +319,7 @@ export class RegistryService extends DataService {
         },
         request: {
           entityType: ['Org'],
-          filters:{},
+          filters: filters || {},
           limit: limit || 250,
           offset: offset || 0,
         }
