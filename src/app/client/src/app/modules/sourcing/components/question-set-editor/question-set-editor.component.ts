@@ -40,6 +40,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public hideSubmitForReviewBtn = false;
   public enableQuestionCreation = true;
   public setDefaultCopyright = false;
+  public isQuestionMode = false;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -70,7 +71,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
     };
-    if(_.get(this.programContext, 'target_type') === 'questionSets') {
+    this.isQuestionMode = _.get(this.programContext, 'target_type') === 'questionSets' && _.get(this.programContext, 'status') !== 'Draft' ? true : false;
+    if(this.isQuestionMode) {
       this.editorParams.questionSetId = _.get(this.sessionContext, 'collection');
       this.editorParams.questionId = _.get(this.questionSetEditorComponentInput, 'contentId');      
       this.editorParams.unitIdentifier = this.unitIdentifier;
@@ -80,7 +82,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       this.collectionDetails = data.result.questionset;   
       this.showQuestionEditor = this.collectionDetails.mimeType === 'application/vnd.sunbird.questionset' ? true : false;
       // this.getFrameWorkDetails();
-      if(_.get(this.programContext, 'target_type') === 'questionSets' && _.get(this.questionSetEditorComponentInput, 'action') !== 'creation') {
+      if(this.isQuestionMode && _.get(this.questionSetEditorComponentInput, 'action') !== 'creation') {
         this.getQuestionDetails().subscribe(data => {
           this.collectionDetails = data.result.question;
           this.setEditorConfig();
@@ -172,7 +174,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.getCorrectionComments();
     this.getDikshaPreviewUrl();    
     this.getStatustoShow();
-    if (_.get(this.programContext, 'target_type') === 'questionSets') {
+    if (this.isQuestionMode) {
       this.setQuestionModeConfig() 
     }
   }
@@ -365,7 +367,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     case 'saveContent':
       this.programsService.emitHeaderEvent(true);
       if(this.enableQuestionCreation === false) this.collectionEditorEventEmitter.emit(event)
-      else if(_.get(this.programContext, 'target_type') === 'questionSets') {
+      else if(this.isQuestionMode) {
         this.collectionEditorEventEmitter.emit(event)
         this.programStageService.removeLastStage();
       }
