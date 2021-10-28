@@ -434,7 +434,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
           this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
-          this.sessionContext['addFromLibraryBetaEnabled'] = this.collectionSourcingConfig.addFromLibraryBetaEnabled;
+          this.sessionContext['addFromLibraryEnabled'] = this.collectionSourcingConfig.addFromLibraryEnabled;
         }
 
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
@@ -1073,7 +1073,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return true;
       } else if (content.status === 'Live' && content.sourceURL) {
         return true;
-      } else if (this.reusedContributions.indexOf(content.identifier) !== -1 && this.sessionContext['addFromLibraryBetaEnabled']) {
+      } else if (this.reusedContributions.indexOf(content.identifier) !== -1 && this.sessionContext['addFromLibraryEnabled']) {
         return true;
       }
     }
