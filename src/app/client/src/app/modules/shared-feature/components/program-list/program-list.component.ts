@@ -249,6 +249,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.toasterService.success(this.resourceService.frmelmnts.lbl.successTheProjectHasBeenDeleted);
         ($event.target as HTMLButtonElement).disabled = false;
         this.programs.splice(this.programIndex, 1);
+        this.count = this.programs.length;
         this.showDeleteModal = false;
       },
       (err) => {

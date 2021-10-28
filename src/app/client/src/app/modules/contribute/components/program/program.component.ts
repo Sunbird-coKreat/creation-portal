@@ -6,8 +6,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { UUID } from 'angular2-uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { map, catchError, tap } from 'rxjs/operators';
-import { throwError, of, forkJoin } from 'rxjs';
+import { map, catchError, tap, take } from 'rxjs/operators';
+import { throwError, of, forkJoin, Subject } from 'rxjs';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { ChapterListComponent } from '../../../sourcing/components';
 import { ICollectionComponentInput, IDashboardComponentInput,
@@ -108,7 +108,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contentCount = 0;
   public showConfirmationModal = false;
   public prefernceFormOptions = {};
-  
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -843,7 +842,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   openContent(content) {
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-    this.contentHelperService.openContent(content);
+    this.contentHelperService.openContent(content).then((response) => {
+      this.setContentComponent(response);
+    }).catch((error) => this.raiseError(error, 'Errror in opening the content componnet'));
   }
 
   setFrameworkCategories(collection) {
@@ -920,6 +921,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.get(this.nominationDetails, 'id')) {
       this.createNomination('Initiated', collection);
     } else {
+      if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
+        this.sessionContext.nominationDetails['targetprimarycategories'] =  this.selectedContentTypes;
+      } else {
+        this.sessionContext.nominationDetails['content_types'] = _.map(this.selectedContentTypes, 'name');
+      }
       this.openCollection(collection);
     }
   }
@@ -997,7 +1003,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
     this.contentHelperService.initialize(this.programDetails, this.sessionContext);
-    this.contentHelperService.handleContentCreation(event);
+    this.contentHelperService.handleContentCreation(event).then((response) => {
+      this.setContentComponent(response);
+    }).catch((error) => this.raiseError(error, 'Errror in opening the content componnet'));
+  }
+
+  setContentComponent(response) {
+    this.dynamicInputs = response.dynamicInputs;
+    this.component = response.currentComponent;
+    this.programStageService.addStage(response.currentComponentName);
   }
 
   resourceTemplateInputData() {
@@ -1139,14 +1153,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
-    }
-    if (this.currentStage !== 'programComponent') {
-      this.contentHelperService.dynamicInputs$.subscribe((res)=> {
-        this.dynamicInputs = res;
-      });
-      this.contentHelperService.currentOpenedComponent$.subscribe((res)=> {
-        this.component = res;
-      });
     }
     if (this.sessionContext && this.programDetails && this.currentStage === 'programComponent') {
       this.nominationIsInProcess = false;

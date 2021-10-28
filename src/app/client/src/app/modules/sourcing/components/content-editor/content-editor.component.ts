@@ -113,6 +113,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   ngOnInit() {
     this.userProfile = this.userService.userProfile;
     this.sessionContext = this.contentEditorComponentInput.sessionContext;
+    // tslint:disable-next-line:max-line-length
+    this.sessionContext.framework = _.isArray(this.sessionContext.framework) ? _.first(this.sessionContext.framework) : this.sessionContext.framework;
     this.unitIdentifier  = _.get(this.contentEditorComponentInput, 'unitIdentifier');
     this.programContext = _.get(this.contentEditorComponentInput, 'programContext');
     this.originCollectionData = _.get(this.contentEditorComponentInput, 'originCollectionData');

@@ -432,7 +432,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }
 
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
+          this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
+          this.sessionContext['addFromLibraryEnabled'] = this.collectionSourcingConfig.addFromLibraryEnabled;
+        }
+
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -1067,7 +1073,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return true;
       } else if (content.status === 'Live' && content.sourceURL) {
         return true;
-      } else if (this.reusedContributions.indexOf(content.identifier) !== -1 && this.sessionContext['addFromLibraryBetaEnabled']) {
+      } else if (this.reusedContributions.indexOf(content.identifier) !== -1 && this.sessionContext['addFromLibraryEnabled']) {
         return true;
       }
     }
@@ -1190,6 +1196,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       case 'preview':
         this.contentId = event.content.identifier;
         this.handlePreview(event);
+        break;
+      case 'addFromLibrary':
+        this.currentStage = 'addFromLibrary';
+        this.setAddLibraryInput();
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;

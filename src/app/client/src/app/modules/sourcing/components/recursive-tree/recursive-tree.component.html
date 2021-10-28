@@ -84,14 +84,14 @@
       </div>
 
      <div class="d-flex">
-       <ng-container *ngIf="sessionContext['addFromLibraryBetaEnabled']; else noLibrary">
+       <ng-container *ngIf="sessionContext['addFromLibraryEnabled']; else noLibrary">
          <button (click)="addFromLibrary($event, collection)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
                  appTelemetryInteract
                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                  [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
                  [telemetryInteractCdata]="telemetryInteractCdata"
                  [telemetryInteractPdata]="telemetryInteractPdata"
-                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && sessionContext['addFromLibraryBetaEnabled']">
+                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && sessionContext['addFromLibraryEnabled']">
            <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
        </ng-container>
        <ng-template #noLibrary>
@@ -147,7 +147,7 @@
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
               <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
-              <strong *ngIf="sessionContext['addFromLibraryBetaEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
+              <strong *ngIf="sessionContext['addFromLibraryEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
