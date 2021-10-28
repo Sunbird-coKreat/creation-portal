@@ -918,16 +918,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   uploadSampleContent(collection) {
-    if (!_.get(this.nominationDetails, 'id')) {
-      this.createNomination('Initiated', collection);
-    } else {
-      if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
-        this.sessionContext.nominationDetails['targetprimarycategories'] =  this.selectedContentTypes;
-      } else {
-        this.sessionContext.nominationDetails['content_types'] = _.map(this.selectedContentTypes, 'name');
-      }
-      this.openCollection(collection);
-    }
+    this.createNomination('Initiated', collection);
   }
   createNomination(status = 'Pending', collection?) {
     this.nominationIsInProcess = true;
