@@ -46,7 +46,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
-    console.log(this.templateList);
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
     this.sessionContext = _.get(this.resourceTemplateComponentInput, 'sessionContext');
     this.unitIdentifier  = _.get(this.resourceTemplateComponentInput, 'unitIdentifier');
@@ -58,7 +57,6 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
      // tslint:disable-next-line:max-line-length
      this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.unitIdentifier, 'Content', '1.0', {l1: this.sessionContext.collection});
   }
-
 
   handleSubmit() {
     this.programsService.getCategoryDefinition(this.templateSelected.name, this.programContext.rootorg_id, this.templateSelected.targetObjectType).subscribe((res) => {
