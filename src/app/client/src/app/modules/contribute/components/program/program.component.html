@@ -50,8 +50,8 @@
 
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
-					<div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15 pt-10 mt-10">
-						<div class="w-40 text-capitalize fs-0-785 line-height-1-3 sb-pageSection-document mt-10">
+					<div class="d-flex flex-jc-space-between fs-0-785 sb-color-gray-300 mb-15 pt-10 mt-10 sb-pageSection-document">
+						<div class="w-40 text-capitalize fs-0-785 line-height-1-3 mt-10">
 							<div *ngIf="currentNominationStatus === 'Approved' && isContributingOrgAdmin">
 								<div *ngIf="isContributingOrgAdmin" class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
 								<div *ngIf="isContributingOrgAdmin" class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
@@ -336,7 +336,7 @@
 						</span>
 					</th>
 					<th class="w-10" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
-					<th *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
+					<th class="w-10" *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
 						<span *ngIf="currentNominationStatus !== 'Approved'">Sample Content</span>
 						<span *ngIf="currentNominationStatus === 'Approved'">{{resourceService.frmelmnts.lbl.contentStatus}}</span>
 					</th>
