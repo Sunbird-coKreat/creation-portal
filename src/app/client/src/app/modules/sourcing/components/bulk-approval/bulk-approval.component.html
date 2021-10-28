@@ -14,7 +14,7 @@
       <span class="sb-loader sb-success-loader"></span>
       <span class="sb-color-warning fs-0-92"suiPopup popupText="Bulk approve of content is in progress, once finished you can initiate another batch">{{resourceService.frmelmnts.lbl.bulkApprovalInProgress}}</span>
     </div>
-    <a *ngIf="bulkApprove && bulkApprove.status" class="text-decor-none text-right" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()"
+    <a *ngIf="bulkApprove && bulkApprove.status" class="text-decor-none" href="javascript:void(0)" (click)="showBulkApproveModal=true;viewBulkApprovalStatus()"
     appTelemetryInteract
     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId, {values: [bulkApprove.process_id]})"
     [telemetryInteractObject]="telemetryInteractObject"
