@@ -1017,6 +1017,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         ...sharedMeta
       },
       learningOutcome: node.learningOutcome,
+      bloomsLevel: node.bloomsLevel
     };
     return nodeMeta;
   }
