@@ -910,19 +910,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showResourceTemplate() {
-    if (!_.get(this.nominationDetails, 'id')) {
-      this.createNomination('Initiated');
-    } else {
-      this.resourceTemplateInputData();
-      this.showResourceTemplatePopup = true;
-    }
+    this.createNomination('Initiated');
   }
   uploadSampleContent(collection) {
-    if (!_.get(this.nominationDetails, 'id')) {
-      this.createNomination('Initiated', collection);
-    } else {
-      this.openCollection(collection);
-    }
+    this.createNomination('Initiated', collection);
   }
   createNomination(status = 'Pending', collection?) {
     this.nominationIsInProcess = true;
