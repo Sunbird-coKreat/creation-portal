@@ -238,7 +238,7 @@
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 								</span>
 							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
+							<th *ngIf="programContext?.target_type === 'searchCriteria'" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
 								{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
 								<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
@@ -290,7 +290,7 @@
 						<ng-container *ngFor="let contributorTextbook of contributorTextbooks">  
 							<tr *ngIf="contributorTextbook?.contentVisibility === undefined || contributorTextbook?.contentVisibility">
 								<td>{{contributorTextbook?.name}}</td>
-								<td>{{contributorTextbook?.board}}</td>
+								<td *ngIf="programContext?.target_type === 'searchCriteria'">{{contributorTextbook?.board}}</td>
 								<td>{{contributorTextbook?.medium}}</td>
 								<td>{{contributorTextbook?.gradeLevel}}</td>
 								<td>{{contributorTextbook?.subject}}</td>
