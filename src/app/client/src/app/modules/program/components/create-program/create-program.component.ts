@@ -776,7 +776,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   validateDates() {
     let hasError = false;
-    const formData = this.createProgramForm.value;
+    const formData = this.createProgramForm.getRawValue();
     const nominationEndDate = moment(formData.nomination_enddate);
     const contentSubmissionEndDate = moment(formData.content_submission_enddate);
     const programEndDate = moment(formData.enddate);
