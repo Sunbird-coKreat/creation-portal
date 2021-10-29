@@ -336,7 +336,7 @@
 						</span>
 					</th>
 					<th class="w-10" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
-					<th class="w-10" *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
+					<th class="w-10" *ngIf="visibility.showCollectionLevelContentStatus">
 						<span *ngIf="currentNominationStatus !== 'Approved'">Sample Content</span>
 						<span *ngIf="currentNominationStatus === 'Approved'">{{resourceService.frmelmnts.lbl.contentStatus}}</span>
 					</th>
@@ -368,7 +368,7 @@
 						<td *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>
-						<td *ngIf="isContributingOrgAdmin && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
+						<td *ngIf="visibility.showCollectionLevelContentStatus">
 							<div class="text-capitalize fs-0-785">
 								<span *ngIf="currentNominationStatus !== 'Approved'"> {{contributorTextbook.totalSampleContent || 0 }}</span>
 								<div *ngIf="currentNominationStatus === 'Approved'">
