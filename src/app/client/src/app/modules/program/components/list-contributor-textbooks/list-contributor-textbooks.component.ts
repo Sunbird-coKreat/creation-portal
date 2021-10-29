@@ -9,7 +9,7 @@ import { InitialState, ISessionContext, IUserParticipantDetails } from '../../in
 import { ProgramStageService } from '../../services/';
 import { ChapterListComponent } from '../../../sourcing/components/chapter-list/chapter-list.component';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
-import { tap, filter, first, map, catchError } from 'rxjs/operators';
+import { tap, filter, first, map, catchError, take } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
@@ -365,7 +365,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   }
   openContent(content) {
     this.contentHelperService.initialize(this.programContext, this.sessionContext);
-    this.contentHelperService.openContent(content);
+    this.contentHelperService.openContent(content).then((response) => {
+      this.dynamicInputs = response['dynamicInputs'];
+      this.component = response['currentComponent'];
+      this.programStageService.addStage(response['currentComponentName']);
+    }).catch((error) => this.toasterService.error('Errror in opening the content componnet'));
   }
 
   setProgramRole() {
@@ -468,14 +472,6 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
-    }
-    if (this.currentStage !== 'listContributorTextbook') {
-      this.contentHelperService.dynamicInputs$.subscribe((res) => {
-        this.dynamicInputs = res;
-      });
-      this.contentHelperService.currentOpenedComponent$.subscribe((res) => {
-        this.component = res;
-      });
     }
   }
   goBack() {

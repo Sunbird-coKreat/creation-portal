@@ -776,7 +776,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   validateDates() {
     let hasError = false;
-    const formData = this.createProgramForm.value;
+    const formData = this.createProgramForm.getRawValue();
     const nominationEndDate = moment(formData.nomination_enddate);
     const contentSubmissionEndDate = moment(formData.content_submission_enddate);
     const programEndDate = moment(formData.enddate);
@@ -1083,9 +1083,9 @@ showTexbooklist(showTextBookSelector = true) {
 
     if (!_.isEmpty(this.projectScopeForm.value.medium) || (!_.isEmpty(this.projectScopeForm.value.gradeLevel)) || !_.isEmpty(this.projectScopeForm.value.subject)) {
       this.filterApplied = true;
-      requestData.request.filters['medium'] = this.projectScopeForm.value.medium || [];
-      requestData.request.filters['gradeLevel'] = this.projectScopeForm.value.gradeLevel || [];
-      requestData.request.filters['subject'] = this.projectScopeForm.value.subject || [];
+      requestData.request.filters['medium'] = _.map(this.projectScopeForm.value.medium, 'name') || [];
+      requestData.request.filters['gradeLevel'] = _.map(this.projectScopeForm.value.gradeLevel, 'name') || [];
+      requestData.request.filters['subject'] = _.map(this.projectScopeForm.value.subject, 'name') || [];
     }
     requestData.request.filters = _.pickBy(requestData.request.filters, function(v,k){return (!_.isEmpty(v))});
 

@@ -120,6 +120,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   private portalVersion: string;
   public defaultFileSize: any;
   public defaultVideoSize: any;
+  dynamicHeaders = [];
+  configUrl;
+  tags = [];
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -138,12 +141,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
      (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
+    this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
+    (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
   }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
+    });
+    this.helperService.getDynamicHeaders(this.configUrl).subscribe((state: any) => {
+      if(_.has(state, "headers")){
+        this.dynamicHeaders = state.headers;
+      }
     });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
@@ -432,7 +442,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
         }
 
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
+          this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
+          this.sessionContext['addFromLibraryEnabled'] = this.collectionSourcingConfig.addFromLibraryEnabled;
+        }
+
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
           if (this.blueprintTemplate && this.blueprintTemplate.properties) {
             _.forEach(this.blueprintTemplate.properties, (prop) => {
@@ -441,6 +457,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
           this.setLocalBlueprint();
         }
+
+        if (_.has(objectCategoryDefinition, "forms.childMetadata.properties") && this.frameworkService.orgFrameworkCategories) { _.forEach(this.frameworkService.orgFrameworkCategories, (orgFrameworkCategory) => {
+            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {              
+              if(prop.code == orgFrameworkCategory.code && prop.editable){                               
+                this.tags.push(prop.code);                              
+              }              
+            });
+          });
+        }
+
         this.levelOneChapterList.push({
           identifier: 'all',
           // tslint:disable-next-line:max-line-length
@@ -989,7 +1015,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       sampleContent: node.sampleContent || null,
       sharedContext: {
         ...sharedMeta
-      }
+      },
+      learningOutcome: node.learningOutcome,
+      bloomsLevel: node.bloomsLevel
     };
     return nodeMeta;
   }
@@ -1067,7 +1095,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return true;
       } else if (content.status === 'Live' && content.sourceURL) {
         return true;
-      } else if (this.reusedContributions.indexOf(content.identifier) !== -1 && this.sessionContext['addFromLibraryBetaEnabled']) {
+      } else if (this.reusedContributions.indexOf(content.identifier) !== -1 && this.sessionContext['addFromLibraryEnabled']) {
         return true;
       }
     }
@@ -1190,6 +1218,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       case 'preview':
         this.contentId = event.content.identifier;
         this.handlePreview(event);
+        break;
+      case 'addFromLibrary':
+        this.currentStage = 'addFromLibrary';
+        this.setAddLibraryInput();
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
