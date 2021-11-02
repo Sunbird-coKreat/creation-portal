@@ -921,7 +921,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!_.get(this.nominationDetails, 'id') || this.currentNominationStatus === 'Initiated') {
       this.createNomination('Initiated', collection);
     } else {
-      this.createNomination('Initiated', collection);
+      this.openCollection(collection);
     }
   }
   createNomination(status = 'Pending', collection?) {
