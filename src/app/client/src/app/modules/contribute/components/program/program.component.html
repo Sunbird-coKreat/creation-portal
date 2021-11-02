@@ -273,7 +273,7 @@
 					</div>
 					<div *ngIf="visibility.showProgramLevelSampleUpload">
 						<button class="sb-btn sb-btn-normal sb-btn-primary px-40"  [disabled]="nominationIsInProcess || !(selectedContentTypes.length)"
-								(click)="createNomination('Initiated');" appTelemetryInteract
+								(click)="showResourceTemplate();" appTelemetryInteract
 								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload_sample', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="telemetryInteractCdata"
