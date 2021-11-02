@@ -1039,6 +1039,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
     this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
+    // tslint:disable-next-line:max-line-length
+    this.visibility['showCollectionLevelContentStatus'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections;
   }
 
   getCollectionCategoryDefinition() {

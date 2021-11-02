@@ -17,7 +17,7 @@
           popupText="{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgressHint}}">{{resourceService?.frmelmnts?.lbl?.bulkUploadInProgress}}</span>
       </div>
     </div>
-    <a href="#" class="text-decor-none text-right" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)"
+    <a href="#" class="text-decor-none ml-20 pl-5" *ngIf="['completed', 'processing'].includes(process?.status)" (click)="viewDetails($event)"
     appTelemetryInteract
     [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
     [telemetryInteractObject]="telemetryInteractObject"
