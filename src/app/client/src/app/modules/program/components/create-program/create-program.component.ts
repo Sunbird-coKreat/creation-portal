@@ -338,7 +338,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    this.programScope.framework.categories.forEach((element) => {
+    _.map(this.programScope.framework.categories, (element) => {
       const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
         result.push(value);
         return result;
