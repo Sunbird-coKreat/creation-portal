@@ -245,9 +245,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
 
-    if ((this.projectTargetType === 'collections')) {
-      this.initializeFrameworkForTatgetType('')
-    }
     const channelData$ = this.frameworkService.readChannel();
     channelData$.subscribe((channelData) => {
       if (channelData) {
@@ -262,6 +259,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
                 this.initializeFrameworkForTatgetType(response.identifier);
               }
           });
+        } else {
+          this.initializeFrameworkForTatgetType(_.get(this.programScope['userChannelData'], 'defaultFramework'))
         }
         const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
         const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
@@ -338,7 +337,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       }
     }
-    _.map(this.programScope.framework.categories, (element) => {
+    this.programScope.framework.categories.forEach((element) => {
       const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
         result.push(value);
         return result;
