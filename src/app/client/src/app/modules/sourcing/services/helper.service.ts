@@ -872,6 +872,9 @@ export class HelperService {
     if (_.includes(['gradeLevel', 'medium', 'subject'], property)) {
       ret = _.isArray(ret) ? ret : _.split(ret, ',');
     }
+    if (_.includes(['board', 'framework'], property)) {
+      ret = _.isArray(ret) ? _.first(ret) : ret;
+    }
     return ret || null;
 
     /*if (property === 'channel') {
