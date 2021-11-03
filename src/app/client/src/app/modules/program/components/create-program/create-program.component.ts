@@ -157,10 +157,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
 
       // tslint:disable-next-line: max-line-length
-      this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
-      if (this.selectedTargetCollection) {
-          this.getCollectionCategoryDefinition();
-      }
+      this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : '';
+      
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -236,6 +234,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if (this.projectTargetType === 'collections') {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
      // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
+     if (this.selectedTargetCollection) {
+        //this.getCollectionCategoryDefinition();
+        this.onChangeTargetCollectionCategory();
+     }
     }
     this.setProjectScopeDetails();
   }
@@ -287,19 +289,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
     this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
       if (frameworkData) {
-        //this.projectScopeForm.controls['framework'].setValue([frameworkData.identifier]);
         this.programScope['framework'] = frameworkData;
-        //this.programScope['frameworkAttributes'] = frameworkData.categories;
-
-        // if (this.projectTargetType === 'collections') {
-        //   //this.programScope['userFramework'] = frameworkData.frameworkdata.defaultFramework.identifier;
-        //   this.projectScopeForm.controls['framework'].setValue([frameworkData.defaultFramework.identifier]);
-        //   this.programScope['frameworkAttributes'] = frameworkData.defaultFramework.categories;
-        // } else {
-        //   //this.programScope['userFramework'] = 'nit_k-12';
-        //   this.projectScopeForm.controls['framework'].setValue(frameworkName);
-        //   this.programScope['frameworkAttributes'] = frameworkData[frameworkName].categories;
-        // }
         this.setFrameworkAttributes();
       }
       this.isFormValueSet.projectScopeForm = true;
@@ -348,7 +338,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       }
     }
-
     this.programScope.framework.categories.forEach((element) => {
       const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
         result.push(value);

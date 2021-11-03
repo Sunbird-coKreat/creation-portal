@@ -210,7 +210,7 @@ export class ContentHelperService {
     setFrameworkCategories() {
       this._sessionContext.targetCollectionFrameworksData = {};
       // tslint:disable-next-line:max-line-length
-      this._sessionContext.targetCollectionFrameworksData['framework'] = _.isArray(this._programDetails.config.framework) ? _.first(this._programDetails.config.framework): this._programDetails.config.framework;
+      this._sessionContext.targetCollectionFrameworksData['framework'] = _.isArray(this._programDetails.config.framework) ? _.first(this._programDetails.config.framework) : this._programDetails.config.framework;
     }
     setNominationDetails(nominationDetails){
       this._sessionContext.nominationDetails = nominationDetails;

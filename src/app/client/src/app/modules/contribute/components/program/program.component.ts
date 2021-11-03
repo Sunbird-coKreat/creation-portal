@@ -227,7 +227,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedContentTypes = this.programsService.getNominatedTargetPrimaryCategories(this.programDetails, this.nominationDetails);
         this.currentNominationStatus = _.get(this.nominationDetails, 'status');
         this.selectedCollectionIds = _.get(this.nominationDetails, 'collection_ids');
-        //this.nominated = !!(this.nominationDetails.status !== 'Initiated');
         this.sessionContext.nominationDetails = this.nominationDetails;
       }
       this.setProgramRole();
