@@ -313,7 +313,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
+					<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
 						{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
 						<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
@@ -321,7 +321,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+					<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
 						{{resourceService.frmelmnts.lbl.Class}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
 						<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
@@ -329,7 +329,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+					<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
 						{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
 						<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
@@ -337,10 +337,12 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-10" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
-					<th class="w-10" *ngIf="visibility.showCollectionLevelContentStatus">
-						<span *ngIf="currentNominationStatus !== 'Approved'">Sample Content</span>
-						<span *ngIf="currentNominationStatus === 'Approved'">{{resourceService.frmelmnts.lbl.contentStatus}}</span>
+					<th class="w-5" *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">{{firstLevelFolderLabel}}</th>
+					<th class="w-5" *ngIf="visibility.showCollectionLevelSamples">
+						<span>Sample Content</span>
+					</th>
+					<th class="w-20" *ngIf="visibility.showCollectionLevelContentStatus">
+						<span>{{resourceService.frmelmnts.lbl.contentStatus}}</span>
 					</th>
 					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
 						<span>{{ resourceService.frmelmnts.lbl.creator }}</span>
@@ -367,7 +369,7 @@
 						<td>{{contributorTextbook.medium}}</td>
 						<td>{{contributorTextbook.gradeLevel}}</td>
 						<td>{{contributorTextbook.subject}}</td>
-						<td *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">
+						<td *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>
 						<td *ngIf="visibility.showCollectionLevelContentStatus">
