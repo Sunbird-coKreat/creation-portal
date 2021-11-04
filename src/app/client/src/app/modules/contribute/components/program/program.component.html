@@ -372,7 +372,7 @@
 						<td *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>
-						<td *ngIf="visibility.showCollectionLevelContentStatus">
+						<td *ngIf="visibility.showCollectionLevelSamples || visibility.showCollectionLevelContentStatus">
 							<div class="text-capitalize fs-0-785">
 								<span *ngIf="currentNominationStatus !== 'Approved'"> {{contributorTextbook.totalSampleContent || 0 }}</span>
 								<div *ngIf="currentNominationStatus === 'Approved'">
