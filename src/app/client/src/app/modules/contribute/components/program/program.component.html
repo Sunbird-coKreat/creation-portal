@@ -390,14 +390,14 @@
 						</td>
 						<td class="text-right">
 							<div class="d-flex" *ngIf="visibility.showCollectionLevelSampleUpload">
-								<div *ngIf="(contributorTextbook.totalSampleContent === undefined || contributorTextbook.totalSampleContent === 0)" class="sb-checkbox-primary d-flex flex-ai-center"
+								<div *ngIf="(contributorTextbook.totalSampleContent === undefined || contributorTextbook.totalSampleContent === 0)" class="sb-checkbox sb-checkbox-primary d-flex flex-ai-center"
 									appTelemetryInteract
 									[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('textbook_selection', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [contributorTextbook.identifier]})"
 									[telemetryInteractObject]="telemetryInteractObject"
 									[telemetryInteractCdata]="getTelemetryInteractCdata('linked_collection',contributorTextbook.identifier)"
 									[telemetryInteractPdata]="telemetryInteractPdata">
-									<input type="checkbox" [checked]="contributorTextbook.isSelected || contributorTextbook.totalSampleContent" [disabled]="!(selectedContentTypes.length)" name="{{contributorTextbook.identifier}}" (click)="selectCollectionForNomination(contributorTextbook);">
-									<label>&nbsp;</label>
+									<input type="checkbox" class="mt-10" [checked]="contributorTextbook.isSelected || contributorTextbook.totalSampleContent" [disabled]="!(selectedContentTypes.length)" name="{{contributorTextbook.identifier}}" (click)="selectCollectionForNomination(contributorTextbook);">
+									<label class="mb-0 pl-10">&nbsp;</label>
 								</div>
 								<button type="button" [disabled]="nominationIsInProcess || !selectedContentTypes.length || !contributorTextbook.isSelected" (click)="uploadSampleContent(contributorTextbook)" class="sb-btn sb-btn-normal sb-btn-outline-primary px-10 ml-10"
 								appTelemetryInteract
