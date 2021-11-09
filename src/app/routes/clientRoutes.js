@@ -151,6 +151,8 @@ function getLocals(req) {
   locals.dockSmsUrl = envHelper.DOCK_SMS_URL;
   locals.dockDefaultFileSize = envHelper.DOCK_DEFAULT_FILE_SIZE;
   locals.dockDefaultVideoSize = envHelper.DOCK_DEFAULT_VIDEO_SIZE;
+  locals.sunbirdQuestionSetChildrenLimit = envHelper.sunbird_questionset_children_limit;
+  locals.sunbirdCollectionChildrenLimit =  envHelper.sunbird_collection_children_limit;
   return locals
 }
 

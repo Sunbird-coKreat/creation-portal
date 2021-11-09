@@ -41,7 +41,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   };
   public usageDetailsCount: any = {
     totalPlays: 0,
-    averageRating: 0
+    averageRating: 0,
+    noOfContentHavingAverageRating: 0
   };
   public direction = 'asc';
   public sortColumn = '';
@@ -197,6 +198,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         this.usageDetailsCount.totalPlays = value.me_totalPlaySessionCount ? (this.usageDetailsCount.totalPlays + this.getCountData(value, 'me_totalPlaySessionCount')) : this.usageDetailsCount.totalPlays;
         // tslint:disable-next-line:max-line-length
         this.usageDetailsCount.averageRating = value.me_averageRating ? (value.me_averageRating + this.usageDetailsCount.averageRating) : this.usageDetailsCount.averageRating;
+        // tslint:disable-next-line:max-line-length
+        this.usageDetailsCount.noOfContentHavingAverageRating = value.me_averageRating ? (this.usageDetailsCount.noOfContentHavingAverageRating + 1) : this.usageDetailsCount.noOfContentHavingAverageRating;
       }
 
     });
