@@ -47,7 +47,7 @@
                 <div class="d-flex flex-jc-space-between practical-header__content w-100">
                     <div class="fs-1">
                         <div class="d-flex flex-ai-center">
-                            <div class="practical-header__title font-weight-bold" suipopup="">
+                            <div class="practical-header__title font-weight-bold text-initial" suipopup="">
                                 {{slectedContent.name}} </div>
                         </div>
                         <div class="mt-8 practice-set__status">
@@ -92,7 +92,7 @@
                     </dl>
                     <dl class="mb-0">
                         <dt class="fs-1-286 font-weight-bold py-10"><i class="icon star sb-color-yellow fs-0-785" aria-hidden="true"></i>
-                            {{usageDetailsCount.averageRating}}
+                          {{usageDetailsCount.noOfContentHavingAverageRating !== 0 ? (usageDetailsCount.averageRating / usageDetailsCount.noOfContentHavingAverageRating | number: '1.0-0') : '0'}}
                         </dt>
                         <dd>{{resourceService.frmelmnts.lbl.averageRating}}</dd>
                     </dl>
@@ -287,7 +287,7 @@
                         </div>
                     </div>
                     <div class="b-1-100 br-2 mt-5" *ngIf="playerConfig && isQumlPlayer" >
-                        <div class="aspectratio" data-ratio="16:9"> 
+                        <div class="aspectratio" data-ratio="16:9">
                             <div class="content-player">
                                 <div class="w-100 h-100">
                                     <quml-main-player [playerConfig]="playerConfig" (playerEvent)="getPlayerEvents($event)"
@@ -436,7 +436,7 @@
                                 </div>
                             </div>
                         </div>
-                    </ng-container>    
+                    </ng-container>
                     <ng-template #noResult>
                         <app-no-result class="w-100" *ngIf="!showLoader" [data]="{messageText: resourceService?.messages?.stmsg?.m0006}"></app-no-result>
                       </ng-template>
@@ -444,4 +444,4 @@
             </div>
         </div>
     </ng-container>
-</ng-container> 
+</ng-container>
