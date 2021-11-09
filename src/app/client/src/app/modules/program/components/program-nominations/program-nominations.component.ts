@@ -574,9 +574,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getNominationSampleCounts(nomination) {
-    return (nomination.organisation_id) ?
+    const ret =  (nomination.organisation_id) ?
     _.get(this.nominationSampleCounts, nomination.organisation_id) || 0 :
     _.get(this.nominationSampleCounts, nomination.user_id) || 0;
+      var index = _.findIndex(this.nominations, {id: nomination.id});
+      this.nominations[index].samples = ret;
+      return ret;
   }
 
   getOverAllCounts(dashboardData) {
