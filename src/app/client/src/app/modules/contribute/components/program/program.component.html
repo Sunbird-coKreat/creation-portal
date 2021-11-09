@@ -283,6 +283,9 @@
 			</div>
 		</div>
 		<ng-container *ngTemplateOutlet="collectionList"></ng-container>
+		<div class="ui" *ngIf="loaders.showCollectionListLoader">
+			<app-loader></app-loader>
+		</div>
 	</div>
 	<div class="ui" *ngIf="loaders.showProgramHeaderLoader && loaders.showCollectionListLoader">
 		<app-loader></app-loader>
