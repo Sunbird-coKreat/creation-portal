@@ -388,7 +388,7 @@
 						<td *ngIf="programDetails?.target_type === 'searchCriteria' && (currentNominationStatus === 'Approved')">
 							<span [ngClass]="contributorTextbook.resourceStatusClass">{{ contributorTextbook.resourceStatusText }}</span>
 						</td>
-						<td class="">
+						<td>
 							<div class="d-flex" *ngIf="visibility.showCollectionLevelSampleUpload">
 								<div *ngIf="(contributorTextbook.totalSampleContent === undefined || contributorTextbook.totalSampleContent === 0)" class="sb-checkbox sb-checkbox-primary d-flex flex-ai-center"
 									appTelemetryInteract
