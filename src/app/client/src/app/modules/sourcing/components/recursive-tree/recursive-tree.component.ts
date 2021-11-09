@@ -23,6 +23,7 @@ export class RecursiveTreeComponent implements OnInit {
   @Input() selectedStatus;
   @Input() dynamicHeaders;
   @Input() tags;
+  @Input() dynamicHeadersEnabled;
   @Output() emitSelectedNode = new EventEmitter<any>();
   @Output() nodeMeta = new EventEmitter<any>();
   public showModal = false;

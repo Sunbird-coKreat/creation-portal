@@ -121,6 +121,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public defaultFileSize: any;
   public defaultVideoSize: any;
   dynamicHeaders = [];
+  dynamicHeadersEnabled;
   configUrl;
   tags = [];
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
@@ -447,6 +448,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.sessionContext['addFromLibraryEnabled'] = this.collectionSourcingConfig.addFromLibraryEnabled;
         }
 
+        if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {
+          this.dynamicHeadersEnabled = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled;
+        }
+        
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;

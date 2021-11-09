@@ -46,7 +46,7 @@
             <p class="sb__ellipsis sb__ellipsis--one cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.contentType}}" popupText="{{ programContentTypes }}"><span>{{ programContentTypes }}</span></p>
           </div>
           <div class="program-timeline px-10 py-10">
-            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted' && programDetails?.type !== 'restricted'">
             <div class="status" [class.active]="activeDate === 'nomination_enddate'">
               <div class="status__label">{{resourceService.frmelmnts.lbl.nominationEndDate}}</div>
               <div class="status__date">
@@ -56,7 +56,7 @@
               </div>
             </div>
             </div>
-            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted'">
+            <div class="program-timeline-item" *ngIf="programDetails?.status !== 'Unlisted' && programDetails?.type !== 'restricted'">
             <div class="status"  [class.active]="activeDate === 'shortlisting_enddate'">
               <div class="status__label">{{resourceService.frmelmnts.lbl.shortlistingNomination}}</div>
               <div class="status__date">
