@@ -115,8 +115,7 @@
 							</td>
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ data?.subject }}">
-										Mathematics,Social Science,Urdu,Political Science/Civics,Geography,Heritage Crafts,Biology,Economics,Health And Physical Education,Sociology,Chemistry,Science,Home Science,Informatics practices,Graphic Design,Business Studies,Creative Writing and Translation,Physics,Computer Science,Statistics,Sanskrit,Accountancy,English,Political Science,Hindi,Graphics design,Psychology,Environmental Studies,History,Fine Arts
-									  
+									{{data.subject}}
 								</div>
 							</td>
 							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
