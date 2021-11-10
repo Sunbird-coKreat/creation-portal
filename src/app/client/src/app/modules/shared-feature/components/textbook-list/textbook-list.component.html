@@ -104,18 +104,19 @@
 								</div>
 							</td>
 							<td>
-								<div>
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ data?.medium }}">
 									{{data.medium}}
 								</div>
 							</td>
 							<td>
-								<div class="sb__ellipsis sb__ellipsis--three">
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ data?.gradeLevel }}">
 									{{data.gradeLevel}}
 								</div>
 							</td>
 							<td>
-								<div>
-									{{data.subject}}
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ data?.subject }}">
+										Mathematics,Social Science,Urdu,Political Science/Civics,Geography,Heritage Crafts,Biology,Economics,Health And Physical Education,Sociology,Chemistry,Science,Home Science,Informatics practices,Graphic Design,Business Studies,Creative Writing and Translation,Physics,Computer Science,Statistics,Sanskrit,Accountancy,English,Political Science,Hindi,Graphics design,Psychology,Environmental Studies,History,Fine Arts
+									  
 								</div>
 							</td>
 							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>

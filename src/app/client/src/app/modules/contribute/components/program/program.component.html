@@ -308,7 +308,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th *ngIf="programDetails?.target_type === 'searchCriteria'" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('board')">
+					<th *ngIf="programDetails?.target_type === 'searchCriteria'" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
 						{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
 						<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
@@ -369,9 +369,15 @@
 							{{contributorTextbook.name}}
 						</td>
 						<td *ngIf="programDetails?.target_type === 'searchCriteria'">{{contributorTextbook.board}}</td>
-						<td>{{contributorTextbook.medium}}</td>
-						<td>{{contributorTextbook.gradeLevel}}</td>
-						<td>{{contributorTextbook.subject}}</td>
+						<td>
+							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ contributorTextbook?.medium }}">{{contributorTextbook.medium}}</span>
+						</td>
+						<td>
+							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ contributorTextbook?.gradeLevel }}">{{contributorTextbook.gradeLevel}}</span>
+						</td>
+						<td>
+							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ contributorTextbook?.subject }}">{{contributorTextbook.subject}}</span>
+						</td>
 						<td *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>
