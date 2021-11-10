@@ -48,7 +48,7 @@
     "@project-sunbird/sunbird-collection-editor-v9": "4.4.13",
     "@project-sunbird/sunbird-pdf-player-v9": "4.2.0",
     "@project-sunbird/sunbird-quml-player-v9": "4.4.14",
-    "@project-sunbird/sunbird-video-player-v9": "4.3.0",
+    "@project-sunbird/sunbird-video-player-v9": "4.4.1",
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "@project-sunbird/web-extensions": "^0.0.2",
     "@project-sunbird/sunbird-resource-library": "^0.0.1",
