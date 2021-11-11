@@ -132,7 +132,7 @@
             <ng-container *ngFor="let header of dynamicHeaders">
               <span class="item-status item-header">{{header.label}}</span>
             </ng-container>
-          </ng-container>          
+          </ng-container>
           <span class="item-status item-header">{{resourceService.frmelmnts.lbl.contributor}}</span>
           <span class="item-name item-header">{{resourceService.frmelmnts.lbl.status}}</span>
         </div>
@@ -145,7 +145,7 @@
           [telemetryInteractCdata]="telemetryInteractCdata"
           [telemetryInteractPdata]="telemetryInteractPdata"
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
-            <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>            
+            <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
             <span class="item-name"> {{content.name}}<br />
               <ng-container *ngFor="let tag of tags">
                 <span *ngIf="content[tag]" class="item-tag">{{content[tag]}}</span>
@@ -249,7 +249,7 @@
       </div>
       <div class="sb-chapterlist-child sb-dock-toc-accor" *ngIf="collection.children">
       <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData" [tags]="tags" [dynamicHeaders]="dynamicHeaders" [dynamicHeadersEnabled]="dynamicHeadersEnabled"
-        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
+        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)" [reusedContributions]="reusedContributions"></app-recursive-tree>
       </div>
     </div>
   </sui-accordion-panel>
