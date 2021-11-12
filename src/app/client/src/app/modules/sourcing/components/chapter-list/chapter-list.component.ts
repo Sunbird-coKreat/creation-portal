@@ -124,6 +124,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   dynamicHeadersEnabled;
   configUrl;
   tags = [];
+  printUrl;
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -235,6 +237,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+    this.printUrl = this.programsService.getCollectionDocxUrl();
   }
 
   setUserAccess() {
