@@ -1,0 +1,43 @@
+<!-- <ng-container *ngFor="transcripts.length">
+  <button class="upload-input-button sb-btn sb-btn-success sb-btn-normal">
+    Upload from Computer
+    <input (change)="attachFile($event)" type="file" name="assetfile">
+  </button>
+  <p class="fsmall my-">Drag and Drop files here</p> -->
+  <!-- <span class="fsmall mt-16">Upload</span> -->
+  <!-- <div class="sb-color-error fsmall mt-8"> -->
+    <!-- <p></p> -->
+  <!-- </div> -->
+<!-- </ng-container> -->
+<!-- <button class="upload-input-button sb-btn sb-btn-success sb-btn-normal" (click)="addMore()">Add</button> -->
+Add transcript for language
+<form class="ui form" [formGroup]="transcriptForm">
+  <div class="ui grid" >
+    <div formArrayName="languages" class="six wide column">
+      <div *ngFor="let language of languages.controls; let i=index">
+        <sui-select [formControlName]="i" placeholder="select language"
+        (selectedOptionChange)="validate()" [options]="languageOptions" #langOptions>
+          <sui-select-option  *ngFor="let option of languageOptions;" [value]="option">
+          </sui-select-option>
+        </sui-select>
+      </div>
+    </div>
+
+    <div formArrayName="transcripts" class="six wide column">
+      <div *ngFor="let transcript of transcripts.controls; let i=index">
+        <button class="upload-input-button sb-btn sb-btn-success sb-btn-normal">
+          Attach file
+          <input (change)="attachFile($event)" type="file" [formControlName]="i">
+        </button>
+
+        <!-- <p class="fsmall my-">Drag and Drop files here</p> -->
+        <span class="fsmall mt-16">Upload</span>
+        <div class="sb-color-error fsmall mt-8">
+          <p></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<button class="upload-input-button sb-btn sb-btn-success sb-btn-normal" (click)="addMore()" type="button">+ Add</button>
