@@ -12,6 +12,7 @@ import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';
 import { UUID } from 'angular2-uuid';
 import * as moment from 'moment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,7 @@ export class HelperService {
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute,
+    public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute, public httpClient: HttpClient,
     private sourcingService: SourcingService, private router: Router) { }
 
   initialize(programDetails) {
@@ -871,6 +872,9 @@ export class HelperService {
     if (_.includes(['gradeLevel', 'medium', 'subject'], property)) {
       ret = _.isArray(ret) ? ret : _.split(ret, ',');
     }
+    if (_.includes(['board', 'framework'], property)) {
+      ret = _.isArray(ret) ? _.first(ret) : ret;
+    }
     return ret || null;
 
     /*if (property === 'channel') {
@@ -918,6 +922,15 @@ export class HelperService {
     };
     return this.publicDataService.get(req).pipe(map((response: ServerResponse) => {
         return response;
+    }));
+  }
+
+  getDynamicHeaders(configUrl){
+    const req = {
+      url: `${configUrl}schemas/collection/1.0/config.json`,
+    };
+    return this.httpClient.get(req.url).pipe(map((response) => {
+      return response;
     }));
   }
 
@@ -1163,7 +1176,7 @@ export class HelperService {
 
   getFormattedFrameworkMetaWithOutCollection(row, sessionContext) {
     const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
-    const framework = _.first(_.get(sessionContext, 'framework'));
+    const framework = (_.isArray(_.get(sessionContext, 'framework'))) ? _.first(_.get(sessionContext, 'framework')) : _.get(sessionContext, 'framework');
     this.flattenedFrameworkCategories[framework] = {};
     // tslint:disable-next-line:max-line-length
     const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');

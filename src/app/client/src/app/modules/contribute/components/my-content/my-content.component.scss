@@ -12,7 +12,7 @@
 
 .d-none {
     display: none;
-} 
+}
 
 .aspectratio {
     position: relative;
@@ -30,4 +30,8 @@
     height: 100%;
     top: 0;
     left: 0;
+}
+
+.text-initial {
+  text-transform: initial !important;
 }

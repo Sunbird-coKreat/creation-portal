@@ -188,18 +188,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.roleNames = _.map(this.rolesWithNone, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
-      this.frameworkService.initialize(this.sessionContext.framework);
-      this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
-        if (frameworkData) {
-          this.sessionContext.frameworkData = frameworkData.categories;
-          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
-        }
-        this.getNominationStatus();
-        this.setTargetCollectionValue();
-        this.getCollectionCategoryDefinition();
-      }, error => {
-        this.raiseError(error, 'Fetching framework details failed')
-      });
+      this.getNominationStatus();
+      this.setTargetCollectionValue();
+      this.getCollectionCategoryDefinition();
     }, error => {
       // TODO: navigate to program list page
       this.raiseError(error, this.resourceService.messages.emsg.project.m0001)
@@ -236,7 +227,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedContentTypes = this.programsService.getNominatedTargetPrimaryCategories(this.programDetails, this.nominationDetails);
         this.currentNominationStatus = _.get(this.nominationDetails, 'status');
         this.selectedCollectionIds = _.get(this.nominationDetails, 'collection_ids');
-        //this.nominated = !!(this.nominationDetails.status !== 'Initiated');
         this.sessionContext.nominationDetails = this.nominationDetails;
       }
       this.setProgramRole();
@@ -246,14 +236,23 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sessionContext = _.assign(this.sessionContext, this.sessionContext['selectedSharedProperties']);
       this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
-      if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
-        this.getProgramCollections();
-      } else if (this.programDetails.target_type == 'searchCriteria') {
-        forkJoin(this.getUserProgramPreferences(),this.getOriginForApprovedContents(), this.getProgramContentAggregation()).subscribe((res) => {
-          const preferences = _.get(_.first(res), 'result');
-          this.getProgramContents(_.get(preferences, 'contributor_preference'));
-        })
-      }
+      this.frameworkService.initialize(this.sessionContext.framework);
+      this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
+        if (frameworkData) {
+          this.sessionContext.frameworkData = frameworkData.categories;
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
+        } 
+        if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+          this.getProgramCollections();
+        } else if (this.programDetails.target_type == 'searchCriteria') {
+          forkJoin(this.getUserProgramPreferences(),this.getOriginForApprovedContents(), this.getProgramContentAggregation()).subscribe((res) => {
+            const preferences = _.get(_.first(res), 'result');
+            this.getProgramContents(_.get(preferences, 'contributor_preference'));
+          })
+        }
+      }, error => {
+        this.raiseError(error, 'Fetching framework details failed')
+      });
     }, error => {
       const errInfo = {
         errorMsg: 'Failed fetching current nomination status',
@@ -910,10 +909,19 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   showResourceTemplate() {
-    this.createNomination('Initiated');
+    if (!_.get(this.nominationDetails, 'id') || this.currentNominationStatus === 'Initiated') {
+      this.createNomination('Initiated');
+    } else {
+      this.resourceTemplateInputData();
+      this.showResourceTemplatePopup = true;
+    }
   }
   uploadSampleContent(collection) {
-    this.createNomination('Initiated', collection);
+    if (!_.get(this.nominationDetails, 'id') || this.currentNominationStatus === 'Initiated') {
+      this.createNomination('Initiated', collection);
+    } else {
+      this.openCollection(collection);
+    }
   }
   createNomination(status = 'Pending', collection?) {
     this.nominationIsInProcess = true;
@@ -1030,6 +1038,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
     this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
+    // tslint:disable-next-line:max-line-length
+    this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && this.currentNominationStatus !== 'Approved';
+    this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && this.currentNominationStatus === 'Approved';
   }
 
   getCollectionCategoryDefinition() {

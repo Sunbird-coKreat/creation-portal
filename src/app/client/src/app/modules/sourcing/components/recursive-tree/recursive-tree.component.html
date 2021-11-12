@@ -84,14 +84,14 @@
       </div>
 
      <div class="d-flex">
-       <ng-container *ngIf="sessionContext['addFromLibraryBetaEnabled']; else noLibrary">
+       <ng-container *ngIf="sessionContext['addFromLibraryEnabled']; else noLibrary">
          <button (click)="addFromLibrary($event, collection)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
                  appTelemetryInteract
                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
                  [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
                  [telemetryInteractCdata]="telemetryInteractCdata"
                  [telemetryInteractPdata]="telemetryInteractPdata"
-                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && sessionContext['addFromLibraryBetaEnabled']">
+                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && sessionContext['addFromLibraryEnabled']">
            <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
        </ng-container>
        <ng-template #noLibrary>
@@ -125,6 +125,17 @@
     </div>
     <div content>
       <div class="chapter-lists level1" *ngIf="collection.leaf">
+        <div class="header chapter-lists--item">
+          <span class="item-name item-sno item-header">{{resourceService.frmelmnts.lbl.sno}}</span>
+          <span class="item-name item-header">{{resourceService.frmelmnts.lbl.name}}</span>
+          <ng-container *ngIf="dynamicHeadersEnabled">
+            <ng-container *ngFor="let header of dynamicHeaders">
+              <span class="item-status item-header">{{header.label}}</span>
+            </ng-container>
+          </ng-container>
+          <span class="item-status item-header">{{resourceService.frmelmnts.lbl.contributor}}</span>
+          <span class="item-name item-header">{{resourceService.frmelmnts.lbl.status}}</span>
+        </div>
         <ng-container *ngFor="let content of collection.leaf; let ind = index">
           <div class="chapter-lists--item"
           *ngIf="content.contentVisibility === true && includes(sourcingOrgReviewer, selectedStatus, content.sourcingStatus || content.status)"
@@ -135,9 +146,18 @@
           [telemetryInteractPdata]="telemetryInteractPdata"
           (click)="previewResource($event, content, collection, originalCollectionData, i)">
             <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
-            <span class="item-name"> {{content.name}}</span>
+            <span class="item-name"> {{content.name}}<br />
+              <ng-container *ngFor="let tag of tags">
+                <span *ngIf="content[tag]" class="item-tag">{{content[tag]}}</span>
+              </ng-container>
+            </span>
+            <ng-container *ngIf="dynamicHeadersEnabled">
+              <ng-container *ngFor="let header of dynamicHeaders">
+                <span class="item-status" *ngIf="header.key">{{content[header.key] || '-'}}</span>
+              </ng-container>
+            </ng-container>
             <span class="item-status">{{content.creator}}</span>
-            <span class="item-status" *ngIf="!content.sampleContent">
+            <span class="item-name" *ngIf="!content.sampleContent">
               <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span [ngClass]="{'sb-color-primary':content.status === 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
               <span [ngClass]="{'sb-color-warning':content.status === 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
@@ -147,7 +167,7 @@
               <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
               <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
               <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
-              <strong *ngIf="sessionContext['addFromLibraryBetaEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
+              <strong *ngIf="sessionContext['addFromLibraryEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
             </span>
             <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
               <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
@@ -228,8 +248,8 @@
         </ng-container>
       </div>
       <div class="sb-chapterlist-child sb-dock-toc-accor" *ngIf="collection.children">
-        <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData"
-        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)"></app-recursive-tree>
+      <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData" [tags]="tags" [dynamicHeaders]="dynamicHeaders" [dynamicHeadersEnabled]="dynamicHeadersEnabled"
+        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)" [reusedContributions]="reusedContributions"></app-recursive-tree>
       </div>
     </div>
   </sui-accordion-panel>

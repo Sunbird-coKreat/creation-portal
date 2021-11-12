@@ -549,6 +549,9 @@
 							</div>
 						</form>
 					</div>
+					<div *ngIf="!isFormValueSet.projectScopeForm">
+						<app-loader></app-loader>
+					</div>
 				</div>
 			</sui-tabset>
 		</div>

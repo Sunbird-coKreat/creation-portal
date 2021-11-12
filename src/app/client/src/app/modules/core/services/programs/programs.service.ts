@@ -1165,7 +1165,7 @@ export class ProgramsService extends DataService implements CanActivate {
       url: `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`,
       param: {
         id: identifier,
-        format: 'json'
+        format: 'docx'
       }
     };
   return this.contentService.get(req);
