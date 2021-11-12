@@ -1160,6 +1160,10 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.API_URL(req);
   }
 
+  getCollectionDocxUrl() {
+    return this.baseUrl + `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`;
+  }
+
   generateCollectionDocx(identifier) {
     const req = {
       url: `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`,
