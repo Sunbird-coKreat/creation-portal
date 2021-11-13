@@ -21,13 +21,26 @@ export class TranscriptsComponent implements OnInit {
 
   ngOnInit(): void {
     this.languageOptions = [
-      "Urdu",
-      "Sanskrit",
-      "Maithili",
-      "Munda",
-      "Santali",
-      "Juang",
-      "Ho",
+      {"name": "English", "id": "en"},
+      {"name": "Hindi", "id": "hi"}
+      // {"language": "Assamese", "languageCode": "as"},
+      // {"language": "Bengali", "languageCode": "bn"},
+      // {"language": "Gujarati", "languageCode": "gu"},
+      // {"language": "Kannada", "languageCode": "kn"},
+      // {"language": "Malayalam", "languageCode": "ml"},
+      // {"language": "Marathi", "languageCode": "mr"},
+      // {"language": "Nepali", "languageCode": "ne"},
+      // {"language": "Odia", "languageCode": "or"},
+      // {"language": "Punjabi", "languageCode": "pa"},
+      // {"language": "Tamil", "languageCode": "ta"},
+      // {"language": "Telugu", "languageCode": "te"},
+      // {"language": "Urdu", "languageCode": "ur"},
+      // {"language": "Sanskrit", "languageCode": "sa"},
+      // {"language": "Maithili", "languageCode": "mai"},
+      // {"language": "Munda", "languageCode": "mun"},
+      // {"language": "Santali", "languageCode": "sat"},
+      // {"language": "Juang", "languageCode": "jun"},
+      // {"language": "Ho", "languageCode": "hoc"},
     ];
 
     this.transcriptForm = this.fb.group({
@@ -77,7 +90,7 @@ export class TranscriptsComponent implements OnInit {
     this.languages.push(this.fb.control(''));
   }
 
-  validate() {
-
+  validate(event) {
+    console.log(event);
   }
 }
