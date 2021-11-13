@@ -1,0 +1,62 @@
+/* Before Upload Field */
+.sb-before-upload-section {
+    min-height: 51px;
+    input[type="file"] {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        margin: 0px;
+        padding: 0px;
+        cursor: pointer;
+        opacity: 0;
+        line-height: 26px;
+    }
+    .sb-before-upload-input{
+        position: relative;
+        line-height: 32px;
+        display: inline-block;
+        .fa-paperclip{
+            &:before{
+                transform: rotate(270deg);
+                -ms-transform: rotate(270deg);
+                -moz-transform: rotate(270deg);
+                -webkit-transform: rotate(270deg);
+                -o-transform: rotate(270deg);
+                position: absolute;
+                left: 0;
+                top: 10px;
+            }
+        }
+    }
+}
+/* After Upload Field */
+.sb-after-upload-section{
+    border: 1px solid #d0e0f3;
+    background-color: var(--primary-0);
+    input[type="file"] {
+        position: absolute;
+        left: -15px;
+        top: 0px;
+        margin: 0px;
+        padding: 0px;
+        cursor: pointer;
+        opacity: 0;
+        line-height: 26px;
+    }
+}
+
+.selection .text{
+    line-height: 26px !important;
+}
+
+.sb-min-width-auto{
+    min-width: auto;
+}
+
+.w-200{
+    width:200px;
+}
+
+
+
+
