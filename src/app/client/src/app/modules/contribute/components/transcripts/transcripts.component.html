@@ -1,55 +1,52 @@
-<!-- <ng-container *ngFor="transcripts.length">
-  <button class="upload-input-button sb-btn sb-btn-success sb-btn-normal">
-    Upload from Computer
-    <input (change)="attachFile($event)" type="file" name="assetfile">
-  </button>
-  <p class="fsmall my-">Drag and Drop files here</p> -->
-  <!-- <span class="fsmall mt-16">Upload</span> -->
-  <!-- <div class="sb-color-error fsmall mt-8"> -->
-    <!-- <p></p> -->
-  <!-- </div> -->
-<!-- </ng-container> -->
-<!-- <button class="upload-input-button sb-btn sb-btn-success sb-btn-normal" (click)="addMore()">Add</button> -->
 <label class="mb-15">Add transcript for language</label>
 <form class="ui form" [formGroup]="transcriptForm">
-  <div class="ui grid" >
+  <div class="ui grid">
     <div formArrayName="languages" class="three wide column">
       <div *ngFor="let language of languages.controls; let i=index" class="py-10">
-        <sui-select [formControlName]="i" placeholder="select language"
-        (selectedOptionChange)="validate()" [options]="languageOptions" class="selection" #langOptions>
-          <sui-select-option  *ngFor="let option of languageOptions;" [value]="option">
+        <sui-select [formControlName]="i" (selectedOptionChange)="languageChange($event)" placeholder="Select language"
+          valueField="code" labelField="name" [options]="languageOptions" class="selection" #selectRef>
+          <sui-select-option *ngFor="let option of selectRef.filteredOptions" [value]="option">
           </sui-select-option>
         </sui-select>
       </div>
     </div>
     <div formArrayName="transcripts" class="six wide column fs-0-785 mt-10">
-        <!--Start - Before Upload File Field-->
-        <div *ngFor="let transcript of transcripts.controls; let i=index" class="sb-before-upload-section">
+      <!--Start - Before Upload File Field-->
+      <div *ngFor="let transcript of transcripts.controls; let i=index" class="sb-before-upload-section">
+        <div id="attachFileBlock{{i}}">
           <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
-            <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i class="fa fa-paperclip"></i>Attach file</span>
-            <input (change)="attachFile($event)" type="file" [formControlName]="i">
+            <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i
+                class="fa fa-paperclip"></i>Attach file</span>
+            <input id="attachFileInput{{i}}" (change)="attachFile($event, i)" type="file" [formControlName]="i">
           </button>
           <div class="sb-color-error fsmall">
             <p class="fs-0-785"></p>
           </div>
         </div>
         <!--End - Before Upload File Field-->
+
         <!--Start - After Upload File Field-->
-        <div class="sb-after-upload-section d-flex bradius-2">
-          <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex" suiPopup popupText="1608430_o_plus_square_icon.png"><i class="file icon" ></i>
-            <div class="sb__ellipsis w-200">1608430_o_plus_square_icon.png </div>
+        <div id="replaceFileBlock{{i}}" class="sb-after-upload-section d-flex bradius-2 block-hide">
+          <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex"><i
+              class="file icon"></i>
+            <div id="selectedFileName{{i}}" class="sb__ellipsis w-200"></div>
           </div>
-          <button class="sb-after-upload-button sb-btn sb-btn-link sb-min-width-auto mouse-pointer"><i class="icon refresh sb-color-primary"></i>
-            <input name="" type="file" accept="image/png,image/jpeg">
+          <button class="sb-after-upload-button sb-btn sb-btn-link sb-min-width-auto mouse-pointer" (click)="replaceFile(i)"><i
+              class="icon refresh sb-color-primary"></i>
+            <!-- <input name="" type="file" accept="image/png,image/jpeg"> -->
           </button>
-          <button class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto"><i class="download icon sb-color-primary"></i>
-          </button>
-          <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto"><i class="trash icon sb-color-primary"></i>
+          <!-- <button class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto"><i
+              class="download icon sb-color-primary"></i>
+          </button> -->
+          <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto" (click)="reset(i)"><i
+              class="trash icon sb-color-primary"></i>
           </button>
         </div>
-        <!-- End - Before Upload File Field-->
+      </div>
+      <!-- End - Before Upload File Field-->
     </div>
   </div>
 </form>
 
-<button type="button" class="ui basic button icon sb-color-primary" (click)="addMore()"><i class="plus icon"></i></button>
+<button type="button" class="ui basic button icon sb-color-primary" (click)="addMore()"><i
+    class="plus icon"></i></button>
