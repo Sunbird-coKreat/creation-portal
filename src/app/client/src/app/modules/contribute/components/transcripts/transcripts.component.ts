@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -9,6 +9,7 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 
 export class TranscriptsComponent implements OnInit {
   @Input() contentObject;
+
   public transcriptForm: FormGroup;
   public langControl = "language";
   public languageOptions;
@@ -91,10 +92,12 @@ export class TranscriptsComponent implements OnInit {
   }
 
   reset(index) {
+    // @Todo use viewChildern referance instead of id
     document.getElementById("replaceFileBlock" + index).classList.add("block-hide");
     document.getElementById("attachFileBlock" + index).classList.remove("block-hide");
     document.getElementById("selectedFileName" + index).innerText = "";
-    (<HTMLInputElement>document.getElementById("attachFileInput" + index)).value = ""
+    (<HTMLInputElement>document.getElementById("attachFileInput" + index)).value = "";
+    this.transcripts.controls[index].reset();
   }
 
   download() {
