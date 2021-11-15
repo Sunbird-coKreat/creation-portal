@@ -60,7 +60,7 @@
 							<div *ngIf="isContributingOrgAdmin" class="sb-color-warning d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts?.sourcingOrgStatus?.pending|| 0}}</span> {{resourceService.frmelmnts.lbl.sentForApproval}}</div> -->
 						</div>
 						<div class="d-flex text-right">
-							<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" [ngClass]="{'mb-10': !isContributingOrgAdmin}"
+							<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary pt-10" href="{{ programDetails?.guidelines_url }}" target="_blank" *ngIf="programDetails?.guidelines_url" [ngClass]="{'mb-10': !isContributingOrgAdmin}"
 							appTelemetryInteract
 							[telemetryInteractEdata]="getTelemetryInteractEdata('view_content_guidelines_document', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
 							[telemetryInteractObject]="telemetryInteractObject"
