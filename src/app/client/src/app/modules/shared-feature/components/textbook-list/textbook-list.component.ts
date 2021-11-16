@@ -242,6 +242,8 @@ export class TextbookListComponent implements OnInit {
           _.forEach(resObj, (obj) => {
             tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, obj));
           });
+        } else {
+          tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, {}));
         }
         const csvDownloadConfig = {
           filename: this.programDetails.name.trim(),
