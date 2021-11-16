@@ -157,7 +157,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.pageStartTime = Date.now();
   }
 
-  getProgramDetails() {    
+  getProgramDetails() {
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
@@ -166,7 +166,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
 
       // tslint:disable-next-line: max-line-length
-      this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';     
+      this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : 'Digital Textbook';
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -270,8 +270,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
         const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
         const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
-        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');     
-        const questionCategories = _.get(channeltargetObjectTypeGroup, 'Question');   
+        const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
+        const questionCategories = _.get(channeltargetObjectTypeGroup, 'Question');
         if (_.toLower(this.enableQuestionSetEditor) === 'true') {
           this.programScope['targetPrimaryObjects'] = questionSetCategories;
           this.programScope['targetPrimaryCategories']  = _.map(questionSetCategories, 'name');
@@ -292,7 +292,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           }));
         }
         // tslint:disable-next-line:max-line-length
-        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];        
+        this.programScope['selectedTargetCategoryObjects'] = (this.programDetails) ? this.programsService.getProgramTargetPrimaryCategories(this.programDetails, channelCats) : [];
         this.selectedTargetCategories = _.map(this.programScope['selectedTargetCategoryObjects'], 'name');
 
         // set draft collections on projectScope page load
@@ -476,20 +476,20 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           'board': board,
           'framework': framework
         }
-      }      
+      }
     }
     return {}
   }
 
   initializeCollectionEditorInput() {
-    this.setFrameworkAttributes();    
+    this.setFrameworkAttributes();
     const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
     const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
 
     this.questionSetEditorComponentInput['sessionContext'] = {
       currentRoles: this.userService.userProfile.userRoles,
     };
-    this.questionSetEditorComponentInput['templateDetails'] = 
+    this.questionSetEditorComponentInput['templateDetails'] =
       {
         name: selectedTargetCollectionObject?.name,
         modeOfCreation: objType,
@@ -505,8 +505,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.questionSetEditorComponentInput['hideSubmitForReviewBtn'] = true;
   }
 
-  
-  initiateCollectionEditor(identifier?) {  
+
+  initiateCollectionEditor(identifier?) {
     this.initializeCollectionEditorInput();
     if(_.isEmpty(identifier)) {
     const createContentReq = this.helperService.createContent(this.questionSetEditorComponentInput);
@@ -523,30 +523,30 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }))
       .subscribe(result => {
         this.questionSetEditorComponentInput.contentId = result.identifier;
-        this.programsService.emitHeaderEvent(false);        
+        this.programsService.emitHeaderEvent(false);
         this.collectionEditorVisible = true;
       });
     } else {
         this.questionSetEditorComponentInput.contentId = identifier;
-        this.programsService.emitHeaderEvent(false);        
+        this.programsService.emitHeaderEvent(false);
         this.collectionEditorVisible = true;
     }
   }
 
   collectionEditorEventListener(event) {
     console.log(event);
-    switch (event.action) {              
+    switch (event.action) {
      case 'saveContent':
        this.collectionEditorVisible = false;
-       this.navigateTo(2);       
+       this.navigateTo(2);
        this.onCollectionCheck(event.collection, true);
        this.showProgramScope = true;
       break;
-     case 'backContent':         
-     default:      
+     case 'backContent':
+     default:
         this.navigateTo(2);
         this.collectionEditorVisible = false;
-        break;      
+        break;
     }
    }
 
@@ -1053,6 +1053,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         (res) => {
           this.programId = res.result.program_id;
           programData['program_id'] = this.programId;
+          this.programDetails = programData;
           cb(null, res);
         },
         (err) => {
@@ -1164,9 +1165,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
-    this.projectScopeForm.value.pcollections = [];  
-    if(this.projectTargetType !== 'questionSets') { 
-      this.showTexbooklist(true);    
+    this.projectScopeForm.value.pcollections = [];
+    if(this.projectTargetType !== 'questionSets') {
+      this.showTexbooklist(true);
     } else {
       this.showTexbooklist(false);
     }
@@ -1174,8 +1175,8 @@ onChangeTargetCollectionCategory() {
   if(this.programScope['userChannelData']) {
     this.setSelectedTargetCollectionObject();
   }
-    
-  this.getCollectionCategoryDefinition();  
+
+  this.getCollectionCategoryDefinition();
   this.tempCollections = [];
 }
 
@@ -1279,7 +1280,7 @@ showTexbooklist(showTextBookSelector = true) {
         this.tempCollections.push(collection);
 
         if(this.projectTargetType === 'questionSets') {
-          if (!this.textbooks[collectionId]) {            
+          if (!this.textbooks[collectionId]) {
             this.textbooks[collectionId] = collection;
           }
         } else {
@@ -1297,7 +1298,7 @@ showTexbooklist(showTextBookSelector = true) {
       pcollectionsFormArray.removeAt(index);
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
-      this.tempCollections.splice(cindex, 1);      
+      this.tempCollections.splice(cindex, 1);
       delete this.textbooks[collectionId];
     }
   }
@@ -1607,7 +1608,7 @@ showTexbooklist(showTextBookSelector = true) {
     this.btnDoneDisabled = false;
   }
 
-  public getCollectionHierarchy(identifier: string) {  
+  public getCollectionHierarchy(identifier: string) {
     return this.programsService.getHierarchyFromOrigin(identifier).subscribe(res => {
       const content = _.get(res, 'result.content');
       this.textbooks[identifier] = {};
