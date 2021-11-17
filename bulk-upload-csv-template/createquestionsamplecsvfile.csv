@@ -1,0 +1,41 @@
+Name of the Question,QuestionCategory,Additional Category,Level 1 Question Set Section,Keywords,Audience,Author,Copyright,License,Attributions,"Status:
+Failed, Success, Pending","Reason for failure:
+Invalid data in column <<Column Name>>
+Content not accessible
+Network Timeout
+System Error (any other error)"
+"Mandatory: No
+Default: Multiple Choice Question
+Validations: 
+- Upto 120 characters
+- No special characters
+Tip: Please provide name for the question","Mandatory: Yes
+Default: MCQ
+Validation: If anything other than MCQ, reject the question
+Tip: Always fill ""MCQ""","Mandatory: No
+Default: Primary category of the Question Set (derived value).
+Validation: 
+Tip: Purpose of the question. Should be same as content type of question set. ","Mandatory: No
+Default: None
+Validation: Should match with the names provided in the question set hierarchy. Not case-sensitive / Case insensitive. 
+Tip: Provide name of the folder where you want to upload a question","Mandatory: No
+Default: None
+Validation: Comma separated values. No special characters.
+Tip: Keywords","Mandatory: No
+Default: Audience category of the Question Set (derived value).
+Validation: Supported values in the platform
+Tip: Audience of the question. Should be same as audience of the question set.","
+Mandatory: No
+Default: None
+Validation: No special characters. Max 300 characters.
+Tip: The person or organization who has authored the content","Mandatory: No
+Default: Name of the tenant.
+Validation: No special characters. Max 300 characters.
+Tip: Person or Organization who owns the copyright. Default name is DIKSHA tenant.","Mandatory: No
+Default: License of the tenant (derived).
+Validation: No special characters. Max 300 characters.
+Tip: One of the supported licenses in DIKSHA.
+If this is empty, default to the default license configured for the tenant.","Mandatory: No
+Default: None
+Validation: No special characters. Max 300 characters.
+Tip: List of persons or organizations who have contributed to this content.",,
