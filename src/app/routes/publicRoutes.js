@@ -154,6 +154,33 @@ module.exports = function (app) {
         })
     )
 
+    app.use(['/api/asset/v1/create','/api/asset/v1/read/*', '/api/asset/v1/upload/*' ],
+      proxy(contentProxyUrl, {
+      proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+          let urlParam = req.originalUrl;
+          let query = require('url').parse(req.url).query
+          console.log('/api/asset  ', require('url').parse(contentProxyUrl + urlParam).path);
+          if (query) {
+            return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
+          } else {
+            return require('url').parse(contentProxyUrl + urlParam).path
+          }
+      },
+      userResDecorator: function (proxyRes, proxyResData,  req, res) {
+          try {
+          logger.info({msg: '/api/asset'});
+          const data = JSON.parse(proxyResData.toString('utf8'));
+          if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+          else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
+          } catch(err) {
+          logger.error({msg:'content api user res decorator json parse error:', proxyResData})
+              return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
+          }
+      }
+      })
+    )
+
     app.use('/api/*',
     isAPIWhitelisted.isAllowed(),
     permissionsHelper.checkPermission(),
