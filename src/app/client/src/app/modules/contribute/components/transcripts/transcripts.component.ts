@@ -2,7 +2,7 @@ import { HelperService } from './../../../sourcing/services/helper.service';
 import { TranscriptService } from './../../../core/services/transcript/transcript.service';
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import _ from 'lodash';
@@ -17,6 +17,7 @@ import { TranscriptMetadata } from './transcript';
 
 export class TranscriptsComponent implements OnInit {
   @Input() contentObject;
+  public orderForm: FormGroup;
   public transcriptForm: FormGroup;
   public langControl = "language";
   public languageOptions;
@@ -73,13 +74,49 @@ export class TranscriptsComponent implements OnInit {
       { name: "Ho", code: "Ho" }
     ];
 
-    this.transcriptForm = this.fb.group({
-      transcripts: this.fb.array([]),
-      languages: this.fb.array([])
-    });
+    // this.transcriptForm = this.fb.group({
+    //   transcripts: this.fb.array([]),
+    //   languages: this.fb.array([])
+    // });
 
-    this.setFormValues(this.content.transcripts);
-    this.addMore();
+    // this.setFormValues(this.content.transcripts);
+    // this.addMore();
+
+    this.transcriptForm = this.fb.group({
+      items: this.fb.array([ this.createItem() ])
+    });
+  }
+
+  get items(): FormArray {
+    return this.transcriptForm.get('items') as FormArray;
+  }
+
+  getLanguage(index) {
+    return this.items.controls[index].get("language").value;
+  }
+
+  getFileControl(index) {
+    return this.items.controls[index].get("transcriptFile");
+  }
+
+  setFile(index, value) {
+    return this.items.controls[index].get("transcriptFile")["file"] = value;
+  }
+
+  getFile(index) {
+    return this.items.controls[index].get("transcriptFile")["file"];
+  }
+
+  addItem(): void {
+    this.items.push(this.createItem());
+  }
+
+  createItem(): FormGroup {
+    return this.fb.group({
+      identifier: '',
+      language: '',
+      transcriptFile: ''
+    });
   }
 
   get transcripts() {
@@ -104,8 +141,7 @@ export class TranscriptsComponent implements OnInit {
 
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
-      this.transcripts.controls[index]['file'] = file;
-      this.transcripts.controls[index].patchValue(file.name);
+      this.setFile(index, file);
     }
   }
 
@@ -122,9 +158,10 @@ export class TranscriptsComponent implements OnInit {
   }
 
   reset(index) {
+    this.getFileControl(index).reset();
     // @Todo use viewChildern referance instead of id
-    (<HTMLInputElement>document.getElementById("attachFileInput" + index)).value = "";
-    this.transcripts.controls[index].reset();
+    // (<HTMLInputElement>document.getElementById("attachFileInput" + index)).value = "";
+    // this.transcripts.controls[index].reset();
   }
 
   download() {

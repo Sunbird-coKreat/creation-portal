@@ -1,68 +1,78 @@
 /* Before Upload Field */
 .sb-before-upload-section {
-    min-height: 51px;
-    input[type="file"] {
-        position: absolute;
-        right: 0px;
-        top: 0px;
-        margin: 0px;
-        padding: 0px;
-        cursor: pointer;
-        opacity: 0;
-        line-height: 26px;
-    }
-    .sb-before-upload-input{
-        position: relative;
-        line-height: 32px;
-        display: inline-block;
-        .fa-paperclip{
-            &:before{
-                transform: rotate(270deg);
-                -ms-transform: rotate(270deg);
-                -moz-transform: rotate(270deg);
-                -webkit-transform: rotate(270deg);
-                -o-transform: rotate(270deg);
-                position: absolute;
-                left: 0;
-                top: 10px;
-            }
-        }
-    }
+  // min-height: 51px;
+  input[type="file"] {
+      position: absolute;
+      right: 0px;
+      top: 0px;
+      margin: 0px;
+      padding: 0px;
+      cursor: pointer;
+      opacity: 0;
+      line-height: 26px;
+  }
+  .sb-before-upload-input{
+      position: relative;
+      line-height: 32px;
+      display: inline-block;
+      .fa-paperclip{
+          &:before{
+              transform: rotate(270deg);
+              -ms-transform: rotate(270deg);
+              -moz-transform: rotate(270deg);
+              -webkit-transform: rotate(270deg);
+              -o-transform: rotate(270deg);
+              position: absolute;
+              left: 0;
+              top: 10px;
+          }
+      }
+  }
 }
 /* After Upload Field */
 .sb-after-upload-section{
-    border: 1px solid #d0e0f3;
-    background-color: var(--primary-0);
-    input[type="file"] {
-        position: absolute;
-        left: -15px;
-        top: 0px;
-        margin: 0px;
-        padding: 0px;
-        cursor: pointer;
-        opacity: 0;
-        line-height: 26px;
-    }
+  // min-height: 51px;
+  input[type="file"] {
+      position: absolute;
+      left: -15px;
+      top: 0px;
+      margin: 0px;
+      padding: 0px;
+      cursor: pointer;
+      opacity: 0;
+      line-height: 26px;
+  }
+  .sb-after-upload-field{
+      border: 1px solid #d0e0f3;
+      background-color: var(--primary-0);
+  }
 }
 
-.selection .text{
-    line-height: 26px !important;
+.ui.selection.dropdown{
+  line-height: 2.1 !important;
+}
+
+.icon{
+  &.sb-color-primary{
+          color: var(--blue) !important;
+      i.plus.icon{
+          color: var(--blue) !important;
+      }
+  }
 }
 
 .sb-min-width-auto{
-    min-width: auto;
+  min-width: auto;
 }
 
-.w-200{
-    width:200px;
+.w-230{
+  width:230px;
 }
 
 .block-hide {
-  display: none !important;
+display: none !important;
 }
 
 .block-show {
-  display: block !important;
+display: block !important;
 }
-
-

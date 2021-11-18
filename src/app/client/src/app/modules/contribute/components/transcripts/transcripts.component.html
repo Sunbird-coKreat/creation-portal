@@ -3,25 +3,24 @@
   <div class="dynamicHeight">
     <label class="mb-15">Add transcript for language</label>
     <form class="ui form" [formGroup]="transcriptForm">
-      <div class="ui grid">
-        <div formArrayName="languages" class="three wide column">
-          <div *ngFor="let language of languages.controls; let i=index" class="py-10">
-            <sui-select [formControlName]="i" (selectedOptionChange)="languageChange($event)"
+      <div formArrayName="items" *ngFor="let item of transcriptForm.get('items')['controls']; let i = index;">
+        <div class="ui grid" [formGroupName]="i">
+          <div class="three wide column">
+            <sui-select formControlName="language" (selectedOptionChange)="languageChange($event)"
               placeholder="Select language" valueField="code" labelField="name" [options]="languageOptions"
               class="selection" #selectRef>
               <sui-select-option *ngFor="let option of selectRef.filteredOptions" [value]="option">
               </sui-select-option>
             </sui-select>
           </div>
-        </div>
-        <div formArrayName="transcripts" class="six wide column fs-0-785 mt-10">
-          <!--Start - Before Upload File Field-->
-          <div *ngFor="let transcript of transcripts.controls; let i=index" class="sb-before-upload-section">
-            <div [class.block-hide]="transcript.value">
+          <div class="six wide column">
+            <!-- [class.block-hide]="transcriptFile.value" -->
+            <div [class.block-hide]="item.controls.transcriptFile.value" class="sb-before-upload-section">
               <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
                 <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i
                     class="fa fa-paperclip"></i>Attach file</span>
-                <input id="attachFileInput{{i}}" (change)="attachFile($event, i)" type="file" [formControlName]="i">
+                <input formControlName="transcriptFile" id="attachFileInput{{i}}" (change)="attachFile($event, i)"
+                  type="file" #transcriptFileInput>
               </button>
               <div class="sb-color-error fsmall">
                 <p class="fs-0-785"></p>
@@ -30,32 +29,49 @@
             <!--End - Before Upload File Field-->
 
             <!--Start - After Upload File Field-->
-            <div [class.block-hide]="!transcript.value" class="sb-after-upload-section d-flex bradius-2">
-              <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex"><i class="file icon"></i>
-                <div class="sb__ellipsis w-200">
-                  {{ transcript.value }}
+            <!-- [class.block-hide]="!transcriptFile.value" -->
+            <div [class.block-hide]="!item.controls.transcriptFile.value" class="sb-after-upload-section">
+              <div class="sb-after-upload-field d-flex bradius-2">
+                <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex"><i class="file icon"></i>
+                  <div class="sb__ellipsis w-230">
+                    {{ item?.controls?.transcriptFile?.file?.name }}
+                  </div>
                 </div>
+                <button class="sb-after-upload-button sb-btn sb-btn-link sb-min-width-auto mouse-pointer"
+                  (click)="replaceFile(i)"><i class="icon refresh sb-color-primary"></i>
+                  <!-- <input name="" type="file" accept="image/png,image/jpeg"> -->
+                </button>
+                <!-- <button class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto"><i
+                        class="download icon sb-color-primary"></i>
+                    </button> -->
+                <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto"
+                  (click)="reset(i)"><i class="trash icon sb-color-primary"></i>
+                </button>
+
               </div>
-              <button class="sb-after-upload-button sb-btn sb-btn-link sb-min-width-auto mouse-pointer"
-                (click)="replaceFile(i)"><i class="icon refresh sb-color-primary"></i>
-                <!-- <input name="" type="file" accept="image/png,image/jpeg"> -->
-              </button>
-              <!-- <button class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto"><i
-                      class="download icon sb-color-primary"></i>
-                  </button> -->
-              <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto"
-                (click)="reset(i)"><i class="trash icon sb-color-primary"></i>
-              </button>
             </div>
           </div>
-          <!-- End - Before Upload File Field-->
+
+          <input formControlName="identifier" type="hidden">
         </div>
       </div>
+      <!-- End - Before Upload File Field-->
     </form>
 
-    <button type="button" class="ui basic button icon sb-color-primary" (click)="addMore()">
-      <i class="plus icon"></i>
-    </button>
+    <!-- <form [formGroup]="transcriptForm">
+    <div formArrayName="items" *ngFor="let item of orderForm.get('items')['controls']; let i = index;">
+      <div [formGroupName]="i">
+        <input formControlName="identifier" type="hidden">
+        <input formControlName="language" placeholder="Item description">
+        <input formControlName="transcriptFile" placeholder="Item price">
+      </div>
+      Exposed item name: {{ orderForm.controls.items.controls[i].controls.name.value }}
+    </div>
+    <button type="button" (click)="addItem()">Add Item</button>
+  </form> -->
+
+    <button type="button" class="ui basic button icon sb-color-primary mt-15" (click)="addItem()"><i
+        class="plus icon"></i></button>
 
   </div>
 </div>
