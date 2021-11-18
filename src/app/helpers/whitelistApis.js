@@ -743,6 +743,30 @@ const API_LIST = {
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
+    },
+    '/api/asset/v1/create' : {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/api/asset/v1/upload' : {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/api/question/v1/bulkUpload' : {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/api/question/v1/bulkUploadStatus' : {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
     }
   },
   URL_PATTERN: [

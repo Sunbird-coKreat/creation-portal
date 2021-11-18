@@ -97,6 +97,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         sid: this.userService.sessionId,
         did: this.deviceId,
         uid: this.userService.userid,
+        programId: this.programContext.program_id,
+        contributionOrgId: this.sessionContext.nominationDetails.organisation_id ,
         pdata: {
           id: this.userService.appId,
           ver: this.portalVersion,
@@ -140,6 +142,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false,
+        enableBulkUpload: true,
+        publicStorageAccount: 'https://dockstorage.blob.core.windows.net/',
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
         questionSet: {
           maxQuestionsLimit: this.sunbirdQuestionSetChildrenLimit
