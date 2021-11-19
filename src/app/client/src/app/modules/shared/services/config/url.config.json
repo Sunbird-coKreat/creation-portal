@@ -237,8 +237,9 @@
       "RETIRE": "assessment/v3/items/retire"
     },
     "ASSET": {
-      "CREATE": "content/v3/create",
-      "UPDATE": "content/v3/upload"
+      "CREATE": "asset/v1/create",
+      "UPDATE": "asset/v1/update",
+      "UPLOAD": "asset/v1/upload"
     },
     "ITEMSET": {
       "CREATE": "itemset/v3/create",
@@ -270,6 +271,7 @@
     },
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",
+      "UPLOAD": "content/v3/upload",
       "PUBLISH": "content/v3/publish",
       "GET": "content/v3/read",
       "RETIRE": "content/v3/retire",

@@ -290,6 +290,12 @@
 	</div>
   <!--/ng-template-->
 </div>
+
+<!--@Todo set isClosable to false-->
+<sui-modal [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" appBodyScroll #modal>
+  <app-transcripts></app-transcripts>
+</sui-modal>
+
 <ng-container *ngIf="currentStage !== 'programComponent'">
 	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
 </ng-container>

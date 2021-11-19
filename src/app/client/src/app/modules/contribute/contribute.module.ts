@@ -1,3 +1,4 @@
+import { TranscriptsComponent } from './components/transcripts/transcripts.component';
 import { CoreModule } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import { NgModule } from '@angular/core';
@@ -28,7 +29,9 @@ import { QumlPlayerService } from '../sourcing';
     ProgramComponent,
     OnboardPopupComponent,
     OrgUserListComponent,
-    MyContentComponent],
+    MyContentComponent,
+    TranscriptsComponent
+  ],
   imports: [
     SuiModule,
     CommonModule,
@@ -50,6 +53,7 @@ import { QumlPlayerService } from '../sourcing';
   exports: [
     ProgramComponent,
     OnboardPopupComponent,
+    TranscriptsComponent
   ]
 })
 export class ContributeModule { }

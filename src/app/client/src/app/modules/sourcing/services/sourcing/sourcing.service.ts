@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
-import { ActionService, ContentService } from '@sunbird/core';
+import { ActionService, ContentService, LearnerService, PublicDataService } from '@sunbird/core';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import * as _ from 'lodash-es';
@@ -9,6 +9,7 @@ import { themeObject, stageObject, questionSetObject, questionObject, questionSe
 import { UUID } from 'angular2-uuid';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,7 +21,10 @@ export class SourcingService {
     public actionService: ActionService,
     public contentService: ContentService,
     public toasterService: ToasterService,
-    public telemetryService: TelemetryService) { }
+    public telemetryService: TelemetryService,
+    public learnerService: LearnerService,
+    public publicDataService: PublicDataService
+    ) { }
 
   public postCertData(file: any, certType: any, userId: any, rootOrgId: any): Observable<any> {
     const formData = new FormData();
@@ -179,7 +183,7 @@ export class SourcingService {
 
   createMediaAsset(req?: object) {
     const reqParam = {
-      url: this.configService.urlConFig.URLS.ASSET.CREATE,
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.CREATE,
       data: {
         'request': {
           content: {
@@ -193,13 +197,38 @@ export class SourcingService {
     reqParam.data.request = req ? _.merge({}, reqParam.data.request, req) : reqParam;
     return this.actionService.post(reqParam);
   }
+
+  createAsset(req?: object) {
+    const reqParam = {
+      url: this.configService.urlConFig.URLS.ASSET.CREATE,
+      data: {
+        'request': {
+          asset: {
+            code: 'org.ekstep0.5375271337424472',
+            channel: 'sunbird'
+          }
+        }
+      }
+    };
+    reqParam.data.request = req ? _.merge({}, reqParam.data.request, req) : reqParam;
+    return this.publicDataService.post(reqParam);
+  }
+
   uploadMedia(req, assetId: any) {
     let reqParam = {
-      url: `${this.configService.urlConFig.URLS.ASSET.UPDATE}/${assetId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.UPLOAD}/${assetId}`,
       data: req.data
     };
     reqParam = req ? _.merge({}, reqParam, req) : reqParam;
     return this.actionService.post(reqParam);
+  }
+  uploadAsset(req, assetId: any) {
+    let reqParam = {
+      url: `${this.configService.urlConFig.URLS.ASSET.UPLOAD}/${assetId}`,
+      data: req.data
+    };
+    reqParam = req ? _.merge({}, reqParam, req) : reqParam;
+    return this.publicDataService.post(reqParam);
   }
   generatePreSignedUrl(req, contentId: any) {
     const reqParam = {

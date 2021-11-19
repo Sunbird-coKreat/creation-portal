@@ -57,6 +57,13 @@
               </div>
             </div>
             <div class="practical-sb-buttons mt-30">
+              <button id="addEditTranscript" suiPopup popupText="Add/edit Transcript" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >Add/edit Transcript</button>
               <button id="changeContent" suiPopup popupText="Replace file" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace_file', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
@@ -94,8 +101,8 @@
                   [telemetryInteractPdata]="telemetryInteractPdata"
                 >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
               <button id="acceptContent" suiPopup
-              popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentAcceptMessage : resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': programContext?.target_collection_category && programContext?.target_collection_category[0]}}" 
-              [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" 
+              popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentAcceptMessage : resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': programContext?.target_collection_category && programContext?.target_collection_category[0]}}"
+              [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons"
               class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
@@ -328,6 +335,33 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
       >Cancel</button>
     </div>
 </sui-modal>
+<!-- @Todo set isClosable to false
+<sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+    <div class="sb-modal-header">Add/edit Transcript</div>
+    <div class="sb-modal-content">
+      <div class="aspectratio" data-ratio="16:9">
+        <app-transcripts> </app-transcripts>
+      </div>
+    </div>
+</sui-modal> -->
+
+<sui-modal *ngIf="showQuestionSetPreview" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.lbl?.interactive?.video?.questionSetPreview}} </div>
+  <div class="sb-modal-content">
+    <div class="aspectratio" data-ratio="16:9">
+      <div class="content-player">
+        <div class="w-100 h-100">
+          <div class="contentViewerIframeShadow">
+            <quml-main-player [playerConfig]="qumlPlayerConfig"></quml-main-player>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sui-modal>
+
 
 <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
@@ -428,9 +462,6 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
     </div>
     <!--/Actions-->
 </sui-modal>
-
-
-
 
 
 
