@@ -144,6 +144,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showQuestionSetPreview = false;
   public qumlPlayerConfig;
   public enableInteractivity = false;
+  public showTranscriptPopup = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -1668,4 +1669,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
   // interactive video Change END
+
+  public addEditTranscript() {
+    this.showTranscriptPopup = true;
+  }
+
+  public closeTranscriptPopup() {
+    this.showTranscriptPopup = false;
+  }
 }
