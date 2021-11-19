@@ -291,9 +291,15 @@
 							<tr *ngIf="contributorTextbook?.contentVisibility === undefined || contributorTextbook?.contentVisibility">
 								<td>{{contributorTextbook?.name}}</td>
 								<td *ngIf="programContext?.target_type === 'searchCriteria'">{{contributorTextbook?.board}}</td>
-								<td>{{contributorTextbook?.medium}}</td>
-								<td>{{contributorTextbook?.gradeLevel}}</td>
-								<td>{{contributorTextbook?.subject}}</td>
+								<td>
+									<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ contributorTextbook?.medium }}">{{contributorTextbook.medium}}</span>
+								</td>
+								<td>
+									<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ contributorTextbook?.gradeLevel }}">{{contributorTextbook.gradeLevel}}</span>
+								</td>
+								<td>
+									<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ contributorTextbook?.subject }}">{{contributorTextbook.subject}}</span>
+								</td>
 								<td *ngIf="contributor?.nominationData?.status == 'Pending' && (!programContext.target_type || programContext.target_type === 'collections')">{{contributorTextbook?.totalSampleContent || 0}}</td>
 								<td class="w-5 px-5" *ngIf="contributor?.nominationData?.status == 'Approved' && programContext?.target_type === 'searchCriteria'">
 									<span [ngClass]="contributorTextbook.resourceStatusClass">{{ contributorTextbook.resourceStatusText }}</span>

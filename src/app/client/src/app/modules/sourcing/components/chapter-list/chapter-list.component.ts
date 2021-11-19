@@ -121,8 +121,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public defaultFileSize: any;
   public defaultVideoSize: any;
   dynamicHeaders = [];
+  dynamicHeadersEnabled;
   configUrl;
   tags = [];
+  printUrl;
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -234,6 +237,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+    this.printUrl = this.programsService.getCollectionDocxUrl();
   }
 
   setUserAccess() {
@@ -447,6 +451,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.sessionContext['addFromLibraryEnabled'] = this.collectionSourcingConfig.addFromLibraryEnabled;
         }
 
+        if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {
+          this.dynamicHeadersEnabled = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled;
+        }
+
         if (objectCategoryDefinition && objectCategoryDefinition.forms) {
           this.searchConfig = objectCategoryDefinition.forms.searchConfig;
           this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
@@ -459,10 +467,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
 
         if (_.has(objectCategoryDefinition, "forms.childMetadata.properties") && this.frameworkService.orgFrameworkCategories) { _.forEach(this.frameworkService.orgFrameworkCategories, (orgFrameworkCategory) => {
-            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {              
-              if(prop.code == orgFrameworkCategory.code && prop.editable){                               
-                this.tags.push(prop.code);                              
-              }              
+            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {
+              if(prop.code == orgFrameworkCategory.code && prop.editable){
+                this.tags.push(prop.code);
+              }
             });
           });
         }
@@ -490,20 +498,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         const byteArray = new Uint8Array(byteNumbers);
         const file = new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main' });
-        if (window.navigator.msSaveOrOpenBlob) {
-          window.navigator.msSaveOrOpenBlob(file, fileName);
-        } else {
-          const a = document.createElement('a');
-          document.body.appendChild(a);
-          const fileURL = URL.createObjectURL(file);
-          a.href = fileURL;
-          a.download = fileName;
-          a.click();
-          setTimeout(() => {
-            URL.revokeObjectURL(fileURL);
-            document.body.removeChild(a);
-          }, 0)
-        }
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        const fileURL = URL.createObjectURL(file);
+        a.href = fileURL;
+        a.download = fileName;
+        a.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(fileURL);
+          document.body.removeChild(a);
+        }, 0);
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToPrint)
       });

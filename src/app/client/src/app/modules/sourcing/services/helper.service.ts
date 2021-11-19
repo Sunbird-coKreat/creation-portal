@@ -872,6 +872,9 @@ export class HelperService {
     if (_.includes(['gradeLevel', 'medium', 'subject'], property)) {
       ret = _.isArray(ret) ? ret : _.split(ret, ',');
     }
+    if (_.includes(['board', 'framework'], property)) {
+      ret = _.isArray(ret) ? _.first(ret) : ret;
+    }
     return ret || null;
 
     /*if (property === 'channel') {
@@ -1173,7 +1176,7 @@ export class HelperService {
 
   getFormattedFrameworkMetaWithOutCollection(row, sessionContext) {
     const organisationFrameworkUserInput = _.pick(row, _.map(this.frameworkService.orgFrameworkCategories, 'orgIdFieldName'));
-    const framework = _.first(_.get(sessionContext, 'framework'));
+    const framework = (_.isArray(_.get(sessionContext, 'framework'))) ? _.first(_.get(sessionContext, 'framework')) : _.get(sessionContext, 'framework');
     this.flattenedFrameworkCategories[framework] = {};
     // tslint:disable-next-line:max-line-length
     const orgFrameworkCategories = _.get(this.frameworkService.frameworkData[framework], 'categories');

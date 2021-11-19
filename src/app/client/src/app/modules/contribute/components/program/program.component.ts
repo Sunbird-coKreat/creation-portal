@@ -227,7 +227,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedContentTypes = this.programsService.getNominatedTargetPrimaryCategories(this.programDetails, this.nominationDetails);
         this.currentNominationStatus = _.get(this.nominationDetails, 'status');
         this.selectedCollectionIds = _.get(this.nominationDetails, 'collection_ids');
-        //this.nominated = !!(this.nominationDetails.status !== 'Initiated');
         this.sessionContext.nominationDetails = this.nominationDetails;
       }
       this.setProgramRole();
@@ -1040,7 +1039,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
     this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCollectionLevelContentStatus'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections;
+    this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && this.currentNominationStatus !== 'Approved';
+    this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && this.currentNominationStatus === 'Approved';
   }
 
   getCollectionCategoryDefinition() {

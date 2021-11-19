@@ -1328,6 +1328,12 @@
         "items": {
           "type": "string"
         }
+      },
+      "transcripts": {
+        "type": "array",
+        "items": {
+            "type": "object"
+        }
       }
     }
 }

@@ -116,7 +116,7 @@ export class FrameworkService {
   }
 
   private setFrameWorkData(framework?: any) {
-    this.cacheService.set(framework.result.framework.code  , framework.result.framework,
+    this.cacheService.set(framework.result.framework.code, framework.result.framework,
       { maxAge: this.browserCacheTtlService.browserCacheTtl });
   }
 
@@ -256,15 +256,15 @@ export class FrameworkService {
   public readFramworkCategories(framework?: string) {
     const channelData = this.cacheService.get(this.userService.hashTagId);
     let frameWorkToGet;
-    if (!framework) {
+    if (!framework && !_.isEmpty(channelData)) {
         const defaultFrameworkInCache = this.cacheService.get(_.get(channelData, 'defaultFramework'));
-        if (channelData && _.get(channelData, 'defaultFramework') && defaultFrameworkInCache) {
+        if (_.get(channelData, 'defaultFramework') && defaultFrameworkInCache) {
           return of(this.cacheService.get(_.get(channelData, 'defaultFramework')))
         } 
-        if (channelData && _.get(channelData, 'defaultFramework') && !defaultFrameworkInCache) {
+        if (_.get(channelData, 'defaultFramework') && !defaultFrameworkInCache) {
           frameWorkToGet = _.get(channelData, 'defaultFramework');
         }
-    } else {
+    } else if (framework) {
       if (this.cacheService.get(framework)) {
         return of(this.cacheService.get(framework));
       } else {

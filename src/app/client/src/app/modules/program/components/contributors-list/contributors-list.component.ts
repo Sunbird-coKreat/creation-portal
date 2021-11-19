@@ -225,8 +225,7 @@ export class ContributorsListComponent implements OnInit {
 
   navigateToPage(page: number): undefined | void {
     this.pageNumber = page;
-
-    if (_.isEmpty(this.paginatedList[this.pageNumber - 1])) {
+    this.paginatedList = [];
       this.showLoader = true;
       this.isDisabledSaveBtn = true;
       this.contributorList = [];
@@ -236,16 +235,7 @@ export class ContributorsListComponent implements OnInit {
           this.getOrgList(this.osLimit, (this.pageNumber - 1) * this.osLimit).then(list => {
             list = this.applySort(list, this.orgSortColumn);
             let contributors = [];
-            this.paginatedList.forEach(element => {
-              contributors = contributors.concat(element);
-            });
             contributors = contributors.concat(list);
-            let chunkList = _.chunk(contributors, this.pageLimit);
-
-            if (_.isEmpty(chunkList[this.pageNumber -1])) {
-              this.pageNumber = this.pageNumber - 1;
-            }
-
             this.showFilteredResults(contributors);
           }, error => {
             console.log("Something went wrong", error);
@@ -255,16 +245,7 @@ export class ContributorsListComponent implements OnInit {
         case "Individual":
           this.getIndividualList(this.osLimit, (this.pageNumber - 1) * this.osLimit).then(list => {
             let contributors = [];
-            this.paginatedList.forEach(element => {
-              contributors = contributors.concat(element);
-            });
             contributors = contributors.concat(list);
-            let chunkList = _.chunk(contributors, this.pageLimit);
-
-            if (_.isEmpty(chunkList[this.pageNumber -1])) {
-              this.pageNumber = this.pageNumber - 1;
-            }
-
             this.showFilteredResults(contributors);
           }, error => {
             console.log("Something went wrong", error);
@@ -272,15 +253,6 @@ export class ContributorsListComponent implements OnInit {
 
           break;
       }
-    }
-    else {
-      this.contributorList = this.paginatedList[this.pageNumber - 1];
-      this.pager = this.paginationService.getPager(
-        this.listCnt,
-        this.pageNumber,
-        this.pageLimit
-      );
-    }
   }
 
   displayLoader() {
@@ -302,7 +274,8 @@ export class ContributorsListComponent implements OnInit {
   }
 
   showFilteredResults(list) {
-    this.contributorList = this.applyPagination(list);
+    this.contributorList = list;
+    this.applyPagination(list);
     this.hideLoader();
   }
 
@@ -343,15 +316,11 @@ export class ContributorsListComponent implements OnInit {
 
   applyPagination(list) {
     this.listCnt = list.length;
-    this.paginatedList = _.chunk(list, this.pageLimit);
     this.pager = this.paginationService.getPager(
       this.listCnt,
       this.searchInput ? 1 : this.pageNumber,
       this.pageLimit
     );
-    return this.searchInput
-      ? this.paginatedList[0]
-      : this.paginatedList[this.pageNumber - 1];
   }
 
   getTelemetryInteractEdata(
@@ -446,6 +415,17 @@ export class ContributorsListComponent implements OnInit {
     contributorList = _.map(contributorList, (obj) => {
       obj.isChecked = false;
       obj.isDisabled = false;
+
+      if (!_.isEmpty(_.get(this.selectedContributors, type))) {
+        let preSelectedUser = _.find(
+          _.get(this.selectedContributors, type),
+          { osid: obj.osid }
+        );
+        if (preSelectedUser) {
+          obj.isChecked = true;
+        }
+      }
+
       if (!_.isEmpty(_.get(this.preSelectedContributors, type))) {
         let preSelectedUser = _.find(
           _.get(this.preSelectedContributors, type),
@@ -456,9 +436,11 @@ export class ContributorsListComponent implements OnInit {
           obj.isDisabled = preSelectedUser.isDisabled;
         }
       }
+
       return obj;
     });
 
+    // Don't allow to add new contributor if project is closed(Show only selected contributors)
     if (this.allowToModifyContributors === false) {
       contributorList = _.filter(
         contributorList,
