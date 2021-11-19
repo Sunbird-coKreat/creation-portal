@@ -335,16 +335,11 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
       >Cancel</button>
     </div>
 </sui-modal>
-<!-- @Todo set isClosable to false
-<sui-modal [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-    class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
-    <div class="sb-modal-header">Add/edit Transcript</div>
-    <div class="sb-modal-content">
-      <div class="aspectratio" data-ratio="16:9">
-        <app-transcripts> </app-transcripts>
-      </div>
-    </div>
-</sui-modal> -->
+
+<!--@Todo set isClosable to false-->
+<sui-modal *ngIf="showTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" appBodyScroll #modal>
+  <app-transcripts (closeTranscript)="closeTranscriptPopup()"></app-transcripts>
+</sui-modal>
 
 <sui-modal *ngIf="showQuestionSetPreview" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >

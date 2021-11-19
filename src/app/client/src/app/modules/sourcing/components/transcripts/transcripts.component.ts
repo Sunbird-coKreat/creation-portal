@@ -1,13 +1,12 @@
 import { HelperService } from './../../../sourcing/services/helper.service';
 import { TranscriptService } from './../../../core/services/transcript/transcript.service';
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import _ from 'lodash';
 import { TranscriptMetadata } from './transcript';
-
 
 @Component({
   selector: 'app-transcripts',
@@ -17,12 +16,13 @@ import { TranscriptMetadata } from './transcript';
 
 export class TranscriptsComponent implements OnInit {
   @Input() contentObject;
+  @Output() closeTranscript = new EventEmitter<any>();
   public orderForm: FormGroup;
   public transcriptForm: FormGroup;
   public langControl = "language";
   public languageOptions;
   public content = {
-    "versionKey": "1637225603143",
+    "versionKey": "1637262562797",
     "identifier": "do_11340715459064627211839",
     "transcripts": [
       {
@@ -188,18 +188,12 @@ export class TranscriptsComponent implements OnInit {
 
     this.items['controls'].forEach((item, index) => {
       let transcriptMetadata: TranscriptMetadata = {};
-      const identifier = item.get("identifier").value;
       const file = item.get("transcriptFile")['file'];
-
-      const req = _.clone(this.createAssetReq);
-      req.asset['name'] = item.get("fileName").value;
-      req.asset['language'].push(item.get("language").value);
-
-      if (req.asset['name'] && req.asset['language'].length && file) {
-        transcriptMetadata.language = item.get("language").value;
-        transcriptMetadata.languageCode = item.get("language").value;
-        const forkReq = this.sourcingService.createAsset(req).pipe(
+      if (item.get("fileName").value && item.get("language").value && file) {
+        const forkReq = this.createAsset(item).pipe(
           switchMap(asset => {
+            transcriptMetadata.language = item.get("language").value;
+            transcriptMetadata.languageCode = item.get("language").value;
             transcriptMetadata.identifier = _.get(asset, 'result.identifier');
             return this.generatePreSignedUrl(asset, item);
           }),
@@ -221,7 +215,9 @@ export class TranscriptsComponent implements OnInit {
     forkJoin(assetRequest).subscribe(response => {
       this.updateContent(response, transcriptMeta).subscribe(response => {
         console.log(response);
+        this.closeTranscript.emit();
       }, error => {
+        this.closeTranscript.emit();
         console.log("Something went wrong", error);
       });
     }, error => {
@@ -240,6 +236,23 @@ export class TranscriptsComponent implements OnInit {
     // 2. upload asset on pre-signed url
     // 3. upload asset - artifact URL
     // 4. Update content
+  }
+
+  createAsset(item): Observable<any> {
+    const identifier = item.get("identifier").value;
+    const req = _.clone(this.createAssetReq);
+    req.asset['name'] = item.get("fileName").value;
+    req.asset['language'].push(item.get("language").value);
+
+    if (identifier) {
+      // this.sourcingService.readAsset(identifier).subscribe(rsp => {
+      // });
+
+      return this.sourcingService.updateAsset(req, identifier);
+    } else {
+      return this.sourcingService.createAsset(req);
+    }
+
   }
 
   uploadToBlob(response, item): Observable<any> {

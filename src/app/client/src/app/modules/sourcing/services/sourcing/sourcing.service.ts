@@ -214,6 +214,29 @@ export class SourcingService {
     return this.publicDataService.post(reqParam);
   }
 
+  readAsset(assetId) {
+    const reqParam = {
+      url: `${this.configService.urlConFig.URLS.ASSET.READ}/${assetId}`,
+    };
+    return this.publicDataService.get(reqParam);
+  }
+
+  updateAsset(req: object, assetId) {
+    const reqParam = {
+      url: `${this.configService.urlConFig.URLS.ASSET.UPDATE}/${assetId}`,
+      data: {
+        'request': {
+          asset: {
+            code: 'org.ekstep0.5375271337424472',
+            channel: 'sunbird'
+          }
+        }
+      }
+    };
+    reqParam.data.request = req ? _.merge({}, reqParam.data.request, req) : reqParam;
+    return this.publicDataService.post(reqParam);
+  }
+
   uploadMedia(req, assetId: any) {
     let reqParam = {
       url: `${this.configService.urlConFig.URLS.DOCKCONTENT.UPLOAD}/${assetId}`,
