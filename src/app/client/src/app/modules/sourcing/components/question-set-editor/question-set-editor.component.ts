@@ -37,6 +37,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public telemetryPageId: string;
   private onComponentDestroy$ = new Subject<any>();
   public hideSubmitForReviewBtn = false;
+  public sunbirdQuestionSetChildrenLimit: any;
+  public sunbirdCollectionChildrenLimit: any;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -51,6 +53,10 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       this.deviceId = deviceId ? deviceId.value : '';
       this.buildNumber = buildNumber ? buildNumber.value : '1.0';
       this.portalVersion = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
+      this.sunbirdQuestionSetChildrenLimit = (<HTMLInputElement>document.getElementById('sunbirdQuestionSetChildrenLimit')) ?
+      (<HTMLInputElement>document.getElementById('sunbirdQuestionSetChildrenLimit')).value : 500;
+      this.sunbirdCollectionChildrenLimit = (<HTMLInputElement>document.getElementById('sunbirdCollectionChildrenLimit')) ?
+      (<HTMLInputElement>document.getElementById('sunbirdCollectionChildrenLimit')).value : 1200;
      }
 
   ngOnInit() {
@@ -135,6 +141,12 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         showSourcingStatus: false,
         showCorrectionComments: false,
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
+        questionSet: {
+          maxQuestionsLimit: this.sunbirdQuestionSetChildrenLimit
+        },
+        collection: {
+          maxContentsLimit: this.sunbirdCollectionChildrenLimit
+        }
       }
     };
     if (this.showQuestionEditor) {

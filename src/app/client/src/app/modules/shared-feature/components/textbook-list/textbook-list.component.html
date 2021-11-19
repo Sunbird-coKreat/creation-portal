@@ -43,51 +43,44 @@
 			<table class="sb-table sb-table-striped  sb-table-sortable">
 				<thead class="sb-table-header sb-table-thead-gray">
 					<tr>
-						<th class="cursor-pointer sb-sorting" (click)="sortCollection('name')">{{resourceService.frmelmnts.lbl.title}} &nbsp;&nbsp;
+						<th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{resourceService.frmelmnts.lbl.title}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 							<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th class="cursor-pointer sb-sorting" (click)="sortCollection('board')">{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
-							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
-							<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
-								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
-								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
-							</span>
-						</th>
-						<th class="cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+						<th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
 							<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th class="cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
+						<th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
 							<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th class="cursor-pointer sb-sorting" (click)="sortCollection('subject')">{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
+						<th class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('subject')">{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
 							<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
-						<th *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">{{ resourceService.frmelmnts.lbl.creator }}</th>
-						<th class="cursor-pointer sb-sorting" (click)="sortCollection('resourceStatusText')">{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
+						<th class="w-15" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
+						<th class="w-15" *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">{{ resourceService.frmelmnts.lbl.creator }}</th>
+						<th class="w-20 cursor-pointer sb-sorting" (click)="sortCollection('resourceStatusText')">{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
 							<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th>&nbsp;</th>
+						<th class="w-10">&nbsp;</th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100" *ngIf="collections.length">
@@ -99,22 +92,17 @@
 								</div>
 							</td>
 							<td>
-								<div>
-									{{data.board}}
-								</div>
-							</td>
-							<td>
-								<div>
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ data?.medium }}">
 									{{data.medium}}
 								</div>
 							</td>
 							<td>
-								<div class="sb__ellipsis sb__ellipsis--three">
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ data?.gradeLevel }}">
 									{{data.gradeLevel}}
 								</div>
 							</td>
 							<td>
-								<div>
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ data?.subject }}">
 									{{data.subject}}
 								</div>
 							</td>

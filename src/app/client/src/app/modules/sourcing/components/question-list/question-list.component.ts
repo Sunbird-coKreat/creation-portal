@@ -1310,8 +1310,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   attachContentToTextbook(action) {
 
     let rejectComment = '';
-    if (action === 'reject' && this.FormControl.value.rejectComment.length) {
-      rejectComment = this.FormControl.value.rejectComment;
+    if (action === 'reject' && this.FormControl.value.contentRejectComment.length) {
+      rejectComment = this.FormControl.value.contentRejectComment;
     }
     // tslint:disable-next-line:max-line-length
     this.helperService.manageSourcingActions(action, this.sessionContext, this.programContext, this.sessionContext.textBookUnitIdentifier, this.sessionContext.contentMetadata, rejectComment);

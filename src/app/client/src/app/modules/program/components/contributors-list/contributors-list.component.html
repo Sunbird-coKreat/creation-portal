@@ -67,13 +67,16 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="listCnt > 0 && !showLoader"
+  <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
+    <app-loader></app-loader>
+  </div>
+  <div class="mt-12" *ngIf="!showLoader && listCnt == 0">
+    <app-no-result [data]="{ messageText: 'resource.messages.stmsg.m0006'}"> </app-no-result>
+  </div>
+
+  <div *ngIf="!showLoader"
     class="sb-pagination-container flex-jc-flex-start pt-16">
     <div class="sb-pagination">
-      <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="navigateToPage(1)" appTelemetryInteract
-        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_fist_page', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
-        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-        [telemetryInteractPdata]="telemetryInteractPdata">First</a>
       <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="navigateToPage(pager.currentPage - 1)"
         appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
@@ -92,12 +95,6 @@
       </div>
   </div>
 
-  <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
-    <app-loader></app-loader>
-  </div>
-  <div class="mt-12" *ngIf="!showLoader && listCnt == 0">
-    <app-no-result [data]="{ messageText: 'resource.messages.stmsg.m0006'}"> </app-no-result>
-  </div>
 </div>
 <div class="sb-modal-actions">
   <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn"
