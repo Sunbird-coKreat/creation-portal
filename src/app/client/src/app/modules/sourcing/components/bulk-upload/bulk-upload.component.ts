@@ -65,7 +65,7 @@ export class BulkUploadComponent implements OnInit {
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
-  public sampleMetadataCsvUrl: string = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
+  // public sampleMetadataCsvUrl: string = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
@@ -86,7 +86,7 @@ export class BulkUploadComponent implements OnInit {
 
    ngOnInit() {
     if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
-      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
+      // this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
     }
 
     this.userService.userData$.pipe(
