@@ -26,6 +26,7 @@ export class HelperService {
   private _categoryMetaData: any;
   private _categoryMetaData$ = new Subject<any>();
   public flattenedFrameworkCategories = {};
+  httpClient: HttpClient;
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
@@ -36,8 +37,11 @@ export class HelperService {
     private actionService: ActionService, private resourceService: ResourceService,
     public programStageService: ProgramStageService, private programsService: ProgramsService,
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
-    public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute, public httpClient: HttpClient,
-    private sourcingService: SourcingService, private router: Router) { }
+    public frameworkService: FrameworkService, public learnerService: LearnerService,
+    public activatedRoute: ActivatedRoute, httpClient: HttpClient,
+    private sourcingService: SourcingService, private router: Router) {
+      this.httpClient = httpClient;
+     }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {

@@ -38,7 +38,7 @@ import { QumlPlayerService } from './services/quml-player/quml-player.service';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
 import { ResourceLibraryModule } from "@project-sunbird/sunbird-resource-library";
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
-
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -72,7 +72,8 @@ import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-
     NgInviewModule,
     CollectionEditorLibraryModule,
     CarouselModule.forRoot(),
-    ResourceLibraryModule, SunbirdVideoPlayerModule
+    ResourceLibraryModule, SunbirdVideoPlayerModule,
+    HttpClientModule
   ],
   providers: [
     { provide: QuestionCursor, useExisting: QumlPlayerService },
