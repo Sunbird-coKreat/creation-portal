@@ -78,13 +78,12 @@ export class TranscriptsComponent implements OnInit {
     //   transcripts: this.fb.array([]),
     //   languages: this.fb.array([])
     // });
-
-    // this.setFormValues(this.content.transcripts);
-    // this.addMore();
-
     this.transcriptForm = this.fb.group({
-      items: this.fb.array([ this.createItem() ])
+      items: this.fb.array([])
     });
+
+    this.setFormValues(this.content.transcripts);
+    this.addItem();
   }
 
   get items(): FormArray {
@@ -99,6 +98,10 @@ export class TranscriptsComponent implements OnInit {
     return this.items.controls[index].get("transcriptFile");
   }
 
+  getFileNameControl(index) {
+    return this.items.controls[index].get("fileName");
+  }
+
   setFile(index, value) {
     return this.items.controls[index].get("transcriptFile")["file"] = value;
   }
@@ -107,15 +110,16 @@ export class TranscriptsComponent implements OnInit {
     return this.items.controls[index].get("transcriptFile")["file"];
   }
 
-  addItem(): void {
-    this.items.push(this.createItem());
+  addItem(data?): void {
+    this.items.push(this.createItem(data));
   }
 
-  createItem(): FormGroup {
+  createItem(data?): FormGroup {
     return this.fb.group({
-      identifier: '',
-      language: '',
-      transcriptFile: ''
+      identifier: [data ? data.identifier : null],
+      language: [data ? data.languageCode : null],
+      transcriptFile: '',
+      fileName : [data ? data.artifactUrl.split('/').pop() : null]
     });
   }
 
@@ -142,6 +146,7 @@ export class TranscriptsComponent implements OnInit {
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       this.setFile(index, file);
+      this.getFileNameControl(index).patchValue(file.name)
     }
   }
 
@@ -159,25 +164,15 @@ export class TranscriptsComponent implements OnInit {
 
   reset(index) {
     this.getFileControl(index).reset();
-    // @Todo use viewChildern referance instead of id
-    // (<HTMLInputElement>document.getElementById("attachFileInput" + index)).value = "";
-    // this.transcripts.controls[index].reset();
+    this.getFileNameControl(index).reset();
   }
 
   download() {
   }
 
-  addMore() {
-    this.transcripts.push(this.fb.control(''));
-    this.languages.push(this.fb.control(''));
-  }
-
-  setFormValues (transcriptsMeta) {
-    transcriptsMeta.forEach((element, index) => {
-      this.addMore();
-      let fileName = element.artifactUrl.split('/').pop();
-      this.transcripts.controls[index].setValue(fileName);
-      this.languages.controls[index].setValue(element.languageCode);
+  setFormValues(transcriptsMeta) {
+    transcriptsMeta.forEach((element) => {
+      this.addItem(element);
     });
   }
 
@@ -190,30 +185,33 @@ export class TranscriptsComponent implements OnInit {
   done() {
     const transcriptMeta = [];
     const assetRequest = [];
-    // For newly created assets
-    this.transcripts.controls.forEach((transcript, index) => {
+
+    this.items['controls'].forEach((item, index) => {
       let transcriptMetadata: TranscriptMetadata = {};
-      const language = this.languages.controls[index];
+      const identifier = item.get("identifier").value;
+      const file = item.get("transcriptFile")['file'];
+
       const req = _.clone(this.createAssetReq);
-      req.asset['name'] = _.get(transcript, 'value');
-      req.asset['language'].push(_.get(language, 'value'));
-      if (req.asset['name'] && req.asset['language'].length) {
-        transcriptMetadata.language = _.get(language, 'value');
-        transcriptMetadata.languageCode = _.get(language, 'value');
+      req.asset['name'] = item.get("fileName").value;
+      req.asset['language'].push(item.get("language").value);
+
+      if (req.asset['name'] && req.asset['language'].length && file) {
+        transcriptMetadata.language = item.get("language").value;
+        transcriptMetadata.languageCode = item.get("language").value;
         const forkReq = this.sourcingService.createAsset(req).pipe(
           switchMap(asset => {
             transcriptMetadata.identifier = _.get(asset, 'result.identifier');
-            return this.generatePreSignedUrl(asset, transcript);
+            return this.generatePreSignedUrl(asset, item);
           }),
           switchMap((rsp) => {
-            transcript['preSignedResponse'] = rsp;
-            const signedURL = transcript['preSignedResponse'].result.pre_signed_url;
+            item['preSignedResponse'] = rsp;
+            const signedURL = item['preSignedResponse'].result.pre_signed_url;
             transcriptMetadata.artifactUrl = signedURL.split('?')[0];
             transcriptMeta.push(transcriptMetadata);
-            return this.uploadToBlob(rsp, transcript);
+            return this.uploadToBlob(rsp, item);
           }),
           switchMap(response => {
-            return this.updateAssetWithURL(transcript);
+            return this.updateAssetWithURL(item);
           })
         );
         assetRequest.push(forkReq);
@@ -244,7 +242,7 @@ export class TranscriptsComponent implements OnInit {
     // 4. Update content
   }
 
-  uploadToBlob(response, transcript): Observable<any> {
+  uploadToBlob(response, item): Observable<any> {
     try {
       const signedURL = response.result.pre_signed_url;
       const config = {
@@ -255,17 +253,17 @@ export class TranscriptsComponent implements OnInit {
         }
       };
 
-      return this.transcriptService.http.put(signedURL, _.get(transcript, 'file'), config);
+      return this.transcriptService.http.put(signedURL, item.get("transcriptFile")['file'], config);
     } catch (err) {
       console.log(err);
     }
   }
 
-  generatePreSignedUrl(asset, transcript): Observable<any> {
+  generatePreSignedUrl(asset, item): Observable<any> {
     try {
       const req = {
         "content": {
-          "fileName": _.get(transcript, 'value')
+          "fileName": item.get("fileName").value
         }
       };
 
@@ -275,8 +273,8 @@ export class TranscriptsComponent implements OnInit {
     }
   }
 
-  updateAssetWithURL(transcript): Observable<any> {
-    const signedURL = transcript['preSignedResponse'].result.pre_signed_url;
+  updateAssetWithURL(item): Observable<any> {
+    const signedURL = item['preSignedResponse'].result.pre_signed_url;
     const fileURL = signedURL.split('?')[0];
 
     var formData = new FormData();
@@ -287,7 +285,7 @@ export class TranscriptsComponent implements OnInit {
       data: formData
     };
 
-    return this.sourcingService.uploadAsset(request, transcript['preSignedResponse'].result.identifier);
+    return this.sourcingService.uploadAsset(request, item['preSignedResponse'].result.identifier);
   }
 
   // 1. Get content as input

@@ -15,7 +15,7 @@
           </div>
           <div class="six wide column">
             <!-- [class.block-hide]="transcriptFile.value" -->
-            <div [class.block-hide]="item.controls.transcriptFile.value" class="sb-before-upload-section">
+            <div [class.block-hide]="item.controls.fileName.value" class="sb-before-upload-section">
               <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
                 <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i
                     class="fa fa-paperclip"></i>Attach file</span>
@@ -30,11 +30,12 @@
 
             <!--Start - After Upload File Field-->
             <!-- [class.block-hide]="!transcriptFile.value" -->
-            <div [class.block-hide]="!item.controls.transcriptFile.value" class="sb-after-upload-section">
+            <div [class.block-hide]="!item.controls.fileName.value" class="sb-after-upload-section">
               <div class="sb-after-upload-field d-flex bradius-2">
                 <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex"><i class="file icon"></i>
                   <div class="sb__ellipsis w-230">
-                    {{ item?.controls?.transcriptFile?.file?.name }}
+                    <input formControlName="fileName" type ="hidden" #fileNameControl>
+                    {{ fileNameControl?.value }}
                   </div>
                 </div>
                 <button class="sb-after-upload-button sb-btn sb-btn-link sb-min-width-auto mouse-pointer"
