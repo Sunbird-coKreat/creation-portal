@@ -110,6 +110,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public unsubscribe = new Subject<void>();
   public firstLevelFolderLabel: string;
   public projectTargetType: string = '';
+  public acceptedContentsAttribute = 'acceptedContents';
+  public rejectedContentsAttribute = 'rejectedContents';
   public addFormLibraryInput = {};
   public reusedContributions = [];
   public showPublishConfirmationModal = false;
@@ -150,7 +152,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
-    });    
+    });
     this.helperService.getDynamicHeaders(this.configUrl).subscribe((state: any) => {
       if(_.has(state, "headers")){
         this.dynamicHeaders = state.headers;
@@ -173,7 +175,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     // this.currentUserID = _.get(this.programContext, 'userDetails.userId');
     this.roles = _.get(this.chapterListComponentInput, 'roles');
     this.collection = _.get(this.chapterListComponentInput, 'collection');
-    if(_.isUndefined(this.sessionContext['targetCollectionObjectType'])) { 
+    if(_.isUndefined(this.sessionContext['targetCollectionObjectType'])) {
       this.sessionContext['targetCollectionObjectType'] = _.get(this.collection, 'objectType');
     }
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
@@ -181,6 +183,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.projectTargetType = _.get(this.programContext, 'target_type');
+    this.acceptedContentsAttribute = this.projectTargetType === 'questionSets' ? 'acceptedContributions' : 'acceptedContents';
+    this.rejectedContentsAttribute = this.projectTargetType === 'questionSets' ? 'rejectedContributions' : 'rejectedContents';
     this.myOrgId = (this.userService.userRegistryData
       && this.userProfile.userRegData
       && this.userProfile.userRegData.User_Org
@@ -206,7 +210,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.dynamicOutputs = {
       uploadedContentMeta: (contentMeta) => {
         this.uploadHandler(contentMeta);
-      }     
+      }
     };
     this.sourcingOrgReviewer = this.router.url.includes('/sourcing') ? true : false;
     if (this.programContext['status'] === 'Unlisted') {
@@ -238,7 +242,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   ]
 
     this.selectedStatusOptions = ["Live", "Approved"];
-    this.displayPrintPreview = _.get(this.collection, 'printable', false);    
+    this.displayPrintPreview = _.get(this.collection, 'printable', false);
   }
 
   setUserAccess() {
@@ -296,9 +300,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
       await this.getCollectionHierarchy(this.sessionContext.collection,
                 this.selectedChapterOption === 'all' ? undefined : this.selectedChapterOption);
-      let acceptedContentsAttribute = 'acceptedContents';
-      if(this.projectTargetType === 'questionSets') acceptedContentsAttribute = 'acceptedContributions';
-      const acceptedContents = _.get(this.storedCollectionData, acceptedContentsAttribute, []);
+      // const acceptedContentsAttribute = this.projectTargetType === 'questionSets' ? 'acceptedContributions' : 'acceptedContents';
+      const acceptedContents = _.get(this.storedCollectionData, this.acceptedContentsAttribute, []);
       if (!_.isEmpty(acceptedContents)) {
         await this.getOriginForApprovedContents(acceptedContents);
       }
@@ -474,10 +477,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (_.has(objectCategoryDefinition, "forms.childMetadata.properties") && this.frameworkService.orgFrameworkCategories) {
           _.forEach(this.frameworkService.orgFrameworkCategories, (orgFrameworkCategory) => {
-            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {              
-              if(prop.code == orgFrameworkCategory.code && prop.editable){                               
-                this.tags.push(prop.code);                              
-              }              
+            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {
+              if(prop.code == orgFrameworkCategory.code && prop.editable){
+                this.tags.push(prop.code);
+              }
             });
           });
         }
@@ -524,11 +527,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       });
   }
 
-  publishQuestionToConsumption(): void {    
+  publishQuestionToConsumption(): void {
     let identifier = this.collectionData.identifier;
     this.helperService.publishQuestionSetToConsumption(identifier).subscribe((res) => {
       this.showPublishConfirmationModal = false;
-      if(res.responseCode === 'OK') {        
+      if(res.responseCode === 'OK') {
         this.toasterService.success(this.resourceService.messages.smsg.questionset.publishing);
       }}, (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.questionset.failedToPublish)
@@ -631,7 +634,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       objectType = 'questionSet';
     }
 
-    
+
     if (unitIdentifier) {
       hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
     }
@@ -815,7 +818,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       return children && children.filter(function (item) {
         return item.mimeType === 'application/vnd.sunbird.questionset' && item.visibility === "Parent";
       });
-    }    
+    }
     return children && children.filter(function (item) {
       return item.mimeType === 'application/vnd.ekstep.content-collection' && item.visibility === "Parent";
     });
@@ -967,7 +970,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         if (this.sourcingOrgReviewer && data.status === 'Live' &&
         // tslint:disable-next-line:max-line-length
-        !_.includes([...this.storedCollectionData.acceptedContents || [], ...this.storedCollectionData.rejectedContents || []], data.identifier)) {
+        !_.includes([...this.storedCollectionData[this.acceptedContentsAttribute] || [], ...this.storedCollectionData[this.rejectedContentsAttribute] || []], data.identifier)) {
           this.countData['pendingReview'] = this.countData['pendingReview'] + 1;
           this.countData['sourcing_approvalPending'] = this.countData['sourcing_approvalPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
@@ -976,7 +979,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.countData['sourcing_correctionPending'] = this.countData['sourcing_correctionPending'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
-        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.acceptedContents || []], data.identifier)) {
+        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData[this.acceptedContentsAttribute] || []], data.identifier)) {
           this.countData['sourcing_approved'] = this.countData['sourcing_approved'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
            // Add blueprint metrics count
@@ -1031,7 +1034,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
               }
             }
         }
-        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData.rejectedContents || []], data.identifier)) {
+        if (this.sourcingOrgReviewer && data.status === 'Live' && _.includes([...this.storedCollectionData[this.rejectedContentsAttribute] || []], data.identifier)) {
           this.countData['sourcing_rejected'] = this.countData['sourcing_rejected'] + 1;
           this.countData['sourcing_total'] = this.countData['sourcing_total'] + 1;
         }
@@ -1088,11 +1091,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   checkSourcingStatus(content) {
-    if (this.storedCollectionData.acceptedContents  &&
-         _.includes(this.storedCollectionData.acceptedContents || [], content.identifier)) {
+    // const acceptedContentsAttribute = this.projectTargetType === 'questionSets' ? 'acceptedContributions' : 'acceptedContents';
+    if (this.storedCollectionData[this.acceptedContentsAttribute]  &&
+         _.includes(this.storedCollectionData[this.acceptedContentsAttribute] || [], content.identifier)) {
             return 'Approved';
-      } else if (this.storedCollectionData.rejectedContents  &&
-              _.includes(this.storedCollectionData.rejectedContents || [], content.identifier)) {
+      } else if (this.storedCollectionData[this.rejectedContentsAttribute]  &&
+              _.includes(this.storedCollectionData[this.rejectedContentsAttribute] || [], content.identifier)) {
             return 'Rejected';
       } else if (content.status === 'Draft' && content.prevStatus === 'Live') {
             return 'PendingForCorrections';
@@ -1195,7 +1199,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
             });
         });
-    } else if(this.projectTargetType === 'questionSets') {      
+    } else if(this.projectTargetType === 'questionSets') {
       this.programsService.emitHeaderEvent(false)
       // tslint:disable-next-line:max-line-length
       this.componentLoadHandler('creation', this.programComponentsService.getComponentInstance(event.templateDetails.onClick), event.templateDetails.onClick);
@@ -1232,7 +1236,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.templateDetails.onClick = 'questionSetEditorComponent';
     } else if(event.content.mimeType === 'application/vnd.sunbird.question'){
       this.templateDetails.onClick = 'questionSetEditorComponent';
-    } 
+    }
     else {
       this.templateDetails.onClick = 'uploadComponent';
     }
@@ -1419,7 +1423,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public updateContentReusedContribution() {
     const option = {
       url: 'content/v3/read/' + this.sessionContext.collection,
-      param: { 'mode': 'edit', 'fields': 'acceptedContents,versionKey' }
+      param: { 'mode': 'edit', 'fields': 'versionKey' }
     };
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       const request = {
@@ -1447,7 +1451,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
        });
   }
 
-  deleteContent() { 
+  deleteContent() {
   this.helperService.retireContent(this.contentId, this.projectTargetType)
     .subscribe(
       (response) => {
@@ -1466,7 +1470,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         };
         this.sourcingService.apiErrorHandling(error, errInfo);
       }
-    );    
+    );
   }
 
   handleBack() {
