@@ -446,12 +446,12 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
 
   getProgramCollection (preferencefilters?) {
     if (!this.programDetails.target_type || _.includes(['collections', 'questionSets'], this.programDetails.target_type)) {
-      return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).pipe(
+      return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters, true, this.programDetails.target_type).pipe(
         tap((response: any) => {
           if (response && response.result) {
             let objectType = 'content';
             if(this.programDetails.target_type === 'questionSets') objectType = 'QuestionSet';
-            this.programCollections = response.result[objectType] || [];            
+            this.programCollections = response.result[objectType] || [];
           }
         }),
         catchError(err => {
@@ -470,7 +470,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           return of(false);
         })
       );
-    } 
+    }
   }
 
   getcontentAggregationData() {
@@ -618,8 +618,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
-      this.frameworkService.initialize(this.sessionContext.framework);   
-      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(), 
+      this.frameworkService.initialize(this.sessionContext.framework);
+      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(),
               this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
             const frameworkRes = _.first(response);
@@ -733,7 +733,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getCollectionsAddedToProgram() {
-    let collectionsAddedToProgram = _.filter(this.programCollections, 
+    let collectionsAddedToProgram = _.filter(this.programCollections,
       (collection) => _.indexOf(this.programDetails.collection_ids, collection.identifier) !== -1
     )
     return collectionsAddedToProgram || [];
@@ -755,13 +755,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             if (prefres.result !== null || prefres.result !== undefined) {
               this.userPreferences = prefres.result;
               preffilter = _.get(this.userPreferences, 'sourcing_preference');
-            }                     
+            }
             this.getProgramCollection(preffilter).subscribe((res) => {
               this.showTextbookLoader  =  false;
-              if (_.get(this.programDetails, 'target_type') === 'questionSets') {              
+              if (_.get(this.programDetails, 'target_type') === 'questionSets') {
                 this.programCollections = this.getCollectionsAddedToProgram();
               }
-              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');              
+              this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
               this.logTelemetryImpressionEvent();
