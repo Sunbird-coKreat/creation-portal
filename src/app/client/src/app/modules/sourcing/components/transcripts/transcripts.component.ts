@@ -7,6 +7,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import _ from 'lodash';
 import { TranscriptMetadata } from './transcript';
+import { SearchService } from '@sunbird/core';
 
 @Component({
   selector: 'app-transcripts',
@@ -21,6 +22,8 @@ export class TranscriptsComponent implements OnInit {
   public transcriptForm: FormGroup;
   public langControl = "language";
   public languageOptions;
+  public assetList = [];
+
   public content = {
     "versionKey": "1637262562797",
     "identifier": "do_11340715459064627211839",
@@ -47,7 +50,8 @@ export class TranscriptsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private sourcingService: SourcingService,
     private transcriptService: TranscriptService,
-    private helperService: HelperService
+    private helperService: HelperService,
+    private searchService: SearchService
   ) { }
 
   ngOnInit(): void {
@@ -84,6 +88,11 @@ export class TranscriptsComponent implements OnInit {
 
     this.setFormValues(this.content.transcripts);
     this.addItem();
+    this.getAssetList().subscribe(res => {
+      console.log(res);
+    }, err => {
+      console.log(err);
+    });
   }
 
   get items(): FormArray {
@@ -119,7 +128,7 @@ export class TranscriptsComponent implements OnInit {
       identifier: [data ? data.identifier : null],
       language: [data ? data.languageCode : null],
       transcriptFile: '',
-      fileName : [data ? data.artifactUrl.split('/').pop() : null]
+      fileName: [data ? data.artifactUrl.split('/').pop() : null]
     });
   }
 
@@ -190,7 +199,7 @@ export class TranscriptsComponent implements OnInit {
       let transcriptMetadata: TranscriptMetadata = {};
       const file = item.get("transcriptFile")['file'];
       if (item.get("fileName").value && item.get("language").value && file) {
-        const forkReq = this.createAsset(item).pipe(
+        const forkReq = this.createOrUpdateAsset(item).pipe(
           switchMap(asset => {
             transcriptMetadata.language = item.get("language").value;
             transcriptMetadata.languageCode = item.get("language").value;
@@ -238,7 +247,7 @@ export class TranscriptsComponent implements OnInit {
     // 4. Update content
   }
 
-  createAsset(item): Observable<any> {
+  createOrUpdateAsset(item): Observable<any> {
     const identifier = item.get("identifier").value;
     const req = _.clone(this.createAssetReq);
     req.asset['name'] = item.get("fileName").value;
@@ -325,5 +334,21 @@ export class TranscriptsComponent implements OnInit {
         "language": []
       }
     }
+  }
+
+  getAssetList(): Observable<any> {
+    const req = {
+      "filters": {
+        "primaryCategory": "Video transcript",
+        "status": [],
+        "mimeType": "application/x-subrip",
+        "identifier": [
+          "do_1134121521152491521479",
+          "do_1134121521153720321480"
+        ]
+      }
+    };
+
+    return this.searchService.compositeSearch(req);
   }
 }
