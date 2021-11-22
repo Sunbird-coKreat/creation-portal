@@ -145,6 +145,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public qumlPlayerConfig;
   public enableInteractivity = false;
   public showTranscriptPopup = false;
+  public showDownloadTranscriptPopup = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -1676,5 +1677,36 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   public closeTranscriptPopup() {
     this.showTranscriptPopup = false;
+  }
+
+  showDownloadTranscript() {
+    /*
+    const transcripts = {
+      'versionKey': '1637262562797',
+      'identifier': 'do_11340715459064627211839',
+      'transcripts': [
+        {
+          'language': 'English',
+          'languageCode': 'English',
+          'identifier': 'do_1134121521152491521479',
+          // tslint:disable-next-line:max-line-length
+          'artifactUrl': 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521152491521479/example.srt'
+        },
+        {
+          'language': 'Assamese',
+          'languageCode': 'Assamese',
+          'identifier': 'do_1134121521153720321480',
+          'artifactUrl': 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521153720321480/srt-e.srt'
+        }
+      ]
+    };
+    this.this.contentMetaData['transcripts'] = transcripts;
+    */
+    if (_.has(this.contentMetaData, 'transcripts') && !_.isUndefined(this.contentMetaData.transcripts)) {
+      this.showDownloadTranscriptPopup = true;
+    } else {
+      this.showDownloadTranscriptPopup = false;
+      this.toasterService.warning('No transcript found for this content');
+    }
   }
 }

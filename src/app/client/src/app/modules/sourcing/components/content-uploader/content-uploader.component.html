@@ -64,6 +64,14 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Add/edit Transcript</button>
+              <button id="downloadTranscript" suiPopup popupText="Download Transcript"
+              [popupPlacement]="'top'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showDownloadTranscript()"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >Download Transcript</button>
               <button id="changeContent" suiPopup popupText="Replace file" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace_file', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
@@ -339,6 +347,23 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
 <!--@Todo set isClosable to false-->
 <sui-modal *ngIf="showTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" appBodyScroll #modal>
   <app-transcripts (closeTranscript)="closeTranscriptPopup()"></app-transcripts>
+</sui-modal>
+
+<sui-modal *ngIf="showDownloadTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" #downloadTranscriptPopup (dismissed)="showDownloadTranscriptPopup = false;">
+  <div class="sb-modal-header">
+    Download Transcript
+  </div>
+  <div class="sb-modal-content">
+    <app-transcripts-review [contentTranscript]="contentMetaData?.transcripts"></app-transcripts-review>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDownloadTranscriptPopup = false;"
+    appTelemetryInteract
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('close', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'download_transcript'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">Close</button>
+  </div>
 </sui-modal>
 
 <sui-modal *ngIf="showQuestionSetPreview" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
