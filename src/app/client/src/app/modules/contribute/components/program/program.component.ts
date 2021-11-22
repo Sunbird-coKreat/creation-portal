@@ -203,12 +203,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
     }
   }
- 
+
 
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
   }
-  
+
   getNominationStatus() {
     const filters = {
       program_id: this.activatedRoute.snapshot.params.programId
@@ -240,8 +240,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
         if (frameworkData) {
           this.sessionContext.frameworkData = frameworkData.categories;
-          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms'); 
-        } 
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
+        }
         if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
           this.getProgramCollections();
         } else if (this.programDetails.target_type == 'searchCriteria') {
@@ -263,7 +263,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
   }
- 
+
   setProgramRole() {
     //const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
     //if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus)) {
@@ -281,7 +281,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         const programType = _.get(this.programDetails, 'type');
         const isContributingOrgContributor = this.userService.isContributingOrgContributor(this.sessionContext.nominationDetails);
         const isDefaultContributingOrg = this.userService.isDefaultContributingOrg(this.programDetails);;
-        if (defaultContributeOrgReview === false && (programType === 'restricted' || 
+        if (defaultContributeOrgReview === false && (programType === 'restricted' ||
         (isContributingOrgContributor && isDefaultContributingOrg && _.get(this.sessionContext, 'currentRoles').includes('CONTRIBUTOR') && this.currentNominationStatus === 'Approved'))) {
           this.sessionContext.currentOrgRole = 'individual';
         }
@@ -666,12 +666,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     let sampleValue, organisation_id, individualUserId, onlyCount;
     if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
         sampleValue = true;
-      if (this.userService.isUserBelongsToOrg()) {
-        organisation_id = this.userService.getUserOrgId();
-      } else {
-        individualUserId = this.userService.userid;
-      }
     }
+    if (this.userService.isUserBelongsToOrg()) {
+      organisation_id = this.userService.getUserOrgId();
+    } else {
+      individualUserId = this.userService.userid;
+    }
+
     this.collectionHierarchyService.preferencefilters = preferences;
     this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId, onlyCount, true).subscribe(
       (response) => {
@@ -1119,6 +1120,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         (response) => {
           if (response && response.result && response.result.node_id) {
             this.toasterService.success(this.resourceService.messages.smsg.m0064);
+            const cindex = this.contributorTextbooks.findIndex(x => x.identifier === this.contentId);
+            this.contributorTextbooks.splice(cindex, 1);
+            this.contentCount = this.contentCount-1;
           } else {
             this.toasterService.error(this.resourceService.messages.fmsg.m00103);
           }
@@ -1154,7 +1158,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.sessionContext && this.programDetails && this.currentStage === 'programComponent') {
       this.nominationIsInProcess = false;
       this.loaders.showCollectionListLoader = true;
-      this.getNominationStatus();
+      setTimeout(() => {
+        this.getNominationStatus();
+      }, 3000);
     }
   }
   tabChangeHandler(e) {

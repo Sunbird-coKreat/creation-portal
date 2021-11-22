@@ -466,7 +466,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
           return of(false);
         })
       );
-    } 
+    }
   }
 
   getcontentAggregationData() {
@@ -617,8 +617,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
-      this.frameworkService.initialize(this.sessionContext.framework);   
-      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(), 
+      this.frameworkService.initialize(this.sessionContext.framework);
+      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(),
               this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
             const frameworkRes = _.first(response);
@@ -926,6 +926,15 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
+    if (this.sessionContext && this.programDetails && this.currentStage === 'programNominations') {
+      this.showTextbookLoader = true;
+      setTimeout(() => {
+        forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
+          (response) => {
+              this.checkActiveTab();
+          });
+      }, 3000);
+    }
   }
 
   applyPreferences(preferences?) {
@@ -1006,27 +1015,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.programStageService.addStage('chapterListComponent');
     this.setFrameworkCategories(collection);
   }
-/*
-  getSharedContextObjectProperty(property) {
-    if (property === 'channel') {
-       return _.get(this.programDetails, 'config.scope.channel');
-    } else if ( property === 'topic' ) {
-      return null;
-    } else {
-      const collectionComComponent = _.find(this.programDetails.config.components, { 'id': 'ng.sunbird.collection' });
-      const filters =  collectionComComponent.config.filters;
-      const explicitProperty =  _.find(filters.explicit, {'code': property});
-      const implicitProperty =  _.find(filters.implicit, {'code': property});
-      return (implicitProperty) ? implicitProperty.range || implicitProperty.defaultValue :
-       explicitProperty.range || explicitProperty.defaultValue;
-    }
-  }
-
-  checkArrayCondition(param) {
-    // tslint:disable-next-line:max-line-length
-    this.sharedContext[param] = _.isArray(this.sharedContext[param]) ? this.sharedContext[param] : _.split(this.sharedContext[param], ',');
-  }*/
-
   public isEmptyObject(obj) {
     return !!(_.isEmpty(obj));
   }
