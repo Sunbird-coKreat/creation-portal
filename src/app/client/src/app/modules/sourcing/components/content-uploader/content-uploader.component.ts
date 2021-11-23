@@ -146,6 +146,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public enableInteractivity = false;
   public showTranscriptPopup = false;
   public showDownloadTranscriptPopup = false;
+  public showDownloadTranscriptButton = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -764,6 +765,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (!this.contentMetaData.artifactUrl) {
         this.showUploadModal = true;
         this.initiateUploadModal();
+      }
+
+      if (_.has(this.contentMetaData, 'transcripts') && !_.isUndefined(this.contentMetaData.transcripts)) {
+        this.showDownloadTranscriptButton = true;
       }
       this.loading = false;
       this.handleActionButtons();

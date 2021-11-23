@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ToasterService } from '@sunbird/shared';
+import { ResourceService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 @Component({
   selector: 'app-transcripts-review',
@@ -10,9 +10,13 @@ export class TranscriptsReviewComponent implements OnInit {
   @Input() contentTranscript;
   transcripts = [];
 
-  constructor(public toasterService: ToasterService) { }
+  constructor(public resourceService: ResourceService) { }
 
   ngOnInit(): void {
+    this.setTranscripts();
+  }
+
+  setTranscripts() {
     this.transcripts = this.contentTranscript;
     _.forEach(this.transcripts, transcript => {
       if (!_.isEmpty(transcript.artifactUrl)) {
@@ -26,8 +30,6 @@ export class TranscriptsReviewComponent implements OnInit {
   downloadFile(artifactUrl) {
     if (!_.isEmpty(artifactUrl)) {
       window.open(artifactUrl, '_blank');
-    } else {
-      this.toasterService.error('Something went wrong');
     }
   }
 
