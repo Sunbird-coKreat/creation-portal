@@ -3,8 +3,8 @@ import { TranscriptService } from './../../../core/services/transcript/transcrip
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { forkJoin, Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, observable, Observable, of } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import _ from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
@@ -23,6 +23,8 @@ export class TranscriptsComponent implements OnInit {
   public langControl = "language";
   public languageOptions;
   public assetList = [];
+  public loader = true;
+  public disableDoneBtn = true;
 
   public content = {
     "versionKey": "1637262562797",
@@ -30,13 +32,11 @@ export class TranscriptsComponent implements OnInit {
     "transcripts": [
       {
         "language": "English",
-        "languageCode": "English",
         "identifier": "do_1134121521152491521479",
         "artifactUrl": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521152491521479/example.srt"
       },
       {
         "language": "Assamese",
-        "languageCode": "Assamese",
         "identifier": "do_1134121521153720321480",
         "artifactUrl": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521153720321480/srt-e.srt"
       }
@@ -89,9 +89,17 @@ export class TranscriptsComponent implements OnInit {
     this.setFormValues(this.content.transcripts);
     this.addItem();
     this.getAssetList().subscribe(res => {
-      console.log(res);
+      if (_.get(res, "responseCode") === "OK") {
+        this.assetList = _.get(res, 'result.content');
+      } else {
+        console.log("Something went wrong", res);
+      }
+      this.hideLoader();
+      this.disableDoneBtn = false;
     }, err => {
-      console.log(err);
+      console.log("Something went wrong", err);
+      this.hideLoader();
+      this.disableDoneBtn = false;
     });
   }
 
@@ -126,7 +134,7 @@ export class TranscriptsComponent implements OnInit {
   createItem(data?): FormGroup {
     return this.fb.group({
       identifier: [data ? data.identifier : null],
-      language: [data ? data.languageCode : null],
+      language: [data ? data.language : null],
       transcriptFile: '',
       fileName: [data ? data.artifactUrl.split('/').pop() : null]
     });
@@ -192,38 +200,57 @@ export class TranscriptsComponent implements OnInit {
   //1. Prepare transcript meta to update
   //2. Update content
   done() {
+    // this.disableDoneBtn = true;
     const transcriptMeta = [];
     const assetRequest = [];
 
-    this.items['controls'].forEach((item, index) => {
+    this.items['controls'].forEach((item) => {
       let transcriptMetadata: TranscriptMetadata = {};
-      const file = item.get("transcriptFile")['file'];
-      if (item.get("fileName").value && item.get("language").value && file) {
-        const forkReq = this.createOrUpdateAsset(item).pipe(
-          switchMap(asset => {
+      let orgAsset;
+      // let isTranscriptChanged;
+
+      if (item.get("identifier").value) {
+        orgAsset = _.find(this.assetList, e => e.identifier == item.get("identifier").value);
+      }
+
+      if (item.get("fileName").value && item.get("language").value) {
+        let forkReq;
+        // if selected then upload it
+        if (item.get("transcriptFile")['file']) {
+          forkReq = this.createOrUpdateAsset(item).pipe(
+            switchMap(asset => {
+              transcriptMetadata.language = item.get("language").value;
+              transcriptMetadata.identifier = _.get(asset, 'result.identifier');
+              return this.generatePreSignedUrl(asset, item);
+            }),
+            switchMap((rsp) => {
+              item['preSignedResponse'] = rsp;
+              const signedURL = item['preSignedResponse'].result.pre_signed_url;
+              transcriptMetadata.artifactUrl = signedURL.split('?')[0];
+              transcriptMeta.push(transcriptMetadata);
+              return this.uploadToBlob(rsp, item);
+            }),
+            switchMap(response => {
+              return this.updateAssetWithURL(item);
+            })
+          );
+        } else {
+          // Update only asset language only
+          forkReq = this.createOrUpdateAsset(item).pipe(switchMap((rs)=> {
+            transcriptMetadata.identifier = _.get(orgAsset, 'identifier');
             transcriptMetadata.language = item.get("language").value;
-            transcriptMetadata.languageCode = item.get("language").value;
-            transcriptMetadata.identifier = _.get(asset, 'result.identifier');
-            return this.generatePreSignedUrl(asset, item);
-          }),
-          switchMap((rsp) => {
-            item['preSignedResponse'] = rsp;
-            const signedURL = item['preSignedResponse'].result.pre_signed_url;
-            transcriptMetadata.artifactUrl = signedURL.split('?')[0];
+            transcriptMetadata.artifactUrl = _.get(orgAsset, 'artifactUrl');
             transcriptMeta.push(transcriptMetadata);
-            return this.uploadToBlob(rsp, item);
-          }),
-          switchMap(response => {
-            return this.updateAssetWithURL(item);
-          })
-        );
+            return of(transcriptMetadata);
+          }));
+        }
+
         assetRequest.push(forkReq);
       }
     });
 
     forkJoin(assetRequest).subscribe(response => {
-      this.updateContent(response, transcriptMeta).subscribe(response => {
-        console.log(response);
+      this.updateContent(transcriptMeta).subscribe(response => {
         this.closeTranscript.emit();
       }, error => {
         this.closeTranscript.emit();
@@ -247,6 +274,25 @@ export class TranscriptsComponent implements OnInit {
     // 4. Update content
   }
 
+  isChanged (item) {
+    let orgAsset;
+
+    if (item.get("identifier").value) {
+      orgAsset = _.find(this.assetList, e => e.identifier == item.get("identifier").value)
+    }
+
+    if (_.get(orgAsset, 'language') === item.get("language").value) {
+
+    }
+
+
+  }
+
+  uploadFile(): Observable<any> {
+
+    return of({});
+  }
+
   createOrUpdateAsset(item): Observable<any> {
     const identifier = item.get("identifier").value;
     const req = _.clone(this.createAssetReq);
@@ -254,14 +300,12 @@ export class TranscriptsComponent implements OnInit {
     req.asset['language'].push(item.get("language").value);
 
     if (identifier) {
-      // this.sourcingService.readAsset(identifier).subscribe(rsp => {
-      // });
-
+      const asset = _.find(this.assetList, em => em.identifier == identifier);
+      req.asset['versionKey'] = _.get(asset, 'versionKey');
       return this.sourcingService.updateAsset(req, identifier);
     } else {
       return this.sourcingService.createAsset(req);
     }
-
   }
 
   uploadToBlob(response, item): Observable<any> {
@@ -313,7 +357,7 @@ export class TranscriptsComponent implements OnInit {
   // 1. Get content as input
   // 2. Update content for transcripts object
   // -- Prepare transcript object
-  updateContent(data, transcriptMeta): Observable<any> {
+  updateContent(transcriptMeta): Observable<any> {
     const req = {
       content: {
         versionKey: this.content.versionKey,
@@ -337,6 +381,9 @@ export class TranscriptsComponent implements OnInit {
   }
 
   getAssetList(): Observable<any> {
+    // @Todo get mime type from configuration
+    // Check if we need mime type, if not then remove or get it from configuration
+    // @Todo get identifier from content
     const req = {
       "filters": {
         "primaryCategory": "Video transcript",
@@ -346,9 +393,18 @@ export class TranscriptsComponent implements OnInit {
           "do_1134121521152491521479",
           "do_1134121521153720321480"
         ]
-      }
+      },
+      "fields": ["versionKey"]
     };
 
     return this.searchService.compositeSearch(req);
+  }
+
+  showLoader(): void {
+    this.loader = true;
+  }
+
+  hideLoader(): void {
+    this.loader = false;
   }
 }
