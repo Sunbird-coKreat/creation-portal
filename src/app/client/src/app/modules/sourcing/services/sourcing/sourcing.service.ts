@@ -234,7 +234,7 @@ export class SourcingService {
       }
     };
     reqParam.data.request = req ? _.merge({}, reqParam.data.request, req) : reqParam;
-    return this.publicDataService.post(reqParam);
+    return this.publicDataService.patch(reqParam);
   }
 
   uploadMedia(req, assetId: any) {
