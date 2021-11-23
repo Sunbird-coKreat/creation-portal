@@ -18,7 +18,7 @@
                 </sui-select-option>
               </sui-select>
             </div>
-            <div class="six wide column">
+            <div class="seven wide column">
               <!-- [class.block-hide]="transcriptFile.value" -->
               <div [class.block-hide]="item.controls.fileName.value" class="sb-before-upload-section">
                 <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
@@ -47,9 +47,9 @@
                     (click)="replaceFile(i)"><i class="icon refresh sb-color-primary"></i>
                     <!-- <input name="" type="file" accept="image/png,image/jpeg"> -->
                   </button>
-                  <!-- <button class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto"><i
-                        class="download icon sb-color-primary"></i>
-                    </button> -->
+                  <button *ngIf="identifierControl.value" (click)="download(identifierControl.value)" class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto">
+                    <i class="download icon sb-color-primary"></i>
+                  </button>
                   <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto"
                     (click)="reset(i)"><i class="trash icon sb-color-primary"></i>
                   </button>
@@ -58,7 +58,7 @@
               </div>
             </div>
 
-            <input formControlName="identifier" type="hidden">
+            <input formControlName="identifier" type="hidden" #identifierControl>
           </div>
         </div>
         <!-- End - Before Upload File Field-->

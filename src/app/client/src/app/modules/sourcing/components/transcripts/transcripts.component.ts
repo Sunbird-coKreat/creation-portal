@@ -8,6 +8,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import _ from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
+// import { ToasterService } from 'src/app/modules/shared';
 
 @Component({
   selector: 'app-transcripts',
@@ -52,6 +53,7 @@ export class TranscriptsComponent implements OnInit {
     private transcriptService: TranscriptService,
     private helperService: HelperService,
     private searchService: SearchService
+    // private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
@@ -184,7 +186,14 @@ export class TranscriptsComponent implements OnInit {
     this.getFileNameControl(index).reset();
   }
 
-  download() {
+  download(identifier) {
+    const item = _.find(this.content.transcripts, e => e.identifier == identifier);
+    if (_.get(item, 'artifactUrl')) {
+      window.open(_.get(item, 'artifactUrl'), '_blank');
+    }
+    // } else {
+      // this.toasterService.error('Something went wrong');
+    // }
   }
 
   setFormValues(transcriptsMeta) {
