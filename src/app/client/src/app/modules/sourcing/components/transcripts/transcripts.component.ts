@@ -5,9 +5,10 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } fro
 import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { EMPTY, forkJoin, observable, Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
+
 // import { ToasterService } from 'src/app/modules/shared';
 
 @Component({
@@ -26,7 +27,6 @@ export class TranscriptsComponent implements OnInit {
   public assetList = [];
   public loader = true;
   public disableDoneBtn = true;
-
   public content = {
     "versionKey": "1637262562797",
     "identifier": "do_11340715459064627211839",
@@ -52,38 +52,39 @@ export class TranscriptsComponent implements OnInit {
     private sourcingService: SourcingService,
     private transcriptService: TranscriptService,
     private helperService: HelperService,
-    private searchService: SearchService
+    private searchService: SearchService,
     // private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
+
     this.languageOptions = [
-      { name: "English", code: "English" },
-      { name: "Hindi", code: "Hindi" },
-      { name: "Assamese", code: "Assamese" },
-      { name: "Bengali", code: "Bengali" },
-      { name: "Gujarati", code: "Gujarati" },
-      { name: "Kannada", code: "Kannada" },
-      { name: "Malayalam", code: "Malayalam" },
-      { name: "Marathi", code: "Marathi" },
-      { name: "Nepali", code: "Nepali" },
-      { name: "Odia", code: "Odia" },
-      { name: "Punjabi", code: "Punjabi" },
-      { name: "Tamil", code: "Tamil" },
-      { name: "Telugu", code: "Telugu" },
-      { name: "Urdu", code: "Urdu" },
-      { name: "Sanskrit", code: "Sanskrit" },
-      { name: "Maithili", code: "Maithili" },
-      { name: "Munda", code: "Munda" },
-      { name: "Santali", code: "Santali" },
-      { name: "Juang", code: "Juang" },
-      { name: "Ho", code: "Ho" }
+      "English",
+      "Hindi",
+      "Assamese",
+      "Bengali",
+      "Gujarati",
+      "Kannada",
+      "Malayalam",
+      "Marathi",
+      "Nepali",
+      "Odia",
+      "Punjabi",
+      "Tamil",
+      "Telugu",
+      "Urdu",
+      "Sanskrit",
+      "Maithili",
+      "Munda",
+      "Santali",
+      "Juang",
+      "Ho",
     ];
 
-    // this.transcriptForm = this.fb.group({
-    //   transcripts: this.fb.array([]),
-    //   languages: this.fb.array([])
+    // this.languageOptions = _.map(this.languageOptions, language => {
+    //   return {name: language}
     // });
+
     this.transcriptForm = this.fb.group({
       items: this.fb.array([])
     });
@@ -119,6 +120,10 @@ export class TranscriptsComponent implements OnInit {
 
   getFileNameControl(index) {
     return this.items.controls[index].get("fileName");
+  }
+
+  getLanguageControl(index) {
+    return this.items.controls[index].get("language");
   }
 
   setFile(index, value) {
@@ -184,16 +189,17 @@ export class TranscriptsComponent implements OnInit {
   reset(index) {
     this.getFileControl(index).reset();
     this.getFileNameControl(index).reset();
+    // this.getLanguageControl(index).reset();
   }
 
   download(identifier) {
+    // @Todo - handle error
     const item = _.find(this.content.transcripts, e => e.identifier == identifier);
     if (_.get(item, 'artifactUrl')) {
       window.open(_.get(item, 'artifactUrl'), '_blank');
-    }
-    // } else {
+    } else {
       // this.toasterService.error('Something went wrong');
-    // }
+    }
   }
 
   setFormValues(transcriptsMeta) {
@@ -202,8 +208,19 @@ export class TranscriptsComponent implements OnInit {
     });
   }
 
-  languageChange(event) {
-    console.log(event);
+  languageChange(language, index) {
+    if (language) {
+      forEach(this.items.controls, (e, i) =>{
+        if (e.get("language").value && i !== index ) {
+          if (e.get("language").value === language) {
+            this.items.controls[index].get("language").reset();
+            // @Todo - remove comment
+            // this.toasterService.warning(language + ' is already selected');
+            return true;
+          }
+        }
+      })
+    }
   }
 
   //1. Prepare transcript meta to update
