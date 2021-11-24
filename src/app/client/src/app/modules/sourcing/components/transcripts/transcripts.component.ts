@@ -19,7 +19,7 @@ import { SearchService } from '@sunbird/core';
 
 export class TranscriptsComponent implements OnInit {
   @Input() contentObject;
-  @Output() closeTranscript = new EventEmitter<any>();
+  @Output() closePopup = new EventEmitter<any>();
   public orderForm: FormGroup;
   public transcriptForm: FormGroup;
   public langControl = "language";
@@ -277,9 +277,9 @@ export class TranscriptsComponent implements OnInit {
 
     forkJoin(assetRequest).subscribe(response => {
       this.updateContent(transcriptMeta).subscribe(response => {
-        this.closeTranscript.emit();
+        this.closePopup.emit();
       }, error => {
-        this.closeTranscript.emit();
+        this.closePopup.emit();
         console.log("Something went wrong", error);
       });
     }, error => {
@@ -432,5 +432,9 @@ export class TranscriptsComponent implements OnInit {
 
   hideLoader(): void {
     this.loader = false;
+  }
+
+  close () {
+    this.closePopup.emit();
   }
 }

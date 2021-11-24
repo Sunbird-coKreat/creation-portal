@@ -12,8 +12,7 @@
           <div class="ui grid" [formGroupName]="i">
             <div class="three wide column">
               <sui-select formControlName="language" (selectedOptionChange)="languageChange($event, i)"
-                placeholder="Select language" [options]="languageOptions"
-                class="selection" #selectRef>
+                placeholder="Select language" [options]="languageOptions" class="selection" #selectRef>
                 <sui-select-option *ngFor="let option of selectRef.filteredOptions" [value]="option">
                 </sui-select-option>
               </sui-select>
@@ -47,7 +46,8 @@
                     (click)="replaceFile(i)"><i class="icon refresh sb-color-primary"></i>
                     <!-- <input name="" type="file" accept="image/png,image/jpeg"> -->
                   </button>
-                  <button *ngIf="identifierControl.value" (click)="download(identifierControl.value)" class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto">
+                  <button *ngIf="identifierControl.value" (click)="download(identifierControl.value)"
+                    class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto">
                     <i class="download icon sb-color-primary"></i>
                   </button>
                   <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto"
@@ -69,5 +69,6 @@
   </div>
 </div>
 <div class="sb-modal-actions">
+  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="close()" [disabled]="disableDoneBtn">Close</button>
   <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="done()" [disabled]="disableDoneBtn">Done</button>
 </div>
