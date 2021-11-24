@@ -153,6 +153,8 @@ function getLocals(req) {
   locals.dockDefaultVideoSize = envHelper.DOCK_DEFAULT_VIDEO_SIZE;
   locals.sunbirdQuestionSetChildrenLimit = envHelper.SUNBIRD_QUESTIONSET_CHILDREN_LIMIT;
   locals.sunbirdCollectionChildrenLimit =  envHelper.SUNBIRD_COLLECTION_CHILDREN_LIMIT;
+  locals.sunbirdTranscriptSupportedLanguages = envHelper.SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES;
+  locals.sunbirdTranscriptFileFormat =  envHelper.SUNBIRD_TRANSCRIPT_FILE_FORMAT;
   return locals
 }
 

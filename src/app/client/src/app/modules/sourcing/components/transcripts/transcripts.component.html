@@ -11,8 +11,8 @@
         <div formArrayName="items" *ngFor="let item of transcriptForm.get('items')['controls']; let i = index;">
           <div class="ui grid" [formGroupName]="i">
             <div class="three wide column">
-              <sui-select formControlName="language" (selectedOptionChange)="languageChange($event)"
-                placeholder="Select language" valueField="code" labelField="name" [options]="languageOptions"
+              <sui-select formControlName="language" (selectedOptionChange)="languageChange($event, i)"
+                placeholder="Select language" [options]="languageOptions"
                 class="selection" #selectRef>
                 <sui-select-option *ngFor="let option of selectRef.filteredOptions" [value]="option">
                 </sui-select-option>

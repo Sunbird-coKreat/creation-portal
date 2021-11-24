@@ -5,9 +5,10 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } fro
 import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { EMPTY, forkJoin, observable, Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
+
 // import { ToasterService } from 'src/app/modules/shared';
 
 @Component({
@@ -21,69 +22,56 @@ export class TranscriptsComponent implements OnInit {
   @Output() closeTranscript = new EventEmitter<any>();
   public orderForm: FormGroup;
   public transcriptForm: FormGroup;
-  public langControl = "language";
+  public langControl = 'language';
   public languageOptions;
   public assetList = [];
   public loader = true;
   public disableDoneBtn = true;
-
   public content = {
-    "versionKey": "1637262562797",
-    "identifier": "do_11340715459064627211839",
-    "transcripts": [
+    'versionKey': '1637262562797',
+    'identifier': 'do_11340715459064627211839',
+    'transcripts': [
       {
-        "language": "English",
-        "identifier": "do_1134121521152491521479",
-        "artifactUrl": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521152491521479/example.srt"
+        'language': 'English',
+        'identifier': 'do_1134121521152491521479',
+        'artifactUrl': 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521152491521479/example.srt'
       },
       {
-        "language": "Assamese",
-        "identifier": "do_1134121521153720321480",
-        "artifactUrl": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521153720321480/srt-e.srt"
+        'language': 'Assamese',
+        'identifier': 'do_1134121521153720321480',
+        'artifactUrl': 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521153720321480/srt-e.srt'
       }
     ]
   };
 
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
-  public userRole = "contributor";
+  public userRole = 'contributor';
 
   constructor(private fb: FormBuilder,
     private cd: ChangeDetectorRef,
     private sourcingService: SourcingService,
     private transcriptService: TranscriptService,
     private helperService: HelperService,
-    private searchService: SearchService
+    private searchService: SearchService,
     // private toasterService: ToasterService
-  ) { }
+  ) {
+    this.languageOptions = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value :
+      ['English', 'Hindi', 'Assamese',
+      'Bengali', 'Gujarati', 'Kannada',
+      'Malayalam', 'Marathi', 'Nepali',
+      'Odia', 'Punjabi', 'Tamil', 'Telugu',
+      'Urdu', 'Sanskrit', 'Maithili', 'Munda',
+      'Santali', 'Juang', 'Ho', 'Oriya'];
+      const fileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ?
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
+   }
 
   ngOnInit(): void {
-    this.languageOptions = [
-      { name: "English", code: "English" },
-      { name: "Hindi", code: "Hindi" },
-      { name: "Assamese", code: "Assamese" },
-      { name: "Bengali", code: "Bengali" },
-      { name: "Gujarati", code: "Gujarati" },
-      { name: "Kannada", code: "Kannada" },
-      { name: "Malayalam", code: "Malayalam" },
-      { name: "Marathi", code: "Marathi" },
-      { name: "Nepali", code: "Nepali" },
-      { name: "Odia", code: "Odia" },
-      { name: "Punjabi", code: "Punjabi" },
-      { name: "Tamil", code: "Tamil" },
-      { name: "Telugu", code: "Telugu" },
-      { name: "Urdu", code: "Urdu" },
-      { name: "Sanskrit", code: "Sanskrit" },
-      { name: "Maithili", code: "Maithili" },
-      { name: "Munda", code: "Munda" },
-      { name: "Santali", code: "Santali" },
-      { name: "Juang", code: "Juang" },
-      { name: "Ho", code: "Ho" }
-    ];
-
-    // this.transcriptForm = this.fb.group({
-    //   transcripts: this.fb.array([]),
-    //   languages: this.fb.array([])
+    // this.languageOptions = _.map(this.languageOptions, language => {
+    //   return {name: language}
     // });
+
     this.transcriptForm = this.fb.group({
       items: this.fb.array([])
     });
@@ -91,15 +79,15 @@ export class TranscriptsComponent implements OnInit {
     this.setFormValues(this.content.transcripts);
     this.addItem();
     this.getAssetList().subscribe(res => {
-      if (_.get(res, "responseCode") === "OK") {
+      if (_.get(res, 'responseCode') === 'OK') {
         this.assetList = _.get(res, 'result.content');
       } else {
-        console.log("Something went wrong", res);
+        console.log('Something went wrong', res);
       }
       this.hideLoader();
       this.disableDoneBtn = false;
     }, err => {
-      console.log("Something went wrong", err);
+      console.log('Something went wrong', err);
       this.hideLoader();
       this.disableDoneBtn = false;
     });
@@ -110,23 +98,27 @@ export class TranscriptsComponent implements OnInit {
   }
 
   getLanguage(index) {
-    return this.items.controls[index].get("language").value;
+    return this.items.controls[index].get('language').value;
   }
 
   getFileControl(index) {
-    return this.items.controls[index].get("transcriptFile");
+    return this.items.controls[index].get('transcriptFile');
   }
 
   getFileNameControl(index) {
-    return this.items.controls[index].get("fileName");
+    return this.items.controls[index].get('fileName');
+  }
+
+  getLanguageControl(index) {
+    return this.items.controls[index].get('language');
   }
 
   setFile(index, value) {
-    return this.items.controls[index].get("transcriptFile")["file"] = value;
+    return this.items.controls[index].get('transcriptFile')['file'] = value;
   }
 
   getFile(index) {
-    return this.items.controls[index].get("transcriptFile")["file"];
+    return this.items.controls[index].get('transcriptFile')['file'];
   }
 
   addItem(data?): void {
@@ -165,7 +157,7 @@ export class TranscriptsComponent implements OnInit {
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       this.setFile(index, file);
-      this.getFileNameControl(index).patchValue(file.name)
+      this.getFileNameControl(index).patchValue(file.name);
     }
   }
 
@@ -178,22 +170,23 @@ export class TranscriptsComponent implements OnInit {
   // File validation
   // 1. mimeType validation
   replaceFile(index) {
-    document.getElementById("attachFileInput" + index).click();
+    document.getElementById('attachFileInput' + index).click();
   }
 
   reset(index) {
     this.getFileControl(index).reset();
     this.getFileNameControl(index).reset();
+    // this.getLanguageControl(index).reset();
   }
 
   download(identifier) {
+    // @Todo - handle error
     const item = _.find(this.content.transcripts, e => e.identifier == identifier);
     if (_.get(item, 'artifactUrl')) {
       window.open(_.get(item, 'artifactUrl'), '_blank');
-    }
-    // } else {
+    } else {
       // this.toasterService.error('Something went wrong');
-    // }
+    }
   }
 
   setFormValues(transcriptsMeta) {
@@ -202,8 +195,19 @@ export class TranscriptsComponent implements OnInit {
     });
   }
 
-  languageChange(event) {
-    console.log(event);
+  languageChange(language, index) {
+    if (language) {
+      forEach(this.items.controls, (e, i) =>{
+        if (e.get('language').value && i !== index ) {
+          if (e.get('language').value === language) {
+            this.items.controls[index].get('language').reset();
+            // @Todo - remove comment
+            // this.toasterService.warning(language + ' is already selected');
+            return true;
+          }
+        }
+      })
+    }
   }
 
   //1. Prepare transcript meta to update
@@ -218,17 +222,17 @@ export class TranscriptsComponent implements OnInit {
       let orgAsset;
       // let isTranscriptChanged;
 
-      if (item.get("identifier").value) {
-        orgAsset = _.find(this.assetList, e => e.identifier == item.get("identifier").value);
+      if (item.get('identifier').value) {
+        orgAsset = _.find(this.assetList, e => e.identifier == item.get('identifier').value);
       }
 
-      if (item.get("fileName").value && item.get("language").value) {
+      if (item.get('fileName').value && item.get('language').value) {
         let forkReq;
         // if selected then upload it
-        if (item.get("transcriptFile")['file']) {
+        if (item.get('transcriptFile')['file']) {
           forkReq = this.createOrUpdateAsset(item).pipe(
             switchMap(asset => {
-              transcriptMetadata.language = item.get("language").value;
+              transcriptMetadata.language = item.get('language').value;
               transcriptMetadata.identifier = _.get(asset, 'result.identifier');
               return this.generatePreSignedUrl(asset, item);
             }),
@@ -247,7 +251,7 @@ export class TranscriptsComponent implements OnInit {
           // Update only asset language only
           forkReq = this.createOrUpdateAsset(item).pipe(switchMap((rs)=> {
             transcriptMetadata.identifier = _.get(orgAsset, 'identifier');
-            transcriptMetadata.language = item.get("language").value;
+            transcriptMetadata.language = item.get('language').value;
             transcriptMetadata.artifactUrl = _.get(orgAsset, 'artifactUrl');
             transcriptMeta.push(transcriptMetadata);
             return of(transcriptMetadata);
@@ -263,7 +267,7 @@ export class TranscriptsComponent implements OnInit {
         this.closeTranscript.emit();
       }, error => {
         this.closeTranscript.emit();
-        console.log("Something went wrong", error);
+        console.log('Something went wrong', error);
       });
     }, error => {
       console.log(error);
@@ -286,11 +290,11 @@ export class TranscriptsComponent implements OnInit {
   isChanged (item) {
     let orgAsset;
 
-    if (item.get("identifier").value) {
-      orgAsset = _.find(this.assetList, e => e.identifier == item.get("identifier").value)
+    if (item.get('identifier').value) {
+      orgAsset = _.find(this.assetList, e => e.identifier == item.get('identifier').value)
     }
 
-    if (_.get(orgAsset, 'language') === item.get("language").value) {
+    if (_.get(orgAsset, 'language') === item.get('language').value) {
 
     }
 
@@ -303,10 +307,10 @@ export class TranscriptsComponent implements OnInit {
   }
 
   createOrUpdateAsset(item): Observable<any> {
-    const identifier = item.get("identifier").value;
+    const identifier = item.get('identifier').value;
     const req = _.clone(this.createAssetReq);
-    req.asset['name'] = item.get("fileName").value;
-    req.asset['language'].push(item.get("language").value);
+    req.asset['name'] = item.get('fileName').value;
+    req.asset['language'].push(item.get('language').value);
 
     if (identifier) {
       const asset = _.find(this.assetList, em => em.identifier == identifier);
@@ -328,7 +332,7 @@ export class TranscriptsComponent implements OnInit {
         }
       };
 
-      return this.transcriptService.http.put(signedURL, item.get("transcriptFile")['file'], config);
+      return this.transcriptService.http.put(signedURL, item.get('transcriptFile')['file'], config);
     } catch (err) {
       console.log(err);
     }
@@ -337,8 +341,8 @@ export class TranscriptsComponent implements OnInit {
   generatePreSignedUrl(asset, item): Observable<any> {
     try {
       const req = {
-        "content": {
-          "fileName": item.get("fileName").value
+        'content': {
+          'fileName': item.get('fileName').value
         }
       };
 
@@ -353,8 +357,8 @@ export class TranscriptsComponent implements OnInit {
     const fileURL = signedURL.split('?')[0];
 
     var formData = new FormData();
-    formData.append("fileUrl", fileURL);
-    formData.append("mimeType", "application/x-subrip");
+    formData.append('fileUrl', fileURL);
+    formData.append('mimeType', 'application/x-subrip');
 
     const request = {
       data: formData
@@ -379,12 +383,12 @@ export class TranscriptsComponent implements OnInit {
 
   get createAssetReq() {
     return {
-      "asset": {
-        "name": "",
-        "mimeType": "application/x-subrip",
-        "primaryCategory": "Video transcript",
-        "mediaType": "text",
-        "language": []
+      'asset': {
+        'name': '',
+        'mimeType': 'application/x-subrip',
+        'primaryCategory': 'Video transcript',
+        'mediaType': 'text',
+        'language': []
       }
     }
   }
@@ -394,16 +398,16 @@ export class TranscriptsComponent implements OnInit {
     // Check if we need mime type, if not then remove or get it from configuration
     // @Todo get identifier from content
     const req = {
-      "filters": {
-        "primaryCategory": "Video transcript",
-        "status": [],
-        "mimeType": "application/x-subrip",
-        "identifier": [
-          "do_1134121521152491521479",
-          "do_1134121521153720321480"
+      'filters': {
+        'primaryCategory': 'Video transcript',
+        'status': [],
+        'mimeType': 'application/x-subrip',
+        'identifier': [
+          'do_1134121521152491521479',
+          'do_1134121521153720321480'
         ]
       },
-      "fields": ["versionKey"]
+      'fields': ['versionKey']
     };
 
     return this.searchService.compositeSearch(req);
