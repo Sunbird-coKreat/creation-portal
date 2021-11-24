@@ -39,6 +39,7 @@ import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml
 import { ResourceLibraryModule } from "@project-sunbird/sunbird-resource-library";
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { TranscriptsComponent } from './components/transcripts/transcripts.component';
+import { TranscriptsReviewComponent } from './components/transcripts-review/transcripts-review.component';
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -48,7 +49,7 @@ import { TranscriptsComponent } from './components/transcripts/transcripts.compo
     ContentUploaderComponent, CollectionComponent,
     ResourceReorderComponent, ContentEditorComponent, MvcLibraryComponent,
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
-    BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent],
+    BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent, TranscriptsReviewComponent],
   imports: [
     RouterModule,
     CoreModule,
@@ -78,6 +79,6 @@ import { TranscriptsComponent } from './components/transcripts/transcripts.compo
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent ]
+  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent ]
 })
 export class SourcingModule { }
