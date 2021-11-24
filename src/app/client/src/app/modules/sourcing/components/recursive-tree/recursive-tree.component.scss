@@ -91,11 +91,11 @@
 
   .item-tag-topic{
     @extend .item-tag;
-    background: $primary-300;
+    background: $red-0;
   }
   .item-tag-learningOutcome{
     @extend .item-tag;
-    background: $secondary-100;
+    background: $tertiary-0;
   }
   .item-tag-subject{
     @extend .item-tag;
