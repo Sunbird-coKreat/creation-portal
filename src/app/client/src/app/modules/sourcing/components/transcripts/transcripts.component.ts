@@ -81,10 +81,6 @@ export class TranscriptsComponent implements OnInit {
       "Ho",
     ];
 
-    // this.languageOptions = _.map(this.languageOptions, language => {
-    //   return {name: language}
-    // });
-
     this.transcriptForm = this.fb.group({
       items: this.fb.array([])
     });
@@ -155,11 +151,6 @@ export class TranscriptsComponent implements OnInit {
     return this.transcriptForm.get('languages') as FormArray;
   }
 
-  // 1. Create asset for identifier
-  // 2. Create pre-signed url for asset identifier
-  // 3. Upload file using pre-signed URL on s3
-  // 4. Upload asset using pre-signed URL as file URL
-  // 5. Update content using transcript meta property
   attachFile(event, index) {
     const file = event.target.files[0];
 
@@ -180,8 +171,6 @@ export class TranscriptsComponent implements OnInit {
     return true;
   }
 
-  // File validation
-  // 1. mimeType validation
   replaceFile(index) {
     document.getElementById("attachFileInput" + index).click();
   }
@@ -189,7 +178,6 @@ export class TranscriptsComponent implements OnInit {
   reset(index) {
     this.getFileControl(index).reset();
     this.getFileNameControl(index).reset();
-    // this.getLanguageControl(index).reset();
   }
 
   download(identifier) {
@@ -223,25 +211,20 @@ export class TranscriptsComponent implements OnInit {
     }
   }
 
-  //1. Prepare transcript meta to update
-  //2. Update content
   done() {
-    // this.disableDoneBtn = true;
+    this.disableDoneBtn = true;
     const transcriptMeta = [];
     const assetRequest = [];
 
     this.items['controls'].forEach((item) => {
       let transcriptMetadata: TranscriptMetadata = {};
       let orgAsset;
-      // let isTranscriptChanged;
-
       if (item.get("identifier").value) {
         orgAsset = _.find(this.assetList, e => e.identifier == item.get("identifier").value);
       }
 
       if (item.get("fileName").value && item.get("language").value) {
         let forkReq;
-        // if selected then upload it
         if (item.get("transcriptFile")['file']) {
           forkReq = this.createOrUpdateAsset(item).pipe(
             switchMap(asset => {
@@ -270,7 +253,6 @@ export class TranscriptsComponent implements OnInit {
             return of(transcriptMetadata);
           }));
         }
-
         assetRequest.push(forkReq);
       }
     });
@@ -285,38 +267,6 @@ export class TranscriptsComponent implements OnInit {
     }, error => {
       console.log(error);
     });
-
-    // API -> For new Create
-    // 1. Create asset
-    // 2. Get pre-signed url
-    // 3. Upload asset on pre-signed URL
-    // 4. Upload asset - artifact url
-    // 5. Update content
-
-    // API's => For edit asset / transcripts
-    // 1. get pre-signed url using asset identifier
-    // 2. upload asset on pre-signed url
-    // 3. upload asset - artifact URL
-    // 4. Update content
-  }
-
-  isChanged (item) {
-    let orgAsset;
-
-    if (item.get("identifier").value) {
-      orgAsset = _.find(this.assetList, e => e.identifier == item.get("identifier").value)
-    }
-
-    if (_.get(orgAsset, 'language') === item.get("language").value) {
-
-    }
-
-
-  }
-
-  uploadFile(): Observable<any> {
-
-    return of({});
   }
 
   createOrUpdateAsset(item): Observable<any> {
@@ -358,7 +308,6 @@ export class TranscriptsComponent implements OnInit {
           "fileName": item.get("fileName").value
         }
       };
-
       return this.sourcingService.generatePreSignedUrl(req, _.get(asset, 'result.identifier'));
     } catch (err) {
       throw err;
@@ -368,7 +317,6 @@ export class TranscriptsComponent implements OnInit {
   updateAssetWithURL(item): Observable<any> {
     const signedURL = item['preSignedResponse'].result.pre_signed_url;
     const fileURL = signedURL.split('?')[0];
-
     var formData = new FormData();
     formData.append("fileUrl", fileURL);
     formData.append("mimeType", "application/x-subrip");
@@ -380,9 +328,6 @@ export class TranscriptsComponent implements OnInit {
     return this.sourcingService.uploadAsset(request, item['preSignedResponse'].result.identifier);
   }
 
-  // 1. Get content as input
-  // 2. Update content for transcripts object
-  // -- Prepare transcript object
   updateContent(transcriptMeta): Observable<any> {
     const req = {
       content: {
@@ -434,7 +379,7 @@ export class TranscriptsComponent implements OnInit {
     this.loader = false;
   }
 
-  close () {
+  close() {
     this.closePopup.emit();
   }
 }
