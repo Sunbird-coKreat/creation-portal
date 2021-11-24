@@ -292,9 +292,7 @@ export class BulkUploadComponent implements OnInit {
     }
 
     try {
-      if (!this.uploadCsvConfig) {
-        this.setBulkUploadCsvConfig();
-      }
+      this.setBulkUploadCsvConfig();
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
       headers.push('Status');
       headers.push('Reason for failure');
