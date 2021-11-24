@@ -3,15 +3,14 @@ import { HelperService } from './../../../sourcing/services/helper.service';
 import { TranscriptService } from './../../../core/services/transcript/transcript.service';
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { EMPTY, forkJoin, observable, Observable, of, throwError } from 'rxjs';
-import { catchError, filter, map, switchMap } from 'rxjs/operators';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
 import { ActivatedRoute } from '@angular/router';
-
-// import { ToasterService } from 'src/app/modules/shared';
+import { ToasterService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-transcripts',
@@ -40,8 +39,8 @@ export class TranscriptsComponent implements OnInit {
     private helperService: HelperService,
     private searchService: SearchService,
     private actionService : ActionService,
-    public activeRoute: ActivatedRoute
-    // private toasterService: ToasterService
+    public activeRoute: ActivatedRoute,
+    private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
@@ -169,7 +168,7 @@ export class TranscriptsComponent implements OnInit {
     if (_.get(item, 'artifactUrl')) {
       window.open(_.get(item, 'artifactUrl'), '_blank');
     } else {
-      // this.toasterService.error('Something went wrong');
+      this.toasterService.error('Something went wrong');
     }
   }
 
