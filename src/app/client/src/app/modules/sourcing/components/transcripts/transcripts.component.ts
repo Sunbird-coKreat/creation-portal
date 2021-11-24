@@ -1,13 +1,15 @@
+import { ActionService } from './../../../core/services/action/action.service';
 import { HelperService } from './../../../sourcing/services/helper.service';
 import { TranscriptService } from './../../../core/services/transcript/transcript.service';
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormControl } from '@angular/forms';
-import { EMPTY, forkJoin, observable, Observable, of } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, observable, Observable, of, throwError } from 'rxjs';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
+import { ActivatedRoute } from '@angular/router';
 
 // import { ToasterService } from 'src/app/modules/shared';
 
@@ -18,7 +20,7 @@ import { SearchService } from '@sunbird/core';
 })
 
 export class TranscriptsComponent implements OnInit {
-  @Input() contentObject;
+  @Input() contentMetaData;
   @Output() closePopup = new EventEmitter<any>();
   public orderForm: FormGroup;
   public transcriptForm: FormGroup;
@@ -27,22 +29,6 @@ export class TranscriptsComponent implements OnInit {
   public assetList = [];
   public loader = true;
   public disableDoneBtn = true;
-  public content = {
-    "versionKey": "1637262562797",
-    "identifier": "do_11340715459064627211839",
-    "transcripts": [
-      {
-        "language": "English",
-        "identifier": "do_1134121521152491521479",
-        "artifactUrl": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521152491521479/example.srt"
-      },
-      {
-        "language": "Assamese",
-        "identifier": "do_1134121521153720321480",
-        "artifactUrl": "https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521153720321480/srt-e.srt"
-      }
-    ]
-  };
 
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
   public userRole = "contributor";
@@ -53,11 +39,13 @@ export class TranscriptsComponent implements OnInit {
     private transcriptService: TranscriptService,
     private helperService: HelperService,
     private searchService: SearchService,
+    private actionService : ActionService,
+    public activeRoute: ActivatedRoute
     // private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
-
+    this.showLoader();
     this.languageOptions = [
       "English",
       "Hindi",
@@ -85,8 +73,15 @@ export class TranscriptsComponent implements OnInit {
       items: this.fb.array([])
     });
 
-    this.setFormValues(this.content.transcripts);
-    this.addItem();
+    this.contentRead(this.contentMetaData.identifier).subscribe(content => {
+      this.hideLoader();
+      this.contentMetaData.transcripts = _.get(content, 'transcripts') || [];
+      if (this.contentMetaData.transcripts.length) {
+        this.setFormValues(this.contentMetaData.transcripts);
+      }
+      this.addItem();
+    })
+
     this.getAssetList();
   }
 
@@ -170,7 +165,7 @@ export class TranscriptsComponent implements OnInit {
 
   download(identifier) {
     // @Todo - handle error
-    const item = _.find(this.content.transcripts, e => e.identifier == identifier);
+    const item = _.find(this.contentMetaData.transcripts, e => e.identifier == identifier);
     if (_.get(item, 'artifactUrl')) {
       window.open(_.get(item, 'artifactUrl'), '_blank');
     } else {
@@ -319,12 +314,12 @@ export class TranscriptsComponent implements OnInit {
   updateContent(transcriptMeta): Observable<any> {
     const req = {
       content: {
-        versionKey: this.content.versionKey,
+        versionKey: this.contentMetaData.versionKey,
         transcripts: transcriptMeta
       }
     };
 
-    return this.helperService.updateContent(req, this.content.identifier);
+    return this.helperService.updateContent(req, this.contentMetaData.identifier);
   }
 
   get createAssetReq() {
@@ -340,7 +335,7 @@ export class TranscriptsComponent implements OnInit {
   }
 
   getAssetList(): void {
-    const transcripts = _.get(this.content, "transcripts") || [];
+    const transcripts = _.get(this.contentMetaData, "transcripts") || [];
     const identifier = _.map(transcripts, e => e.identifier);
     if (identifier && identifier.length) {
       const req = {
@@ -365,6 +360,22 @@ export class TranscriptsComponent implements OnInit {
       this.hideLoader();
       this.disableDoneBtn = false;
     }
+  }
+
+  contentRead(identifier): Observable<any> {
+    const option = {
+      url: 'content/v3/read/' + identifier
+    };
+    return this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: "",
+        telemetryCdata: "",
+        env: this.activeRoute.snapshot.data.telemetry.env,
+        request: option
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+    }));
   }
 
   showLoader(): void {
