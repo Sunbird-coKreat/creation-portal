@@ -8,7 +8,7 @@ import { UserService, ActionService, PlayerService, FrameworkService, Notificati
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, filter, take, takeUntil, tap } from 'rxjs/operators';
-import { throwError, Observable, Subject, forkJoin } from 'rxjs';
+import { throwError, Observable, Subject, forkJoin, observable } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -1680,8 +1680,25 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.showTranscriptPopup = true;
   }
 
-  public closeTranscriptPopup() {
-    this.showTranscriptPopup = false;
+  public closeTranscriptPopup():void {
+    this.readContent(this.contentMetaData.identifier).subscribe(res => {
+      this.contentMetaData = res;
+      this.showTranscriptPopup = false;
+    });
+  }
+
+  readContent(identifier): Observable<any> {
+    const option = {
+      url: 'content/v3/read/' + identifier
+    };
+    return this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+    }));
   }
 
   showDownloadTranscript() {
