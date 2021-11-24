@@ -127,6 +127,31 @@ module.exports = function (app) {
         }
     }))
 
+    app.use(['/api/program/v1/process/create',
+      '/api/program/v1/process/update',
+      '/api/program/v1/process/search',
+      'api/question/v1/bulkUpload',
+      'api/question/v1/bulkUploadStatus'],
+      permissionsHelper.checkPermission(),
+      proxy(contentServiceBaseUrl, {
+          limit: reqDataLimitOfContentUpload,
+          proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
+          proxyReqPathResolver: (req) => {
+              return require('url').parse(contentServiceBaseUrl + req.originalUrl).path
+          },
+          userResDecorator: (proxyRes, proxyResData, req, res) => {
+              try {
+                  const data = JSON.parse(proxyResData.toString('utf8'));
+                  if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+                  else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
+              } catch (err) {
+                  logger.error({msg: 'content api user res decorator json parse error', proxyResData});
+                  return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res)
+              }
+          }
+      })
+    )
+
     app.use(['/api/questionset/*', '/api/question/*' ],
         proxy(contentProxyUrl, {
         proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
