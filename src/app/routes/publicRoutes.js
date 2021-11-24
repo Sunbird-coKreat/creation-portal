@@ -137,10 +137,12 @@ module.exports = function (app) {
           limit: reqDataLimitOfContentUpload,
           proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
           proxyReqPathResolver: (req) => {
+              console.log('/api/questionset  ', require('url').parse(contentServiceBaseUrl + req.originalUrl).path);
               return require('url').parse(contentServiceBaseUrl + req.originalUrl).path
           },
           userResDecorator: (proxyRes, proxyResData, req, res) => {
               try {
+                logger.info({msg: 'api/question/v1/bulkUpload'});
                   const data = JSON.parse(proxyResData.toString('utf8'));
                   if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
                   else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
