@@ -929,10 +929,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (this.sessionContext && this.programDetails && this.currentStage === 'programNominations') {
       this.showTextbookLoader = true;
       setTimeout(() => {
-        forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
+        const req = {
+          url: `program/v1/read/${this.programId}`
+        };
+        this.programsService.get(req).subscribe((programDetails) => {
+          this.programDetails = _.get(programDetails, 'result');
+          forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
           (response) => {
               this.checkActiveTab();
           });
+        });
       }, 3000);
     }
   }
