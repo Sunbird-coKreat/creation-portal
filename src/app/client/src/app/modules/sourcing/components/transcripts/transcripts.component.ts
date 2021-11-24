@@ -87,19 +87,7 @@ export class TranscriptsComponent implements OnInit {
 
     this.setFormValues(this.content.transcripts);
     this.addItem();
-    this.getAssetList().subscribe(res => {
-      if (_.get(res, "responseCode") === "OK") {
-        this.assetList = _.get(res, 'result.content');
-      } else {
-        console.log("Something went wrong", res);
-      }
-      this.hideLoader();
-      this.disableDoneBtn = false;
-    }, err => {
-      console.log("Something went wrong", err);
-      this.hideLoader();
-      this.disableDoneBtn = false;
-    });
+    this.getAssetList();
   }
 
   get items(): FormArray {
@@ -198,8 +186,8 @@ export class TranscriptsComponent implements OnInit {
 
   languageChange(language, index) {
     if (language) {
-      forEach(this.items.controls, (e, i) =>{
-        if (e.get("language").value && i !== index ) {
+      forEach(this.items.controls, (e, i) => {
+        if (e.get("language").value && i !== index) {
           if (e.get("language").value === language) {
             this.items.controls[index].get("language").reset();
             // @Todo - remove comment
@@ -245,7 +233,7 @@ export class TranscriptsComponent implements OnInit {
           );
         } else {
           // Update only asset language only
-          forkReq = this.createOrUpdateAsset(item).pipe(switchMap((rs)=> {
+          forkReq = this.createOrUpdateAsset(item).pipe(switchMap((rs) => {
             transcriptMetadata.identifier = _.get(orgAsset, 'identifier');
             transcriptMetadata.language = item.get("language").value;
             transcriptMetadata.artifactUrl = _.get(orgAsset, 'artifactUrl');
@@ -351,24 +339,32 @@ export class TranscriptsComponent implements OnInit {
     }
   }
 
-  getAssetList(): Observable<any> {
-    // @Todo get mime type from configuration
-    // Check if we need mime type, if not then remove or get it from configuration
-    // @Todo get identifier from content
-    const req = {
-      "filters": {
-        "primaryCategory": "Video transcript",
-        "status": [],
-        "mimeType": "application/x-subrip",
-        "identifier": [
-          "do_1134121521152491521479",
-          "do_1134121521153720321480"
-        ]
-      },
-      "fields": ["versionKey"]
-    };
+  getAssetList(): void {
+    const transcripts = _.get(this.content, "transcripts") || [];
+    const identifier = _.map(transcripts, e => e.identifier);
+    if (identifier && identifier.length) {
+      const req = {
+        "filters": {
+          "primaryCategory": "Video transcript",
+          "status": [],
+          "identifier": identifier
+        },
+        "fields": ["versionKey"]
+      };
 
-    return this.searchService.compositeSearch(req);
+      this.searchService.compositeSearch(req).subscribe(res => {
+        this.hideLoader();
+        this.disableDoneBtn = false;
+        if (_.get(res, "responseCode") === "OK") {
+          this.assetList = _.get(res, 'result.content');
+        }
+      }, err => {
+        console.log("Something went wrong", err);
+      });
+    } else {
+      this.hideLoader();
+      this.disableDoneBtn = false;
+    }
   }
 
   showLoader(): void {
