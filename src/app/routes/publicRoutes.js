@@ -130,14 +130,14 @@ module.exports = function (app) {
     app.use(['/api/program/v1/process/create',
       '/api/program/v1/process/update',
       '/api/program/v1/process/search',
-      'api/question/v1/bulkUpload',
-      'api/question/v1/bulkUploadStatus'],
+      '/api/question/v1/bulkUpload',
+      '/api/question/v1/bulkUploadStatus'],
       permissionsHelper.checkPermission(),
       proxy(contentServiceBaseUrl, {
           limit: reqDataLimitOfContentUpload,
           proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
           proxyReqPathResolver: (req) => {
-              console.log('/api/questionset  ', require('url').parse(contentServiceBaseUrl + req.originalUrl).path);
+              console.log('/api/question/bulkUpload  ', require('url').parse(contentServiceBaseUrl + req.originalUrl).path);
               return require('url').parse(contentServiceBaseUrl + req.originalUrl).path
           },
           userResDecorator: (proxyRes, proxyResData, req, res) => {
