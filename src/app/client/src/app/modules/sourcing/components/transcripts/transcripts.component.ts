@@ -48,7 +48,9 @@ export class TranscriptsComponent implements OnInit {
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : 'English, Hindi, Assamese, Bengali,Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya';
       this.acceptedFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ?
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
-      this.languageOptions = languages.split(',');
+      this.languageOptions = languages.split(',').map(function(item) {
+        return item.trim();
+      });
    }
 
   ngOnInit(): void {
