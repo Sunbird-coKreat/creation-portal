@@ -346,7 +346,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
 
 <!--@Todo set isClosable to false-->
 <sui-modal *ngIf="showTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" appBodyScroll #modal>
-  <app-transcripts (closeTranscript)="closeTranscriptPopup()"></app-transcripts>
+  <app-transcripts (closePopup)="closeTranscriptPopup()"></app-transcripts>
 </sui-modal>
 
 <sui-modal *ngIf="showDownloadTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" #downloadTranscriptPopup (dismissed)="showDownloadTranscriptPopup = false;">

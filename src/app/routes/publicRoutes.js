@@ -154,7 +154,7 @@ module.exports = function (app) {
         })
     )
 
-    app.use(['/api/asset/v1/create','/api/asset/v1/read/*', '/api/asset/v1/upload/*' ],
+    app.use(['/api/asset/v1/*'],
       proxy(contentProxyUrl, {
       proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
       proxyReqPathResolver: function (req) {
