@@ -57,7 +57,7 @@ let envVariables = {
   // generic editor question set and coleections children contents limit
   SUNBIRD_QUESTIONSET_CHILDREN_LIMIT: env.sunbird_questionset_children_limit || 500,
   SUNBIRD_COLLECTION_CHILDREN_LIMIT: env.sunbird_collection_children_limit || 1200,
-  SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES: env.sunbird_transcript_supported_languages || ['English', 'Hindi', 'Assamese', 'Bengali', 'Gujarati', 'Kannada', 'Malayalam', 'Marathi', 'Nepali', 'Odia', 'Punjabi', 'Tamil', 'Telugu', 'Urdu', 'Sanskrit', 'Maithili', 'Munda', 'Santali', 'Juang', 'Ho', 'Oriya'],
+  SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES: env.sunbird_transcript_supported_languages || 'English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya',
   SUNBIRD_TRANSCRIPT_FILE_FORMAT: env.sunbird_transcript_file_format || 'srt',
 
   // TTL and Intervals

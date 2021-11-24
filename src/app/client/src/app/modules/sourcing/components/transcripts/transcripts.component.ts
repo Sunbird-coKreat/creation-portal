@@ -8,9 +8,8 @@ import { filter, switchMap } from 'rxjs/operators';
 import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
-
 // import { ToasterService } from 'src/app/modules/shared';
-
+import { ToasterService} from '@sunbird/shared';
 @Component({
   selector: 'app-transcripts',
   templateUrl: './transcripts.component.html',
@@ -46,6 +45,7 @@ export class TranscriptsComponent implements OnInit {
 
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
   public userRole = 'contributor';
+  public acceptedFileFormat;
 
   constructor(private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -53,18 +53,14 @@ export class TranscriptsComponent implements OnInit {
     private transcriptService: TranscriptService,
     private helperService: HelperService,
     private searchService: SearchService,
-    // private toasterService: ToasterService
+    private toasterService: ToasterService
   ) {
-    this.languageOptions = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
-      (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value :
-      ['English', 'Hindi', 'Assamese',
-      'Bengali', 'Gujarati', 'Kannada',
-      'Malayalam', 'Marathi', 'Nepali',
-      'Odia', 'Punjabi', 'Tamil', 'Telugu',
-      'Urdu', 'Sanskrit', 'Maithili', 'Munda',
-      'Santali', 'Juang', 'Ho', 'Oriya'];
-      const fileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ?
+    const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
+      // tslint:disable-next-line:max-line-length
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : 'English, Hindi, Assamese, Bengali,Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya';
+      this.acceptedFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ?
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
+      this.languageOptions = languages.split(',');
    }
 
   ngOnInit(): void {
@@ -162,6 +158,11 @@ export class TranscriptsComponent implements OnInit {
   }
 
   fileValidation(file) {
+    const extn = file.name.split('.').pop();
+    if (extn !== this.acceptedFileFormat) {
+      this.toasterService.error('Invalid file extension');
+      return false;
+    }
     // 1. File format validation
     // 2. file size validation
     return true;
