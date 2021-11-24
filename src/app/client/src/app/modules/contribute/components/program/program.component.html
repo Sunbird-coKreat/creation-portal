@@ -51,7 +51,7 @@
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" isActive='true' suiTabContent="2">
 				<div class="ui container p-0 m-0">
 					<div class="d-flex fs-0-785 sb-color-gray-300 mb-15 pt-10 mt-10 sb-pageSection-document" [ngClass]="{'flex-jc-space-between': isContributingOrgAdmin, 'flex-jc-flex-end': !isContributingOrgAdmin}">
-						<div class="w-40 text-capitalize fs-0-785 line-height-1-3 mt-10" *ngIf="currentNominationStatus === 'Approved' && isContributingOrgAdmin">
+						<div class="w-40 text-capitalize fs-0-785 line-height-1-3 mt-10" *ngIf="(currentNominationStatus === 'Pending' || currentNominationStatus === 'Approved') && isContributingOrgAdmin">
 							<div class="sb-color-gray-100 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.draft || 0}}</span> {{resourceService.frmelmnts.lbl.drafts}}</div>
 							<div class="sb-color-primary d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.review || 0}}</span> {{resourceService.frmelmnts.lbl.reviewInProgress}}</div>
 							<div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{contentStatusCounts.rejected || 0}}</span> {{resourceService.frmelmnts.lbl.notAccepted}}</div>
@@ -379,14 +379,14 @@
 						<td *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>
-						<td *ngIf="visibility.showCollectionLevelSamples || visibility.showCollectionLevelContentStatus">
+						<td *ngIf="visibility.showCollectionLevelSamples">
+							<span> {{contributorTextbook.totalSampleContent || 0 }}</span>
+						</td>
+						<td *ngIf="visibility.showCollectionLevelContentStatus">
 							<div class="text-capitalize fs-0-785">
-								<span *ngIf="currentNominationStatus !== 'Approved'"> {{contributorTextbook.totalSampleContent || 0 }}</span>
-								<div *ngIf="currentNominationStatus === 'Approved'">
-									<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>
-									<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.notAccepted}}</span>
-									<span class="sb-color-warning d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
-								</div>
+								<span class="sb-color-primary d-inline-block br-2 pr-5">{{contributorTextbook.reviewCount || 0}}  {{resourceService.frmelmnts.lbl.pending}}</span>
+								<span class="sb-color-error d-inline-block br-2 px-5">{{contributorTextbook.rejectedCount || 0}} {{resourceService.frmelmnts.lbl.notAccepted}}</span>
+								<span class="sb-color-warning d-inline-block px-5">{{contributorTextbook.liveCount || 0}} {{resourceService.frmelmnts.lbl.sentForApproval}}</span>
 							</div>
 						</td>
 						<td *ngIf="programDetails?.target_type === 'searchCriteria'">

@@ -1040,8 +1040,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
     this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && this.currentNominationStatus !== 'Approved';
-    this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && this.currentNominationStatus === 'Approved';
+    this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && _.includes(['Initiated', 'Rejected'], this.currentNominationStatus);
+    this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && _.includes(['Approved', 'Pending'], this.currentNominationStatus);
   }
 
   getCollectionCategoryDefinition() {
