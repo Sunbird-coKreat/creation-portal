@@ -139,8 +139,14 @@
 
       <!-- Validation bulkUploadState = 3 -->
       <div class="p-30 w-70 flex-as-center text-center" *ngIf="bulkUploadState === 3">
-        <h6 class="sb-color-gray-400">
-          <span class="sb-loader sb-success-loader"></span>{{resourceService?.frmelmnts?.lbl?.validatingCSVFile}}</h6>
+        <div class="">
+          <div class="relative sb-loader-with-lbl">
+            <span class="sb-loader sb-success-loader relative"></span>
+            <span class="pl-10 ml-10">
+              <h6 class="sb-color-gray-400 pl-10 ml-10">{{resourceService?.frmelmnts?.lbl?.validatingCSVFile}}</h6>
+            </span>
+          </div>
+        </div>
       </div>
 
       <!-- Validation failed bulkUploadState = 4 -->
