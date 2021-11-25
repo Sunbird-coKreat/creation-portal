@@ -327,7 +327,21 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
       </div>
     </div>
     <div class="sb-modal-actions">
-      <button id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
+      <button *ngIf="optionalAddTranscript" (click)="closeUploadModal()" class="sb-btn sb-btn-normal ml-8 sb-btn-primary"
+      appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'submit'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+      >Submit</button>
+      <button *ngIf="optionalAddTranscript" class="sb-btn sb-btn-normal ml-8" (click)="addEditTranscript()"
+      appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-transcript', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'add-transcript'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+      >Add Transcript</button>
+      <button *ngIf="!optionalAddTranscript" id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'upload_files'})"
         [telemetryInteractObject]="telemetryInteractObject"

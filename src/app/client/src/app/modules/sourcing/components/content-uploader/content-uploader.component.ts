@@ -147,6 +147,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showTranscriptPopup = false;
   public showDownloadTranscriptPopup = false;
   public showDownloadTranscriptButton = false;
+  public optionalAddTranscript = false;
   public showAddTrascriptButton = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
@@ -664,7 +665,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   })).subscribe(res => {
      this.uploadInprogress = false;
       this.toasterService.success('Content Successfully Uploaded...');
-      this.getUploadedContentMeta(contentId);
+      this.getUploadedContentMeta(contentId, false);
       this.uploadedContentMeta.emit({
         contentId: contentId
       });
@@ -683,7 +684,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentMetaData.identifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
     }
 
-  getUploadedContentMeta(contentId) {
+  getUploadedContentMeta(contentId, uploadModalClose = true) {
     this.showPreview = false;
     const option = {
       url: 'content/v3/read/' + contentId
@@ -762,11 +763,20 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.playerConfig.context.cdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
-      this.showUploadModal = false;
+
+      if (uploadModalClose) {
+        this.showUploadModal = false;
+      }
+
       if (!this.contentMetaData.artifactUrl) {
         this.showUploadModal = true;
         this.initiateUploadModal();
       }
+
+      if (!uploadModalClose) {
+        this.enableOptionalAddTranscript(this.contentMetaData);
+      }
+
       this.showDownloadTranscript(this.contentMetaData);
       this.allowAddTranscript(this.contentMetaData);
       this.loading = false;
@@ -785,6 +795,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public closeUploadModal() {
+    this.optionalAddTranscript = false;
     if (this.modal && this.modal.deny && this.changeFile_instance) {
       this.showPreview = true;
       this.showUploadModal = false;
@@ -1163,6 +1174,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.changeFile_instance = true;
     this.uploadButton = false;
     this.showUploadModal = true;
+    this.optionalAddTranscript = false;
     this.initiateUploadModal();
   }
 
@@ -1677,6 +1689,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   public addEditTranscript() {
     this.showTranscriptPopup = true;
+    this.showUploadModal = false;
+    this.optionalAddTranscript = false;
   }
 
   public closeTranscriptPopup():void {
@@ -1707,6 +1721,16 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
        && !_.isUndefined(content.transcripts)) {
          this.showDownloadTranscriptButton = true;
     }
+  }
+
+  enableOptionalAddTranscript(content) {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if ((content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
+       && submissionDateFlag
+       && this.canEdit()) {
+        this.optionalAddTranscript = true;
+        this.changeFile_instance = true;
+      }
   }
 
   allowAddTranscript(content) {
