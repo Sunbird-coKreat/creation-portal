@@ -10,7 +10,7 @@ import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
 import { ActivatedRoute } from '@angular/router';
-import { ToasterService } from '@sunbird/shared';
+import { ToasterService, ConfigService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-transcripts',
@@ -32,6 +32,7 @@ export class TranscriptsComponent implements OnInit {
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
   public userRole = 'contributor';
   public acceptedFileFormat;
+  public mimeType;
 
   constructor(private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -41,7 +42,8 @@ export class TranscriptsComponent implements OnInit {
     private searchService: SearchService,
     private actionService: ActionService,
     public activeRoute: ActivatedRoute,
-    private toasterService: ToasterService
+    private toasterService: ToasterService,
+    public configService: ConfigService
   ) {
     const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
       // tslint:disable-next-line:max-line-length
@@ -140,13 +142,29 @@ export class TranscriptsComponent implements OnInit {
   fileValidation(file) {
     const extn = file.name.split('.').pop();
     if (extn !== this.acceptedFileFormat) {
-      this.toasterService.error('Invalid file extension');
+      this.toasterService.error(`Invalid file type (supported type: ${this.acceptedFileFormat})`);
       return false;
     }
+    this.mimeType = this.detectMimeType(extn);
+    console.log('mimeType', this.mimeType);
     // 1. File format validation
     // 2. file size validation
     return true;
   }
+
+  detectMimeType(extn) {
+    const appFilesConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
+    let thisFileMimetype = '';
+
+    _.forEach(appFilesConfig, (item, key) => {
+      if (item === extn) {
+        thisFileMimetype = key;
+      }
+    });
+
+    return thisFileMimetype;
+  }
+
 
   replaceFile(index) {
     document.getElementById('attachFileInput' + index).click();
@@ -299,7 +317,7 @@ export class TranscriptsComponent implements OnInit {
     const fileURL = signedURL.split('?')[0];
     const formData = new FormData();
     formData.append('fileUrl', fileURL);
-    formData.append('mimeType', 'application/x-subrip');
+    formData.append('mimeType', this.mimeType);
 
     const request = {
       data: formData
@@ -323,7 +341,7 @@ export class TranscriptsComponent implements OnInit {
     return {
       'asset': {
         'name': '',
-        'mimeType': 'application/x-subrip',
+        'mimeType': this.mimeType,
         'primaryCategory': 'Video transcript',
         'mediaType': 'text',
         'language': []

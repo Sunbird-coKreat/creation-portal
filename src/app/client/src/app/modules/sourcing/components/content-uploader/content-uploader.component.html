@@ -57,7 +57,7 @@
               </div>
             </div>
             <div class="practical-sb-buttons mt-30">
-              <button id="addEditTranscript" suiPopup popupText="Add/edit Transcript" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
+              <button id="addEditTranscript" suiPopup popupText="Add/edit Transcript" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
