@@ -65,7 +65,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Add/edit Transcript</button>
               <button id="downloadTranscript" *ngIf="showDownloadTranscriptButton" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.downloadTranscript}}"
-              [popupPlacement]="'top'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showDownloadTranscript()"
+              [popupPlacement]="'top'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showDownloadTranscriptPopup = true"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"

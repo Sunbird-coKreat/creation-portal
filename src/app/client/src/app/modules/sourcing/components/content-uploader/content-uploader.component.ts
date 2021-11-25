@@ -570,9 +570,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   uploadFile(mimeType, contentId) {
     const contentType = mimeType;
-    if (this.contentMetaData.mimeType === 'video/webm' || this.contentMetaData.mimeType === 'video/mp4' ) {
-      this.showAddTrascriptButton = true;
-    }
     // document.getElementById('qq-upload-actions').style.display = 'none';
     const option = {
       url: 'content/v3/upload/url/' + contentId,
@@ -770,13 +767,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.showUploadModal = true;
         this.initiateUploadModal();
       }
-
-      if (_.has(this.contentMetaData, 'transcripts') && !_.isUndefined(this.contentMetaData.transcripts)) {
-        this.showDownloadTranscriptButton = true;
-      }
-      if (this.contentMetaData.mimeType === 'video/webm' || this.contentMetaData.mimeType === 'video/mp4' ) {
-        this.showAddTrascriptButton = true;
-      }
+      this.showDownloadTranscript(this.contentMetaData);
+      this.allowAddTranscript(this.contentMetaData);
       this.loading = false;
       this.handleActionButtons();
 
@@ -1708,34 +1700,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }));
   }
 
-  showDownloadTranscript() {
-    /*
-    const transcripts = {
-      'versionKey': '1637262562797',
-      'identifier': 'do_11340715459064627211839',
-      'transcripts': [
-        {
-          'language': 'English',
-          'languageCode': 'English',
-          'identifier': 'do_1134121521152491521479',
-          // tslint:disable-next-line:max-line-length
-          'artifactUrl': 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521152491521479/example.srt'
-        },
-        {
-          'language': 'Assamese',
-          'languageCode': 'Assamese',
-          'identifier': 'do_1134121521153720321480',
-          'artifactUrl': 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_1134121521153720321480/srt-e.srt'
-        }
-      ]
-    };
-    this.this.contentMetaData['transcripts'] = transcripts;
-    */
-    if (_.has(this.contentMetaData, 'transcripts') && !_.isUndefined(this.contentMetaData.transcripts)) {
-      this.showDownloadTranscriptPopup = true;
-    } else {
-      this.showDownloadTranscriptPopup = false;
-      this.toasterService.warning('No transcript found for this content');
+  showDownloadTranscript(content) {
+    if (_.has(content, 'transcripts')
+       && (this.canReviewContent() || this.canPublishContent())
+       && (content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
+       && !_.isUndefined(content.transcripts)) {
+         this.showDownloadTranscriptButton = true;
     }
+  }
+
+  allowAddTranscript(content) {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if ((content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
+       && submissionDateFlag
+       && this.canEdit()) {
+        this.showAddTrascriptButton = true;
+      }
   }
 }

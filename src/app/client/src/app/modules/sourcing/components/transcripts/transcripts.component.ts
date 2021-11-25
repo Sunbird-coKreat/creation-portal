@@ -65,10 +65,6 @@ export class TranscriptsComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    // this.languageOptions = _.map(this.languageOptions, language => {
-    //   return {name: language}
-    // });
-
     this.transcriptForm = this.fb.group({
       items: this.fb.array([])
     });
@@ -180,7 +176,6 @@ export class TranscriptsComponent implements OnInit {
   }
 
   download(identifier) {
-    // @Todo - handle error
     const item = _.find(this.contentMetaData.transcripts, e => e.identifier == identifier);
     if (_.get(item, 'artifactUrl')) {
       window.open(_.get(item, 'artifactUrl'), '_blank');
@@ -201,7 +196,6 @@ export class TranscriptsComponent implements OnInit {
         if (e.get('language').value && i !== index ) {
           if (e.get('language').value === language) {
             this.items.controls[index].get('language').reset();
-            // @Todo - remove comment
             this.toasterService.warning(language + ' is already selected');
             return true;
           }
@@ -218,7 +212,6 @@ export class TranscriptsComponent implements OnInit {
     this.items['controls'].forEach((item) => {
       let transcriptMetadata: TranscriptMetadata = {};
       let orgAsset;
-      // let isTranscriptChanged;
 
       if (item.get('identifier').value) {
         orgAsset = _.find(this.assetList, e => e.identifier === item.get('identifier').value);

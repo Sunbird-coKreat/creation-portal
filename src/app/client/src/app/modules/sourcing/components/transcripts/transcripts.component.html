@@ -21,7 +21,7 @@
                 <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
                   <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i
                       class="fa fa-paperclip"></i>Attach file</span>
-                  <input formControlName="transcriptFile" id="attachFileInput{{i}}" (change)="attachFile($event, i)" [accept]="acceptFileExt" type="file" #transcriptFileInput>
+                  <input formControlName="transcriptFile" id="attachFileInput{{i}}" (change)="attachFile($event, i)" [accept]="acceptFileExtensions" type="file" #transcriptFileInput>
                 </button>
                 <div class="sb-color-error fsmall">
                   <p class="fs-0-785"></p>
