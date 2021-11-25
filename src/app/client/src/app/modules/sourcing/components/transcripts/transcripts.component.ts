@@ -31,8 +31,9 @@ export class TranscriptsComponent implements OnInit {
 
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
   public userRole = 'contributor';
-  public acceptedFileFormat;
+  public acceptedFileFormats;
   public mimeType;
+  public acceptFileExtensions;
 
   constructor(private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -43,16 +44,24 @@ export class TranscriptsComponent implements OnInit {
     private actionService: ActionService,
     public activeRoute: ActivatedRoute,
     private toasterService: ToasterService,
+
     public configService: ConfigService
   ) {
     const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
       // tslint:disable-next-line:max-line-length
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : 'English, Hindi, Assamese, Bengali,Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya';
-      this.acceptedFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ?
-      (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
-      this.languageOptions = languages.split(',').map(function(item) {
-        return item.trim();
-      });
+    this.languageOptions = languages.split(',').map(function(item) {
+      return item.trim();
+    });
+
+    const sunbirdTranscriptFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ? (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
+    this.acceptedFileFormats = sunbirdTranscriptFileFormat.split(',').map(function(item) {
+      return item.trim();
+    });
+
+    this.acceptFileExtensions = this.acceptedFileFormats.map(item=> {
+      return "." + item;
+    }).toString();
    }
 
   ngOnInit(): void {
@@ -127,11 +136,9 @@ export class TranscriptsComponent implements OnInit {
 
   attachFile(event, index) {
     const file = event.target.files[0];
-
     if (!this.fileValidation(file)) {
       return false;
     }
-
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       this.setFile(index, file);
@@ -141,14 +148,11 @@ export class TranscriptsComponent implements OnInit {
 
   fileValidation(file) {
     const extn = file.name.split('.').pop();
-    if (extn !== this.acceptedFileFormat) {
-      this.toasterService.error(`Invalid file type (supported type: ${this.acceptedFileFormat})`);
+    if (!this.acceptedFileFormats.includes(extn)) {
+      this.toasterService.error(`Invalid file type (supported type: ${this.acceptFileExtensions})`);
       return false;
     }
     this.mimeType = this.detectMimeType(extn);
-    console.log('mimeType', this.mimeType);
-    // 1. File format validation
-    // 2. file size validation
     return true;
   }
 
@@ -198,7 +202,7 @@ export class TranscriptsComponent implements OnInit {
           if (e.get('language').value === language) {
             this.items.controls[index].get('language').reset();
             // @Todo - remove comment
-            // this.toasterService.warning(language + ' is already selected');
+            this.toasterService.warning(language + ' is already selected');
             return true;
           }
         }
