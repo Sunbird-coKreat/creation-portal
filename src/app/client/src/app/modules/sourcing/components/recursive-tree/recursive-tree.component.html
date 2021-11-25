@@ -148,7 +148,7 @@
             <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
             <span class="item-name"> {{content.name}}<br />
               <ng-container *ngFor="let tag of tags">
-                <span *ngIf="content[tag]" class="item-tag">{{content[tag]}}</span>
+                <span *ngIf="content[tag]" [ngClass]="'item-tag-'+tag">{{content[tag]}}</span>
               </ng-container>
             </span>
             <ng-container *ngIf="dynamicHeadersEnabled">

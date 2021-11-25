@@ -39,6 +39,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public hideSubmitForReviewBtn = false;
   public sunbirdQuestionSetChildrenLimit: any;
   public sunbirdCollectionChildrenLimit: any;
+  public publicStorageAccount: any;
 
   constructor(private activatedRoute: ActivatedRoute, private userService: UserService,
     private telemetryService: TelemetryService, private configService: ConfigService,
@@ -57,6 +58,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       (<HTMLInputElement>document.getElementById('sunbirdQuestionSetChildrenLimit')).value : 500;
       this.sunbirdCollectionChildrenLimit = (<HTMLInputElement>document.getElementById('sunbirdCollectionChildrenLimit')) ?
       (<HTMLInputElement>document.getElementById('sunbirdCollectionChildrenLimit')).value : 1200;
+      this.publicStorageAccount = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
+      (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : 'https://dockstorage.blob.core.windows.net/';
      }
 
   ngOnInit() {
@@ -97,6 +100,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         sid: this.userService.sessionId,
         did: this.deviceId,
         uid: this.userService.userid,
+        programId: this.programContext.program_id,
+        contributionOrgId: this.sessionContext.nominationDetails.organisation_id ,
         pdata: {
           id: this.userService.appId,
           ver: this.portalVersion,
@@ -140,6 +145,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false,
+        enableBulkUpload: true,
+        publicStorageAccount: this.publicStorageAccount,
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
         questionSet: {
           maxQuestionsLimit: this.sunbirdQuestionSetChildrenLimit

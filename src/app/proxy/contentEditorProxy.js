@@ -198,6 +198,22 @@ module.exports = function (app) {
           return require('url').parse(contentServiceBaseUrl + originalUrl).path
       }
   }))
+
+  app.use(['/action/program/v1/process/create',
+    '/action/program/v1/process/update',
+    '/action/program/v1/process/search',
+    '/action/question/v1/bulkUpload',
+    '/action/question/v1/bulkUploadStatus'],
+      proxy(contentURL, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl
+        originalUrl = originalUrl.replace('/action/', '')
+        console.log('bulkUpload ', contentURL, '  ===  ', require('url').parse(contentURL + originalUrl).path)
+        return require('url').parse(contentURL + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+  }))
   // Proxy for content create , update & review END
 
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),

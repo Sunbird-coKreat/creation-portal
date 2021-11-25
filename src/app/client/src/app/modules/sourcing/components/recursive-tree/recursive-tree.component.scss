@@ -86,15 +86,29 @@
     padding: $base-block-space * 0.5;
     padding: $base-block-space * 0.5 $base-block-space;
     border-radius: $base-block-space;
-    margin-right: $base-block-space;    
+    margin-right: $base-block-space;
   }
-  
+
+  .item-tag-topic{
+    @extend .item-tag;
+    background: $red-0;
+    max-width: $base-block-space * 13;
+  }
+  .item-tag-learningOutcome{
+    @extend .item-tag;
+    background: $tertiary-0;
+    max-width: $base-block-space * 15;
+  }
+  .item-tag-subject{
+    @extend .item-tag;
+  }
+
   .item-header{
     font-weight: 700;
     color: $primary-color;
     font-size: $base-block-space*1.5;
   }
-  
+
   .item-dropdown {
     right: 16px;
     height: 40px;
