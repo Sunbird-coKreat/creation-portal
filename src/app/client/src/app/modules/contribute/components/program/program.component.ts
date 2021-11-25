@@ -33,7 +33,6 @@ interface IDynamicInput {
 export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('prefModal') prefModal;
   @ViewChild('userRemoveRoleModal') userRemoveRoleModal;
-  public showTranscriptPopup = true;
   public programId: string;
   public programDetails: any;
   public loaders = {
@@ -1177,9 +1176,5 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
-  }
-
-  closeTranscriptPopup() {
-    this.showTranscriptPopup = false;
   }
 }
