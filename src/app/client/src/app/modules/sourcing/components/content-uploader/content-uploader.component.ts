@@ -147,6 +147,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showTranscriptPopup = false;
   public showDownloadTranscriptPopup = false;
   public showDownloadTranscriptButton = false;
+  public showAddTrascriptButton = false;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -569,6 +570,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   uploadFile(mimeType, contentId) {
     const contentType = mimeType;
+    if (this.contentMetaData.mimeType === 'video/webm' || this.contentMetaData.mimeType === 'video/mp4' ) {
+      this.showAddTrascriptButton = true;
+    }
     // document.getElementById('qq-upload-actions').style.display = 'none';
     const option = {
       url: 'content/v3/upload/url/' + contentId,
@@ -769,6 +773,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       if (_.has(this.contentMetaData, 'transcripts') && !_.isUndefined(this.contentMetaData.transcripts)) {
         this.showDownloadTranscriptButton = true;
+      }
+      if (this.contentMetaData.mimeType === 'video/webm' || this.contentMetaData.mimeType === 'video/mp4' ) {
+        this.showAddTrascriptButton = true;
       }
       this.loading = false;
       this.handleActionButtons();
