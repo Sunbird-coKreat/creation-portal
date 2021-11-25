@@ -92,10 +92,12 @@
   .item-tag-topic{
     @extend .item-tag;
     background: $red-0;
+    max-width: $base-block-space * 13;
   }
   .item-tag-learningOutcome{
     @extend .item-tag;
     background: $tertiary-0;
+    max-width: $base-block-space * 15;
   }
   .item-tag-subject{
     @extend .item-tag;
