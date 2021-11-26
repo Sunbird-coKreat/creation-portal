@@ -292,10 +292,10 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
     </div>
     <div class="sb-modal-header">Upload Files</div>
     <div class="sb-modal-content">
-    <div *ngIf="!loading">
+    <div *ngIf="!loading && !optionalAddTranscript">
       <div  id="upload-content-div" class="upload-file-section"></div>
     </div>
-      <div *ngIf='!loading' class="upload-file-description pt-16">
+      <div *ngIf='!loading && !optionalAddTranscript' class="upload-file-description pt-16">
         <p class="mb-8 fsmall">Related information:</p>
 
         <ul class="pl-16">
@@ -306,7 +306,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
           <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf') || templateDetails.filesConfig.accepted.toLowerCase().includes('epub')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
         </ul>
       </div>
-      <div *ngIf='loading' class="uploading-files text-center">
+      <div *ngIf='loading || optionalAddTranscript' class="uploading-files text-center">
         <div class='d-flex flex-dc flex-ai-center icon'>
           <img src="assets/images/loader.gif" width="64" class='process-icon'>
           <label class="fs-0-785 pt-16">{{uploader.getName(0)}} </label>

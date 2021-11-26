@@ -211,14 +211,14 @@ export class SourcingService {
       }
     };
     reqParam.data.request = req ? _.merge({}, reqParam.data.request, req) : reqParam;
-    return this.publicDataService.post(reqParam);
+    return this.actionService.post(reqParam);
   }
 
   readAsset(assetId) {
     const reqParam = {
       url: `${this.configService.urlConFig.URLS.ASSET.READ}/${assetId}`,
     };
-    return this.publicDataService.get(reqParam);
+    return this.actionService.get(reqParam);
   }
 
   updateAsset(req: object, assetId) {
@@ -234,7 +234,7 @@ export class SourcingService {
       }
     };
     reqParam.data.request = req ? _.merge({}, reqParam.data.request, req) : reqParam;
-    return this.publicDataService.patch(reqParam);
+    return this.actionService.patch(reqParam);
   }
 
   uploadMedia(req, assetId: any) {
@@ -251,7 +251,7 @@ export class SourcingService {
       data: req.data
     };
     reqParam = req ? _.merge({}, reqParam, req) : reqParam;
-    return this.publicDataService.post(reqParam);
+    return this.actionService.post(reqParam);
   }
   generatePreSignedUrl(req, contentId: any) {
     const reqParam = {

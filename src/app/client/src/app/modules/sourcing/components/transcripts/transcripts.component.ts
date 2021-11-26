@@ -376,7 +376,7 @@ export class TranscriptsComponent implements OnInit {
 
   contentRead(identifier): Observable<any> {
     const option = {
-      url: 'content/v3/read/' + identifier
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${identifier}`
     };
     return this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
       const errInfo = {

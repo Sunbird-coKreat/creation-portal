@@ -772,6 +772,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.showUploadModal = true;
         this.initiateUploadModal();
       }
+      this.loading = false;
 
       if (!uploadModalClose) {
         this.enableOptionalAddTranscript(this.contentMetaData);
@@ -779,7 +780,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       this.showDownloadTranscript(this.contentMetaData);
       this.allowAddTranscript(this.contentMetaData);
-      this.loading = false;
+
       this.handleActionButtons();
 
       // At the end of execution
@@ -796,6 +797,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   public closeUploadModal() {
     this.optionalAddTranscript = false;
+    this.loading = false;
     if (this.modal && this.modal.deny && this.changeFile_instance) {
       this.showPreview = true;
       this.showUploadModal = false;
@@ -1688,6 +1690,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   // interactive video Change END
 
   public addEditTranscript() {
+    this.loading = false;
     this.showTranscriptPopup = true;
     this.showUploadModal = false;
     this.optionalAddTranscript = false;

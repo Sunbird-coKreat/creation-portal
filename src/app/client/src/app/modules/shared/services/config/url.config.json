@@ -238,6 +238,7 @@
     },
     "ASSET": {
       "CREATE": "asset/v1/create",
+      "READ": "asset/v1/read",
       "UPDATE": "asset/v1/update",
       "UPLOAD": "asset/v1/upload"
     },
