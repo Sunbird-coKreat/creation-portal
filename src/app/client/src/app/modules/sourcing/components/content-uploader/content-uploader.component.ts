@@ -8,7 +8,7 @@ import { UserService, ActionService, PlayerService, FrameworkService, Notificati
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
 import { catchError, map, filter, take, takeUntil, tap } from 'rxjs/operators';
-import { throwError, Observable, Subject, forkJoin, observable } from 'rxjs';
+import { throwError, Observable, Subject, forkJoin } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -783,6 +783,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.initiateUploadModal();
       }
       this.loading = false;
+      this.handleActionButtons();
 
       if (!uploadModalClose) {
         this.enableOptionalAddTranscript(this.contentMetaData);
@@ -790,8 +791,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       this.showDownloadTranscript(this.contentMetaData);
       this.allowAddTranscript(this.contentMetaData);
-
-      this.handleActionButtons();
 
       // At the end of execution
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
@@ -1729,7 +1728,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   showDownloadTranscript(content) {
     if (_.has(content, 'transcripts')
-       && (this.canReviewContent() || this.canPublishContent())
+       && (this.canReviewContent() || this.canPublishContent() || (this.visibility && this.visibility.showSourcingActionButtons))
        && (content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
        && !_.isUndefined(content.transcripts)) {
          this.showDownloadTranscriptButton = true;
