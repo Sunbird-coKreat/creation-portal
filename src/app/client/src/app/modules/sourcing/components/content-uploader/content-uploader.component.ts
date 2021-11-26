@@ -166,7 +166,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
       ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
       this.transcriptRequired = (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')) ?
-      (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')).value : false;
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')).value : 'false';
     }
 
   ngOnInit() {
