@@ -10,7 +10,7 @@ import _, { forEach } from 'lodash';
 import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
 import { ActivatedRoute } from '@angular/router';
-import { ToasterService, ConfigService } from '@sunbird/shared';
+import { ToasterService, ConfigService, ResourceService } from '@sunbird/shared';
 
 @Component({
   selector: 'app-transcripts',
@@ -44,8 +44,8 @@ export class TranscriptsComponent implements OnInit {
     private actionService: ActionService,
     public activeRoute: ActivatedRoute,
     private toasterService: ToasterService,
-
-    public configService: ConfigService
+    public configService: ConfigService,
+    public resourceService: ResourceService
   ) {
     const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
       // tslint:disable-next-line:max-line-length
