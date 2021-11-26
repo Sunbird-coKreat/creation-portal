@@ -216,6 +216,18 @@ module.exports = function (app) {
   }))
   // Proxy for content create , update & review END
 
+  app.use(['/action/asset/v1/*'],
+  proxy(contentURL, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+          var originalUrl = req.originalUrl
+          originalUrl = originalUrl.replace('/action/', '')
+          console.log('asset ', contentURL, '  ===  ', require('url').parse(contentURL + originalUrl).path)
+          return require('url').parse(contentURL + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+  }))
+
   app.use('/action/content/v3/unlisted/publish/:contentId', permissionsHelper.checkPermission(),
     bodyParser.json(), proxy(contentProxyUrl, {
       preserveHostHdr: true,
