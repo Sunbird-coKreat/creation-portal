@@ -149,6 +149,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showDownloadTranscriptButton = false;
   public optionalAddTranscript = false;
   public showAddTrascriptButton = false;
+  public transcriptRequired;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -164,6 +165,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     public programComponentsService: ProgramComponentsService) {
       this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
       ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
+      this.transcriptRequired = (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')) ?
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')).value : 'false';
     }
 
   ngOnInit() {
@@ -313,6 +316,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showEditform(action) {
+    if (action === 'review') {
+      if (this.transcriptRequired === 'true' && _.isEmpty(this.contentMetaData.transcripts) &&
+      (this.contentMetaData.mimeType === 'video/webm' || this.contentMetaData.mimeType === 'video/mp4')) {
+        this.toasterService.error('Please add transcript to video');
+        return false;
+      }
+    }
     this.fetchFormconfiguration();
     this.requiredAction = action;
     if (_.get(this.selectedSharedContext, 'topic')) {
