@@ -204,7 +204,12 @@ export class TranscriptsComponent implements OnInit {
     }
   }
 
-  done() {
+  submit() {
+    if (!this.items['controls'].length) {
+      this.closePopup.emit();
+      return true;
+    }
+
     this.disableDoneBtn = true;
     const transcriptMeta = [];
     const assetRequest = [];
