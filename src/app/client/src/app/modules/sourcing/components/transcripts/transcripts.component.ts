@@ -28,6 +28,7 @@ export class TranscriptsComponent implements OnInit {
   public assetList = [];
   public loader = true;
   public disableDoneBtn = true;
+  public disableAddItemBtn = true;
 
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
   public userRole = 'contributor';
@@ -50,19 +51,19 @@ export class TranscriptsComponent implements OnInit {
     const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
       // tslint:disable-next-line:max-line-length
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : 'English, Hindi, Assamese, Bengali,Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya';
-    this.languageOptions = languages.split(',').map(function(item) {
+    this.languageOptions = languages.split(',').map(function (item) {
       return item.trim();
     });
 
     const sunbirdTranscriptFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ? (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
-    this.acceptedFileFormats = sunbirdTranscriptFileFormat.split(',').map(function(item) {
+    this.acceptedFileFormats = sunbirdTranscriptFileFormat.split(',').map(function (item) {
       return item.trim();
     });
 
-    this.acceptFileExtensions = this.acceptedFileFormats.map(item=> {
+    this.acceptFileExtensions = this.acceptedFileFormats.map(item => {
       return "." + item;
     }).toString();
-   }
+  }
 
   ngOnInit(): void {
     this.transcriptForm = this.fb.group({
@@ -140,6 +141,8 @@ export class TranscriptsComponent implements OnInit {
       this.setFile(index, file);
       this.getFileNameControl(index).patchValue(file.name);
     }
+
+    this.enableDisableAddItemButton();
   }
 
   fileValidation(file) {
@@ -173,6 +176,7 @@ export class TranscriptsComponent implements OnInit {
   reset(index) {
     this.getFileControl(index).reset();
     this.getFileNameControl(index).reset();
+    this.enableDisableAddItemButton();
   }
 
   download(identifier) {
@@ -193,7 +197,7 @@ export class TranscriptsComponent implements OnInit {
   languageChange(language, index) {
     if (language) {
       forEach(this.items.controls, (e, i) => {
-        if (e.get('language').value && i !== index ) {
+        if (e.get('language').value && i !== index) {
           if (e.get('language').value === language) {
             this.items.controls[index].get('language').reset();
             this.toasterService.warning(language + ' is already selected');
@@ -202,6 +206,8 @@ export class TranscriptsComponent implements OnInit {
         }
       })
     }
+
+    this.enableDisableAddItemButton();
   }
 
   submit() {
@@ -267,6 +273,18 @@ export class TranscriptsComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  enableDisableAddItemButton() {
+    const itemCnt = this.items['controls'].length - 1;
+    const lastItem = this.items['controls'][itemCnt];
+
+    if (lastItem.get('fileName').value && lastItem.get('language').value) {
+      this.disableAddItemBtn = false;
+    }
+    else {
+      this.disableAddItemBtn = true;
+    }
   }
 
   createOrUpdateAsset(item): Observable<any> {
