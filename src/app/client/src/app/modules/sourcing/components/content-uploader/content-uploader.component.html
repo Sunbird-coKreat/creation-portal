@@ -57,6 +57,21 @@
               </div>
             </div>
             <div class="practical-sb-buttons mt-30">
+              <button id="addEditTranscript" suiPopup popupText="Add/edit Transcript" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >Add/edit Transcript</button>
+              <button id="downloadTranscript" *ngIf="showDownloadTranscriptButton" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.downloadTranscript}}"
+              [popupPlacement]="'top'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showDownloadTranscriptPopup = true"
+              appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+              >{{resourceService.frmelmnts?.lbl?.downloadTranscript}}</button>
               <button id="changeContent" suiPopup popupText="Replace file" [popupPlacement]="'top'" *ngIf="visibility && visibility.showChangeFile" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="changeFile()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('replace_file', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
@@ -94,8 +109,8 @@
                   [telemetryInteractPdata]="telemetryInteractPdata"
                 >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
               <button id="acceptContent" suiPopup
-              popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentAcceptMessage : resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': programContext?.target_collection_category && programContext?.target_collection_category[0]}}" 
-              [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" 
+              popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentAcceptMessage : resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': programContext?.target_collection_category && programContext?.target_collection_category[0]}}"
+              [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons"
               class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
@@ -277,10 +292,10 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
     </div>
     <div class="sb-modal-header">Upload Files</div>
     <div class="sb-modal-content">
-    <div *ngIf="!loading">
+    <div *ngIf="!loading && !optionalAddTranscript">
       <div  id="upload-content-div" class="upload-file-section"></div>
     </div>
-      <div *ngIf='!loading' class="upload-file-description pt-16">
+      <div *ngIf='!loading && !optionalAddTranscript' class="upload-file-description pt-16">
         <p class="mb-8 fsmall">Related information:</p>
 
         <ul class="pl-16">
@@ -291,9 +306,10 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
           <li *ngIf="templateDetails.filesConfig.accepted.toLowerCase().includes('pdf') || templateDetails.filesConfig.accepted.toLowerCase().includes('epub')"><a target="_blank" title="How to convert MS word to PDF" href="https://diksha.gov.in/help/contributor/word-to-pdf.html">How to convert MS word to PDF</a></li>
         </ul>
       </div>
-      <div *ngIf='loading' class="uploading-files text-center">
+      <div *ngIf='loading || optionalAddTranscript' class="uploading-files text-center">
         <div class='d-flex flex-dc flex-ai-center icon'>
-          <img src="assets/images/loader.gif" width="64" class='process-icon'>
+          <img *ngIf="!optionalAddTranscript" src="assets/images/loader.gif" width="64" class='process-icon'>
+          <img *ngIf="optionalAddTranscript" src="assets/images/circle-with-check-symbol.svg" width="64" class='process-icon'>
           <label class="fs-0-785 pt-16">{{uploader.getName(0)}} </label>
           <div *ngIf="videoFileFormat">
             <div class="fs-0-785 pt-16">{{fileUplaoderProgress?.size}} Uploading Files ({{fileUplaoderProgress.progress}}%)
@@ -312,7 +328,21 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
       </div>
     </div>
     <div class="sb-modal-actions">
-      <button id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
+      <button *ngIf="optionalAddTranscript" (click)="closeUploadModal()" class="sb-btn sb-btn-normal ml-8 sb-btn-primary"
+      appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'submit'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+      >Submit</button>
+      <button *ngIf="optionalAddTranscript" class="sb-btn sb-btn-normal ml-8" (click)="addEditTranscript()"
+      appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-transcript', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'add-transcript'})"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+      >Add Transcript</button>
+      <button *ngIf="!optionalAddTranscript" id="uploadContent" class="sb-btn sb-btn-normal ml-8" [ngClass]="{'sb-btn-primary': uploadButton, 'sb-btn-disabled': !uploadButton}" (click)="uploadContent()"
       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('upload', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'upload_files'})"
         [telemetryInteractObject]="telemetryInteractObject"
@@ -328,6 +358,45 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
       >Cancel</button>
     </div>
 </sui-modal>
+
+<!--@Todo set isClosable to false-->
+<sui-modal *ngIf="showTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" appBodyScroll #modal>
+  <app-transcripts [contentMetaData]="contentMetaData" (closePopup)="closeTranscriptPopup()"></app-transcripts>
+</sui-modal>
+
+<sui-modal *ngIf="showDownloadTranscriptPopup" [mustScroll]="true" [isClosable]="false" [size]="'normal'" class="sb-modal" #downloadTranscriptPopup (dismissed)="showDownloadTranscriptPopup = false;">
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts?.lbl?.downloadTranscript}}
+  </div>
+  <div class="sb-modal-content">
+    <app-transcripts-review [contentTranscript]="contentMetaData?.transcripts"></app-transcripts-review>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDownloadTranscriptPopup = false;"
+    appTelemetryInteract
+    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('close', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'download_transcript'})"
+    [telemetryInteractObject]="telemetryInteractObject"
+    [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts?.btn?.close}}</button>
+  </div>
+</sui-modal>
+
+<sui-modal *ngIf="showQuestionSetPreview" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModal()" #modal >
+  <div class="sb-modal-header"> {{resourceService?.frmelmnts?.lbl?.interactive?.video?.questionSetPreview}} </div>
+  <div class="sb-modal-content">
+    <div class="aspectratio" data-ratio="16:9">
+      <div class="content-player">
+        <div class="w-100 h-100">
+          <div class="contentViewerIframeShadow">
+            <quml-main-player [playerConfig]="qumlPlayerConfig"></quml-main-player>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</sui-modal>
+
 
 <sui-modal *ngIf="showRequestChangesPopup" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0"
   [size]="'normal'" class="sb-modal" appBodyScroll #modal (dismissed)="showRequestChangesPopup = false;">
@@ -428,9 +497,6 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
     </div>
     <!--/Actions-->
 </sui-modal>
-
-
-
 
 
 
