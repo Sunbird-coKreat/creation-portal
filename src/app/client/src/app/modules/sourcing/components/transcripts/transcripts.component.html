@@ -56,12 +56,12 @@
         </div>
         <!-- End - Before Upload File Field-->
       </form>
-      <button type="button" class="ui basic button icon sb-color-primary mt-15" (click)="addItem()"><i
+      <button type="button" class="ui basic button icon sb-color-primary mt-15" (click)="addItem()" [disabled]="disableAddItemBtn" ><i
           class="plus icon"></i></button>
     </div>
   </div>
 </div>
 <div class="sb-modal-actions">
-  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="done()" [disabled]="disableDoneBtn">{{resourceService?.frmelmnts?.lbl?.done}}</button>
+  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="submit()" [disabled]="disableDoneBtn">{{resourceService?.frmelmnts?.lbl?.done}}</button>
   <button class="sb-btn sb-btn-normal" (click)="close()" [disabled]="disableDoneBtn">{{resourceService?.frmelmnts?.btn?.close}}</button>
 </div>

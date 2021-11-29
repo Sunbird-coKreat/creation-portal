@@ -98,6 +98,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public vidEtns: string;
   public audioExtns: string;
   public allAvailableVidExtns = ['mp4', 'webm'];
+  public videoMimeType = ['video/webm', 'video/mp4'];
   // public allAvailableAudioExtns = ['mp3', 'wav', 'mpeg', 'ogg', 'x-wav'];
   public allAvailableDocExtns = ['pdf', 'epub', 'h5p', 'zip', 'mp3', 'wav', 'mpeg', 'ogg', 'x-wav'];
   public videoSizeLimit: string;
@@ -150,6 +151,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public optionalAddTranscript = false;
   public showAddTrascriptButton = false;
   public transcriptRequired;
+
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -317,12 +319,14 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   showEditform(action) {
     if (action === 'review') {
-      if (this.transcriptRequired === 'true' && _.isEmpty(this.contentMetaData.transcripts) &&
-      (this.contentMetaData.mimeType === 'video/webm' || this.contentMetaData.mimeType === 'video/mp4')) {
-        this.toasterService.error(this.resourceService?.messages?.emsg?.addTranscript);
-        return false;
+      if (this.transcriptRequired === 'true'
+        && _.isEmpty(this.contentMetaData.transcripts)
+        && _.includes(this.videoMimeType, this.contentMetaData.mimeType)) {
+          this.toasterService.error(this.resourceService?.messages?.emsg?.addTranscript);
+          return false;
       }
     }
+
     this.fetchFormconfiguration();
     this.requiredAction = action;
     if (_.get(this.selectedSharedContext, 'topic')) {
@@ -776,12 +780,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       if (uploadModalClose) {
         this.showUploadModal = false;
+      } else if (!_.includes(this.videoMimeType, this.contentMetaData.mimeType)) {
+        this.showUploadModal = false;
       }
 
       if (!this.contentMetaData.artifactUrl) {
         this.showUploadModal = true;
         this.initiateUploadModal();
       }
+
       this.loading = false;
       this.handleActionButtons();
 
@@ -1729,7 +1736,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   showDownloadTranscript(content) {
     if (_.has(content, 'transcripts')
        && (this.canReviewContent() || this.canPublishContent() || (this.visibility && this.visibility.showSourcingActionButtons))
-       && (content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
+       && _.includes(this.videoMimeType, content.mimeType)
        && !_.isUndefined(content.transcripts)) {
          this.showDownloadTranscriptButton = true;
     }
@@ -1737,7 +1744,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   enableOptionalAddTranscript(content) {
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    if ((content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
+    if ((_.includes(this.videoMimeType, content.mimeType))
        && submissionDateFlag
        && this.canEdit()) {
         this.optionalAddTranscript = true;
@@ -1747,7 +1754,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   allowAddTranscript(content) {
     const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    if ((content.mimeType === 'video/webm' || content.mimeType === 'video/mp4')
+    if ((_.includes(this.videoMimeType, content.mimeType))
        && submissionDateFlag
        && this.canEdit()) {
         this.showAddTrascriptButton = true;
