@@ -1734,10 +1734,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showDownloadTranscript(content) {
-    if (_.has(content, 'transcripts')
-       && (this.canReviewContent() || this.canPublishContent() || (this.visibility && this.visibility.showSourcingActionButtons))
-       && _.includes(this.videoMimeType, content.mimeType)
-       && !_.isUndefined(content.transcripts)) {
+    if ((this.canReviewContent() || this.canPublishContent() || (this.visibility && this.visibility.showSourcingActionButtons))
+       && _.includes(this.videoMimeType, content.mimeType)) {
          this.showDownloadTranscriptButton = true;
     }
   }

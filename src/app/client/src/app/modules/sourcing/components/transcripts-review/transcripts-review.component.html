@@ -1,4 +1,4 @@
-<div class="dynamicHeight px-15">
+<div *ngIf="transcripts.length" class="dynamicHeight px-15">
     <label class="my-15">{{resourceService.frmelmnts?.lbl?.downloadTranscriptForLanguage}}</label>
     <table class="sb-table sb-table-striped">
         <tbody class="sb-table-body">
@@ -14,4 +14,7 @@
             </tr>
         </tbody>
     </table>
+</div>
+<div *ngIf="!transcripts.length">
+  {{resourceService?.messages?.smsg?.no?.transcriptFile}}
 </div>

@@ -318,7 +318,8 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
             <div class="fs-0-785 pt-16">{{fileUplaoderProgress.remainingTime ? 'Remaining time '+ fileUplaoderProgress.remainingTime : ''}}
             </div>
           </div>
-          <div class="sb-color-error fs-0-785 pt-10">Please do not close this window until the upload is complete</div>
+          <div *ngIf="!optionalAddTranscript" class="sb-color-error fs-0-785 pt-10">Please do not close this window until the upload is complete</div>
+          <div *ngIf="optionalAddTranscript" class="sb-color-info fs-0-785 pt-10">The video file is uploaded successfully. You can use “Add Transcript” option to add transcript file(s) to your video, for showing subtitles.</div>
         </div>
         <div class="text-center fs-0-785">
           <!-- <span class="sb-color-gray-800">Disclaimer:</span>
