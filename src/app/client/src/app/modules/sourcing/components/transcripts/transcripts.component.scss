@@ -54,7 +54,8 @@
 
 .icon{
   &.sb-color-primary{
-          color: var(--blue) !important;
+      color: var(--blue) !important;
+      border:1px solid var(--blue)!important;
       i.plus.icon{
           color: var(--blue) !important;
       }
@@ -65,8 +66,8 @@
   min-width: auto;
 }
 
-.w-230{
-  width:230px;
+.w-250{
+  width:250px;
 }
 
 .block-hide {
