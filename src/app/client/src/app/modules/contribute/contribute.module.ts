@@ -28,7 +28,8 @@ import { QumlPlayerService } from '../sourcing';
     ProgramComponent,
     OnboardPopupComponent,
     OrgUserListComponent,
-    MyContentComponent],
+    MyContentComponent
+  ],
   imports: [
     SuiModule,
     CommonModule,

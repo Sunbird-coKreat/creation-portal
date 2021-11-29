@@ -98,6 +98,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public vidEtns: string;
   public audioExtns: string;
   public allAvailableVidExtns = ['mp4', 'webm'];
+  public videoMimeType = ['video/webm', 'video/mp4'];
   // public allAvailableAudioExtns = ['mp3', 'wav', 'mpeg', 'ogg', 'x-wav'];
   public allAvailableDocExtns = ['pdf', 'epub', 'h5p', 'zip', 'mp3', 'wav', 'mpeg', 'ogg', 'x-wav'];
   public videoSizeLimit: string;
@@ -144,6 +145,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public showQuestionSetPreview = false;
   public qumlPlayerConfig;
   public enableInteractivity = false;
+  public showTranscriptPopup = false;
+  public showDownloadTranscriptPopup = false;
+  public showDownloadTranscriptButton = false;
+  public optionalAddTranscript = false;
+  public showAddTrascriptButton = false;
+  public transcriptRequired;
+
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -159,6 +167,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     public programComponentsService: ProgramComponentsService) {
       this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
       ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
+      this.transcriptRequired = (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')) ?
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')).value : 'false';
     }
 
   ngOnInit() {
@@ -308,6 +318,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showEditform(action) {
+    if (action === 'review') {
+      if (this.transcriptRequired === 'true'
+        && _.isEmpty(this.contentMetaData.transcripts)
+        && _.includes(this.videoMimeType, this.contentMetaData.mimeType)) {
+          this.toasterService.error('Please add transcript to video');
+          return false;
+      }
+    }
+
     this.fetchFormconfiguration();
     this.requiredAction = action;
     if (_.get(this.selectedSharedContext, 'topic')) {
@@ -660,7 +679,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   })).subscribe(res => {
      this.uploadInprogress = false;
       this.toasterService.success('Content Successfully Uploaded...');
-      this.getUploadedContentMeta(contentId);
+      this.getUploadedContentMeta(contentId, false);
       this.uploadedContentMeta.emit({
         contentId: contentId
       });
@@ -679,7 +698,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentMetaData.identifier, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.unitIdentifier});
     }
 
-  getUploadedContentMeta(contentId) {
+  getUploadedContentMeta(contentId, uploadModalClose = true) {
     this.showPreview = false;
     const option = {
       url: 'content/v3/read/' + contentId
@@ -758,13 +777,27 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.playerConfig.context.cdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
       this.showPreview = this.contentMetaData.artifactUrl ? true : false;
-      this.showUploadModal = false;
+
+      if (uploadModalClose) {
+        this.showUploadModal = false;
+      } else if (!_.includes(this.videoMimeType, this.contentMetaData.mimeType)) {
+        this.showUploadModal = false;
+      }
+
       if (!this.contentMetaData.artifactUrl) {
         this.showUploadModal = true;
         this.initiateUploadModal();
       }
+
       this.loading = false;
       this.handleActionButtons();
+
+      if (!uploadModalClose) {
+        this.enableOptionalAddTranscript(this.contentMetaData);
+      }
+
+      this.showDownloadTranscript(this.contentMetaData);
+      this.allowAddTranscript(this.contentMetaData);
 
       // At the end of execution
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
@@ -779,6 +812,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public closeUploadModal() {
+    this.optionalAddTranscript = false;
+    this.loading = false;
     if (this.modal && this.modal.deny && this.changeFile_instance) {
       this.showPreview = true;
       this.showUploadModal = false;
@@ -1157,6 +1192,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.changeFile_instance = true;
     this.uploadButton = false;
     this.showUploadModal = true;
+    this.optionalAddTranscript = false;
     this.initiateUploadModal();
   }
 
@@ -1668,4 +1704,60 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
   }
   // interactive video Change END
+
+  public addEditTranscript() {
+    this.loading = false;
+    this.showTranscriptPopup = true;
+    this.showUploadModal = false;
+    this.optionalAddTranscript = false;
+  }
+
+  public closeTranscriptPopup():void {
+    this.readContent(this.contentMetaData.identifier).subscribe(res => {
+      this.contentMetaData = res;
+      this.showTranscriptPopup = false;
+    });
+  }
+
+  readContent(identifier): Observable<any> {
+    const option = {
+      url: 'content/v3/read/' + identifier
+    };
+    return this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
+      const errInfo = {
+        errorMsg: 'Unable to read the Content, Please Try Again',
+        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+        env : this.activeRoute.snapshot.data.telemetry.env, request: option
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+    }));
+  }
+
+  showDownloadTranscript(content) {
+    if (_.has(content, 'transcripts')
+       && (this.canReviewContent() || this.canPublishContent() || (this.visibility && this.visibility.showSourcingActionButtons))
+       && _.includes(this.videoMimeType, content.mimeType)
+       && !_.isUndefined(content.transcripts)) {
+         this.showDownloadTranscriptButton = true;
+    }
+  }
+
+  enableOptionalAddTranscript(content) {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if ((_.includes(this.videoMimeType, content.mimeType))
+       && submissionDateFlag
+       && this.canEdit()) {
+        this.optionalAddTranscript = true;
+        this.changeFile_instance = true;
+      }
+  }
+
+  allowAddTranscript(content) {
+    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    if ((_.includes(this.videoMimeType, content.mimeType))
+       && submissionDateFlag
+       && this.canEdit()) {
+        this.showAddTrascriptButton = true;
+      }
+  }
 }
