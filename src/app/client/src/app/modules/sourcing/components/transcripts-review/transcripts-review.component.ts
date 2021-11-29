@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 })
 export class TranscriptsReviewComponent implements OnInit {
   @Input() contentTranscript;
-  transcripts = [];
+  public transcripts = [];
 
   constructor(public resourceService: ResourceService) { }
 
@@ -17,7 +17,7 @@ export class TranscriptsReviewComponent implements OnInit {
   }
 
   setTranscripts() {
-    this.transcripts = this.contentTranscript;
+    this.transcripts = this.contentTranscript || [];
     _.forEach(this.transcripts, transcript => {
       if (!_.isEmpty(transcript.artifactUrl)) {
         transcript['fileName'] = transcript.artifactUrl.split('/').pop();
