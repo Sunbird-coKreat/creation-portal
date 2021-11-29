@@ -57,13 +57,13 @@
               </div>
             </div>
             <div class="practical-sb-buttons mt-30">
-              <button id="addEditTranscript" suiPopup popupText="Add/edit Transcript" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
+              <button id="addEditTranscript" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.addEditTranscript}}" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-              >Add/edit Transcript</button>
+              >{{resourceService.frmelmnts?.lbl?.addEditTranscript}}</button>
               <button id="downloadTranscript" *ngIf="showDownloadTranscriptButton" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.downloadTranscript}}"
               [popupPlacement]="'top'" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showDownloadTranscriptPopup = true"
               appTelemetryInteract
@@ -334,7 +334,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
-      >Submit</button>
+      >{{resourceService?.frmelmnts?.btn?.submit}}</button>
       <button *ngIf="optionalAddTranscript" class="sb-btn sb-btn-normal ml-8" (click)="addEditTranscript()"
       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-transcript', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'add-transcript'})"

@@ -322,7 +322,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (this.transcriptRequired === 'true'
         && _.isEmpty(this.contentMetaData.transcripts)
         && _.includes(this.videoMimeType, this.contentMetaData.mimeType)) {
-          this.toasterService.error('Please add transcript to video');
+          this.toasterService.error(this.resourceService?.messages?.emsg?.addTranscript);
           return false;
       }
     }

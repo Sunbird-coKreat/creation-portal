@@ -1,17 +1,17 @@
-<div class="sb-modal-header">Add/edit Transcript</div>
+<div class="sb-modal-header">{{resourceService?.frmelmnts?.lbl?.addEditTranscript}}</div>
 <div class="sb-modal-content">
   <div class="dynamicHeight">
     <div class="ui tweleve wide column mb-20" *ngIf="loader">
       <app-loader></app-loader>
     </div>
     <div *ngIf="!loader">
-      <label class="mb-15">Add transcript for language</label>
+      <label class="mb-15">{{resourceService?.frmelmnts?.lbl?.addTranscriptForLanguage}}</label>
       <form class="ui form" [formGroup]="transcriptForm">
         <div formArrayName="items" *ngFor="let item of transcriptForm.get('items')['controls']; let i = index;">
           <div class="ui grid" [formGroupName]="i">
             <div class="three wide column">
               <sui-select formControlName="language" (selectedOptionChange)="languageChange($event, i)"
-                placeholder="Select language" [options]="languageOptions" class="selection" #selectRef>
+                placeholder="{{resourceService.frmelmnts?.btn?.selectLanguage}}" [options]="languageOptions" class="selection" #selectRef>
                 <sui-select-option *ngFor="let option of selectRef.filteredOptions" [value]="option">
                 </sui-select-option>
               </sui-select>
@@ -20,7 +20,7 @@
               <div [class.block-hide]="item.controls.fileName.value" class="sb-before-upload-section">
                 <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
                   <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i
-                      class="fa fa-paperclip"></i>Attach file</span>
+                      class="fa fa-paperclip"></i>{{resourceService?.frmelmnts?.lbl?.attachFile}}</span>
                   <input formControlName="transcriptFile" id="attachFileInput{{i}}" (change)="attachFile($event, i)" [accept]="acceptFileExtensions" type="file" #transcriptFileInput>
                 </button>
                 <div class="sb-color-error fsmall">
@@ -62,6 +62,6 @@
   </div>
 </div>
 <div class="sb-modal-actions">
-  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="submit()" [disabled]="disableDoneBtn">Done</button>
-  <button class="sb-btn sb-btn-normal" (click)="close()" [disabled]="disableDoneBtn">Close</button>
+  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="submit()" [disabled]="disableDoneBtn">{{resourceService?.frmelmnts?.lbl?.done}}</button>
+  <button class="sb-btn sb-btn-normal" (click)="close()" [disabled]="disableDoneBtn">{{resourceService?.frmelmnts?.btn?.close}}</button>
 </div>
