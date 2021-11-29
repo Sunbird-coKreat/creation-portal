@@ -334,7 +334,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
-      >{{resourceService?.frmelmnts?.btn?.submit}}</button>
+      >{{resourceService?.frmelmnts?.lbl?.done}}</button>
       <button *ngIf="optionalAddTranscript" class="sb-btn sb-btn-normal ml-8" (click)="addEditTranscript()"
       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add-transcript', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId, {key:'dialog_id',value:'add-transcript'})"
@@ -349,7 +349,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
       >Upload</button>
-      <button (click)="closeUploadModal()" class="sb-btn sb-btn-normal" [disabled]="uploadButton" [ngClass]="{'sb-btn-outline-primary': !uploadButton, 'sb-btn-disabled': uploadButton}"
+      <button *ngIf="!optionalAddTranscript" (click)="closeUploadModal()" class="sb-btn sb-btn-normal" [disabled]="uploadButton" [ngClass]="{'sb-btn-outline-primary': !uploadButton, 'sb-btn-disabled': uploadButton}"
       appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('cancel', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId,{key:'dialog_id',value:'upload_files'})"
         [telemetryInteractObject]="telemetryInteractObject"

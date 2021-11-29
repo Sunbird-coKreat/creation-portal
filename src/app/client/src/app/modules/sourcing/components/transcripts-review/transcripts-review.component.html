@@ -5,7 +5,7 @@
             <tr *ngFor="let transcript of transcripts">
                 <td>
                     <div class="d-flex w-100 sb-color-primary">
-                        <div class="w-90"><i class="file icon mr-5"></i>
+                        <div class="w-90 d-flex"><i class="file icon mr-10"></i>
                             {{transcript?.language + ' ' + transcript?.fileName}}
                         </div>
                         <div class="w-10 text-right" (click)="downloadFile(transcript.artifactUrl)"><i class="download icon text-right cursor-pointer"></i></div>

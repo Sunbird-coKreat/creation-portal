@@ -29,6 +29,7 @@ export class TranscriptsComponent implements OnInit {
   public loader = true;
   public disableDoneBtn = true;
   public disableAddItemBtn = true;
+  public uploadInProgress = false;
 
   // @Todo -> contributor/ sourcing reviewer/ contribution reviewer/ sourcing admin/ contribution org admin
   public userRole = 'contributor';
@@ -51,9 +52,9 @@ export class TranscriptsComponent implements OnInit {
     const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
       // tslint:disable-next-line:max-line-length
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : 'English, Hindi, Assamese, Bengali,Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya';
-    this.languageOptions = languages.split(',').map(function (item) {
+    this.languageOptions = _.sortBy(languages.split(',').map(function (item) {
       return item.trim();
-    });
+    }), lanauge => lanauge);
 
     const sunbirdTranscriptFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ? (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
     this.acceptedFileFormats = sunbirdTranscriptFileFormat.split(',').map(function (item) {
@@ -112,6 +113,7 @@ export class TranscriptsComponent implements OnInit {
 
   addItem(data?): void {
     this.items.push(this.createItem(data));
+    this.disableAddItemBtn = true;
   }
 
   createItem(data?): FormGroup {
@@ -211,6 +213,7 @@ export class TranscriptsComponent implements OnInit {
   }
 
   submit() {
+    this.uploadInProgress = true;
     if (!this.items['controls'].length) {
       this.closePopup.emit();
       return true;
@@ -263,16 +266,27 @@ export class TranscriptsComponent implements OnInit {
       }
     });
 
-    forkJoin(assetRequest).subscribe(response => {
+    if (assetRequest && assetRequest.length) {
+      forkJoin(assetRequest).subscribe(response => {
+        this.updateContent(transcriptMeta).subscribe(response => {
+          this.closePopup.emit();
+        }, error => {
+          console.log('Something went wrong', error);
+          this.closePopup.emit();
+        });
+      }, error => {
+        console.log(error);
+        this.closePopup.emit();
+      });
+    }
+    else if (!_.isEmpty(this.contentMetaData.transcripts)) {
       this.updateContent(transcriptMeta).subscribe(response => {
         this.closePopup.emit();
       }, error => {
-        this.closePopup.emit();
         console.log('Something went wrong', error);
+        this.closePopup.emit();
       });
-    }, error => {
-      console.log(error);
-    });
+    }
   }
 
   enableDisableAddItemButton() {
