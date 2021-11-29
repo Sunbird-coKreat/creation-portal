@@ -55,11 +55,15 @@
 .icon{
   &.sb-color-primary{
     color: var(--blue) !important;
-    border:1px solid var(--blue)!important;
     i.plus.icon{
       color: var(--blue) !important;
     }
   }
+}
+
+.sb-btn-primary-border{
+  border:1px solid var(--blue)!important;
+  box-shadow: none !important;
 }
 
 .sb-min-width-auto{
@@ -68,6 +72,10 @@
 
 .w-250{
   width:250px;
+}
+
+.w-285{
+  width:285px;
 }
 
 .block-hide {

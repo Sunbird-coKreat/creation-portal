@@ -33,7 +33,7 @@
               <div [class.block-hide]="!item.controls.fileName.value" class="sb-after-upload-section">
                 <div class="sb-after-upload-field d-flex bradius-2">
                   <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex"><i class="file icon"></i>
-                    <div class="sb__ellipsis w-250">
+                    <div [ngClass]="{'sb__ellipsis w-250':identifierControl.value, 'sb__ellipsis w-285': !identifierControl.value}">
                       <input formControlName="fileName" type="hidden" #fileNameControl>
                       {{ fileNameControl?.value }}
                     </div>
@@ -56,7 +56,7 @@
         </div>
         <!-- End - Before Upload File Field-->
       </form>
-      <button type="button" class="ui basic button icon sb-color-primary mt-15" (click)="addItem()" [disabled]="disableAddItemBtn" ><i
+      <button type="button" class="ui basic button icon sb-color-primary mt-15 sb-btn-primary-border" (click)="addItem()" [disabled]="disableAddItemBtn" ><i
           class="plus icon"></i></button>
     </div>
   </div>
