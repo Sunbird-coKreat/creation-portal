@@ -269,6 +269,7 @@ export class TranscriptsComponent implements OnInit {
     if (assetRequest && assetRequest.length) {
       forkJoin(assetRequest).subscribe(response => {
         this.updateContent(transcriptMeta).subscribe(response => {
+          this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptAdded);
           this.closePopup.emit();
         }, error => {
           console.log('Something went wrong', error);
