@@ -145,7 +145,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
         showCorrectionComments: false,
-        enableBulkUpload: true,
+        enableBulkUpload: false,
         publicStorageAccount: this.publicStorageAccount,
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
         questionSet: {
