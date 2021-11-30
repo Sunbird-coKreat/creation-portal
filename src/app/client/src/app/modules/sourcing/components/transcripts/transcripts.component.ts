@@ -221,17 +221,25 @@ export class TranscriptsComponent implements OnInit {
   }
 
   submit() {
-    this.uploadInProgress = true;
     if (!this.items['controls'].length) {
       this.closePopup.emit();
       return true;
+    } else {
+      for (let item of this.items['controls']) {
+        if ((item.get('transcriptFile')['file'] || item.get('fileName').value)
+          && !item.get('language').value) {
+          this.toasterService.warning('Please select language for transcript file');
+          return false;
+        }
+      }
     }
 
+    this.uploadInProgress = true;
     this.disableDoneBtn = true;
     const transcriptMeta = [];
     const assetRequest = [];
 
-    this.items['controls'].forEach((item) => {
+    for (let item of this.items['controls']) {
       let transcriptMetadata: TranscriptMetadata = {};
       let orgAsset;
 
@@ -272,7 +280,7 @@ export class TranscriptsComponent implements OnInit {
         }
         assetRequest.push(forkReq);
       }
-    });
+    }
 
     if (assetRequest && assetRequest.length) {
       forkJoin(assetRequest).subscribe(response => {
