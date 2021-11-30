@@ -21,7 +21,6 @@ import { ToasterService, ConfigService, ResourceService } from '@sunbird/shared'
 export class TranscriptsComponent implements OnInit {
   @Input() contentMetaData;
   @Output() closePopup = new EventEmitter<any>();
-  public orderForm: FormGroup;
   public transcriptForm: FormGroup;
   public langControl = 'language';
   public languageOptions;
@@ -134,6 +133,12 @@ export class TranscriptsComponent implements OnInit {
   }
 
   attachFile(event, index) {
+    if (!this.getLanguageControl(index).value) {
+      this.toasterService.warning('Please select language first');
+      return false;
+    }
+
+    this.disableDoneBtn = false;
     const file = event.target.files[0];
     if (!this.fileValidation(file)) {
       return false;
@@ -176,8 +181,10 @@ export class TranscriptsComponent implements OnInit {
   }
 
   reset(index) {
+    this.disableDoneBtn = false;
     this.getFileControl(index).reset();
     this.getFileNameControl(index).reset();
+    this.getLanguageControl(index).reset();
     this.enableDisableAddItemButton();
   }
 
@@ -209,6 +216,7 @@ export class TranscriptsComponent implements OnInit {
       })
     }
 
+    this.disableDoneBtn = false;
     this.enableDisableAddItemButton();
   }
 
@@ -287,6 +295,8 @@ export class TranscriptsComponent implements OnInit {
         console.log('Something went wrong', error);
         this.closePopup.emit();
       });
+    } else {
+      this.closePopup.emit();
     }
   }
 
@@ -399,7 +409,6 @@ export class TranscriptsComponent implements OnInit {
 
       this.searchService.compositeSearch(req).subscribe(res => {
         this.hideLoader();
-        this.disableDoneBtn = false;
         if (_.get(res, 'responseCode') === 'OK') {
           this.assetList = _.get(res, 'result.content');
         }
@@ -408,7 +417,6 @@ export class TranscriptsComponent implements OnInit {
       });
     } else {
       this.hideLoader();
-      this.disableDoneBtn = false;
     }
   }
 
