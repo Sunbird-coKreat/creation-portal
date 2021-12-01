@@ -21,7 +21,6 @@ import { ToasterService, ConfigService, ResourceService } from '@sunbird/shared'
 export class TranscriptsComponent implements OnInit {
   @Input() contentMetaData;
   @Output() closePopup = new EventEmitter<any>();
-  public orderForm: FormGroup;
   public transcriptForm: FormGroup;
   public langControl = 'language';
   public languageOptions;
@@ -134,6 +133,12 @@ export class TranscriptsComponent implements OnInit {
   }
 
   attachFile(event, index) {
+    if (!this.getLanguageControl(index).value) {
+      this.toasterService.warning('Please select language first');
+      return false;
+    }
+
+    this.disableDoneBtn = false;
     const file = event.target.files[0];
     if (!this.fileValidation(file)) {
       return false;
@@ -176,8 +181,10 @@ export class TranscriptsComponent implements OnInit {
   }
 
   reset(index) {
+    this.disableDoneBtn = false;
     this.getFileControl(index).reset();
     this.getFileNameControl(index).reset();
+    this.getLanguageControl(index).reset();
     this.enableDisableAddItemButton();
   }
 
@@ -209,21 +216,30 @@ export class TranscriptsComponent implements OnInit {
       })
     }
 
+    this.disableDoneBtn = false;
     this.enableDisableAddItemButton();
   }
 
   submit() {
-    this.uploadInProgress = true;
     if (!this.items['controls'].length) {
       this.closePopup.emit();
       return true;
+    } else {
+      for (let item of this.items['controls']) {
+        if ((item.get('transcriptFile')['file'] || item.get('fileName').value)
+          && !item.get('language').value) {
+          this.toasterService.warning('Please select language for transcript file');
+          return false;
+        }
+      }
     }
 
+    this.uploadInProgress = true;
     this.disableDoneBtn = true;
     const transcriptMeta = [];
     const assetRequest = [];
 
-    this.items['controls'].forEach((item) => {
+    for (let item of this.items['controls']) {
       let transcriptMetadata: TranscriptMetadata = {};
       let orgAsset;
 
@@ -264,7 +280,7 @@ export class TranscriptsComponent implements OnInit {
         }
         assetRequest.push(forkReq);
       }
-    });
+    }
 
     if (assetRequest && assetRequest.length) {
       forkJoin(assetRequest).subscribe(response => {
@@ -287,6 +303,8 @@ export class TranscriptsComponent implements OnInit {
         console.log('Something went wrong', error);
         this.closePopup.emit();
       });
+    } else {
+      this.closePopup.emit();
     }
   }
 
@@ -399,7 +417,6 @@ export class TranscriptsComponent implements OnInit {
 
       this.searchService.compositeSearch(req).subscribe(res => {
         this.hideLoader();
-        this.disableDoneBtn = false;
         if (_.get(res, 'responseCode') === 'OK') {
           this.assetList = _.get(res, 'result.content');
         }
@@ -408,7 +425,6 @@ export class TranscriptsComponent implements OnInit {
       });
     } else {
       this.hideLoader();
-      this.disableDoneBtn = false;
     }
   }
 

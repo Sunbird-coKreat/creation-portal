@@ -1733,11 +1733,37 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }));
   }
 
-  showDownloadTranscript(content) {
-    if ((this.canReviewContent() || this.canPublishContent() || (this.visibility && this.visibility.showSourcingActionButtons))
-       && _.includes(this.videoMimeType, content.mimeType)) {
-         this.showDownloadTranscriptButton = true;
+  showDownloadBtnToSourcingReviewer(contentMetaData, sourcingReviewStatus, programContext, originCollectionData, selectedOriginUnitStatus) {
+    const resourceStatus = contentMetaData.status;
+    // tslint:disable-next-line:max-line-length
+    const flag = !!(this.router.url.includes('/sourcing') && ((resourceStatus === 'Live' && !this.contentMetaData.sampleContent === true) || ((resourceStatus === 'Review' || resourceStatus === 'Draft') && this.contentMetaData.sampleContent === true)) && !sourcingReviewStatus && this.userService.userid !== contentMetaData.createdBy
+    && this.programsService.isProjectLive(programContext));
+
+    if (!programContext.target_type || programContext.target_type === 'collections') {
+      return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft');
     }
+
+    return flag;
+  }
+
+  showDownloadTranscript(content) {
+    if (_.has(content, 'transcripts')) {
+      if (!_.isEmpty(content.transcripts)) {
+        // tslint:disable-next-line:max-line-length
+        const showDownloadBtnToSourcingReviewer = this.showDownloadBtnToSourcingReviewer(this.contentMetaData, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
+
+        if ((this.canReviewContent()
+            || this.canPublishContent()
+            || showDownloadBtnToSourcingReviewer)
+          && _.includes(this.videoMimeType, content.mimeType)) {
+            this.showDownloadTranscriptButton = true;
+            }
+          } else {
+            this.showDownloadTranscriptButton = false;
+          }
+        } else {
+          this.showDownloadTranscriptButton = false;
+        }
   }
 
   enableOptionalAddTranscript(content) {
