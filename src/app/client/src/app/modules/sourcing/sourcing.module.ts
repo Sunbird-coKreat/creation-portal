@@ -32,7 +32,7 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { NgInviewModule } from 'angular-inport';
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
+import { CollectionEditorLibraryModule, EditorCursor } from '@samagra-x/sunbird-collection-editor-v9';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
@@ -79,6 +79,6 @@ import { TranscriptsReviewComponent } from './components/transcripts-review/tran
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent ]
+  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent, QuestionSetEditorComponent  ]
 })
 export class SourcingModule { }

@@ -108,6 +108,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contentCount = 0;
   public showConfirmationModal = false;
   public prefernceFormOptions = {};
+
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -204,7 +205,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-
   isSourcingOrgReviewer () {
     return this.userService.isSourcingOrgReviewer(this.programDetails);
   }
@@ -242,7 +242,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.sessionContext.frameworkData = frameworkData.categories;
           this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
         }
-        if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
+        if (!this.programDetails.target_type || this.programDetails.target_type === 'collections' || this.programDetails.target_type === 'questionSets') {
           this.getProgramCollections();
         } else if (this.programDetails.target_type == 'searchCriteria') {
           forkJoin(this.getUserProgramPreferences(),this.getOriginForApprovedContents(), this.getProgramContentAggregation()).subscribe((res) => {
@@ -707,10 +707,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
   fetchProgramCollections(preferencefilters?) {
-    this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).subscribe(
+    this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters, true, this.programDetails.target_type).subscribe(
       (res) => {
-        if (res && res.result && res.result.content && res.result.content.length) {
-          this.showTexbooklist(res.result.content);
+        let objType = 'content';
+        if(this.programDetails?.target_type === 'questionSets') objType = 'QuestionSet';
+        if (res && res.result && res.result[objType] && res.result[objType].length) {
+          this.showTexbooklist(res.result[objType]);
         }
       },
       (err) => {
@@ -727,8 +729,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   showTexbooklist(contributorTextbooks) {
     const notInitiatedNoms = ['Pending', 'Approved', 'Rejected'];
     // tslint:disable-next-line:max-line-length
+    const isTargetTypeQuestionSet = this.programDetails?.target_type === 'questionSets' ? true : false;
+
     contributorTextbooks = (!_.isUndefined(this.currentNominationStatus) && _.includes(notInitiatedNoms, this.currentNominationStatus)) ? _.filter(contributorTextbooks, (collection) => {
-      return _.includes(this.nominationDetails.collection_ids, collection.identifier);
+
+      return _.includes(
+        isTargetTypeQuestionSet ? this.programDetails.collection_ids :
+        this.nominationDetails.collection_ids, collection.identifier);
     }) : contributorTextbooks;
 
     let sampleValue, organisation_id, individualUserId;
@@ -743,8 +750,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId).subscribe(
       (response) => {
         let contents = [];
-        if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet'))) {
-          contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
+        if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet') || _.get(response.result, 'Question'))) {
+          if(isTargetTypeQuestionSet) {
+            contents = _.compact(_.concat(_.get(response.result, 'content')), _.get(response.result, 'Question'));
+          } else {
+            contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')), _.get(response.result, 'Question'));
+          }
         }
         if (this.userService.isUserBelongsToOrg()) {
             this.contentStatusCounts = this.collectionHierarchyService.getContentCounts(contents, this.userService.getUserOrgId(), contributorTextbooks);
@@ -1025,7 +1036,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility = {};
     const isOpenForNomination = this.helperService.isOpenForNomination(this.programDetails);
     const canAcceptContribution = this.helperService.canAcceptContribution(this.programDetails);
-    const isProgramForCollections = !!(!this.programDetails.target_type || this.programDetails.target_type === 'collections')
+    const isProgramForCollections = !!(!this.programDetails.target_type || _.includes(['collections', 'questionSets'], this.programDetails.target_type));
     const isProgramForNoCollections = !!(this.programDetails.target_type && this.programDetails.target_type === 'searchCriteria')
     const isSourcingSide = this.programsService.ifSourcingInstance();
     this.visibility['showNominate'] = isOpenForNomination && (!_.get(this.nominationDetails, 'id') || _.get(this.nominationDetails, 'status') === 'Initiated');
@@ -1047,7 +1058,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
     if (!_.isEmpty(this.programDetails.target_collection_category) && this.userService.userProfile.rootOrgId) {
       // tslint:disable-next-line:max-line-length
-      this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0], this.userService.userProfile.rootOrgId, 'Collection').subscribe(res => {
+      let objType = 'Collection';
+      if(_.get(this.programDetails, 'target_type') === 'questionSets') objType = 'QuestionSet';
+      this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0], this.userService.userProfile.rootOrgId, objType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length

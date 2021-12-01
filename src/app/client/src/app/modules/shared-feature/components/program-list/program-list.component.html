@@ -9,13 +9,20 @@
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forCollections }}
         </a>
-        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="2"  (click)="setActiveTab('searchCriteria')"
+        <a class="item" [isActive]="forTargetType === 'questionSets'"  suiTabHeader="2"  (click)="setActiveTab('questionSets')"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
+        [telemetryInteractObject]="telemetryInteractObject"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forQuestionSets }}
+        </a>
+        <a class="item" [isActive]="forTargetType === 'searchCriteria'"  suiTabHeader="3"  (click)="setActiveTab('searchCriteria')"
         appTelemetryInteract
         [telemetryInteractEdata]="getTelemetryInteractEdata('Framework', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, configService.telemetryLabels.pageId.sourcing.projectNominations)"
         [telemetryInteractObject]="telemetryInteractObject"
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.projetcList?.forSearchCriteria }}
-        </a>
+        </a>  
       </div>
     </div>
   </div>
@@ -24,7 +31,10 @@
   </div> 
   <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="2">
     <ng-container *ngTemplateOutlet="projectList"></ng-container>
-  </div>    
+  </div>
+  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
+    <ng-container *ngTemplateOutlet="projectList"></ng-container>
+  </div>        
 </sui-tabset>
 <div *ngIf="isContributor  || !issourcingOrgAdmin">
   <ng-container *ngTemplateOutlet="projectList"></ng-container>
@@ -114,7 +124,7 @@
                     {{program?.name}}
                   </div>
                   <div class="sb__ellipsis sb__ellipsis--three" *ngIf="program?.target_type === 'searchCriteria'">{{ getProgramInfo(program, 'framework') }}</div>
-                  <div class="sb__ellipsis sb__ellipsis--three"*ngIf="!program.target_type || program?.target_type === 'collections'">{{ getProgramTextbooksCount(program) }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--three"*ngIf="!program.target_type || program?.target_type === 'collections' || program?.target_type === 'questionSets'">{{ getProgramTextbooksCount(program) }}</div>
                   <div *ngIf="activeMyProgramsMenu && (!program.target_type || program?.target_type === 'collections') && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
                   <div *ngIf = "program.notificationData" class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex mt-5">
                     <div><i class="icon bell"></i></div>

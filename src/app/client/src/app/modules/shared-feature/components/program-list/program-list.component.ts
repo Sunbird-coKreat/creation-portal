@@ -141,12 +141,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     .subscribe(params => {
       const tabName = !_.isEmpty(params.get('targetType')) ? params.get('targetType') : 'collections';
       this.forTargetType = (tabName === 'noCollections') ? 'searchCriteria' : 'collections'; 
+      if(tabName === 'questionSets') this.forTargetType = 'questionSets';
       this.getProgramsListByRole();
     });
   }
   setActiveTab(targetType) {
     this.forTargetType = targetType;
-    const tabName = (targetType === 'collections') ? 'collections' : 'noCollections'
+    let tabName = (targetType === 'collections') ? 'collections' : 'noCollections'
+    if(targetType === 'questionSets') tabName = 'questionSets';
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { targetType: tabName }, queryParamsHandling: 'merge' });
     this.getProgramsListByRole();
   }
