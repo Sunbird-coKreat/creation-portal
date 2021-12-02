@@ -48,7 +48,6 @@ describe('TranscriptsReviewComponent', () => {
   it('downloadFile should call window.open', () => {
     spyOn(window, 'open').and.callFake(() => {});
     spyOn(component, 'downloadFile').and.callThrough();
-    // spyOn(component, 'ngOnInit').and.callThrough();
     component.downloadFile("https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_11341782099017728011533/srt-e.srt");
     expect(window.open).toHaveBeenCalled();
   });
