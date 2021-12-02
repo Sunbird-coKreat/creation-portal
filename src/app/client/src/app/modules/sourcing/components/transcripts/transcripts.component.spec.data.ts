@@ -93,3 +93,37 @@ export const contentMetaData = {
     "board": "CBSE",
     "programId": "4519aaf0-3c90-11ec-a56f-4b503455085f"
 };
+
+export const dummyItems = {
+    controls: [{
+        get(dummyInput){
+        return {value: 'dummyData'};
+        }
+    }],
+    value: [
+        {
+            "identifier": "do_11342086801690624012061",
+            "language": "English",
+            "transcriptFile": "",
+            "fileName": "vsshort-de.srt"
+        },
+        {
+            "identifier": "do_11342079401490022412054",
+            "language": "Gujarati",
+            "transcriptFile": "",
+            "fileName": "vsshort-de.srt"
+        },
+        {
+            "identifier": "do_11342195573822259212070",
+            "language": "Bengali",
+            "transcriptFile": "C:\\fakepath\\srt-e.srt",
+            "fileName": "example.srt"
+        },
+        {
+            "identifier": null,
+            "language": null,
+            "transcriptFile": "",
+            "fileName": null
+        }
+    ]
+}
