@@ -230,5 +230,4 @@ describe('TranscriptsComponent', () => {
     component.close();
     expect(component.closePopup.emit).toHaveBeenCalled();
   });
-
 });
