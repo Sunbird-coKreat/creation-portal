@@ -831,10 +831,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
         return treeItem;
       });
+      return tree;
       // Sorting leaf node based on created time
-      return _.orderBy(tree, (node) => {
-        return new Date(node.createdOn);
-      });
+      // return _.orderBy(tree, (node) => {
+      //   return new Date(node.createdOn);
+      // });
     }
   }
 

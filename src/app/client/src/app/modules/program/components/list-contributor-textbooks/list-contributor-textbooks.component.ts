@@ -71,10 +71,10 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public collectionsCnt = 0;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
-    public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router, 
+    public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router,
     public programStageService: ProgramStageService, private navigationHelperService: NavigationHelperService,
-    public toasterService: ToasterService, private collectionHierarchyService: CollectionHierarchyService, 
-    private contentHelperService: ContentHelperService, private notificationService: NotificationService, 
+    public toasterService: ToasterService, private collectionHierarchyService: CollectionHierarchyService,
+    private contentHelperService: ContentHelperService, private notificationService: NotificationService,
     private sourcingService: SourcingService, private helperService: HelperService) { }
 
   ngOnInit() {
@@ -105,7 +105,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.sessionContext.nominationDetails = this.selectedNominationDetails && this.selectedNominationDetails.nominationData;
       this.setActiveDate();
       this.setProgramRole();
-  
+
       if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
         this.getProgramTextbooks();
       } else if (this.programDetails.target_type == 'searchCriteria') {
@@ -209,7 +209,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       return of([]);
     }
   }
- 
+
   getProgramContents() {
     let sampleValue, organisation_id, individualUserId, onlyCount, contentStatusCounts;
     const currentNominationStatus = this.contributor.nominationData.status;
@@ -472,6 +472,15 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   changeView() {
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
+    }
+
+    if (this.programDetails && this.programDetails.target_type == 'searchCriteria' && this.currentStage === 'listContributorTextbook') {
+      this.showLoader = true;
+      setTimeout(() => {
+        this.getOriginForApprovedContents().subscribe((res) => {
+          this.getProgramContents();
+        })
+      }, 3000);
     }
   }
   goBack() {
