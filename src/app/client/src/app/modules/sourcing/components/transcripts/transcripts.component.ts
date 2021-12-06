@@ -285,7 +285,7 @@ export class TranscriptsComponent implements OnInit {
     if (assetRequest && assetRequest.length) {
       forkJoin(assetRequest).subscribe(response => {
         this.updateContent(transcriptMeta).subscribe(response => {
-          this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptAdded);
+          this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptUpdate);
           this.closePopup.emit();
         }, error => {
           console.log('Something went wrong', error);
@@ -298,6 +298,7 @@ export class TranscriptsComponent implements OnInit {
     }
     else if (!_.isEmpty(this.contentMetaData.transcripts)) {
       this.updateContent(transcriptMeta).subscribe(response => {
+        this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptUpdate);
         this.closePopup.emit();
       }, error => {
         console.log('Something went wrong', error);

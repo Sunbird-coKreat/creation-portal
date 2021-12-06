@@ -1036,7 +1036,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showCollectionLevelUploadContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
     this.visibility['showViewContribution'] = this.currentNominationStatus === 'Approved' && !canAcceptContribution && isProgramForCollections;
     this.visibility['showReviewContent'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution && isProgramForCollections;
-    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Pending', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
+    this.visibility['showContentLevelOpen'] = (!this.currentNominationStatus || _.includes(['Initiated', 'Approved'], this.currentNominationStatus)) && isProgramForNoCollections;
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
     this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
     // tslint:disable-next-line:max-line-length
