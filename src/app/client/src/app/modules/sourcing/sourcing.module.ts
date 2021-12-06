@@ -79,6 +79,6 @@ import { TranscriptsReviewComponent } from './components/transcripts-review/tran
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent ]
+  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe]
 })
 export class SourcingModule { }

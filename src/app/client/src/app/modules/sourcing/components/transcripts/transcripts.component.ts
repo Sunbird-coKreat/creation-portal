@@ -1,7 +1,7 @@
-import { ActionService } from './../../../core/services/action/action.service';
-import { HelperService } from './../../../sourcing/services/helper.service';
-import { TranscriptService } from './../../../core/services/transcript/transcript.service';
-import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
+import { ActionService } from '../../../core/services/action/action.service';
+import { HelperService } from '../../../sourcing/services/helper.service';
+import { TranscriptService } from '../../../core/services/transcript/transcript.service';
+import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
@@ -40,7 +40,7 @@ export class TranscriptsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private sourcingService: SourcingService,
     private transcriptService: TranscriptService,
-    private helperService: HelperService,
+    public helperService: HelperService,
     private searchService: SearchService,
     private actionService: ActionService,
     public activeRoute: ActivatedRoute,
