@@ -570,7 +570,7 @@
       "type": "object"
     },
     "migrationStatus": {
-      "type":  "string"
+      "type":  "boolean"
     },
     "migrationError": {
       "type" : "string"
