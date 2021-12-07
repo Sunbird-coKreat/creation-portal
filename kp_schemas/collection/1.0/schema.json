@@ -148,7 +148,9 @@
           "Student",
           "Teacher",
           "Parent",
-          "Administrator"
+          "Administrator",
+          "Others",
+          "Other"
         ]
       },
       "default": ["Student"]

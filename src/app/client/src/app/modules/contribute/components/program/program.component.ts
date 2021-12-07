@@ -666,12 +666,13 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     let sampleValue, organisation_id, individualUserId, onlyCount;
     if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
         sampleValue = true;
-      if (this.userService.isUserBelongsToOrg()) {
-        organisation_id = this.userService.getUserOrgId();
-      } else {
-        individualUserId = this.userService.userid;
-      }
     }
+    if (this.userService.isUserBelongsToOrg()) {
+      organisation_id = this.userService.getUserOrgId();
+    } else {
+      individualUserId = this.userService.userid;
+    }
+
     this.collectionHierarchyService.preferencefilters = preferences;
     this.collectionHierarchyService.getContentAggregation(this.activatedRoute.snapshot.params.programId, sampleValue, organisation_id, individualUserId, onlyCount, true).subscribe(
       (response) => {
@@ -1050,8 +1051,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.visibility['showProgramLevelBulkUpload']= isProgramForNoCollections && canAcceptContribution && !_.includes(['Pending', 'Initiated'], this.currentNominationStatus) && _.get(this.sessionContext, 'currentRoles', []).includes('CONTRIBUTOR');
     this.visibility['showFilter'] = (isProgramForCollections && (this.isContributingOrgAdmin || this.sessionContext?.currentRoles?.includes('REVIEWER')) || (isProgramForNoCollections && this.currentNominationStatus === 'Approved'));
     // tslint:disable-next-line:max-line-length
-    this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && this.currentNominationStatus !== 'Approved';
-    this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && this.currentNominationStatus === 'Approved';
+    this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && _.includes(['Initiated', 'Rejected'], this.currentNominationStatus);
+    this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && _.includes(['Approved', 'Pending'], this.currentNominationStatus);
   }
 
   getCollectionCategoryDefinition() {
@@ -1132,6 +1133,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         (response) => {
           if (response && response.result && response.result.node_id) {
             this.toasterService.success(this.resourceService.messages.smsg.m0064);
+            const cindex = this.contributorTextbooks.findIndex(x => x.identifier === this.contentId);
+            this.contributorTextbooks.splice(cindex, 1);
+            this.contentCount = this.contentCount-1;
           } else {
             this.toasterService.error(this.resourceService.messages.fmsg.m00103);
           }
@@ -1167,7 +1171,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.sessionContext && this.programDetails && this.currentStage === 'programComponent') {
       this.nominationIsInProcess = false;
       this.loaders.showCollectionListLoader = true;
-      this.getNominationStatus();
+      setTimeout(() => {
+        this.getNominationStatus();
+      }, 3000);
     }
   }
   tabChangeHandler(e) {

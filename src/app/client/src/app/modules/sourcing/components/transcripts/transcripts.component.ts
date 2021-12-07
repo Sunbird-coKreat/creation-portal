@@ -1,7 +1,7 @@
-import { ActionService } from './../../../core/services/action/action.service';
-import { HelperService } from './../../../sourcing/services/helper.service';
-import { TranscriptService } from './../../../core/services/transcript/transcript.service';
-import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
+import { ActionService } from '../../../core/services/action/action.service';
+import { HelperService } from '../../../sourcing/services/helper.service';
+import { TranscriptService } from '../../../core/services/transcript/transcript.service';
+import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
@@ -40,7 +40,7 @@ export class TranscriptsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private sourcingService: SourcingService,
     private transcriptService: TranscriptService,
-    private helperService: HelperService,
+    public helperService: HelperService,
     private searchService: SearchService,
     private actionService: ActionService,
     public activeRoute: ActivatedRoute,
@@ -134,6 +134,7 @@ export class TranscriptsComponent implements OnInit {
 
   attachFile(event, index) {
     if (!this.getLanguageControl(index).value) {
+      event.target.value = "";
       this.toasterService.warning('Please select language first');
       return false;
     }
@@ -141,8 +142,10 @@ export class TranscriptsComponent implements OnInit {
     this.disableDoneBtn = false;
     const file = event.target.files[0];
     if (!this.fileValidation(file)) {
+      event.target.value = "";
       return false;
     }
+
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       this.setFile(index, file);
@@ -285,7 +288,7 @@ export class TranscriptsComponent implements OnInit {
     if (assetRequest && assetRequest.length) {
       forkJoin(assetRequest).subscribe(response => {
         this.updateContent(transcriptMeta).subscribe(response => {
-          this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptAdded);
+          this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptUpdate);
           this.closePopup.emit();
         }, error => {
           console.log('Something went wrong', error);
@@ -298,6 +301,7 @@ export class TranscriptsComponent implements OnInit {
     }
     else if (!_.isEmpty(this.contentMetaData.transcripts)) {
       this.updateContent(transcriptMeta).subscribe(response => {
+        this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptUpdate);
         this.closePopup.emit();
       }, error => {
         console.log('Something went wrong', error);
