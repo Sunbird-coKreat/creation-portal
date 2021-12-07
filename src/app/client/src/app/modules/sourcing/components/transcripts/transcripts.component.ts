@@ -134,6 +134,7 @@ export class TranscriptsComponent implements OnInit {
 
   attachFile(event, index) {
     if (!this.getLanguageControl(index).value) {
+      event.target.value = "";
       this.toasterService.warning('Please select language first');
       return false;
     }
@@ -141,8 +142,10 @@ export class TranscriptsComponent implements OnInit {
     this.disableDoneBtn = false;
     const file = event.target.files[0];
     if (!this.fileValidation(file)) {
+      event.target.value = "";
       return false;
     }
+
     if (event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       this.setFile(index, file);
