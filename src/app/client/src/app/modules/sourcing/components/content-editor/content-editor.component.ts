@@ -732,7 +732,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         const notificationForPublisher = {
           user_id: this.sessionContext.nominationDetails.user_id,
           content: { name: this.contentData.name },
-          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          org: { name: _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
           program: { name: this.contentData.name },
           status: status
         };

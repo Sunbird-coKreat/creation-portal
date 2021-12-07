@@ -376,7 +376,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         const notificationForPublisher = {
           user_id: this.sessionContext.nominationDetails.user_id,
           content: { name: this.collectionDetails.name },
-          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          org: { name: _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
           program: { name: this.programContext.name },
           status: status
         };
