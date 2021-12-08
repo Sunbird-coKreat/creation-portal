@@ -308,9 +308,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       gradeLevel: [],
     });
 
-    this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
-    this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
-    this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
+    this.prefernceFormOptions['medium'] = _.compact(this.programDetails.config.medium) || [];
+    this.prefernceFormOptions['gradeLevel'] = _.compact(this.programDetails.config.gradeLevel) || [];
+    this.prefernceFormOptions['subject'] = _.compact(this.programDetails.config.subject) || [];
 
     if (this.programDetails.target_type === 'searchCriteria' && !_.isEmpty(this.sessionContext.frameworkData)) {
       this.sessionContext.frameworkData.forEach((element) => {
