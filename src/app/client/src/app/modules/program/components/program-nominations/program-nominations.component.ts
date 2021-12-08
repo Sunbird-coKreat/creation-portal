@@ -245,7 +245,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.direction = 'desc';
       this.sortColumn = 'createdon';
       this.getPaginatedNominations(0);
-      this.sortCollection(this.sortColumn, this.nominations);
+      this.sortCollection(this.sortColumn);
     }
     if (tab === 'user' && !_.includes(this.visitedTab, 'user')) {
       this.showUsersLoader = true;
@@ -289,8 +289,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  sortCollection(column, object) {
-    this.nominations = this.programsService.sortCollection(object, column, this.direction);
+  sortCollection(column) {
+    switch (this.activeTab) {
+      case 'nomination' :
+            this.nominations = this.programsService.sortCollection(this.nominations, column, this.direction);
+            break;
+      case 'contributionDashboard' :
+      default:
+        this.contributionDashboardData = this.programsService.sortCollection(this.contributionDashboardData, column, this.direction);
+        break;
+    }
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
@@ -562,14 +570,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     let orgSampleUploads = _.filter(contentResult, contribution => !_.isEmpty(contribution.organisationId) && contribution.sampleContent);
     orgSampleUploads = _.groupBy(orgSampleUploads, 'organisationId');
     _.forEach(orgSampleUploads, (temp, index) => {
-      this.nominationSampleCounts[index] = temp.length;
+      let nomInd = _.findIndex(this.nominations, {organisation_id: index});
+      this.nominations[nomInd].samples = temp.length;
     });
 
     // tslint:disable-next-line: max-line-length
     let individualSampleUploads = _.filter(contentResult, contribution => _.isEmpty(contribution.organisationId) && contribution.sampleContent);
     individualSampleUploads = _.groupBy(individualSampleUploads, 'createdBy');
     _.forEach(individualSampleUploads, (temp, index) => {
-      this.nominationSampleCounts[index] = temp.length;
+      let nomInd = _.findIndex(this.nominations, {user_id: index});
+      this.nominations[nomInd].samples = temp.length;
+
+      //this.nominationSampleCounts[index] = temp.length;
     });
   }
 
