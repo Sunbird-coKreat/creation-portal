@@ -580,8 +580,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     _.forEach(individualSampleUploads, (temp, index) => {
       let nomInd = _.findIndex(this.nominations, {user_id: index});
       this.nominations[nomInd].samples = temp.length;
-
-      //this.nominationSampleCounts[index] = temp.length;
     });
   }
 
