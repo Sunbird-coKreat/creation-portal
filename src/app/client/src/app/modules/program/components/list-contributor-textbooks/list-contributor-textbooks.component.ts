@@ -477,8 +477,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     if (this.programDetails && this.programDetails.target_type == 'searchCriteria' && this.currentStage === 'listContributorTextbook') {
       this.showLoader = true;
       setTimeout(() => {
-        this.getOriginForApprovedContents().subscribe((res) => {
-          this.getProgramContents();
+        this.fetchProgramDetails().subscribe((programDetails) => {
+          this.programContext = _.get(programDetails, 'result');
+          this.getOriginForApprovedContents().subscribe((res) => {
+            this.getProgramContents();
+          })
         })
       }, 3000);
     }
