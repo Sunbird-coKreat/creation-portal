@@ -16,7 +16,7 @@
       ><i class="plus square icon"></i>{{resourceService.frmelmnts.lbl.addToTextbook}}</button>
   </div>
 </div>
-<app-player class="content-player" [playerConfig]="playerConfig"></app-player>
+<app-player *ngIf="showPlayer" class="content-player" [playerConfig]="playerConfig"></app-player>
 <div class="toc-content-player content-video">
   <div class="sb-bg-color-white">
     <div class="mx-16 py-16 content-metadeta__content" *ngIf="contentData?.description">
