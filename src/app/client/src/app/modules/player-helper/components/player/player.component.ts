@@ -25,6 +25,7 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   contentRatingModal = false;
   previewCdnUrl: string;
   isCdnWorking: string;
+  public playerType: string;
   CONSTANT = {
     ACCESSEVENT: 'renderer:question:submitscore'
   };
@@ -54,12 +55,13 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
   ngOnChanges() {
     this.contentRatingModal = false;
     if (this.playerConfig) {
-      if (this.playerLoaded) {
-        const playerElement = this.contentIframe.nativeElement;
-        playerElement.contentWindow.initializePreview(this.playerConfig);
-      } else {
-        this.loadPlayer();
-      }
+      this.loadPlayer();
+      // if (this.playerLoaded) {
+      //   const playerElement = this.contentIframe.nativeElement;
+      //   playerElement.contentWindow.initializePreview(this.playerConfig);
+      // } else {
+      //   this.loadPlayer();
+      // }
     }
   }
   loadCdnPlayer() {
@@ -108,25 +110,45 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
    * Emits event when content starts playing and end event when content was played/read completely
    */
   loadPlayer() {
-    if (_.includes(this.router.url, 'browse') && environment.isOffline) {
-      this.loadDefaultPlayer(`${this.configService.appConfig.PLAYER_CONFIG.localBaseUrl}webview=true`);
-      return;
-    } else if (environment.isOffline) {
-      if (_.get(this.playerConfig, 'metadata.artifactUrl')
-      && _.includes(OFFLINE_ARTIFACT_MIME_TYPES, this.playerConfig.metadata.mimeType)) {
-        const artifactFileName = this.playerConfig.metadata.artifactUrl.split('/');
-        this.playerConfig.metadata.artifactUrl = artifactFileName[artifactFileName.length - 1];
+    this.playerType = 'default-player';
+    this.setPlayerType();
+    if (this.playerType === 'default-player') {
+      if (_.includes(this.router.url, 'browse') && environment.isOffline) {
+        this.loadDefaultPlayer(`${this.configService.appConfig.PLAYER_CONFIG.localBaseUrl}webview=true`);
+        return;
+      } else if (environment.isOffline) {
+        if (_.get(this.playerConfig, 'metadata.artifactUrl')
+        && _.includes(OFFLINE_ARTIFACT_MIME_TYPES, this.playerConfig.metadata.mimeType)) {
+          const artifactFileName = this.playerConfig.metadata.artifactUrl.split('/');
+          this.playerConfig.metadata.artifactUrl = artifactFileName[artifactFileName.length - 1];
+        }
+        this.loadDefaultPlayer(this.configService.appConfig.PLAYER_CONFIG.localBaseUrl);
+        return;
       }
-      this.loadDefaultPlayer(this.configService.appConfig.PLAYER_CONFIG.localBaseUrl);
-      return;
-    }
 
-    if (this.previewCdnUrl !== '' && (this.isCdnWorking).toLowerCase() === 'yes') {
-      this.loadCdnPlayer();
-      return;
+      if (this.previewCdnUrl !== '' && (this.isCdnWorking).toLowerCase() === 'yes') {
+        this.loadCdnPlayer();
+        return;
+      }
+      this.loadDefaultPlayer();
+    } else {
+      this.adjustPlayerHeight();
+      this.playerConfig.config = {};
     }
-    this.loadDefaultPlayer();
   }
+
+
+  setPlayerType() {
+    const playerType = _.get(this.configService.appConfig.PLAYER_CONFIG, 'playerType');
+    _.forIn(playerType, (value, key) => {
+      if (value.length) {
+        if (_.includes(value, _.get(this.playerConfig, 'metadata.mimeType'))) {
+          this.playerType = key;
+        }
+      }
+    });
+  }
+
   /**
    * Adjust player height after load
    */
@@ -144,18 +166,33 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  generateContentReadEvent(event: any) {
-    const eid = event.detail.telemetryData.eid;
+  generateContentReadEvent(event: any, newPlayerEvent?) {
+    let eventCopy = newPlayerEvent ? _.cloneDeep(event) : event;
+    if (!eventCopy) {
+      return;
+    }
+
+    if (newPlayerEvent) {
+      eventCopy = { detail: {telemetryData: eventCopy}};
+    }
+
+    const eid = _.get(eventCopy, 'detail.telemetryData.eid');
     if (eid && (eid === 'START' || eid === 'END')) {
-      this.showRatingPopup(event);
-      this.contentProgressEvents$.next(event);
+      this.showRatingPopup(eventCopy);
+      if (this.contentProgressEvents$) {
+        this.contentProgressEvents$.next(eventCopy);
+      }
     } else if (eid && (eid === 'IMPRESSION')) {
       this.emitSceneChangeEvent();
     }
     if (eid && (eid === 'ASSESS') || eid === 'START' || eid === 'END') {
-      this.assessmentEvents.emit(event);
+      this.assessmentEvents.emit(eventCopy);
     }
   }
+
+  eventHandler(event) {
+  }
+
   emitSceneChangeEvent(timer = 0) {
     setTimeout(() => {
       const stageId = this.contentIframe.nativeElement.contentWindow.EkstepRendererAPI.getCurrentStageId();
