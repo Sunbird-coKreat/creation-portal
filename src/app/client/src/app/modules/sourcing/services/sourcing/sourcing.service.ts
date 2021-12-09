@@ -255,7 +255,7 @@ export class SourcingService {
   }
   generatePreSignedUrl(req, contentId: any) {
     const reqParam = {
-      url: `content/v3/upload/url/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.PRE_SIGNED_UPLOAD_URL}/${contentId}`,
       data: {
         request: req
       }
@@ -264,7 +264,7 @@ export class SourcingService {
   }
   getVideo(videoId) {
     const reqParam = {
-      url: `content/v3/read/${videoId}`
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${videoId}`
     };
     return this.actionService.get(reqParam);
   }
