@@ -491,27 +491,15 @@
 												</h5>
 												<hr class="mt-0">
 												<div class="o-y-auto maxmin-h-375 fs-0-92 text-capitalize">
-													<div class="sb-program-collection ui container"
+													<div class="sb-program-collection ui container px-10"
 														*ngFor="let tempCollection of tempCollections">
 														<div class="ui grid">
-															<div class="six wide column">
+															<div class="six wide column pb-0">
 																<h5
 																	class="mx-10 sb-color-gray-400 pb-5 sb__ellipsis sb__ellipsis--three font-weight-bold">
 																	{{tempCollection.name}}</h5>
-																<small class="d-flex mx-10 max-content mt-10">
-																	<span
-																		class="sb-maxw-10">{{tempCollection.medium}}</span>
-																	<span class="mx-8"
-																		style="border-left: 1px solid var(--gray-200);"></span>
-																	<span
-																		class="sb-maxw-10">{{tempCollection.gradeLevel}}</span>
-																	<span class="mx-8"
-																		style="border-left: 1px solid var(--gray-200);"></span>
-																	<span
-																		class="sb-maxw-5">{{tempCollection.subject}}</span>
-																</small>
 															</div>
-															<div class="four wide column px-0 mt-5">
+															<div class="five wide column px-0 mt-5">
 																<div class="sb-color-gray-400 fxsmall text-lowercase">
 																	{{resource?.frmelmnts?.lbl?.selectedOutOfTotal | interpolate:'{selected}': tempCollection.selected || '0' | interpolate:'{total}': tempCollection.total || '0' | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | lowercase}}
 																</div>
@@ -528,15 +516,29 @@
 																		class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
 																</div>
 															</div>
-															<div class="two wide column text-right cursor-pointer"
+															<div class="one wide column px-0 text-center cursor-pointer"
 																(click)="onCollectionCheck(tempCollection, false)"
 																appTelemetryInteract
 																[telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
 																[telemetryInteractObject]="telemetryInteractObject"
 																[telemetryInteractCdata]="telemetryInteractCdata"
 																[telemetryInteractPdata]="telemetryInteractPdata">
-																<i class="close outline icon sb-color-red-100" suiPopup
+																<i class="close outline icon sb-color-red-100 pr-20" suiPopup
 																	popupHeader="close"></i>
+															</div>
+															<div class="twelve wide column pt-0">
+																<small class="d-flex mx-10 max-content">
+																	<span
+																		class="sb-maxw-10">{{tempCollection.medium}}</span>
+																	<span class="mx-8"
+																		style="border-left: 1px solid var(--gray-200);"></span>
+																	<span
+																		class="sb-maxw-10">{{tempCollection.gradeLevel}}</span>
+																	<span class="mx-8"
+																		style="border-left: 1px solid var(--gray-200);"></span>
+																	<span
+																		class="sb-maxw-5">{{tempCollection.subject}}</span>
+																</small>
 															</div>
 															<hr class="row p-0 mt-0">
 														</div>
