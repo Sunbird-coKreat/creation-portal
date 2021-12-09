@@ -571,7 +571,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     orgSampleUploads = _.groupBy(orgSampleUploads, 'organisationId');
     _.forEach(orgSampleUploads, (temp, index) => {
       let nomInd = _.findIndex(this.nominations, {organisation_id: index});
-      this.nominations[nomInd].samples = temp.length;
+      if (nomInd !== -1) {
+       this.nominations[nomInd].samples = temp.length;
+      }
     });
 
     // tslint:disable-next-line: max-line-length
@@ -579,7 +581,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     individualSampleUploads = _.groupBy(individualSampleUploads, 'createdBy');
     _.forEach(individualSampleUploads, (temp, index) => {
       let nomInd = _.findIndex(this.nominations, {user_id: index});
-      this.nominations[nomInd].samples = temp.length;
+      if (nomInd !== -1) {
+        this.nominations[nomInd].samples = temp.length;
+      }
     });
   }
 
