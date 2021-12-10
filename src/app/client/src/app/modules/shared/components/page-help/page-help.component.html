@@ -1,12 +1,12 @@
-<span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="'bottom left'" class="cursor-pointer d-flex" popupTrigger="outsideClick">
-    <span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary">
+<span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="'bottom left'" class="cursor-pointer d-flex sb-help-section" popupTrigger="outsideClick">
+    <span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary d-flex">
       <i aria-hidden="true" class="question circle icon fs-1-286"></i>
-      <span class="">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</span>
+      <label class="mt-5">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</label>
     </span>
     <ng-template #helpSectionTemplate>
-      <div class="p-10 w-300">
+      <div class="p-10 w-250">
         <div class="fs-0-785 font-weight-bold mb-10">{{helpSectionConfig.helpHeader}}</div>
-        <div class="fs-0-785 sb-color-gray-100">
+        <div class="fs-0-785 sb-color-gray-400 mb-5">
           {{helpSectionConfig.helpMessage}}
         </div>
         <button class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
