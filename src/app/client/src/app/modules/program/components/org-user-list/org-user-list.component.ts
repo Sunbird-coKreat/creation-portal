@@ -336,9 +336,4 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       extra
     }, _.isUndefined);
   }
-
-  openLink(url) {
-    window.open(url,
-    '_blank');
-  }
 }

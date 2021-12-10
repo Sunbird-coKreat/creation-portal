@@ -6,21 +6,7 @@
               <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning ml-5 px-5"
                   *ngIf="!showLoader && orgUserscnt">{{orgUserscnt}}
               </span>
-              <span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="'bottom left'" class="cursor-pointer d-flex" popupTrigger="outsideClick">
-                <span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary">
-                  <i class="question circle icon fs-1-286"></i>
-                  <span class="">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</span>
-                </span>
-                <ng-template #helpSectionTemplate>
-                  <div class="p-10 w-300">
-                    <div class="fs-0-785 font-weight-bold mb-10">{{helpSectionConfig.helpHeader}}</div>
-                    <div class="fs-0-785 sb-color-gray-100">
-                      {{helpSectionConfig.helpMessage}}
-                    </div>
-                    <button class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
-                  </div>
-                </ng-template>
-              </span>
+              <app-page-help [helpSectionConfig]="helpSectionConfig"></app-page-help>
           </div>
             <div class="sb-search-box medium mt-5 mr-10">
               <div class="input-div relative">
@@ -128,21 +114,7 @@
     </div>
   <div class="mt-12" *ngIf="!showLoader && orgUserscnt == 0">
       <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"> </app-no-result>
-      <span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="'bottom left'" class="cursor-pointer d-flex" popupTrigger="outsideClick">
-        <span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary">
-          <i class="question circle icon fs-1-286"></i>
-          <span class="">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</span>
-        </span>
-        <ng-template #helpSectionTemplate>
-          <div class="p-10 w-300">
-            <div class="fs-0-785 font-weight-bold mb-10">{{helpSectionConfig.helpHeader}}</div>
-            <div class="fs-0-785 sb-color-gray-100">
-              {{helpSectionConfig.helpMessage}}
-            </div>
-            <button class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
-          </div>
-        </ng-template>
-      </span>
+      <app-page-help [helpSectionConfig]="helpSectionConfig"></app-page-help>
   </div>
     <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
       <app-loader></app-loader>
