@@ -106,6 +106,7 @@
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{ userService?.userProfile?.userRegData?.Org?.name }}</h4>
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ OrgUsersCnt }}</span>
+						  <app-page-help [helpSectionConfig]="helpSectionConfig"></app-page-help>
 						</div>
 						<div class="sb-search-box medium mb-15">
                             <div class="input-div relative">
@@ -241,7 +242,8 @@
 						</div>
 					  </div>
 					<div class="mt-12" *ngIf="!loaders.showUsersLoader && OrgUsersCnt == 0">
-						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"> </app-no-result>
+						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
+						<app-page-help [helpSectionConfig]="helpSectionConfig"></app-page-help>
 					</div>
 					  <div class="ui tweleve wide column mb-20" *ngIf="loaders.showUsersLoader">
 						<app-loader></app-loader>

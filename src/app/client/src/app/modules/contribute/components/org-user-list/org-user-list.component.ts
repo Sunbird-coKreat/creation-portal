@@ -40,6 +40,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   isInitialSourcingOrgUser = true;
   telemetryPageId: string;
   public impressionEventTriggered: Boolean =  false;
+  public helpSectionConfig = this.configService.appConfig.contextaulHelp.sourcing.manageUsers;
   constructor(private toasterService: ToasterService, public configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
