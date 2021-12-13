@@ -122,7 +122,7 @@
                         <table class="sb-table sb-table-striped sb-table-sortable" aria-describedby="frameworkTable">
                             <thead class="sb-table-header sb-table-thead-gray">
                                 <tr>
-                                    <th class="cursor-pointer sb-sorting" scope="col" (click)="sortCollection('board')" >{{resourceService.frmelmnts.lbl.board}}
+                                    <th class="cursor-pointer sb-sorting w-15" scope="col" (click)="sortCollection('board')" >{{resourceService.frmelmnts.lbl.board}}
                                         &nbsp;&nbsp;
                                         <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
                                         <span  *ngIf="sortColumn == 'board'" class="d-inline-block">
@@ -131,7 +131,7 @@
                                         </span>
 
                                     </th>
-                                    <th class="cursor-pointer sb-sorting" scope="col" (click)="sortCollection('medium')" >{{resourceService.frmelmnts.lbl.mediums}}
+                                    <th class="cursor-pointer sb-sorting w-15" scope="col" (click)="sortCollection('medium')" >{{resourceService.frmelmnts.lbl.mediums}}
                                         &nbsp;&nbsp;
                                         <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
                                         <span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
@@ -149,7 +149,7 @@
                                         </span>
 
                                     </th>
-                                    <th class="cursor-pointer sb-sorting" scope="col" (click)="sortCollection('subject')" >{{resourceService.frmelmnts.lbl.subject}}
+                                    <th class="cursor-pointer sb-sorting w-15" scope="col" (click)="sortCollection('subject')" >{{resourceService.frmelmnts.lbl.subject}}
                                         &nbsp;&nbsp;
                                         <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
                                         <span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
