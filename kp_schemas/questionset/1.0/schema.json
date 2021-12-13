@@ -613,6 +613,9 @@
     },
     "reusedContributions": {
       "type": "array"
+    },
+    "rejectedContributionComments": {
+      "type": "object"
     }
   }
 }
