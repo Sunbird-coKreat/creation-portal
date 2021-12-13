@@ -157,6 +157,7 @@
               </ng-container>
             </ng-container>
             <span class="item-status">{{content.creator}}</span>
+            <span class="item-name" *ngIf="content.sampleContent"></span>
             <span class="item-name" *ngIf="!content.sampleContent">
               <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
               <span [ngClass]="{'sb-color-primary':content.status === 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
