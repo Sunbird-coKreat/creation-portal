@@ -68,7 +68,7 @@
     [telemetryInteractCdata]="telemetryInteractCdata"
     [telemetryInteractPdata]="telemetryInteractPdata"><i
             class="fa fa-download pr-10"></i>{{resourceService?.frmelmnts?.btn?.downloadSampleMetadataCsv}}</a>
-            <h6 class="sb-color-gray-400">{{resourceService?.frmelmnts?.lbl?.keepFirstTwoRows}}</h6>
+            <div class="sb-color-gray-400 fs-0-92 d-flex"><i class="exclamation circle icon"></i> {{resourceService?.frmelmnts?.lbl?.keepFirstTwoRows}}</div>
       </div>
 
       <div class="content p-10 d-block w-70 flex-as-center text-center" *ngIf="bulkUploadState === 2">
