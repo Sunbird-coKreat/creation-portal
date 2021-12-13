@@ -115,7 +115,7 @@
     </div>
   <div class="mt-12">
       <app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
-      <app-page-help [helpSectionConfig]="helpSectionConfig"></app-page-help>
+      <div class="d-flex flex-ai-jc-center"><app-page-help  [helpSectionConfig]="helpSectionConfig"></app-page-help></div>
   </div>
     <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
       <app-loader></app-loader>
