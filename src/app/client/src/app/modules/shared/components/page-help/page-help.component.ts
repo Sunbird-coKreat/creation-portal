@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ResourceService } from '../../services/index';
+import * as _ from 'lodash-es';
 @Component({
   selector: 'app-page-help',
   templateUrl: './page-help.component.html',
@@ -8,9 +9,13 @@ import { ResourceService } from '../../services/index';
 export class PageHelpComponent implements OnInit {
 
   @Input() helpSectionConfig;
+  @Input() popupPlacement;
   constructor(public resourceService: ResourceService) { }
 
   ngOnInit(): void {
+    if (_.isUndefined(this.popupPlacement)) {
+      this.popupPlacement = 'bottom left';
+    }
   }
 
   openLink(url) {

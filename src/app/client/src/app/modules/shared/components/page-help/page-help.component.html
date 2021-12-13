@@ -1,4 +1,4 @@
-<span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="'bottom left'" class="cursor-pointer d-flex sb-help-section" popupTrigger="outsideClick">
+<span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="popupPlacement" class="cursor-pointer d-flex sb-help-section" popupTrigger="outsideClick">
     <span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary d-flex">
       <i aria-hidden="true" class="question circle icon fs-1-286"></i>
       <label class="mt-5">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</label>
