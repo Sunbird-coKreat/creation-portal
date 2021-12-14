@@ -7,7 +7,7 @@
 		<div class="sb-color-primary d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.correctionsPending || 0 }}</span> {{resourceService.frmelmnts.lbl.correctionsPending}}</div>
 	</div>
 	<div class="twelve wide tablet five wide computer column text-right">
-		<app-page-help [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
+		<app-page-help *ngIf="!programDetails?.target_type || programDetails?.target_type === 'searchCriteria'" [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
 		<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary d-inline-block pt-10 mx-10"  *ngIf="programDetails?.guidelines_url" href="{{ programDetails?.guidelines_url }}" target="_blank">
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}

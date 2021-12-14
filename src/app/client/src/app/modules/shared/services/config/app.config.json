@@ -1411,8 +1411,17 @@
         "helpMessage": "You can do so by clicking on Select Role next to a particular user and selecting their role from the dropdown."
       }
     },
-    "contrib": {
-
+    "contribute": {
+      "manageUsers": {
+        "url": "https://dock.preprod.ntp.net.in/help/contribute/administrator/manage-users/index.html",
+        "helpHeader": "Inviting users will allow you to assign them roles for projects",
+        "helpMessage":  "You can invite users to your organization by clicking on Invite Users and sharing an invitation link with them"
+      },
+      "myProjects": {
+        "url": "https://dock.preprod.ntp.net.in/help/contribute/contributor/enrol/index.html",
+        "helpHeader": "You can use this space to view all the projects assigned to you, along with your designated role.",
+        "helpMessage":  "You can contribute or review content based on the requirements"
+      }
     }
   }
 }
