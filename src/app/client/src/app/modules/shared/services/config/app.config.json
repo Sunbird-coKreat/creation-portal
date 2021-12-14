@@ -1421,6 +1421,11 @@
         "url": "https://dock.preprod.ntp.net.in/help/contribute/contributor/enrol/index.html",
         "helpHeader": "You can use this space to view all the projects assigned to you, along with your designated role.",
         "helpMessage":  "You can contribute or review content based on the requirements"
+      },
+      "allProjectNomations": {
+        "url": "https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-nominate-for-sourcing-project.html",
+        "helpHeader": "This space allows you to upload your content samples, in order to nominate to this particular project.",
+        "helpMessage":  ""
       }
     }
   }

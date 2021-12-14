@@ -7,7 +7,6 @@
 		<div class="sb-color-primary d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ contentStatusCounts?.correctionsPending || 0 }}</span> {{resourceService.frmelmnts.lbl.correctionsPending}}</div>
 	</div>
 	<div class="twelve wide tablet five wide computer column text-right">
-		<app-page-help *ngIf="!programDetails?.target_type || programDetails?.target_type === 'searchCriteria'" [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
 		<a class="fs-0-785 text-decor-none font-weight-bold sb-color-primary d-inline-block pt-10 mx-10"  *ngIf="programDetails?.guidelines_url" href="{{ programDetails?.guidelines_url }}" target="_blank">
 			<i class="file sb-file-icon outline icon pr-10 sb-color-primary"></i>
 			{{ resourceService.frmelmnts.lbl.viewGuidelinesDocument }}
@@ -82,10 +81,11 @@
 							</span>
 						</th>
 						<th class="w-10">&nbsp;</th>
+						<th class="min-w-125 px-0"><app-page-help [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'top right'"></app-page-help></th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100" *ngIf="collections.length">
-					<ng-container *ngFor="let data of collections;">  
+					<ng-container *ngFor="let data of collections;">
 						<tr *ngIf="data?.contentVisibility === undefined || data?.contentVisibility">
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
@@ -124,6 +124,7 @@
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="getTelemetryInteractCdata(data.identifier,'linked_collection')"
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
+							<td></td>
 						</tr>
 					</ng-container>
 				</tbody>
