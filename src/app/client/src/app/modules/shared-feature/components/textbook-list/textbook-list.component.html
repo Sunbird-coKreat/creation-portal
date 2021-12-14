@@ -82,10 +82,11 @@
 							</span>
 						</th>
 						<th class="w-10">&nbsp;</th>
+						<th class="min-w-125 px-0"><app-page-help [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'top right'"></app-page-help></th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100" *ngIf="collections.length">
-					<ng-container *ngFor="let data of collections;">  
+					<ng-container *ngFor="let data of collections;">
 						<tr *ngIf="data?.contentVisibility === undefined || data?.contentVisibility">
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
@@ -124,6 +125,7 @@
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="getTelemetryInteractCdata(data.identifier,'linked_collection')"
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
+							<td></td>
 						</tr>
 					</ng-container>
 				</tbody>
