@@ -7,9 +7,8 @@ import * as _ from 'lodash-es';
   styleUrls: ['./page-help.component.scss']
 })
 export class PageHelpComponent implements OnInit {
-
-  @Input() helpSectionConfig;
-  @Input() popupPlacement;
+  @Input() helpSectionConfig: any;
+  @Input() popupPlacement: string;
   constructor(public resourceService: ResourceService) { }
 
   ngOnInit(): void {
