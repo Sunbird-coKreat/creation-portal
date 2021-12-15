@@ -58,7 +58,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public userProfile = this.userService.userProfile;
   public forTargetType = 'collections';
   public activeTab='';
-  public helpSectionConfig = this.configService.appConfig.contextaulHelp.contribute.myProjects;
+  public helpSectionConfig = this.configService.appConfig.contextualHelp.contribute.myProjects;
 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,

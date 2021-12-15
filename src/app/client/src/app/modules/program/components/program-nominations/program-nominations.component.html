@@ -400,9 +400,9 @@
                                                         [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
                         </div>
                     </div>
-					<div class="sb-table-responsive" *ngIf="!showUsersLoader && sourcingOrgUserCnt == 0">
+					<div class="mt-12" *ngIf="!showUsersLoader && sourcingOrgUserCnt == 0">
 						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"></app-no-result>
-                        <app-page-help [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
+                        <app-page-help class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
 					</div>
 				  </div>
             </div>

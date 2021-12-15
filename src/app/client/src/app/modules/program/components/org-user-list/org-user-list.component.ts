@@ -44,7 +44,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   searchLimitMessage: any;
   searchLimitCount: any;
   public telemetryPageId: string;
-  public helpSectionConfig = this.configService.appConfig.contextaulHelp.sourcing.manageUsers;
+  public helpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.manageUsers;
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
