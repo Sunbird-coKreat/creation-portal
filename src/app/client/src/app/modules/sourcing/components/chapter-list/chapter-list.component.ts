@@ -125,8 +125,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   configUrl;
   tags = [];
   printUrl;
-  public helpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.reviewContributions;
-
+  public reviewHelpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.reviewContributions;
+  public contributeHelpSectionConfig = this.configService.appConfig.contextualHelp.contribute.myProjectContribute;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
