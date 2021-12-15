@@ -5,9 +5,9 @@
     </span>
     <ng-template #helpSectionTemplate>
       <div class="p-10 w-250">
-        <div class="fs-0-785 font-weight-bold mb-10">{{helpSectionConfig.helpHeader}}</div>
+        <div class="fs-0-785 font-weight-bold mb-10">{{helpSectionConfig.header}}</div>
         <div class="fs-0-785 sb-color-gray-400 mb-5">
-          {{helpSectionConfig.helpMessage}}
+          {{helpSectionConfig.message}}
         </div>
         <button class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
       </div>
