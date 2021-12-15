@@ -364,6 +364,7 @@
 					</th>
 					<th class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
 					<th class="w-10" *ngIf="programDetails?.target_type === 'collections'"></th>
+					<th class="min-w-125 px-0"><app-page-help class="float-ContentRight" [helpSectionConfig]="contributeHelpSectionConfig" [popupPlacement]="'top right'"></app-page-help></th>
 				</tr>
 			</thead>
 			<tbody class="sb-table-body">
@@ -456,7 +457,8 @@
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_collection')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
-					</td>
+						</td>
+						<td></td>
 					</tr>
 				</ng-container>
 			</tbody>

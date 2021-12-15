@@ -1426,6 +1426,11 @@
         "url": "https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-nominate-for-sourcing-project.html",
         "helpHeader": "This space allows you to upload your content samples, in order to nominate to this particular project.",
         "helpMessage":  ""
+      },
+      "myProjectContribute": {
+        "url": "https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-nominate-for-sourcing-project.html",
+        "helpHeader": "This space allows you to see a list of content pending for your contribution in this project",
+        "helpMessage":  "Click on any unit to proceed with the contribution process."
       }
     }
   }
