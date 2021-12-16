@@ -26,7 +26,7 @@ class RouterStub {
 
 const resourceServiceMockData = {
   messages: {
-    imsg: { m0027: 'Something went wrong' },
+    imsg: { m0027: 'Something went wrong', m0046: 'dummy message' },
     stmsg: { m0009: 'error' },
     fmsg: {m0054 : 'error', m0056: 'error', m0052: 'error'},
     smsg: {m0033: 'success', m0034: 'success'}
