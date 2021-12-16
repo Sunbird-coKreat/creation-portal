@@ -108,6 +108,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contentCount = 0;
   public showConfirmationModal = false;
   public prefernceFormOptions = {};
+  public assignUserHelpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.assignUsersToProject;
+  public nominationHelpSectionConfig = this.configService.appConfig.contextualHelp.contribute.allProjectNomations;
+  public contributeHelpSectionConfig = this.configService.appConfig.contextualHelp.contribute.myProjectContribute;
+  public noUsersFoundHelpConfig = this.configService.appConfig.contextualHelp.contribute.noUsersFound;
+  public reviewHelpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.reviewContributions;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,

@@ -26,6 +26,9 @@
 						[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.nominate}}</button>
 				</div>
 				<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage.replace('{TARGET_NAME}', targetCollections | lowercase)}}</div>
+				<div class="d-inline-block">
+					<app-page-help [helpSectionConfig]="nominationHelpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -106,6 +109,7 @@
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{ userService?.userProfile?.userRegData?.Org?.name }}</h4>
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ OrgUsersCnt }}</span>
+						  <app-page-help [helpSectionConfig]="assignUserHelpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
 						</div>
 						<div class="sb-search-box medium mb-15">
                             <div class="input-div relative">
@@ -241,7 +245,8 @@
 						</div>
 					  </div>
 					<div class="mt-12" *ngIf="!loaders.showUsersLoader && OrgUsersCnt == 0">
-						<app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0006'}"> </app-no-result>
+						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
+						<app-page-help class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
 					</div>
 					  <div class="ui tweleve wide column mb-20" *ngIf="loaders.showUsersLoader">
 						<app-loader></app-loader>
@@ -299,7 +304,7 @@
 		<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
 			<thead class="sb-table-header sb-table-thead-gray">
 				<tr>
-					<th class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
+					<th scope="col" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('name')">
 						{{targetCollection}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 						<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
@@ -307,7 +312,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th *ngIf="programDetails?.target_type === 'searchCriteria'" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
+					<th scope="col" *ngIf="programDetails?.target_type === 'searchCriteria'" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
 						{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
 						<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
@@ -315,7 +320,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
+					<th scope="col" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
 						{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
 						<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
@@ -323,7 +328,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+					<th scope="col" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
 						{{resourceService.frmelmnts.lbl.Class}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
 						<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
@@ -331,7 +336,7 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
+					<th scope="col" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('subject')">
 						{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'subject' "></i>
 						<span  *ngIf="sortColumn == 'subject'" class="d-inline-block">
@@ -339,17 +344,17 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-5" *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">{{firstLevelFolderLabel}}</th>
+					<th scope="col" class="w-5" *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections')">{{firstLevelFolderLabel}}</th>
 					<th class="w-5" *ngIf="visibility.showCollectionLevelSamples">
 						<span>Sample Content</span>
 					</th>
-					<th class="w-20" *ngIf="visibility.showCollectionLevelContentStatus">
+					<th scope="col" class="w-20" *ngIf="visibility.showCollectionLevelContentStatus">
 						<span>{{resourceService.frmelmnts.lbl.contentStatus}}</span>
 					</th>
-					<th class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
+					<th scope="col" class="w-10" *ngIf="programDetails?.target_type === 'searchCriteria'">
 						<span>{{ resourceService.frmelmnts.lbl.creator }}</span>
 					</th>
-					<th class="w-10 cursor-pointer sb-sorting" *ngIf="programDetails?.target_type === 'searchCriteria' && (currentNominationStatus === 'Approved')" (click)="sortCollection('resourceStatusText')">
+					<th scope="col" class="w-10 cursor-pointer sb-sorting" *ngIf="programDetails?.target_type === 'searchCriteria' && (currentNominationStatus === 'Approved')" (click)="sortCollection('resourceStatusText')">
 						{{ resourceService.frmelmnts.lbl.status }}
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'resourceStatusText' "></i>
 						<span  *ngIf="sortColumn == 'resourceStatusText'" class="d-inline-block">
@@ -357,8 +362,18 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
-					<th class="w-10" *ngIf="programDetails?.target_type === 'collections'"></th>
+					<th scope="col" class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
+					<th scope="col" class="w-10" *ngIf="programDetails?.target_type === 'collections'"></th>
+					<th scope="col" class="w-10" *ngIf="visibility.showCollectionLevelUploadContent">
+						<app-page-help class="min-w-125 float-ContentRight" [helpSectionConfig]="contributeHelpSectionConfig"
+						[popupPlacement]="'top right'">
+						</app-page-help>
+					</th>
+					<th scope="col" class="w-10" *ngIf="visibility.showReviewContent">
+						<app-page-help class="min-w-125 float-ContentRight" [helpSectionConfig]="reviewHelpSectionConfig"
+						[popupPlacement]="'top right'">
+						</app-page-help>
+					</th>
 				</tr>
 			</thead>
 			<tbody class="sb-table-body">
@@ -451,7 +466,9 @@
 							[telemetryInteractObject]="telemetryInteractObject"
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_collection')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
-					</td>
+						</td>
+						<td *ngIf="visibility.showCollectionLevelUploadContent"></td>
+						<td *ngIf="visibility.showReviewContent"></td>
 					</tr>
 				</ng-container>
 			</tbody>

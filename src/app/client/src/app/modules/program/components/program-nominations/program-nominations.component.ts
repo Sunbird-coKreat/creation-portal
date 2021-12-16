@@ -103,6 +103,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public targetCollections: string;
   public firstLevelFolderLabel: string;
   public showBulkApprovalButton: Boolean = false;
+  public helpSectionConfig = this.config.appConfig.contextualHelp.sourcing.assignUsersToProject;
+  public noUsersFoundHelpConfig = this.config.appConfig.contextualHelp.sourcing.noUsersFound;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,

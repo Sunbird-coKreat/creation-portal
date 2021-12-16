@@ -69,6 +69,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public targetCollections: string;
   private onComponentDestroy$ = new Subject<any>();
   public collectionsCnt = 0;
+  public helpSectionConfig = this.config.appConfig.contextualHelp.sourcing.reviewContributions;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
     public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router,

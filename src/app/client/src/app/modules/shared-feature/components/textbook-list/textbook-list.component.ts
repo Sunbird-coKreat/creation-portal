@@ -54,6 +54,7 @@ export class TextbookListComponent implements OnInit {
   public targetCollections: string;
   public firstLevelFolderLabel: string;
   public prefernceFormOptions = {};
+  public helpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.reviewContributions;
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
