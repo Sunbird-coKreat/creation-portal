@@ -35,4 +35,20 @@ describe('PageHelpComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should set popupPlacement value', () => {
+    component.popupPlacement = undefined;
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.ngOnInit).toHaveBeenCalled();
+    expect(component.popupPlacement).toEqual('bottom left');
+  });
+
+  it('openLink should call window.open', () => {
+    spyOn(window, 'open').and.callFake(() => {});
+    spyOn(component, 'openLink').and.callThrough();
+    component.openLink('https://dock.preprod.ntp.net.in/help/contribute/administrator/manage-users/index.html');
+    expect(component.openLink).toHaveBeenCalled();
+    expect(window.open).toHaveBeenCalled();
+  });
 });
