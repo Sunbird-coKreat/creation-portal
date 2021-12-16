@@ -9,7 +9,11 @@ import * as _ from 'lodash-es';
 export class PageHelpComponent implements OnInit {
   @Input() helpSectionConfig: any;
   @Input() popupPlacement: string;
-  constructor(public resourceService: ResourceService) { }
+  public baseUrl;
+  constructor(public resourceService: ResourceService) {
+    this.baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+    ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+   }
 
   ngOnInit(): void {
     if (_.isUndefined(this.popupPlacement)) {
@@ -18,8 +22,7 @@ export class PageHelpComponent implements OnInit {
   }
 
   openLink(url) {
-    window.open(url,
+    window.open(this.baseUrl + url,
     '_blank');
   }
-
 }
