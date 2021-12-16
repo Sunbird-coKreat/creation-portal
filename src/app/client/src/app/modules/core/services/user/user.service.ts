@@ -300,7 +300,7 @@ export class UserService {
   openSaberRegistrySearch() {
     const userRegData = {};
     const option = {
-      url: 'reg/search',
+      url: this.config.urlConFig.URLS.OPENSABER.SEARCH,
       data: {
         id: 'open-saber.registry.search',
         ver: '1.0',
