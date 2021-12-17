@@ -112,7 +112,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public nominationHelpSectionConfig: any;
   public contributeHelpSectionConfig: any;
   public noUsersFoundHelpConfig: any;
-  public reviewHelpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.reviewContributions;
+  public reviewHelpSectionConfig: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
