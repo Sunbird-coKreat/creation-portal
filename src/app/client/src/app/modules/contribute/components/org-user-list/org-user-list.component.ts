@@ -63,15 +63,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
-    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
-    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.manageUsers')) {
-        this.mangeUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.manageUsers');
-      }
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound')) {
-        this.noUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
-      }
-    }
+    this.setContextualHelpConfig();
   }
 
   ngAfterViewInit() {
@@ -99,6 +91,18 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         }
       };
      });
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.manageUsers')) {
+        this.mangeUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.manageUsers');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound')) {
+        this.noUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
+      }
+    }
   }
 
   getPageId() {
