@@ -3,7 +3,7 @@ import { ToasterService, ResourceService, NavigationHelperService, ConfigService
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../sourcing/interfaces';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
-import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
+import { UserService, RegistryService, ProgramsService, ContentHelperService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 import { SourcingService } from '../../../sourcing/services';
@@ -44,22 +44,19 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   searchLimitMessage: any;
   searchLimitCount: any;
   public telemetryPageId: string;
-  // public helpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.manageUsers;
   public mangeUsersContextualConfig: any;
   public sunbirdContextualHelpConfig: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
-    private paginationService: PaginationService, private sourcingService: SourcingService
-    ) {
+    private paginationService: PaginationService, private sourcingService: SourcingService,
+    private contentHelperService: ContentHelperService) {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
 
-    this.sunbirdContextualHelpConfig = (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
-    JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
-
+    this.sunbirdContextualHelpConfig = this.contentHelperService.getContextualHelpConfig();
     console.log('sunbirdContextualHelpConfig', this.sunbirdContextualHelpConfig);
 
     if (!_.isUndefined(this.sunbirdContextualHelpConfig) && _.has(this.sunbirdContextualHelpConfig, 'sourcing.manageUsers')) {
