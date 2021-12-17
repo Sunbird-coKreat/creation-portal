@@ -81,7 +81,9 @@
 							</span>
 						</th>
 						<th scope="col" class="w-10">&nbsp;</th>
-						<th scope="col" class="min-w-125 px-0"><app-page-help [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'top right'"></app-page-help></th>
+						<th scope="col" class="min-w-125 px-0" *ngIf="reviewContributionHelpConfig">
+							<app-page-help [helpSectionConfig]="reviewContributionHelpConfig" [popupPlacement]="'top right'"></app-page-help>
+						</th>
 					</tr>
 				</thead>
 				<tbody class="sb-table-body w-100" *ngIf="collections.length">
@@ -124,7 +126,7 @@
 								[telemetryInteractObject]="telemetryInteractObject"
 								[telemetryInteractCdata]="getTelemetryInteractCdata(data.identifier,'linked_collection')"
 								[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.open}}</button></td>
-							<td></td>
+							<td *ngIf="reviewContributionHelpConfig"></td>
 						</tr>
 					</ng-container>
 				</tbody>

@@ -9,7 +9,7 @@ import { DatePipe } from '@angular/common';
 import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { first } from 'rxjs/operators';
-import { SourcingService } from '../../../sourcing/services';
+import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
 
 @Component({
@@ -58,23 +58,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public userProfile = this.userService.userProfile;
   public forTargetType = 'collections';
   public activeTab='';
-  // public helpSectionConfig = this.configService.appConfig.contextualHelp.contribute.myProjects;
   public myProjectContextHelpConfig: any;
-  public sunbirdContextualHelpConfig: any;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
-    private sourcingService: SourcingService) {
-      this.sunbirdContextualHelpConfig = (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
-    JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
-
-    console.log('sunbirdContextualHelpConfig', this.sunbirdContextualHelpConfig);
-
-    if (!_.isUndefined(this.sunbirdContextualHelpConfig) && _.has(this.sunbirdContextualHelpConfig, 'contribute.myProjects')) {
-      this.myProjectContextHelpConfig = _.get(this.sunbirdContextualHelpConfig, 'contribute.myProjects');
-      }
+    private sourcingService: SourcingService, private helperService: HelperService) {
     }
 
   ngOnInit() {
@@ -90,6 +80,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'contribute.myProjects')) {
+      this.myProjectContextHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjects');
+      }
   }
 
   ngAfterViewInit() {

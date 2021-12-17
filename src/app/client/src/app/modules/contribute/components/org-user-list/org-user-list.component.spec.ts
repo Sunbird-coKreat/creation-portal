@@ -14,7 +14,7 @@ import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import * as _ from 'lodash-es';
-import { SourcingService } from '../../../sourcing/services';
+import { SourcingService, HelperService } from '../../../sourcing/services';
 describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
@@ -67,7 +67,8 @@ describe('OrgUserListComponent', () => {
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }, { provide: Router, useValue: routerStub },
         {provide: APP_BASE_HREF, useValue: '/'}, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry },
         {provide: UserService, useValue: userServiceStub},
-        { provide: ResourceService, useValue: resourceBundle  }
+        { provide: ResourceService, useValue: resourceBundle  },
+        HelperService
       ]
     })
     .compileComponents();

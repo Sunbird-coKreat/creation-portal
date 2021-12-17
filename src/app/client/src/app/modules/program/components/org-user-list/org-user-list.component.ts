@@ -3,10 +3,10 @@ import { ToasterService, ResourceService, NavigationHelperService, ConfigService
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../sourcing/interfaces';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
-import { UserService, RegistryService, ProgramsService, ContentHelperService } from '@sunbird/core';
+import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-import { SourcingService } from '../../../sourcing/services';
+import { SourcingService, HelperService } from '../../../sourcing/services';
 import {DatePipe} from '@angular/common';
 
 @Component({
@@ -45,23 +45,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   searchLimitCount: any;
   public telemetryPageId: string;
   public mangeUsersContextualConfig: any;
-  public sunbirdContextualHelpConfig: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService, private sourcingService: SourcingService,
-    private contentHelperService: ContentHelperService) {
+    private helperService: HelperService) {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-
-    this.sunbirdContextualHelpConfig = this.contentHelperService.getContextualHelpConfig();
-    console.log('sunbirdContextualHelpConfig', this.sunbirdContextualHelpConfig);
-
-    if (!_.isUndefined(this.sunbirdContextualHelpConfig) && _.has(this.sunbirdContextualHelpConfig, 'sourcing.manageUsers')) {
-      this.mangeUsersContextualConfig = _.get(this.sunbirdContextualHelpConfig, 'sourcing.manageUsers');
-    }
 
     this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
       this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
@@ -84,6 +76,11 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    console.log('sunbirdContextualHelpConfig', sunbirdContextualHelpConfig);
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.manageUsers')) {
+      this.mangeUsersContextualConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.manageUsers');
+    }
   }
 
   ngAfterViewInit() {
