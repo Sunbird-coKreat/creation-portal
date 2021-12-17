@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { UserService, ProgramsService, ActionService, FrameworkService } from '@sunbird/core';
+import { UserService, ProgramsService, ActionService, FrameworkService, ContentHelperService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, IUserProfile } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
@@ -10,6 +10,7 @@ import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -64,8 +65,7 @@ export class BulkUploadComponent implements OnInit {
   public bulkUploadErrorMsgs = [];
   public bulkUploadValidationError = '';
   public levels = [];
-  // public sampleMetadataCsvUrl: string = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'bulk-content-upload-format.csv';
-  public sampleMetadataCsvUrl: string = 'bulk-content-upload-format.csv';
+  public sampleMetadataCsvUrl: string =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',') + 'bulk-content-upload-format.csv';
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
@@ -80,10 +80,15 @@ export class BulkUploadComponent implements OnInit {
     private helperService: HelperService,
     public actionService: ActionService,
     public frameworkService: FrameworkService,
+    public contentHelperService: ContentHelperService,
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService
   ) { }
 
    ngOnInit() {
+    if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
+      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
+    }
+
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))
       .subscribe((user: any) => {
@@ -161,7 +166,7 @@ export class BulkUploadComponent implements OnInit {
       unit.identifier = identifier;
       return (unit.root === false && unit.mimeType === 'application/vnd.ekstep.content-collection')
     }).map((unit) => {
-      return { identifier: unit.identifier, name: unit.name, parent: unit.parent }
+      return { identifier: unit.identifier, name: _.trim(unit.name), parent: unit.parent }
     });
   }
 
@@ -178,22 +183,22 @@ export class BulkUploadComponent implements OnInit {
     const reqData = {
       filters: {
         program_id: _.get(this.programContext, 'program_id', ''),
-        collection_id: _.get(this.sessionContext, 'collection', ''),
         type: 'bulk_upload',
         createdby: _.get(this.userService, 'userid', '')
       },
       limit: 1
     };
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      reqData.filters['collection_id']= _.get(this.sessionContext, 'collection', '')
+    }
     this.bulkJobService.getBulkOperationStatus(reqData)
       .subscribe((statusResponse) => {
         const count = _.get(statusResponse, 'result.count', 0);
         if (!count) {
           return;
         }
-
         this.process = _.first(_.get(statusResponse, 'result.process', []));
         this.oldProcessStatus = this.process.status;
-        // console.log('process', JSON.stringify(this.process));
         this.searchContentWithProcessId();
         this.bulkUploadState = 5;
       }, (error) => {
@@ -232,29 +237,28 @@ export class BulkUploadComponent implements OnInit {
         if (this.process.overall_stats.upload_pending === 0) {
           this.process.status = 'completed';
         }
+        this.calculateCompletionPercentage();
+        if (this.oldProcessStatus !== this.process.status) {
+          this.updateJob();
+        }
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const req = {
+            url: `content/v3/hierarchy/${this.sessionContext.collection}`,
+            param: { 'mode': 'edit' }
+          };
+          this.actionService.get(req).subscribe((response) => {
+            const children = [];
+            _.forEach(response.result.content.children, (child) => {
+              if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
+              (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
+                children.push(child);
+              }
+            });
 
-        const req = {
-          url: `content/v3/hierarchy/${this.sessionContext.collection}`,
-          param: { 'mode': 'edit' }
-        };
-        this.actionService.get(req).subscribe((response) => {
-          const children = [];
-          _.forEach(response.result.content.children, (child) => {
-            if (child.mimeType !== 'application/vnd.ekstep.content-collection' ||
-            (child.mimeType === 'application/vnd.ekstep.content-collection' && child.openForContribution === true)) {
-              children.push(child);
-            }
+            response.result.content.children = children;
+            this.storedCollectionData = response.result.content;
           });
-
-          response.result.content.children = children;
-          this.storedCollectionData = response.result.content;
-          this.calculateCompletionPercentage();
-          // console.log('updated process:', JSON.stringify(this.process));
-          if (this.oldProcessStatus !== this.process.status) {
-            this.updateJob();
-          }
-
-        });
+        }
       }
     }, (error) => {
       console.log(error);
@@ -281,11 +285,14 @@ export class BulkUploadComponent implements OnInit {
   }
 
   downloadReport() {
-    this.unitsInLevel = _.map(this.contents, content => {
-      return this.findFolderLevel(this.storedCollectionData, content.identifier);
-    });
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      this.unitsInLevel = _.map(this.contents, content => {
+        return this.findFolderLevel(this.storedCollectionData, content.identifier);
+      });
+    }
 
     try {
+      this.setBulkUploadCsvConfig();
       const headers = _.map(this.uploadCsvConfig.headers, header => header.name);
       headers.push('Status');
       headers.push('Reason for failure');
@@ -304,21 +311,21 @@ export class BulkUploadComponent implements OnInit {
         result['fileFormat'] = this.getFileFormat(_.get(content, 'mimeType', ''));
         result['source'] = _.get(content, 'source', '');
         result['contentType'] = _.get(content, 'primaryCategory');
+        if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+          const folderStructure = this.unitsInLevel[i];
+          this.unitGroup = [];
+          this.tree(folderStructure);
 
-        const folderStructure = this.unitsInLevel[i];
-        this.unitGroup = [];
-        this.tree(folderStructure);
-
-        result['level1'] = '';
-        result['level2'] = '';
-        result['level3'] = '';
-        result['level4'] = '';
-
-        if (this.unitGroup.length > 0) {
-          result['level1'] = _.get(this.unitGroup, '[0].name', '');
-          result['level2'] = _.get(this.unitGroup, '[1].name', '');
-          result['level3'] = _.get(this.unitGroup, '[2].name', '');
-          result['level4'] = _.get(this.unitGroup, '[3].name', '');
+          result['level1'] = '';
+          result['level2'] = '';
+          result['level3'] = '';
+          result['level4'] = '';
+          if (this.unitGroup.length > 0) {
+            result['level1'] = _.get(this.unitGroup, '[0].name', '');
+            result['level2'] = _.get(this.unitGroup, '[1].name', '');
+            result['level3'] = _.get(this.unitGroup, '[2].name', '');
+            result['level4'] = _.get(this.unitGroup, '[3].name', '');
+          }
         }
 
         let status = _.get(content, 'status', '');
@@ -330,9 +337,9 @@ export class BulkUploadComponent implements OnInit {
 
         return result;
       });
-
+      const fileName = _.get(this.storedCollectionData, 'name') ? `Bulk Upload ${this.storedCollectionData.name.trim()}` : `Bulk Upload ${this.programContext.name.trim()}`;
       const csvDownloadConfig = {
-        filename: `Bulk Upload ${this.storedCollectionData.name.trim()}`,
+        filename: fileName,
         tableData: tableData,
         headers: headers,
         showTitle: false
@@ -478,67 +485,82 @@ export class BulkUploadComponent implements OnInit {
       { name: 'File Format', inputName: 'fileFormat', required: true, requiredError, headerError, in: this.bulkUploadConfig.fileFormats, inError },
       { name: 'File Path', inputName: 'source', required: true, requiredError, headerError, unique: true, uniqueError, isUrl: true, urlError },
       { name: 'Content Type', inputName: 'contentType', required: true, requiredError, headerError, in: contentTypes, inError },
-      { name: 'Level 1 Textbook Unit', inputName: 'level1', required: true, requiredError, headerError },
-      { name: 'Level 2 Textbook Unit', inputName: 'level2', headerError },
-      { name: 'Level 3 Textbook Unit', inputName: 'level3', headerError },
-      { name: 'Level 4 Textbook Unit', inputName: 'level4', headerError },
     ];
 
-     const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
-       _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      headers.push ({ name: 'Level 1 Textbook Unit', inputName: 'level1', required: true, requiredError, headerError });
+      headers.push ({ name: 'Level 2 Textbook Unit', inputName: 'level2', required: false, requiredError, headerError });
+      headers.push ({ name: 'Level 3 Textbook Unit', inputName: 'level3', required: false, requiredError, headerError });
+      headers.push ({ name: 'Level 4 Textbook Unit', inputName: 'level4', required: false, requiredError, headerError });
+    }
+    if (this.programContext.target_type === 'searchCriteria') {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+      this.allowedDynamicColumns = [...orgFrameworkCategories];
+    } else {
+      const orgFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'framework')) ? _.map(
+        _.omitBy(this.frameworkService.orgFrameworkCategories, category => category.code === 'framework'), category => {
+        return {
+          name: `Org_FW_${category.code}`,
+          inputName: category.orgIdFieldName,
+          isArray: true,
+          headerError
+        };
+      }) : [];
+
+      const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
+        _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
        return {
-         name: `Org_FW_${category.code}`,
-         inputName: category.orgIdFieldName,
+         name: `Target_FW_${category.code}`,
+         inputName: category.targetIdFieldName,
          isArray: true,
          headerError
        };
      }) : [];
-
-     const targetFrameworkCategories = !_.isEmpty(_.get(this.sessionContext.targetCollectionFrameworksData, 'targetFWIds'))  ? _.map(
-       _.omitBy(this.frameworkService.targetFrameworkCategories, category => category.code === 'targetFWIds'), category => {
-      return {
-        name: `Target_FW_${category.code}`,
-        inputName: category.targetIdFieldName,
-        isArray: true,
-        headerError
-      };
-    }) : [];
-
-    this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+     this.allowedDynamicColumns = [...orgFrameworkCategories, ...targetFrameworkCategories];
+    }
     const validateRow = (row, rowIndex) => {
-      if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
-        const name = headers.find((r) => r.inputName === 'level1').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
-        return;
-      } else if (_.isEmpty(row.level3) && !_.isEmpty(row.level4)) {
-        const name = headers.find((r) => r.inputName === 'level3').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
+      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+        if (_.isEmpty(row.level4) && _.isEmpty(row.level3) && _.isEmpty(row.level2) && _.isEmpty(row.level1)) {
+          const name = headers.find((r) => r.inputName === 'level1').name || '';
+          this.setError(`${name} is missing at row: ${rowIndex}`);
+          return;
+        } else if (_.isEmpty(row.level3) && !_.isEmpty(row.level4)) {
+          const name = headers.find((r) => r.inputName === 'level3').name || '';
+          this.setError(`${name} is missing at row: ${rowIndex}`);
 
-        if (_.isEmpty(row.level2)) {
+          if (_.isEmpty(row.level2)) {
+            const name = headers.find((r) => r.inputName === 'level2').name || '';
+            this.setError(`${name} is missing at row: ${rowIndex}`);
+          }
+
+          if (_.isEmpty(row.level1)) {
+            const name = headers.find((r) => r.inputName === 'level1').name || '';
+            this.setError(`${name} is missing at row: ${rowIndex}`);
+          }
+          return;
+        } else if (_.isEmpty(row.level2) && !_.isEmpty(row.level3)) {
           const name = headers.find((r) => r.inputName === 'level2').name || '';
           this.setError(`${name} is missing at row: ${rowIndex}`);
-        }
 
-        if (_.isEmpty(row.level1)) {
+          if (_.isEmpty(row.level1)) {
+            const name = headers.find((r) => r.inputName === 'level1').name || '';
+            this.setError(`${name} is missing at row: ${rowIndex}`);
+          }
+          return;
+        } else if (_.isEmpty(row.level1) && !_.isEmpty(row.level2)) {
           const name = headers.find((r) => r.inputName === 'level1').name || '';
           this.setError(`${name} is missing at row: ${rowIndex}`);
+          return;
         }
-        return;
-      } else if (_.isEmpty(row.level2) && !_.isEmpty(row.level3)) {
-        const name = headers.find((r) => r.inputName === 'level2').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
-
-        if (_.isEmpty(row.level1)) {
-          const name = headers.find((r) => r.inputName === 'level1').name || '';
-          this.setError(`${name} is missing at row: ${rowIndex}`);
-        }
-        return;
-      } else if (_.isEmpty(row.level1) && !_.isEmpty(row.level2)) {
-        const name = headers.find((r) => r.inputName === 'level1').name || '';
-        this.setError(`${name} is missing at row: ${rowIndex}`);
-        return;
       }
-
       // Validate the textbook level units
       const keys = ['level1', 'level2', 'level3', 'level4'];
       _.map(keys, key => {
@@ -683,27 +705,47 @@ export class BulkUploadComponent implements OnInit {
   }
 
   getContentObject(row) {
-    const unitName = row.level4 || row.level3 || row.level2 || row.level1;
-    const unitId = this.getUnitIdFromName(row);
     const userId = _.get(this.userService, 'userid');
-    const collectionId = _.get(this.sessionContext, 'collection', '');
     const source = this.getDownloadableLink(row.source);
     const license = _.get(row, 'license');
     const organisationId =  _.get(this.sessionContext, 'nominationDetails.organisation_id');
-
-    const reqBody = this.sharedContext.reduce((obj, context) => {
+    /*const reqBody = this.sharedContext.reduce((obj, context) => {
       return { ...obj, [context]: this.sessionContext[context] };
-    }, {});
-    let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext);
-
-    let frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
-    frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
-    frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
-
-    if (!_.isEmpty(frameworkMetaData)) {
-      const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
-      sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+    }, {});*/
+    let sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.sessionContext, this.programContext.target_type);
+    let frameworkMetaData;
+    if (this.programContext.target_type === 'searchCriteria') {
+      frameworkMetaData = this.helperService.getFormattedFrameworkMetaWithOutCollection(row, this.sessionContext);
+      frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+      const framework = _.isArray(this.sessionContext.framework) ? _.first(this.sessionContext.framework) : this.sessionContext.framework;
+      frameworkMetaData = Object.assign({}, {framework: framework}, frameworkMetaData);
+      if (!_.isEmpty(frameworkMetaData)) {
+        const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, {framework: framework});
+        sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+        if (_.isArray(sharedMetaData.board)) {
+          sharedMetaData.board = _.first(sharedMetaData.board);
+        }
+      }
+    } else {
+      // tslint:disable-next-line:max-line-length
+      frameworkMetaData = this.helperService.getFormattedFrameworkMeta(row, this.sessionContext.targetCollectionFrameworksData);
+      frameworkMetaData = _.pickBy(frameworkMetaData, i => !_.isEmpty(i));
+      frameworkMetaData = Object.assign({}, this.sessionContext.targetCollectionFrameworksData, frameworkMetaData);
+      if (!_.isEmpty(frameworkMetaData)) {
+        const sourceCategoryValues = this.helperService.getSourceCategoryValues(row, this.sessionContext.targetCollectionFrameworksData);
+        sharedMetaData = Object.assign({}, sharedMetaData, sourceCategoryValues);
+        if (_.isArray(sharedMetaData.board)) {
+          sharedMetaData.board = _.first(sharedMetaData.board);
+        }
+      }
     }
+
+
+
+    let creatorName = this.userProfile.firstName;
+      if (!_.isEmpty(this.userProfile.lastName)) {
+        creatorName = this.userProfile.firstName + ' ' + this.userProfile.lastName;
+      }
     const content = {
       stage: this.stageStatus,
       metadata: {
@@ -712,28 +754,34 @@ export class BulkUploadComponent implements OnInit {
         source: source,
         artifactUrl: source,
         appIcon: this.getDownloadableLink(row.appIcon),
-        creator: row.creator,
+        creator: creatorName,
+        author: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
         code: UUID.UUID(),
         mimeType: this.getMimeType(_.toLower(row.fileFormat)),
         primaryCategory: row.contentType,
         lastPublishedBy: userId,
         createdBy: userId,
-        collectionId: collectionId,
-        programId: _.get(this.sessionContext, 'programId', ''),
-        unitIdentifiers: [unitId],
+        programId: this.programContext.program_id,
         copyright: row.copyright,
         attributions: row.attributions,
         keywords: row.keywords,
         contentPolicyCheck: true,
         ...(_.pickBy(sharedMetaData, i => !_.isEmpty(i))),
         ...(_.pickBy(frameworkMetaData, i => !_.isEmpty(i)))
-      },
-      collection: [{
+      }
+    };
+
+    if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      const unitId = this.getUnitIdFromName(row);
+      const collectionId = _.get(this.sessionContext, 'collection', '');
+      content.metadata.collectionId = collectionId;
+      content.metadata.unitIdentifiers = [unitId];
+      content['collection'] = [{
         identifier: collectionId,
         unitId: unitId
       }]
-    };
+    }
 
     if (!_.isEmpty(license)) {
       content.metadata.license = license;
