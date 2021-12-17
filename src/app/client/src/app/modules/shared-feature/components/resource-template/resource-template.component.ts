@@ -97,9 +97,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         } else {
           this.selectedtemplateDetails["modeOfCreation"] = modeOfCreation[0];
           if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
-            this.showModeofCreationModal = false;        
+            this.showModeofCreationModal = false;
             this.showQuestionTypeModal = true;
-            if(!_.isUndefined(this.selectedtemplateDetails["interactionTypes"])) {
+            if(this.selectedtemplateDetails["interactionTypes"][0] === "choice") {
               this.showQuestionTypeModal = false;
               this.submit();
             }
@@ -141,11 +141,11 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
         break;
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';
-        const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});    
+        const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});
         if(temp.mimetype === 'application/vnd.sunbird.question') {
-          this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';          
-        }    
-        this.selectedtemplateDetails.mimeType = [temp.mimetype];       
+          this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';
+        }
+        this.selectedtemplateDetails.mimeType = [temp.mimetype];
         break;
       case 'ecml':
         this.selectedtemplateDetails.onClick = 'editorComponent';
