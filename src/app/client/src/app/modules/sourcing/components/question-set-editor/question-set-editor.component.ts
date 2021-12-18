@@ -224,6 +224,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorConfig.config.mimeType = _.get(this.sessionContext, 'templateDetails.mimeType[0]');
     this.editorConfig.config.primaryCategory = _.get(this.sessionContext, 'templateDetails.name');
     this.editorConfig.config.interactionType = _.get(this.sessionContext, 'templateDetails.interactionTypes[0]');
+    this.editorConfig.config.questionCategory = _.get(this.sessionContext, 'templateDetails.questionCategory');
     this.editorConfig.config.objectType = 'Question';
     this.editorConfig.config.mode = 'edit';
     this.editorConfig.config.isReadOnlyMode = false;
