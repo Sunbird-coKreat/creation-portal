@@ -103,7 +103,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public targetCollections: string;
   public firstLevelFolderLabel: string;
   public showBulkApprovalButton: Boolean = false;
-  public helpSectionConfig: any;
+  public assignUsersHelpConfig: any;
   public noUsersFoundHelpConfig: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
@@ -173,7 +173,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig)) {
       if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
-        this.helpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
+        this.assignUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
       }
       if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
         this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');

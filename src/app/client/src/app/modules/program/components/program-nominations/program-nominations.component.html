@@ -267,7 +267,7 @@
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{userService.userProfile?.organisations[0]?.orgName}}</h4>
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUserCnt || 0}}</span>
-                          <app-page-help *ngIf="helpSectionConfig" [helpSectionConfig]="helpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
+                          <app-page-help *ngIf="assignUsersHelpConfig" [helpSectionConfig]="assignUsersHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
                         </div>
                         <div class="sb-search-box medium mb-15">
                             <div class="input-div relative">
