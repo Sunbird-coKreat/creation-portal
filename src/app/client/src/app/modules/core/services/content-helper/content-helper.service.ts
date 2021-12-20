@@ -309,10 +309,4 @@ export class ContentHelperService {
       }
       return [resourceStatusText, resourceStatusClass];
     }
-
-    getContextualHelpConfig() {
-      const sunbirdContextualHelpConfig = (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
-      JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
-      return sunbirdContextualHelpConfig;
-    }
 }
