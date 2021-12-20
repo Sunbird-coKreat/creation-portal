@@ -21,7 +21,8 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
   instance: string;
   public playerConfig: any;
   public contentData: any = {};
-  public getUploadedContentMeta : any;
+  public getUploadedContentMeta: any;
+  public showPlayer: Boolean = false;
   public contentId;
   constructor(
     private playerService: PlayerService, public configService: ConfigService, private actionService: ActionService,
@@ -35,6 +36,7 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     if (this.contentDetails.identifier && this.contentId !== this.contentDetails.identifier) {
+      this.showPlayer = false;
       this.contentId = this.contentDetails.identifier;
       this.getConfigByContent(this.contentId);
     }
@@ -52,6 +54,7 @@ export class MvcPlayerComponent implements OnInit, OnChanges {
       this.playerConfig = config;
       this.playerConfig.context.pdata.pid = `${this.configService.appConfig.TELEMETRY.PID}`;
       this.playerConfig.context.cdata = this.sessionContext.telemetryInteractCdata;
+      this.showPlayer = true;
       this.cd.detectChanges();
     });
   }

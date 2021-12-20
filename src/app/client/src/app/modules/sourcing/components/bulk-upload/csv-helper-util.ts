@@ -43,16 +43,16 @@ export default class CSVFileValidator {
      */
     private prepareDataAndValidateFile() {
         const expectedColumns = this.config.headers.length;
-        const foundColumns = this.csvData[0].length;
+        const foundColumns = this.csvData[1].length;
 
         // Check if extra columns are present other than specified
         if (foundColumns > expectedColumns) {
-            const invalidColumns = _.map(_.range(expectedColumns, foundColumns), (number) => this.csvData[0][number] || `Column ${number}`)
+            const invalidColumns = _.map(_.range(expectedColumns, foundColumns), (number) => this.csvData[1][number] || `Column ${number}`)
             return this.handleError(this.config, 'extraHeaderError', `Invalid data found in columns: ${invalidColumns.join(',')}`, [invalidColumns, expectedColumns, foundColumns]);
         }
 
-        // One row for headers and one empty blank row at last
-        const actualRows = this.csvData.length - 2;
+        // Two row for headers and descriptions and one empty blank row at last
+        const actualRows = this.csvData.length - 3;
 
         // Empty rows or file validation
         if (actualRows === 0) {
@@ -73,7 +73,7 @@ export default class CSVFileValidator {
 
         // Required headers validation
         const headers = this.config.headers;
-        const csvHeaders = _.first(this.csvData);
+        const csvHeaders = this.csvData[1]; // get the header row
         const headerNames = headers.map(row => {
            row.name = _.get(row, 'name', '').trim();
            return row.name;
@@ -97,8 +97,8 @@ export default class CSVFileValidator {
 
         // Iterate over each row in csv file
         this.csvData.forEach((row, rowIndex) => {
-            // First row is headers so skip it
-            if (rowIndex === 0) return;
+            // First row is description and second row is headers so skip it
+            if (rowIndex === 0 || rowIndex === 1) return;
 
             // No more rows in the file
             if ((row.length < headers.length)) {
@@ -239,7 +239,7 @@ export default class CSVFileValidator {
                     this.csvData = results.data;
                     const dynamicHeaders = !_.isEmpty(this.allowedDynamicColumns) ? // 10
                     [...this.config.headers, ..._.filter(this.allowedDynamicColumns, columns => {
-                        return _.includes(_.first(this.csvData), columns.name);
+                        return _.includes(this.csvData[1], columns.name);
                     })] : [...this.config.headers];
                     this.config.headers = _.uniqBy(dynamicHeaders, 'inputName');
                     resolve(this.prepareDataAndValidateFile());
@@ -251,4 +251,3 @@ export default class CSVFileValidator {
         });
     }
 }
-
