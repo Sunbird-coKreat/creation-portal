@@ -118,7 +118,7 @@ export class ProgramsService extends DataService implements CanActivate {
    */
   searchRegistry(reqData) {
     const option = {
-      url: 'reg/search',
+      url: this.config.urlConFig.URLS.OPENSABER.SEARCH,
       data:
       {
         id : 'open-saber.registry.search',
@@ -140,7 +140,7 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   addToRegistry(reqData) {
     const option = {
-      url: 'reg/add',
+      url: this.config.urlConFig.URLS.OPENSABER.ADD,
       data:
       {
         id : 'open-saber.registry.create',
@@ -1129,7 +1129,7 @@ export class ProgramsService extends DataService implements CanActivate {
   */
   updateToRegistry(reqData) {
     const option = {
-      url: 'reg/update',
+      url: this.config.urlConFig.URLS.OPENSABER.UPDATE,
       data: {
         id : 'open-saber.registry.update',
         request: reqData
