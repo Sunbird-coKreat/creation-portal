@@ -80,6 +80,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'contribute.myProjects')) {
       this.myProjectContextHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjects');

@@ -74,6 +74,10 @@ export class TextbookListComponent implements OnInit {
     ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
       this.reviewContributionHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');

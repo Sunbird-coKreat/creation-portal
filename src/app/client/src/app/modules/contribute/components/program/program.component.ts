@@ -184,6 +184,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
         this.assignUserHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
       }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
+        this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');
+      }
       if (_.has(sunbirdContextualHelpConfig, 'contribute.allProjectNomations')) {
         this.nominationHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.allProjectNomations');
       }

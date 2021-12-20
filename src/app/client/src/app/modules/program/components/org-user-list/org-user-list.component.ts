@@ -76,6 +76,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     console.log('sunbirdContextualHelpConfig', sunbirdContextualHelpConfig);
     if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.manageUsers')) {

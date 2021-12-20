@@ -15,6 +15,7 @@ import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import * as _ from 'lodash-es';
 import { SourcingService, HelperService } from '../../../sourcing/services';
+import { contextualHelpConfig} from './org-user-list.component.spec.data';
 describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
@@ -208,5 +209,16 @@ describe('OrgUserListComponent', () => {
     expect(component.contributorOrgUsers).toBe(userDetail.result.response.content);
     expect(component.initialSourcingOrgUser).toBe(userDetail.result.response.content);
     expect(component.orgUserscnt).toBe(userDetail.result.response.content.length);
+    });
+
+    it('#setContextualHelpConfig should set mangeUsersHelpConfig and noUsersHelpConfig', () => {
+      component.mangeUsersHelpConfig = undefined;
+      component.noUsersHelpConfig = undefined;
+      const helperService = TestBed.get(HelperService);
+      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+      spyOn(component, 'setContextualHelpConfig').and.callThrough();
+      component.setContextualHelpConfig();
+      expect(component.mangeUsersHelpConfig).toBeDefined();
+      expect(component.noUsersHelpConfig).toBeDefined();
     });
 });
