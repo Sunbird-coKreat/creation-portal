@@ -876,7 +876,12 @@ const API_LIST = {
     '/action/question/v1/update/:do_id',
     '/content/content/v1/read/:do_id',
     '/content/questionset/v1/read/:do_id',
-    '/learner/user/v1/exists/phone/:phone'
+    '/learner/user/v1/exists/phone/:phone',
+    '/action/content/v4/upload/:do_id',
+    '/action/content/v4/upload/url/:do_id',
+    '/action/content/v4/update/:do_id',
+    '/action/collection/v4/hierarchy/add/:do_id',
+    '/action/collection/v4/hierarchy/remove/:do_id'
   ]
 }
 module.exports = API_LIST;
