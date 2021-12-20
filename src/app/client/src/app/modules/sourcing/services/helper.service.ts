@@ -1437,8 +1437,7 @@ export class HelperService {
   }
 
   getContextualHelpConfig() {
-    const sunbirdContextualHelpConfig = (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
+    return (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
     JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
-    return sunbirdContextualHelpConfig;
   }
 }
