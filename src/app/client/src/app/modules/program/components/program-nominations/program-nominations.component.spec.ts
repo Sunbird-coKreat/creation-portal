@@ -388,13 +388,13 @@ describe('ProgramNominationsComponent', () => {
           }
         }
       };
-      component.helpSectionConfig = undefined;
+      component.assignUsersHelpConfig = undefined;
       component.noUsersFoundHelpConfig = undefined;
       const helperService = TestBed.get(HelperService);
       spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
       spyOn(component, 'setContextualHelpConfig').and.callThrough();
       component.setContextualHelpConfig();
-      expect(component.helpSectionConfig).toBeDefined();
+      expect(component.assignUsersHelpConfig).toBeDefined();
       expect(component.noUsersFoundHelpConfig).toBeDefined();
     });
 });
