@@ -133,26 +133,6 @@ module.exports = function (app) {
     })
   );
   // Proxy for content create ,update & review Start
-  // app.use(
-  //   [
-  //     // "/action/content/v3/create",
-  //     // "/action/content/v3/hierarchy/add",
-  //     // "/action/content/v3/hierarchy/remove",
-  //     "/action/collection/v4/hierarchy/*",
-  //     // "/action/content/v3/import",
-  //   ],
-  //   bodyParser.json({ limit: "50mb" }),
-  //   proxy(kp_content_service_base_url, {
-  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-  //     proxyReqPathResolver: function (req) {
-  //       var originalUrl = req.originalUrl;
-  //       originalUrl = originalUrl.replace("/action/", "");
-  //       return require("url").parse(kp_content_service_base_url + originalUrl)
-  //         .path;
-  //     },
-  //   })
-  // );
-
   app.get("/action/collection/v4/hierarchy/*",
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_content_service_base_url, {
@@ -236,36 +216,6 @@ module.exports = function (app) {
     })
   );
 
-  app.post(
-    "/action/user/v1/search",
-    addCorsHeaders,
-    proxyUtils.verifyToken(),
-    permissionsHelper.checkPermission(),
-    proxy(learnerURL, {
-      limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        let originalUrl = req.originalUrl.replace("/action/", "");
-        return require("url").parse(learnerURL + originalUrl).path;
-      },
-      userResDecorator: userResDecorator,
-    })
-  );
-
-  // app.use(
-  //   ["/action/content/v3/update/*"],
-  //   bodyParser.json({ limit: "50mb" }),
-  //   proxy(kp_content_service_base_url, {
-  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-  //     proxyReqPathResolver: function (req) {
-  //       var originalUrl = req.originalUrl;
-  //       originalUrl = originalUrl.replace("/action/", "");
-  //       return require("url").parse(kp_content_service_base_url + originalUrl)
-  //         .path;
-  //     },
-  //   })
-  // );
-
   app.post("/action/content/v4/update/*",
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_content_service_base_url, {
@@ -278,22 +228,6 @@ module.exports = function (app) {
       },
     })
   );
-
-  // app.post(
-  //   "/action/content/v3/upload/*",
-  //   proxy(kp_content_service_base_url, {
-  //     preserveHostHdr: true,
-  //     limit: reqDataLimitOfContentUpload,
-  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-  //     proxyReqPathResolver: function (req) {
-  //       var originalUrl = req.originalUrl;
-  //       originalUrl = originalUrl.replace("/action/", "");
-  //       return require("url").parse(kp_content_service_base_url + originalUrl)
-  //         .path;
-  //     },
-  //     userResDecorator: userResDecorator,
-  //   })
-  // );
 
   app.use(
     [
@@ -315,30 +249,6 @@ module.exports = function (app) {
       },
     })
   );
-
-  // app.post("/action/content/v4/review/*",
-  //   proxy(kp_learning_service_base_url, {
-  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-  //     proxyReqPathResolver: function (req) {
-  //       var originalUrl = req.originalUrl;
-  //       originalUrl = originalUrl.replace("/action/", "");
-  //       return require("url").parse(kp_learning_service_base_url + originalUrl)
-  //         .path;
-  //     },
-  //   })
-  // );
-
-  // app.delete( "/action/content/v4/retire/*",
-  //   proxy(kp_learning_service_base_url, {
-  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-  //     proxyReqPathResolver: function (req) {
-  //       var originalUrl = req.originalUrl;
-  //       originalUrl = originalUrl.replace("/action/", "");
-  //       return require("url").parse(kp_learning_service_base_url + originalUrl)
-  //         .path;
-  //     },
-  //   })
-  // );
 
   app.use(
     [
