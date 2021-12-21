@@ -125,8 +125,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   configUrl;
   tags = [];
   printUrl;
-  public reviewHelpSectionConfig = this.configService.appConfig.contextualHelp.sourcing.reviewContributions;
-  public contributeHelpSectionConfig = this.configService.appConfig.contextualHelp.contribute.myProjectContribute;
+  public reviewHelpSectionConfig: any;
+  public contributeHelpSectionConfig: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -239,6 +239,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
     this.printUrl = this.programsService.getCollectionDocxUrl();
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+        this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
+        this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');
+      }
+    }
   }
 
   setUserAccess() {
