@@ -133,14 +133,27 @@ module.exports = function (app) {
     })
   );
   // Proxy for content create ,update & review Start
-  app.use(
-    [
-      "/action/content/v3/create",
-      "/action/content/v3/hierarchy/add",
-      "/action/content/v3/hierarchy/remove",
-      "/action/content/v3/hierarchy/*",
-      "/action/content/v3/import",
-    ],
+  // app.use(
+  //   [
+  //     // "/action/content/v3/create",
+  //     // "/action/content/v3/hierarchy/add",
+  //     // "/action/content/v3/hierarchy/remove",
+  //     "/action/collection/v4/hierarchy/*",
+  //     // "/action/content/v3/import",
+  //   ],
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
+
+  app.get("/action/collection/v4/hierarchy/*",
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_content_service_base_url, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
@@ -153,8 +166,7 @@ module.exports = function (app) {
     })
   );
 
-  app.use(
-    ["/action/content/v3/update/*"],
+  app.post("/action/content/v4/import",
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_content_service_base_url, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
@@ -168,7 +180,21 @@ module.exports = function (app) {
   );
 
   app.post(
-    "/action/content/v3/upload/*",
+    "/action/content/v4/create",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post(
+    "/action/content/v4/upload/*",
     proxy(kp_content_service_base_url, {
       preserveHostHdr: true,
       limit: reqDataLimitOfContentUpload,
@@ -182,6 +208,92 @@ module.exports = function (app) {
       userResDecorator: userResDecorator,
     })
   );
+
+  app.patch(
+    "/action/collection/v4/hierarchy/add",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.delete(
+    "/action/collection/v4/hierarchy/remove",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post(
+    "/action/user/v1/search",
+    addCorsHeaders,
+    proxyUtils.verifyToken(),
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let originalUrl = req.originalUrl.replace("/action/", "");
+        return require("url").parse(learnerURL + originalUrl).path;
+      },
+      userResDecorator: userResDecorator,
+    })
+  );
+
+  // app.use(
+  //   ["/action/content/v3/update/*"],
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
+
+  app.post("/action/content/v4/update/*",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  // app.post(
+  //   "/action/content/v3/upload/*",
+  //   proxy(kp_content_service_base_url, {
+  //     preserveHostHdr: true,
+  //     limit: reqDataLimitOfContentUpload,
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //     userResDecorator: userResDecorator,
+  //   })
+  // );
 
   app.use(
     [
@@ -203,6 +315,30 @@ module.exports = function (app) {
       },
     })
   );
+
+  // app.post("/action/content/v4/review/*",
+  //   proxy(kp_learning_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_learning_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
+
+  // app.delete( "/action/content/v4/retire/*",
+  //   proxy(kp_learning_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_learning_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
   app.use(
     [

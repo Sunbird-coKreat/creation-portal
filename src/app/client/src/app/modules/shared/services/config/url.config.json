@@ -93,10 +93,10 @@
       "LOCK_LIST": "lock/v1/list",
       "LOCK_CREATE": "lock/v1/create",
       "LOCK_RETIRE": "lock/v1/retire",
-      "UPDATE": "content/v3/update",
+      "UPDATE": "content/v4/update",
       "REVIEW": "content/v3/review",
-      "HIERARCHY_ADD": "content/v3/hierarchy/add",
-      "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
+      "HIERARCHY_ADD": "collection/v3/hierarchy/add",
+      "HIERARCHY_REMOVE": "collection/v3/hierarchy/remove"
     },
     "COLLECTION": {
       "HIERARCHY_GET": "collection/v1/hierarchy/"
@@ -271,9 +271,9 @@
       "FEED_SEARCH":"program/v1/feed/search"
     },
     "DOCKCONTENT": {
-      "CREATE": "content/v3/create",
-      "UPLOAD": "content/v3/upload",
-      "PRE_SIGNED_UPLOAD_URL": "content/v3/upload/url",
+      "CREATE": "content/v4/create",
+      "UPLOAD": "content/v4/upload",
+      "PRE_SIGNED_UPLOAD_URL": "content/v4/upload/url",
       "PUBLISH": "content/v3/publish",
       "GET": "content/v3/read",
       "RETIRE": "content/v3/retire",
@@ -293,7 +293,7 @@
       "READ": "program/v1/process/read",
       "UPDATE": "program/v1/process/update",
       "SEARCH": "program/v1/process/search",
-      "DOCK_IMPORT": "content/v3/import",
+      "DOCK_IMPORT": "content/v4/import",
       "DOCK_IMPORT_V1": "content/v1/import",
       "DOCK_QS_IMPORT_V1": "questionset/v1/import"
     },
