@@ -587,7 +587,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const contentType = mimeType;
     // document.getElementById('qq-upload-actions').style.display = 'none';
     const option = {
-      url: 'content/v3/upload/url/' + contentId,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.PRE_SIGNED_UPLOAD_URL}/${contentId}`,
       data: {
         request: {
           content: {
@@ -665,7 +665,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       cache: false
     };
     const option = {
-      url: 'content/v3/upload/' + contentId,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.UPLOAD}/${contentId}`,
       data: data,
       param: config
     };

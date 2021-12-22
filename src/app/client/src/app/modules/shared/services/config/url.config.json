@@ -94,12 +94,13 @@
       "LOCK_CREATE": "lock/v1/create",
       "LOCK_RETIRE": "lock/v1/retire",
       "UPDATE": "content/v4/update",
-      "REVIEW": "content/v3/review",
-      "HIERARCHY_ADD": "collection/v4/hierarchy/add",
-      "HIERARCHY_REMOVE": "collection/v4/hierarchy/remove"
+      "REVIEW": "content/v3/review"
     },
     "COLLECTION": {
-      "HIERARCHY_GET": "collection/v1/hierarchy/"
+      "HIERARCHY_GET": "collection/v1/hierarchy/",
+      "HIERARCHY_GET_NEW": "collection/v4/hierarchy",
+      "HIERARCHY_ADD": "collection/v4/hierarchy/add",
+      "HIERARCHY_REMOVE": "collection/v4/hierarchy/remove"
     },
     "QUESTIONSET" : {
       "GET": "questionset/v1/read",
