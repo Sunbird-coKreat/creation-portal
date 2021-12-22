@@ -1405,7 +1405,7 @@ export class HelperService {
       obj['questionCategories'] =  [templateDetails.questionCategory];
     }
     const option = {
-      url: 'content/v3/create',
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.CREATE,
       header: {
         'X-Channel-Id': programContext.rootorg_id
       },
