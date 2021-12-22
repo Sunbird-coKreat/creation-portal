@@ -268,7 +268,7 @@ module.exports = function (app) {
     })
   );
 
-  app.post("/action/content/v4/update/*",
+  app.patch("/action/content/v4/update/*",
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_content_service_base_url, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
