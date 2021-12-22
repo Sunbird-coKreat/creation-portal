@@ -291,19 +291,52 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
-    // '/action/content/v3/create': {
-    //   checksNeeded: ['ROLE_CHECK'],
-    //   ROLE_CHECK: [
-    //     ROLE.PUBLIC
-    //   ]
-    // },
+    '/action/content/v3/create': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/action/content/v4/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
+    '/action/content/v3/hierarchy/add': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
+    '/action/collection/v4/hierarchy/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
     '/action/collection/v4/hierarchy/add': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
+    '/action/content/v3/hierarchy/remove': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -325,17 +358,17 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    // '/action/content/v3/import': {
-    //   checksNeeded: ['ROLE_CHECK'],
-    //   ROLE_CHECK: [
-    //     ROLE.PUBLIC,
-    //     ROLE.ORG_ADMIN,
-    //     ROLE.SOURCING_USER,
-    //     ROLE.CONTRIBUTE_ORG_ADMIN,
-    //     ROLE.CONTRIBUTE_ORG_USER,
-    //     ROLE.INDIVIDUAL_USER
-    //   ]
-    // },
+    '/action/content/v3/import': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
     '/action/content/v4/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -501,6 +534,17 @@ const API_LIST = {
     '/learner/data/v1/system/settings/get/tncConfig': {
       checksNeeded: []
     },
+    '/action/content/v3/update/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
     '/action/content/v4/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -512,7 +556,29 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
+    '/action/content/v3/upload/url/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
     '/action/content/v4/upload/url/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
+    '/action/content/v3/upload/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -825,6 +891,7 @@ const API_LIST = {
     '/action/content/v4/upload/:do_id',
     '/action/content/v4/upload/url/:do_id',
     '/action/content/v4/update/:do_id',
+    '/action/collection/v4/hierarchy/:do_id',
     '/action/collection/v4/hierarchy/add/:do_id',
     '/action/collection/v4/hierarchy/remove/:do_id'
   ]

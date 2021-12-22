@@ -133,6 +133,26 @@ module.exports = function (app) {
     })
   );
   // Proxy for content create ,update & review Start
+  app.use(
+    [
+      "/action/content/v3/create",
+      "/action/content/v3/hierarchy/add",
+      "/action/content/v3/hierarchy/remove",
+      "/action/content/v3/hierarchy/*",
+      "/action/content/v3/import",
+    ],
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+  // Proxy for content create ,update & review Start
   app.get("/action/collection/v4/hierarchy/*",
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_content_service_base_url, {
@@ -143,6 +163,38 @@ module.exports = function (app) {
         return require("url").parse(kp_content_service_base_url + originalUrl)
           .path;
       },
+    })
+  );
+
+  // @Todo depreacted
+  app.use(
+    ["/action/content/v3/update/*"],
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  // @Todo depreacted
+  app.post(
+    "/action/content/v3/upload/*",
+    proxy(kp_content_service_base_url, {
+      preserveHostHdr: true,
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+      userResDecorator: userResDecorator,
     })
   );
 
