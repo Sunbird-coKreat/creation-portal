@@ -187,7 +187,7 @@ export class SourcingService {
       data: {
         'request': {
           content: {
-            contentType: 'Asset',
+            primaryCategory: 'Asset',
             language: ['English'],
             code: 'org.ekstep0.5375271337424472',
           }
