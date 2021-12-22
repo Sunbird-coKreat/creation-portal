@@ -131,4 +131,13 @@ const errorInitiate = false;
     expect(returnObj).not.toContain(undefined);
   });
 
+  it('#setContextualHelpConfig should set reviewContributionHelpConfig', () => {
+    component.reviewContributionHelpConfig = undefined;
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'getContextualHelpConfig').and.returnValue(SpecData.contextualHelpConfig);
+    spyOn(component, 'setContextualHelpConfig').and.callThrough();
+    component.setContextualHelpConfig();
+    expect(component.reviewContributionHelpConfig).toBeDefined();
+  });
+
 });

@@ -94,7 +94,7 @@
       "LOCK_CREATE": "lock/v1/create",
       "LOCK_RETIRE": "lock/v1/retire",
       "UPDATE": "content/v4/update",
-      "REVIEW": "content/v3/review"
+      "REVIEW": "content/v4/review"
     },
     "COLLECTION": {
       "HIERARCHY_GET": "collection/v1/hierarchy/",
@@ -276,9 +276,9 @@
       "UPLOAD": "content/v4/upload",
       "PRE_SIGNED_UPLOAD_URL": "content/v4/upload/url",
       "PUBLISH": "content/v3/publish",
-      "GET": "content/v3/read",
-      "RETIRE": "content/v3/retire",
-      "REJECT": "content/v3/reject",
+      "GET": "content/v4/read",
+      "RETIRE": "content/v4/retire",
+      "REJECT": "content/v4/reject",
       "FLAG": "content/v3/flag",
       "PRINT_PREVIEW": "program/v1/print/docx",
       "SEARCH": "composite/v3/search"

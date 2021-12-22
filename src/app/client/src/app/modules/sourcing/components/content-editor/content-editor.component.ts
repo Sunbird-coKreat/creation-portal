@@ -258,7 +258,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
   getContentMetadata() {
     const option = {
-      url: 'content/v3/read/' + this.contentEditorComponentInput.contentId
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${this.contentEditorComponentInput.contentId}`
     };
     this.actionService.get(option).subscribe(
       response => {

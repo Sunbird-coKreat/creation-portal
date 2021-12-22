@@ -350,4 +350,10 @@ describe('HelperService', () => {
     expect(actionService.patch).toHaveBeenCalled();
   });
 
+  it('#getContextualHelpConfig() should return undefined', () => {
+    spyOn(helperService, 'getContextualHelpConfig').and.callThrough();
+    const sunbirdContextualHelpConfig = helperService.getContextualHelpConfig();
+    expect(sunbirdContextualHelpConfig).toBeUndefined();
+  });
+
 });
