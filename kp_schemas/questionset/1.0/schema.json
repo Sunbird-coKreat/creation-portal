@@ -619,6 +619,9 @@
       "items": {
           "type": "object"
       }
+    },
+    "rejectedContributionComments": {
+      "type": "object"
     }
   }
 }
