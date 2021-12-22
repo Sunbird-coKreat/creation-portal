@@ -114,7 +114,9 @@
     </div>
   <div class="mt-12" *ngIf="!showLoader && orgUserscnt == 0">
       <app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
-      <div *ngIf="mangeUsersContextualConfig" class="d-flex flex-ai-jc-center"><app-page-help [helpSectionConfig]="mangeUsersContextualConfig" [popupPlacement]="'bottom left'"></app-page-help></div>
+      <div *ngIf="mangeUsersContextualConfig" class="d-flex flex-ai-jc-center">
+        <app-page-help [helpSectionConfig]="mangeUsersContextualConfig" [popupPlacement]="'bottom left'"></app-page-help>
+      </div>
   </div>
     <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
       <app-loader></app-loader>
