@@ -597,8 +597,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
     const instance = this;
-    let hierarchy;
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+    let hierarchyUrl = `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${identifier}`;
     if (unitIdentifier) {
       hierarchyUrl = hierarchyUrl + '/' + unitIdentifier;
     }
@@ -1339,7 +1338,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public addResourceToHierarchy(contentId, isAddedFromLibrary = false) {
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_ADD,
+      url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_ADD,
       data: {
         'request': {
           'rootId': this.sessionContext.collection,
