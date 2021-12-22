@@ -63,7 +63,7 @@
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata">
-                <i class="universal access icon "></i>{{resourceService?.frmelmnts?.lbl?.accessibilityDetails}}</a>
+                <i class="universal access icon " aria-hidden="true" ></i>{{resourceService?.frmelmnts?.lbl?.accessibilityDetails}}</a>
               <button id="addEditTranscript" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.addEditTranscript}}" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"

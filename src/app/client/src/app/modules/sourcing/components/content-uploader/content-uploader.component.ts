@@ -338,7 +338,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     mergeMap(accessibilityFormFields => iif(() => _.isEmpty(accessibilityFormFields),
       this.getSystemLevelConfig().pipe(map((res: any) => {
         this.accessibilityFormFields = _.get(res, 'accessibility', '');
-        this.captureAccessibilityInfo = true || _.get(res, 'captureAccessibilityInfo', false);
+        this.captureAccessibilityInfo = _.get(res, 'captureAccessibilityInfo', false);
         this.modifyAccessibilityInfoByReviewer = _.get(res, 'modifyAccessibilityInfoByReviewer', false);
         return this.accessibilityFormFields;
       })), of(accessibilityFormFields))
@@ -352,46 +352,44 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   handleAccessibilityPopup() {
     if (_.isEmpty(this.accessibilityFormFields)) {
       this.toasterService.error('Accessibility form is not set for the given primary category');
-    } else {
-        const contentAccessibility = _.get(this.contentMetaData, 'accessibility', []);
-        // if (!_.isEmpty(contentAccessibility)) {
-        //   contentAccessibility = JSON.parse(contentAccessibility);
-        // }
-      _.forEach(this.accessibilityFormFields, field => {
-        if (_.findIndex(contentAccessibility, _.pick(field, ['need', 'feature'])) !== -1 ) {
-          field['isSelected'] = true;
-        } else {
-          field['isSelected'] = false;
-        }
-        if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-          if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
-            field['editable'] = true;
-          } else if (this.canPublishContent()) {
-            field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
-          }
-        } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
-          field['editable'] = true;
-        } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
-          && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
-          && !this.sourcingReviewStatus
-          && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
-            field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
-        } else {
-          field['editable'] = false;
-        }
-      });
-      this.accessibilityInput = {
-        accessibilityFormFields: this.accessibilityFormFields,
-        contentMetaData: this.contentMetaData,
-        selectedAccessibility: contentAccessibility,
-        contentId: this.contentId,
-        telemetryPageId: this.telemetryPageId,
-        telemetryInteractCdata: this.telemetryInteractCdata,
-        telemetryInteractObject: this.telemetryInteractObject,
-        telemetryInteractPdata: this.telemetryInteractPdata
-      };
-      this.showAccessibilityPopup = true;
+      return;
     }
+
+    const contentAccessibility = _.get(this.contentMetaData, 'accessibility', []);
+    _.forEach(this.accessibilityFormFields, field => {
+      if (_.findIndex(contentAccessibility, _.pick(field, ['need', 'feature'])) !== -1 ) {
+        field['isSelected'] = true;
+      } else {
+        field['isSelected'] = false;
+      }
+      if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+        if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
+          field['editable'] = true;
+        } else if (this.canPublishContent()) {
+          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+        }
+      } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+        field['editable'] = true;
+      } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+        && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+        && !this.sourcingReviewStatus
+        && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
+          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+      } else {
+        field['editable'] = false;
+      }
+    });
+    this.accessibilityInput = {
+      accessibilityFormFields: this.accessibilityFormFields,
+      contentMetaData: this.contentMetaData,
+      selectedAccessibility: contentAccessibility,
+      contentId: this.contentId,
+      telemetryPageId: this.telemetryPageId,
+      telemetryInteractCdata: this.telemetryInteractCdata,
+      telemetryInteractObject: this.telemetryInteractObject,
+      telemetryInteractPdata: this.telemetryInteractPdata
+    };
+    this.showAccessibilityPopup = true;
   }
 
   getSystemLevelConfig(): Observable<any> {

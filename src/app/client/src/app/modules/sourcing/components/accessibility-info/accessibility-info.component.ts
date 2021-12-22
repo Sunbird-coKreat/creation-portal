@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { ToasterService, ConfigService, ResourceService} from '@sunbird/shared';
 import { ActionService} from '@sunbird/core';
 import { catchError, map } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { throwError } from 'rxjs';
 import { SourcingService } from '../../services';
 import { ProgramTelemetryService } from '../../../program/services';
