@@ -83,7 +83,7 @@ export class AccessibilityInfoComponent implements OnInit, OnDestroy {
         };
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     })).subscribe( result => {
-      this.toasterService.success(this.resourceService.messages.smsg.interactive.video.delete);
+      this.toasterService.success('Accessibility details updated successfully...');
       this.redirect('submit');
     });
   }
