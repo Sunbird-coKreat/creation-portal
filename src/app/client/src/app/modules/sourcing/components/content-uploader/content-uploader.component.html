@@ -57,6 +57,13 @@
               </div>
             </div>
             <div class="practical-sb-buttons mt-30">
+              <a  class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold cursor-pointer" (click)="handleAccessibilityPopup();"
+                *ngIf="captureAccessibilityInfo" appTelemetryInteract
+                [telemetryInteractEdata]="{id: 'accessibility_details', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
+                [telemetryInteractObject]="telemetryInteractObject"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
+                <i class="universal access icon "></i>{{resourceService?.frmelmnts?.lbl?.accessibilityDetails}}</a>
               <button id="addEditTranscript" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.addEditTranscript}}" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
@@ -498,6 +505,10 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
     </div>
     <!--/Actions-->
 </sui-modal>
+
+
+<!-- Digital Content Accessibility  -->
+<app-accessibility-info *ngIf="showAccessibilityPopup" [accessibilityInput]="accessibilityInput" (accessibilityEmitter)="accessibilityListener($event);"  ></app-accessibility-info>
 
 
 
