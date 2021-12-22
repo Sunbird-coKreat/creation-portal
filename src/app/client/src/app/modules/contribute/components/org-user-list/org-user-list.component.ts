@@ -6,7 +6,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, Telem
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-import { SourcingService } from '../../../sourcing/services';
+import { SourcingService, HelperService } from '../../../sourcing/services';
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
@@ -40,12 +40,14 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   isInitialSourcingOrgUser = true;
   telemetryPageId: string;
   public impressionEventTriggered: Boolean =  false;
+  public mangeUsersHelpConfig: any;
+  public noUsersHelpConfig: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService, private telemetryService: TelemetryService,
-    private sourcingService: SourcingService ) {
+    private sourcingService: SourcingService, private helperService: HelperService ) {
 
     this.getContributionOrgUsers();
   }
@@ -61,6 +63,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.setContextualHelpConfig();
   }
 
   ngAfterViewInit() {
@@ -88,6 +91,18 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         }
       };
      });
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.manageUsers')) {
+        this.mangeUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.manageUsers');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound')) {
+        this.noUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
+      }
+    }
   }
 
   getPageId() {

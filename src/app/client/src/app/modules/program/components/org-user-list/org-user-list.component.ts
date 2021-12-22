@@ -6,7 +6,7 @@ import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, Telem
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-import { SourcingService } from '../../../sourcing/services';
+import { SourcingService, HelperService } from '../../../sourcing/services';
 import {DatePipe} from '@angular/common';
 
 @Component({
@@ -44,16 +44,17 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   searchLimitMessage: any;
   searchLimitCount: any;
   public telemetryPageId: string;
+  public mangeUsersContextualConfig: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
-    private paginationService: PaginationService, private sourcingService: SourcingService
-    ) {
-
+    private paginationService: PaginationService, private sourcingService: SourcingService,
+    private helperService: HelperService) {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+
     this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
       this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
       this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
@@ -75,6 +76,15 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    console.log('sunbirdContextualHelpConfig', sunbirdContextualHelpConfig);
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.manageUsers')) {
+      this.mangeUsersContextualConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.manageUsers');
+    }
   }
 
   ngAfterViewInit() {

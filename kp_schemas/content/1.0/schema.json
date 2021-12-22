@@ -1336,6 +1336,12 @@
         "items": {
             "type": "object"
         }
+      },
+      "accessibility": {
+        "type": "array",
+        "items": {
+            "type": "object"
+        }
       }
     }
 }

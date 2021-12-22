@@ -7,8 +7,7 @@ import { ProgramComponent } from './program.component';
 import * as _ from 'lodash-es';
 import { of as observableOf, throwError , of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
-import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails,
-  programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection } from './program.component.spec.data';
+import { addParticipentResponseSample, userProfile,  frameWorkData, programDetailsWithOutUserDetails, programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection, contextualHelpConfig } from './program.component.spec.data';
 import { CollectionComponent } from '../../../sourcing/components/collection/collection.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
@@ -353,5 +352,22 @@ describe('ProgramComponent', () => {
     const returnObj = component.getTelemetryInteractEdata('select_content_types',
     'click', 'launch', 'sourcing_my_projects', undefined);
     expect(returnObj).not.toContain(undefined);
+  });
+
+  it('#setContextualHelpConfig should set variable values', () => {
+    component.assignUserHelpSectionConfig = undefined;
+    component.contributeHelpSectionConfig = undefined;
+    component.nominationHelpSectionConfig = undefined;
+    component.noUsersFoundHelpConfig = undefined;
+    component.reviewHelpSectionConfig = undefined;
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+    spyOn(component, 'setContextualHelpConfig').and.callThrough();
+    component.setContextualHelpConfig();
+    expect(component.assignUserHelpSectionConfig).toBeDefined();
+    expect(component.contributeHelpSectionConfig).toBeDefined();
+    expect(component.nominationHelpSectionConfig).toBeDefined();
+    expect(component.noUsersFoundHelpConfig).toBeDefined();
+    expect(component.reviewHelpSectionConfig).toBeDefined();
   });
 });

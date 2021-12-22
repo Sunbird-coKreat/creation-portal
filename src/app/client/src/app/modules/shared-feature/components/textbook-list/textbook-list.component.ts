@@ -54,12 +54,14 @@ export class TextbookListComponent implements OnInit {
   public targetCollections: string;
   public firstLevelFolderLabel: string;
   public prefernceFormOptions = {};
+  public reviewContributionHelpConfig: any;
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService, private formBuilder: FormBuilder, public configService: ConfigService,
-    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService, public contentHelperService: ContentHelperService
+    public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
+    public contentHelperService: ContentHelperService
   )  {
     this.sbFormBuilder = formBuilder;
   }
@@ -72,6 +74,14 @@ export class TextbookListComponent implements OnInit {
     ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+      this.reviewContributionHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+      }
   }
 
   initialize() {

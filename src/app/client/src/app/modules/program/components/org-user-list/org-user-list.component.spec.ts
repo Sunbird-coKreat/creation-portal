@@ -7,7 +7,8 @@ import { APP_BASE_HREF,DatePipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-
+import { SourcingService, HelperService } from '../../../sourcing/services';
+import { contextualHelpConfig } from './org-user-list.component.spec.data';
 xdescribe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
@@ -71,5 +72,13 @@ xdescribe('OrgUserListComponent', () => {
     const returnObj = component.getTelemetryInteractEdata('copy_link',
     'click', 'launch', 'sourcing_my_projects', undefined);
     expect(returnObj).not.toContain(undefined);
+    });
+    it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+      component.mangeUsersContextualConfig = undefined;
+      const helperService = TestBed.get(HelperService);
+      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+      spyOn(component, 'setContextualHelpConfig').and.callThrough();
+      component.setContextualHelpConfig();
+      expect(component.mangeUsersContextualConfig).toBeDefined();
     });
 });
