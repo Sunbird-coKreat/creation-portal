@@ -614,6 +614,12 @@
     "reusedContributions": {
       "type": "array"
     },
+    "accessibility": {
+      "type": "array",
+      "items": {
+          "type": "object"
+      }
+    },
     "rejectedContributionComments": {
       "type": "object"
     }
