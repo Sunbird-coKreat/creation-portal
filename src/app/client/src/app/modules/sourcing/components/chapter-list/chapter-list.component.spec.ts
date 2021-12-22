@@ -14,10 +14,9 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { DatePipe } from '@angular/common';
 import { ProgramTelemetryService } from '../../../program/services';
 import { SourcingService } from '../../services';
-import {
-  chapterListComponentInput, responseSample, frameWorkData, 
-  fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection, objectCategoryDefinition
-} from './chapter-list.component.spec.data';
+import { chapterListComponentInput, responseSample, frameWorkData,
+  fetchedQueCount, templateSelectionEvent, programDetailsTargetCollection,
+  objectCategoryDefinition, contextualHelpConfig } from './chapter-list.component.spec.data';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -419,5 +418,15 @@ describe('ChapterListComponent', () => {
       spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(objectCategoryDefinition));
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
+    });
+    it('#setContextualHelpConfig should set reviewHelpSectionConfig and contributeHelpSectionConfig', () => {
+      component.reviewHelpSectionConfig = undefined;
+      component.contributeHelpSectionConfig = undefined;
+      const helperService = TestBed.get(HelperService);
+      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+      spyOn(component, 'setContextualHelpConfig').and.callThrough();
+      component.setContextualHelpConfig();
+      expect(component.reviewHelpSectionConfig).toBeDefined();
+      expect(component.contributeHelpSectionConfig).toBeDefined();
     });
 });

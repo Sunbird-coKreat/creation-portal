@@ -124,6 +124,7 @@ let envVariables = {
   sunbird_azure_account_key: env.sunbird_azure_account_key,
   sunbird_portal_cdn_blob_url: env.sunbird_portal_cdn_blob_url || '',
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
+  SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
 
   // Default Language Configuration
