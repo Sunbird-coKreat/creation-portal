@@ -701,7 +701,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   getUploadedContentMeta(contentId, uploadModalClose = true) {
     this.showPreview = false;
     const option = {
-      url: 'content/v3/read/' + contentId
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${contentId}`
     };
     this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
       this.showPreview = true;
@@ -1721,7 +1721,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   readContent(identifier): Observable<any> {
     const option = {
-      url: 'content/v3/read/' + identifier
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${identifier}`
     };
     return this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
       const errInfo = {

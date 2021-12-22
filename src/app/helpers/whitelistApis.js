@@ -291,6 +291,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/action/content/v4/read/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/action/content/v3/create': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -611,6 +617,17 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
+    '/action/content/v4/review/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
     '/action/content/v3/publish/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -631,7 +648,25 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
+    '/action/content/v4/reject/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
+      ]
+    },
     '/action/content/v3/retire/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
+      ]
+    },
+    '/action/content/v4/retire/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -888,9 +923,13 @@ const API_LIST = {
     '/content/content/v1/read/:do_id',
     '/content/questionset/v1/read/:do_id',
     '/learner/user/v1/exists/phone/:phone',
+    '/action/content/v4/read/:do_id',
     '/action/content/v4/upload/:do_id',
     '/action/content/v4/upload/url/:do_id',
     '/action/content/v4/update/:do_id',
+    '/action/content/v4/retire/:do_id',
+    '/action/content/v4/review/:do_id',
+    '/action/content/v4/reject/:do_id',
     '/action/collection/v4/hierarchy/:do_id',
     '/action/collection/v4/hierarchy/add/:do_id',
     '/action/collection/v4/hierarchy/remove/:do_id'
