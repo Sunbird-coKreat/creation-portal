@@ -1439,7 +1439,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.captureAccessibilityInfo = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.captureAccessibilityInfo', false);
         // tslint:disable-next-line:max-line-length
         this.modifyAccessibilityInfoByReviewer = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.modifyAccessibilityInfoByReviewer', false);
-        this.accessibilityFormFields = _.get(res.result.objectCategoryDefinition, 'forms.accessibilityMetadata.properties', '');
+        this.accessibilityFormFields = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.accessibility', '');
         return this.accessibilityFormFields;
     }),
     mergeMap(accessibilityFormFields => iif(() => _.isEmpty(accessibilityFormFields),
