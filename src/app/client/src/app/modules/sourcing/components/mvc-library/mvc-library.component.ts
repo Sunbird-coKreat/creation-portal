@@ -115,7 +115,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit, OnDestroy {
     this.telemetryPageId = _.get(this.route, 'snapshot.data.telemetry.pageid');
     return this.telemetryPageId;
   }
- 
+
 
   initialize() {
     forkJoin([this.getCollectionHierarchy(this.collectionId), this.getProgramDetails()]).subscribe(
@@ -136,7 +136,8 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getCollectionHierarchy(identifier: string) {
-    const hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+
+    const hierarchyUrl = `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${identifier}`;
     const req = {
       url: hierarchyUrl,
       param: { 'mode': 'edit' }
