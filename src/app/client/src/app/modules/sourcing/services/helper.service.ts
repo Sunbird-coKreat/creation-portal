@@ -1120,7 +1120,7 @@ export class HelperService {
   getContentCorrectionComments(contentMetaData, sessionContext) {
     const id = _.get(contentMetaData, 'identifier');
     let contentComment = '';
-    const sourcingRejectedComments = _.get(sessionContext, 'hierarchyObj.sourcingRejectedComments')
+    const sourcingRejectedComments = _.get(sessionContext, 'hierarchyObj.sourcingRejectedComments') || _.get(sessionContext, 'hierarchyObj.rejectedContributionComments')
     if (id && contentMetaData.status === "Draft" && contentMetaData.prevStatus  === "Review") {
       // if the contributing org reviewer has requested for changes
       contentComment = _.get(contentMetaData, 'rejectComment');
