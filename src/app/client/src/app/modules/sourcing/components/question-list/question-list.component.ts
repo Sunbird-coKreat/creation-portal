@@ -8,7 +8,7 @@ import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/tele
 import { tap, map, catchError, mergeMap, first, filter, takeUntil, take } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { UUID } from 'angular2-uuid';
-import { of, forkJoin, throwError, Subject } from 'rxjs';
+import { of, forkJoin, throwError, Subject, iif, Observable } from 'rxjs';
 import { SourcingService } from '../../services';
 import { ItemsetService } from '../../services/itemset/itemset.service';
 import { HelperService } from '../../services/helper.service';
@@ -94,6 +94,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
+  public showAccessibilityPopup = false;
+  public accessibilityFormFields: any;
+  public captureAccessibilityInfo = false;
+  public modifyAccessibilityInfoByReviewer = false;
+  public accessibilityInput: any;
+  public publicStorageAccount: any;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -106,7 +112,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public programStageService: ProgramStageService, public activeRoute: ActivatedRoute,
     public router: Router, private navigationHelperService: NavigationHelperService,
     public programTelemetryService: ProgramTelemetryService, private programsService: ProgramsService,
-    public frameworkService: FrameworkService) { }
+    public frameworkService: FrameworkService) {
+      this.publicStorageAccount = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
+      (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : 'https://dockstorage.blob.core.windows.net/content-service/';
+     }
 
   ngOnInit() {
     this.overrideMetaData = this.programsService.overrideMetaData;
@@ -148,6 +157,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.helperService.setTargetFrameWorkData(targetFWIds);
       }
     }
+    this.initAccessibilityDetails();
   }
 
   setTelemetryStartData() {
@@ -1413,5 +1423,90 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFormData(event) {
     this.formInputData = event;
+  }
+
+  initAccessibilityDetails() {
+    const primaryCategory = _.get(this.templateDetails, 'name');
+    this.programsService.getCategoryDefinition(primaryCategory, this.programContext.rootorg_id, 'Content').pipe(
+      map((res: any) => {
+        this.captureAccessibilityInfo = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.captureAccessibilityInfo', false);
+        // tslint:disable-next-line:max-line-length
+        this.modifyAccessibilityInfoByReviewer = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.modifyAccessibilityInfoByReviewer', false);
+        this.accessibilityFormFields = _.get(res.result.objectCategoryDefinition, 'forms.accessibilityMetadata.properties', '');
+        return this.accessibilityFormFields;
+    }),
+    mergeMap(accessibilityFormFields => iif(() => _.isEmpty(accessibilityFormFields),
+      this.getSystemLevelConfig().pipe(map((res: any) => {
+        this.accessibilityFormFields = _.get(res, 'accessibility', '');
+        this.captureAccessibilityInfo = _.get(res, 'captureAccessibilityInfo', false);
+        this.modifyAccessibilityInfoByReviewer = _.get(res, 'modifyAccessibilityInfoByReviewer', false);
+        return this.accessibilityFormFields;
+      })), of(accessibilityFormFields))
+    )).subscribe((response: any) => {
+       console.log(response);
+    }, (err: any) => {
+      this.toasterService.error('Something went wrong while fetching the accessibility details');
+    });
+  }
+
+  handleAccessibilityPopup() {
+    if (_.isEmpty(this.accessibilityFormFields)) {
+      this.toasterService.error('Accessibility form is not set for the given primary category');
+      return;
+    }
+
+    const contentAccessibility = _.get(this.resourceDetails, 'accessibility', []);
+    _.forEach(this.accessibilityFormFields, field => {
+      if (_.findIndex(contentAccessibility, _.pick(field, ['need', 'feature'])) !== -1 ) {
+        field['isSelected'] = true;
+      } else {
+        field['isSelected'] = false;
+      }
+      if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+        if (this.userService.userid === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
+          field['editable'] = true;
+        } else if (this.canPublishContent()) {
+          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+        }
+      } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+        field['editable'] = true;
+      } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
+        && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
+        && !this.sourcingReviewStatus
+        && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
+          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+      } else {
+        field['editable'] = false;
+      }
+    });
+    this.accessibilityInput = {
+      accessibilityFormFields: this.accessibilityFormFields,
+      contentMetaData: this.resourceDetails,
+      selectedAccessibility: contentAccessibility,
+      contentId: this.sessionContext.resourceIdentifier,
+      telemetryPageId: this.telemetryPageId,
+      telemetryInteractCdata: this.telemetryEventsInput.telemetryInteractCdata,
+      telemetryInteractObject: this.telemetryEventsInput.telemetryInteractObject,
+      telemetryInteractPdata: this.telemetryEventsInput.telemetryInteractPdata
+    };
+    this.showAccessibilityPopup = true;
+  }
+
+  getSystemLevelConfig(): Observable<any> {
+    const req = {
+      url: `${this.publicStorageAccount}schemas/content/1.0/config.json`,
+    };
+    return this.actionService.http.get(req.url).pipe(map((response: any) => {
+      return response;
+    }));
+  }
+
+  accessibilityListener(event: any) {
+    if (event && event.type === 'submit') {
+        this.showAccessibilityPopup = false;
+        this.getContentMetadata(this.resourceDetails.identifier);
+    } else if (event && event.type === 'close') {
+        this.showAccessibilityPopup = false;
+    }
   }
 }
