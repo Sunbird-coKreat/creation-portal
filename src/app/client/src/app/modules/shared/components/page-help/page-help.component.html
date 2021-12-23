@@ -1,15 +1,15 @@
-<span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="popupPlacement" class="cursor-pointer d-flex sb-help-section" popupTrigger="outsideClick">
-  <span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary d-flex">
-    <i aria-hidden="true" class="question circle icon fs-1-286"></i>
-    <label class="mt-5 mb-5">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</label>
+<span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="popupPlacement" class="cursor-pointer d-flex sb-help-section" popupTrigger="manual"  #popup="suiPopup" hoverable>
+  <span id="helpTextSpan" class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary d-flex" (mouseenter) ="mouseEnter(popup)">
+    <i id="helpTextIcon" aria-hidden="true" class="question circle icon fs-1-286"></i>
+    <label id="helpTextLabel" class="mt-5 mb-5 cursor-pointer">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</label>
   </span>
   <ng-template #helpSectionTemplate>
     <div class="p-10 w-250">
-      <div class="fs-0-785 font-weight-bold mb-10">{{helpSectionConfig.header}}</div>
-      <div class="fs-0-785 sb-color-gray-400 mb-5">
+      <div class="fs-0-785 font-weight-bold mb-10" *ngIf="helpSectionConfig.header">{{helpSectionConfig.header}}</div>
+      <div class="fs-0-785 sb-color-gray-400 mb-5" *ngIf="helpSectionConfig.message">
         {{helpSectionConfig.message}}
       </div>
-      <button class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
+      <button *ngIf="helpSectionConfig.url" class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
     </div>
   </ng-template>
 </span>
