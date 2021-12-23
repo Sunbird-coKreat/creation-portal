@@ -802,6 +802,18 @@
       "webm": "video/webm",
       "xUrl": "text/x-url"
     },
+    "playerType": {
+      "pdf-player": [
+         "application/pdf"
+      ],
+      "video-player": [
+         "video/mp4",
+         "video/webm"
+      ],
+      "epub-player": [
+        "application/epub"
+     ]
+   },
     "baseURL": "/content/preview/preview.html?webview=true",
     "localBaseUrl": "/contentPlayer/preview/preview.html?",
     "cdnUrl": "/content/preview/preview_cdn.html?webview=true"
