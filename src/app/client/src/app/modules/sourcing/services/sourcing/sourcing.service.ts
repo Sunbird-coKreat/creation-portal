@@ -183,11 +183,11 @@ export class SourcingService {
 
   createMediaAsset(req?: object) {
     const reqParam = {
-      url: this.configService.urlConFig.URLS.DOCKCONTENT.CREATE,
+      url: this.configService.urlConFig.URLS.ASSET.CREATE,
       data: {
         'request': {
-          content: {
-            contentType: 'Asset',
+          asset: {
+            primaryCategory: 'asset',
             language: ['English'],
             code: 'org.ekstep0.5375271337424472',
           }
@@ -270,7 +270,7 @@ export class SourcingService {
   }
   generateAssetCreateRequest(fileName, fileType, mediaType, creator) {
     return {
-      content: {
+      asset: {
         name: fileName,
         mediaType: mediaType,
         mimeType: fileType,

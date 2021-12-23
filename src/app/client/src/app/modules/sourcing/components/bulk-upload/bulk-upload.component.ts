@@ -243,7 +243,7 @@ export class BulkUploadComponent implements OnInit {
         }
         if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
           const req = {
-            url: `content/v3/hierarchy/${this.sessionContext.collection}`,
+            url: `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${this.sessionContext.collection}`,
             param: { 'mode': 'edit' }
           };
           this.actionService.get(req).subscribe((response) => {

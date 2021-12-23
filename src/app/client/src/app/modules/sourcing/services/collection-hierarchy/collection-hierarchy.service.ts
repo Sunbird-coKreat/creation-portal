@@ -23,14 +23,14 @@ export class CollectionHierarchyService {
     private programsService: ProgramsService, public learnerService: LearnerService) {
       this.currentUserID = this.userService.userProfile.userId;
      }
-  
+
   setProgram(programDetails){
     this._programDetails = programDetails;
   }
 
   removeResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,
+      url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_REMOVE,
       data: {
         'request': {
           'rootId': collection,
@@ -67,7 +67,7 @@ export class CollectionHierarchyService {
 
   addResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_ADD,
+      url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_ADD,
       data: {
         'request': {
           'rootId': collection,
@@ -87,7 +87,7 @@ export class CollectionHierarchyService {
   getCollectionHierarchy(collectionIds) {
     const hierarchyRequest =  _.map(collectionIds, id => {
       const req = {
-        url: 'content/v3/hierarchy/' + id,
+        url: `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${id}`,
         param: { 'mode': 'edit' }
       };
       return this.actionService.get(req);
@@ -97,7 +97,7 @@ export class CollectionHierarchyService {
 
   getCollectionHierarchyDetails(collectionId) {
     const req = {
-      url: 'content/v3/hierarchy/' + collectionId,
+      url: `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${collectionId}`,
       param: { 'mode': 'edit' }
     };
     return this.actionService.get(req);

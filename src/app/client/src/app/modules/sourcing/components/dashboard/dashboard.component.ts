@@ -138,7 +138,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   getprogramLevelCount(identifier: string) {
     const req = {
-      url: 'content/v3/hierarchy/' + identifier, // `${this.configService.urlConFig.URLS.COURSE.HIERARCHY}/${identifier}`,
+      url: `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${identifier}`,
       param: { 'mode': 'edit' }
     };
     return this.actionService.get(req).pipe(map((response: any) => {

@@ -46,7 +46,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   constructor(public resourceService: ResourceService, public bulkJobService: BulkJobService,
     public cacheService: CacheService, public userService: UserService, public programsService: ProgramsService,
     public toasterService: ToasterService, public helperService: HelperService,
-    public actionService: ActionService, public programTelemetryService: ProgramTelemetryService, 
+    public actionService: ActionService, public programTelemetryService: ProgramTelemetryService,
     public configService: ConfigService, public learnerService: LearnerService) { }
 
   ngOnInit() {
@@ -176,7 +176,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     const questionSets = [];
     const temp = _.compact(_.map(this.approvalPending, item => {
       const reqFormat = {};
-      if ((!this.programContext.target_type || this.programContext.target_type === 'collections') && item.originUnitId) { 
+      if ((!this.programContext.target_type || this.programContext.target_type === 'collections') && item.originUnitId) {
         const channel =  _.get(this.storedCollectionData.originData, 'channel');
         if (_.isString(channel)) {
           item['createdFor'] = [channel];
@@ -321,7 +321,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   updateCollection() {
     if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
       const option = {
-        url: 'content/v3/read/' + this.sessionContext.collection,
+        url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${this.sessionContext.collection}`,
         param: { 'mode': 'edit', 'fields': 'acceptedContents,versionKey' }
       };
       this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
@@ -346,7 +346,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
         };
           // tslint:disable-next-line:max-line-length
         request['acceptedcontents'] = _.compact(_.uniq([...this.programContext.acceptedcontents || [],
-          ..._.map(this.approvalPending, 'identifier')]));  
+          ..._.map(this.approvalPending, 'identifier')]));
         this.programsService.updateProgram(request).subscribe(() => {
           this.updateToc.emit('bulkApproval_completed');
           this.showBulkApprovalButton = false;
