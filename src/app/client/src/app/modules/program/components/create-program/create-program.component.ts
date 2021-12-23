@@ -84,6 +84,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public uploader;
   public assetConfig: any = this.configService.contentCategoryConfig.sourcingConfig.asset;
   public localBlueprintMap: any;
+  public localBlueprintMapDeepClone: any;
   public localBlueprint: any;
   public blueprintTemplate: any;
   public disableCreateProgramBtn = false;
@@ -158,7 +159,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : '';
-      
+
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -175,6 +176,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (!_.isEmpty(_.get(this.programDetails, 'config.contributors'))) {
         this.setPreSelectedContributors(_.get(this.programDetails, 'config.contributors'));
       }
+      this.localBlueprintMap = _.get(this.programDetails, 'config.blueprintMap');
     }, error => {
       const errInfo = {
         errorMsg:  'Fetching program details failed',
@@ -1360,13 +1362,25 @@ showTexbooklist(showTextBookSelector = true) {
 
   public onChangeTopics() {
     this.blueprintTemplate.properties.forEach( (property) => {
-      if(property.code === "learningOutcomes") property.options = this.programsService.filterBlueprintMetadata(this.localBlueprint.topics);
+      if(property.code === "learningOutcomes") {
+        const topics = this.initTopicOptions.filter(e => ( _.includes(this.localBlueprint["topics"], e.identifier)));
+        property.options = this.programsService.filterBlueprintMetadata(topics);
+      }
     })
   }
 
   public mapBlueprintToId() {
     if(this.isBlueprintValid()) {
       this.localBlueprintMap[this.choosedTextBook.code] = this.localBlueprint;
+
+      if (this.localBlueprintMap[this.choosedTextBook.code]["topics"]) {
+        this.localBlueprintMap[this.choosedTextBook.code]["topics"] = this.initTopicOptions.filter(e => ( _.includes(this.localBlueprint["topics"], e.identifier)));
+      }
+
+      if (this.localBlueprintMap[this.choosedTextBook.code]["learningOutcomes"]) {
+        this.localBlueprintMap[this.choosedTextBook.code]["learningOutcomes"] = this.initLearningOutcomeOptions.filter(e => (_.includes(this.localBlueprint["learningOutcomes"], e.identifier)));
+      }
+
       this.editBlueprintFlag = false;
     }
     else {
@@ -1380,8 +1394,13 @@ showTexbooklist(showTextBookSelector = true) {
     let blueprint = {};
      this.blueprintTemplate.properties.forEach( (property) => {
        if(!property.default) {
-         if(property.code === 'topics') property.options = this.initTopicOptions;
-         else if(property.code === 'learningOutcomes') property.options = this.initLearningOutcomeOptions;
+         if(property.code === 'topics'){
+            property.options = this.initTopicOptions;
+          }
+         else if(property.code === 'learningOutcomes') {
+           property.options = this.initLearningOutcomeOptions;
+         }
+
          blueprint[property.code] = [];
        }
        if(property.children) {
@@ -1391,11 +1410,24 @@ showTexbooklist(showTextBookSelector = true) {
          })
        }
      })
-     if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
-       this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code]
-     }
-     else this.localBlueprint = blueprint;
 
+     if(this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code]) {
+      this.localBlueprintMapDeepClone = _.cloneDeep(this.localBlueprintMap[this.choosedTextBook.code]);
+       this.localBlueprint = this.localBlueprintMap[this.choosedTextBook.code]
+       this.localBlueprint["topics"] = this.localBlueprint["topics"].map(e => e.identifier);
+       this.localBlueprint["learningOutcomes"] = this.localBlueprint["learningOutcomes"].map(e => e.identifier);
+       console.log(this.localBlueprintMap);
+     }
+     else{
+       this.localBlueprint = blueprint;
+     }
+  }
+
+  dismissedBluePrintModal () {
+    if (this.localBlueprintMap[this.choosedTextBook && this.choosedTextBook.code] && this.localBlueprintMapDeepClone) {
+      this.localBlueprintMap[this.choosedTextBook.code] = _.cloneDeep(this.localBlueprintMapDeepClone);
+    }
+    this.editBlueprintFlag = false
   }
 
   isBlueprintValid() {
