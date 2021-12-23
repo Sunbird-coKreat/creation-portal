@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
 import { ResourceService } from '../../services/index';
 import * as _ from 'lodash-es';
-import { IPopup, SuiPopupConfig } from 'ng2-semantic-ui-v9';
+import { IPopup } from 'ng2-semantic-ui-v9';
 @Component({
   selector: 'app-page-help',
   templateUrl: './page-help.component.html',
@@ -13,8 +13,7 @@ export class PageHelpComponent implements OnInit {
 
   public baseUrl;
   public contextualHelpPopup: IPopup;
-  constructor(public resourceService: ResourceService, globalConfig: SuiPopupConfig) {
-    globalConfig.isFlowing = true;
+  constructor(public resourceService: ResourceService) {
     this.baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
    }
@@ -43,9 +42,4 @@ export class PageHelpComponent implements OnInit {
     this.contextualHelpPopup = popup;
     popup.open();
   }
-
-  togglePopup(popup: IPopup) {
-    popup.toggle();
-  }
-
 }
