@@ -132,7 +132,7 @@ describe('ProgramNominationsComponent', () => {
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: UserService, useValue: userServiceStub },
         { provide: ResourceService, useValue: resourceBundle },
-        ToasterService, ConfigService, DatePipe, ProgramStageService, 
+        ToasterService, ConfigService, DatePipe, ProgramStageService,
         ProgramsService, FrameworkService, HelperService, Subject, PaginationService,
         NavigationHelperService, CollectionHierarchyService, ContentHelperService,
         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
@@ -246,7 +246,7 @@ describe('ProgramNominationsComponent', () => {
     component.direction = 'desc';
     spyOn(programsService, 'sortCollection').and.returnValue({});
     spyOn(component, 'sortCollection').and.callThrough();
-    component.sortCollection('name', {});
+    component.sortCollection('name');
     expect(programsService.sortCollection).toHaveBeenCalled();
     expect(component.direction).toEqual('asc');
     expect(component.sortColumn).toEqual('name');
