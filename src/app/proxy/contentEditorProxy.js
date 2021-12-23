@@ -297,10 +297,13 @@ module.exports = function (app) {
   app.post(
     "/action/collection/v4/dialcode/link/*",
     bodyParser.json({ limit: "50mb" }),
-    proxy(contentProxyUrl, {
+    proxy(kp_content_service_base_url, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
       proxyReqPathResolver: function (req) {
-        return require("url").parse(contentProxyUrl + req.originalUrl).path;
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
       },
     })
   );
