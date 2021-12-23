@@ -84,7 +84,7 @@ const errorInitiate = false;
     spyOn(collectionHierarchyService, 'getCollectionHierarchy').and.callThrough();
     collectionHierarchyService.getCollectionHierarchy(['do_12345']);
     const hierarchyRequest = {
-      url: 'content/v3/hierarchy/' + 'do_12345',
+      url: 'collection/v4/hierarchy/' + 'do_12345',
       param: { 'mode': 'edit' }
     };
     expect(actionService.get).toHaveBeenCalledWith(hierarchyRequest);
@@ -96,7 +96,7 @@ const errorInitiate = false;
     spyOn(collectionHierarchyService, 'getCollectionHierarchyDetails').and.callThrough();
     collectionHierarchyService.getCollectionHierarchyDetails('do_12345');
     const hierarchyRequest = {
-      url: 'content/v3/hierarchy/' + 'do_12345',
+      url: 'collection/v4/hierarchy/' + 'do_12345',
       param: { 'mode': 'edit' }
     };
     expect(actionService.get).toHaveBeenCalledWith(hierarchyRequest);
