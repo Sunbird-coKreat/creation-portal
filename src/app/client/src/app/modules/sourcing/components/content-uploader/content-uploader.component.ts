@@ -332,7 +332,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         this.captureAccessibilityInfo = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.captureAccessibilityInfo', false);
         // tslint:disable-next-line:max-line-length
         this.modifyAccessibilityInfoByReviewer = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.modifyAccessibilityInfoByReviewer', false);
-        this.accessibilityFormFields = _.get(res.result.objectCategoryDefinition, 'forms.accessibilityMetadata.properties', '');
+        this.accessibilityFormFields = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.accessibility', '');
         return this.accessibilityFormFields;
     }),
     mergeMap(accessibilityFormFields => iif(() => _.isEmpty(accessibilityFormFields),
@@ -345,13 +345,19 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     )).subscribe((response: any) => {
        console.log(response);
     }, (err: any) => {
-      this.toasterService.error('Something went wrong while fetching the accessibility details');
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.formConfigError,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: {}
+      };
     });
   }
 
   handleAccessibilityPopup() {
     if (_.isEmpty(this.accessibilityFormFields)) {
-      this.toasterService.error('Accessibility form is not set for the given primary category');
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
       return;
     }
 
@@ -362,22 +368,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       } else {
         field['isSelected'] = false;
       }
-      if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-        if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
-          field['editable'] = true;
-        } else if (this.canPublishContent()) {
-          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
-        }
-      } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      const role = this.getRole();
+      if (role === 'CONTRIBUTOR') {
         field['editable'] = true;
-      } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
-        && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
-        && !this.sourcingReviewStatus
-        && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
-          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+      } else if (role === 'REVIEWER') {
+        field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
       } else {
         field['editable'] = false;
       }
+
     });
     this.accessibilityInput = {
       accessibilityFormFields: this.accessibilityFormFields,
@@ -1349,23 +1348,30 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getEditableFields() {
-    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
-        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
-        this.contentEditRole = 'CONTRIBUTOR';
-      } else if (this.canPublishContent()) {
-        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
-        this.contentEditRole = 'REVIEWER';
-      }
-    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+    const role = this.getRole();
+    if (role === 'CONTRIBUTOR') {
       this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
       this.contentEditRole = 'CONTRIBUTOR';
+    } else if (role === 'REVIEWER') {
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
+      this.contentEditRole = 'REVIEWER';
+    }
+  }
+
+  getRole() {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
+        return 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
+        return 'REVIEWER';
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      return 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
-      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
-      this.contentEditRole = 'REVIEWER';
+      return 'REVIEWER';
     }
   }
 

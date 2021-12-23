@@ -75,7 +75,7 @@ export class AccessibilityInfoComponent implements OnInit, OnDestroy {
     };
     this.actionService.patch(requestBody).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
-          errorMsg: 'Something went wrong while updating the accessibility details',
+          errorMsg: this.resourceService.messages.emsg.accessibilityUpdate,
           telemetryPageId: this.accessibilityInput.telemetryPageId,
           telemetryCdata : this.accessibilityInput.telemetryInteractCdata,
           env : this.activeRoute.snapshot.data.telemetry.env,
@@ -83,7 +83,7 @@ export class AccessibilityInfoComponent implements OnInit, OnDestroy {
         };
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     })).subscribe( result => {
-      this.toasterService.success('Accessibility details updated successfully...');
+      this.toasterService.success(this.resourceService.messages.smsg.accessibilityUpdate);
       this.redirect('submit');
     });
   }
