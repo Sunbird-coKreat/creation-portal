@@ -434,23 +434,30 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getEditableFields() {
-    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.userid === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
-        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
-        this.contentEditRole = 'CONTRIBUTOR';
-      } else if (this.canPublishContent()) {
-        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
-        this.contentEditRole = 'REVIEWER';
-      }
-    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+    const role = this.getRole();
+    if (role === 'CONTRIBUTOR') {
       this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.resourceDetails);
       this.contentEditRole = 'CONTRIBUTOR';
+    } else if (role === 'REVIEWER') {
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
+      this.contentEditRole = 'REVIEWER';
+    }
+  }
+
+  getRole() {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.userid === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
+        return 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
+        return 'REVIEWER';
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      return 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
-      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.resourceDetails);
-      this.contentEditRole = 'REVIEWER';
+      return 'REVIEWER';
     }
   }
 
@@ -1306,7 +1313,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleBack() {
-    if(!this.questionCreationChild.validateCurrentQuestion() || !this.checkCurrentQuestionStatus()) {
+    if (!this.questionCreationChild.validateCurrentQuestion() || !this.checkCurrentQuestionStatus()) {
       return;
     } else {
       this.generateTelemetryEndEvent('back');
@@ -1445,13 +1452,20 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     )).subscribe((response: any) => {
        console.log(response);
     }, (err: any) => {
-      this.toasterService.error('Something went wrong while fetching the accessibility details');
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.formConfigError,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryEventsInput.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: {}
+      };
+      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
     });
   }
 
   handleAccessibilityPopup() {
     if (_.isEmpty(this.accessibilityFormFields)) {
-      this.toasterService.error('Accessibility form is not set for the given primary category');
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
       return;
     }
 
@@ -1462,20 +1476,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       } else {
         field['isSelected'] = false;
       }
-      if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-        if (this.userService.userid === this.resourceDetails.createdBy && this.resourceStatus === 'Draft') {
-          field['editable'] = true;
-        } else if (this.canPublishContent()) {
-          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
-        }
-      } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      const role = this.getRole();
+      if (role === 'CONTRIBUTOR') {
         field['editable'] = true;
-      } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
-        && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
-        && !this.sourcingReviewStatus
-        && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
-          field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
-      } else {
+      } else if (role === 'REVIEWER') {
+        field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+      }  else {
         field['editable'] = false;
       }
     });
