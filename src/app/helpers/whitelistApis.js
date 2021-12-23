@@ -885,7 +885,27 @@ const API_LIST = {
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
-    }
+    },
+    '/action/collection/v4/hierarchy/update': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN,
+        ROLE.CONTRIBUTE_ORG_USER,
+        ROLE.INDIVIDUAL_USER
+      ]
+    },
+    '/action/collection/v4/reject/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
+      ]
+    },
   },
   URL_PATTERN: [
     '/content/program/v1/read/:program_id',
@@ -900,6 +920,7 @@ const API_LIST = {
     '/action/content/v3/review/:do_id',
     '/action/content/v3/publish/:do_id',
     '/action/content/v3/reject/:do_id',
+    '/action/collection/v4/reject/:do_id',
     '/action/content/v3/retire/:do_id',
     '/action/assessment/v3/items/retire/:do_id',
     '/action/system/v3/content/update/:do_id',

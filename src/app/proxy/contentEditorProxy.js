@@ -266,6 +266,33 @@ module.exports = function (app) {
     })
   );
 
+  app.patch(
+    "/action/collection/v4/hierarchy/update",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post(
+    "/action/collection/v4/reject/*",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
   app.delete(
     "/action/collection/v4/hierarchy/remove",
     proxy(kp_content_service_base_url, {
