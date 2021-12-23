@@ -133,6 +133,7 @@ module.exports = function (app) {
     })
   );
   // Proxy for content create ,update & review Start
+  // @Todo deprecated
   app.use(
     [
       "/action/content/v3/create",
@@ -166,7 +167,7 @@ module.exports = function (app) {
     })
   );
 
-  // @Todo depreacted
+  // @Todo deprecated
   app.use(
     ["/action/content/v3/update/*"],
     bodyParser.json({ limit: "50mb" }),
@@ -181,7 +182,7 @@ module.exports = function (app) {
     })
   );
 
-  // @Todo depreacted
+  // @Todo deprecated
   app.post(
     "/action/content/v3/upload/*",
     proxy(kp_content_service_base_url, {
@@ -292,6 +293,7 @@ module.exports = function (app) {
     })
   );
 
+  // @Todo deprecated(only few)
   app.use(
     [
       "/action/content/v3/review/*",
