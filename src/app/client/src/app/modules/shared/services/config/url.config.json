@@ -273,6 +273,7 @@
     "DOCKCONTENT": {
       "CREATE": "content/v3/create",
       "UPLOAD": "content/v3/upload",
+      "PRE_SIGNED_UPLOAD_URL": "content/v3/upload/url",
       "PUBLISH": "content/v3/publish",
       "GET": "content/v3/read",
       "RETIRE": "content/v3/retire",
@@ -298,6 +299,11 @@
     },
     "DOCK_TENANT": {
       "LIST": "program/v1/tenant/list"
+    },
+    "OPENSABER": {
+      "ADD": "reg/add",
+      "UPDATE": "reg/update",
+      "SEARCH": "reg/search"
     }
   }
 }

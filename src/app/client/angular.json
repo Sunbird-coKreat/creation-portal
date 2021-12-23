@@ -60,10 +60,10 @@
               "src/assets/styles/styles.scss",
               "./node_modules/common-consumption-styles/assets/_styles.scss",
               "./node_modules/katex/dist/katex.min.css",
+              "src/assets/libs/iziModal/css/iziModal.min.css",
               "node_modules/video.js/dist/video-js.min.css",
               "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
-              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css",
-              "src/assets/libs/iziModal/css/iziModal.min.css"
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -71,6 +71,7 @@
               ]
             },
             "scripts": [
+              "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
               "src/assets/libs/iziModal/js/iziModal.min.js",
@@ -168,6 +169,7 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
+              "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/slick-carousel/slick/slick.min.js",

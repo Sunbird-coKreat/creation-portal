@@ -60,6 +60,7 @@ let envVariables = {
   SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES: env.sunbird_transcript_supported_languages || 'English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya',
   SUNBIRD_TRANSCRIPT_FILE_FORMAT: env.sunbird_transcript_file_format || 'srt',
   SUNBIRD_TRANSCRIPT_REQUIRED: env.sunbird_transcript_required || false,
+  sunbird_accessibility_guidelines_url: env.sunbird_accessibility_guidelines_url || '',
 
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
@@ -123,6 +124,7 @@ let envVariables = {
   sunbird_azure_account_key: env.sunbird_azure_account_key,
   sunbird_portal_cdn_blob_url: env.sunbird_portal_cdn_blob_url || '',
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
+  SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
 
   // Default Language Configuration

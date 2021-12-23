@@ -373,4 +373,28 @@ describe('ProgramNominationsComponent', () => {
       'click', 'launch', 'sourcing_my_projects', undefined);
       expect(returnObj).not.toContain(undefined);
     });
+    it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+      const contextualHelpConfig = {
+        'sourcing': {
+          'assignUsersToProject': {
+            'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+            'header': 'This table allow you to see a list of users',
+            'message':  ''
+          },
+          'noUsersFound': {
+            'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+            'header': 'no users found',
+            'message':  ''
+          }
+        }
+      };
+      component.assignUsersHelpConfig = undefined;
+      component.noUsersFoundHelpConfig = undefined;
+      const helperService = TestBed.get(HelperService);
+      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+      spyOn(component, 'setContextualHelpConfig').and.callThrough();
+      component.setContextualHelpConfig();
+      expect(component.assignUsersHelpConfig).toBeDefined();
+      expect(component.noUsersFoundHelpConfig).toBeDefined();
+    });
 });

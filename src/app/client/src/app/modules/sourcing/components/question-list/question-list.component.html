@@ -66,6 +66,13 @@
           </div>
         </div> -->
         <div class='practical-sb-buttons mt-30'>
+          <a  class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold cursor-pointer" (click)="handleAccessibilityPopup();"
+          *ngIf="captureAccessibilityInfo" appTelemetryInteract
+          [telemetryInteractEdata]="{id: 'accessibility_details', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
+          [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
+          [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
+          [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">
+          <i class="universal access icon " aria-hidden="true" ></i>{{resourceService?.frmelmnts?.lbl?.accessibilityDetails}}</a>
           <button id="saveContent" suiPopup popupText="Save" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSave" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="questionCreationChild.buttonTypeHandler('save')"
           appTelemetryInteract
           [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('save', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
@@ -351,3 +358,6 @@
     </div>
     <!--/Actions-->
 </sui-modal>
+
+<app-accessibility-info *ngIf="showAccessibilityPopup" [accessibilityInput]="accessibilityInput" (accessibilityEmitter)="accessibilityListener($event);"  ></app-accessibility-info>
+

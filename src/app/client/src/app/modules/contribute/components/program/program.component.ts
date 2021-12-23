@@ -108,6 +108,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contentCount = 0;
   public showConfirmationModal = false;
   public prefernceFormOptions = {};
+  public assignUserHelpSectionConfig: any;
+  public nominationHelpSectionConfig: any;
+  public contributeHelpSectionConfig: any;
+  public noUsersFoundHelpConfig: any;
+  public reviewHelpSectionConfig: any;
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
     public userService: UserService,
@@ -144,6 +149,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.getProgramDetails();
+    this.setContextualHelpConfig();
   }
 
   ngAfterViewInit() {
@@ -170,6 +176,27 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       };
     });
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
+        this.assignUserHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
+        this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.allProjectNomations')) {
+        this.nominationHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.allProjectNomations');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound')) {
+        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+        this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+      }
+    }
   }
 
   getPageId() {
@@ -1042,6 +1069,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     // tslint:disable-next-line:max-line-length
     this.visibility['showCollectionLevelSamples'] = (this.isContributingOrgAdmin || !this.userService.isUserBelongsToOrg()) && isProgramForCollections && _.includes(['Initiated', 'Rejected'], this.currentNominationStatus);
     this.visibility['showCollectionLevelContentStatus'] = this.isContributingOrgAdmin && isProgramForCollections && _.includes(['Approved', 'Pending'], this.currentNominationStatus);
+    this.visibility['showReviewContentHelp'] = this.currentNominationStatus === 'Approved' && this.sessionContext?.currentRoles?.includes('REVIEWER') && !this.sessionContext?.currentRoles?.includes('CONTRIBUTOR') && canAcceptContribution;
   }
 
   getCollectionCategoryDefinition() {

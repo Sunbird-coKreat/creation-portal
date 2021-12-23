@@ -23,6 +23,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CdnprefixPipe } from './pipes/cdnprefix.pipe';
 import { HighlightTextDirective } from './directives/highlight-text/highlight-text.directive';
+import { PageHelpComponent } from './components/page-help/page-help.component';
 
 
 @NgModule({
@@ -38,12 +39,12 @@ import { HighlightTextDirective } from './directives/highlight-text/highlight-te
     BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
     InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent],
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent],
   exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
     CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent]
+    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders<SharedModule> {

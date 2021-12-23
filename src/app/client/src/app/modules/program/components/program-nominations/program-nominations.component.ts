@@ -103,6 +103,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public targetCollections: string;
   public firstLevelFolderLabel: string;
   public showBulkApprovalButton: Boolean = false;
+  public assignUsersHelpConfig: any;
+  public noUsersFoundHelpConfig: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -138,6 +140,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.setContextualHelpConfig();
   }
 
   ngAfterViewInit() {
@@ -164,6 +167,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       };
      });
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
+        this.assignUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
+        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
+      }
+    }
   }
 
   getPageId() {
