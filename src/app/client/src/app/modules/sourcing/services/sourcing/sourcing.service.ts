@@ -270,7 +270,7 @@ export class SourcingService {
   }
   generateAssetCreateRequest(fileName, fileType, mediaType, creator) {
     return {
-      content: {
+      asset: {
         name: fileName,
         mediaType: mediaType,
         mimeType: fileType,
