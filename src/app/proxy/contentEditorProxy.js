@@ -293,6 +293,18 @@ module.exports = function (app) {
       },
     })
   );
+
+  app.post(
+    "/action/collection/v4/dialcode/link/*",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(contentProxyUrl, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        return require("url").parse(contentProxyUrl + req.originalUrl).path;
+      },
+    })
+  );
+
   app.delete(
     "/action/collection/v4/hierarchy/remove",
     proxy(kp_content_service_base_url, {

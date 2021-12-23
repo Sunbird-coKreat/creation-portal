@@ -906,6 +906,13 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
+    // To do (update role)
+    '/action/collection/v4/dialcode/link/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+      ]
+    }
   },
   URL_PATTERN: [
     '/content/program/v1/read/:program_id',
@@ -921,6 +928,7 @@ const API_LIST = {
     '/action/content/v3/publish/:do_id',
     '/action/content/v3/reject/:do_id',
     '/action/collection/v4/reject/:do_id',
+    '/action/collection/v4/dialcode/link/:do_id',
     '/action/content/v3/retire/:do_id',
     '/action/assessment/v3/items/retire/:do_id',
     '/action/system/v3/content/update/:do_id',
