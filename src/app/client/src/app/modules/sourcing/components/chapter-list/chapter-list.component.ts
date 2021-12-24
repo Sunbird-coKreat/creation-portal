@@ -1446,7 +1446,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public updateContentReusedContribution() {
     const option = {
       url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${this.sessionContext.collection}`,
-      param: { 'mode': 'edit', 'fields': 'acceptedContents,versionKey' }
+      param: { 'mode': 'edit', 'fields': 'versionKey' }
     };
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       const request = {
