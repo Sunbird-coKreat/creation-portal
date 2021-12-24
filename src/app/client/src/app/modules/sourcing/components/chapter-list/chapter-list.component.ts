@@ -1439,7 +1439,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else {
         this.updateAccordianView();
       }
-      console.log('result ', res);
     });
   }
 
@@ -1829,7 +1828,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           tags: this.userService.dims,
           timeDiff: this.userService.getServerTimeDiff,
           endpoint: '/data/v3/telemetry',
-          env: 'question_editor'
+          env: 'question_editor',
+          user: {
+            id: this.userService.userid,
+            orgIds: this.userProfile.organisationIds,
+            organisations: this.userService.orgIdNameMap,
+            fullName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.firstName + ' ' + this.userProfile.lastName :
+              this.userProfile.firstName,
+            firstName: this.userProfile.firstName,
+            lastName : !_.isEmpty(this.userProfile.lastName) ? this.userProfile.lastName : '',
+            isRootOrgAdmin: this.userService.userProfile.rootOrgAdmin
+          }
         },
         config: {
           mode: 'edit',
