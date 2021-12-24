@@ -691,7 +691,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getCollectionCategoryDefinition() {
-    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId && (!this.programDetails.target_type || this.programDetails.target_type === 'collections' || this.programDetails.target_type === 'questionSets')) {
+    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId && (!this.programDetails.target_type || _.includes(['collections','questionSets'], this.programDetails.target_type))) {
       // tslint:disable-next-line:max-line-length
       let objectType = _.get(this.programDetails, 'target_type') === 'questionSets' ? 'QuestionSet' : 'Collection';
       this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],

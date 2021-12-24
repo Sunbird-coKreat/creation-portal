@@ -240,7 +240,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null],
     });
-    if (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') {
+    if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
      // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
      if (this.selectedTargetCollection) {
@@ -254,7 +254,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
 
-    if ((this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
+    if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.initializeFrameworkForTargetType('')
     }
     const channelData$ = this.frameworkService.readChannel();
@@ -339,7 +339,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.programScope['gradeLevel'] = [];
     this.programScope['subject'] = [];
     this.projectScopeForm.controls['framework'].setValue([this.programScope.framework.identifier]);
-    if (this.projectScopeForm && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
+    if (this.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['board'].setValue('');
       this.projectScopeForm.controls['medium'].setValue('');
       this.projectScopeForm.controls['gradeLevel'].setValue('');
@@ -478,7 +478,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeCollectionEditorInput() {
     this.setFrameworkAttributes();
     const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
-    const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
+    const objType = _.lowerCase(selectedTargetCollectionObject?.targetObjectType);
 
     this.questionSetEditorComponentInput['sessionContext'] = {
       currentRoles: this.userService.userProfile.userRoles,
@@ -922,7 +922,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.projectScopeForm.controls['medium'].setValue('');
     this.projectScopeForm.controls['gradeLevel'].setValue('');
     this.projectScopeForm.controls['subject'].setValue('');
-    this.showTexbooklist(true);
+    this.showTexbooklist();
   }
 
   defaultContributeOrgReviewChanged($event) {
@@ -940,7 +940,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
     this.projectScopeForm.controls['targetPrimaryCategories'].setValidators(Validators.required);
     this.projectScopeForm.controls['targetPrimaryCategories'].updateValueAndValidity();
-    if (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') {
+    if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
       this.projectScopeForm.controls['target_collection_category'].updateValueAndValidity();
     }
@@ -976,7 +976,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //   _.find(_.find(this.programConfig.components, { id: 'ng.sunbird.collection' }).config.filters.implicit, { code: 'framework' }).defaultValue = this.programConfig.framework;
     // }
     programData['target_type'] = this.projectTargetType;
-    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) ? [this.projectScopeForm.value.target_collection_category] : [];
+    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
 
     // if (this.userBoard) {
     // // tslint:disable-next-line: max-line-length
@@ -1056,7 +1056,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       );
     } else {
-      if (!this.editPublished && (this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets')) {
+      if (!this.editPublished && _.includes(['collections','questionSets'], this.projectTargetType)) {
         programData['collection_ids'] = [];
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
@@ -1160,11 +1160,7 @@ onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
     this.projectScopeForm.value.pcollections = [];
-    if(this.projectTargetType !== 'questionSets') {
-      this.showTexbooklist(true);
-    } else {
-      this.showTexbooklist(false);
-    }
+    this.showTexbooklist();
   }
   if(this.programScope['userChannelData']) {
     this.setSelectedTargetCollectionObject();
@@ -1179,7 +1175,7 @@ setSelectedTargetCollectionObject() {
   this.programScope['selectedTargetCollectionObject'] = _.find(channelCats, { name: this.selectedTargetCollection });
 }
 
-showTexbooklist(showTextBookSelector = true) {
+showTexbooklist() {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
     if (!primaryCategory) {
       return;
@@ -1802,7 +1798,7 @@ showTexbooklist(showTextBookSelector = true) {
       return false;
     }
 
-    if ((this.projectTargetType === 'collections' || this.projectTargetType === 'questionSets') && _.isEmpty(this.projectScopeForm.value.pcollections)) {
+    if (_.includes(['collections','questionSets'], this.projectTargetType) && _.isEmpty(this.projectScopeForm.value.pcollections)) {
       this.disableCreateProgramBtn = false;
       this.toasterService.warning(this.resource.messages.smsg.selectOneTargetCollection);
       return false;
@@ -1825,7 +1821,7 @@ showTexbooklist(showTextBookSelector = true) {
           }
         };
 
-        if (this.createProgramForm.value.type === 'public' || this.createProgramForm.value.type === 'restricted') {
+        if (_.includes(['public','restricted'], this.createProgramForm.value.type)) {
           this.programsService.publishProgram(data).subscribe(res => {
             this.generateTelemetryEndEvent('publish');
             this.toasterService.success(

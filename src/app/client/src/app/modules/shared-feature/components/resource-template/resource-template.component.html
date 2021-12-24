@@ -105,8 +105,8 @@
         <label for="comprehension">Comprehension</label>
       </div>
     </div>
-    <div *ngIf="!programContext.target_collection_category.includes('Exam Question Set')" class="d-flex flex-dc">
-      <h4 class="my-10">Interactive</h4>   
+    <div *ngIf="showInteractiveQuestionTypes" class="d-flex flex-dc">
+      <h4 class="my-10">Interactive</h4>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="mcq" name="questionType" (click)="setQuestionType('MCQ')">
         <label for="mcq">MCQ - Practice Sets</label>
