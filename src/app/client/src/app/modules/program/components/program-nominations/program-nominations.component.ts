@@ -104,6 +104,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public targetCollections: string;
   public firstLevelFolderLabel: string;
   public showBulkApprovalButton: Boolean = false;
+  public assignUsersHelpConfig: any;
+  public noUsersFoundHelpConfig: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -139,6 +141,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     });
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
+    this.setContextualHelpConfig();
   }
 
   ngAfterViewInit() {
@@ -165,6 +168,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         }
       };
      });
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
+        this.assignUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
+        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
+      }
+    }
   }
 
   getPageId() {
@@ -246,7 +261,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.direction = 'desc';
       this.sortColumn = 'createdon';
       this.getPaginatedNominations(0);
-      this.sortCollection(this.sortColumn, this.nominations);
+      this.sortCollection(this.sortColumn);
     }
     if (tab === 'user' && !_.includes(this.visitedTab, 'user')) {
       this.showUsersLoader = true;
@@ -290,8 +305,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }
   }
 
-  sortCollection(column, object) {
-    this.nominations = this.programsService.sortCollection(object, column, this.direction);
+  sortCollection(column) {
+    switch (this.activeTab) {
+      case 'nomination' :
+            this.nominations = this.programsService.sortCollection(this.nominations, column, this.direction);
+            break;
+      case 'contributionDashboard' :
+      default:
+        this.contributionDashboardData = this.programsService.sortCollection(this.contributionDashboardData, column, this.direction);
+        break;
+    }
     if (this.direction === 'asc' || this.direction === '') {
       this.direction = 'desc';
     } else {
@@ -565,14 +588,20 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     let orgSampleUploads = _.filter(contentResult, contribution => !_.isEmpty(contribution.organisationId) && contribution.sampleContent);
     orgSampleUploads = _.groupBy(orgSampleUploads, 'organisationId');
     _.forEach(orgSampleUploads, (temp, index) => {
-      this.nominationSampleCounts[index] = temp.length;
+      let nomInd = _.findIndex(this.nominations, {organisation_id: index});
+      if (nomInd !== -1) {
+       this.nominations[nomInd].samples = temp.length;
+      }
     });
 
     // tslint:disable-next-line: max-line-length
     let individualSampleUploads = _.filter(contentResult, contribution => _.isEmpty(contribution.organisationId) && contribution.sampleContent);
     individualSampleUploads = _.groupBy(individualSampleUploads, 'createdBy');
     _.forEach(individualSampleUploads, (temp, index) => {
-      this.nominationSampleCounts[index] = temp.length;
+      let nomInd = _.findIndex(this.nominations, {user_id: index});
+      if (nomInd !== -1) {
+        this.nominations[nomInd].samples = temp.length;
+      }
     });
   }
 

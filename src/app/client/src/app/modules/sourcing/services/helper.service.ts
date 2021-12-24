@@ -271,7 +271,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `content/v3/reject/${contentId}`,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.REJECT}/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -318,7 +318,7 @@ export class HelperService {
       contentMetaData['createdFor'] = channel;
     }
     const option = {
-      url: 'content/v3/read/' + collectionId,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${collectionId}`,
       param: { 'mode': 'edit', 'fields': 'acceptedContents,rejectedContents,versionKey,sourcingRejectedComments' }
     };
 
@@ -553,7 +553,7 @@ export class HelperService {
 
   getTextbookDetails(textbookId) {
     const option = {
-      url: 'content/v3/read/' + textbookId,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${textbookId}`,
       param: { 'mode': 'edit', 'fields': 'versionKey,mvcContentCount,mvcContributions' }
     };
     return  this.actionService.get(option);
@@ -1448,7 +1448,7 @@ export class HelperService {
       }
     }
     const option = {
-      url: 'content/v3/create',
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.CREATE,
       header: {
         'X-Channel-Id': programContext.rootorg_id
       },
@@ -1482,5 +1482,10 @@ export class HelperService {
       return flag && !!(originCollectionData.status === 'Draft' && selectedOriginUnitStatus === 'Draft')
     }
     return flag;
+  }
+
+  getContextualHelpConfig() {
+    return (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
+    JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
   }
 }

@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 import { TelemetryService } from './../../../telemetry/services/telemetry/telemetry.service';
 import {  throwError , of } from 'rxjs';
 import * as SpecData from './textbook-list.component.spec.data';
+import { HelperService } from '../../../sourcing/services/helper.service';
 const programDetailsTargetCollection = {
   'target_collection_category': [
       'Question paper'
@@ -109,5 +110,13 @@ xdescribe('TextbookListComponent', () => {
     spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
     component.getCollectionCategoryDefinition();
     expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
+  });
+  it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+    component.reviewContributionHelpConfig = undefined;
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'getContextualHelpConfig').and.returnValue(SpecData.contextualHelpConfig);
+    spyOn(component, 'setContextualHelpConfig').and.callThrough();
+    component.setContextualHelpConfig();
+    expect(component.reviewContributionHelpConfig).toBeDefined();
   });
 });

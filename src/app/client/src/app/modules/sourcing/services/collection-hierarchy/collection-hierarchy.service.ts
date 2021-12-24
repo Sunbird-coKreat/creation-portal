@@ -23,7 +23,7 @@ export class CollectionHierarchyService {
     private programsService: ProgramsService, public learnerService: LearnerService) {
       this.currentUserID = this.userService.userProfile.userId;
      }
-  
+
   setProgram(programDetails){
     this._programDetails = programDetails;
   }
@@ -31,7 +31,7 @@ export class CollectionHierarchyService {
   removeResourceToHierarchy(collection, unitIdentifier, contentId, target_type?): Observable<any> {
     let reqObj, reqQset;
     const req = {
-        url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_REMOVE,
+        url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_REMOVE,
         data: {
           'request': {
             'rootId': collection,
@@ -39,13 +39,13 @@ export class CollectionHierarchyService {
             'children': [contentId]
           }
         }
-      };    
+      };
     if(target_type === 'questionSets') {
       reqQset = {
         url: this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_REMOVE,
         data: {
           'request': {
-            'questionset': 
+            'questionset':
             {
               'rootId': collection,
               'collectionId': unitIdentifier,
@@ -53,8 +53,8 @@ export class CollectionHierarchyService {
             }
           }
         }
-      }      
-    }   
+      }
+    }
     reqObj = target_type === 'questionSets' ? req : reqQset;
     return this.actionService.delete(req).pipe(map((data: any) => {
       return data.result;
@@ -84,7 +84,7 @@ export class CollectionHierarchyService {
 
   addResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_ADD,
+      url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_ADD,
       data: {
         'request': {
           'rootId': collection,
@@ -104,7 +104,7 @@ export class CollectionHierarchyService {
   getCollectionHierarchy(collectionIds) {
     const hierarchyRequest =  _.map(collectionIds, id => {
       const req = {
-        url: 'content/v3/hierarchy/' + id,
+        url: `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${id}`,
         param: { 'mode': 'edit' }
       };
       return this.actionService.get(req);
@@ -114,7 +114,7 @@ export class CollectionHierarchyService {
 
   getCollectionHierarchyDetails(collectionId) {
     const req = {
-      url: 'content/v3/hierarchy/' + collectionId,
+      url: `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${collectionId}`,
       param: { 'mode': 'edit' }
     };
     return this.actionService.get(req);
@@ -127,7 +127,7 @@ export class CollectionHierarchyService {
       headers: {
         'content-type': 'application/json',
       }
-    };  
+    };
     const option = {
       url: 'composite/v3/search',
       data: {
@@ -250,7 +250,7 @@ export class CollectionHierarchyService {
       } else if(this._programDetails && this._programDetails.target_type === 'questionSets') {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContributions'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContributions'));
-      } 
+      }
       else {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));

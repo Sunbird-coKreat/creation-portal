@@ -128,7 +128,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   configUrl;
   tags = [];
   printUrl;
-
+  public reviewHelpSectionConfig: any;
+  public contributeHelpSectionConfig: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -247,6 +248,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
     this.printUrl = this.programsService.getCollectionDocxUrl();
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+        this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
+        this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');
+      }
+    }
   }
 
   setUserAccess() {
@@ -629,9 +643,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public getCollectionHierarchy(identifier: string, unitIdentifier: string) {
     const instance = this;
-    let hierarchy;
     let objectType = 'content';
-    let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
+    let hierarchyUrl = `${this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_GET_NEW}/${identifier}`;
+    // let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
     if(this.projectTargetType === 'questionSets') {
       hierarchyUrl = `${this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_READ}/${identifier}`;
       objectType = 'questionSet';
@@ -1408,7 +1422,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public addResourceToHierarchy(contentId, isAddedFromLibrary = false) {
     const req = {
-      url: this.configService.urlConFig.URLS.CONTENT.HIERARCHY_ADD,
+      url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_ADD,
       data: {
         'request': {
           'rootId': this.sessionContext.collection,
@@ -1431,8 +1445,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   public updateContentReusedContribution() {
     const option = {
-      url: 'content/v3/read/' + this.sessionContext.collection,
-      param: { 'mode': 'edit', 'fields': 'versionKey' }
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${this.sessionContext.collection}`,
+      param: { 'mode': 'edit', 'fields': 'acceptedContents,versionKey' }
     };
     this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
       const request = {
