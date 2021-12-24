@@ -731,7 +731,7 @@
 	</form>
 </sui-modal>
 
-<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal blueprint-modal" appBodyScroll (dismissed)="this.editBlueprintFlag = false" #blueprintModal>
+<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal blueprint-modal" appBodyScroll (dismissed)="dismissedBluePrintModal()" #blueprintModal>
 	<div class="sb-modal-header">
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
@@ -749,6 +749,7 @@
 								[options]="property.options ? property.options : []"
 								[(ngModel)]="localBlueprint[property.code]"
 								labelField="name"
+                valueField="identifier"
 								>
 								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
 							</sui-multi-select>
