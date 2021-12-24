@@ -478,7 +478,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeCollectionEditorInput() {
     this.setFrameworkAttributes();
     const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
-    const objType = _.lowerCase(selectedTargetCollectionObject?.targetObjectType);
+    const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
 
     this.questionSetEditorComponentInput['sessionContext'] = {
       currentRoles: this.userService.userProfile.userRoles,
@@ -1279,7 +1279,7 @@ showTexbooklist() {
           }
         }
       }
-      else { // Update already selected questionset during project creation
+      else { // Update already created questionset during project creation
         this.textbooks[collectionId] = collection;
         this.updateTempCollections(collection);
       }
