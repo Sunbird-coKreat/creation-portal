@@ -29,7 +29,7 @@ export class AccessibilityInfoComponent implements OnInit, OnDestroy {
     public programTelemetryService: ProgramTelemetryService
     ) {
     this.sunbirdAccessibilityGuidelinesUrl = (<HTMLInputElement>document.getElementById('sunbirdAccessibilityGuidelinesUrl')) ?
-      (<HTMLInputElement>document.getElementById('sunbirdAccessibilityGuidelinesUrl')).value : '';
+      (<HTMLInputElement>document.getElementById('sunbirdAccessibilityGuidelinesUrl')).value : null;
    }
 
   ngOnInit(): void {
