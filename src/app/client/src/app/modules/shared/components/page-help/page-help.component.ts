@@ -20,7 +20,7 @@ export class PageHelpComponent implements OnInit {
 
    @HostListener('document:click', ['$event'])
    click(event) {
-     if (!_.includes(['helpTextSpan', 'helpTextIcon', 'helpTextLabel'], event.target.id )) {
+     if ( event.target.id === 'helpTextIcon') {
       this.contextualHelpPopup.close();
     } else {
       this.contextualHelpPopup.toggle();
