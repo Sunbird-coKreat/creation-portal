@@ -20,10 +20,10 @@ export class PageHelpComponent implements OnInit {
 
    @HostListener('document:click', ['$event'])
    click(event) {
-     if ( event.target.id === 'helpTextIcon') {
-      this.contextualHelpPopup.close();
-    } else {
+     if ( event.target.id === 'contextualHelpIcon') {
       this.contextualHelpPopup.toggle();
+    } else {
+      this.contextualHelpPopup.close();
     }
   }
 
