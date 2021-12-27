@@ -1433,7 +1433,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initAccessibilityDetails() {
-    const primaryCategory = _.get(this.templateDetails, 'name');
+    const primaryCategory = _.get(this.templateDetails, 'name') || _.get(this.sessionContext, 'templateDetails.name');
     this.programsService.getCategoryDefinition(primaryCategory, this.programContext.rootorg_id, 'Content').pipe(
       map((res: any) => {
         this.captureAccessibilityInfo = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.captureAccessibilityInfo', false);
@@ -1487,7 +1487,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.accessibilityInput = {
       accessibilityFormFields: this.accessibilityFormFields,
-      contentMetaData: this.resourceDetails,
+      contentMetaData: {...this.resourceDetails, versionKey: this.existingContentVersionKey},
       selectedAccessibility: contentAccessibility,
       contentId: this.sessionContext.resourceIdentifier,
       telemetryPageId: this.telemetryPageId,
