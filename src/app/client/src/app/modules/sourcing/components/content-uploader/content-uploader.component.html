@@ -24,14 +24,22 @@
                 <i [ngClass]="{'edit': visibility && visibility.showEditMetadata, 'eye': visibility && !(visibility.showEditMetadata)}" class="icon sb-color-primary cursor-pointer"></i>
                 <a class="cursor-pointer text-underline text-capitalize"
                 appTelemetryInteract
-                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'edit_details' : 'view_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('content_details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
-                (click)="showEditform('editForm');">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</a></span>
-                <!-- <a class="fsmall ml-16 sb-color-primary font-weight-normal" *ngIf="visibility && visibility.showEditMetadata && sessionContext.topicList">
-                  <span class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform(); requiredAction = 'editForm'">edit metadata</span>
-                </a> -->
+                (click)="showEditform('editForm');">Content Details</a>
+              </span>
+              <a  class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold cursor-pointer" (click)="handleAccessibilityPopup();"
+              *ngIf="captureAccessibilityInfo" appTelemetryInteract
+              [telemetryInteractEdata]="{id: 'accessibility_details', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
+              [telemetryInteractObject]="telemetryInteractObject"
+              [telemetryInteractCdata]="telemetryInteractCdata"
+              [telemetryInteractPdata]="telemetryInteractPdata">
+              <i class="universal access icon " aria-hidden="true" ></i>{{resourceService?.frmelmnts?.lbl?.accessibilityDetails}}</a>
+              <!-- <a class="fsmall ml-16 sb-color-primary font-weight-normal" *ngIf="visibility && visibility.showEditMetadata && sessionContext.topicList">
+                <span class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform(); requiredAction = 'editForm'">edit metadata</span>
+              </a> -->
               </div>
               <div class="mt-8 practice-set__status">
                 <span class="sb-label sb-label-table" *ngIf="contentMetaData && !contentMetaData.sampleContent" [ngClass]="resourceStatusClass">{{ resourceStatusText }}</span>
@@ -57,13 +65,6 @@
               </div>
             </div>
             <div class="practical-sb-buttons mt-30">
-              <a  class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold cursor-pointer" (click)="handleAccessibilityPopup();"
-                *ngIf="captureAccessibilityInfo" appTelemetryInteract
-                [telemetryInteractEdata]="{id: 'accessibility_details', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
-                [telemetryInteractObject]="telemetryInteractObject"
-                [telemetryInteractCdata]="telemetryInteractCdata"
-                [telemetryInteractPdata]="telemetryInteractPdata">
-                <i class="universal access icon " aria-hidden="true" ></i>{{resourceService?.frmelmnts?.lbl?.accessibilityDetails}}</a>
               <button id="addEditTranscript" suiPopup popupText="{{resourceService.frmelmnts?.lbl?.addEditTranscript}}" [popupPlacement]="'top'" *ngIf="showAddTrascriptButton" class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="addEditTranscript()"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_edit_transcript', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.cancel, telemetryPageId)"
