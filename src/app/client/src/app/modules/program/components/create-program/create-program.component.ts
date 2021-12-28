@@ -1,13 +1,13 @@
 import { ConfigService, ResourceService, ToasterService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService, UserService} from '@sunbird/core';
-import { Subscription, Subject, throwError, Observable, of } from 'rxjs';
+import { Subscription, forkJoin, throwError, Observable, of } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
-import { SourcingService } from './../../../sourcing/services';
+import { SourcingService, HelperService } from './../../../sourcing/services';
 import { programConfigObj } from './programconfig';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -15,6 +15,8 @@ import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from 'ng2-cache-service';
+import { promise } from 'selenium-webdriver';
+import { includes } from 'lodash';
 
 @Component({
   selector: 'app-create-program',
@@ -47,18 +49,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public tempCollections = [];
   public showProgramScope: boolean = false;
   public textbooks: any = {};
-  private userBoard;
-  //private frameworkCategories;
   public programScope: any = {};
   private originalProgramScope: any = {};
   public userprofile;
-  //public programData: any = {};
   public programConfig: any = _.cloneDeep(programConfigObj);
-  //public showTextBookSelector = false;
   public stepNo= 1;
   public formIsInvalid = false;
   public pickerMinDate = new Date(new Date().setHours(23,59,59));
-  //public pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -79,7 +76,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public showPublishModal= false;
   public uploadedDocument;
   public loading = false;
-  //private isOpenNominations = true;
   public isClosable = true;
   public uploader;
   public assetConfig: any = this.configService.contentCategoryConfig.sourcingConfig.asset;
@@ -87,7 +83,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public localBlueprint: any;
   public blueprintTemplate: any;
   public disableCreateProgramBtn = false;
-  private btnDoneDisabled = false;
+  public btnDoneDisabled = false;
   public telemetryPageId: string;
   private pageStartTime: any;
   public enableQuestionSetEditor: string;
@@ -105,6 +101,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   };
   public selectedContributorsCnt: number = 0;
   public allowToModifyContributors:boolean = true;
+  public allowedFrameworkTypes = [];
+  public formFieldProperties: any;
+  public isValidFrameworkFields = false;
+  public frameworkFormData: any;
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -116,6 +116,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private sourcingService: SourcingService,
+    private helperService: HelperService,
     private sbFormBuilder: FormBuilder,
     private navigationHelperService: NavigationHelperService,
     public configService: ConfigService,
@@ -127,6 +128,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
       ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'false';
+    const allowedTypes = (<HTMLInputElement>document.getElementById('allowedFrameworkTypes'))
+    ? (<HTMLInputElement>document.getElementById('allowedFrameworkTypes')).value : '';
+    this.allowedFrameworkTypes = (allowedTypes) ? allowedTypes.split(',') : ["K-12", "TPD"];
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.localBlueprint = {};
@@ -153,12 +157,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programDetails = _.get(programDetails, 'result');
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
       this.disableUpload = (this.editPublished && _.get(this.programDetails, 'guidelines_url')) ? true : false;
-      //this.isOpenNominations = (this.programDetails && _.get(this.programDetails, 'type') === 'public') ? true : false;
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
 
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : '';
-      
+
       if (!_.isEmpty(this.programDetails.guidelines_url)) {
         this.guidLinefileName = this.programDetails.guidelines_url.split("/").pop();
       }
@@ -223,21 +226,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   initializeProjectScopeForm(): void {
     this.projectScopeForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
-      framework: [],
-      board: [],
+      framework: [null, Validators.required],
+      /*board: [],
       medium: [],
       gradeLevel: [],
-      subject: [],
+      subject: [],*/
       targetPrimaryCategories: [[], Validators.required],
-      target_collection_category: [this.selectedTargetCollection || null],
+      target_collection_category: [this.selectedTargetCollection || null]
     });
     if (this.projectTargetType === 'collections') {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
-     // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
-     if (this.selectedTargetCollection) {
-        //this.getCollectionCategoryDefinition();
+      if (this.selectedTargetCollection) {
         this.onChangeTargetCollectionCategory();
-     }
+      }
     }
     this.setProjectScopeDetails();
   }
@@ -249,19 +250,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     channelData$.subscribe((channelData) => {
       if (channelData) {
         this.programScope['userChannelData'] = channelData;
-        if (this.projectTargetType === 'searchCriteria') {
-          this.getFramewok().subscribe(
-            (response) => {
+          this.getFramework().then((response) => {
               if (!response) {
                 this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
                 return false;
               } else {
-                this.initializeFrameworkForTatgetType(response.identifier);
+                this.programScope['framework'] = response;
+                if (!_.isEmpty(_.first(_.get(this.programDetails, 'config.framework')))) {
+                  const selectedFramework =  _.find(this.programScope.framework, {'identifier': _.first(_.get(this.programDetails, 'config.framework'))});
+                  this.projectScopeForm.controls['framework'].setValue(selectedFramework);
+                  this.onFrameworkChange();
+                }
+                this.isFormValueSet.projectScopeForm = true;
+                //console.log(response);
+                //this.initializeFrameworkForTargetType();
               }
-          });
-        } else {
-          this.initializeFrameworkForTatgetType(_.get(this.programScope['userChannelData'], 'defaultFramework'))
-        }
+          }).catch((err) => {
+            console.log(err);
+            this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError);
+            return false;
+          });;
         const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
         const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
         const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
@@ -284,8 +292,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  initializeFrameworkForTatgetType (frameworkName) {
-    //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
+  /*initializeFrameworkForTargetType (frameworkName) {
+    this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
     this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
       if (frameworkData) {
         this.programScope['framework'] = frameworkData;
@@ -293,23 +301,45 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
       this.isFormValueSet.projectScopeForm = true;
     });
-  }
+  }*/
 
-  getFramewok () {
-    // Get K-12 framework
+  getFramework () {
+    let frameworkTypes = ['K-12'];
+    let frameworks = [];
+    let systemRequests = [];
+    if (this.allowedFrameworkTypes.length) {
+      frameworkTypes = this.allowedFrameworkTypes;
+    }
     const channelFrameworks = _.get(this.programScope['userChannelData'], 'frameworks');
     const frameworkTypeGroup = _.groupBy(channelFrameworks, 'type');
-    if (!_.isEmpty(_.get(frameworkTypeGroup, 'K-12'))) {
-      const ret = _.first(_.get(frameworkTypeGroup, 'K-12'));
-      return of(ret);
-    } else {
-      // get systemDefault framework
-      return this.frameworkService.getFrameworkData(undefined, 'K-12', undefined, "Yes").pipe(map((response) => {
-        return _.first(_.get(response, 'result.Framework'));
-      }));
-    }
+    return new Promise ((resolve, reject) => {
+      _.forEach(frameworkTypes, type => {
+        if (!_.isEmpty(_.get(frameworkTypeGroup, type))) {
+          const ret = _.first(_.get(frameworkTypeGroup, type));
+          frameworks.push(ret);
+        } else {
+          systemRequests.push(this.frameworkService.getFrameworkData(undefined, type, undefined, "Yes"));
+          // get systemDefault framework
+          // return this.frameworkService.getFrameworkData(undefined, type, undefined, "Yes").pipe(map((response) => {
+          //   frameworks.push(_.first(_.get(response, 'result.Framework')));
+          // }));
+        }
+      });
+      if (systemRequests.length) {
+        forkJoin(systemRequests).subscribe((response) => {
+          _.forEach(response, res => {
+            if (res.result.count) {
+              frameworks.push(_.first(_.get(res, 'result.Framework')));
+            }
+          })
+          return resolve(frameworks);
+        })
+      } else {
+        return resolve(frameworks);
+      }
+    });
   }
-
+/*
   setFrameworkAttributes() {
     this.programScope['board'] = [];
     this.programScope['medium'] = [];
@@ -382,7 +412,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
       this.projectScopeForm.controls['subject'].setValue(selectedsubjects);
     }
-  }
+  }*/
 
   initiateDocumentUploadModal() {
     this.showDocumentUploader = true;
@@ -673,6 +703,26 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['nomination_enddate'].updateValueAndValidity();
     this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
   }
+  onFrameworkChange() {
+    //Get framework fields data
+    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+      const framework = this.projectScopeForm.value.framework;
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type),
+                        this.frameworkService.readFramworkCategories(framework.name) ];
+      forkJoin(request).subscribe(res => {
+        const formData = _.get(_.first(res), 'result.data.properties');
+        const frameworkDetails = res[1];
+        this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
+        this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
+        console.log(this.formFieldProperties);
+      });
+      if (!this.projectTargetType || this.projectTargetType == 'collections') {
+        this.showTexbooklist()
+      }
+      //this.isFormValueSet.projectScopeForm = true;
+    }
+  }
+  /*
   onBoardChange() {
     this.projectScopeForm.controls['medium'].setValue('');
     this.projectScopeForm.controls['gradeLevel'].setValue('');
@@ -724,7 +774,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programScope['subject'] = this.originalProgramScope['subject'];
     }
   }
-
+*/
   getCollectionCategoryDefinition() {
     if (this.selectedTargetCollection && this.userprofile.rootOrgId) {
       this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, 'Collection').subscribe(res => {
@@ -889,36 +939,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['createdon'] = new Date();
     programData['startdate'] = new Date();
     programData['slug'] = 'sunbird';
-    //this.programData['type'] = (!this.isOpenNominations) ? 'private' : 'public';
-    //this.programData['default_roles'] = ['CONTRIBUTOR'];
-    //programData['enddate'] = this.programData.program_end_date;
     // tslint:disable-next-line: max-line-length
     programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
     programData['status'] = this.editPublished ? 'Live' : 'Draft';
-
-    /*if (!this.programData['nomination_enddate']) {
-      this.programData['nomination_enddate']= null;
-    } else {
-      this.programData['nomination_enddate'].setHours(23,59,59);
-    }
-
-    if (!this.programData['shortlisting_enddate']) {
-      this.programData['shortlisting_enddate'] = null;
-    } else {
-      this.programData['shortlisting_enddate'].setHours(23,59,59);
-    }
-
-    if (!this.programData['enddate']) {
-      this.programData['enddate'] = null;
-    } else {
-      this.programData['enddate'].setHours(23,59,59);
-    }
-
-    if (!this.programData['content_submission_enddate']) {
-      this.programData['content_submission_enddate'] = null;
-    } else {
-      this.programData['content_submission_enddate'].setHours(23,59,59);
-    }*/
 
     if (!this.programConfig['blueprintMap']) {
       this.programConfig['blueprintMap'] = this.localBlueprintMap;
@@ -988,8 +1011,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (_.includes(invalidValues, prgData.shortlisting_enddate)) {
         prgData['shortlisting_enddate'] = null;
       }
-
-      //prgData['enddate'] = prgData.program_end_date;
       prgData['program_id'] = this.programId;
       // tslint:disable-next-line: max-line-length
       prgData['guidelines_url'] = (this.uploadedDocument) ? this.uploadedDocument.artifactUrl : _.get(this.programDetails, 'guidelines_url');
@@ -1069,12 +1090,18 @@ showTexbooklist(showTextBookSelector = true) {
       }
     };
 
-    if (!_.isEmpty(this.projectScopeForm.value.medium) || (!_.isEmpty(this.projectScopeForm.value.gradeLevel)) || !_.isEmpty(this.projectScopeForm.value.subject)) {
-      this.filterApplied = true;
-      requestData.request.filters['medium'] = _.map(this.projectScopeForm.value.medium, 'name') || [];
-      requestData.request.filters['gradeLevel'] = _.map(this.projectScopeForm.value.gradeLevel, 'name') || [];
-      requestData.request.filters['subject'] = _.map(this.projectScopeForm.value.subject, 'name') || [];
+    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+      const framework = this.projectScopeForm.value.framework;
+      requestData.request.filters['framework'] = framework.name;
     }
+    if (!_.isEmpty(this.frameworkFormData)) {
+      _.forEach(this.frameworkFormData,  (value, key) => {
+        if (!_.isEmpty(value)) {
+          requestData.request.filters[key] =_.isArray(value) ? value : [value];
+        }
+      });
+    }
+
     requestData.request.filters = _.pickBy(requestData.request.filters, function(v,k){return (!_.isEmpty(v))});
 
     return this.programsService.getCollectionList(requestData).subscribe(
@@ -1167,11 +1194,58 @@ showTexbooklist(showTextBookSelector = true) {
     return collections;
   }
   setFrameworkAttributesToconfig() {
+     const frameworkSelected = this.programScope['selectedFramework'];
+      this.programConfig['framework'] = [frameworkSelected.code]
+      this.programConfig['frameworkObj'] = {
+        identifier : frameworkSelected.identifier,
+        code: frameworkSelected.code,
+        type: frameworkSelected.type,
+        name : frameworkSelected.name,
+      };
     if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
       this.programConfig['boardIds'] = [];
       this.programConfig['gradeLevelIds'] = [];
       this.programConfig['mediumIds'] = [];
       this.programConfig['subjectIds'] = [];
+      _.forEach(this.frameworkFormData,  (value, key) => {
+        this.programConfig[key] =_.isArray(value) ? value : [value];
+
+        if (key === 'board') {
+         const boardField = _.find(this.formFieldProperties, {'code': 'board'});
+          _.map(boardField.terms, (board) => {
+            if (includes(this.programConfig[key], board.name)) {
+              this.programConfig['boardIds'].push(board.identifier);
+            }
+          });
+        }
+        if (key === 'medium') {
+          const mediumField = _.find(this.formFieldProperties, {'code': 'medium'});
+           _.map(mediumField.terms, (medium) => {
+             if (includes(this.programConfig[key], medium.name)) {
+               this.programConfig['mediumIds'].push(medium.identifier);
+             }
+           });
+         }
+
+         if (key === 'gradeLevel') {
+          const gradeLevelField = _.find(this.formFieldProperties, {'code': 'gradeLevel'});
+           _.map(gradeLevelField.terms, (gradeLevel) => {
+             if (includes(this.programConfig[key], gradeLevel.name)) {
+               this.programConfig['gradeLevelIds'].push(gradeLevel.identifier);
+             }
+           });
+         }
+         if (key === 'subject') {
+          const subjectField = _.find(this.formFieldProperties, {'code': 'subject'});
+           _.map(subjectField.terms, (subject) => {
+             if (includes(this.programConfig[key], subject.name)) {
+               this.programConfig['subjectIds'].push(subject.identifier);
+             }
+           });
+         }
+      });
+
+      /*
       // tslint:disable-next-line:max-line-length
       this.programConfig['framework'] = _.isArray(this.projectScopeForm.value.framework) ? this.projectScopeForm.value.framework : [this.projectScopeForm.value.framework];
       if (_.get(this.projectScopeForm, 'value') && _.isArray(this.projectScopeForm.value.board)) {
@@ -1196,13 +1270,7 @@ showTexbooklist(showTextBookSelector = true) {
           this.programConfig['subjectIds'].push(subject.identifier);
           return subject.name;
         });
-      }
-      this.programConfig['frameworkObj'] = {
-        identifier : this.programScope.framework.identifier,
-        code: this.programScope.framework.code,
-        type: this.programScope.framework.type,
-        name : this.programScope.framework.name,
-      };
+      }*/
     }
   }
 
@@ -1634,6 +1702,10 @@ showTexbooklist(showTextBookSelector = true) {
       this.validateAllFormFields(this.projectScopeForm);
       return false;
     }
+    if (!this.helperService.validateForm(this.isValidFrameworkFields)) {
+      this.toasterService.error(this.resource.messages.fmsg.m0101);
+      return false;
+    }
     if (this.validateDates() === true) {
       this.navigateTo(1);
       this.formIsInvalid = true;
@@ -1790,5 +1862,11 @@ showTexbooklist(showTextBookSelector = true) {
   onContributorSave(contributors) {
     this.setPreSelectedContributors(contributors);
     this.closeContributorListPopup();
+  }
+  formStatusEventListener(event) {
+    this.isValidFrameworkFields = event;
+  }
+  getFormData(event) {
+    this.frameworkFormData = event;
   }
 }

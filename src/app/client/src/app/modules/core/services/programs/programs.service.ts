@@ -1428,6 +1428,41 @@ export class ProgramsService extends DataService implements CanActivate {
     };
     return this.get(req);
   }
+  getformConfigData(channel?, context?, context_type?) {
+    const option = {
+      url: `${this.config.urlConFig.URLS.FORM.READ}`,
+      data: {
+        request: {
+            ...(context && {context}),
+            ...(context_type && {context_type}),
+            ...(channel && {channel})
+          }
+      }
+    };
+    return this.contentService.post(option);
+  }
+  initializeFrameworkFormFields(frameworkCategories, formFieldProperties, defaultValues) {
+    // tslint:disable-next-line:max-line-length
+    _.forEach(frameworkCategories, (frameworkCategories) => {
+      _.forEach(formFieldProperties, (field) => {
+        // tslint:disable-next-line:max-line-length
+        if (frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) {
+            field.terms = frameworkCategories.terms;
+        }
+      });
+    });
+
+    // set default values in the form
+    if (defaultValues) {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        const requiredData = _.get(defaultValues, formFieldCategory.code);
+        if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
+          formFieldCategory.default = requiredData;
+        }
+      });
+    }
+    return formFieldProperties;
+  }
   ifSourcingInstance() {
     return !!(this.router.url.includes('/sourcing'));
   }
