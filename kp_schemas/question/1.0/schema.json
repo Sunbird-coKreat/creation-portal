@@ -513,12 +513,9 @@
       "description": "Cognitive processes involved to answer the question set.",
       "type": "string",
       "enum": [
-        "remember",
-        "understand",
-        "apply",
-        "analyse",
-        "evaluate",
-        "create"
+        "Knowledge",
+        "Understanding",
+        "Application"
       ]
     },
     "feedback": {
