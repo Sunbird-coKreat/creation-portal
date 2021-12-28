@@ -59,6 +59,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public forTargetType = 'collections';
   public activeTab='';
   public myProjectContextHelpConfig: any;
+  public myProjectNotFoundHelpConfig: any;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
@@ -85,9 +86,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
-    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'contribute.myProjects')) {
-      this.myProjectContextHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjects');
+    if (!_.isUndefined(sunbirdContextualHelpConfig)) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjects')) {
+        this.myProjectContextHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjects');
       }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectsNotFound')) {
+        this.myProjectNotFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectsNotFound');
+      }
+    }
   }
 
   ngAfterViewInit() {

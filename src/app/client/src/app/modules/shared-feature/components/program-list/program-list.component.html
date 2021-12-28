@@ -273,7 +273,12 @@
           <div class="ui tweleve wide column mb-20">
             <app-loader *ngIf="showLoader"></app-loader>
           </div>
-          <app-no-result *ngIf="!showLoader" [data]="{messageText: resourceService?.messages?.stmsg?.m0006}"></app-no-result>
+          <div class="mt-12">
+            <app-no-result *ngIf="!showLoader" [data]="{messageText: frmelmnts?.lbl?.noOrgProjects}"></app-no-result>
+            <div class="d-flex flex-ai-jc-center">
+              <app-page-help *ngIf="activeMyProgramsMenu && isContributor && myProjectNotFoundHelpConfig && !showLoader" [helpSectionConfig]="myProjectNotFoundHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
+            </div>
+          </div>
         </ng-template>
       <!-- </ng-container> -->
     </div>
