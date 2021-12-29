@@ -118,6 +118,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
+  public existingContentVersionKey = '';
 
   // interactive video
   public unFormatedinterceptionTime;
@@ -362,13 +363,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     const contentAccessibility = _.get(this.contentMetaData, 'accessibility', []);
+    const role = this.getRole();
     _.forEach(this.accessibilityFormFields, field => {
       if (_.findIndex(contentAccessibility, _.pick(field, ['need', 'feature'])) !== -1 ) {
         field['isSelected'] = true;
       } else {
         field['isSelected'] = false;
       }
-      const role = this.getRole();
       if (role === 'CONTRIBUTOR') {
         field['editable'] = true;
       } else if (role === 'REVIEWER') {
@@ -380,7 +381,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     });
     this.accessibilityInput = {
       accessibilityFormFields: this.accessibilityFormFields,
-      contentMetaData: this.contentMetaData,
+      role,
+      contentMetaData: {...this.contentMetaData, versionKey: this.existingContentVersionKey},
       selectedAccessibility: contentAccessibility,
       contentId: this.contentId,
       telemetryPageId: this.telemetryPageId,
@@ -824,6 +826,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      this.existingContentVersionKey = res.versionKey;
       if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
         this.videoFileFormat = true;
       } else {
@@ -984,6 +987,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
 
       this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentMetaData.identifier).subscribe((res) => {
+        this.existingContentVersionKey = _.get(res, 'result.versionKey');
         if (this.sessionContext.collection && this.unitIdentifier) {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
