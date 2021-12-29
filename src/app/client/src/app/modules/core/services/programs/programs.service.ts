@@ -1428,14 +1428,16 @@ export class ProgramsService extends DataService implements CanActivate {
     };
     return this.get(req);
   }
-  getformConfigData(channel?, context?, context_type?) {
+  getformConfigData(channel?, context?, context_type?, objecttype?, operation?) {
     const option = {
       url: `${this.config.urlConFig.URLS.FORM.READ}`,
       data: {
         request: {
             ...(context && {context}),
             ...(context_type && {context_type}),
-            ...(channel && {channel})
+            ...(channel && {channel}),
+            ...(objecttype && {objecttype}),
+            ...(operation && {operation})
           }
       }
     };
