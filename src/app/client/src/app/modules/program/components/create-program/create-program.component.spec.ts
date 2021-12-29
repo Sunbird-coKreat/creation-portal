@@ -474,7 +474,7 @@ describe('CreateProgramComponent', () => {
 
   it('should call showTexbooklist', () => {
     spyOn(component, 'showTexbooklist').and.callFake(() => {});
-    component.showTexbooklist(true);
+    component.showTexbooklist();
     expect(component.showTexbooklist).toHaveBeenCalled();
   });
 
