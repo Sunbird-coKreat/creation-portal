@@ -17,7 +17,7 @@
         <div class="column" *ngFor="let list of accessibilityFormFields | keyvalue; let i = index;">
             <h5 class="ui tiny font-weight-600">{{list.key}}</h5>
             <div class="ui list" *ngFor="let item of list.value;let itemIndex = index;">
-                <div class="item">
+                <div class="item" *ngIf="item.feature">
                     <div class="sb-checkbox sb-checkbox-primary checklist">
                         <input id="checkitem_{{i}}{{itemIndex}}" type="checkbox" #inputFields [checked]="item.isSelected" class="listItem" [attr.disabled]="item.editable ? null : true" tabindex="0" (click)="createCheckedArray(item, $event)">
                         <label class="cursor-pointer sb-color-gray-400" for="checkitem_{{i}}{{itemIndex}}">{{item.feature}}</label>
