@@ -14,6 +14,10 @@
                 "type": "questionset"
             },
             {
+                "mimetype": "application/vnd.sunbird.question",
+                "type": "question"
+            },
+            {
                 "mimetype": "application/vnd.ekstep.html-archive",
                 "type": "upload"
             },

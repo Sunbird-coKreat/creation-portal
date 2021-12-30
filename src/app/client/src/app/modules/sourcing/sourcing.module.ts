@@ -81,6 +81,6 @@ import { AccessibilityInfoComponent } from './components/accessibility-info/acce
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe]
+  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent, QuestionSetEditorComponent  ]
 })
 export class SourcingModule { }

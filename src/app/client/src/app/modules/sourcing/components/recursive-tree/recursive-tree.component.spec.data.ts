@@ -28,5 +28,9 @@ export const recursiveTreeComponentInput = {
     },
     sessionContext: {
         currentRoleId: 1
-      }
+      },
+    dynamicHeaders: [
+      {"label": "Question Type", "key": "questionCategories"},
+      {"label": "Skill Tested", "key": "bloomsLevel"}
+    ]
 };
