@@ -133,7 +133,6 @@
               <span class="item-status item-header">{{header.label}}</span>
             </ng-container>
           </ng-container>
-          <span class="item-name item-header">{{resourceService.frmelmnts.lbl.skills}}</span>
           <span class="item-status item-header">{{resourceService.frmelmnts.lbl.contributor}}</span>
           <span class="item-name item-header">{{resourceService.frmelmnts.lbl.status}}</span>
         </div>
@@ -157,7 +156,6 @@
                 <span class="item-status" *ngIf="header.key">{{content[header.key] || '-'}}</span>
               </ng-container>
             </ng-container>
-            <span class="item-name">{{content.bloomsLevel}}</span>
             <span class="item-status">{{content.creator}}</span>
             <span class="item-name">
               <ng-container *ngIf="!content.sampleContent">
