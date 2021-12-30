@@ -1,5 +1,5 @@
-"Upto 200 or 250 characters. Ideally less than 60 characters 
-(Please enter the text)","Upto 400 or 500 characters. Ideally 160 to 200 characters.
+"Upto 50 characters
+(Please enter the text)","Upto 250 characters.
 (Please enter the text)",,Student Or Teacher Or Administrator,The person or organization who has authored the content,Person or Organization who owns the copyright. Default name is DIKSHA tenant.,"One of the supported licenses in DIKSHA.
 If this is empty, default to the default license configured for the tenant",List of persons or organizations who have contributed to this content.,"Publicly accessible URL of the Icon file.
 A square thumbnail that helps identify the content easily. All images need to be in 1:1 (Square dimension) so that they do not get distorted.

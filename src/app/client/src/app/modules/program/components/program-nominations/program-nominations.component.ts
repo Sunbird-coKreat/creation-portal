@@ -106,6 +106,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public showBulkApprovalButton: Boolean = false;
   public assignUsersHelpConfig: any;
   public noUsersFoundHelpConfig: any;
+  public reviewNominationsHelpConfig: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -178,6 +179,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
       if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
         this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewNominations')) {
+        this.reviewNominationsHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewNominations');
       }
     }
   }

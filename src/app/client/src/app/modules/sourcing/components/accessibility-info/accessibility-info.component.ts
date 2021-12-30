@@ -7,6 +7,7 @@ import { ActivatedRoute} from '@angular/router';
 import { throwError } from 'rxjs';
 import { SourcingService } from '../../services';
 import { ProgramTelemetryService } from '../../../program/services';
+import { HelperService } from '../../services/helper.service';
 
 @Component({
   selector: 'app-accessibility-info',
@@ -26,10 +27,10 @@ export class AccessibilityInfoComponent implements OnInit, OnDestroy {
   constructor(
     public configService: ConfigService, public toasterService: ToasterService, public actionService: ActionService,
     public resourceService: ResourceService, public activeRoute: ActivatedRoute, private sourcingService: SourcingService,
-    public programTelemetryService: ProgramTelemetryService
+    public programTelemetryService: ProgramTelemetryService, private helperService: HelperService
     ) {
     this.sunbirdAccessibilityGuidelinesUrl = (<HTMLInputElement>document.getElementById('sunbirdAccessibilityGuidelinesUrl')) ?
-      (<HTMLInputElement>document.getElementById('sunbirdAccessibilityGuidelinesUrl')).value : '';
+      (<HTMLInputElement>document.getElementById('sunbirdAccessibilityGuidelinesUrl')).value : null;
    }
 
   ngOnInit(): void {
@@ -63,17 +64,12 @@ export class AccessibilityInfoComponent implements OnInit, OnDestroy {
 
   submitAccessibilityForm() {
     const requestBody = {
-      url: `${this.configService.urlConFig.URLS.CONTENT.UPDATE}/${this.accessibilityInput.contentId}`,
-      data: {
-        request : {
-          content : {
-            versionKey : this.accessibilityInput.contentMetaData.versionKey,
-            accessibility: _.map(this.selectedAccessibility, (item) => _.pick(item, ['need', 'feature']))
-          }
-        }
+      content : {
+        versionKey : this.accessibilityInput.contentMetaData.versionKey,
+        accessibility: _.map(this.selectedAccessibility, (item) => _.pick(item, ['need', 'feature']))
       }
-    };
-    this.actionService.patch(requestBody).pipe(map((res: any) => res.result), catchError(err => {
+    }
+    this.helperService.contentMetadataUpdate(this.accessibilityInput.role, requestBody, this.accessibilityInput.contentId).pipe(map((res: any) => res.result), catchError(err => {
         const errInfo = {
           errorMsg: this.resourceService.messages.emsg.accessibilityUpdate,
           telemetryPageId: this.accessibilityInput.telemetryPageId,
