@@ -28,17 +28,34 @@ export class CollectionHierarchyService {
     this._programDetails = programDetails;
   }
 
-  removeResourceToHierarchy(collection, unitIdentifier, contentId): Observable<any> {
+  removeResourceToHierarchy(collection, unitIdentifier, contentId, target_type?): Observable<any> {
+    let reqObj, reqQset;
     const req = {
-      url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_REMOVE,
-      data: {
-        'request': {
-          'rootId': collection,
-          'unitId': unitIdentifier,
-          'children': [contentId]
+        url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_REMOVE,
+        data: {
+          'request': {
+            'rootId': collection,
+            'unitId': unitIdentifier,
+            'children': [contentId]
+          }
+        }
+      };
+    if(target_type === 'questionSets') {
+      reqQset = {
+        url: this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_REMOVE,
+        data: {
+          'request': {
+            'questionset':
+            {
+              'rootId': collection,
+              'collectionId': unitIdentifier,
+              'children': [contentId]
+            }
+          }
         }
       }
-    };
+    }
+    reqObj = target_type === 'questionSets' ? req : reqQset;
     return this.actionService.delete(req).pipe(map((data: any) => {
       return data.result;
     }), catchError(err => {
@@ -103,7 +120,9 @@ export class CollectionHierarchyService {
     return this.actionService.get(req);
   }
 
-  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true) {
+  getCollectionWithProgramId(programId, primaryCategory, preferencefilters?, allFields = true, target_type?) {
+    let objectType = 'collection';
+    if(target_type && target_type === 'questionSets') objectType = 'QuestionSet';
     const httpOptions: HttpOptions = {
       headers: {
         'content-type': 'application/json',
@@ -115,7 +134,7 @@ export class CollectionHierarchyService {
         request: {
           filters: {
             programId: programId,
-            objectType: 'collection',
+            objectType: objectType,
             status: ['Draft', 'Live'],
             primaryCategory: !_.isNull(primaryCategory) ? primaryCategory : 'Digital Textbook'
           },
@@ -226,9 +245,13 @@ export class CollectionHierarchyService {
       }
       let allAcceptedContentIds, allRejectedContentIds = [];
       if (this._programDetails && this._programDetails.target_type === 'searchCriteria') {
-        allAcceptedContentIds = _.uniq(this._programDetails.acceptedcontents);
-        allRejectedContentIds = _.uniq(this._programDetails.rejectedcontents);
-      } else {
+        allAcceptedContentIds = _.uniq(this._programDetails.config.acceptedContents);
+        allRejectedContentIds = _.uniq(this._programDetails.config.rejectedContents);
+      } else if(this._programDetails && this._programDetails.target_type === 'questionSets') {
+        allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContributions'));
+        allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContributions'));
+      }
+      else {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContents'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContents'));
       }
@@ -349,7 +372,7 @@ export class CollectionHierarchyService {
       data: {
         request: {
           filters: {
-            objectType: ['content', 'questionset'],
+            objectType: ['content', 'questionset', 'question'],
             programId: programId,
             status: ['Draft', 'Review', 'Live', 'Processing'],
             mimeType: {'!=': 'application/vnd.ekstep.content-collection'},
@@ -478,7 +501,10 @@ export class CollectionHierarchyService {
       return liveContents.length;
     }
 
-    const reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+    let reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContents')), _.flatten(_.map(collections, 'rejectedContents')));
+    if(this._programDetails && this._programDetails.target_type === 'questionSets') {
+      reviewedContents = _.union(_.flatten(_.map(collections, 'acceptedContributions')), _.flatten(_.map(collections, 'rejectedContributions')));
+    }
 
     if(collections && collections.length) { // for getting  mvc contents
       _.map(collections, textbook => {

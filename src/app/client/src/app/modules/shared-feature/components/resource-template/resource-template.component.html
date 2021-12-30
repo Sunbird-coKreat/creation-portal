@@ -26,7 +26,7 @@
 
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleSubmit()"
-    appTelemetryInteract 
+    appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('continue', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'select_to_contribute','template_id':templateSelected})"
             [telemetryInteractObject]="telemetryInteractObject"
             [telemetryInteractCdata]="telemetryInteractCdata"
@@ -83,19 +83,19 @@
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="ftb" name="questionType" (click)="setQuestionType('FTB')">
         <label for="ftb">FTB - Fill in the Blank</label>
-      </div>   
+      </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="vsa" name="questionType" (click)="setQuestionType('VSA')">
         <label for="vsa">VSA - Practice Sets</label>
-      </div>   
+      </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="sa" name="questionType" (click)="setQuestionType('SA')">
         <label for="sa">SA - Practice Sets</label>
-      </div>   
+      </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="la" name="questionType" (click)="setQuestionType('LA')">
         <label for="la">LA - Practice Sets</label>
-      </div>  
+      </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="curiosity" name="questionType" (click)="setQuestionType('CuriosityQuestion')">
         <label for="curiosity">Curiosity Sets</label>
@@ -105,15 +105,15 @@
         <label for="comprehension">Comprehension</label>
       </div>
     </div>
-    <div class="d-flex flex-dc">
-      <h4 class="my-10">Interactive</h4>   
+    <div *ngIf="showInteractiveQuestionTypes" class="d-flex flex-dc">
+      <h4 class="my-10">Interactive</h4>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="mcq" name="questionType" (click)="setQuestionType('MCQ')">
         <label for="mcq">MCQ - Practice Sets</label>
       </div>
     </div>
     </div>
-  </div>  
+  </div>
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="submit()"
     appTelemetryInteract

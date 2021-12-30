@@ -5,9 +5,13 @@ export interface IContentEditorComponentInput {
     action?: string;
     content?: any;
     sessionContext?: ISessionContext;
+    templateDetails?: any;
     unitIdentifier?: string;
     programContext?: any;
     originCollectionData: any;
     sourcingStatus: string;
     selectedSharedContext: any;
+    hideSubmitForReviewBtn?: boolean;
+    enableQuestionCreation?: boolean;
+    setDefaultCopyright?: boolean;
 }
