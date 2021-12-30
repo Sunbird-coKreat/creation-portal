@@ -1522,7 +1522,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                   }
                 }
               };
-              this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+              this.actionService.patch(this.interceptionData).pipe(map((res: any) => {
+                this.existingContentVersionKey = _.get(res, 'result.versionKey');
+                return res.result;
+              }), catchError(err => {
                   const errInfo = {
                     errorMsg: this.resourceService.messages.emsg.interactive.video.updateInterception,
                     telemetryPageId: this.telemetryPageId,
@@ -1688,7 +1691,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           };
           this.showConfirmationModal = false;
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-      })).subscribe( result => {
+      })).subscribe(( response: any) => {
+        this.existingContentVersionKey = _.get(response, 'versionKey');
         this.showConfirmationModal = false;
         this.toasterService.success(this.resourceService.messages.smsg.interactive.video.delete);
         this.getUploadedContentMeta(this.contentMetaData.identifier);
@@ -1744,6 +1748,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
       .subscribe(result => {
+        this.existingContentVersionKey = _.get(result, 'versionKey');
         console.log(result);
         this.showQuestionSetEditModal = false;
         this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
@@ -1815,9 +1820,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.optionalAddTranscript = false;
   }
 
-  public closeTranscriptPopup():void {
+  public closeTranscriptPopup(): void {
     this.readContent(this.contentMetaData.identifier).subscribe(res => {
       this.contentMetaData = res;
+      this.existingContentVersionKey = res.versionKey;
       this.showTranscriptPopup = false;
     });
   }
