@@ -1090,51 +1090,6 @@ app-question-set-editor{
   }
 }
 
-
-// Hamburger menu for pdf, epub, player etc
-sb-player-side-menu-icon {
-  #overlay-button{
-    &:hover{
-      span{
-        background: #fff !important;
-        &:before,
-        &:after {
-          background: #fff !important;
-        }
-      }
-      background: #000 !important;
-    }
-    span{
-      background: #000 !important;
-      &:before,
-      &:after {
-        background: #000 !important;
-      }
-    }
-  }
-  input[type=checkbox]:checked~#overlay-button {
-    span,
-    &:hover span {
-      background: 0 0 !important;
-    }
-    span:before {
-      background: #000 !important;
-    }
-
-    &:hover span:before {
-      background: #fff !important;
-    }
-
-    span:after {
-      background: #000 !important;
-    }
-
-    &:hover span:after {
-      background: #fff !important;
-    }
-  }
-}
-
 /*
 .w-73 .two-column-grid.formSection:first-child .sb-g-col-lg-1:nth-child(2n) .sb-textarea-container {
   margin: 1rem 0!important;
