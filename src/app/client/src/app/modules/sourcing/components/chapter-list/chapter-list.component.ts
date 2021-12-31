@@ -858,7 +858,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   checkifContent (content) {
     if(this.projectTargetType === 'questionSets') {
-      if (content.mimeType !== 'application/vnd.sunbird-questionset' && content.visibility !== 'Parent') {
+      if (content.mimeType !== 'application/vnd.sunbird.questionset' && content.visibility !== 'Parent') {
         return true;
       } else {
         return false;
