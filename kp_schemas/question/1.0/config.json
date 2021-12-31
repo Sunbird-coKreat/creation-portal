@@ -21,9 +21,6 @@
   "targetFrameworkTerms": [],
   "cacheEnabled": false,
   "schema_restrict_api": true,
-  "headers": [
-    {"label": "Skill Tested", "key": "bloomsLevel"}
-  ],
   "external": {
     "tableName": "question_data",
     "properties": {

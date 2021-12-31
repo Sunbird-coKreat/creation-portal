@@ -19,6 +19,9 @@
   "targetFrameworkTerms": [],
   "cacheEnabled": false,
   "schema_restrict_api": true,
+  "headers": [
+    {"label": "Skill Tested", "key": "bloomsLevel"}
+  ],
   "restrictProps": {
     "create" : [
       "children"
