@@ -853,6 +853,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/content/question/v1/read/:do_id': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/content/data/v1/telemetry': {
       checksNeeded: []
     },
@@ -922,6 +928,7 @@ const API_LIST = {
     '/action/question/v1/update/:do_id',
     '/content/content/v1/read/:do_id',
     '/content/questionset/v1/read/:do_id',
+    '/content/question/v1/read/:do_id',
     '/learner/user/v1/exists/phone/:phone',
     '/action/content/v4/read/:do_id',
     '/action/content/v4/upload/:do_id',

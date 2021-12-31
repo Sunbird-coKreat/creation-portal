@@ -1489,7 +1489,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   this.helperService.retireContent(this.contentId, this.projectTargetType)
     .subscribe(
       (response) => {
-        if (response && response.result && response.result.node_id) {
+        if (this.projectTargetType === 'questionSets') {
+          this.showConfirmationModal = false;
+          this.updateAccordianView(this.unitIdentifier);
+          this.toasterService.success(this.resourceService.messages.smsg.m0064);
+        } else if (response && response.result && response.result.node_id) {
           this.removeResourceFromHierarchy();
         } else {
           this.toasterService.error(this.resourceService.messages.fmsg.m00103);
