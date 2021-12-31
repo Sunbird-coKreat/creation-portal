@@ -963,7 +963,7 @@ export class HelperService {
       url: `${configUrl}schemas/collection/1.0/config.json`,
     };
     if(projectTargetType === 'questionSets') {
-      req.url = `${configUrl}schemas/questionSet/1.0/config.json`;
+      req.url = `${configUrl}schemas/questionset/1.0/config.json`;
     }
     return this.httpClient.get(req.url).pipe(map((response) => {
       return response;
