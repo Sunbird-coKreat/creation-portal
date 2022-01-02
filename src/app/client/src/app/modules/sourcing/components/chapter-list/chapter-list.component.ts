@@ -157,11 +157,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.state.stages = state.stages;
       this.changeView();
     });
-    this.helperService.getDynamicHeaders(this.configUrl).subscribe((state: any) => {
-      if(_.has(state, "headers")){
-        this.dynamicHeaders = state.headers;
-      }
-    });
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
@@ -196,6 +191,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if ( _.isUndefined(this.sessionContext.topicList)) {
         this.fetchFrameWorkDetails();
     }
+    this.helperService.getDynamicHeaders(this.configUrl, this.projectTargetType).subscribe((state: any) => {
+      if (_.has(state, 'headers')) {
+        this.dynamicHeaders = state.headers;
+      }
+    });
     this.getCollectionCategoryDefinition();
     /**
      * @description : this will fetch question Category configuration based on currently active route
@@ -858,7 +858,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   checkifContent (content) {
     if(this.projectTargetType === 'questionSets') {
-      if (content.mimeType !== 'application/vnd.sunbird-questionset' && content.visibility !== 'Parent') {
+      if (content.mimeType !== 'application/vnd.sunbird.questionset' && content.visibility !== 'Parent') {
         return true;
       } else {
         return false;
