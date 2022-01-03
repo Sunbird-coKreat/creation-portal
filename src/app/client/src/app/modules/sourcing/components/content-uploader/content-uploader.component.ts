@@ -176,7 +176,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.transcriptRequired = (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')) ?
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')).value : 'false';
       this.publicStorageAccount = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
-      (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : 'https://dockstorage.blob.core.windows.net/content-service/';      
+      (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : 'https://dockstorage.blob.core.windows.net/content-service/';
     }
 
   ngOnInit() {
@@ -1448,7 +1448,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
           const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
           const primaryCategories  = _.map(questionSetCategories, 'name');
-          const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+          const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext, this.programContext.target_type);
           _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
           const option = {
             url: `questionset/v1/create`,
@@ -1467,7 +1467,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                   'author': creator,
                   'programId': this.sessionContext.programId,
                   'collectionId': this.sessionContext.collection,
-                  'unitIdentifiers': [this.unitIdentifier],
+                  ...(this.unitIdentifier && { 'unitIdentifiers': [this.unitIdentifier] }),
                   ...(this.sessionContext.nominationDetails &&
                     this.sessionContext.nominationDetails.organisation_id &&
                     {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
