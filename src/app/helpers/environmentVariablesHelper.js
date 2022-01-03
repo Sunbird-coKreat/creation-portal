@@ -60,6 +60,8 @@ let envVariables = {
   SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES: env.sunbird_transcript_supported_languages || 'English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya',
   SUNBIRD_TRANSCRIPT_FILE_FORMAT: env.sunbird_transcript_file_format || 'srt',
   SUNBIRD_TRANSCRIPT_REQUIRED: env.sunbird_transcript_required || false,
+  SUNBIRD_BULK_UPLOAD_NAME_LENGTH: env.sunbird_bulk_upload_name_length || '50',
+  SUNBIRD_BULK_UPLOAD_DESC_LENGTH: env.sunbird_bulk_upload_description_length || '500',
 
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
