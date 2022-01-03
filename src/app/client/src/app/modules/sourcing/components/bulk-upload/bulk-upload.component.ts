@@ -71,6 +71,8 @@ export class BulkUploadComponent implements OnInit {
   public telemetryInteractObject: any;
   public userProfile: IUserProfile;
   public unsubscribe = new Subject<void>();
+  public bulkUploadNameLength;
+  public bulkUploadDescriptionLength;
   constructor(
     private userService: UserService,
     private resourceService: ResourceService,
@@ -88,6 +90,12 @@ export class BulkUploadComponent implements OnInit {
     if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
       this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
     }
+
+    this.bulkUploadNameLength = (<HTMLInputElement>document.getElementById('sunbirdBulkUploadNameLength')) ?
+    (<HTMLInputElement>document.getElementById('sunbirdBulkUploadNameLength')).value : 50;
+
+    this.bulkUploadDescriptionLength = (<HTMLInputElement>document.getElementById('sunbirdBulkUploadDescriptionLength')) ?
+    (<HTMLInputElement>document.getElementById('sunbirdBulkUploadDescriptionLength')).value : 500;
 
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))
@@ -472,8 +480,10 @@ export class BulkUploadComponent implements OnInit {
     const licenses = this.licenses.map((license) => license.name);
 
     const headers = [
-      { name: 'Name of the Content', inputName: 'name', maxLength: 50, required: true, requiredError, headerError, maxLengthError },
-      { name: 'Description of the content', inputName: 'description', maxLength: 500, maxLengthError, headerError },
+      // tslint:disable-next-line:max-line-length
+      { name: 'Name of the Content', inputName: 'name', maxLength: this.bulkUploadNameLength, required: true, requiredError, headerError, maxLengthError },
+      // tslint:disable-next-line:max-line-length
+      { name: 'Description of the content', inputName: 'description', maxLength: this.bulkUploadDescriptionLength, maxLengthError, headerError },
       { name: 'Keywords', inputName: 'keywords', isArray: true, headerError },
       // tslint:disable-next-line:max-line-length
       { name: 'Audience', inputName: 'audience', required: true, requiredError, headerError, in: ['Student', 'Teacher', 'Administrator'], inError },

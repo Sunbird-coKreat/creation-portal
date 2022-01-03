@@ -156,6 +156,8 @@ function getLocals(req) {
   locals.sunbirdTranscriptSupportedLanguages = envHelper.SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES;
   locals.sunbirdTranscriptFileFormat =  envHelper.SUNBIRD_TRANSCRIPT_FILE_FORMAT;
   locals.sunbirdTranscriptRequired = envHelper.SUNBIRD_TRANSCRIPT_REQUIRED;
+  locals.sunbirdBulkUploadNameLength = envHelper.SUNBIRD_BULK_UPLOAD_NAME_LENGTH;
+  locals.sunbirdBulkUploadDescriptionLength = envHelper.SUNBIRD_BULK_UPLOAD_DESC_LENGTH;
   return locals
 }
 
