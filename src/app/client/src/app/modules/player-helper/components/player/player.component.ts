@@ -133,7 +133,9 @@ export class PlayerComponent implements AfterViewInit, OnChanges {
       this.loadDefaultPlayer();
     } else {
       this.adjustPlayerHeight();
-      this.playerConfig.config = {};
+      if (this.playerType !== 'epub-player') {
+        this.playerConfig.config = {};
+      }
     }
   }
 

@@ -69,6 +69,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   public targetCollections: string;
   private onComponentDestroy$ = new Subject<any>();
   public collectionsCnt = 0;
+  public reviewContributionHelpConfig: any;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
     public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router,
@@ -120,6 +121,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
+    this.setContextualHelpConfig();
+  }
+
+  setContextualHelpConfig() {
+    const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+        this.reviewContributionHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+    }
   }
 
   sortCollection(column) {
@@ -477,8 +486,11 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     if (this.programDetails && this.programDetails.target_type == 'searchCriteria' && this.currentStage === 'listContributorTextbook') {
       this.showLoader = true;
       setTimeout(() => {
-        this.getOriginForApprovedContents().subscribe((res) => {
-          this.getProgramContents();
+        this.fetchProgramDetails().subscribe((programDetails) => {
+          this.programContext = _.get(programDetails, 'result');
+          this.getOriginForApprovedContents().subscribe((res) => {
+            this.getProgramContents();
+          })
         })
       }, 3000);
     }

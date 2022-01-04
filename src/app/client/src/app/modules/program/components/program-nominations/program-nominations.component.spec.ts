@@ -132,7 +132,7 @@ describe('ProgramNominationsComponent', () => {
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: UserService, useValue: userServiceStub },
         { provide: ResourceService, useValue: resourceBundle },
-        ToasterService, ConfigService, DatePipe, ProgramStageService, 
+        ToasterService, ConfigService, DatePipe, ProgramStageService,
         ProgramsService, FrameworkService, HelperService, Subject, PaginationService,
         NavigationHelperService, CollectionHierarchyService, ContentHelperService,
         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
@@ -246,7 +246,7 @@ describe('ProgramNominationsComponent', () => {
     component.direction = 'desc';
     spyOn(programsService, 'sortCollection').and.returnValue({});
     spyOn(component, 'sortCollection').and.callThrough();
-    component.sortCollection('name', {});
+    component.sortCollection('name');
     expect(programsService.sortCollection).toHaveBeenCalled();
     expect(component.direction).toEqual('asc');
     expect(component.sortColumn).toEqual('name');
@@ -372,5 +372,29 @@ describe('ProgramNominationsComponent', () => {
       const returnObj = component.getTelemetryInteractEdata('download_contribution_details',
       'click', 'launch', 'sourcing_my_projects', undefined);
       expect(returnObj).not.toContain(undefined);
+    });
+    it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+      const contextualHelpConfig = {
+        'sourcing': {
+          'assignUsersToProject': {
+            'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+            'header': 'This table allow you to see a list of users',
+            'message':  ''
+          },
+          'noUsersFound': {
+            'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+            'header': 'no users found',
+            'message':  ''
+          }
+        }
+      };
+      component.assignUsersHelpConfig = undefined;
+      component.noUsersFoundHelpConfig = undefined;
+      const helperService = TestBed.get(HelperService);
+      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+      spyOn(component, 'setContextualHelpConfig').and.callThrough();
+      component.setContextualHelpConfig();
+      expect(component.assignUsersHelpConfig).toBeDefined();
+      expect(component.noUsersFoundHelpConfig).toBeDefined();
     });
 });

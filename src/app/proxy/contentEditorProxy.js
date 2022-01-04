@@ -75,6 +75,7 @@ module.exports = function (app) {
     [
       "/action/questionset/v1/read/*",
       "/action/question/v1/read/*",
+      '/action/question/v1/retire/*',
       "/action/questionset/v1/hierarchy/*",
       "/action/questionset/v1/retire/*",
     ],
@@ -103,6 +104,7 @@ module.exports = function (app) {
       "/action/question/v1/review/*",
       "/action/question/v1/publish/*",
       "/action/questionset/v1/reject/*",
+      '/action/question/v1/reject/*',
     ],
     proxy(contentURL, {
       limit: reqDataLimitOfContentUpload,
@@ -120,6 +122,8 @@ module.exports = function (app) {
       "/action/questionset/v1/update/*",
       "/action/questionset/v1/add/*",
       "/action/question/v1/update/*",
+      '/action/questionset/v1/add',
+      '/action/questionset/v1/remove',
     ],
     proxyUtils.verifyToken(),
     proxy(contentURL, {
@@ -133,6 +137,7 @@ module.exports = function (app) {
     })
   );
   // Proxy for content create ,update & review Start
+  // @Todo deprecated
   app.use(
     [
       "/action/content/v3/create",
@@ -152,7 +157,21 @@ module.exports = function (app) {
       },
     })
   );
+  // Proxy for content create ,update & review Start
+  app.get("/action/collection/v4/hierarchy/*",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
 
+  // @Todo deprecated
   app.use(
     ["/action/content/v3/update/*"],
     bodyParser.json({ limit: "50mb" }),
@@ -167,6 +186,7 @@ module.exports = function (app) {
     })
   );
 
+  // @Todo deprecated
   app.post(
     "/action/content/v3/upload/*",
     proxy(kp_content_service_base_url, {
@@ -183,6 +203,101 @@ module.exports = function (app) {
     })
   );
 
+  app.post("/action/content/v4/import",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.get("/action/content/v4/read/*",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post("/action/content/v4/create",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post(
+    "/action/content/v4/upload/*",
+    proxy(kp_content_service_base_url, {
+      preserveHostHdr: true,
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+      userResDecorator: userResDecorator,
+    })
+  );
+
+  app.patch(
+    "/action/collection/v4/hierarchy/add",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.delete(
+    "/action/collection/v4/hierarchy/remove",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.patch("/action/content/v4/update/*",
+    bodyParser.json({ limit: "50mb" }),
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  // @Todo deprecated(only few)
   app.use(
     [
       "/action/content/v3/review/*",
@@ -199,6 +314,42 @@ module.exports = function (app) {
         var originalUrl = req.originalUrl;
         originalUrl = originalUrl.replace("/action/", "");
         return require("url").parse(kp_learning_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post("/action/content/v4/review/*",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.post("/action/content/v4/reject/*",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+
+  app.delete("/action/content/v4/retire/*",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
           .path;
       },
     })

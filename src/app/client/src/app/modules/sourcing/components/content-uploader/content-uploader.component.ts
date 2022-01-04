@@ -7,8 +7,8 @@ import { UserService, ActionService, PlayerService, FrameworkService, Notificati
   ProgramsService, ContentService} from '@sunbird/core';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import * as _ from 'lodash-es';
-import { catchError, map, filter, take, takeUntil, tap } from 'rxjs/operators';
-import { throwError, Observable, Subject, forkJoin } from 'rxjs';
+import { catchError, map, filter, take, takeUntil, tap, mergeMap } from 'rxjs/operators';
+import { throwError, Observable, Subject, forkJoin, iif, of } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { FormGroup, FormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
@@ -118,6 +118,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
+  public existingContentVersionKey = '';
 
   // interactive video
   public unFormatedinterceptionTime;
@@ -151,7 +152,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public optionalAddTranscript = false;
   public showAddTrascriptButton = false;
   public transcriptRequired;
-
+  public showAccessibilityPopup = false;
+  public accessibilityFormFields: any;
+  public captureAccessibilityInfo = false;
+  public modifyAccessibilityInfoByReviewer = false;
+  public accessibilityInput: any;
+  public publicStorageAccount: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -169,6 +175,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
       this.transcriptRequired = (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')) ?
       (<HTMLInputElement>document.getElementById('sunbirdTranscriptRequired')).value : 'false';
+      this.publicStorageAccount = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
+      (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : 'https://dockstorage.blob.core.windows.net/content-service/';
     }
 
   ngOnInit() {
@@ -219,6 +227,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.enableInteractivity = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.enableInteractivity');
       });
     }
+    this.initAccessibilityDetails();
    }
 
    setTelemetryStartData() {
@@ -315,6 +324,91 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         field['editable'] = false;
       }
     });
+  }
+
+  initAccessibilityDetails() {
+    const primaryCategory = _.get(this.templateDetails, 'name');
+    this.programsService.getCategoryDefinition(primaryCategory, this.programContext.rootorg_id, 'Content').pipe(
+      map((res: any) => {
+        this.captureAccessibilityInfo = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.captureAccessibilityInfo', false);
+        // tslint:disable-next-line:max-line-length
+        this.modifyAccessibilityInfoByReviewer = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.modifyAccessibilityInfoByReviewer', false);
+        this.accessibilityFormFields = _.get(res.result.objectCategoryDefinition, 'objectMetadata.config.accessibility', '');
+        return this.accessibilityFormFields;
+    }),
+    mergeMap(accessibilityFormFields => iif(() => _.isEmpty(accessibilityFormFields),
+      this.getSystemLevelConfig().pipe(map((res: any) => {
+        this.accessibilityFormFields = _.get(res, 'accessibility', '');
+        this.captureAccessibilityInfo = _.get(res, 'captureAccessibilityInfo', false);
+        this.modifyAccessibilityInfoByReviewer = _.get(res, 'modifyAccessibilityInfoByReviewer', false);
+        return this.accessibilityFormFields;
+      })), of(accessibilityFormFields))
+    )).subscribe((response: any) => {
+       console.log(response);
+    }, (err: any) => {
+      const errInfo = {
+        errorMsg: this.resourceService.messages.emsg.formConfigError,
+        telemetryPageId: this.telemetryPageId,
+        telemetryCdata : this.telemetryInteractCdata,
+        env : this.activeRoute.snapshot.data.telemetry.env,
+        request: {}
+      };
+    });
+  }
+
+  handleAccessibilityPopup() {
+    if (_.isEmpty(this.accessibilityFormFields)) {
+      this.toasterService.error(this.resourceService.messages.emsg.formConfigError);
+      return;
+    }
+
+    const contentAccessibility = _.get(this.contentMetaData, 'accessibility', []);
+    const role = this.getRole();
+    _.forEach(this.accessibilityFormFields, field => {
+      if (_.findIndex(contentAccessibility, _.pick(field, ['need', 'feature'])) !== -1 ) {
+        field['isSelected'] = true;
+      } else {
+        field['isSelected'] = false;
+      }
+      if (role === 'CONTRIBUTOR') {
+        field['editable'] = true;
+      } else if (role === 'REVIEWER') {
+        field['editable'] = this.modifyAccessibilityInfoByReviewer ? true : false;
+      } else {
+        field['editable'] = false;
+      }
+
+    });
+    this.accessibilityInput = {
+      accessibilityFormFields: this.accessibilityFormFields,
+      role,
+      contentMetaData: {...this.contentMetaData, versionKey: this.existingContentVersionKey},
+      selectedAccessibility: contentAccessibility,
+      contentId: this.contentId,
+      telemetryPageId: this.telemetryPageId,
+      telemetryInteractCdata: this.telemetryInteractCdata,
+      telemetryInteractObject: this.telemetryInteractObject,
+      telemetryInteractPdata: this.telemetryInteractPdata
+    };
+    this.showAccessibilityPopup = true;
+  }
+
+  getSystemLevelConfig(): Observable<any> {
+    const req = {
+      url: `${this.publicStorageAccount}schemas/content/1.0/config.json`,
+    };
+    return this.actionService.http.get(req.url).pipe(map((response: any) => {
+      return response;
+    }));
+  }
+
+  accessibilityListener(event: any) {
+    if (event && event.type === 'submit') {
+        this.showAccessibilityPopup = false;
+        this.getUploadedContentMeta(this.contentMetaData.identifier);
+    } else if (event && event.type === 'close') {
+        this.showAccessibilityPopup = false;
+    }
   }
 
   showEditform(action) {
@@ -587,7 +681,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const contentType = mimeType;
     // document.getElementById('qq-upload-actions').style.display = 'none';
     const option = {
-      url: 'content/v3/upload/url/' + contentId,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.PRE_SIGNED_UPLOAD_URL}/${contentId}`,
       data: {
         request: {
           content: {
@@ -665,7 +759,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       cache: false
     };
     const option = {
-      url: 'content/v3/upload/' + contentId,
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.UPLOAD}/${contentId}`,
       data: data,
       param: config
     };
@@ -701,7 +795,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   getUploadedContentMeta(contentId, uploadModalClose = true) {
     this.showPreview = false;
     const option = {
-      url: 'content/v3/read/' + contentId
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${contentId}`
     };
     this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
       this.showPreview = true;
@@ -732,6 +826,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      this.existingContentVersionKey = res.versionKey;
       if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
         this.videoFileFormat = true;
       } else {
@@ -892,6 +987,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       };
 
       this.helperService.contentMetadataUpdate(this.contentEditRole, request, this.contentMetaData.identifier).subscribe((res) => {
+        this.existingContentVersionKey = _.get(res, 'result.versionKey');
         if (this.sessionContext.collection && this.unitIdentifier) {
         // tslint:disable-next-line:max-line-length
         this.collectionHierarchyService.addResourceToHierarchy(this.sessionContext.collection, this.unitIdentifier, res.result.node_id || res.result.identifier)
@@ -1058,7 +1154,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   requestCorrectionsBySourcing() {
     if (this.FormControl.value.rejectComment) {
-      this.helperService.updateContentStatus(this.contentMetaData.identifier, "Draft", this.FormControl.value.rejectComment)
+      this.helperService.updateContentStatus(this.contentMetaData.identifier, 'Draft', this.FormControl.value.rejectComment)
       .subscribe(res => {
         this.showRequestChangesPopup = false;
         this.contentStatusNotify('Reject');
@@ -1158,7 +1254,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         const notificationForPublisher = {
           user_id: this.sessionContext.nominationDetails.user_id,
           content: { name: this.contentMetaData.name },
-          org: { name:  this.sessionContext.nominationDetails.orgData.name},
+          org: { name: _.get(this.sessionContext, 'nominationDetails.orgData.name') || '--'},
           program: { name: this.programContext.name },
           status: status
         };
@@ -1256,23 +1352,30 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getEditableFields() {
-    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
-      if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
-        this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
-        this.contentEditRole = 'CONTRIBUTOR';
-      } else if (this.canPublishContent()) {
-        this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
-        this.contentEditRole = 'REVIEWER';
-      }
-    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+    const role = this.getRole();
+    if (role === 'CONTRIBUTOR') {
       this.editableFields = this.helperService.getEditableFields('CONTRIBUTOR', this.formFieldProperties, this.contentMetaData);
       this.contentEditRole = 'CONTRIBUTOR';
+    } else if (role === 'REVIEWER') {
+      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
+      this.contentEditRole = 'REVIEWER';
+    }
+  }
+
+  getRole() {
+    if (this.hasRole('CONTRIBUTOR') && this.hasRole('REVIEWER')) {
+      if (this.userService.userid === this.contentMetaData.createdBy && this.resourceStatus === 'Draft') {
+        return 'CONTRIBUTOR';
+      } else if (this.canPublishContent()) {
+        return 'REVIEWER';
+      }
+    } else if (this.hasRole('CONTRIBUTOR') && this.resourceStatus === 'Draft') {
+      return 'CONTRIBUTOR';
     } else if ((this.sourcingOrgReviewer || (this.visibility && this.visibility.showPublish))
       && (this.resourceStatus === 'Live' || this.resourceStatus === 'Review')
       && !this.sourcingReviewStatus
       && (this.programContext.target_type === 'searchCriteria' || ((!this.programContext.target_type || this.programContext.target_type === 'collections') && this.selectedOriginUnitStatus === 'Draft'))) {
-      this.editableFields = this.helperService.getEditableFields('REVIEWER', this.formFieldProperties, this.contentMetaData);
-      this.contentEditRole = 'REVIEWER';
+      return 'REVIEWER';
     }
   }
 
@@ -1345,7 +1448,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
           const questionSetCategories = _.get(channeltargetObjectTypeGroup, 'QuestionSet');
           const primaryCategories  = _.map(questionSetCategories, 'name');
-          const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext);
+          const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext, this.programContext.target_type);
           _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
           const option = {
             url: `questionset/v1/create`,
@@ -1364,7 +1467,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                   'author': creator,
                   'programId': this.sessionContext.programId,
                   'collectionId': this.sessionContext.collection,
-                  'unitIdentifiers': [this.unitIdentifier],
+                  ...(this.unitIdentifier && { 'unitIdentifiers': [this.unitIdentifier] }),
                   ...(this.sessionContext.nominationDetails &&
                     this.sessionContext.nominationDetails.organisation_id &&
                     {'organisationId': this.sessionContext.nominationDetails.organisation_id || null}),
@@ -1419,7 +1522,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                   }
                 }
               };
-              this.actionService.patch(this.interceptionData).pipe(map((res: any) => res.result), catchError(err => {
+              this.actionService.patch(this.interceptionData).pipe(map((res: any) => {
+                this.existingContentVersionKey = _.get(res, 'result.versionKey');
+                return res.result;
+              }), catchError(err => {
                   const errInfo = {
                     errorMsg: this.resourceService.messages.emsg.interactive.video.updateInterception,
                     telemetryPageId: this.telemetryPageId,
@@ -1585,7 +1691,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           };
           this.showConfirmationModal = false;
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-      })).subscribe( result => {
+      })).subscribe(( response: any) => {
+        this.existingContentVersionKey = _.get(response, 'versionKey');
         this.showConfirmationModal = false;
         this.toasterService.success(this.resourceService.messages.smsg.interactive.video.delete);
         this.getUploadedContentMeta(this.contentMetaData.identifier);
@@ -1641,6 +1748,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       }))
       .subscribe(result => {
+        this.existingContentVersionKey = _.get(result, 'versionKey');
         console.log(result);
         this.showQuestionSetEditModal = false;
         this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
@@ -1712,16 +1820,17 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.optionalAddTranscript = false;
   }
 
-  public closeTranscriptPopup():void {
+  public closeTranscriptPopup(): void {
     this.readContent(this.contentMetaData.identifier).subscribe(res => {
       this.contentMetaData = res;
+      this.existingContentVersionKey = res.versionKey;
       this.showTranscriptPopup = false;
     });
   }
 
   readContent(identifier): Observable<any> {
     const option = {
-      url: 'content/v3/read/' + identifier
+      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${identifier}`
     };
     return this.actionService.get(option).pipe(map((data: any) => data.result.content), catchError(err => {
       const errInfo = {

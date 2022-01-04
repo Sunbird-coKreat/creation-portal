@@ -396,3 +396,40 @@ export const programDetailsTargetCollection = {
       'Question paper'
   ]
 };
+
+export const contextualHelpConfig = {
+  'sourcing': {
+    'reviewContributions': {
+      'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+      'header': 'This table allow you to see a list of content pending for your review.',
+      'message': 'Click on any unit to proceed with the review process'
+    },
+    'assignUsersToProject': {
+      'url': 'https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-assign-users-with-roles-to-contributor-projects.html',
+      'header': 'This table allows you to see all the users available for this project and assign them relevant roles',
+      'message': 'You can do so by clicking on Select Role next to a particular user and selecting their role from the dropdown.'
+    }
+  },
+  'contribute': {
+    'manageUsers': {
+      'url': 'https://dock.preprod.ntp.net.in/help/contribute/administrator/manage-users/index.html',
+      'header': 'Inviting users will allow you to assign them roles for projects',
+      'message': 'You can invite users to your organization by clicking on Invite Users and sharing an invitation link with them'
+    },
+    'noUsersFound': {
+      'url': 'https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-make-users-part-of-contributor.html',
+      'header': 'Inviting users will allow you to assign them roles for projects',
+      'message': 'You can invite users to your organization by clicking on Invite Users and sharing an invitation link with them'
+    },
+    'allProjectNomations': {
+      'url': 'https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-nominate-for-sourcing-project.html',
+      'header': 'This space allows you to upload your content samples, in order to nominate to this particular project.',
+      'message': ''
+    },
+    'myProjectContribute': {
+      'url': 'https://dock.preprod.ntp.net.in/help/contribute/how-to/how-to-nominate-for-sourcing-project.html',
+      'header': 'This space allows you to see a list of content pending for your contribution in this project',
+      'message': 'Click on any unit to proceed with the contribution process.'
+    }
+  }
+};

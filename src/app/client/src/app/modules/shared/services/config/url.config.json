@@ -93,17 +93,24 @@
       "LOCK_LIST": "lock/v1/list",
       "LOCK_CREATE": "lock/v1/create",
       "LOCK_RETIRE": "lock/v1/retire",
-      "UPDATE": "content/v3/update",
-      "REVIEW": "content/v3/review",
-      "HIERARCHY_ADD": "content/v3/hierarchy/add",
-      "HIERARCHY_REMOVE": "content/v3/hierarchy/remove"
+      "UPDATE": "content/v4/update",
+      "REVIEW": "content/v4/review"
     },
     "COLLECTION": {
-      "HIERARCHY_GET": "collection/v1/hierarchy/"
+      "HIERARCHY_GET": "collection/v1/hierarchy/",
+      "HIERARCHY_GET_NEW": "collection/v4/hierarchy",
+      "HIERARCHY_ADD": "collection/v4/hierarchy/add",
+      "HIERARCHY_REMOVE": "collection/v4/hierarchy/remove"
     },
     "QUESTIONSET" : {
       "GET": "questionset/v1/read",
-      "HIERARCHY_READ": "questionset/v1/hierarchy"
+      "HIERARCHY_READ": "questionset/v1/hierarchy",
+      "HIERARCHY_ADD": "questionset/v1/add",
+      "HIERARCHY_REMOVE": "questionset/v1/remove"
+    },
+    "QUESTION" : {
+      "READ": "question/v1/read",
+      "RETIRE": "question/v1/retire"
     },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",
@@ -271,13 +278,13 @@
       "FEED_SEARCH":"program/v1/feed/search"
     },
     "DOCKCONTENT": {
-      "CREATE": "content/v3/create",
-      "UPLOAD": "content/v3/upload",
-      "PRE_SIGNED_UPLOAD_URL": "content/v3/upload/url",
+      "CREATE": "content/v4/create",
+      "UPLOAD": "content/v4/upload",
+      "PRE_SIGNED_UPLOAD_URL": "content/v4/upload/url",
       "PUBLISH": "content/v3/publish",
-      "GET": "content/v3/read",
-      "RETIRE": "content/v3/retire",
-      "REJECT": "content/v3/reject",
+      "GET": "content/v4/read",
+      "RETIRE": "content/v4/retire",
+      "REJECT": "content/v4/reject",
       "FLAG": "content/v3/flag",
       "PRINT_PREVIEW": "program/v1/print/docx",
       "SEARCH": "composite/v3/search"
@@ -293,7 +300,7 @@
       "READ": "program/v1/process/read",
       "UPDATE": "program/v1/process/update",
       "SEARCH": "program/v1/process/search",
-      "DOCK_IMPORT": "content/v3/import",
+      "DOCK_IMPORT": "content/v4/import",
       "DOCK_IMPORT_V1": "content/v1/import",
       "DOCK_QS_IMPORT_V1": "questionset/v1/import"
     },

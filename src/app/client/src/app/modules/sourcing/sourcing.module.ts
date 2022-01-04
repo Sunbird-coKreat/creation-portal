@@ -40,6 +40,7 @@ import { ResourceLibraryModule } from "@project-sunbird/sunbird-resource-library
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { TranscriptsComponent } from './components/transcripts/transcripts.component';
 import { TranscriptsReviewComponent } from './components/transcripts-review/transcripts-review.component';
+import { AccessibilityInfoComponent } from './components/accessibility-info/accessibility-info.component';
 
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
@@ -49,7 +50,8 @@ import { TranscriptsReviewComponent } from './components/transcripts-review/tran
     ContentUploaderComponent, CollectionComponent,
     ResourceReorderComponent, ContentEditorComponent, MvcLibraryComponent,
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
-    BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent, TranscriptsReviewComponent],
+    BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent, TranscriptsReviewComponent,
+    AccessibilityInfoComponent],
   imports: [
     RouterModule,
     CoreModule,
@@ -79,6 +81,6 @@ import { TranscriptsReviewComponent } from './components/transcripts-review/tran
     { provide: QuestionCursor, useExisting: QumlPlayerService },
     { provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
-  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe]
+  exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent, QuestionSetEditorComponent  ]
 })
 export class SourcingModule { }
