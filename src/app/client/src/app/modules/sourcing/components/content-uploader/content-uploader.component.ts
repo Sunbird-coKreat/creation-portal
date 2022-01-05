@@ -1157,7 +1157,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const processId = _.get(this.contentMetaData, 'processId');
     if (processId) {
       this.bulkJobService.bulkJobProcessRead(processId).subscribe(response => {
-        console.log(_.get(response, 'result.status'), '>>>>>>>>>>>');
         if (_.get(response, 'result.status') === 'completed') {
           this.handleContentPopUpAction(popupAction);
         } else {
