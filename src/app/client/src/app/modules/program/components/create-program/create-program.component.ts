@@ -468,7 +468,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         if(_.isArray(board) && board.length) board = _.first(board);
         return {
           'board': board,
-          'framework': framework
+          'framework': framework,
+          channel: this.userprofile.rootOrgId
         }
       }
     }
