@@ -87,7 +87,7 @@
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >Replace File</button>
-              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="popupAction='requestChanges';showRequestChangesPopup = true;"
+              <button id="requestChanges" suiPopup popupText="{{resourceService.frmelmnts.btn.requestChanges}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showRequestChanges" class="sb-btn sb-btn-error sb-btn-normal mr-8" (click)="checkBulkUploadStatus('requestChanges')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('request_changes', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -95,21 +95,21 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.requestChanges}}
               </button>
-              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.submitForApproval}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="publishContent();"
+              <button id="publishContent" suiPopup popupText="{{resourceService.frmelmnts.btn.submitForApproval}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showPublish" class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="checkBulkUploadStatus('publishContent')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_for_approval', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.submitForApproval}}</button>
-              <button id="submitContent" suiPopup popupText="{{ sessionContext.sampleContent ? resourceService.frmelmnts.btn.submit : resourceService.frmelmnts.btn.submitForReview}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="isIndividualAndNotSample() ? showEditform('publish') : showEditform('review');"
+              <button id="submitContent" suiPopup popupText="{{ sessionContext.sampleContent ? resourceService.frmelmnts.btn.submit : resourceService.frmelmnts.btn.submitForReview}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSubmit" class="sb-btn sb-btn-secondary sb-btn-normal" (click)="checkBulkUploadStatus('submit')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata( sessionContext.sampleContent ? 'submit' : 'submit_for_review', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
                 [telemetryInteractCdata]="telemetryInteractCdata"
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{ sessionContext.sampleContent ? resourceService.frmelmnts.btn.submit : resourceService.frmelmnts.btn.submitForReview }}</button>
-              <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSendForCorrections" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="popupAction='sendForCorrections';showRequestChangesPopup = true"
+              <button id="sendForCorrections" suiPopup popupText="Send back for corrections" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSendForCorrections" class="sb-btn sb-btn-normal sb-btn-outline-primary mr-10" (click)="checkBulkUploadStatus('sendForCorrections')"
                 appTelemetryInteract
                   [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('send_back_for_corrections', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                   [telemetryInteractObject]="telemetryInteractObject"
@@ -119,7 +119,7 @@
               <button id="acceptContent" suiPopup
               popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentAcceptMessage : resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': programContext?.target_collection_category && programContext?.target_collection_category[0]}}"
               [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons"
-              class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="checkBulkUploadStatus('nonCollectionsContentAccept')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -127,7 +127,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.publishToConsume}}</button>
               <button id="rejectContent" class="sb-btn sb-btn-error sb-btn-normal mr-8"
-              suiPopup popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentRejectMessage : resourceService.frmelmnts.lbl.contentRejectMessage | interpolate:'{category}': programContext.target_collection_category && programContext.target_collection_category[0]}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
+              suiPopup popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentRejectMessage : resourceService.frmelmnts.lbl.contentRejectMessage | interpolate:'{category}': programContext.target_collection_category && programContext.target_collection_category[0]}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" (click)="checkBulkUploadStatus('rejectContent')"
               appTelemetryInteract
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"

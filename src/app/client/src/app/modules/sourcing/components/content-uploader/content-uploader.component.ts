@@ -22,6 +22,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { InitialState } from '../../interfaces';
+import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 interface IDynamicInput {
   questionSetEditorComponentInput?: any;
 }
@@ -170,6 +171,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
     private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
+    public bulkJobService: BulkJobService,
     public programComponentsService: ProgramComponentsService) {
       this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
       ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
@@ -1151,7 +1153,46 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
   }
-
+  checkBulkUploadStatus(popupAction) {
+    const processId = _.get(this.contentMetaData, 'processId');
+    if (processId) {
+      this.bulkJobService.bulkJobProcessRead(processId).subscribe(response => {
+        console.log(_.get(response, 'result.status'), '>>>>>>>>>>>');
+        if (_.get(response, 'result.status') === 'completed') {
+          this.handleContentPopUpAction(popupAction);
+        } else {
+          this.toasterService.error(this.resourceService.messages.emsg.bulkUploadInProgress);
+        }
+      });
+    } else {
+      this.handleContentPopUpAction(popupAction);
+    }
+  }
+  handleContentPopUpAction(popupAction) {
+    switch (popupAction) {
+      case 'submit':
+        this.isIndividualAndNotSample() ? this.showEditform('publish') : this.showEditform('review');
+        break;
+      case 'publishContent':
+        this.publishContent();
+        break;
+      case 'nonCollectionsContentAccept':
+        this.attachContentToTextbook('accept');
+        break;
+      case 'requestChanges':
+        this.popupAction = 'requestChanges';
+        this.showRequestChangesPopup = true;
+        break;
+      case 'sendForCorrections':
+        this.popupAction = 'sendForCorrections';
+        this.showRequestChangesPopup = true;
+        break;
+      case 'rejectContent':
+        this.popupAction = 'rejectContent';
+        this.showRequestChangesPopup = true;
+        break;
+    }
+  }
   requestCorrectionsBySourcing() {
     if (this.FormControl.value.rejectComment) {
       this.helperService.updateContentStatus(this.contentMetaData.identifier, 'Draft', this.FormControl.value.rejectComment)
