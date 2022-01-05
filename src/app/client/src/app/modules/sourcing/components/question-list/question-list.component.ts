@@ -1470,13 +1470,13 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const contentAccessibility = _.get(this.resourceDetails, 'accessibility', []);
+     const role = this.getRole();
     _.forEach(this.accessibilityFormFields, field => {
       if (_.findIndex(contentAccessibility, _.pick(field, ['need', 'feature'])) !== -1 ) {
         field['isSelected'] = true;
       } else {
         field['isSelected'] = false;
       }
-      const role = this.getRole();
       if (role === 'CONTRIBUTOR') {
         field['editable'] = true;
       } else if (role === 'REVIEWER') {
@@ -1487,6 +1487,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     this.accessibilityInput = {
       accessibilityFormFields: this.accessibilityFormFields,
+      role,
       contentMetaData: {...this.resourceDetails, versionKey: this.existingContentVersionKey},
       selectedAccessibility: contentAccessibility,
       contentId: this.sessionContext.resourceIdentifier,

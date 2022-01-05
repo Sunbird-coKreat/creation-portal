@@ -40,7 +40,7 @@
                     [telemetryInteractPdata]="telemetryInteractPdata">
                         {{resourceService.frmelmnts.lbl.contributionDashboard}}
                     </a>
-                    <a class="item" *ngIf="!programDetails?.target_type ||  programDetails?.target_type === 'collections'" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
+                    <a class="item" *ngIf="!programDetails?.target_type ||  (programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')" [isActive]="activeTab === 'report'" suiTabHeader="5" (click)="resetStatusFilter('report')"
                     appTelemetryInteract
                     [telemetryInteractEdata]="getTelemetryInteractEdata('reports', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch,config.telemetryLabels.pageId.sourcing.projectReports)"
                     [telemetryInteractObject]="telemetryInteractObject"
@@ -63,17 +63,24 @@
             </div>
             <div class="ui segment  p-0 m-0 mt-4 sb-bg-color-white dynamicHeight"  suiTabContent="1">
                 <div class="ui container p-0 m-0">
-                    <div class="pt-24 text-capitalize fs-0-785 line-height-1-3">
-                        <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ totalNominations || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
-                        <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Approved || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
-                        <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Rejected|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
-                        <div class="sb-color-primary d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ statusCount.Pending || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
-                        <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" *ngIf="!isEmptyObject(programDetails) && this.totalNominations > 0" (click)="downloadNominationList()"
-                            appTelemetryInteract
-                            [telemetryInteractEdata]="getTelemetryInteractEdata('download_nominations_list', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
-                            [telemetryInteractObject]="telemetryInteractObject"
-                            [telemetryInteractCdata]="telemetryInteractCdata"
-                            [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{ resourceService?.frmelmnts?.btn?.downloadNominationsList }}</button>
+                    <div class="pt-24 text-capitalize fs-0-785 d-flex flex-jc-space-between flex-ai-center">
+                        <div class="text-left line-height-1-3">
+                            <div class="sb-color-gray-400 d-inline-block br-2 pr-10"><span class="fs-1-286 font-weight-bold">{{ totalNominations || 0}}</span> {{resourceService.frmelmnts.lbl.total}}</div>
+                            <div class="sb-color-success d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Approved || 0}}</span> {{resourceService.frmelmnts.lbl.approved}}</div>
+                            <div class="sb-color-error d-inline-block br-2 px-10"><span class="fs-1-286 font-weight-bold">{{statusCount.Rejected|| 0}}</span> {{resourceService.frmelmnts.lbl.rejected}}</div>
+                            <div class="sb-color-primary d-inline-block px-10"><span class="fs-1-286 font-weight-bold">{{ statusCount.Pending || 0}}</span> {{resourceService.frmelmnts.lbl.pending}}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="d-flex flex-ai-center">
+                                <app-page-help *ngIf="reviewNominationsHelpConfig" [helpSectionConfig]="reviewNominationsHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
+                                <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" *ngIf="!isEmptyObject(programDetails) && this.totalNominations > 0" (click)="downloadNominationList()"
+                                    appTelemetryInteract
+                                    [telemetryInteractEdata]="getTelemetryInteractEdata('download_nominations_list', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                                    [telemetryInteractObject]="telemetryInteractObject"
+                                    [telemetryInteractCdata]="telemetryInteractCdata"
+                                    [telemetryInteractPdata]="telemetryInteractPdata"> <i class="download icon"></i> {{ resourceService?.frmelmnts?.btn?.downloadNominationsList }}</button>
+                            </div>
+                        </div>
                     </div>
                     <hr class="mt-20 mb-10">
                     <div class="pt-10 text-capitalize fs-0-785 line-height-1-3 sb-color-gray-400 d-flex">
@@ -532,7 +539,7 @@
                     <app-no-result [data]="{ messageText: 'resourceService.messages.stmsg.m0146'}"></app-no-result>
                 </div>
             </div>
-            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5" *ngIf="!programDetails?.target_type ||  programDetails?.target_type === 'collections'">
+            <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="5" *ngIf="!programDetails?.target_type ||  (programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')">
                 <div class="ui container pt-24 m-0">
                     <div class="sb-table-responsive">
                         <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">

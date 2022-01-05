@@ -75,6 +75,7 @@ module.exports = function (app) {
     [
       "/action/questionset/v1/read/*",
       "/action/question/v1/read/*",
+      '/action/question/v1/retire/*',
       "/action/questionset/v1/hierarchy/*",
       "/action/questionset/v1/retire/*",
     ],
@@ -103,6 +104,7 @@ module.exports = function (app) {
       "/action/question/v1/review/*",
       "/action/question/v1/publish/*",
       "/action/questionset/v1/reject/*",
+      '/action/question/v1/reject/*',
     ],
     proxy(contentURL, {
       limit: reqDataLimitOfContentUpload,
@@ -120,6 +122,8 @@ module.exports = function (app) {
       "/action/questionset/v1/update/*",
       "/action/questionset/v1/add/*",
       "/action/question/v1/update/*",
+      '/action/questionset/v1/add',
+      '/action/questionset/v1/remove',
     ],
     proxyUtils.verifyToken(),
     proxy(contentURL, {

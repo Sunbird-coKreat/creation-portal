@@ -55,9 +55,7 @@
   --primary-200: #80a7ce; // divider
   --primary-250: #d3e7f4; //pagination bg color
   --primary-300: #7ab4ee; // outline, focus fields
-  --primary-400: var(
-    --primary-color
-  ); // button bg, heading, table titles, links, toggles
+  --primary-400: var(--primary-color); // button bg, heading, table titles, links, toggles
   --primary-600: #005391; // on press
   --primary-800: #002e50; // hover
 
@@ -88,6 +86,9 @@
   --icon-svg-md: calc(var(--base-block-space) * 4);
   --icon-svg-lg: calc(var(--base-block-space) * 5);
   --icon-svg-xl: calc(var(--base-block-space) * 6);
+
+  --rc-rgba-black: 0, 0, 0; // var(--black)
+  --primary-theme: var(--primary-color);
 }
 
 // Variables
@@ -246,7 +247,7 @@ $sb-modal-header-fsize: $h5-font-size;
 $sb-modal-small-width: 480px;
 $sb-modal-normal-width: 720px;
 $sb-modal-large-width: 900px;
-$sb-modal-corner-radius: $base-block-space; 
+$sb-modal-corner-radius: $base-block-space;
 $sb-modal-corner-radius: 8px;
 //button component
 

@@ -622,6 +622,9 @@
     },
     "rejectedContributionComments": {
       "type": "object"
+    },
+    "printable": {
+      "type": "boolean"
     }
   }
 }

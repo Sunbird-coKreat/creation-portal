@@ -15,6 +15,7 @@ import { DatePipe } from '@angular/common';
 import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { collection } from '../list-contributor-textbooks/data';
 
 @Component({
   selector: 'app-program-nominations',
@@ -105,6 +106,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public showBulkApprovalButton: Boolean = false;
   public assignUsersHelpConfig: any;
   public noUsersFoundHelpConfig: any;
+  public reviewNominationsHelpConfig: any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -177,6 +179,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       }
       if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
         this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewNominations')) {
+        this.reviewNominationsHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewNominations');
       }
     }
   }
@@ -466,11 +471,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getProgramCollection (preferencefilters?) {
-    if (!this.programDetails.target_type || this.programDetails.target_type === 'collections') {
-      return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters).pipe(
+    if (!this.programDetails.target_type || _.includes(['collections', 'questionSets'], this.programDetails.target_type)) {
+      return this.collectionHierarchyService.getCollectionWithProgramId(this.programId, this.programDetails.target_collection_category, preferencefilters, true, this.programDetails.target_type).pipe(
         tap((response: any) => {
           if (response && response.result) {
-            this.programCollections = response.result.content || [];
+            let objectType = 'content';
+            if(this.programDetails.target_type === 'questionSets') objectType = 'QuestionSet';
+            this.programCollections = response.result[objectType] || [];
           }
         }),
         catchError(err => {
@@ -688,10 +695,11 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   }
 
   getCollectionCategoryDefinition() {
-    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId && (!this.programDetails.target_type || this.programDetails.target_type === 'collections')) {
+    if (this.programDetails.target_collection_category && this.userProfile.rootOrgId && (!this.programDetails.target_type || _.includes(['collections','questionSets'], this.programDetails.target_type))) {
       // tslint:disable-next-line:max-line-length
+      let objectType = _.get(this.programDetails, 'target_type') === 'questionSets' ? 'QuestionSet' : 'Collection';
       this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0],
-        this.userProfile.rootOrgId, 'Collection').subscribe(res => {
+        this.userProfile.rootOrgId, objectType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
@@ -759,6 +767,13 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     }, _.isUndefined);
   }
 
+  getCollectionsAddedToProgram() {
+    let collectionsAddedToProgram = _.filter(this.programCollections,
+      (collection) => _.indexOf(this.programDetails.collection_ids, collection.identifier) !== -1
+    )
+    return collectionsAddedToProgram || [];
+  }
+
   checkActiveTab() {
     this.activatedRoute.queryParamMap
       .subscribe(params => {
@@ -778,6 +793,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
             }
             this.getProgramCollection(preffilter).subscribe((res) => {
               this.showTextbookLoader  =  false;
+              if (_.get(this.programDetails, 'target_type') === 'questionSets') {
+                this.programCollections = this.getCollectionsAddedToProgram();
+              }
               this.logTelemetryImpressionEvent(this.programCollections, 'identifier', 'collection');
             }, (err) => { // TODO: navigate to program list page
               this.showTextbookLoader  =  false;
