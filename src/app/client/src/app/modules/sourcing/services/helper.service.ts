@@ -947,7 +947,7 @@ export class HelperService {
 
   getContextObj(context, selectedSharedContext, programTargetType?) {
     if (context === 'topic' || (!_.isUndefined(programTargetType) && programTargetType && programTargetType === 'searchCriteria' || programTargetType === 'questionSets')) { // Here topic is fetched from unitLevel meta
-      const fieldMustbeString = ['framework', 'board'];
+      const fieldMustbeString = ['framework', 'board', 'channel'];
       // These fields are required to be strings in the create request object
       if (programTargetType === 'questionSets') {
         if(_.includes(fieldMustbeString, context)) {

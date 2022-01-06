@@ -247,6 +247,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
+    if (this.projectTargetType === 'questionSets') {
+      this.displayPrintPreview = true;
+    }
     this.printUrl = this.programsService.getCollectionDocxUrl();
     this.setContextualHelpConfig();
   }
