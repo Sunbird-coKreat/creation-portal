@@ -245,8 +245,8 @@ export class CollectionHierarchyService {
       }
       let allAcceptedContentIds, allRejectedContentIds = [];
       if (this._programDetails && this._programDetails.target_type === 'searchCriteria') {
-        allAcceptedContentIds = _.uniq(this._programDetails.config.acceptedContents);
-        allRejectedContentIds = _.uniq(this._programDetails.config.rejectedContents);
+        allAcceptedContentIds = _.uniq(this._programDetails.acceptedcontents);
+        allRejectedContentIds = _.uniq(this._programDetails.rejectedcontents);
       } else if(this._programDetails && this._programDetails.target_type === 'questionSets') {
         allAcceptedContentIds = _.flatten(_.map(collections, 'acceptedContributions'));
         allRejectedContentIds = _.flatten(_.map(collections, 'rejectedContributions'));
