@@ -159,6 +159,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public modifyAccessibilityInfoByReviewer = false;
   public accessibilityInput: any;
   public publicStorageAccount: any;
+  public disableContentActions =  false;
+  public ischeckBulkUploadStatus = true;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -828,6 +830,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      if (this.ischeckBulkUploadStatus && _.get(this.contentMetaData, 'processId')) {
+        this.checkBulkUploadStatus();
+      } else {
+        this.disableContentActions = true;
+      }
       this.existingContentVersionKey = res.versionKey;
       if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
         this.videoFileFormat = true;
@@ -907,7 +914,27 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
     });
   }
-
+  checkBulkUploadStatus() {
+    const processId = _.get(this.contentMetaData, 'processId');
+    if (processId) {
+      this.bulkJobService.bulkJobProcessRead(processId).subscribe(response => {
+        if (_.get(response, 'result.status') === 'completed') {
+          this.disableContentActions = true;
+        } else {
+          this.toasterService.error(this.resourceService.messages.emsg.bulkUploadInProgress);
+        }
+      }, (err: any) => {
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m0051,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata: this.telemetryInteractCdata,
+          env: this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+      });
+    }
+    this.ischeckBulkUploadStatus = false;
+  }
   public closeUploadModal() {
     this.optionalAddTranscript = false;
     this.loading = false;
@@ -1153,45 +1180,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
   }
-  checkBulkUploadStatus(popupAction) {
-    const processId = _.get(this.contentMetaData, 'processId');
-    if (processId) {
-      this.bulkJobService.bulkJobProcessRead(processId).subscribe(response => {
-        if (_.get(response, 'result.status') === 'completed') {
-          this.handleContentPopUpAction(popupAction);
-        } else {
-          this.toasterService.error(this.resourceService.messages.emsg.bulkUploadInProgress);
-        }
-      });
-    } else {
-      this.handleContentPopUpAction(popupAction);
-    }
-  }
-  handleContentPopUpAction(popupAction) {
-    switch (popupAction) {
-      case 'submit':
-        this.isIndividualAndNotSample() ? this.showEditform('publish') : this.showEditform('review');
-        break;
-      case 'publishContent':
-        this.publishContent();
-        break;
-      case 'nonCollectionsContentAccept':
-        this.attachContentToTextbook('accept');
-        break;
-      case 'requestChanges':
-        this.popupAction = 'requestChanges';
-        this.showRequestChangesPopup = true;
-        break;
-      case 'sendForCorrections':
-        this.popupAction = 'sendForCorrections';
-        this.showRequestChangesPopup = true;
-        break;
-      case 'rejectContent':
-        this.popupAction = 'rejectContent';
-        this.showRequestChangesPopup = true;
-        break;
-    }
-  }
+
   requestCorrectionsBySourcing() {
     if (this.FormControl.value.rejectComment) {
       this.helperService.updateContentStatus(this.contentMetaData.identifier, 'Draft', this.FormControl.value.rejectComment)
