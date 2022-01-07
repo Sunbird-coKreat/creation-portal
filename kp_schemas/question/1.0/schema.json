@@ -518,7 +518,13 @@
       "enum": [
         "Knowledge",
         "Understanding",
-        "Application"
+        "Application",
+        "remember",
+        "understand",
+        "apply",
+        "analyse",
+        "evaluate",
+        "create"
       ]
     },
     "feedback": {
