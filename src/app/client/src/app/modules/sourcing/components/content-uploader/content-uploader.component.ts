@@ -159,7 +159,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public modifyAccessibilityInfoByReviewer = false;
   public accessibilityInput: any;
   public publicStorageAccount: any;
-  public disableContentActions =  false;
+  public enableContentActions =  false;
   public ischeckBulkUploadStatus = true;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
@@ -833,7 +833,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       if (this.ischeckBulkUploadStatus && _.get(this.contentMetaData, 'processId')) {
         this.checkBulkUploadStatus();
       } else {
-        this.disableContentActions = true;
+        this.enableContentActions = true;
       }
       this.existingContentVersionKey = res.versionKey;
       if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
@@ -919,7 +919,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     if (processId) {
       this.bulkJobService.bulkJobProcessRead(processId).subscribe(response => {
         if (_.get(response, 'result.status') === 'completed') {
-          this.disableContentActions = true;
+          this.enableContentActions = true;
         } else {
           this.toasterService.error(this.resourceService.messages.emsg.bulkUploadInProgress);
         }
