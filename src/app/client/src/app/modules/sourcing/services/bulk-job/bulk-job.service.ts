@@ -109,7 +109,12 @@ export class BulkJobService {
     };
     return this.programsService.patch(req);
   }
-
+  bulkJobProcessRead(processId): Observable<ServerResponse> {
+    const req = {
+      url: `${this.configService.urlConFig.URLS.BULKJOB.READ}/${processId}`,
+    };
+    return this.programsService.get(req);
+  }
   createBulkImport(reqData): Observable<ServerResponse> {
     const req = {
       url: `${this.configService.urlConFig.URLS.BULKJOB.DOCK_IMPORT}`,
