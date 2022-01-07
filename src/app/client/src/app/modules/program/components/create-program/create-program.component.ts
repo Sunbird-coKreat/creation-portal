@@ -1210,9 +1210,11 @@ showTexbooklist() {
 
     return this.programsService.getCollectionList(requestData, this.projectTargetType).subscribe(
       (res) => {
-        if (res.result.count) {
+        if (this.projectTargetType === 'questionSets' || res.result.count) {
           this.collections = res.result.content;
-          if(this.projectTargetType === 'questionSets') this.collections = res.result.QuestionSet;
+          if(this.projectTargetType === 'questionSets') {
+            this.collections = _.get(res.result, 'QuestionSet', []);
+          }
           this.showProgramScope = true;
           this.tempSortCollections = this.collections;
           if (!this.filterApplied) {
