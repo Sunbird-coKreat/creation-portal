@@ -363,6 +363,7 @@ module.exports = function (app) {
       "/action/itemset/v3/review/*",
       "/action/itemset/v3/retire/*",
       "/action/questionset/v4/system/update/*",
+      "/action/question/v4/system/update/*",
     ],
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_assessment_service_base_url, {

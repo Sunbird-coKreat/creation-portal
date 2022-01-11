@@ -81,7 +81,7 @@
                   </div>
                 </div>
               </div>
-              <div class="twelve wide column sb-field-group pt-0">
+              <div class="ui grid sb-field-group pt-0">
                 <div class="sb-field-group mb-8">
                   <label
                     class="fs-0-92">{{resource?.frmelmnts?.lbl?.howToGetContributionsToThisProject}}</label>
@@ -101,7 +101,7 @@
                                [telemetryInteractObject]="telemetryInteractObject"
                                [telemetryInteractCdata]="telemetryInteractCdata"
                                [telemetryInteractPdata]="telemetryInteractPdata"/>
-                        <label for="type_private">{{resource?.frmelmnts?.lbl?.contributionFromYourOrgOnly}}</label>
+                        <label for="type_private">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
                       </div>
                       <span *ngIf="createProgramForm.controls['type'].value === 'restricted'"
                             class="fs-0-785 pl-20 cursor-pointer"
@@ -847,7 +847,7 @@
 	</form>
 </sui-modal>
 
-<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal blueprint-modal" appBodyScroll (dismissed)="this.editBlueprintFlag = false" #blueprintModal>
+<sui-modal *ngIf="editBlueprintFlag" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'" class="sb-modal blueprint-modal" appBodyScroll (dismissed)="dismissedBluePrintModal()" #blueprintModal>
 	<div class="sb-modal-header">
 		{{resource?.frmelmnts?.lbl?.editBlueprint}}
 	</div>
@@ -865,6 +865,7 @@
 								[options]="property.options ? property.options : []"
 								[(ngModel)]="localBlueprint[property.code]"
 								labelField="name"
+                valueField="identifier"
 								>
 								<sui-select-option *ngFor="let option of multiselect.filteredOptions" [value]="option" ></sui-select-option>
 							</sui-multi-select>

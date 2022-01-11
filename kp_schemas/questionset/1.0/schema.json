@@ -625,6 +625,10 @@
     },
     "printable": {
       "type": "boolean"
+    },
+    "outcomeDeclaration": {
+      "type": "object",
+      "description": "External Property"
     }
   }
 }

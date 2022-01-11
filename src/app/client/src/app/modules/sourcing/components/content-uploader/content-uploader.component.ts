@@ -22,6 +22,7 @@ import { CacheService } from 'ng2-cache-service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { InitialState } from '../../interfaces';
+import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 interface IDynamicInput {
   questionSetEditorComponentInput?: any;
 }
@@ -158,6 +159,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public modifyAccessibilityInfoByReviewer = false;
   public accessibilityInput: any;
   public publicStorageAccount: any;
+  public enableContentActions =  false;
+  public ischeckBulkUploadStatus = true;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -170,6 +173,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
     private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
+    public bulkJobService: BulkJobService,
     public programComponentsService: ProgramComponentsService) {
       this.baseUrl = (<HTMLInputElement>document.getElementById('baseUrl'))
       ? (<HTMLInputElement>document.getElementById('baseUrl')).value : document.location.origin;
@@ -826,6 +830,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
+      if (this.ischeckBulkUploadStatus && _.get(this.contentMetaData, 'processId')) {
+        this.checkBulkUploadStatus();
+      } else {
+        this.enableContentActions = true;
+      }
       this.existingContentVersionKey = res.versionKey;
       if (_.includes(this.contentMetaData.mimeType.toString(), 'video')) {
         this.videoFileFormat = true;
@@ -905,7 +914,27 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
     });
   }
-
+  checkBulkUploadStatus() {
+    const processId = _.get(this.contentMetaData, 'processId');
+    if (processId) {
+      this.bulkJobService.bulkJobProcessRead(processId).subscribe(response => {
+        if (_.get(response, 'result.status') === 'completed') {
+          this.enableContentActions = true;
+        } else {
+          this.toasterService.error(this.resourceService.messages.emsg.bulkUploadInProgress);
+        }
+      }, (err: any) => {
+        const errInfo = {
+          errorMsg: this.resourceService.messages.fmsg.m0051,
+          telemetryPageId: this.telemetryPageId,
+          telemetryCdata: this.telemetryInteractCdata,
+          env: this.activeRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(err, errInfo);
+      });
+    }
+    this.ischeckBulkUploadStatus = false;
+  }
   public closeUploadModal() {
     this.optionalAddTranscript = false;
     this.loading = false;
