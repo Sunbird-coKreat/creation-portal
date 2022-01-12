@@ -36,7 +36,7 @@
     "USER": {
       "SIGNUP": "user/v1/create",
       "TNC_ACCEPT": "user/v1/tnc/accept",
-      "UPDATE_USER_PROFILE": "user/v1/update",
+      "UPDATE_USER_PROFILE": "user/v3/update",
       "GET_PROFILE": "user/v2/read/",
       "TENANT_LOGO": "get/tenant/logo",
       "SKILLS": "data/v1/skills",
