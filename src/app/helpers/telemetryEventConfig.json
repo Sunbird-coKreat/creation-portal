@@ -38,6 +38,13 @@
       "message": "Calling org search",
       "env": "org"
     },
+    "org/v2/search": {
+      "title": "Org search",
+      "category": "orgsearch",
+      "url": "org/v2/search",
+      "message": "Calling org search",
+      "env": "org"
+    },
     "test": {
       "title": "echo test",
       "category": "test",

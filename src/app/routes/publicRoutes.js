@@ -43,7 +43,7 @@ module.exports = function (app) {
         })
     )
 
-    app.post(['/api/org/v1/search'],
+    app.post(['/api/org/v1/search', '/api/org/v2/search'],
         isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
         proxy(learnerURL, {
@@ -58,9 +58,9 @@ module.exports = function (app) {
             return require('url').parse(learnerURL + urlParam).path
             }
         },
-        userResDecorator: function (proxyRes, proxyResData,  req, res) {
+        userResDecorator: function (proxyRes, proxyResData, req, res) {
             try {
-            logger.info({msg: '/api/org/v1/search'});
+            logger.info({msg: '/api/org/v2/search'});
             const data = JSON.parse(proxyResData.toString('utf8'));
             if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
             else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);

@@ -438,6 +438,9 @@ const API_LIST = {
     '/api/org/v1/search': {
       checksNeeded: []
     },
+    '/api/org/v2/search': {
+      checksNeeded: []
+    },
     '/learner/user/v2/read/:userId': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
