@@ -244,6 +244,7 @@ describe('ProgramNominationsComponent', () => {
 
   it('#sortCollection() should set nominations value', () => {
     component.direction = 'desc';
+    component.nominations = [];
     spyOn(programsService, 'sortCollection').and.returnValue({});
     spyOn(component, 'sortCollection').and.callThrough();
     component.sortCollection('name');
