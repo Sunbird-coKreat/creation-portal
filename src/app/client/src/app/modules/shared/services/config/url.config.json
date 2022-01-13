@@ -143,7 +143,7 @@
       "REMOVE_USERS": "course/v1/batch/user/remove"
     },
     "ADMIN": {
-      "USER_SEARCH": "user/v1/search",
+      "USER_SEARCH": "user/v3/search",
       "ORG_SEARCH": "org/v2/search",
       "BULK": {
         "USERS_UPLOAD": "user/v2/upload",

@@ -428,6 +428,15 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
+    '/action/user/v3/search': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
+      ]
+    },
     '/content/program/v1/print/docx': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -472,6 +481,15 @@ const API_LIST = {
       ]
     },
     '/learner/user/v1/search': { /* Todo */
+      checksNeeded: []
+      // checksNeeded: ['ROLE_CHECK'],
+      // ROLE_CHECK: [
+      //   ROLE.ORG_ADMIN,
+      //   ROLE.SOURCING_REVIEWER,
+      //   ROLE.CONTRIBUTE_ORG_ADMIN
+      // ]
+    },
+    '/learner/user/v3/search': { /* Todo */
       checksNeeded: []
       // checksNeeded: ['ROLE_CHECK'],
       // ROLE_CHECK: [

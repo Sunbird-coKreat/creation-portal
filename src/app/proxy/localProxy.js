@@ -62,6 +62,7 @@ var learnerServiceApi = {
   'course/v1/batch/read': 'v1/course/batch/read',
   'course/v1/batch/list': 'v1/course/batch/search',
   'user/v1/search': 'v1/user/search',
+  'user/v3/search': 'v3/user/search',
   'org/v1/search': 'v1/org/search',
   'org/v2/search': 'v2/org/search',
   'user/v1/upload': 'v1/user/upload',
