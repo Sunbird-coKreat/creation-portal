@@ -507,6 +507,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/learner/user/v2/signup': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/learner/user/v1/password/reset': {
       checksNeeded: []
     },
