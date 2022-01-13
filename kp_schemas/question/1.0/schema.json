@@ -48,14 +48,17 @@
     "copyright": {
       "type": "string"
     },
-	"processId": {
-		"type": "string"
-    },
-	"questionFileRefId": {
-		"type": "string"
-    },
-	"questionUploadStatus": {
+    "programId": {
         "type": "string"
+    },
+  	"processId": {
+  		"type": "string"
+    },
+  	"questionFileRefId": {
+  		"type": "string"
+    },
+  	"questionUploadStatus": {
+          "type": "string"
     },
     "license": {
       "type": "string",

@@ -381,3 +381,11 @@
 .addQuestionSet{
   width:100%;
 }
+.disableClick{
+  pointer-events: none;
+  color: gray !important;
+  .icon, a {
+    color: gray !important;
+    pointer-events: none;
+  }
+}
