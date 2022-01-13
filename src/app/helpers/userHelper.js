@@ -72,7 +72,7 @@ module.exports = {
   getUserDetails: async function (userId, userToken) {
     const options = {
       method: 'GET',
-      url: learnerURL + 'user/v1/read/' + userId,
+      url: learnerURL + 'user/v5/read/' + userId,
       headers: {
         'x-msgid': uuidv1(),
         'content-type': 'application/json',

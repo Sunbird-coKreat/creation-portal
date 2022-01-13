@@ -456,6 +456,12 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
+    '/learner/user/v5/read/:userId': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
     '/learner/data/v1/role/read': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -925,6 +931,7 @@ const API_LIST = {
     '/content/program/v1/process/read/:process_id',
     '/action/content/v3/unlisted/publish/:contentId',
     '/learner/user/v2/read/:userId',
+    '/learner/user/v5/read/:userId',
     '/learner/framework/v1/read/:frameworkId',
     '/learner/channel/v1/read/:channelId',
     '/action/content/v3/update/:do_id',

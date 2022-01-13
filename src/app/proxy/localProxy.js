@@ -39,6 +39,7 @@ var learnerServiceApi = {
   'user/v1/update': 'v1/user/update',
   'user/v3/update': 'v3/user/update',
   'user/v1/read': 'v1/user/read',
+  'user/v5/read': 'v5/user/read',
   'course/v1/content/state/read': 'v1/content/state/read',
   'course/v1/content/state/update': 'v1/content/state/update',
   'course/v1/user/enrollment/list': 'v1/user/courses/list',

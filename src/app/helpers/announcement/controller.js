@@ -203,10 +203,10 @@ class AnnouncementController {
                 })
         })
     }
-    
+
     /**
      * To send an announcement notification
-     * @param  Object annoucement - Request object 
+     * @param  Object annoucement - Request object
      */
     __notify(requestObj) {
         try {
@@ -272,7 +272,7 @@ class AnnouncementController {
                                 reject(this.customError(err))
                             })
 
-            resolve(announcement) 
+            resolve(announcement)
         })
     }
 
@@ -332,7 +332,7 @@ class AnnouncementController {
             if (manageObj) {
                 queryParams = _.pick(queryParams, ['rootorgid'])
             }
-            
+
 
             let queryObj = {
                 query: queryParams,
@@ -351,7 +351,7 @@ class AnnouncementController {
                         }
 
                         let transformedData = this.__transformResponse(data.data.content, transformationMap)
-                        
+
                         resolve(transformedData)
                     } else {
                         resolve()
@@ -570,11 +570,11 @@ class AnnouncementController {
         })
     }
 
-    
+
 
     /**
-     * Get received and read status of given announcements 
-     * @param  Array announcementIds 
+     * Get received and read status of given announcements
+     * @param  Array announcementIds
      * @param  String userId
      * @return Object
      */
@@ -673,7 +673,7 @@ class AnnouncementController {
             let announcements = _.map(outboxData.announcements, this.__addMetricsPlaceholder)
 
             //Get read and received status and append to response
-            
+
             let metricsData = await (this.__getOutboxMetrics(announcementIds, requestObj.reqID))
 
             if (metricsData) {
@@ -682,14 +682,14 @@ class AnnouncementController {
                         "id": metricsObj.announcementid
                     })
 
-                    announcementObj.metrics[metricsActivityConstant.RECEIVED] = 
-                        metricsObj[metricsActivityConstant.RECEIVED] ? 
+                    announcementObj.metrics[metricsActivityConstant.RECEIVED] =
+                        metricsObj[metricsActivityConstant.RECEIVED] ?
                         metricsObj[metricsActivityConstant.RECEIVED] : 0
 
-                    announcementObj.metrics[metricsActivityConstant.READ] = 
-                        metricsObj[metricsActivityConstant.READ] ? 
+                    announcementObj.metrics[metricsActivityConstant.READ] =
+                        metricsObj[metricsActivityConstant.READ] ?
                         metricsObj[metricsActivityConstant.READ] : 0
-                    
+
                 })
             }
 
@@ -802,7 +802,7 @@ class AnnouncementController {
                     let response = {}
                     response[metricsActivityConstant.RECEIVED] = metricsData.data
                     return response
-                    
+
                 }
             } catch (error) {
                 throw this.customError(error)
@@ -975,7 +975,7 @@ class AnnouncementController {
                                                 reject(this.customError(err))
                                             })
 
-                            resolve(announcement) 
+                            resolve(announcement)
                         })
                     } else {
                         throw {
@@ -1136,12 +1136,12 @@ class AnnouncementController {
 
             if (tokenDetails) {
                 return tokenDetails.userId
-            } 
+            }
 
             return false
         })
     }
-                
+
     /**
      * To get a user's profile data
      * @param  String authUserToken User's access token
@@ -1152,15 +1152,15 @@ class AnnouncementController {
             try {
                 let tokenDetails = await(this.__getTokenDetails(authUserToken))
                 if (!tokenDetails) {
-                    throw {message: 'Unauthorized User!', status: HttpStatus.UNAUTHORIZED,isCustom:true } 
+                    throw {message: 'Unauthorized User!', status: HttpStatus.UNAUTHORIZED,isCustom:true }
                 }
                 let options = {
                     method: 'GET',
-                    uri: envVariables.DATASERVICE_URL + 'user/v1/read/' + tokenDetails.userId,
+                    uri: envVariables.DATASERVICE_URL + 'user/v5/read/' + tokenDetails.userId,
                     headers: this.httpService.getRequestHeader(authUserToken)
                 }
                 telemetry.addObjectData(reqID, telemetry.getObjectData(tokenDetails.userId, 'user'))
-                // telemetry.generateApiCallLogEvent(reqID, options, 'user/v1/read/')
+                // telemetry.generateApiCallLogEvent(reqID, options, 'user/v5/read/')
                 this.httpService.call(options).then((data) => {
                         data.body = JSON.parse(data.body)
                         resolve(_.get(data, 'body.result.response'))
@@ -1213,7 +1213,7 @@ class AnnouncementController {
                 }
 
                 var newAnnouncementTypeObj = await (this.__saveAnnouncementType(requestObj.body.request))
-                
+
                 return {
                     announcementType: newAnnouncementTypeObj.data
                 }
@@ -1264,7 +1264,7 @@ class AnnouncementController {
     }
 
     /**
-     * List all the announcement types for the given root org. 
+     * List all the announcement types for the given root org.
      * @param  Object requestObj Request object
      * @return Object            Response object
      */
@@ -1339,7 +1339,7 @@ class AnnouncementController {
                     .catch((error) => {
                         reject(this.customError(error))
                     })
-                
+
             })
         })
     }
@@ -1401,7 +1401,7 @@ class AnnouncementController {
 
     /**
      * Which is used to create a custom error object
-     * @param  {Object} error  - Error object it should contain message and status attribute 
+     * @param  {Object} error  - Error object it should contain message and status attribute
      *                           For example error = {message:'Invalid request object', status:'400'}
      * @return {Object}        - Error object
      */

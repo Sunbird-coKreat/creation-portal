@@ -24,6 +24,13 @@
       "message": "Calling get user profile",
       "env": "user"
     },
+    "user/v5/read": {
+      "title": "Read user profile",
+      "category": "userread",
+      "url": "user/v5/read",
+      "message": "Calling get user profile",
+      "env": "user"
+    },
     "user/v1/update/logintime": {
       "title": "Update user login time",
       "category": "logintimeupdate",
