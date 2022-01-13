@@ -21,6 +21,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   @Output() templateSelection = new EventEmitter<any>();
   showButton = false;
   showInteractiveQuestionTypes = true;
+  showCuriosityQuestion = true;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
@@ -99,7 +100,10 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
           this.selectedtemplateDetails["modeOfCreation"] = modeOfCreation[0];
           if (this.selectedtemplateDetails["modeOfCreation"] === 'question') {
             const temp = _.find(editorTypes, {'type': 'question'});
-            this.showInteractiveQuestionTypes = (temp.mimetype !== 'application/vnd.sunbird.question');
+            if (temp.mimetype === 'application/vnd.sunbird.question') {
+              this.showCuriosityQuestion = false;
+              this.showInteractiveQuestionTypes = false;
+            }
             this.showModeofCreationModal = false;
             this.showQuestionTypeModal = true;
             if(this.selectedtemplateDetails["interactionTypes"][0] === "choice") {

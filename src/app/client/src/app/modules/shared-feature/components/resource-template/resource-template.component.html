@@ -86,17 +86,17 @@
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="vsa" name="questionType" (click)="setQuestionType('VSA')">
-        <label for="vsa">VSA - Practice Sets</label>
+        <label for="vsa">VSA - Very Short Answer</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="sa" name="questionType" (click)="setQuestionType('SA')">
-        <label for="sa">SA - Practice Sets</label>
+        <label for="sa">SA - Short Answer</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="la" name="questionType" (click)="setQuestionType('LA')">
-        <label for="la">LA - Practice Sets</label>
+        <label for="la">LA - Long Answer</label>
       </div>
-      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+      <div *ngIf="showCuriosityQuestion" class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="curiosity" name="questionType" (click)="setQuestionType('CuriosityQuestion')">
         <label for="curiosity">Curiosity Sets</label>
       </div>
