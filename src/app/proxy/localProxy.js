@@ -36,6 +36,7 @@ var contentServiceApi = {
 var learnerServiceApi = {
   'data/v1/page/assemble': 'v1/page/assemble',
   'user/v1/create': 'v1/user/create',
+  'user/v1/sso/create': 'v1/user/sso/create',
   'user/v1/update': 'v1/user/update',
   'user/v3/update': 'v3/user/update',
   'user/v1/read': 'v1/user/read',

@@ -73,6 +73,13 @@
       "message": "Calling create user",
       "env": "user"
     },
+    "user/v1/sso/create": {
+      "title": "Create user profile",
+      "category": "createuser",
+      "url": "user/v1/sso/create",
+      "message": "Calling create user",
+      "env": "user"
+    },
     "tenant/info": {
       "title": "tenant info",
       "category": "tenantinfo",
