@@ -34,10 +34,10 @@
       "CREATE": "review/comment/v1/create/comment"
     },
     "USER": {
-      "SIGNUP": "user/v1/create",
+      "SIGNUP": "user/v1/sso/create",
       "TNC_ACCEPT": "user/v1/tnc/accept",
-      "UPDATE_USER_PROFILE": "user/v1/update",
-      "GET_PROFILE": "user/v2/read/",
+      "UPDATE_USER_PROFILE": "user/v3/update",
+      "GET_PROFILE": "user/v5/read/",
       "TENANT_LOGO": "get/tenant/logo",
       "SKILLS": "data/v1/skills",
       "ENDORSE_SKILLS": "user/v1/skill/endorse/add",
@@ -46,8 +46,7 @@
       "UPDATE_PROF_VIS_FIELDS": "user/v1/profile/visibility",
       "GET_USER_BY_KEY": "user/v1/get",
       "CHECK_USER_EXISTS": "user/v1/exists",
-      "CREATE_V2": "user/v2/create",
-      "SIGN_UP_V1": "user/v1/signup",
+      "SIGN_UP": "user/v2/signup",
       "LOCATION_SEARCH": "data/v1/location/search",
       "TYPE": "user/v1/type/list",
       "VALIDATE_CERTIFICATE": "certreg/v1/certs/validate",
@@ -143,8 +142,8 @@
       "REMOVE_USERS": "course/v1/batch/user/remove"
     },
     "ADMIN": {
-      "USER_SEARCH": "user/v1/search",
-      "ORG_SEARCH": "org/v1/search",
+      "USER_SEARCH": "user/v3/search",
+      "ORG_SEARCH": "org/v2/search",
       "BULK": {
         "USERS_UPLOAD": "user/v2/upload",
         "ORGANIZATIONS_UPLOAD": "org/v1/upload",
