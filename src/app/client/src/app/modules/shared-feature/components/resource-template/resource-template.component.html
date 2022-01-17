@@ -78,23 +78,23 @@
       <h4 class="my-10">Non-Interactive</h4>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="mtf" name="questionType" (click)="setQuestionType('MTF')">
-        <label for="mtf">MTF - Match The Following</label>
+        <label for="mtf">MTF - {{resourceService.frmelmnts.lbl.MTF}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="ftb" name="questionType" (click)="setQuestionType('FTB')">
-        <label for="ftb">FTB - Fill in the Blank</label>
+        <label for="ftb">FTB - {{resourceService.frmelmnts.lbl.FTB}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="vsa" name="questionType" (click)="setQuestionType('VSA')">
-        <label for="vsa">VSA - Very Short Answer</label>
+        <label for="vsa">VSA - {{resourceService.frmelmnts.lbl.VSA}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="sa" name="questionType" (click)="setQuestionType('SA')">
-        <label for="sa">SA - Short Answer</label>
+        <label for="sa">SA - {{resourceService.frmelmnts.lbl.SA}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="la" name="questionType" (click)="setQuestionType('LA')">
-        <label for="la">LA - Long Answer</label>
+        <label for="la">LA - {{resourceService.frmelmnts.lbl.LA}}</label>
       </div>
       <div *ngIf="showCuriosityQuestion" class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="curiosity" name="questionType" (click)="setQuestionType('CuriosityQuestion')">
