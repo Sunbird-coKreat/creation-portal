@@ -51,6 +51,9 @@
     "programId": {
         "type": "string"
     },
+    "collectionId": {
+       "type": "string"
+    },
   	"processId": {
   		"type": "string"
     },
