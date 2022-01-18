@@ -321,7 +321,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   fetchFormconfiguration() {
-    this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    const formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    const formContextConfig = _.cloneDeep(this.helperService.getFormConfigurationforContext());
+    this.formFieldProperties = _.unionBy(formFieldProperties, formContextConfig, 'code')
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {
@@ -975,7 +977,10 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
 
   fetchCategoryDetails() {
-    this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
+    let reqs = [] ;
+    reqs.push(this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)));
+    reqs.push(this.helperService.formConfigForContext$.pipe(take(1), takeUntil(this.onComponentDestroy$)));
+    forkJoin(reqs).subscribe(data => {
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
@@ -993,6 +998,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
+    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', this.sessionContext.frameworkType, 'content', 'create');
   }
 
   changePolicyCheckValue (event) {
@@ -1005,7 +1011,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   saveMetadataForm(cb?, emitHeaderEvent?) {
     if (this.helperService.validateForm(this.formstatus)) {
-      console.log(this.formInputData);
       // tslint:disable-next-line:max-line-length
       const formattedData = this.helperService.getFormattedData(_.pick(this.formInputData, this.editableFields), this.formFieldProperties);
       const request = {
