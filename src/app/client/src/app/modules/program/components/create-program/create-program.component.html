@@ -331,26 +331,6 @@
                   <div class="twelve wide column" *ngIf="projectTargetType == 'searchCriteria'">
                     <ng-container *ngTemplateOutlet="frameworkAttributes; context: {form: projectScopeForm}" ></ng-container>
                   </div>
-                  <!--div class="twelve wide column sb-field-group">
-                    <div class="sb-field-group mb-8">
-                      <label
-                        class="fs-0-92">{{resource.frmelmnts.lbl.foraTargetCollection}}
-                        <i class="pull-right question circle link icon pull-right ml-10" suiPopup
-                          popupDelay="500" [popupPlacement]="'right'"
-                          popupText="{{resource.frmelmnts.lbl.foraTargetCollection}}"></i>
-                      </label>
-                      <div class="sb-field mt-4 d-flex">
-                        <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                          <input id="yes" [disabled]="true" type="radio" name="openNominations" checked>
-                          <label for="yes">{{resource?.frmelmnts?.btn?.yes}}</label>
-                        </div>
-                        <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
-                          <input id="no" [disabled]="true" type="radio">
-                          <label for="no">{{resource?.frmelmnts?.btn?.no}}</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div-->
                   <div class="six wide column" *ngIf="projectTargetType == 'collections'">
                     <div class="required field">
                       <label class="d-block">{{resource?.frmelmnts?.lbl?.selectTargetCollection}}
@@ -366,6 +346,38 @@
                       <div class="ui pointing red basic label below"
                            *ngIf="projectScopeForm.controls['target_collection_category'].errors  && (!projectScopeForm.controls['target_collection_category'].pristine || formIsInvalid)">
                         {{resource?.frmelmnts?.lbl?.targetCollectionRequired}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="six wide column" *ngIf="projectTargetType == 'collections'">
+                    <div class="required field">
+                      <label class="d-block">{{resource?.frmelmnts?.projectSource?.lbl?.frameworkType}}
+                        <i class="pull-right question circle link icon pull-right" suiPopup
+                          popupDelay="500" [popupPlacement]="'left'"
+                          popupText="{{resource?.frmelmnts?.projectSource?.lbl?.frameworkTypeMsg}}"></i>
+                      </label>
+                      <sui-select placeholder="{{resource?.frmelmnts?.projectSource?.placeholder?.frameworkType}}"
+                        class="selection p-5" formControlName="framework"
+                        [options]="programScope['framework']"
+                        labelField="name"
+                        [isDisabled]="!programScope['framework']"
+                        (ngModelChange)="onFrameworkChange()" #frameworks
+                        appTelemetryInteract
+                        [telemetryInteractEdata]="getTelemetryInteractEdata('framework', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
+                        [telemetryInteractObject]="telemetryInteractObject"
+                        [telemetryInteractCdata]="telemetryInteractCdata"
+                        [telemetryInteractPdata]="telemetryInteractPdata">
+                        <sui-select-option *ngFor="let framework of frameworks.filteredOptions"
+                          [value]="framework" appTelemetryInteract
+                          [telemetryInteractEdata]="getTelemetryInteractEdata('framework', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements, {values: [framework]})"
+                          [telemetryInteractObject]="telemetryInteractObject"
+                          [telemetryInteractCdata]="telemetryInteractCdata"
+                          [telemetryInteractPdata]="telemetryInteractPdata">
+                        </sui-select-option>
+                      </sui-select>
+                      <div class="ui pointing red basic label below "
+                        *ngIf="projectScopeForm.controls['framework'].errors && projectScopeForm.controls['framework']?.errors?.required && (!projectScopeForm.controls['framework']?.pristine || formIsInvalid)">
+                        {{resource?.frmelmnts?.projectSource?.lbl?.frameworkRequired }}
                       </div>
                     </div>
                   </div>

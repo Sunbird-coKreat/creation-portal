@@ -242,8 +242,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.projectScopeForm = this.sbFormBuilder.group({
       pcollections: this.sbFormBuilder.array([]),
       framework: [null, Validators.required],
-      /*board: [],
-      medium: [],
+      board: [],
+      /*medium: [],
       gradeLevel: [],
       subject: [],*/
       targetPrimaryCategories: [[], Validators.required],
@@ -270,25 +270,29 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     channelData$.subscribe((channelData) => {
       if (channelData) {
         this.programScope['userChannelData'] = channelData;
-        this.getFramework().then((response) => {
-            if (!response) {
-              this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
-              return false;
-            } else {
-              this.programScope['framework'] = response;
-              this.frameworkService.getMasterCategories();
-                if (!_.isEmpty(_.first(_.get(this.programDetails, 'config.framework')))) {
-                  const selectedFramework =  _.find(this.programScope.framework, {'identifier': _.first(_.get(this.programDetails, 'config.framework'))});
-                  this.projectScopeForm.controls['framework'].setValue(selectedFramework);
-                  this.onFrameworkChange();
-                }
-                this.isFormValueSet.projectScopeForm = true;
-            }
-        }).catch((err) => {
-          console.log(err);
-          this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError);
-          return false;
-        });
+        if (_.includes(['collections', 'searchCriteria'], this.projectTargetType)) {
+          this.getFramework().then((response) => {
+              if (!response) {
+                this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError)
+                return false;
+              } else {
+                this.programScope['framework'] = response;
+                this.frameworkService.getMasterCategories();
+                  if (!_.isEmpty(_.first(_.get(this.programDetails, 'config.framework')))) {
+                    const selectedFramework =  _.find(this.programScope.framework, {'identifier': _.first(_.get(this.programDetails, 'config.framework'))});
+                    this.projectScopeForm.controls['framework'].setValue(selectedFramework);
+                    this.onFrameworkChange();
+                  }
+                  this.isFormValueSet.projectScopeForm = true;
+              }
+          }).catch((err) => {
+            console.log(err);
+            this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError);
+            return false;
+          });
+        } else {
+          this.getDefaultChannelFramework();
+        }
         const channelCats = _.get(this.programScope['userChannelData'], 'primaryCategories');
         const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
         const contentCategories = _.get(channeltargetObjectTypeGroup, 'Content');
@@ -322,17 +326,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  /*
-  initializeFrameworkForTargetType (frameworkName) {
-    //this.frameworkService.initialize(frameworkName, this.userService.hashTagId);
-    this.frameworkService.readFramworkCategories(frameworkName).subscribe((frameworkData) => {
-      if (frameworkData) {
-        this.programScope['framework'] = frameworkData;
-        this.setFrameworkAttributes();
+
+  getDefaultChannelFramework () {
+    const frameWork = _.get(this.programScope['userChannelData'], 'defaultFramework');
+    this.frameworkService.readFramworkCategories(frameWork).subscribe((frameworkDetails) => {
+      if (frameworkDetails) {
+        this.programScope['framework'] = [frameworkDetails];
+        this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
+        this.projectScopeForm.controls['framework'].setValue(frameworkDetails);
+        const board = _.find(this.programScope.selectedFramework.categories, (element) => {
+          return element.code === 'board';
+        });
+        if (board) {
+          if (!_.isEmpty(board.terms[0].name)) {
+            this.projectScopeForm.controls['board'].setValue(board.terms[0].name);
+          } else if (_.get(this.userprofile.framework, 'board')) {
+            this.projectScopeForm.controls['board'].setValue(this.userprofile.framework.board[0]);
+          }
+        }
       }
       this.isFormValueSet.projectScopeForm = true;
     });
-  }*/
+  }
 
   getFramework () {
     let frameworks = [];
@@ -493,8 +508,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     if(target_type === 'questionSets') {
       if(this.isFormValueSet.projectScopeForm && this.projectScopeForm.controls) {
         let board = this.projectScopeForm.controls.board.value;
-        let framework = this.projectScopeForm.controls.framework.value;
-        if(_.isArray(framework) && framework.length) framework = _.first(framework);
+        let framework = _.get(this.projectScopeForm.controls.framework.value, 'identifier');
         if(_.isArray(board) && board.length) board = _.first(board);
         return {
           'board': board,
@@ -507,7 +521,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   initializeCollectionEditorInput() {
-    //this.setFrameworkAttributes();
     const selectedTargetCollectionObject = this.programScope['selectedTargetCollectionObject'];
     const objType = _.replace(_.lowerCase(selectedTargetCollectionObject?.targetObjectType), ' ', '');
 
@@ -1213,7 +1226,7 @@ showTexbooklist() {
     };
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      requestData.request.filters['framework'] = framework.name;
+      requestData.request.filters['framework'] = framework.identifier;
     }
     if (!_.isEmpty(this.frameworkFormData)) {
       _.forEach(this.frameworkFormData,  (value, key) => {
@@ -1342,28 +1355,30 @@ showTexbooklist() {
     return collections;
   }
   setFrameworkAttributesToconfig() {
-    const frameworkSelected = this.programScope['selectedFramework'];
-    this.programConfig['framework'] = [frameworkSelected.code]
-    this.programConfig['frameworkObj'] = {
-      identifier : frameworkSelected.identifier,
-      code: frameworkSelected.code,
-      type: frameworkSelected.type,
-      name : frameworkSelected.name,
-    };
-    if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
-      _.forEach(this.frameworkFormData,  (value, key) => {
-        this.programConfig[key] =_.isArray(value) ? value : [value];
-        const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
-           'code': key
-         }), 'orgIdFieldName');
-        this.programConfig[code] = [];
-        const formField = _.find(this.formFieldProperties, {'code': key});
-        _.map(formField.terms, (field) => {
-          if (_.includes(this.programConfig[key], field.name)) {
-            this.programConfig[code].push(field.identifier);
-          }
+    if (!_.isEmpty(this.programScope['selectedFramework'])) {
+      const frameworkSelected = this.programScope['selectedFramework'];
+      this.programConfig['framework'] = [frameworkSelected.code]
+      this.programConfig['frameworkObj'] = {
+        identifier : frameworkSelected.identifier,
+        code: frameworkSelected.code,
+        type: frameworkSelected.type,
+        name : frameworkSelected.name,
+      };
+      if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
+        _.forEach(this.frameworkFormData,  (value, key) => {
+          this.programConfig[key] =_.isArray(value) ? value : [value];
+          const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
+            'code': key
+          }), 'orgIdFieldName');
+          this.programConfig[code] = [];
+          const formField = _.find(this.formFieldProperties, {'code': key});
+          _.map(formField.terms, (field) => {
+            if (_.includes(this.programConfig[key], field.name)) {
+              this.programConfig[code].push(field.identifier);
+            }
+          });
         });
-      });
+      }
     }
   }
 
