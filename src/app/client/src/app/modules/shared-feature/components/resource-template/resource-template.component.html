@@ -78,25 +78,25 @@
       <h4 class="my-10">Non-Interactive</h4>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="mtf" name="questionType" (click)="setQuestionType('MTF')">
-        <label for="mtf">MTF - Match The Following</label>
+        <label for="mtf">{{resourceService.frmelmnts.lbl.MTF}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="ftb" name="questionType" (click)="setQuestionType('FTB')">
-        <label for="ftb">FTB - Fill in the Blank</label>
+        <label for="ftb">{{resourceService.frmelmnts.lbl.FTB}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="vsa" name="questionType" (click)="setQuestionType('VSA')">
-        <label for="vsa">VSA - Practice Sets</label>
+        <label for="vsa">{{resourceService.frmelmnts.lbl.VSA}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="sa" name="questionType" (click)="setQuestionType('SA')">
-        <label for="sa">SA - Practice Sets</label>
+        <label for="sa">{{resourceService.frmelmnts.lbl.SA}}</label>
       </div>
       <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="la" name="questionType" (click)="setQuestionType('LA')">
-        <label for="la">LA - Practice Sets</label>
+        <label for="la">{{resourceService.frmelmnts.lbl.LA}}</label>
       </div>
-      <div class="sb-radio-btn-checkbox sb-radio-btn-primary">
+      <div *ngIf="showCuriosityQuestion" class="sb-radio-btn-checkbox sb-radio-btn-primary">
         <input type="radio" id="curiosity" name="questionType" (click)="setQuestionType('CuriosityQuestion')">
         <label for="curiosity">Curiosity Sets</label>
       </div>
