@@ -1314,7 +1314,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         break;
       case 'addFromLibrary':
         this.currentStage = 'addFromLibrary';
-        this.setAddLibraryInput();
+        this.setAddLibraryInput(event);
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
@@ -1827,11 +1827,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
   }
 
-  setAddLibraryInput() {
+  setAddLibraryInput(event) {
     this.addFormLibraryInput = {
       targetPrimaryCategories: this.programContext.targetprimarycategories,
       framework: this.sessionContext.framework,
       collectionId: this.sessionContext.collection,
+      collection: event.collection,
       editorConfig: {
         context: {
           identifier: this.sessionContext.collection,
