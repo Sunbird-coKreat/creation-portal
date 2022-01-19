@@ -79,8 +79,10 @@ module.exports = function (app) {
         limit: reqDataLimitOfContentUpload,
         proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
         proxyReqPathResolver: function (req) {
+            logger.info({msg: '/api/org/v2/search'});
             let urlParam = req.originalUrl.replace('/api/', '')
             let query = require('url').parse(req.url).query
+            logger.info({"LearnerURL": learnerURL, 'query': query, "parse": (require('url').parse(learnerURL + urlParam).path)});
             if (query) {
             return require('url').parse(learnerURL + urlParam + '?' + query).path
             } else {
