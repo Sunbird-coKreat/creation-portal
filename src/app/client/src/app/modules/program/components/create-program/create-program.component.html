@@ -101,7 +101,7 @@
                                [telemetryInteractObject]="telemetryInteractObject"
                                [telemetryInteractCdata]="telemetryInteractCdata"
                                [telemetryInteractPdata]="telemetryInteractPdata"/>
-                        <label for="type_private">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
+                        <label for="type_restricted">{{resource?.frmelmnts?.lbl?.contributionFromResctrictedSet}}</label>
                       </div>
                       <span *ngIf="createProgramForm.controls['type'].value === 'restricted'"
                             class="fs-0-785 pl-20 cursor-pointer"
@@ -142,9 +142,13 @@
                     <label
                       for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
                   </div>
-                  <div
-                    class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
+                  <div *ngIf="createProgramForm.controls['type'].value !== 'restricted'"
+                       class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
                     {{resource?.frmelmnts?.lbl?.twoLevelReviewNote}}
+                  </div>
+                  <div *ngIf="createProgramForm.controls['type'].value === 'restricted'"
+                       class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
+                    {{resource?.frmelmnts?.lbl?.restricted?.twoLevelReviewNote}}
                   </div>
                 </div>
                 <div class="twelve wide tablet three wide computer column"

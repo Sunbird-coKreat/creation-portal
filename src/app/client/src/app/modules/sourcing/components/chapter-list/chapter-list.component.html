@@ -212,7 +212,7 @@
                 <div class="d-flex flex-dc">
                   <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit ml-10" style="margin-bottom: 0.75rem" (click)="viewBlueprint()" *ngIf="localBlueprint">{{resourceService?.frmelmnts?.lbl?.viewBlueprint}}</button>
                   <a class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10" [href]="printUrl + '?id=' + collectionData.identifier + '&format=docx&version=1.0'" target="_blank" *ngIf="displayPrintPreview && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.printPreview}}</a>
-                  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit ml-10" (click)="showPublishConfirmationModal = true;" *ngIf="projectTargetType === 'questionSets' && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.publishQuestionset}}</button>
+                  <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit ml-10" (click)="showPublishConfirmationModal = true;" *ngIf="publishQuestionset && projectTargetType === 'questionSets' && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.publishQuestionset}}</button>
                 </div>
               </div>
           </div>
