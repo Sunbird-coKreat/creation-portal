@@ -83,29 +83,18 @@ module.exports = function (app) {
   )
 
   app.post('/learner/org/v2/search',
-      isAPIWhitelisted.isAllowed(),
-      permissionsHelper.checkPermission(),
-      proxy(learnerURL, {
-        limit: reqDataLimitOfContentUpload,
-        proxyReqOptDecorator: proxyHeaders.decorateSunbirdRequestHeaders(),
-        proxyReqPathResolver: function (req) {
-            logger.info({msg: '/learner/org/v2/search'});
-            let urlParam = req.originalUrl.replace('/learner/', '')
-            logger.info({"LearnerURL": learnerURL, 'query': query, "parse": (require('url').parse(learnerURL + urlParam).path)});
-            return require('url').parse(learnerURL + urlParam).path
-        },
-        userResDecorator: function (proxyRes, proxyResData, req, res) {
-            try {
-              logger.info({msg: '/learner/org/v2/search'});
-              const data = JSON.parse(proxyResData.toString('utf8'));
-              if(req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
-              else return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res, data);
-            } catch(err) {
-              logger.error({msg:'learner org res decorator json parse error:', proxyResData})
-              return proxyHeaders.handleSessionExpiry(proxyRes, proxyResData, req, res);
-            }
-        }
-      }))
+    isAPIWhitelisted.isAllowed(),
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let originalUrl = req.originalUrl.replace('/learner/', '')
+        return require('url').parse(learnerURL + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+    })
+  )
 
   // Generate telemetry fot proxy service
   app.all('/learner/*', telemetryHelper.generateTelemetryForLearnerService,
