@@ -267,6 +267,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
         if (frameworkData) {
           this.sessionContext.frameworkData = frameworkData.categories;
+          this.sessionContext['frameworkType'] = frameworkData.type;
           this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
         }
         if (!this.programDetails.target_type || this.programDetails.target_type === 'collections' || this.programDetails.target_type === 'questionSets') {
