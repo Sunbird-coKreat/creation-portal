@@ -1165,18 +1165,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         return false;
       // tslint:disable-next-line:max-line-length
       } else if (creatorAndReviewerRole) {
-        if (( (_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && this.currentUserID !== content.createdBy && ((content.organisationId === this.myOrgId) || (_.get(content, 'sharedContext.channel') === this.currentRootOrgID))) || this.currentUserID === content.createdBy) {
+        if (( (_.includes(['Review', 'Live'], content.status) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || (content.prevStatus === 'Review' && content.status === 'Draft' )) && this.currentUserID !== content.createdBy && content.organisationId === this.myOrgId) || this.currentUserID === content.createdBy) {
           return true;
         } else if (content.status === 'Live' && content.sourceURL) {
           return true;
         }
       } else if (reviewerViewRole && (content.status === 'Review' || content.status === 'Live' || (content.prevStatus === 'Review' && content.status === 'Draft' ) || (content.prevStatus === 'Live' && content.status === 'Draft' ) || content.status === 'Processing')
       && this.currentUserID !== content.createdBy
-      && ((content.organisationId === this.myOrgId) || (_.get(content, 'sharedContext.channel') === this.currentRootOrgID))) {
+      && content.organisationId === this.myOrgId) {
         return true;
       } else if (creatorViewRole && this.currentUserID === content.createdBy) {
         return true;
-      } else if (contributingOrgAdmin && ((content.organisationId === this.myOrgId) || (_.get(content, 'sharedContext.channel') === this.currentRootOrgID))) {
+      } else if (contributingOrgAdmin && content.organisationId === this.myOrgId) {
         return true;
       } else if (content.status === 'Live' && content.sourceURL) {
         return true;
@@ -1658,7 +1658,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contentStatusCount['approved'] = 0;
       contentStatusCount['correctionsPending'] = 0;
       _.forEach(contents, (content) => {
-        if (((content.organisationId === this.myOrgId) || (_.get(content, 'sharedContext.channel') === this.currentRootOrgID)) && !content.sampleContent) {
+        if (content.organisationId === this.myOrgId && !content.sampleContent) {
           if (content.status === 'Draft' && content.prevStatus === 'Review') {
             contentStatusCount['notAccepted'] += 1;
           } else if (content.status === 'Live' && !content.sourcingStatus) {

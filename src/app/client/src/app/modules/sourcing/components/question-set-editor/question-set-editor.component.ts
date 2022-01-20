@@ -259,7 +259,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   getCorrectionComments() {
-      const contentComment = this.helperService.getContentCorrectionComments(this.collectionDetails, this.sessionContext);
+      const contentComment = this.helperService.getContentCorrectionComments(this.collectionDetails, this.sessionContext, this.programContext);
       this.editorConfig.config.showCorrectionComments = (contentComment) ? true : false;
       this.editorConfig.context.correctionComments = contentComment;
   }

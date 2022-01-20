@@ -895,7 +895,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
       this.loading = false;
       this.handleActionButtons();
-
+      this.showCommentAddedAgainstContent();
       if (!uploadModalClose) {
         this.enableOptionalAddTranscript(this.contentMetaData);
       }
@@ -1375,9 +1375,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   showCommentAddedAgainstContent() {
-    this.contentComment = this.helperService.getContentCorrectionComments(this.contentMetaData, this.sessionContext);
-    const retVal = (this.contentComment) ? true : false;
-    return retVal;
+    this.contentComment = this.helperService.getContentCorrectionComments(this.contentMetaData, this.sessionContext, this.programContext);
   }
 
   getEditableFields() {

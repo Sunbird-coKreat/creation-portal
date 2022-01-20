@@ -50,7 +50,7 @@
             [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata"
             (click)="showReviewModal=!showReviewModal"
-            *ngIf="resourceDetails && showCommentAddedAgainstContent()"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
+            *ngIf="resourceDetails && contentComment"><i class="comment alternate outline icon sb-color-primary"></i><a>View Comments</a></span>
             <a id="viewContentOnDiksha" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
               href="{{originPreviewUrl}}" target="_blank"
               appTelemetryInteract
