@@ -748,7 +748,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.publicDataService.post(option);
+    return this.learnerService.post(option);
   }
 
   /**

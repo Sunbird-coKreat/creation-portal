@@ -282,7 +282,7 @@ export class UserService {
         }
       }
     };
-    this.publicDataService.post(option).subscribe
+    this.learnerService.post(option).subscribe
       ((data: ServerResponse) => {
         this.orgnisationsDetails = _.get(data, 'result.response.content');
         _.forEach(this.orgnisationsDetails, (orgData) => {

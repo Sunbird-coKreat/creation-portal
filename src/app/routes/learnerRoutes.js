@@ -82,6 +82,19 @@ module.exports = function (app) {
     })
   )
 
+  app.post('/learner/org/v2/search',
+    isAPIWhitelisted.isAllowed(),
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let originalUrl = req.originalUrl.replace('/learner/', '')
+        return require('url').parse(learnerURL + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+    })
+  )
 
   // Generate telemetry fot proxy service
   app.all('/learner/*', telemetryHelper.generateTelemetryForLearnerService,

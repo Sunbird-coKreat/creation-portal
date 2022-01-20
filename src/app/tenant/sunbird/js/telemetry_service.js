@@ -2513,7 +2513,7 @@ if (typeof module != 'undefined') {
   function getOrgInfo(id) {
     return $.ajax({
       method: "POST",
-      url: hostURL + "/api/org/v2/search",
+      url: hostURL + "/learner/org/v2/search",
       data: JSON.stringify({
         request: {
           filters: {
