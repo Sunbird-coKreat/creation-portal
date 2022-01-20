@@ -378,10 +378,10 @@
                   <div class="three wide column">
                     <div class="required field">
                       <label class="d-block"
-                      >{{resource?.frmelmnts?.lbl?.selectTarget}}
+                      >{{resource?.frmelmnts?.lbl?.questionSetSelectTarget}}
                         <i
                           class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" [popupPlacement]="'left'"
-                          popupText="{{resource?.frmelmnts?.lbl?.selectTarget}}"></i>
+                          popupText="{{resource?.frmelmnts?.lbl?.questionSetSelectTarget}}"></i>
                       </label>
                       <sui-select formControlName="target_collection_category" class="selecttarget" placeholder="{{resource?.frmelmnts?.lbl?.Select}}"
                                   (selectedOptionChange)="onChangeTargetCollectionCategory()" [(ngModel)]="selectedTargetCollection" [options]="programScope['collectionCategories']" #targetCollections>
@@ -399,10 +399,10 @@
                   </div>
                   <div class="three wide column">
                     <div class="required field">
-                      <label class="d-block">{{resource?.frmelmnts?.lbl?.selectRequiredAssets}}
+                      <label class="d-block">{{resource?.frmelmnts?.lbl?.questionSetSelectRequiredAssets}}
                         <i
                           class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" [popupPlacement]="'left'"
-                          popupText="{{resource?.frmelmnts?.lbl?.selectRequiredAssets}}"></i>
+                          popupText="{{resource?.frmelmnts?.lbl?.questionSetSelectRequiredAssets}}"></i>
                       </label>
                       <sui-multi-select class="w-100" *ngIf="!editPublished; else elseBlock" class="selection" formControlName="targetPrimaryCategories" [options]="programScope.targetPrimaryCategories"
                                         [(ngModel)]="selectedTargetCategories"
