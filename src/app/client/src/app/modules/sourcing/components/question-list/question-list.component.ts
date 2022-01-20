@@ -314,6 +314,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.fetchQuestionList();
       }
       this.handleActionButtons();
+      this.showCommentAddedAgainstContent();
       this.fetchCategoryDetails();
     });
   }
@@ -1335,23 +1336,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showCommentAddedAgainstContent() {
-    const id = _.get(this.resourceDetails, 'identifier');
-    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments')
-    if (id && this.resourceDetails.status === "Draft" && this.resourceDetails.prevStatus  === "Review") {
-      // if the contributing org reviewer has requested for changes
-      this.contentComment = _.get(this.resourceDetails, 'rejectComment');
-      return true;
-    } else if (id && !_.isEmpty(_.get(this.resourceDetails, 'requestChanges')) &&
-    ((this.resourceDetails.status === "Draft" && this.resourceDetails.prevStatus === "Live") ||
-    this.resourceDetails.status === "Live")) {
-      // if the souring org reviewer has requested for changes
-      this.contentComment = _.get(this.resourceDetails, 'requestChanges');
-      return true;
-    } else  if (id && this.resourceDetails.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
-        this.contentComment = _.get(sourcingRejectedComments, id);
-        return true;
-    }
-    return false;
+    this.contentComment = this.helperService.getContentCorrectionComments(this.resourceDetails, this.sessionContext, this.programContext);
   }
 
 
