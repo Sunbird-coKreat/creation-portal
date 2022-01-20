@@ -153,6 +153,12 @@ module.exports = function (app) {
     checkForValidUser()
   )
 
+  app.all('/learner/user/v2/signup',
+    healthService.checkDependantServiceHealth(['LEARNER', 'CASSANDRA']),
+    permissionsHelper.checkPermission(),
+    checkForValidUser()
+  )
+
   app.all('/learner/collection/v1/hierarchy/*',
   permissionsHelper.checkPermission(),
   proxy(learnerURL, {

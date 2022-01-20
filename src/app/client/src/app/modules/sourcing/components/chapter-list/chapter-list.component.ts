@@ -91,6 +91,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public selectedStatusOptions: any = [];
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
+  publishQuestionset = true;
   contentName: string;
   public userProfile: any;
   public sampleContent = false;
@@ -480,6 +481,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection')) {
           this.collectionSourcingConfig = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection');
           this.sessionContext['addFromLibraryEnabled'] = this.collectionSourcingConfig.addFromLibraryEnabled;
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.publishQuestionset')) {
+          this.publishQuestionset = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.publishQuestionset;
         }
 
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {

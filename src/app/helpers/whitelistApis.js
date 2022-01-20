@@ -428,6 +428,15 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
+    '/action/user/v3/search': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC,
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER,
+        ROLE.CONTRIBUTE_ORG_ADMIN
+      ]
+    },
     '/content/program/v1/print/docx': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
@@ -438,7 +447,16 @@ const API_LIST = {
     '/api/org/v1/search': {
       checksNeeded: []
     },
+    '/api/org/v2/search': {
+      checksNeeded: []
+    },
     '/learner/user/v2/read/:userId': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/learner/user/v5/read/:userId': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
@@ -477,10 +495,25 @@ const API_LIST = {
       //   ROLE.CONTRIBUTE_ORG_ADMIN
       // ]
     },
+    '/learner/user/v3/search': { /* Todo */
+      checksNeeded: []
+      // checksNeeded: ['ROLE_CHECK'],
+      // ROLE_CHECK: [
+      //   ROLE.ORG_ADMIN,
+      //   ROLE.SOURCING_REVIEWER,
+      //   ROLE.CONTRIBUTE_ORG_ADMIN
+      // ]
+    },
     '/signup': {
       checksNeeded: [],
     },
     '/learner/user/v1/signup': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.PUBLIC
+      ]
+    },
+    '/learner/user/v2/signup': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
@@ -898,6 +931,7 @@ const API_LIST = {
     '/content/program/v1/process/read/:process_id',
     '/action/content/v3/unlisted/publish/:contentId',
     '/learner/user/v2/read/:userId',
+    '/learner/user/v5/read/:userId',
     '/learner/framework/v1/read/:frameworkId',
     '/learner/channel/v1/read/:channelId',
     '/action/content/v3/update/:do_id',

@@ -128,7 +128,7 @@ let PERMISSIONS_HELPER = {
     var userId = reqObj.session.userId
     var options = {
       method: 'GET',
-      url: learnerURL + 'user/v1/read/' + userId,
+      url: learnerURL + 'user/v5/read/' + userId,
       headers: {
         'x-msgid': uuidv1(),
         'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
@@ -146,19 +146,19 @@ let PERMISSIONS_HELPER = {
 
     const telemetryData = {reqObj: reqObj,
       options: options,
-      uri: 'user/v1/read',
+      uri: 'user/v5/read',
       type: 'user',
       id: userId,
       userId: userId}
     // telemetryHelper.logAPICallEvent(telemetryData)
 
     request(options, function (error, response, body) {
-      logger.info({msg: 'user/v1/read api response', error, requestOptions: options});
+      logger.info({msg: 'user/v5/read api response', error, requestOptions: options});
       telemetryData.statusCode = _.get(response, 'statusCode');
       reqObj.session.roles = [];
       reqObj.session.orgs = [];
       if (error) {
-        logger.error({msg: 'error while user/v1/read', error});
+        logger.error({msg: 'error while user/v5/read', error});
         callback(error, null)
       } else if (!error && body) {
         module.exports.setUserSessionData(reqObj, body);
@@ -171,7 +171,7 @@ let PERMISSIONS_HELPER = {
           }
         });
       } else {
-        logger.error({msg: 'error while user/v1/read', error});
+        logger.error({msg: 'error while user/v5/read', error});
         callback(error, null)
       }
     })
