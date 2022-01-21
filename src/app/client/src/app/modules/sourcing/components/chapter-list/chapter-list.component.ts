@@ -1023,19 +1023,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                 }
               })
             }
-            if(data.bloomsLevel && data.bloomsLevel.length) {
-              _.forEach(data.bloomsLevel, (bl)=> {
-                bl = bl.toLowerCase();
-                if(bl === "remember") {
-                this.countData['remember'] = this.countData['remember'] + 1;
-                }
-                else if(bl === "understand") {
-                  this.countData['understand'] = this.countData['understand'] + 1;
-                }
-                else if(bl === "apply") {
-                  this.countData['apply'] = this.countData['apply'] + 1;
-                }
-              })
+            if(data.bloomsLevel) {
+              this.parseBloomLevel(data.bloomsLevel);
             }
             if(this.localBlueprint) {
               if(data.topic && data.topic.length) {
@@ -1073,6 +1062,34 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       childData.map(child => {
         self.getContentStatusCount(child);
       });
+    }
+  }
+
+  parseBloomLevel(bloomsLevel) {
+    if (_.isArray(bloomsLevel)) {
+      _.forEach(bloomsLevel, (bl) => {
+        this.calculateBloomLevel(bl);
+      });
+    } else {
+      this.calculateBloomLevel(bloomsLevel);
+    }
+  }
+
+  calculateBloomLevel(bloomLevel) {
+    bloomLevel = bloomLevel ? bloomLevel.toLowerCase() : null;
+    switch (bloomLevel) {
+      case 'remember':
+      case 'knowledge':
+        this.countData['remember'] = this.countData['remember'] + 1;
+        break;
+      case 'understand':
+      case 'understanding':
+        this.countData['understand'] = this.countData['understand'] + 1;
+        break;
+      case 'apply':
+      case 'application':
+        this.countData['apply'] = this.countData['apply'] + 1;
+        break;
     }
   }
 
@@ -1314,7 +1331,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         break;
       case 'addFromLibrary':
         this.currentStage = 'addFromLibrary';
-        this.setAddLibraryInput();
+        this.setAddLibraryInput(event);
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
@@ -1827,11 +1844,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
   }
 
-  setAddLibraryInput() {
+  setAddLibraryInput(event) {
     this.addFormLibraryInput = {
       targetPrimaryCategories: this.programContext.targetprimarycategories,
       framework: this.sessionContext.framework,
       collectionId: this.sessionContext.collection,
+      collection: event.collection,
       editorConfig: {
         context: {
           identifier: this.sessionContext.collection,

@@ -100,7 +100,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     selectedSharedContext: undefined
   };
   public openProjectTargetTypeModal= false;
-  private projectTargetType: string = null;
+  projectTargetType: string = null;
   public firstLevelFolderLabel: string;
   public showContributorsListModal = false;
   public selectedContributors = {
@@ -1920,6 +1920,9 @@ showTexbooklist() {
       //   this.initializeFormFields();
       // }
       this.openProjectTargetTypeModal = false;
+    }
+    if (this.projectTargetType === 'questionSets') {
+      this.createProgramForm.patchValue({type: 'private'});
     }
   }
 
