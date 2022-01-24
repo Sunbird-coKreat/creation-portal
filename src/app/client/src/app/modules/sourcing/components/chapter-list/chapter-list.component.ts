@@ -58,6 +58,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sharedContext: Array<string>;
   public currentStage: any;
   public selectedSharedContext: any;
+  public docxVersion = '0.5';
   public state: InitialState = {
     stages: []
   };
@@ -184,6 +185,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.projectTargetType = _.get(this.programContext, 'target_type');
+    this.docxVersion = this.projectTargetType === 'questionSets'? '1.0' : '0.5';
     this.acceptedContentsAttribute = this.projectTargetType === 'questionSets' ? 'acceptedContributions' : 'acceptedContents';
     this.rejectedContentsAttribute = this.projectTargetType === 'questionSets' ? 'rejectedContributions' : 'rejectedContents';
     this.myOrgId = (this.userService.userRegistryData
