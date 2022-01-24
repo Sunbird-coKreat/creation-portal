@@ -359,31 +359,6 @@ describe('CreateProgramComponent', () => {
     expect(component.setPreSelectedContributors).toHaveBeenCalled();
     expect(component.closeContributorListPopup).toHaveBeenCalled();
   });
-  it('setFrameworkAttributes should set varible data', () => {
-    component.projectScopeForm = new FormGroup({
-      framework: new FormControl(),
-      board: new FormControl(),
-      medium: new FormControl(),
-      gradeLevel: new FormControl(),
-      subject: new FormControl()
-    });
-    component.programScope.framework = mockData.frameworkDetails.frameworkdata.NCFCOPY;
-    spyOn(component, 'setFrameworkAttributes').and.callThrough();
-    component.setFrameworkAttributes();
-    expect(component.setFrameworkAttributes).toHaveBeenCalled();
-  });
-
-  it('Should call the onMediumChange method', () => {
-    spyOn(component, 'onMediumChange').and.callFake(() => {});
-    component.onMediumChange();
-    expect(component.onMediumChange).toHaveBeenCalled();
-  });
-
-  it('should call onClassChange method', () => {
-    spyOn(component, 'onClassChange').and.callFake(() => {});
-    component.onClassChange();
-    expect(component.onClassChange).toHaveBeenCalled();
-  });
 
   it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
     component.selectedTargetCollection = 'Course';
