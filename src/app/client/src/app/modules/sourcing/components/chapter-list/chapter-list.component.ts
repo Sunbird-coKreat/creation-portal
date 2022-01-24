@@ -92,6 +92,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
   publishQuestionset = true;
+  bulkUploadEnabled = true;
   contentName: string;
   public userProfile: any;
   public sampleContent = false;
@@ -484,7 +485,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
 
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.publishQuestionset')) {
-          this.publishQuestionset = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.publishQuestionset;
+          this.publishQuestionset = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.publishQuestionset');
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.bulkUploadEnabled')) {
+          this.bulkUploadEnabled = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.bulkUploadEnabled');
         }
 
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {
