@@ -63,7 +63,7 @@ let envVariables = {
   SUNBIRD_BULK_UPLOAD_NAME_LENGTH: env.sunbird_bulk_upload_name_length || '50',
   SUNBIRD_BULK_UPLOAD_DESC_LENGTH: env.sunbird_bulk_upload_description_length || '500',
   sunbird_accessibility_guidelines_url: env.sunbird_accessibility_guidelines_url || '',
-  DOCK_ALLOWED_FRAMEWORK_TYPES: env.dock_allowed_framework_types || '',
+  DOCK_ALLOWED_FRAMEWORK_TYPES: env.dock_allowed_framework_types || 'K-12,TPD',
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
   PORTAL_API_CACHE_TTL: env.sunbird_api_response_cache_ttl || '600',
