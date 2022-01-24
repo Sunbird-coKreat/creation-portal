@@ -159,7 +159,8 @@ function getLocals(req) {
   locals.sunbirdBulkUploadNameLength = envHelper.SUNBIRD_BULK_UPLOAD_NAME_LENGTH;
   locals.sunbirdBulkUploadDescriptionLength = envHelper.SUNBIRD_BULK_UPLOAD_DESC_LENGTH;
   locals.sunbirdContextualHelpConfig = envHelper.SUNBIRD_CONTEXTUAL_HELP_CONFIG;
-  locals.sunbirdAccessibilityGuidelinesUrl = envHelper.sunbird_accessibility_guidelines_url
+  locals.sunbirdAccessibilityGuidelinesUrl = envHelper.sunbird_accessibility_guidelines_url;
+  locals.allowedFrameworkTypes = envHelper.DOCK_ALLOWED_FRAMEWORK_TYPES;
   return locals
 }
 
