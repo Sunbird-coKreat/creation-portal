@@ -1028,7 +1028,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                 }
               })
             }
-            if(data.bloomsLevel) {
+            if (data.qType) {
+              this.calculateQuestionType(data.qType);
+            }
+            if (data.bloomsLevel) {
               this.parseBloomLevel(data.bloomsLevel);
             }
             if(this.localBlueprint) {
@@ -1067,6 +1070,28 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       childData.map(child => {
         self.getContentStatusCount(child);
       });
+    }
+  }
+
+  calculateQuestionType(qType) {
+    switch (qType) {
+      case 'MCQ':
+      case 'MTF':
+      case 'FTB':
+        this.countData['objective']++;
+        break;
+      case 'VSA':
+        this.countData['vsa']++;
+        this.countData['subjective']++;
+        break;
+      case 'SA':
+        this.countData['sa']++;
+        this.countData['subjective']++;
+        break;
+      case 'LA':
+        this.countData['la']++;
+        this.countData['subjective']++;
+        break;
     }
   }
 
