@@ -54,6 +54,9 @@
     "collectionId": {
        "type": "string"
     },
+    "organisationId" : {
+      "type": "string"
+    },
   	"processId": {
   		"type": "string"
     },

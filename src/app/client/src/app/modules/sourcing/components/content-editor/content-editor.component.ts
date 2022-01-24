@@ -284,6 +284,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.resourceStatusText = this.resourceStatus;
       }
       this.handleActionButtons();
+      this.showCommentAddedAgainstContent();
       this.handleContentStatusText();
       this.handlePreview();
       if ( _.isUndefined(this.sessionContext.topicList) || _.isUndefined(this.sessionContext.frameworkData)) {
@@ -458,23 +459,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   showCommentAddedAgainstContent() {
-    const id = _.get(this.contentData, 'identifier');
-    const sourcingRejectedComments = _.get(this.sessionContext, 'hierarchyObj.sourcingRejectedComments');
-    if (id && this.contentData.status === 'Draft' && this.contentData.prevStatus  === 'Review') {
-      // if the contributing org reviewer has requested for changes
-      this.contentComment = _.get(this.contentData, 'rejectComment');
-      return true;
-    } else if (id && !_.isEmpty(_.get(this.contentData, 'requestChanges')) &&
-    ((this.contentData.status === 'Draft' && this.contentData.prevStatus === 'Live') ||
-    this.contentData.status === 'Live')) {
-      // if the souring org reviewer has requested for changes
-      this.contentComment = _.get(this.contentData, 'requestChanges');
-      return true;
-    } else  if (id && this.contentData.status === 'Live' && !_.isEmpty(_.get(sourcingRejectedComments, id))) {
-        this.contentComment = _.get(sourcingRejectedComments, id);
-        return true;
-    }
-    return false;
+    this.contentComment = this.helperService.getContentCorrectionComments(this.contentData, this.sessionContext, this.programContext);
   }
 
   private initEditor() {
