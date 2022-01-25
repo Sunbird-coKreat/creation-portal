@@ -1186,6 +1186,17 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     return !_.isEmpty(_.intersection(roles, this.sessionContext.currentRoles || []));
   }
 
+  ifContentFromCurrentNomination(content) {
+    const nomination = this.sessionContext.nominationDetails;
+    if (nomination &&
+      ((nomination.organisation_id && nomination.organisation_id === content.organisationId) ||
+      (!nomination.organisation_id && nomination.user_id && nomination.user_id === content.createdBy))
+    ) {
+      return true;
+    }
+    return false;
+  }
+
   shouldContentBeVisible(content) {
     const creatorViewRole = this.hasAccessForContributor;
     const reviewerViewRole = this.hasAccessForReviewer;
@@ -1201,7 +1212,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       } else if (this.sessionContext.nominationDetails
         && (this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')) {
           if ( reviewerViewRole && content.sampleContent !== true &&
-          (content.status === 'Live' || (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
+          (content.status === 'Live' || (content.prevStatus === 'Live' && content.status === 'Draft' )) && this.ifContentFromCurrentNomination(content)) {
               return true;
           }
           return false;
