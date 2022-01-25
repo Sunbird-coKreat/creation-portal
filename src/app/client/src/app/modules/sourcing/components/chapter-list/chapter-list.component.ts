@@ -58,6 +58,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public sharedContext: Array<string>;
   public currentStage: any;
   public selectedSharedContext: any;
+  public docxVersion = '0.5';
   public state: InitialState = {
     stages: []
   };
@@ -184,6 +185,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.projectTargetType = _.get(this.programContext, 'target_type');
+    this.docxVersion = this.projectTargetType === 'questionSets'? '1.0' : '0.5';
     this.acceptedContentsAttribute = this.projectTargetType === 'questionSets' ? 'acceptedContributions' : 'acceptedContents';
     this.rejectedContentsAttribute = this.projectTargetType === 'questionSets' ? 'rejectedContributions' : 'rejectedContents';
     this.myOrgId = (this.userService.userRegistryData
@@ -1028,7 +1030,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
                 }
               })
             }
-            if(data.bloomsLevel) {
+            if (data.qType) {
+              this.calculateQuestionType(data.qType);
+            }
+            if (data.bloomsLevel) {
               this.parseBloomLevel(data.bloomsLevel);
             }
             if(this.localBlueprint) {
@@ -1067,6 +1072,28 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       childData.map(child => {
         self.getContentStatusCount(child);
       });
+    }
+  }
+
+  calculateQuestionType(qType) {
+    switch (qType) {
+      case 'MCQ':
+      case 'MTF':
+      case 'FTB':
+        this.countData['objective']++;
+        break;
+      case 'VSA':
+        this.countData['vsa']++;
+        this.countData['subjective']++;
+        break;
+      case 'SA':
+        this.countData['sa']++;
+        this.countData['subjective']++;
+        break;
+      case 'LA':
+        this.countData['la']++;
+        this.countData['subjective']++;
+        break;
     }
   }
 
