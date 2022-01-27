@@ -24,9 +24,13 @@ export class HelperService {
   private _availableLicences: Array<any>;
   private _channelData: any;
   private _categoryMetaData: any;
+  private _formConfigForContext: any;
   private _categoryMetaData$ = new Subject<any>();
+  private _formConfigForContext$ = new Subject<any>();
   public flattenedFrameworkCategories = {};
   public readonly categoryMetaData$: Observable<any> = this._categoryMetaData$
+    .asObservable().pipe(skipWhile(data => data === undefined || data === null));
+  public readonly formConfigForContext$: Observable<any> = this._formConfigForContext$
     .asObservable().pipe(skipWhile(data => data === undefined || data === null));
   private _selectedCollectionMetaData: any;
   private _telemetryPageId: any;
@@ -58,7 +62,6 @@ export class HelperService {
   }
 
   getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, programTargetType?) {
-
     if (!programTargetType || programTargetType === 'collections') {
     // tslint:disable-next-line:max-line-length
     const categoryDefinition$ = this.programsService.getCategoryDefinition(targetCollectionMeta.primaryCategory, targetCollectionMeta.channelId, 'Collection')
@@ -80,7 +83,7 @@ export class HelperService {
           this._categoryMetaData$.next(response);
         }
       );
-    } else if(programTargetType === 'searchCriteria'){
+    } else if(programTargetType === 'searchCriteria') {
       const contentCategoryDefinition$ = this.programsService.getCategoryDefinition(assetMeta.primaryCategory, assetMeta.channelId, assetMeta.objectType).pipe(map((data) => {
         return _.get(data, 'result.objectCategoryDefinition.forms.update.properties');
       }));
@@ -91,6 +94,29 @@ export class HelperService {
         }
       );
     }
+  }
+
+  getformConfigforContext(channel?, context?, context_type?, objecttype?, operation?) {
+    const req = this.programsService.getformConfigData(channel, context, context_type, objecttype, operation).pipe(map((data) => {
+      return _.get(data, 'result.data.properties');
+    }));
+    req.subscribe(
+      (response) => {
+        this.formConfigforContext = response;
+      }
+    );
+  }
+
+  set formConfigforContext(data) {
+    this._formConfigForContext = data;
+    this._formConfigForContext$.next(data);
+  }
+
+  get formConfigforContext() {
+    return this._formConfigForContext;
+  }
+  getFormConfigurationforContext() {
+    return _.cloneDeep(this._formConfigForContext);
   }
 
   set selectedCategoryMetaData(data) {

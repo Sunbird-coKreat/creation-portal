@@ -245,7 +245,7 @@ export class FrameworkService {
     const channelData = this.cacheService.get(channelKey);
     if (channelData) {
        return of(channelData);
-    } 
+    }
     return this.getDefaultFrameWork(channelKey).pipe(
       map(data => {
         this.setChannelData(channelKey, data)
@@ -260,7 +260,7 @@ export class FrameworkService {
         const defaultFrameworkInCache = this.cacheService.get(_.get(channelData, 'defaultFramework'));
         if (_.get(channelData, 'defaultFramework') && defaultFrameworkInCache) {
           return of(this.cacheService.get(_.get(channelData, 'defaultFramework')))
-        } 
+        }
         if (_.get(channelData, 'defaultFramework') && !defaultFrameworkInCache) {
           frameWorkToGet = _.get(channelData, 'defaultFramework');
         }
@@ -270,15 +270,16 @@ export class FrameworkService {
       } else {
         frameWorkToGet = framework;
       }
-    }    
-    if (frameWorkToGet) { 
+    }
+    if (frameWorkToGet) {
       return this.getFrameworkCategories(frameWorkToGet).pipe(
       map(data => {
+        this._frameworkData[frameWorkToGet] = _.get(data, 'result.framework');
         this.setFrameWorkData(data)
         return _.get(data, 'result.framework');
       }));
     } else {
       return of({});
-    } 
+    }
   }
 }

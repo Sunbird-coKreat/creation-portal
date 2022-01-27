@@ -924,7 +924,22 @@ const API_LIST = {
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
-    }
+    },
+    '/content/program/v1/form/create' : {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.ORG_ADMIN
+      ]
+    },
+    '/content/program/v1/form/update' : {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.ORG_ADMIN
+      ]
+    },
+    '/content/program/v1/form/read' : {
+      checksNeeded: [],
+    },
   },
   URL_PATTERN: [
     '/content/program/v1/read/:program_id',

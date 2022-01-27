@@ -310,6 +310,9 @@
       "ADD": "reg/add",
       "UPDATE": "reg/update",
       "SEARCH": "reg/search"
+    },
+    "FORM": {
+      "READ": "program/v1/form/read"
     }
   }
 }
