@@ -95,7 +95,7 @@ let PERMISSIONS_HELPER = {
     try {
       if (body.responseCode === 'OK') {
         reqObj.session.userId = body.result.response.identifier
-        reqObj.session.roles = body.result.response.roles
+        reqObj.session.roles = _.map(body.result.response.roles, (e) => e.role);
         if (body.result.response.organisations) {
           _.forEach(body.result.response.organisations, function (org) {
             if (org.roles && _.isArray(org.roles)) {
