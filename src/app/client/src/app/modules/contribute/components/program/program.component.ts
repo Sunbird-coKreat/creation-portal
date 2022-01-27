@@ -781,7 +781,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         let contents = [];
         if (response && response.result && (_.get(response.result, 'content')|| _.get(response.result, 'QuestionSet') || _.get(response.result, 'Question'))) {
           if(isTargetTypeQuestionSet) {
-            contents = _.compact(_.concat(_.get(response.result, 'content')), _.get(response.result, 'Question'));
+            contents = _.compact(_.concat(_.get(response.result, 'content'), _.get(response.result, 'Question')));
           } else {
             contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')), _.get(response.result, 'Question'));
           }
