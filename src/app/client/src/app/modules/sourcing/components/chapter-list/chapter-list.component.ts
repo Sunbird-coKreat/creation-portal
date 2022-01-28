@@ -1486,13 +1486,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   public addResourceToHierarchy(contentId, resourceType = "default", isAddedFromLibrary = false) {
+    const children: any[] = _.isArray(contentId)? contentId: [contentId];
     const req: any = {
       url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_ADD,
       data: {
         'request': {
           'rootId': this.sessionContext.collection,
           'unitId': this.unitIdentifier,
-          'children': [contentId]
+          'children': children
         }
       }
     };
@@ -1503,7 +1504,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           'questionset': {
             'rootId': this.sessionContext.collection,
             'collectionId': this.unitIdentifier,
-            'children': [contentId]
+            'children': children
           }
         }
       };
@@ -1879,9 +1880,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
   onLibraryChange(event) {
     switch (event.action) {
-      case 'add':
-        this.reusedContributions.push(event.collectionId);
-        this.addResourceToHierarchy(event.collectionId, event.resourceType, true);
+      case 'addBulk':
+        this.reusedContributions = _.concat(this.reusedContributions, event.collectionIds);
+        this.addResourceToHierarchy(event.collectionIds, event.resourceType, true);
         break;
     }
     this.currentStage = 'chapterListComponent';
