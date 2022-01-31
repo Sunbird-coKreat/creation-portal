@@ -131,6 +131,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   configUrl;
   tags = [];
   printUrl;
+  downloadCsvUrl;
+  displayDownloadCsv = false;
   public reviewHelpSectionConfig: any;
   public contributeHelpSectionConfig: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
@@ -252,6 +254,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
     this.printUrl = this.programsService.getCollectionDocxUrl();
+    this.downloadCsvUrl = this.programsService.getDownloadCsvUrl();
     this.setContextualHelpConfig();
   }
 
@@ -492,6 +495,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.bulkUploadEnabled')) {
           this.bulkUploadEnabled = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.bulkUploadEnabled');
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled')) {
+          this.displayDownloadCsv = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled');
         }
 
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {

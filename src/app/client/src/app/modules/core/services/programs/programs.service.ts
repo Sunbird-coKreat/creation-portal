@@ -1164,6 +1164,10 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.baseUrl + `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`;
   }
 
+  getDownloadCsvUrl() {
+    return this.baseUrl + `${this.config.urlConFig.URLS.DOCKCONTENT.DOWNLOAD_CSV}`
+  }
+
   generateCollectionDocx(identifier) {
     const req = {
       url: `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`,

@@ -286,6 +286,7 @@
       "REJECT": "content/v4/reject",
       "FLAG": "content/v3/flag",
       "PRINT_PREVIEW": "program/v1/print/docx",
+      "DOWNLOAD_CSV": "program/v1/print/csv",
       "SEARCH": "composite/v3/search"
     },
     "DOCKCONTENT_MVC": {
