@@ -727,8 +727,7 @@
 	<div class="sb-modal-content p-0">
     <div class="eight wide column bg-white p-20">
       <ng-container *ngIf="editTargetObjectForm">
-        <sb-dynamic-form [config]="editTargetObjectForm" (initialize)="outputData($event)"
-          (statusChanges)="onStatusChanges($event)" (valueChanges)="valueChanges($event)"></sb-dynamic-form>
+        <sb-dynamic-form [config]="editTargetObjectForm" (valueChanges)="valueChanges($event)"></sb-dynamic-form>
       </ng-container>
     </div>
   </div>

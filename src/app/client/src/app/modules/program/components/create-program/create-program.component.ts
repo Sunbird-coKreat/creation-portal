@@ -962,6 +962,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.actionService.patch(req).subscribe((res) => {
         this.editTargetObjectFlag = false;
         this.toasterService.success(this.resource.messages.smsg.questionset.updated);
+        this.showTexbooklist();
       },
       (err) => {
         this.toasterService.error(this.resource.messages.smsg.questionset.failedToUpdate);
@@ -972,11 +973,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   valueChanges(data: any) {
     this.modifiedNodeData = data;
   }
-
-  outputData(eventData: any) { }
-
-  onStatusChanges(event) { }
-
 
   saveProgramError(err) {
     console.log(err);
