@@ -20,7 +20,7 @@
             <div class="item" suiTabHeader="1" [ngClass]="{'active' : stepNo == 1}">
               {{resource?.frmelmnts?.lbl?.details}}
             </div>
-            <div class="item" suiTabHeader="2" [isDisabled]="stepNo != 2" [isActive]="stepNo === 2"
+            <div *ngIf="!editPublished || projectTargetType === 'questionSets'" class="item" suiTabHeader="2" [isDisabled]="stepNo != 2" [isActive]="stepNo === 2"
                  [ngClass]="{'active' : stepNo == 2}">
               {{resource?.frmelmnts?.lbl?.projectScope}}
             </div>
