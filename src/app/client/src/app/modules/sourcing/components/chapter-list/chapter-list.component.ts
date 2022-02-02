@@ -948,7 +948,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const self = this;
     if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
-      if ((this.checkifContent(data) && ( (this.myOrgId === data.organisationId) || (this.currentRootOrgID === _.get(data, 'channel'))))  && (!data.sampleContent || data.sampleContent === undefined)) {
+      if ((this.checkifContent(data) && ( (this.myOrgId === data.organisationId)))  && (!data.sampleContent || data.sampleContent === undefined)) {
         this.countData['total'] = this.countData['total'] + 1;
         if (data.createdBy === this.currentUserID && data.status === 'Review') {
           this.countData['review'] = this.countData['review'] + 1;
@@ -1676,7 +1676,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       // If user is having contributor and reviewer both roles
       if (this.isContributingOrgContributor() && this.isContributingOrgReviewer()) {
         leaves = _.concat(leaves, _.filter(contents, (c) => {
-          const result = (((c.organisationId === organisationId) || (c.channel === this.currentRootOrgID)) && c.status === 'Draft' &&
+          const result = (c.organisationId === organisationId && c.status === 'Draft' &&
             ((c.createdBy === createdBy && c.contentVisibility === true) || c.prevStatus === 'Review' || c.prevStatus === 'Live'));
           return result;
         }));
