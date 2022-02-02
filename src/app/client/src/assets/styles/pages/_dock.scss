@@ -875,11 +875,15 @@ app-question-set-editor{
   }
   .sb-dropdown{
     margin: 1rem 0 !important;
+    select{
+      border: 1px solid rgba(34,36,38,.15);
+    }
   }
   .treepicker-parent{
     .list-border{
       height: 38px !important;
       padding: 1rem !important;
+      border: 1px solid rgba(34,36,38,.15);
     }
   }
   .sb-textbox{
