@@ -63,7 +63,7 @@ module.exports = (app) => {
             }
         }))
 
-    app.get('/content/program/v1/print/docx',
+    app.get('/content/program/v1/print/*',
         permissionsHelper.checkPermission(),
         proxyUtils.verifyToken(),
         proxy(programServiceUrl, {
