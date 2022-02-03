@@ -1,6 +1,6 @@
 import { ConfigService, ResourceService, ToasterService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
-import { ProgramsService, DataService, FrameworkService, ActionService, UserService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService, UserService, ContentService } from '@sunbird/core';
 import { Subscription, forkJoin, throwError, Observable, of } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
@@ -141,6 +141,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
     public actionService: ActionService,
+    private contentService: ContentService,
     public cacheService: CacheService
   ) { }
 
@@ -932,21 +933,39 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   editTargetNode(nodeData: any) {
-    this.selectedTargetNodeData = nodeData;
+    const formFields = [];
     _.forEach(this.editTargetObjectForm, (section) => {
       _.forEach(section.fields, field => {
-          if (_.has(nodeData, field.code)) {
-            field.default = _.get(nodeData, field.code);
-          }
-          else {
-            field.default = '';
-          }
+          formFields.push(field.code);
       })
     });
-    this.editTargetObjectFlag = true;
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${nodeData.identifier}`,
+      param: {
+          mode: 'edit',
+          fields: formFields.join(',')
+        }
+    };
+    return this.contentService.get(req).subscribe((res) => {
+      this.selectedTargetNodeData = res.result.questionset;
+      _.forEach(this.editTargetObjectForm, (section) => {
+        _.forEach(section.fields, field => {
+            if (_.has(this.selectedTargetNodeData, field.code)) {
+              field.default = _.get(this.selectedTargetNodeData, field.code);
+            }
+            else {
+              field.default = '';
+            }
+        })
+      });
+      this.editTargetObjectFlag = true;
+    },
+    (err) => {
+      this.toasterService.error(this.resource.messages.emsg.questionset.failedToRead);
+    })
   }
 
-  updateQuestionSet() {
+  updateTargetNode() {
     if (this.selectedTargetNodeData) {
       const req = {
         url: `${this.configService.urlConFig.URLS.QUESTIONSET.UPDATE}/${this.selectedTargetNodeData.identifier}`,
@@ -960,9 +979,14 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       };
       this.actionService.patch(req).subscribe((res) => {
-        this.editTargetObjectFlag = false;
+        _.forEach(this.tempCollections, (tempCollection, index) => {
+            if (tempCollection.identifier === this.selectedTargetNodeData.identifier) {
+              this.tempCollections[index] = { ...tempCollection, ...this.modifiedNodeData }
+            }
+        })
         this.toasterService.success(this.resource.messages.smsg.questionset.updated);
-        this.showTexbooklist();
+        this.editTargetObjectFlag = false;
+        this.selectedTargetNodeData = {};
       },
       (err) => {
         this.toasterService.error(this.resource.messages.smsg.questionset.failedToUpdate);
@@ -1619,7 +1643,12 @@ showTexbooklist() {
   }
 
   initEditBlueprintForm(collection) {
-    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.programScope.framework.categories);
+    let frameworkDetails = this.programScope.framework;
+    if (_.isArray(frameworkDetails)) {
+      frameworkDetails = _.find(this.programScope.framework, {'identifier': _.first(_.get(this.programDetails, 'config.framework'))})
+    }
+    const frameworkCategories = frameworkDetails.categories;
+    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, frameworkCategories);
     let blueprint = {};
      this.blueprintTemplate.properties.forEach( (property) => {
       if (!property.default) {
