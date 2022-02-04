@@ -103,6 +103,7 @@
     },
     "QUESTIONSET" : {
       "GET": "questionset/v1/read",
+      "UPDATE": "questionset/v1/update/",
       "HIERARCHY_READ": "questionset/v1/hierarchy",
       "HIERARCHY_ADD": "questionset/v1/add",
       "HIERARCHY_REMOVE": "questionset/v1/remove"

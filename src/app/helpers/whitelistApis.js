@@ -444,6 +444,13 @@ const API_LIST = {
         ROLE.SOURCING_USER
       ]
     },
+    '/content/program/v1/print/csv': {
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.ORG_ADMIN,
+        ROLE.SOURCING_USER
+      ]
+    },
     '/api/org/v1/search': {
       checksNeeded: []
     },

@@ -1,6 +1,6 @@
 import { ConfigService, ResourceService, ToasterService, ServerResponse, NavigationHelperService } from '@sunbird/shared';
 import { FineUploader } from 'fine-uploader';
-import { ProgramsService, DataService, FrameworkService, ActionService, UserService} from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService, UserService, ContentService } from '@sunbird/core';
 import { Subscription, forkJoin, throwError, Observable, of } from 'rxjs';
 import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
@@ -35,6 +35,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   };
   public collectionEditorVisible: Boolean = false;
   public editPublished = false;
+  public editTargetObjectFlag = false;
+  public selectedTargetNodeData: any;
+  public modifiedNodeData: any = {};
+  public editTargetObjectForm: any;
+  public unitFormConfig: any;
   public choosedTextBook: any;
   public selectChapter = false;
   public editBlueprintFlag = false;
@@ -135,8 +140,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public configService: ConfigService,
     private deviceDetectorService: DeviceDetectorService,
     public programTelemetryService: ProgramTelemetryService,
-    public actionService: ActionService, public cacheService: CacheService) {
-  }
+    public actionService: ActionService,
+    private contentService: ContentService,
+    public cacheService: CacheService
+  ) { }
 
   ngOnInit() {
     this.enableQuestionSetEditor = (<HTMLInputElement>document.getElementById('enableQuestionSetEditor'))
@@ -907,8 +914,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programsService.getCategoryDefinition(this.selectedTargetCollection, this.userprofile.rootOrgId, objType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         this.fetchedCategory = _.get(objectCategoryDefinition, 'name');
-        if (objectCategoryDefinition && objectCategoryDefinition.forms && !_.isEmpty(objectCategoryDefinition.forms.blueprintCreate)) {
-          this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
+        if (objectCategoryDefinition && objectCategoryDefinition.forms) {
+          if (!_.isEmpty(objectCategoryDefinition.forms.blueprintCreate)) {
+            this.blueprintTemplate = objectCategoryDefinition.forms.blueprintCreate;
+          }
+          if (!_.isEmpty(objectCategoryDefinition.forms.modify)) {
+            this.editTargetObjectForm = objectCategoryDefinition.forms.modify.properties;
+          }
         }
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
@@ -918,6 +930,72 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         }
       });
     }
+  }
+
+  editTargetNode(nodeData: any) {
+    const formFields = [];
+    _.forEach(this.editTargetObjectForm, (section) => {
+      _.forEach(section.fields, field => {
+          formFields.push(field.code);
+      })
+    });
+    const req = {
+      url: `${this.configService.urlConFig.URLS.QUESTIONSET.GET}/${nodeData.identifier}`,
+      param: {
+          mode: 'edit',
+          fields: formFields.join(',')
+        }
+    };
+    return this.contentService.get(req).subscribe((res) => {
+      this.selectedTargetNodeData = res.result.questionset;
+      _.forEach(this.editTargetObjectForm, (section) => {
+        _.forEach(section.fields, field => {
+            if (_.has(this.selectedTargetNodeData, field.code)) {
+              field.default = _.get(this.selectedTargetNodeData, field.code);
+            }
+            else {
+              field.default = '';
+            }
+        })
+      });
+      this.editTargetObjectFlag = true;
+    },
+    (err) => {
+      this.toasterService.error(this.resource.messages.emsg.questionset.failedToRead);
+    })
+  }
+
+  updateTargetNode() {
+    if (this.selectedTargetNodeData) {
+      const req = {
+        url: `${this.configService.urlConFig.URLS.QUESTIONSET.UPDATE}/${this.selectedTargetNodeData.identifier}`,
+        data: {
+          request: {
+            questionset: {
+              channel: this.userprofile.rootOrgId,
+              ...this.modifiedNodeData
+            }
+          }
+        }
+      };
+      this.actionService.patch(req).subscribe((res) => {
+        _.forEach(this.tempCollections, (tempCollection, index) => {
+            if (tempCollection.identifier === this.selectedTargetNodeData.identifier) {
+              this.tempCollections[index] = { ...tempCollection, ...this.modifiedNodeData }
+            }
+        })
+        this.toasterService.success(this.resource.messages.smsg.questionset.updated);
+        this.editTargetObjectFlag = false;
+        this.selectedTargetNodeData = {};
+      },
+      (err) => {
+        this.toasterService.error(this.resource.messages.smsg.questionset.failedToUpdate);
+      })
+    }
+  }
+
+  valueChanges(data: any) {
+    this.modifiedNodeData = data;
   }
 
   saveProgramError(err) {
@@ -1165,6 +1243,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         prgData.config['contributors'] = this.selectedContributors;
       }
 
+      if (!_.isEmpty(this.localBlueprintMap)) {
+        if (!prgData.config) {
+          prgData['config'] = _.get(this.programDetails, 'config');
+        }
+        prgData.config['blueprintMap'] = this.localBlueprintMap;
+      }
+
       this.programsService.updateProgram(prgData).subscribe(
         (res) => {
           this.generateTelemetryEndEvent('update');
@@ -1256,18 +1341,16 @@ showTexbooklist() {
           }
 
 
-          if (!this.editPublished) {
-            _.forEach(this.collections, item => {
-              const draftCollections = _.get(this.programDetails, 'config.collections');
-              const cindex = this.collections.findIndex(x => x.id === item.identifier);
-              if (!_.isEmpty(draftCollections)) {
-                const index = draftCollections.findIndex(x => x.id === item.identifier);
-                if (index !== -1) {
-                  this.onCollectionCheck(item, true);
-                }
+          _.forEach(this.collections, item => {
+            const draftCollections = _.get(this.programDetails, 'config.collections');
+            const cindex = this.collections.findIndex(x => x.id === item.identifier);
+            if (!_.isEmpty(draftCollections)) {
+              const index = draftCollections.findIndex(x => x.id === item.identifier);
+              if (index !== -1) {
+                this.onCollectionCheck(item, true);
               }
-            });
-          }
+            }
+          });
         } else {
           this.showProgramScope = (!this.filterApplied) ? false : true;
           this.collections = [];
@@ -1560,7 +1643,12 @@ showTexbooklist() {
   }
 
   initEditBlueprintForm(collection) {
-    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, this.programScope.framework.categories);
+    let frameworkDetails = this.programScope.framework;
+    if (_.isArray(frameworkDetails)) {
+      frameworkDetails = _.find(this.programScope.framework, {'identifier': _.first(_.get(this.programDetails, 'config.framework'))})
+    }
+    const frameworkCategories = frameworkDetails.categories;
+    [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, frameworkCategories);
     let blueprint = {};
      this.blueprintTemplate.properties.forEach( (property) => {
       if (!property.default) {
