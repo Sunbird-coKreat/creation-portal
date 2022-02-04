@@ -1094,7 +1094,8 @@ app-question-set-editor{
   }
 }
 
-/*
-.w-73 .two-column-grid.formSection:first-child .sb-g-col-lg-1:nth-child(2n) .sb-textarea-container {
-  margin: 1rem 0!important;
-}*/
+.ui.dropdown.selecttarget{
+  .menu{
+      z-index:99999 !important;
+  }
+}
