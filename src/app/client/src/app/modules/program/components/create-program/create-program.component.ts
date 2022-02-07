@@ -1654,11 +1654,11 @@ showTexbooklist() {
   }
 
   initEditBlueprintForm(collection) {
-    let frameworkDetails = this.programScope.framework;
+    let frameworkDetails = _.get(this.programScope, 'framework');
     if (_.isArray(frameworkDetails)) {
-      frameworkDetails = _.find(this.programScope.framework, {'identifier': _.first(_.get(this.programDetails, 'config.framework'))})
+      frameworkDetails = _.first(this.programScope.framework);
     }
-    const frameworkCategories = frameworkDetails.categories;
+    const frameworkCategories = frameworkDetails? frameworkDetails.categories : [];
     [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, frameworkCategories);
     let blueprint = {};
      this.blueprintTemplate.properties.forEach( (property) => {
