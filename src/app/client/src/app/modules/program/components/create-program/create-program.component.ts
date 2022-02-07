@@ -1518,7 +1518,7 @@ showTexbooklist() {
     if (_.isArray(frameworkDetails)) {
       frameworkDetails = _.first(this.programScope.framework);
     }
-    const frameworkCategories = frameworkDetails? frameworkDetails.categories : [];
+    const frameworkCategories = _.get(frameworkDetails, 'categories', []);
     [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, frameworkCategories);
     let blueprint = {};
      this.blueprintTemplate.properties.forEach( (property) => {
