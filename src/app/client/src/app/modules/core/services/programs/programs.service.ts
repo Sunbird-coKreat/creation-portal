@@ -91,7 +91,7 @@ export class ProgramsService extends DataService implements CanActivate {
     if (urlSlug && _.isEmpty(this._organisations[urlSlug])) {
      const orgFilters = {
          slug: urlSlug,
-         isRootOrg: true
+         isTenant: true
      };
 
      this.getOrganisationDetails(orgFilters).subscribe

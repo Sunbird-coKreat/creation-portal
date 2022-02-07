@@ -41,7 +41,7 @@ export class OrgDetailsService {
         request: {
           filters: {
             slug: slug || (<HTMLInputElement>document.getElementById('defaultTenant')).value,
-            isRootOrg: true
+            isTenant: true
           }
         }
       }
@@ -96,7 +96,7 @@ export class OrgDetailsService {
       data: {
         request: {
           filters: {
-            isRootOrg: true
+            isTenant: true
           }
         }
       }
