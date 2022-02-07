@@ -14,16 +14,16 @@ let envVariables = {
 
   // Application Start-up - Hosts and PORT Configuration
   PORTAL_PORT: env.sunbird_port || 3000,
-  LEARNER_URL: env.sunbird_learner_player_url || 'https://staging.open-sunbird.org/api/',
-  CONTENT_URL: env.sunbird_content_player_url || 'https://staging.open-sunbird.org/api/',
-  CONTENT_PROXY_URL: env.sunbird_content_proxy_url || 'https://staging.open-sunbird.org',
+  LEARNER_URL: env.sunbird_learner_player_url || 'https://dev.sunbirded.org/api/',
+  CONTENT_URL: env.sunbird_content_player_url || 'https://dock.sunbirded.org/api/',
+  CONTENT_PROXY_URL: env.sunbird_content_proxy_url || 'https://dock.sunbirded.org',
   PORTAL_REALM: env.sunbird_portal_realm || 'sunbird',
-  PORTAL_AUTH_SERVER_URL: env.sunbird_portal_auth_server_url || 'https://staging.open-sunbird.org/auth',
+  PORTAL_AUTH_SERVER_URL: env.sunbird_portal_auth_server_url || 'https://dev.sunbirded.org/auth',
   PORTAL_AUTH_SERVER_CLIENT: env.sunbird_portal_auth_server_client || 'portal',
   PORTAL_API_AUTH_TOKEN: env.dock_api_auth_token,
   SUNBIRD_PORTAL_API_AUTH_TOKEN: env.sunbird_api_auth_token,
-  PORTAL_ECHO_API_URL: env.sunbird_echo_api_url || 'https://staging.open-sunbird.org/api/echo/',
-  CONFIG_URL: env.sunbird_config_service_url || 'https://staging.open-sunbird.org/api/config/',
+  PORTAL_ECHO_API_URL: env.sunbird_echo_api_url || 'https://dev.sunbirded.org/api/echo/',
+  CONFIG_URL: env.sunbird_config_service_url || 'https://dev.sunbirded.org/api/config/',
   EKSTEP_ENV: env.ekstep_env || 'qa',
   DEVICE_REGISTER_API: process.env.sunbird_device_register_api || 'https://api.open-sunbird.org/v3/device/register/',
   DEVICE_PROFILE_API: process.env.sunbird_device_profile_api || 'https://staging.open-sunbird.org/api/v3/device/profile/',
@@ -141,9 +141,9 @@ let envVariables = {
   LEARNER_SERVICE_UPSTREAM_URL: env.sunbird_learner_service_upstream_url || 'http://localhost:9000/',
   DATASERVICE_URL: env.sunbird_dataservice_url || 'https://staging.open-sunbird.org/api/',
   PORTAL_EXT_PLUGIN_URL: process.env.sunbird_ext_plugin_url || 'http://player_player:3000/plugin/',
-  kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'http://content-service:9000/',
-  kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url,
-  kp_assessment_service_base_url: env.sunbird_kp_assessment_service_base_url || 'http://assessment-service:9000/',
+  kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'https://dock.sunbirded.org/api/',
+  kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url || 'https://dock.sunbirded.org/api/',
+  kp_assessment_service_base_url: env.sunbird_kp_assessment_service_base_url || 'https://dock.sunbirded.org/api/',
 
 
   // Health Checks Configuration

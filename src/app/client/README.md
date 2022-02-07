@@ -1,9 +1,9 @@
-# Installing Sunbird Portal
+# Installing Creation Portal
 
-Installing Sunbird requires two primary software components:
+Installing Creation portal requires two primary software components:
 
-- Sunbird portal or web application
-- Sunbird services stack or the backend API interface
+- Creation portal or web application
+- Services stack or the backend API interface
 
 ## Table of contents
 
@@ -47,10 +47,15 @@ Installing Sunbird requires two primary software components:
 1. Clone project
 
     ```console
-    git clone https://github.com/Sunbird-Ed/SunbirdEd-portal.git
+    Go to https://github.com/Sunbird-Ed/creation-portal and fork the repo
+    git clone <FORK URL>
+    cd creation-portal
+    git remote add upstream git@github.com:Sunbird-Ed/creation-portal.git
+    Git fetch upstream 
+    git checkout -b test upstream/<LATEST BRANCH>
     ```
 
-    > ***Note***: Stable versions of the sunbird portal are available via tags for each release, and the master branch contains latest stable release. For latest stable release [refer](https://github.com/Sunbird-Ed/SunbirdEd-portal/branches)
+    > ***Note***: Stable versions of the Creation portal are available via tags for each release, and the master branch contains latest stable release. For latest stable release [refer](https://github.com/Sunbird-Ed/creation-portal/branches)
 
 2. Add the following environment variables - *Required for downloading editors (Via gulp task)*
 
@@ -64,12 +69,12 @@ Installing Sunbird requires two primary software components:
 
 3. Install required dependencies
 
-    1. Sunbird portal or web application
+    1. Creation portal or web application
 
         1. $ cd {PROJECT-FOLDER}/src/app/client
         2. $ npm install
 
-    2. Sunbird services stack or the backend API interface
+    2. Services stack or the backend API interface
 
         1. $ gulp download:editors
         2. $ cd {PROJECT-FOLDER}/src/app
@@ -143,7 +148,7 @@ Installing Sunbird requires two primary software components:
 ### Project Structure
 
     .
-    ├── Sunbirded-portal                                            
+    ├── creation-portal                                            
     |   ├── /.circleci                           # 
     │   |   └── config.yml                       # Circleci Configuration file
     |   ├── /experiments                         # -|-
