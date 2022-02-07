@@ -909,9 +909,6 @@ export class HelperService {
       case 'channel':
         ret =  _.get(programDetails, 'rootorg_id');
         break;
-      case 'topic':
-        ret = null;
-        break;
       default:
         ret =  _.get(programDetails, `config.${property}`);
         break;
