@@ -951,7 +951,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       _.forEach(this.editTargetObjectForm, (section) => {
         _.forEach(section.fields, field => {
             if (_.has(this.selectedTargetNodeData, field.code)) {
-              field.default = _.get(this.selectedTargetNodeData, field.code);
+              const value = _.get(this.selectedTargetNodeData, field.code);
+              if (_.isObject(value) && _.has(value, 'default')) {
+                field.default = _.get(value, 'default');
+              }
+              else  {
+                field.default = value;
+              }
             }
             else {
               field.default = '';
@@ -966,6 +972,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   updateTargetNode() {
+    if (_.has(this.modifiedNodeData, 'instructions')) {
+      this.modifiedNodeData['instructions'] = {
+        default: _.get(this.modifiedNodeData, 'instructions')
+      };
+    }
     if (this.selectedTargetNodeData) {
       const req = {
         url: `${this.configService.urlConFig.URLS.QUESTIONSET.UPDATE}/${this.selectedTargetNodeData.identifier}`,
