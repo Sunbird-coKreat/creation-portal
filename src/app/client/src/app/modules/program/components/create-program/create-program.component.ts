@@ -177,9 +177,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.programDetails = _.get(programDetails, 'result');
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
       this.disableUpload = (this.editPublished && _.get(this.programDetails, 'guidelines_url')) ? true : false;
-      //this.isOpenNominations = (this.programDetails && _.get(this.programDetails, 'type') === 'public') ? true : false;
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
-
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : '';
 
@@ -250,17 +248,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       pcollections: this.sbFormBuilder.array([]),
       framework: [null, Validators.required],
       board: [],
-      /*medium: [],
-      gradeLevel: [],
-      subject: [],*/
       targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null]
     });
     if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
-     // this.programScope['target_collection_category_options'] = _.get(this.cacheService.get(this.userService.hashTagId), 'collectionPrimaryCategories');
      if (this.selectedTargetCollection) {
-        //this.getCollectionCategoryDefinition();
         this.onChangeTargetCollectionCategory();
      }
     }
@@ -269,10 +262,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   setProjectScopeDetails() {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
-    /*
-    if (_.includes(['collections','questionSets'], this.projectTargetType)) {
-      this.initializeFrameworkForTargetType('')
-    } */
     const channelData$ = this.frameworkService.readChannel();
     channelData$.subscribe((channelData) => {
       if (channelData) {
@@ -384,81 +373,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       }
     });
   }
-/*
-  setFrameworkAttributes() {
-    this.programScope['board'] = [];
-    this.programScope['medium'] = [];
-    this.programScope['gradeLevel'] = [];
-    this.programScope['subject'] = [];
-    this.projectScopeForm.controls['framework'].setValue([this.programScope.framework.identifier]);
-    if (this.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) {
-      this.projectScopeForm.controls['board'].setValue('');
-      this.projectScopeForm.controls['medium'].setValue('');
-      this.projectScopeForm.controls['gradeLevel'].setValue('');
-      this.projectScopeForm.controls['subject'].setValue('');
-      const board = _.find(this.programScope.framework.categories, (element) => {
-        return element.code === 'board';
-      });
-      if (board) {
-        if (!_.isEmpty(board.terms[0].name)) {
-          this.projectScopeForm.controls['board'].setValue(board.terms[0].name);
-        } else if (_.get(this.userprofile.framework, 'board')) {
-          this.projectScopeForm.controls['board'].setValue(this.userprofile.framework.board[0]);
-        }
 
-        const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.programScope.framework.categories);
-        if (mediumOption.length) {
-          this.programScope['medium'] = mediumOption;
-        }
-      }
-    }
-    this.programScope.framework.categories.forEach((element) => {
-      const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
-        result.push(value);
-        return result;
-      }, []));
-      const sortedTermsArray = _.map(sortedArray, (term) => {
-        if (_.find(element['terms'], { name: term.name })) {
-          return term;
-        }
-      });
-      this.programScope[element['code']] = sortedTermsArray;
-      this.originalProgramScope[element['code']] = sortedTermsArray;
-    });
-
-    const Kindergarten = _.remove(this.programScope['gradeLevel'], (item) => {
-      return item.name === 'Kindergarten';
-    });
-    this.programScope['gradeLevel'] = [...Kindergarten, ...this.programScope['gradeLevel']];
-
-    // set framework attribute values
-    if (this.projectScopeForm && this.projectTargetType === 'searchCriteria') {
-      const selectedBoard =  _.find(this.programScope.board, {'name': _.first(_.get(this.programDetails, 'config.board'))});
-      this.projectScopeForm.controls['board'].setValue(selectedBoard);
-
-      const selectedMediums =  _.filter(this.programScope.medium, (temp) => {
-        if (_.includes(_.get(this.programDetails, 'config.medium'), temp.name)) {
-          return temp;
-        }
-      });
-      this.projectScopeForm.controls['medium'].setValue(selectedMediums);
-
-      const selectedgradeLevels =  _.filter(this.programScope.gradeLevel, (temp) => {
-        if (_.includes(_.get(this.programDetails, 'config.gradeLevel'), temp.name)) {
-          return temp;
-        }
-      });
-      this.projectScopeForm.controls['gradeLevel'].setValue(selectedgradeLevels);
-
-      const selectedsubjects =  _.filter(this.programScope.subject, (temp) => {
-        if (_.includes(_.get(this.programDetails, 'config.subject'), temp.name)) {
-          return temp;
-        }
-      });
-      this.projectScopeForm.controls['subject'].setValue(selectedsubjects);
-    }
-  }
-*/
   initiateDocumentUploadModal() {
     this.showDocumentUploader = true;
     this.loading = false;
@@ -839,75 +754,21 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
-      //console.log(this.frameworkService.orgFrameworkCategories);
 
       forkJoin(request).subscribe(res => {
         const formData = _.get(_.first(res), 'result.data.properties');
         const frameworkDetails = res[1];
         this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
         this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
-        console.log(this.formFieldProperties);
-        //console.log(res[2]);
+        this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+
       });
       if (!this.projectTargetType || this.projectTargetType == 'collections') {
         this.showTexbooklist()
       }
-      //this.isFormValueSet.projectScopeForm = true;
-    }
-  }
-/*
-  onBoardChange() {
-    this.projectScopeForm.controls['medium'].setValue('');
-    this.projectScopeForm.controls['gradeLevel'].setValue('');
-    this.projectScopeForm.controls['subject'].setValue('');
-
-    if (!_.isEmpty(this.projectScopeForm.value.board)) {
-      const boardValue = _.isArray(this.projectScopeForm.value.board) ? this.projectScopeForm.value.board : [this.projectScopeForm.value.board];
-      // tslint:disable-next-line: max-line-length
-      const mediumOption = this.programsService.getAssociationData(boardValue, 'medium', this.programScope.framework.categories);
-
-      if (mediumOption.length) {
-        this.programScope['medium'] = mediumOption;
-      }
-
-      this.onMediumChange();
-    } else {
-      this.programScope['medium'] = this.originalProgramScope['medium'];
-    }
-  }
-  onMediumChange() {
-    this.projectScopeForm.controls['gradeLevel'].setValue('');
-    this.projectScopeForm.controls['subject'].setValue('');
-
-    if (!_.isEmpty(this.projectScopeForm.value.medium)) {
-      // tslint:disable-next-line: max-line-length
-      const classOption = this.programsService.getAssociationData(this.projectScopeForm.value.medium, 'gradeLevel', this.programScope.framework.categories);
-
-      if (classOption.length) {
-        this.programScope['gradeLevel'] = classOption;
-      }
-
-      this.onClassChange();
-    } else {
-      this.programScope['gradeLevel'] = this.originalProgramScope['gradeLevel'];
     }
   }
 
-  onClassChange() {
-    this.projectScopeForm.controls['subject'].setValue('');
-
-    if (!_.isEmpty(this.projectScopeForm.value.gradeLevel)) {
-      // tslint:disable-next-line: max-line-length
-      const subjectOption = this.programsService.getAssociationData(this.projectScopeForm.value.gradeLevel, 'subject', this.programScope.framework.categories);
-
-      if (subjectOption.length) {
-        this.programScope['subject'] = subjectOption;
-      }
-    } else {
-      this.programScope['subject'] = this.originalProgramScope['subject'];
-    }
-  }
-*/
   getCollectionCategoryDefinition() {
     if (this.selectedTargetCollection && this.userprofile.rootOrgId && this.selectedTargetCollection !== this.fetchedCategory) {
       let objType = this.projectTargetType === 'questionSets' ? 'QuestionSet' : 'Collection';
@@ -1076,9 +937,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   resetFilters() {
     this.filterApplied = false;
     this.resetSorting();
-    this.projectScopeForm.controls['medium'].setValue('');
-    this.projectScopeForm.controls['gradeLevel'].setValue('');
-    this.projectScopeForm.controls['subject'].setValue('');
+    this.formFieldProperties = _.cloneDeep(this.programScope['formFieldProperties']);
+    this.frameworkFormData = {};
     this.showTexbooklist();
   }
 
