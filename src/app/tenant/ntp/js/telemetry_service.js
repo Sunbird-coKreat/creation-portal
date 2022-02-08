@@ -2517,7 +2517,7 @@ if (typeof module != 'undefined') {
       data: JSON.stringify({
         request: {
           filters: {
-            isRootOrg: true,
+            isTenant: true,
             slug: 'ntp'
           }
         }
