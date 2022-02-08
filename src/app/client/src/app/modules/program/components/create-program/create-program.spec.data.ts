@@ -743,7 +743,7 @@ export const contentUploadComponentInput = {
     userId: '123456789',
     rootOrg : {
       slug: 'sunbird'
-    }
+    },
   };
   export const programDetails = {
     result : {
@@ -2251,3 +2251,119 @@ export const contentUploadComponentInput = {
       }
     }
   };
+
+export const editTargetObjectFormMock = [
+  {
+		"name": "Details",
+		"fields": [
+			{
+				"code": "name",
+				"name": "Name",
+				"label": "Name",
+				"placeholder": "Enter Name",
+				"description": "Name of the Question Set",
+				"dataType": "text",
+				"inputType": "text",
+				"editable": true,
+				"required": true,
+				"visible": true,
+				"renderingHints": {
+					"class": "sb-g-col-lg-1 required"
+				},
+				"validations": [
+					{
+						"type": "maxLength",
+						"value": "120",
+						"message": "Entered name is too long"
+					},
+					{
+						"type": "required",
+						"message": "Name is required"
+					}
+				]
+			},
+			{
+				"code": "description",
+				"name": "Description",
+				"label": "Description",
+				"placeholder": "Enter Description",
+				"description": "Description of the Question Set",
+				"dataType": "text",
+				"inputType": "textarea",
+				"editable": true,
+				"required": false,
+				"visible": true,
+				"renderingHints": {
+					"class": "sb-g-col-lg-1 required"
+				}
+			},
+			{
+				"code": "instructions",
+				"name": "Instructions",
+				"label": "Instructions",
+				"placeholder": "Enter Instructions",
+				"description": "Instructions for the question set",
+				"dataType": "text",
+				"inputType": "textarea",
+				"editable": true,
+				"required": false,
+				"visible": true,
+				"renderingHints": {
+					"class": "sb-g-col-lg-2 required"
+				},
+				"validations": [
+					{
+						"type": "maxLength",
+						"value": "500",
+						"message": "Input is Exceeded"
+					}
+				]
+			},
+			{
+				"code": "audience",
+				"name": "Audience",
+				"label": "Audience",
+				"placeholder": "Select Audience",
+				"description": "Audience of the Question Set",
+				"dataType": "list",
+				"inputType": "select",
+				"editable": true,
+				"required": true,
+				"visible": true,
+				"range": [
+					"Student",
+					"Teacher",
+					"Administrator"
+				],
+				"renderingHints": {
+					"class": "sb-g-col-lg-1 required"
+				},
+				"validations": [
+					{
+						"type": "required",
+						"message": "Audience is required"
+					}
+				]
+			}
+		]
+	}
+]
+
+export const questionsetReadResp = {
+	"result": {
+		"questionset": {
+			"instructions": {
+				"default": "Questions"
+			},
+			"identifier": "do_213469757284712448194",
+			"audience": [
+				"Administrator"
+			],
+			"languageCode": [
+				"en"
+			],
+			"name": "Questions",
+			"description": "Questions"
+		}
+	}
+};
