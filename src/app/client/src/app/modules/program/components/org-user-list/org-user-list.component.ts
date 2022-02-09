@@ -45,6 +45,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   searchLimitCount: any;
   public telemetryPageId: string;
   public mangeUsersContextualConfig: any;
+  public noMangeUsersContextualConfig: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
@@ -84,6 +85,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     console.log('sunbirdContextualHelpConfig', sunbirdContextualHelpConfig);
     if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.manageUsers')) {
       this.mangeUsersContextualConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.manageUsers');
+    }
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
+      this.noMangeUsersContextualConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
     }
   }
 

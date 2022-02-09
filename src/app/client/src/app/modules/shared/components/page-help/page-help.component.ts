@@ -10,6 +10,7 @@ import { IPopup } from 'ng2-semantic-ui-v9';
 export class PageHelpComponent implements OnInit {
   @Input() helpSectionConfig: any;
   @Input() popupPlacement: string;
+  @Input() pageid: string;
 
   public baseUrl;
   public contextualHelpPopup: IPopup;
@@ -20,7 +21,7 @@ export class PageHelpComponent implements OnInit {
 
    @HostListener('document:click', ['$event'])
    click(event) {
-     if ( event.target.id === 'contextualHelpIcon') {
+     if (event.target.id === this.pageid) {
       this.contextualHelpPopup.toggle();
     } else {
       this.contextualHelpPopup.close();
@@ -30,6 +31,11 @@ export class PageHelpComponent implements OnInit {
   ngOnInit(): void {
     if (_.isUndefined(this.popupPlacement)) {
       this.popupPlacement = 'bottom left';
+    }
+    if(_.isUndefined(this.pageid)) {
+      this.pageid = 'contextualHelpIcon'
+    } else {
+      this.pageid = this.pageid;
     }
   }
 
