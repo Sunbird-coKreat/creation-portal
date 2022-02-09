@@ -32,10 +32,8 @@ export class PageHelpComponent implements OnInit {
     if (_.isUndefined(this.popupPlacement)) {
       this.popupPlacement = 'bottom left';
     }
-    if(_.isUndefined(this.pageid)) {
-      this.pageid = 'contextualHelpIcon'
-    } else {
-      this.pageid = this.pageid;
+    if (_.isUndefined(this.pageid)) {
+      this.pageid = 'contextualHelpIcon';
     }
   }
 
