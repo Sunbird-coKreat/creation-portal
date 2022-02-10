@@ -188,14 +188,17 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (_.has(sunbirdContextualHelpConfig, 'contribute.assignUsersToProject') && this.router.url.includes('/contribute')) {
         this.assignUserHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.assignUsersToProject');
       }
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound') && this.router.url.includes('/sourcing')) {
+        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound') && this.router.url.includes('/contribute')) {
+        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute') && this.router.url.includes('/contribute')) {
         this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');
       }
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.allProjectNomations')) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.allProjectNomations') && this.router.url.includes('/contribute')) {
         this.nominationHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.allProjectNomations');
-      }
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound')) {
-        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
       }
       if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions') && this.router.url.includes('/sourcing')) {
         this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
