@@ -830,7 +830,9 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         contentData: res
       };
       this.contentMetaData = res;
-      if (this.ischeckBulkUploadStatus && _.get(this.contentMetaData, 'processId')) {
+      if (this.ischeckBulkUploadStatus && _.get(this.contentMetaData, 'processId') &&
+      this.userService.isContributingOrgReviewer(this.sessionContext.nominationDetails) &&
+      this.userService.isSourcingOrgReviewer(this.programContext)) {
         this.checkBulkUploadStatus();
       } else {
         this.enableContentActions = true;
