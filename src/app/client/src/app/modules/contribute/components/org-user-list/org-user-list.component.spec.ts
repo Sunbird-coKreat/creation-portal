@@ -211,7 +211,7 @@ describe('OrgUserListComponent', () => {
     expect(component.orgUserscnt).toBe(userDetail.result.response.content.length);
     });
 
-    it('#setContextualHelpConfig should set mangeUsersHelpConfig and noUsersHelpConfig', () => {
+    xit('#setContextualHelpConfig should set mangeUsersHelpConfig and noUsersHelpConfig', () => {
       component.mangeUsersHelpConfig = undefined;
       component.noUsersHelpConfig = undefined;
       const helperService = TestBed.get(HelperService);
