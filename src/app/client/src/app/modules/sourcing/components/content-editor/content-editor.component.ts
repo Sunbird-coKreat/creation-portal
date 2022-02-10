@@ -7,7 +7,7 @@ import { UserService, TenantService, FrameworkService, PlayerService, Notificati
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
 import { TelemetryService } from '@sunbird/telemetry';
-import { of, Subject } from 'rxjs';
+import { of, Subject, forkJoin } from 'rxjs';
 import { tap, delay, first, filter, takeUntil, take } from 'rxjs/operators';
 import { IContentEditorComponentInput } from '../../interfaces';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
@@ -327,7 +327,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   fetchCategoryDetails() {
-    this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
+    let reqs = [] ;
+    reqs.push(this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)));
+    reqs.push(this.helperService.formConfigForContext$.pipe(take(1), takeUntil(this.onComponentDestroy$)));
+    forkJoin(reqs).subscribe(data => {
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
@@ -345,6 +348,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
+    const contextType = _.get(this.programContext, 'config.frameworkObj.type') || this.sessionContext.frameworkType;
+    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create');
   }
 
   handleContentStatusText() {
@@ -385,7 +390,9 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   fetchFormconfiguration() {
-    this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    const formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    const formContextConfig = _.cloneDeep(this.helperService.getFormConfigurationforContext());
+    this.formFieldProperties = _.unionBy(formFieldProperties, formContextConfig, 'code')
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {
