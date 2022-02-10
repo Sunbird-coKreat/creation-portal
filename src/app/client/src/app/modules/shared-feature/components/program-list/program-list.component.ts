@@ -87,10 +87,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig)) {
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjects')) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjects') && this.router.url.includes('/contribute')) {
         this.myProjectContextHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjects');
       }
-      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectsNotFound')) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectsNotFound') && this.router.url.includes('/contribute')) {
         this.myProjectNotFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectsNotFound');
       }
     }

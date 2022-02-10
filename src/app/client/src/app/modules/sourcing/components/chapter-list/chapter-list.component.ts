@@ -258,8 +258,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig)) {
-      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions') && this.router.url.includes('/sourcing')) {
         this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.reviewContributions') && this.router.url.includes('/contribute')) {
+        this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.reviewContributions');
       }
       if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
         this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');

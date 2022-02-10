@@ -126,8 +126,13 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
 
   setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
-    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')
+    && this.router.url.includes('/sourcing')) {
         this.reviewContributionHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+    }
+    if (!_.isUndefined(sunbirdContextualHelpConfig) && _.has(sunbirdContextualHelpConfig, 'contribute.reviewContributions')
+    && this.router.url.includes('/contribute')) {
+      this.reviewContributionHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.reviewContributions');
     }
   }
 

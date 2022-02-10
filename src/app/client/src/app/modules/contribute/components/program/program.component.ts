@@ -182,8 +182,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig)) {
-      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject') && this.router.url.includes('/sourcing')) {
         this.assignUserHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.assignUsersToProject') && this.router.url.includes('/contribute')) {
+        this.assignUserHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.assignUsersToProject');
       }
       if (_.has(sunbirdContextualHelpConfig, 'contribute.myProjectContribute')) {
         this.contributeHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.myProjectContribute');
@@ -194,8 +197,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound')) {
         this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
       }
-      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions')) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewContributions') && this.router.url.includes('/sourcing')) {
         this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewContributions');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.reviewContributions') && this.router.url.includes('/contribute')) {
+        this.reviewHelpSectionConfig = _.get(sunbirdContextualHelpConfig, 'contribute.reviewContributions');
       }
     }
   }
