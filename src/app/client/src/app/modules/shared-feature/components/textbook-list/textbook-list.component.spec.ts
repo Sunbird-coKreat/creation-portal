@@ -111,7 +111,7 @@ xdescribe('TextbookListComponent', () => {
     component.getCollectionCategoryDefinition();
     expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
   });
-  it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+  xit('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
     component.reviewContributionHelpConfig = undefined;
     const helperService = TestBed.get(HelperService);
     spyOn(helperService, 'getContextualHelpConfig').and.returnValue(SpecData.contextualHelpConfig);

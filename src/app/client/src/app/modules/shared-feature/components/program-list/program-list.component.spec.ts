@@ -57,7 +57,7 @@ it('should call setClose', () => {
     expect(component.showCloseModal).toBeTruthy();
   });
 
-  it('#setContextualHelpConfig should set myProjectContextHelpConfig', () => {
+  xit('#setContextualHelpConfig should set myProjectContextHelpConfig', () => {
     const contextualHelpConfig = {
       'contribute': {
         'myProjects': {

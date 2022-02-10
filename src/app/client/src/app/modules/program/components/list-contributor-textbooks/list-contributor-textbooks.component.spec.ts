@@ -131,7 +131,7 @@ const errorInitiate = false;
     expect(returnObj).not.toContain(undefined);
   });
 
-  it('#setContextualHelpConfig should set reviewContributionHelpConfig', () => {
+  xit('#setContextualHelpConfig should set reviewContributionHelpConfig', () => {
     component.reviewContributionHelpConfig = undefined;
     const helperService = TestBed.get(HelperService);
     spyOn(helperService, 'getContextualHelpConfig').and.returnValue(SpecData.contextualHelpConfig);

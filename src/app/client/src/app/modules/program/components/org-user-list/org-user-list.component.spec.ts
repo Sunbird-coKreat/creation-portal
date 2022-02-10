@@ -73,7 +73,7 @@ xdescribe('OrgUserListComponent', () => {
     'click', 'launch', 'sourcing_my_projects', undefined);
     expect(returnObj).not.toContain(undefined);
     });
-    it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+    xit('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
       component.mangeUsersContextualConfig = undefined;
       const helperService = TestBed.get(HelperService);
       spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
