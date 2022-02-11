@@ -85,6 +85,7 @@ describe('ProgramNominationsComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
+  const routerStub = { url: '/sourcing' };
 
   const fakeActivatedRoute = {
     snapshot: {
@@ -128,7 +129,7 @@ describe('ProgramNominationsComponent', () => {
         ContributorProfilePopupComponent
       ],
       providers: [
-        { provide: Router, useClass: RouterStub },
+        { provide: Router, useValue: routerStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: UserService, useValue: userServiceStub },
         { provide: ResourceService, useValue: resourceBundle },
@@ -244,7 +245,7 @@ describe('ProgramNominationsComponent', () => {
 
   it('#sortCollection() should set nominations value', () => {
     component.direction = 'desc';
-    component.nominations = [];
+    // component.nominations = [];
     spyOn(programsService, 'sortCollection').and.returnValue({});
     spyOn(component, 'sortCollection').and.callThrough();
     component.sortCollection('name');

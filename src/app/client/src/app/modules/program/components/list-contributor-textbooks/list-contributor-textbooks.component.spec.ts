@@ -23,9 +23,7 @@ import { ProgramStageService } from '../../services/program-stage/program-stage.
 describe('ListContributorTextbooksComponent', () => {
   let component: ListContributorTextbooksComponent;
   let fixture: ComponentFixture<ListContributorTextbooksComponent>;
-  class RouterStub {
-    navigate = jasmine.createSpy('navigate');
-  }
+  const routerStub = { url: '/sourcing' };
 const errorInitiate = false;
   const userServiceStub = {
     get() {
@@ -74,7 +72,7 @@ const errorInitiate = false;
         ],
       declarations: [ ListContributorTextbooksComponent, DaysToGoPipe],
       providers: [
-        { provide: Router, useClass: RouterStub },
+        { provide: Router, useValue: routerStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: UserService, useValue: userServiceStub },
         { provide: APP_BASE_HREF, useValue: '/' },

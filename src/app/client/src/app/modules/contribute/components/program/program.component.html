@@ -364,7 +364,8 @@
 					</th>
           <th class="w-15" *ngIf="programDetails?.target_type === 'searchCriteria'"></th>
           <th class="w-10" *ngIf="programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'"></th>
-					<th scope="col" class="w-10" *ngIf="(visibility.showCollectionLevelUploadContent || visibility.showProgramLevelContentUpload) && contributeHelpSectionConfig">
+					<th scope="col" class="w-10" *ngIf="(visibility.showCollectionLevelUploadContent || visibility.showProgramLevelContentUpload)
+					&& !visibility.showReviewContent && contributeHelpSectionConfig">
 						<app-page-help class="min-w-125 float-ContentRight" [helpSectionConfig]="contributeHelpSectionConfig"
 						[popupPlacement]="'top right'">
 						</app-page-help>
@@ -467,7 +468,7 @@
 							[telemetryInteractCdata]="getTelemetryInteractCdata(contributorTextbook.identifier,'linked_collection')"
 							[telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.lbl.reviewContent}}</button>
 						</td>
-						<td *ngIf="(visibility.showCollectionLevelUploadContent || visibility.showProgramLevelContentUpload) && contributeHelpSectionConfig"></td>
+						<td *ngIf="(visibility.showCollectionLevelUploadContent || visibility.showProgramLevelContentUpload) && !visibility.showReviewContent && contributeHelpSectionConfig"></td>
 						<td *ngIf="visibility.showReviewContentHelp && reviewHelpSectionConfig"></td>
 					</tr>
 				</ng-container>

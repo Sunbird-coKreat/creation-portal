@@ -19,7 +19,7 @@ describe('ProgramListComponent', () => {
   let component: ProgramListComponent;
   let fixture: ComponentFixture<ProgramListComponent>;
 
-  const routerStub = { url: '/sourcing' };
+  const routerStub = { url: '/sourcing/contribute' };
 
   const fakeActivatedRoute = {
     snapshot: { data: {
