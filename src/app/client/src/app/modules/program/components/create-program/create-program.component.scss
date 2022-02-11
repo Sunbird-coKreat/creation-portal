@@ -44,7 +44,9 @@ h4 {
     select{
         @extend input;
     }
+
 }
+
 .ui .default.text {
     color: #e0e0e0 !important;
 }
@@ -122,6 +124,7 @@ sui-select{
     border: 1px solid rgba(34, 36, 38, 0.15);
     font-size: 0.8rem;
     padding:0.4rem 0.2rem;
+    border-radius: 0.1875rem !important;
 }
 .mb-0 {
     margin-bottom: 0px !important;

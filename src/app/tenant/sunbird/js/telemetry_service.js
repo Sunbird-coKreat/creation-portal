@@ -2513,11 +2513,11 @@ if (typeof module != 'undefined') {
   function getOrgInfo(id) {
     return $.ajax({
       method: "POST",
-      url: hostURL + "/api/org/v1/search",
+      url: hostURL + "/learner/org/v2/search",
       data: JSON.stringify({
         request: {
           filters: {
-            isRootOrg: true,
+            isTenant: true,
             slug: 'sunbird'
           }
         }

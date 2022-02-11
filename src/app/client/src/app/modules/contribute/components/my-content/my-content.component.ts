@@ -416,7 +416,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
 
   getUserProfiles(identifier?: any) {
     const option = {
-      url: 'user/v1/search',
+      url: 'user/v3/search',
       data: {
         request: {
           filters: {

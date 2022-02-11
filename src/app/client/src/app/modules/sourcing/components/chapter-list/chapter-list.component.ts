@@ -131,6 +131,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   configUrl;
   tags = [];
   printUrl;
+  downloadCsvUrl;
+  displayDownloadCsv = false;
   public reviewHelpSectionConfig: any;
   public contributeHelpSectionConfig: any;
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
@@ -252,6 +254,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.selectedStatusOptions = ["Live", "Approved"];
     this.displayPrintPreview = _.get(this.collection, 'printable', false);
     this.printUrl = this.programsService.getCollectionDocxUrl();
+    this.downloadCsvUrl = this.programsService.getDownloadCsvUrl();
     this.setContextualHelpConfig();
   }
 
@@ -492,6 +495,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.bulkUploadEnabled')) {
           this.bulkUploadEnabled = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.bulkUploadEnabled');
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled')) {
+          this.displayDownloadCsv = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled');
         }
 
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {
@@ -1486,13 +1493,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   public addResourceToHierarchy(contentId, resourceType = "default", isAddedFromLibrary = false) {
+    const children: any[] = _.isArray(contentId)? contentId: [contentId];
     const req: any = {
       url: this.configService.urlConFig.URLS.COLLECTION.HIERARCHY_ADD,
       data: {
         'request': {
           'rootId': this.sessionContext.collection,
           'unitId': this.unitIdentifier,
-          'children': [contentId]
+          'children': children
         }
       }
     };
@@ -1503,7 +1511,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           'questionset': {
             'rootId': this.sessionContext.collection,
             'collectionId': this.unitIdentifier,
-            'children': [contentId]
+            'children': children
           }
         }
       };
@@ -1879,9 +1887,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
   onLibraryChange(event) {
     switch (event.action) {
-      case 'add':
-        this.reusedContributions.push(event.collectionId);
-        this.addResourceToHierarchy(event.collectionId, event.resourceType, true);
+      case 'addBulk':
+        this.reusedContributions = _.concat(this.reusedContributions, event.collectionIds);
+        this.addResourceToHierarchy(event.collectionIds, event.resourceType, true);
         break;
     }
     this.currentStage = 'chapterListComponent';

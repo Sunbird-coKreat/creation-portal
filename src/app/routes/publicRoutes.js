@@ -58,7 +58,7 @@ module.exports = function (app) {
             return require('url').parse(learnerURL + urlParam).path
             }
         },
-        userResDecorator: function (proxyRes, proxyResData,  req, res) {
+        userResDecorator: function (proxyRes, proxyResData, req, res) {
             try {
             logger.info({msg: '/api/org/v1/search'});
             const data = JSON.parse(proxyResData.toString('utf8'));

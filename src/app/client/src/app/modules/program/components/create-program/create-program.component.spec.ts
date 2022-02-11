@@ -8,7 +8,7 @@ import { CacheService } from 'ng2-cache-service';
 import * as mockData from './create-program.spec.data';
 import { DatePipe } from '@angular/common';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
-import { ProgramsService, DataService, FrameworkService, ActionService } from '@sunbird/core';
+import { ProgramsService, DataService, FrameworkService, ActionService, ContentService } from '@sunbird/core';
 import { of, Subject, throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -50,10 +50,24 @@ describe('CreateProgramComponent', () => {
     messages: {
       emsg: {
         blueprintViolation : 'Please provide all required blueprint values'
+      },
+      smsg: {
+        questionset: { updated: '' }
       }
     }
   };
   const routerStub = { url: '/sourcing/orgreports' };
+
+  const contentServiceMock = {
+    get: (req) => {
+      return ({ subscribe: (e) => e(mockData.questionsetReadResp) })
+    }
+  };
+  const actionServiceMock = {
+    patch: (req) => {
+      return ({ subscribe: (e) => e() })
+    }
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -61,7 +75,7 @@ describe('CreateProgramComponent', () => {
         RouterTestingModule, SharedModule.forRoot(), SuiModule],
       declarations: [CreateProgramComponent],
       providers: [ToasterService, CacheService, ConfigService, DatePipe,
-        ProgramsService, DataService, FrameworkService, ActionService,
+        ProgramsService, DataService, FrameworkService,
         Component, ViewChild, Validators, FormGroupName, FormBuilder, NavigationHelperService,
         SourcingService, ProgramTelemetryService, TelemetryService, HelperService,
         DeviceDetectorService,
@@ -69,6 +83,8 @@ describe('CreateProgramComponent', () => {
        { provide: Router, useValue: routerStub },
        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
        { provide: UserService, useValue: userServiceStub },
+       { provide: ContentService, useValue: contentServiceMock },
+       { provide: ActionService, useValue: actionServiceMock },
        { provide: ResourceService, useValue: resourceBundle }],
        schemas: [NO_ERRORS_SCHEMA]
     })
@@ -359,31 +375,6 @@ describe('CreateProgramComponent', () => {
     expect(component.setPreSelectedContributors).toHaveBeenCalled();
     expect(component.closeContributorListPopup).toHaveBeenCalled();
   });
-  it('setFrameworkAttributes should set varible data', () => {
-    component.projectScopeForm = new FormGroup({
-      framework: new FormControl(),
-      board: new FormControl(),
-      medium: new FormControl(),
-      gradeLevel: new FormControl(),
-      subject: new FormControl()
-    });
-    component.programScope.framework = mockData.frameworkDetails.frameworkdata.NCFCOPY;
-    spyOn(component, 'setFrameworkAttributes').and.callThrough();
-    component.setFrameworkAttributes();
-    expect(component.setFrameworkAttributes).toHaveBeenCalled();
-  });
-
-  it('Should call the onMediumChange method', () => {
-    spyOn(component, 'onMediumChange').and.callFake(() => {});
-    component.onMediumChange();
-    expect(component.onMediumChange).toHaveBeenCalled();
-  });
-
-  it('should call onClassChange method', () => {
-    spyOn(component, 'onClassChange').and.callFake(() => {});
-    component.onClassChange();
-    expect(component.onClassChange).toHaveBeenCalled();
-  });
 
   it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
     component.selectedTargetCollection = 'Course';
@@ -672,4 +663,49 @@ describe('CreateProgramComponent', () => {
     component.publishProject({});
     expect(component.publishProject).toHaveBeenCalled();
   });
+
+  it('#editTargetNode should set #selectedTargetNodeData and #editTargetObjectFlag', () => {
+    component.editTargetObjectForm = mockData.editTargetObjectFormMock;
+    component.editTargetNode({"identifier": "do_213469757284712448194"});
+    expect(component.selectedTargetNodeData).toEqual(mockData.questionsetReadResp.result.questionset);
+    expect(component.editTargetObjectFlag).toBeTruthy();
+  });
+
+  it('#valueChanges should set #modifiedNodeData', () => {
+    const outputData = {"name": "Test Question Set"};
+    component.valueChanges(outputData);
+    expect(component.modifiedNodeData).toEqual(outputData);
+  });
+
+  it('#updateTargetNode should update QuestionSet', () => {
+    component.selectedTargetNodeData = {
+      identifier: "do_1234",
+      name: 'Question Set',
+      instructions: {
+        default: 'instructions',
+      }
+    };
+    component.modifiedNodeData = {
+      name: 'Question Set',
+      instructions: "updated instructions"
+    };
+    component.tempCollections = [
+      {identifier: 'do_1234'}
+    ]
+    component.userprofile = {
+      rootOrgId: '01309282781705830427'
+    }
+    component.updateTargetNode();
+    expect(component.tempCollections).toEqual([
+      {
+        identifier: "do_1234",
+        name: 'Question Set',
+        instructions: {
+          default: 'updated instructions',
+        }
+      }
+    ]);
+    expect(component.editTargetObjectFlag).toBeFalsy();
+  });
+
 });

@@ -41,7 +41,7 @@ export class OrgDetailsService {
         request: {
           filters: {
             slug: slug || (<HTMLInputElement>document.getElementById('defaultTenant')).value,
-            isRootOrg: true
+            isTenant: true
           }
         }
       }
@@ -49,7 +49,7 @@ export class OrgDetailsService {
     if (this.orgDetails) {
       return of(this.orgDetails);
     } else {
-      return this.publicDataService.postWithHeaders(option).pipe(mergeMap((data: ServerResponse) => {
+      return this.learnerService.postWithHeaders(option).pipe(mergeMap((data: ServerResponse) => {
         if (data.ts) {
           // data.ts is taken from header and not from api response ts, and format in IST
           this.timeDiff = data.ts;
@@ -62,7 +62,7 @@ export class OrgDetailsService {
           return of(data.result.response.content[0]);
         } else {
           option.data.request.filters.slug = (<HTMLInputElement>document.getElementById('defaultTenant')).value;
-          return this.publicDataService.post(option).pipe(mergeMap((responseData: ServerResponse) => {
+          return this.learnerService.post(option).pipe(mergeMap((responseData: ServerResponse) => {
             if (responseData.result.response.count > 0) {
               this.orgDetails = responseData.result.response.content[0];
               this._rootOrgId = this.orgDetails.rootOrgId;
@@ -96,7 +96,7 @@ export class OrgDetailsService {
       data: {
         request: {
           filters: {
-            isRootOrg: true
+            isTenant: true
           }
         }
       }
@@ -105,7 +105,7 @@ export class OrgDetailsService {
     if (orgDetails) {
       return of(orgDetails);
     } else {
-      return this.publicDataService.post(option).pipe(mergeMap((data: ServerResponse) => {
+      return this.learnerService.post(option).pipe(mergeMap((data: ServerResponse) => {
         if (data.result.response.count > 0) {
           this.setOrgDetails(data.result.response);
           return of(data.result.response);
@@ -206,7 +206,7 @@ export class OrgDetailsService {
       }
     };
 
-    return this.publicDataService.post(option);
+    return this.learnerService.post(option);
   }
 }
 
