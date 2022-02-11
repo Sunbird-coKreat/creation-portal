@@ -242,7 +242,10 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fetchCategoryDetails() {
-    this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)).subscribe(data => {
+    let reqs = [] ;
+    reqs.push(this.helperService.categoryMetaData$.pipe(take(1), takeUntil(this.onComponentDestroy$)));
+    reqs.push(this.helperService.formConfigForContext$.pipe(take(1), takeUntil(this.onComponentDestroy$)));
+    forkJoin(reqs).subscribe(data => {
       this.fetchFormconfiguration();
       this.handleActionButtons();
     });
@@ -259,6 +262,8 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
+    const contextType = _.get(this.programContext, 'config.frameworkObj.type') || this.sessionContext.frameworkType;
+    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create');
   }
 
   public preprareTelemetryEvents() {
@@ -394,7 +399,9 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   fetchFormconfiguration() {
-    this.formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    const formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
+    const formContextConfig = _.cloneDeep(this.helperService.getFormConfigurationforContext());
+    this.formFieldProperties = _.unionBy(formFieldProperties, formContextConfig, 'code');
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {

@@ -91,7 +91,7 @@ export class ProgramsService extends DataService implements CanActivate {
     if (urlSlug && _.isEmpty(this._organisations[urlSlug])) {
      const orgFilters = {
          slug: urlSlug,
-         isRootOrg: true
+         isTenant: true
      };
 
      this.getOrganisationDetails(orgFilters).subscribe
@@ -748,7 +748,7 @@ export class ProgramsService extends DataService implements CanActivate {
       }
     };
 
-    return this.publicDataService.post(option);
+    return this.learnerService.post(option);
   }
 
   /**
@@ -1164,6 +1164,10 @@ export class ProgramsService extends DataService implements CanActivate {
     return this.baseUrl + `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`;
   }
 
+  getDownloadCsvUrl() {
+    return this.baseUrl + `${this.config.urlConFig.URLS.DOCKCONTENT.DOWNLOAD_CSV}`
+  }
+
   generateCollectionDocx(identifier) {
     const req = {
       url: `${this.config.urlConFig.URLS.DOCKCONTENT.PRINT_PREVIEW}`,
@@ -1428,6 +1432,46 @@ export class ProgramsService extends DataService implements CanActivate {
     };
     return this.get(req);
   }
+
+  getformConfigData(channel?, context?, context_type?, objecttype?, operation?) {
+    const option = {
+      url: `${this.config.urlConFig.URLS.FORM.READ}`,
+      data: {
+        request: {
+            ...(context && {context}),
+            ...(context_type && {context_type}),
+            ...(channel && {channel}),
+            ...(objecttype && {objecttype}),
+            ...(operation && {operation})
+          }
+      }
+    };
+    return this.contentService.post(option);
+  }
+
+  initializeFrameworkFormFields(frameworkCategories, formFieldProperties, defaultValues) {
+    // tslint:disable-next-line:max-line-length
+    _.forEach(frameworkCategories, (frameworkCategories) => {
+      _.forEach(formFieldProperties, (field) => {
+        // tslint:disable-next-line:max-line-length
+        if (frameworkCategories.code === field.sourceCategory || frameworkCategories.code === field.code) {
+            field.terms = frameworkCategories.terms;
+        }
+      });
+    });
+
+    // set default values in the form
+    if (defaultValues) {
+      _.forEach(formFieldProperties, (formFieldCategory) => {
+        const requiredData = _.get(defaultValues, formFieldCategory.code);
+        if (!_.isEmpty(requiredData) && requiredData !== 'Untitled') {
+          formFieldCategory.default = requiredData;
+        }
+      });
+    }
+    return formFieldProperties;
+  }
+
   ifSourcingInstance() {
     return !!(this.router.url.includes('/sourcing'));
   }
