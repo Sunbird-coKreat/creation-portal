@@ -117,7 +117,7 @@ export class SearchService {
         }
       }
     };
-    return this.publicDataService.post(option).pipe(
+    return this.learnerService.post(option).pipe(
       map((data: ServerResponse) => {
         this._searchedOrganisationList = data.result.response;
         return data;
@@ -140,7 +140,7 @@ export class SearchService {
         }
       }
     };
-    return this.publicDataService.post(option).pipe(
+    return this.learnerService.post(option).pipe(
       map((data: ServerResponse) => {
         return data;
       }));
@@ -207,7 +207,7 @@ export class SearchService {
         }
       }
     };
-    return this.publicDataService.post(option);
+    return this.learnerService.post(option);
   }
   /**
    * Course Search.

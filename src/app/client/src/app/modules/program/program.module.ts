@@ -21,6 +21,7 @@ import { CollectionComponent, DashboardComponent, ChapterListComponent } from '.
 import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgReportsComponent } from './components/org-reports/org-reports.component';
 import { ContributorsListComponent } from './components/contributors-list/contributors-list.component';
+import { CommonFormElementsModule } from 'common-form-elements-web-v9';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ContributorsListComponent } from './components/contributors-list/contri
     TelemetryModule,
     SourcingModule,
     SharedFeatureModule,
+    CommonFormElementsModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent])
   ],
   exports: [

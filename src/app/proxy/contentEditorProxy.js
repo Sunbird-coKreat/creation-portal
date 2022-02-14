@@ -554,6 +554,22 @@ module.exports = function (app) {
     })
   );
 
+  app.post(
+    "/action/user/v3/search",
+    addCorsHeaders,
+    proxyUtils.verifyToken(),
+    permissionsHelper.checkPermission(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        let originalUrl = req.originalUrl.replace("/action/", "");
+        return require("url").parse(learnerURL + originalUrl).path;
+      },
+      userResDecorator: userResDecorator,
+    })
+  );
+
   app.use(
     "/action/*",
     permissionsHelper.checkPermission(),

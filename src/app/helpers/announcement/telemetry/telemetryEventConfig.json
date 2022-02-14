@@ -73,6 +73,12 @@
     "category": "user/read",
     "env": "announcement"
   },
+  "user/v5/read/": {
+    "rid": "user.read",
+    "title": "userread",
+    "category": "user/read",
+    "env": "announcement"
+  },
   "data/v1/object/create": {
     "rid": "data.object.create",
     "title": "dataobjectcreate",
