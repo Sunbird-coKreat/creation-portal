@@ -27,7 +27,7 @@
 				</div>
 				<div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-20 va-top pl-20">{{resourceService.frmelmnts.lbl.nominationMessage.replace('{TARGET_NAME}', targetCollections | lowercase)}}</div>
 				<div class="d-inline-block">
-					<app-page-help *ngIf="nominationHelpSectionConfig" [helpSectionConfig]="nominationHelpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
+					<app-page-help *ngIf="nominationHelpSectionConfig" [helpSectionConfig]="nominationHelpSectionConfig" [popupPlacement]="'bottom left'" [pageid]="'contribution_nomination_help'"></app-page-help>
 				</div>
 			</div>
 		</div>
@@ -109,7 +109,7 @@
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{ userService?.userProfile?.userRegData?.Org?.name }}</h4>
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{ OrgUsersCnt }}</span>
-						  <app-page-help *ngIf="assignUserHelpSectionConfig" [helpSectionConfig]="assignUserHelpSectionConfig" [popupPlacement]="'bottom left'"></app-page-help>
+						  <app-page-help *ngIf="assignUserHelpSectionConfig" [helpSectionConfig]="assignUserHelpSectionConfig" [popupPlacement]="'bottom left'" [pageid]="'contribution_assign_users_help'"></app-page-help>
 						</div>
 						<div class="sb-search-box medium mb-15">
                             <div class="input-div relative">
@@ -246,7 +246,7 @@
 					  </div>
 					<div class="mt-12" *ngIf="!loaders.showUsersLoader && OrgUsersCnt == 0">
 						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
-						<app-page-help *ngIf="noUsersFoundHelpConfig" class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
+						<app-page-help *ngIf="noUsersFoundHelpConfig" class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'" [pageid]="'contribution_no_users_found_help'"></app-page-help>
 					</div>
 					  <div class="ui tweleve wide column mb-20" *ngIf="loaders.showUsersLoader">
 						<app-loader></app-loader>
@@ -367,12 +367,12 @@
 					<th scope="col" class="w-10" *ngIf="(visibility.showCollectionLevelUploadContent || visibility.showProgramLevelContentUpload)
 					&& !visibility.showReviewContent && contributeHelpSectionConfig">
 						<app-page-help class="min-w-125 float-ContentRight" [helpSectionConfig]="contributeHelpSectionConfig"
-						[popupPlacement]="'top right'">
+						[popupPlacement]="'top right'" [pageid]="'contribution_contribute_help'">
 						</app-page-help>
 					</th>
 					<th scope="col" class="w-10" *ngIf="visibility.showReviewContentHelp && reviewHelpSectionConfig">
 						<app-page-help class="min-w-125 float-ContentRight" [helpSectionConfig]="reviewHelpSectionConfig"
-						[popupPlacement]="'top right'">
+						[popupPlacement]="'top right'" [pageid]="'contribution_review_help'">
 						</app-page-help>
 					</th>
 				</tr>

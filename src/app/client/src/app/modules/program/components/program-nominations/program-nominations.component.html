@@ -72,7 +72,7 @@
                         </div>
                         <div class="text-right">
                             <div class="d-flex flex-ai-center">
-                                <app-page-help *ngIf="reviewNominationsHelpConfig" [helpSectionConfig]="reviewNominationsHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
+                                <app-page-help *ngIf="reviewNominationsHelpConfig" [helpSectionConfig]="reviewNominationsHelpConfig" [popupPlacement]="'bottom left'" [pageid]="'sourcing_review_nomination_help'"></app-page-help>
                                 <button type="button" class="pull-right sb-btn sb-btn-normal sb-btn-outline-primary mb-5" *ngIf="!isEmptyObject(programDetails) && this.totalNominations > 0" (click)="downloadNominationList()"
                                     appTelemetryInteract
                                     [telemetryInteractEdata]="getTelemetryInteractEdata('download_nominations_list', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,telemetryPageId)"
@@ -274,7 +274,7 @@
 						<div class="sb-pageSection-header">
 						  <h4 class="sb-pageSection-title"> {{userService.userProfile?.organisations[0]?.orgName}}</h4>
 						  <span class="sb-pagSection-count sb-label sb-label-x sb-label-warning">{{sourcingOrgUserCnt || 0}}</span>
-                          <app-page-help *ngIf="assignUsersHelpConfig" [helpSectionConfig]="assignUsersHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
+                          <app-page-help *ngIf="assignUsersHelpConfig" [helpSectionConfig]="assignUsersHelpConfig" [popupPlacement]="'bottom left'" [pageid]="'sourcing_assign_users_help'"></app-page-help>
                         </div>
                         <div class="sb-search-box medium mb-15">
                             <div class="input-div relative">
@@ -409,7 +409,7 @@
                     </div>
 					<div class="mt-12" *ngIf="!showUsersLoader && sourcingOrgUserCnt == 0">
 						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"></app-no-result>
-                        <app-page-help *ngIf="noUsersFoundHelpConfig" class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'"></app-page-help>
+                        <app-page-help *ngIf="noUsersFoundHelpConfig" class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'" [pageid]="'sourcing_no_users_help'"></app-page-help>
 					</div>
 				  </div>
             </div>
