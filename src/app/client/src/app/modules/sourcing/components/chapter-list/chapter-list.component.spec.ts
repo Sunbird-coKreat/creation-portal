@@ -34,6 +34,7 @@ describe('ChapterListComponent', () => {
     navigate = jasmine.createSpy('navigate');
     url = jasmine.createSpy('url');
   };
+  const routerStub = { url: '/sourcing' };
   const frameworkServiceStub = {
     initialize() {
       return null;
@@ -130,6 +131,7 @@ describe('ChapterListComponent', () => {
             { provide: PublicDataService, useValue: PublicDataServiceStub }, 
             { provide: FrameworkService, useValue: frameworkServiceStub },
             { provide: ActivatedRoute, useValue: activatedRouteStub},
+            { provide: Router, useValue: routerStub },
             ToasterService, ConfigService, ProgramTelemetryService, TelemetryService, SourcingService,
             ProgramComponentsService, NavigationHelperService, HelperService, ProgramStageService,
             ProgramsService, CollectionHierarchyService, ResourceService, DatePipe,]

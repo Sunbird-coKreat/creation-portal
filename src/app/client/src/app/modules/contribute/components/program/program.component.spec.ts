@@ -100,6 +100,7 @@ describe('ProgramComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
+  const routerStub = { url: '/sourcing/contribute' };
   const fakeActivatedRoute = {
     snapshot: {
       params: {
@@ -134,7 +135,7 @@ describe('ProgramComponent', () => {
         RegistryService,
         {
           provide: Router,
-          useClass: RouterStub
+          useValue: routerStub
         },
         {
           provide: FrameworkService,

@@ -12,6 +12,7 @@ import { TelemetryService } from './../../../telemetry/services/telemetry/teleme
 import {  throwError , of } from 'rxjs';
 import * as SpecData from './textbook-list.component.spec.data';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { Router } from '@angular/router';
 const programDetailsTargetCollection = {
   'target_collection_category': [
       'Question paper'
@@ -34,6 +35,7 @@ const userServiceStub = {
   userid: SpecData.userProfile.userId,
   userProfile : SpecData.userProfile
 };
+const routerStub = { url: '/sourcing' };
 
 xdescribe('TextbookListComponent', () => {
   let component: TextbookListComponent;
@@ -50,6 +52,7 @@ xdescribe('TextbookListComponent', () => {
           provide: UserService,
           useValue: userServiceStub
         },
+        { provide: Router, useValue: routerStub },
         DatePipe,
         TelemetryService,
         CollectionHierarchyService]

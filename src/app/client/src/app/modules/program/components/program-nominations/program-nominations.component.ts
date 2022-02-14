@@ -174,13 +174,19 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   setContextualHelpConfig() {
     const sunbirdContextualHelpConfig = this.helperService.getContextualHelpConfig();
     if (!_.isUndefined(sunbirdContextualHelpConfig)) {
-      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject')) {
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject') && this.router.url.includes('/sourcing')) {
         this.assignUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.assignUsersToProject');
       }
-      if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound')) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.assignUsersToProject') && this.router.url.includes('/contribute')) {
+        this.assignUsersHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.assignUsersToProject');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.noUsersFound') && this.router.url.includes('/sourcing')) {
         this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.noUsersFound');
       }
-      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewNominations')) {
+      if (_.has(sunbirdContextualHelpConfig, 'contribute.noUsersFound') && this.router.url.includes('/contribute')) {
+        this.noUsersFoundHelpConfig = _.get(sunbirdContextualHelpConfig, 'contribute.noUsersFound');
+      }
+      if (_.has(sunbirdContextualHelpConfig, 'sourcing.reviewNominations') && this.router.url.includes('/sourcing')) {
         this.reviewNominationsHelpConfig = _.get(sunbirdContextualHelpConfig, 'sourcing.reviewNominations');
       }
     }
