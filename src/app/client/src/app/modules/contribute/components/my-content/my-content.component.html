@@ -119,7 +119,7 @@
                 </div>
                 <div class="sb-pageSection-content">
                     <div class="sb-table-responsive">
-                        <table class="sb-table sb-table-striped sb-table-sortable" aria-describedby="frameworkTable">
+                        <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap" aria-describedby="frameworkTable">
                             <thead class="sb-table-header sb-table-thead-gray">
                                 <tr>
                                     <th class="cursor-pointer sb-sorting w-15" scope="col" (click)="sortCollection('board')" >{{resourceService.frmelmnts.lbl.board}}
@@ -160,11 +160,11 @@
                                     </th>
                                     <th class="cursor-pointer sb-sorting w-40" scope="col">{{resourceService.frmelmnts.lbl.contenttype}}
                                         &nbsp;&nbsp;</th>
-                                    <th class="cursor-pointer sb-sorting" scope="col"> &nbsp;&nbsp;
+                                    <th class="cursor-pointer sb-sorting w-10" scope="col"> &nbsp;&nbsp;
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="sb-table-body w-100 o-y-auto">
+                            <tbody class="sb-table-body">
                                 <tr *ngFor="let item of selectedContributionDetails">
                                     <td>
                                         {{item.board ? item.board : ' - '}}

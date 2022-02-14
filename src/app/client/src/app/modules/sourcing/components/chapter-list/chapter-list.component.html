@@ -197,8 +197,8 @@
             <span *ngIf="textbookStatusMessage" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold font-italic w-30">{{textbookStatusMessage}}</span>
             <span class="w-30 font-italic">{{resourceService?.frmelmnts?.lbl?.partialTextbookSelectionNote | interpolate:'{TARGET_NAME}': targetCollection | interpolate:'{contentTypeUnit}': firstLevelFolderLabel | interpolate:'{contentTypeUnit}': firstLevelFolderLabel}} </span>
             <div class="d-flex">
-              <app-page-help *ngIf="(sourcingOrgReviewer || isContributingOrgReviewer()) && reviewHelpSectionConfig" [helpSectionConfig]="reviewHelpSectionConfig" [popupPlacement]="'bottom right'"></app-page-help>
-              <app-page-help *ngIf="(!sourcingOrgReviewer && !isContributingOrgReviewer()) && contributeHelpSectionConfig" [helpSectionConfig]="contributeHelpSectionConfig" [popupPlacement]="'bottom right'"></app-page-help>
+              <app-page-help *ngIf="(sourcingOrgReviewer || isContributingOrgReviewer()) && reviewHelpSectionConfig" [helpSectionConfig]="reviewHelpSectionConfig" [popupPlacement]="'bottom right'" [pageid]="'sourcing_review_section_help'"></app-page-help>
+              <app-page-help *ngIf="(!sourcingOrgReviewer && !isContributingOrgReviewer()) && contributeHelpSectionConfig" [helpSectionConfig]="contributeHelpSectionConfig" [popupPlacement]="'bottom right'" [pageid]="'sourcing_contribute_section_help'"></app-page-help>
               <div *ngIf="sourcingOrgReviewer && storedCollectionData && !sessionContext.nominationDetails && programsService.isProjectLive(programContext)" class="d-flex">
                 <app-bulk-approval [programContext]="programContext" [sessionContext]="sessionContext" [storedCollectionData]="storedCollectionData" [originalCollectionData]="originalCollectionData" (updateToc)="bulkApprovalSuccess($event)"></app-bulk-approval>
               </div>
