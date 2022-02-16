@@ -60,6 +60,8 @@
       }
   }
   .treepicker-parent{
+    margin-bottom: 16px;
+    margin-top: 0;
     .list-border{
       font-size: 0.75rem !important;
       padding: 0.25rem 0.5rem !important;
@@ -67,19 +69,22 @@
       border-radius: 0.1875rem !important;
     }
   }
+  .sb-dropdown{
+    margin-bottom: 16px !important;
+  }
 }
 sui-select{
-border-radius: 0.1875rem !important;
+  border-radius: 0.1875rem !important;
 }
 .dynamic-form .label-html div {
-font-size:0.785rem !important;
-line-height:1.4 !important;
-.font-italic{
   font-size:0.785rem !important;
-}
+  line-height:1.4 !important;
+  .font-italic{
+    font-size:0.785rem !important;
+  }
 }
 .two-column-grid {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-column-gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2rem;
 }
