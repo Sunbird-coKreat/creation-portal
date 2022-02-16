@@ -648,7 +648,7 @@
                                       class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
                                   </div>
                                 </div>
-                                <div class="two wide column text-right cursor-pointer"
+                                <div *ngIf="!editPublished" class="two wide column text-right cursor-pointer"
                                      (click)="onCollectionCheck(tempCollection, false)"
                                      appTelemetryInteract
                                      [telemetryInteractEdata]="getTelemetryInteractEdata('collection_check', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
@@ -656,7 +656,7 @@
                                      [telemetryInteractCdata]="telemetryInteractCdata"
                                      [telemetryInteractPdata]="telemetryInteractPdata">
                                   <i class="close outline icon sb-color-red-100" suiPopup
-                                     popupHeader="close"></i>
+                                     popupHeader="remove"></i>
                                 </div>
                                 <hr class="row p-0 mt-0">
                               </div>
