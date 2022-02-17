@@ -957,6 +957,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
     this.projectScopeForm.controls['targetPrimaryCategories'].setValidators(Validators.required);
     this.projectScopeForm.controls['targetPrimaryCategories'].updateValueAndValidity();
+    this.projectScopeForm.controls['framework'].setValidators(Validators.required);
+    this.projectScopeForm.controls['framework'].updateValueAndValidity();
     if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
       this.projectScopeForm.controls['target_collection_category'].updateValueAndValidity();
@@ -1788,6 +1790,7 @@ showTexbooklist() {
       this.validateAllFormFields(this.createProgramForm);
       return false;
     }
+
     if (!this.projectScopeForm.valid) {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.projectScopeForm);
