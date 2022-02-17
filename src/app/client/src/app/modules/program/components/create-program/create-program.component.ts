@@ -1311,7 +1311,7 @@ showTexbooklist() {
   setFrameworkAttributesToconfig() {
     if (!_.isEmpty(this.programScope['selectedFramework'])) {
       const frameworkSelected = this.programScope['selectedFramework'];
-      this.programConfig['framework'] = [frameworkSelected.code]
+      this.programConfig['framework'] = [frameworkSelected.code];
       this.programConfig['frameworkObj'] = {
         identifier : frameworkSelected.identifier,
         code: frameworkSelected.code,
@@ -1320,7 +1320,8 @@ showTexbooklist() {
       };
       if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
         _.forEach(this.frameworkFormData,  (value, key) => {
-          this.programConfig[key] =_.isArray(value) ? value : [value];
+          const formData = _.isArray(value) ? value : [value];
+          this.programConfig[key] = _.compact(formData);
           const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
             'code': key
           }), 'orgIdFieldName');
