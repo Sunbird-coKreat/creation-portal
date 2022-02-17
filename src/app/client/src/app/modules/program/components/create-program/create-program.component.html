@@ -364,8 +364,7 @@
                         class="selection p-5" formControlName="framework"
                         [options]="programScope['framework']"
                         labelField="name"
-                        [isDisabled]="!programScope['framework']"
-                        (ngModelChange)="onFrameworkChange()" #frameworks
+                        [isDisabled]="!programScope['framework']" #frameworks
                         appTelemetryInteract
                         [telemetryInteractEdata]="getTelemetryInteractEdata('framework', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
                         [telemetryInteractObject]="telemetryInteractObject"
@@ -1001,8 +1000,7 @@
 					class="selection p-5" formControlName="framework"
 					[options]="programScope['framework']"
 					labelField="name"
-					[isDisabled]="!programScope['framework']"
-					(ngModelChange)="onFrameworkChange()" #frameworks
+					[isDisabled]="!programScope['framework']" #frameworks
 					appTelemetryInteract
 					[telemetryInteractEdata]="getTelemetryInteractEdata('framework', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,configService.telemetryLabels.pageId.sourcing.createProjectRequirements)"
 					[telemetryInteractObject]="telemetryInteractObject"

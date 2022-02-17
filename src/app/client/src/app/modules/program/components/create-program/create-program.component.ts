@@ -2,7 +2,7 @@ import { ConfigService, ResourceService, ToasterService, ServerResponse, Navigat
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService, UserService, ContentService } from '@sunbird/core';
 import { Subscription, forkJoin, throwError, Observable, of } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
+import { tap, first, map, takeUntil, catchError, count, isEmpty, startWith, pairwise } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -251,6 +251,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null]
     });
+
     if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
      if (this.selectedTargetCollection) {
@@ -259,6 +260,23 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
     this.setProjectScopeDetails();
   }
+
+  changeFrameWork() {
+    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+      this.projectScopeForm.value.pcollections = [];
+      this.tempCollections.length = 0;
+      this.textbooks = {};
+
+      if (this.programDetails.config
+        && this.programDetails.config.collections
+        && this.programDetails.config.collections.length > 0) {
+          this.programDetails.config.collections.length = 0;
+      }
+    }
+
+    this.onFrameworkChange();
+  }
+
   setProjectScopeDetails() {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
@@ -281,6 +299,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
                   }
                   this.isFormValueSet.projectScopeForm = true;
               }
+
+              let frameworkValue = this.projectScopeForm.value.framework || null;
+              this.projectScopeForm.get('framework')
+              .valueChanges
+              .pipe(startWith(frameworkValue as string), pairwise())
+              .subscribe(([prev, next]: [any, any]) => {
+                if (prev.identifier != next.identifier) {
+                  this.changeFrameWork();
+                } else {
+                  return false;
+                }
+              });
           }).catch((err) => {
             console.log(err);
             this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError);
@@ -1151,6 +1181,7 @@ onChangeTargetCollectionCategory() {
     this.projectScopeForm.value.pcollections = [];
     this.showTexbooklist();
   }
+
   if(this.programScope['userChannelData']) {
     this.setSelectedTargetCollectionObject();
   }
@@ -1166,9 +1197,11 @@ setSelectedTargetCollectionObject() {
 
 showTexbooklist() {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
-    if (!primaryCategory) {
-      return;
+
+    if (!primaryCategory || _.isEmpty(this.projectScopeForm.value.framework)) {
+      return true;
     }
+
     // for scrolling window to top after Next button navigation
     const requestData = {
       request: {
@@ -1764,7 +1797,6 @@ showTexbooklist() {
         const cb = (error, resp) => {
           if (!error && resp) {
             this.navigateTo(2);
-            //this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1774,7 +1806,6 @@ showTexbooklist() {
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
         this.navigateTo(2);
-        //this.showTexbooklist();
       } else {
         this.validateAllFormFields(this.createProgramForm);
         return false;
