@@ -1213,7 +1213,11 @@ setSelectedTargetCollectionObject() {
 showTexbooklist() {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
 
-    if (!primaryCategory || _.isEmpty(this.projectScopeForm.value.framework)) {
+    if (!primaryCategory) {
+      return true;
+    }
+
+    if (this.projectTargetType !== 'questionSets' && _.isEmpty(this.projectScopeForm.value.framework)) {
       return true;
     }
 
