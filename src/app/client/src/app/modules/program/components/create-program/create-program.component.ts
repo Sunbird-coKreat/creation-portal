@@ -315,11 +315,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
               .valueChanges
               .pipe(startWith(frameworkValue as string), pairwise())
               .subscribe(([prev, next]: [any, any]) => {
-                if (prev.identifier != next.identifier) {
+                if (!prev && next) {
+                  this.projectScopeForm.get('framework').patchValue(next);
+                  this.changeFrameWork();
+                } else if (prev.identifier != next.identifier) {
                   this.saveFrameWorkValue['prev'] = prev;
                   this.saveFrameWorkValue['next'] = next;
                   this.showFrameworkChangeModal = true;
-                  //this.changeFrameWork();
                 } else {
                   return false;
                 }
