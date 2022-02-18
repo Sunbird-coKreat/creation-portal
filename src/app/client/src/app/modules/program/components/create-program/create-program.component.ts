@@ -84,6 +84,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
   public showPublishModal= false;
+  public showFrameworkChangeModal = false;
+  public saveFrameWorkValue = {};
   public uploadedDocument;
   public loading = false;
   //private isOpenNominations = true;
@@ -262,9 +264,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   }
 
   changeFrameWork() {
+    this.showFrameworkChangeModal = false;
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
-      this.projectScopeForm.value.pcollections = [];
       this.tempCollections.length = 0;
+      const pcollectionsFormArray = <FormArray>this.projectScopeForm.controls.pcollections;
+      pcollectionsFormArray.controls.length = 0;
+      this.projectScopeForm.value.pcollections.length = 0;
       this.textbooks = {};
 
       if (this.programDetails.config
@@ -275,6 +280,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     this.onFrameworkChange();
+  }
+
+  cancelFrameworkChange() {
+    this.projectScopeForm.get('framework').patchValue(this.saveFrameWorkValue['prev']);
+    this.showFrameworkChangeModal = false;
   }
 
   setProjectScopeDetails() {
@@ -306,7 +316,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
               .pipe(startWith(frameworkValue as string), pairwise())
               .subscribe(([prev, next]: [any, any]) => {
                 if (prev.identifier != next.identifier) {
-                  this.changeFrameWork();
+                  this.saveFrameWorkValue['prev'] = prev;
+                  this.saveFrameWorkValue['next'] = next;
+                  this.showFrameworkChangeModal = true;
+                  //this.changeFrameWork();
                 } else {
                   return false;
                 }
@@ -1329,16 +1342,17 @@ showTexbooklist() {
         'children': []
       };
 
-      _.forEach(this.textbooks[identifier].children, (item) => {
-        if (item.checked === true) {
-          obj.children.push({
-            'id': item.identifier,
-            'allowed_content_types': []
-          });
-        }
-      });
-
-      collections.push(obj);
+      if (this.textbooks[identifier]) {
+        _.forEach(this.textbooks[identifier].children, (item) => {
+          if (item.checked === true) {
+            obj.children.push({
+              'id': item.identifier,
+              'allowed_content_types': []
+            });
+          }
+        });
+        collections.push(obj);
+      }
     });
 
     return collections;
