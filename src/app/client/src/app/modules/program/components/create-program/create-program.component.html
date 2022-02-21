@@ -129,9 +129,9 @@
                     </div>
                   </div>
                 </div>
-                <div class="twelve wide column" [ngClass]="(editPublished || projectTargetType === 'questionSets') ? 'disabled field':''">
+                <div class="twelve wide column" [ngClass]="editPublished? 'disabled field':''">
                   <div class="sb-checkbox sb-checkbox-primary">
-                    <input type="checkbox" [disabled]="editPublished || projectTargetType === 'questionSets'" id="defaultContributeOrgReview"
+                    <input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
                            name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
                            [checked]="defaultContributeOrgReviewChecked"
                            (change)="defaultContributeOrgReviewChanged($event)" appTelemetryInteract
