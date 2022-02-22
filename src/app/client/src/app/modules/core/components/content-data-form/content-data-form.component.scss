@@ -17,12 +17,16 @@
       }
     }
   }
-  sb-dynamic-checkbox label:after
-  {
-    color:#fff !important;
-    width:0.5rem!important;
-    height:0.5rem !important;
-    top:2.5px !important;
+  sb-dynamic-checkbox{
+    label{
+      padding-left: 1.5rem !important;
+      &:after
+      {
+        color:#fff !important;
+        width:1rem!important;
+        height:1rem !important;
+      }
+    }
   }
   .sb-dropdown{
     select{
