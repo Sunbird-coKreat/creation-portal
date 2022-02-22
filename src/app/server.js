@@ -60,7 +60,10 @@ app.use('/announcement/v1', bodyParser.urlencoded({ extended: false }),
   bodyParser.json({ limit: '10mb' }), require('./helpers/announcement')(keycloak)) // announcement api routes
 
 app.all('/logoff', endSession, (req, res) => {
-  res.cookie('connect.sid', '', { expires: new Date() }); res.redirect('/logout')
+  // Clear cookie for client (browser)
+  res.status(200).clearCookie('connect.sid', { path: '/' });
+  // Clear session pertaining to User
+  req.session.destroy(function (err) { res.redirect('/logout') });
 })
 
 app.all('/sessionExpired', endSession, (req, res) => {
