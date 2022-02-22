@@ -310,6 +310,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
                   this.isFormValueSet.projectScopeForm = true;
               }
 
+              if (!this.projectScopeForm.value.framework) {
+                this.projectScopeForm.controls['framework'].setValue((this.programScope['framework'][0] || null));
+              }
+
               let frameworkValue = this.projectScopeForm.value.framework || null;
               this.projectScopeForm.get('framework')
               .valueChanges
