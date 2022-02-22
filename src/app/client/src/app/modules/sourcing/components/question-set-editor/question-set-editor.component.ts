@@ -80,7 +80,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
     };
-    this.isQuestionMode = _.get(this.programContext, 'target_type') === 'questionSets' && _.get(this.programContext, 'status') !== 'Draft' ? true : false;
+    this.isQuestionMode = _.get(this.programContext, 'target_type') === 'questionSets' && _.get(this.questionSetEditorInput, 'templateDetails.modeOfCreation') !== 'questionset' ? true : false;
     if(this.isQuestionMode) {
       this.editorParams.questionSetId = _.get(this.sessionContext, 'collection');
       this.editorParams.questionId = _.get(this.questionSetEditorComponentInput, 'contentId');
@@ -350,7 +350,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   canModifyProjects() {
     const programStatus = this.programContext.status.toLowerCase();
     // tslint:disable-next-line:max-line-length
-    return !!(this.hasAccessFor(['ORG_ADMIN']) && programStatus === 'draft' && this.userService.userid === this.programContext.createdby);
+    return !!(this.hasAccessFor(['ORG_ADMIN']) && this.userService.userid === this.programContext.createdby);
   }
 
   hasAccessFor(roles: Array<string>) {
