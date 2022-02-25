@@ -873,7 +873,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.setFrameworkCategories(collection);
     const collectionSharedProperties = this.helperService.getSharedProperties(this.programDetails, collection)
+    const collectionFramework = collectionSharedProperties.framework;
+    const sessionContextFramework = this.sessionContext.framework;
     this.sessionContext = _.assign(this.sessionContext, collectionSharedProperties);
+    if (collectionFramework !== sessionContextFramework) {
+      this.helperService.fetchProgramFramework(this.sessionContext);
+    }
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,
