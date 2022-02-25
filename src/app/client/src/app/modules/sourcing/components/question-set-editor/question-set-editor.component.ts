@@ -173,6 +173,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         setDefaultCopyRight: this.setDefaultCopyright,
         showOriginPreviewUrl: false,
         showSourcingStatus: false,
+        skipTwoLevelReview: _.get(this.programContext, 'config.defaultContributeOrgReview') === false,
         showCorrectionComments: false,
         enableBulkUpload: false,
         publicStorageAccount: this.publicStorageAccount,
