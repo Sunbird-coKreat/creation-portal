@@ -262,7 +262,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
-    const contextType = _.get(this.programContext, 'config.frameworkObj.type') || this.sessionContext.frameworkType;
+    const contextType = this.sessionContext.frameworkType || _.get(this.programContext, 'config.frameworkObj.type');
     this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create');
   }
 
