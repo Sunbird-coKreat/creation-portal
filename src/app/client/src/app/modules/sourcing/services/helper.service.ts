@@ -1386,7 +1386,7 @@ export class HelperService {
       this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
         if (frameworkDetails && !frameworkDetails.err) {
           sessionContext.frameworkData = frameworkDetails.frameworkdata[sessionContext.framework].categories;
-          sessionContext['frameworkType'] = sessionContext.frameworkData.type;
+          sessionContext['frameworkType'] = frameworkDetails.frameworkdata[sessionContext.framework].type;
           sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms');
         }
       }, error => {
