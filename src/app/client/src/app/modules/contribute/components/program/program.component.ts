@@ -272,7 +272,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sessionContext = _.assign(this.sessionContext, this.sessionContext['selectedSharedProperties']);
       this.loaders.showProgramHeaderLoader = false;
       this.contentCount = 0;
-      this.frameworkService.initialize(this.sessionContext.framework);
+      this.frameworkService.getMasterCategories();
       this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
         if (frameworkData) {
           this.sessionContext.frameworkData = frameworkData.categories;
@@ -872,13 +872,27 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.setFrameworkCategories(collection);
-    const collectionSharedProperties = this.helperService.getSharedProperties(this.programDetails, collection)
+    const collectionSharedProperties = this.helperService.getSharedProperties(this.programDetails, collection);
     const collectionFramework = collectionSharedProperties.framework;
     const sessionContextFramework = this.sessionContext.framework;
     this.sessionContext = _.assign(this.sessionContext, collectionSharedProperties);
     if (collectionFramework !== sessionContextFramework) {
-      this.helperService.fetchProgramFramework(this.sessionContext);
+      this.frameworkService.readFramworkCategories(this.sessionContext.framework).subscribe((frameworkData) => {
+        if (frameworkData) {
+          this.sessionContext.frameworkData = frameworkData.categories;
+          this.sessionContext['frameworkType'] = frameworkData.type;
+          this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
+          this.openToc(collection);
+        }
+      }, error => {
+        this.raiseError(error, 'Fetching framework details failed')
+      });
+    } else {
+      this.openToc(collection);
     }
+  }
+
+  openToc(collection) {
     this.dynamicInputs = {
       chapterListComponentInput: {
         sessionContext: this.sessionContext,

@@ -375,6 +375,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       first()).subscribe((frameworkDetails: any) => {
       if (frameworkDetails && !frameworkDetails.err) {
         const frameworkData = frameworkDetails.frameworkdata[this.sessionContext.framework].categories;
+        this.sessionContext['frameworkType'] = frameworkData.type;
         this.sessionContext.topicList = _.get(_.find(frameworkData, { code: 'topic' }), 'terms');
       }
     });
