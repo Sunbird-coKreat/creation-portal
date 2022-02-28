@@ -266,6 +266,8 @@ export class FrameworkService {
         }
     } else if (framework) {
       if (this.cacheService.get(framework)) {
+        this._frameworkData[framework] = this.cacheService.get(framework);
+        this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
         return of(this.cacheService.get(framework));
       } else {
         frameWorkToGet = framework;
@@ -275,7 +277,8 @@ export class FrameworkService {
       return this.getFrameworkCategories(frameWorkToGet).pipe(
       map(data => {
         this._frameworkData[frameWorkToGet] = _.get(data, 'result.framework');
-        this.setFrameWorkData(data)
+        this.setFrameWorkData(data);
+        this._frameworkData$.next({ err: null, frameworkdata: this._frameworkData });
         return _.get(data, 'result.framework');
       }));
     } else {
