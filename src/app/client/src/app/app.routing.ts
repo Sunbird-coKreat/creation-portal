@@ -9,6 +9,9 @@ const appRoutes: Routes = [
     path: 'search', loadChildren: () => import('app/modules/search/search.module').then(m => m.SearchModule)
   },
   {
+    path: 'workspace', loadChildren: () => import('app/modules/workspace/workspace.module').then(m => m.WorkspaceModule)
+  },
+  {
     path: 'sourcing', loadChildren: () => import('app/modules/program/program.module').then(m => m.ProgramModule)
   },
   {
