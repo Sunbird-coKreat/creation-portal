@@ -1,2 +1,137 @@
-<mat-slider min="1" max="100" step="1" value="50"></mat-slider>
-<p>workspace works!</p>
+<sui-tabset>
+    <div class="ui pointing secondary menu sb-bg-color-primary-100">
+        <div class="ui container">
+            <div class="p-0 m-0 d-flex">
+                <a class="item active cursor-pointer">Published Content</a>
+                <a class="item cursor-pointer">My Content</a>
+                <a class="item cursor-pointer">Content for review</a>
+                <a class="item cursor-pointer">Content for collaboration</a>
+            </div>
+        </div>
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab active">
+        Published Content
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+        My Content
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+        Content for review
+    </div>
+    <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+        Content for collaboration
+    </div>
+</sui-tabset>
+<div class="ui container">
+    <div class="mt-24 mb-10">
+        <div class="d-flex flex-jc-space-between d-flex sb-pageSection">
+             <div>
+                <div class="sb-color-primary d-inline-block br-2 pr-10 mr-10">
+                    <span class="fs-1-286 font-weight-bold">2045</span>
+                    Total
+                </div>
+                <div class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
+                    <span class="fs-1-286 font-weight-bold">192</span>
+                    Draft
+                </div>
+                <div class="sb-color-success d-inline-block pr-10">
+                    <span class="fs-1-286 font-weight-bold">192</span>
+                    Live
+                </div>
+            </div>
+            <div class="d-flex flex-jc-space-between">
+                <div class="sb-search-box medium mb-15">
+                    <div class="input-div relative">
+                        <i class="search icon"></i>
+                        <input class="sb-search-input" type="text"  placeholder="Search..." />
+                        <i class="close icon"></i>
+                    </div>
+                    <button class="sb-btn sb-btn-normal">Search</button>
+                </div>
+                <div class="d-flex">
+                    <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button"><i class="filter icon"></i> Apply Filter</button>
+                    <button class="px-10 sb-btn sb-btn-primary sb-btn-normal"><i class="plus outline icon"></i>Create</button>
+                </div>
+            </div>
+        </div>
+        <div class="sb-pageSection-content">
+        <div class="sb-table-responsive desktop-o-x-unset">
+            <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+                <thead class="sb-table-header sb-table-thead-gray">
+                    <tr>
+                        <th class="cursor-pointer sb-sorting w-15">Title</th>
+                        <th class="cursor-pointer sb-sorting w-15">Content Category</th>
+                        <th class="cursor-pointer sb-sorting w-15 text-center">Status</th>
+                        <th class="cursor-pointer sb-sorting w-15">Creator</th>
+                        <th class="cursor-pointer sb-sorting w-15">Last Updated date</th>
+                        <th class="cursor-pointer sb-sorting w-15">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody class="sb-table-body">
+                    <tr>
+                        <td class="pr-0">
+                            <div _ngcontent-fct-c8="" class="sb__ellipsis sb__ellipsis--three">
+                                KAYAL_VIZHI_100_textbooks SPRINT20_PARTIAL_BOOK Fevicol_2
+                            </div>
+                            <div class="my-5">
+                                <div class="sb-label sb-label-table sb-label-gray-0 mr-5">CBSC</div>
+                                <div class="sb-label sb-label-table sb-label-gray-0 mr-5">ICSC</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="sb__ellipsis sb__ellipsis--breakAll">
+                            Demo Practice Question Set, Explanation Content, Learning Resource, Practice Question Set
+                            </span>
+                        </td>
+                        <td class="text-center pl-0 pr-0">
+                            <div class="sb-color-success">Live</div>
+                            <br>
+                            <div class="sb-color-gray-100">Draft</div>
+                        </td>
+                        <td><span class="fs-0-785">Kanmani1</span></td>
+                        <td>
+                            <div>October 5, 2020 514 days ago</div>
+                        </td>
+                        <td>
+                            <span>
+                                <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-20" type="button">Open</button>
+                            </span>
+                            <div class="sb-dock-icon-tooltip d-inline-block">
+                                <div class="ui dropdown sb-dotted-dropdown"
+                                    suiDropdown autoClose="itemClick">
+                                    <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
+                                    <div class="menu" suiDropdownMenu>
+                                        <div class="item">Edit</div>
+                                        <div class="item">Share</div>
+                                        <div class="item">Preview</div>
+                                        <div class="item">Delete</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="sb-pageSection-content-bottom">
+            <div class="d-flex flex-ai-center flex-jc-space-between my-20">
+                <div>
+                    <a class="sb-color-primary fs-0-785 font-weight-bold" target="_blank" href="#">Download Course QR Codes</a>
+                </div>
+                <div class="sb-pagination-container">
+                    <div class="sb-pagination">
+                        <a class="sb-item">&laquo;</a>
+                        <a class="sb-item">&lt;</a>
+                        <a class="sb-item sb-item-active">1</a>
+                        <a class="sb-item no-border">...</a>
+                        <a class="sb-item">10</a>
+                        <a class="sb-item">11</a>
+                        <a class="sb-item">12</a>
+                        <a class="sb-item">&gt;</a>
+                        <a class="sb-item">&raquo;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
