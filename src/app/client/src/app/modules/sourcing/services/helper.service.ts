@@ -96,8 +96,8 @@ export class HelperService {
     }
   }
 
-  getformConfigforContext(channel?, context?, context_type?, objecttype?, operation?) {
-    const req = this.programsService.getformConfigData(channel, context, context_type, objecttype, operation).pipe(map((data) => {
+  getformConfigforContext(channel?, context?, context_type?, objecttype?, operation?, primarycategory?) {
+    const req = this.programsService.getformConfigData(channel, context, context_type, objecttype, operation, primarycategory).pipe(map((data) => {
       return _.get(data, 'result.data.properties');
     }));
     req.subscribe(

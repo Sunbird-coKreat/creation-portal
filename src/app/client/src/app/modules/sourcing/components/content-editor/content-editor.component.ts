@@ -349,7 +349,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
     const contextType = this.sessionContext.frameworkType || _.get(this.programContext, 'config.frameworkObj.type');
-    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create');
+    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create', _.get(this.sessionContext, 'targetCollectionPrimaryCategory'));
   }
 
   handleContentStatusText() {

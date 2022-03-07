@@ -256,9 +256,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
     if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
-     if (this.selectedTargetCollection) {
-        this.onChangeTargetCollectionCategory();
-     }
     }
     this.setProjectScopeDetails();
   }
@@ -801,7 +798,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type),
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type, null, null, this.selectedTargetCollection),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
 
@@ -982,6 +979,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     }
 
     return hasError;
+  }
+
+  applyFilters() {
+    const primaryCategory = this.projectScopeForm.value.target_collection_category;
+
+    if (!primaryCategory) {
+      this.toasterService.warning(this.resource.messages.emsg.NoTargetCollection);
+      return true;
+    }
+    this.filterApplied=true;
+    this.showTexbooklist();
   }
 
   resetFilters() {
@@ -1199,7 +1207,11 @@ onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
     this.projectScopeForm.value.pcollections = [];
-    this.showTexbooklist();
+    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+      this.onFrameworkChange();
+    } else {
+      this.showTexbooklist();
+    }
   }
 
   if(this.programScope['userChannelData']) {
