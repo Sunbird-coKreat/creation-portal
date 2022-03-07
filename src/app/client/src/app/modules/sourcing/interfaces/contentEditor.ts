@@ -13,5 +13,6 @@ export interface IContentEditorComponentInput {
     selectedSharedContext: any;
     hideSubmitForReviewBtn?: boolean;
     enableQuestionCreation?: boolean;
+    enableAddFromLibrary?: boolean;
     setDefaultCopyright?: boolean;
 }
