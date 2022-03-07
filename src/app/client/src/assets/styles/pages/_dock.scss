@@ -851,7 +851,8 @@ app-question-set-editor{
     font-size: 12px!important;
   }
   [data-title]:hover::before{
-    bottom: -22px !important;
+    top: 20px !important;
+    bottom: initial !important;
   }
 }
 .sb-edit-form{

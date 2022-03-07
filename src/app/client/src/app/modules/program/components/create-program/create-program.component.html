@@ -600,7 +600,7 @@
                             <h5 class="py-15 px-20 font-weight-bold fs-0-92 text-capitalize">
                               {{tempCollections.length + ' ' + (resource.frmelmnts.lbl.number.Of.Collections.Added | interpolate:'{TARGET_NAME}': programsService.setTargetCollectionName({target_collection_category: [projectScopeForm.value.target_collection_category]}, 'plural'))}}
                             </h5>
-                            <button *ngIf="projectTargetType === 'questionSets' && tempCollections.length && !editPublished"class="mr-10 my-10 sb-btn sb-btn-normal sb-btn-secondary" (click)="initiateCollectionEditor()">{{resource.frmelmnts.lbl.addNewTargetObject}}</button>
+                            <button *ngIf="projectTargetType === 'questionSets' && tempCollections.length"class="mr-10 my-10 sb-btn sb-btn-normal sb-btn-secondary" (click)="initiateCollectionEditor()">{{resource.frmelmnts.lbl.addNewTargetObject}}</button>
                           </div>
                           <hr class="mt-0">
                           <div class="o-y-auto fs-0-92 text-capitalize" [ngClass]="{'maxmin-h-375': projectTargetType === 'collections', 'max-h-375 min-height-auto': projectTargetType === 'questionSets'}">
