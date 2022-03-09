@@ -1,4 +1,7 @@
-<div class="sb-pageSection-content">
+<div class="ui tweleve wide column mb-20" *ngIf="showLoader">
+  <app-loader></app-loader>
+</div>
+<div *ngIf="!showLoader" class="sb-pageSection-content">
   <div class="sb-table-responsive desktop-o-x-unset">
     <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
       <thead class="sb-table-header sb-table-thead-gray">
@@ -63,7 +66,7 @@
         <a class="sb-color-primary fs-0-785 font-weight-bold" target="_blank" href="#">Download Course QR
           Codes</a>
       </div>
-      <div *ngIf="data && data.count > 0 && pager.totalPages > 1 && !showLoader" class="sb-pagination-container">
+      <div *ngIf="result && result.count > 0 && pager.totalPages > 1 && !showLoader" class="sb-pagination-container">
         <div class="sb-pagination">
           <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
             appTelemetryInteract
