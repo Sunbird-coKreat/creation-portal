@@ -1902,6 +1902,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.addFormLibraryInput = {
       targetPrimaryCategories: this.programContext.targetprimarycategories,
       framework: this.sessionContext.framework,
+      existingContentCounts: this.countData['total'],
       collectionId: this.sessionContext.collection,
       collection: event.collection,
       editorConfig: {
