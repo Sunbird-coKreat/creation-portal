@@ -70,19 +70,19 @@ export class PublishedComponent implements OnInit {
     });
   }
 
-  openCreatePopUpMat() {
-    if(this.createPopUpMat){
-      this.dialogRef = this.dialog.open(this.createPopUpMat);
-    }
-  }
-  openFilterPopUpMat() {
-    if(this.filterPopUpMat){
-      this.dialogRef = this.dialog.open(this.filterPopUpMat);
-    }
-  }
-  closeDialog() {
-    if(this.dialogRef){
-      this.dialogRef.close();
-    }
-  }
+  // openCreatePopUpMat() {
+  //   if(this.createPopUpMat){
+  //     this.dialogRef = this.dialog.open(this.createPopUpMat);
+  //   }
+  // }
+  // openFilterPopUpMat() {
+  //   if(this.filterPopUpMat){
+  //     this.dialogRef = this.dialog.open(this.filterPopUpMat);
+  //   }
+  // }
+  // closeDialog() {
+  //   if(this.dialogRef){
+  //     this.dialogRef.close();
+  //   }
+  // }
 }
