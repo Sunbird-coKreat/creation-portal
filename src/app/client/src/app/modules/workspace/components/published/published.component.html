@@ -119,25 +119,42 @@ class="sb-modal" appBodyScroll (dismissed)="showFilterModal = !showFilterModal" 
 
 <sui-modal *ngIf="showCreateModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
 class="sb-modal" appBodyScroll (dismissed)="showCreateModal = !showCreateModal" #modal>
-<div class="sb-modal-header">
-  Select to Create
-</div>
-<div class="sb-modal-content p-0">
-  <sui-tabset>
-    <div class="ui pointing secondary menu sb-bg-color-primary-100">
-      <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
-        <div class="p-0 m-0 d-flex">
-          <a class="item active cursor-pointer">Collection</a>
-          <a class="item cursor-pointer">Content</a>
-        </div>
+<sui-tabset>
+  <div class="ui pointing secondary menu sb-bg-color-primary-100">
+    <div class="ui container">
+      <div class="p-0 m-0 d-flex flex-jc-space-between">
+         <div class="item active cursor-pointer" suitabheader="1">Collection</div>
+         <div class="item cursor-pointer" suitabheader="2">Content</div>
       </div>
     </div>
-    <div class="ui segment p-0 m-0 sb-bg-color-white dynamicHeight tab active sb-bg-color-primary-0">
-
-    </div>
-    <div class="ui segment p-0 m-0 sb-bg-color-white dynamicHeight tab sb-bg-color-primary-0">
-
-    </div>
-  </sui-tabset>
-</div>
+  </div>
+  <div class="ui segment p-0 m-0 sb-bg-color-primary-0 dynamicHeight tab active" suiTabContent="1">
+      <div class="ui d-flex flex-jc-center m-0">
+          <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                  <i class="check circle icon"></i>
+                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                  <div class="content-title pt-16 pb-8">Content Paylist</div>
+              </div>
+          </div>
+          <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                  <i class="check circle icon"></i>
+                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                  <div class="content-title pt-16 pb-8">Book</div>
+              </div>
+          </div>
+          <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                  <i class="check circle icon"></i>
+                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                  <div class="content-title pt-16 pb-8">Course</div>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="ui segment p-0 m-0 sb-bg-color-primary-0 tab dynamicHeight" suiTabContent="2">
+      Collection
+  </div>
+</sui-tabset>
 </sui-modal>
