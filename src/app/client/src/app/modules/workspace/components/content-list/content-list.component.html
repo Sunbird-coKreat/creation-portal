@@ -1,55 +1,100 @@
-<table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
-  <thead class="sb-table-header sb-table-thead-gray">
-    <tr>
-      <th class="cursor-pointer sb-sorting w-15">Title</th>
-      <th class="cursor-pointer sb-sorting w-15">Content Category</th>
-      <th class="cursor-pointer sb-sorting w-15 text-center">Status</th>
-      <th class="cursor-pointer sb-sorting w-15">Creator</th>
-      <th class="cursor-pointer sb-sorting w-15">Last Updated date</th>
-      <th class="cursor-pointer sb-sorting w-15">&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody class="sb-table-body">
-    <tr>
-      <td class="pr-0">
-        <div _ngcontent-fct-c8="" class="sb__ellipsis sb__ellipsis--three">
-          KAYAL_VIZHI_100_textbooks SPRINT20_PARTIAL_BOOK Fevicol_2
-        </div>
-        <div class="my-5">
-          <div class="sb-label sb-label-table sb-label-gray-0 mr-5">CBSC</div>
-          <div class="sb-label sb-label-table sb-label-gray-0 mr-5">ICSC</div>
-        </div>
-      </td>
-      <td>
-        <span class="sb__ellipsis sb__ellipsis--breakAll">
-          Demo Practice Question Set, Explanation Content, Learning Resource, Practice Question Set
-        </span>
-      </td>
-      <td class="text-center pl-0 pr-0">
-        <div class="sb-color-success">Live</div>
-        <br>
-        <div class="sb-color-gray-100">Draft</div>
-      </td>
-      <td><span class="fs-0-785">Kanmani1</span></td>
-      <td>
-        <div>October 5, 2020 514 days ago</div>
-      </td>
-      <td>
-        <span>
-          <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-20" type="button">Open</button>
-        </span>
-        <div class="sb-dock-icon-tooltip d-inline-block">
-          <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
-            <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
-            <div class="menu" suiDropdownMenu>
-              <div class="item">Edit</div>
-              <div class="item">Share</div>
-              <div class="item">Preview</div>
-              <div class="item">Delete</div>
+<div class="ui tweleve wide column mb-20" *ngIf="showLoader">
+  <app-loader></app-loader>
+</div>
+<div *ngIf="!showLoader" class="sb-pageSection-content">
+  <div class="sb-table-responsive desktop-o-x-unset">
+    <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+      <thead class="sb-table-header sb-table-thead-gray">
+        <tr>
+          <th class="cursor-pointer sb-sorting w-15">Title</th>
+          <th class="cursor-pointer sb-sorting w-15">Content Category</th>
+          <th class="cursor-pointer sb-sorting w-15 text-center">Status</th>
+          <th class="cursor-pointer sb-sorting w-15">Creator</th>
+          <th class="cursor-pointer sb-sorting w-15">Last Updated date</th>
+          <th class="cursor-pointer sb-sorting w-15">&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody class="sb-table-body">
+        <tr *ngFor="let item of list">
+          <td class="pr-0">
+            <div _ngcontent-fct-c8="" class="sb__ellipsis sb__ellipsis--three">
+              {{ item.name }}
             </div>
-          </div>
+            <div class="my-5">
+              <div *ngIf="item.board" class="sb-label sb-label-table sb-label-gray-0 mr-5">{{ item.board }}</div>
+              <!-- <div class="sb-label sb-label-table sb-label-gray-0 mr-5">ICSC</div> -->
+            </div>
+          </td>
+          <td>
+            <span class="sb__ellipsis sb__ellipsis--breakAll">
+              {{ item.primaryCategory }}
+            </span>
+          </td>
+          <td class="text-center pl-0 pr-0">
+            <div [ngClass]="{'sb-color-success': item.status == 'Live', 'sb-color-gray-100': item.status !== 'Live'}">{{
+              item.status }}</div>
+            <!-- <br> -->
+            <!-- <div class="sb-color-gray-100">Draft</div> -->
+          </td>
+          <td><span class="fs-0-785">{{ item.creator }}</span></td>
+          <td>
+            <div>{{item.lastUpdatedOn | fromNow }}</div>
+          </td>
+          <td>
+            <span>
+              <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-20" type="button">Open</button>
+            </span>
+            <div class="sb-dock-icon-tooltip d-inline-block">
+              <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
+                <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
+                <div class="menu" suiDropdownMenu>
+                  <div class="item">Edit</div>
+                  <div class="item">Share</div>
+                  <div class="item">Preview</div>
+                  <div class="item">Delete</div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sb-pageSection-content-bottom">
+    <div class="d-flex flex-ai-center flex-jc-space-between my-20">
+      <div>
+        <a class="sb-color-primary fs-0-785 font-weight-bold" target="_blank" href="#">Download Course QR
+          Codes</a>
+      </div>
+      <div *ngIf="result && result.count > 0 && pager.totalPages > 1 && !showLoader" class="sb-pagination-container">
+        <div class="sb-pagination">
+          <a class="sb-item" [ngClass]="{disabled:pager.currentPage===1 }" (click)="NavigateToPage(1)"
+            appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_fist_page', configService.telemetryLabels.eventType.click,undefined, telemetryPageId)"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">First</a>
+          <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item"
+            (click)="NavigateToPage(pager.currentPage - 1)" appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
+          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}"
+            (click)="NavigateToPage(page)" class="sb-item" appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}"
+            (click)="NavigateToPage(pager.currentPage + 1)" class="sb-item" appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
+          <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" (click)="NavigateToPage(pager.totalPages)"
+            class="sb-item" appTelemetryInteract
+            [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
+            [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+            [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
         </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+      </div>
+    </div>
+  </div>
+</div>
