@@ -1,6 +1,6 @@
 <div class="ui container">
-  <div class="mt-24 mb-10">
-    <div class="d-flex flex-jc-space-between d-flex sb-pageSection">
+  <div class="pt-24 mb-10">
+    <div class="d-flex flex-jc-space-between d-flex sb-pageSection ">
       <div>
         <div class="sb-color-primary d-inline-block br-2 pr-10 mr-10">
           <span class="fs-1-286 font-weight-bold">2045</span>
@@ -25,14 +25,14 @@
           <button class="sb-btn sb-btn-normal">Search</button>
         </div>
         <div class="d-flex">
-          <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button"><i class="filter icon"></i>
+          <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button" (click)="showFilterModal = true"><i class="filter icon"></i>
             Apply Filter</button>
-          <button class="px-10 sb-btn sb-btn-primary sb-btn-normal"><i class="plus outline icon"></i>Create</button>
+          <button class="px-10 sb-btn sb-btn-primary sb-btn-normal" (click)="showCreateModal = true"><i class="plus outline icon"></i>Create</button>
         </div>
       </div>
 
     </div>
-    <div class="sb-pageSection-content">
+    <div class="sb-pageSection-content mt-10">
       <div class="sb-table-responsive desktop-o-x-unset">
         <app-content-list></app-content-list>
       </div>
@@ -60,3 +60,84 @@
     </div>
   </div>
 </div>
+<sui-modal *ngIf="showFilterModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal" appBodyScroll (dismissed)="showFilterModal = !showFilterModal" #modal>
+<div class="sb-modal-header">
+  Apply filters
+</div>
+<div class="sb-modal-content">
+  <div class="formSection grid two-column-grid">
+    <div class="sb-g-col-lg-1">
+      <label class="d-block fs-0-785 font-weight-bold">Board</label>
+        <sui-select class="selection w-100">
+            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+            </sui-select-option>
+        </sui-select>
+    </div>
+    <div class="sb-g-col-lg-1 my-10">
+      <label class="d-block fs-0-785 font-weight-bold">Medium</label>
+        <sui-select class="selection w-100">
+            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+            </sui-select-option>
+        </sui-select>
+    </div>
+    <div class="sb-g-col-lg-1 my-10">
+      <label class="d-block fs-0-785 font-weight-bold">Grade</label>
+        <sui-select class="selection w-100">
+            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+            </sui-select-option>
+        </sui-select>
+    </div>
+    <div class="sb-g-col-lg-1 my-10">
+      <label class="d-block fs-0-785 font-weight-bold">Select Subject</label>
+        <sui-select class="selection w-100">
+            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+            </sui-select-option>
+        </sui-select>
+    </div>
+    <div class="sb-g-col-lg-1 my-10">
+      <label class="d-block fs-0-785 font-weight-bold">Status</label>
+        <sui-select class="selection w-100">
+            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+            </sui-select-option>
+        </sui-select>
+    </div>
+    <div class="sb-g-col-lg-1 my-10">
+      <label class="d-block fs-0-785 font-weight-bold">Content Category</label>
+      <sui-multi-select class="selection w-100" #multiSelect>
+        <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+        </sui-select-option>
+      </sui-multi-select>
+    </div>
+  </div>
+</div>
+<div class="sb-modal-actions py-20">
+  <button class="sb-btn sb-btn-normal sb-btn-primary" type="button"> Apply </button>
+  <button class="sb-btn sb-btn-normal sb-btn-outline-primary" type="button"> Reset</button>
+</div>
+</sui-modal>
+
+<sui-modal *ngIf="showCreateModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+class="sb-modal" appBodyScroll (dismissed)="showCreateModal = !showCreateModal" #modal>
+<div class="sb-modal-header">
+  Select to Create
+</div>
+<div class="sb-modal-content p-0">
+  <sui-tabset>
+    <div class="ui pointing secondary menu sb-bg-color-primary-100">
+      <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
+        <div class="p-0 m-0 d-flex">
+          <a class="item active cursor-pointer">Collection</a>
+          <a class="item cursor-pointer">Content</a>
+        </div>
+      </div>
+    </div>
+    <div class="ui segment p-0 m-0 sb-bg-color-white dynamicHeight tab active sb-bg-color-primary-0">
+
+    </div>
+    <div class="ui segment p-0 m-0 sb-bg-color-white dynamicHeight tab sb-bg-color-primary-0">
+
+    </div>
+  </sui-tabset>
+</div>
+</sui-modal>

@@ -1,0 +1,10 @@
+.two-column-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    -moz-column-gap: .5rem;
+    column-gap: 1.5rem;
+}
+
+.sb-bg-color-primary-0 {
+    background-color: var(--primary-0) !important;
+}

@@ -6,8 +6,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./published.component.scss']
 })
 export class PublishedComponent implements OnInit {
-
-  constructor() { }
+  public showFilterModal = false;
+  public showCreateModal = false;
+  constructor() {}
 
   ngOnInit(): void {
   }
