@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { SearchService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 
@@ -8,15 +9,19 @@ import * as _ from 'lodash-es';
   styleUrls: ['./published.component.scss']
 })
 export class PublishedComponent implements OnInit {
+  @ViewChild('createPopUpMat') createPopUpMat: TemplateRef<any>;
+  @ViewChild('filterPopUpMat') filterPopUpMat: TemplateRef<any>;
+  public showFilterModal = false;
+  public showCreateModal = false;
+  dialogRef: any;
 
   searchService: SearchService;
   contents: any;
   showLoader: boolean = true;
 
-  constructor(searchService: SearchService) {
+  constructor(searchService: SearchService, public dialog: MatDialog) {
     this.searchService = searchService;
   }
-
 
   ngOnInit(): void {
     console.log(this.searchService);
@@ -65,4 +70,19 @@ export class PublishedComponent implements OnInit {
     });
   }
 
+  openCreatePopUpMat() {
+    if(this.createPopUpMat){
+      this.dialogRef = this.dialog.open(this.createPopUpMat);
+    }
+  }
+  openFilterPopUpMat() {
+    if(this.filterPopUpMat){
+      this.dialogRef = this.dialog.open(this.filterPopUpMat);
+    }
+  }
+  closeDialog() {
+    if(this.dialogRef){
+      this.dialogRef.close();
+    }
+  }
 }

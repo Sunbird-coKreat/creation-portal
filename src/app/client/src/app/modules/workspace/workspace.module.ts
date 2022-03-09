@@ -4,6 +4,7 @@ import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { WorkspaceRoutingModule } from './workspace-routing.module';
 import { PublishedComponent } from './components/published/published.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
+import { MatDialogModule } from '@angular/material/dialog';
 import { ContentListHeaderComponent } from './components/content-list-header/content-list-header.component';
 import { ContentListComponent } from './components/content-list/content-list.component';
 import { SearchService } from '@sunbird/core';
@@ -17,7 +18,8 @@ import { TelemetryModule } from '@sunbird/telemetry';
     CommonModule,
     SuiModule,
     SharedModule,
-    TelemetryModule
+    TelemetryModule,
+    MatDialogModule
   ],
   providers: [
     SearchService

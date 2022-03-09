@@ -1,0 +1,178 @@
+@import "variables";
+
+.two-column-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    -moz-column-gap: .5rem;
+    column-gap: 1.5rem;
+}
+
+.sb-bg-color-primary-0 {
+    background-color: var(--primary-0) !important;
+}
+
+
+//Common contribution card section
+.common-contribution-card {
+  box-sizing: border-box;
+  border: 0.5px solid rgba(123, 134, 244, 0.39);
+  border-radius: 0.25rem;
+  background-color: var(--white);
+  box-shadow: none;
+  max-width: 170px;
+  max-height: 170px;
+  margin: 20px 10px;
+    .content {
+      img {
+        width: 64px;
+        height: 64px;
+      }
+
+      .content-title {
+        font-size: $font-size-sm;
+        color: var(--gray);
+        vertical-align: middle;
+        line-height: ($base-block-space * 2);
+      }
+
+      .icon {
+        display: none;
+        height: ($base-block-space * 2) + 2;
+        position: absolute;
+        right: $base-block-space;
+        top: $base-block-space;
+        margin: 0;
+        width: 20px;
+        font-size: ($base-block-space * 2) + 2;
+        color: $secondary-200;
+        font-size:20px;
+      }
+
+    }
+
+    &:hover,
+    &.active {
+      .content .icon {
+        display: block;
+      }
+    }
+
+    &:hover, &.active {
+      cursor: pointer;
+      z-index: 5;
+      background: var(--white);
+      transform: translateY(-3px);
+      box-shadow: 0 2px 8px 0 rgba(123, 134, 244, 0.31);
+      border: 0.5px solid rgba(208, 208, 208, 0.48);
+    }
+
+    &.active {
+      .content-title {
+        font-weight: 700;
+      }
+    }
+}
+
+.cdk-overlay-pane {
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    .mat-dialog-container {
+        padding: 0;
+        border-radius: 4px;
+        overflow: hidden;
+        background-color: transparent;
+        box-shadow: none;
+        position: relative;
+        .mat-dialog-content {
+            margin: 0;
+            padding: 0;
+            max-height: 100%;
+            overflow: auto;
+        }
+    }
+    &.overflow-visible {
+         max-width: 100% !important;
+        .mat-dialog-container {
+            overflow: inherit;
+            .mat-dialog-content {
+            overflow: inherit;
+            }
+        }
+        .sb-mat__modal__content {
+            overflow-y: visible;
+            max-height: inherit;
+        }
+    }
+    .sb-mat__modal {
+        max-width: 720px;
+        width: 100%;
+        margin: 2% auto 0 auto;
+        &--small {
+            max-width: 480px;
+        }
+        &--fullscreen {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        &__content {
+            padding: 16px;
+            max-height: 400px;
+            min-height: 100px;
+            background: var(--mat-modal-content-bg);
+            color: var(--mat-modal-content-txt);
+            overflow-y: auto;
+        }
+        &__actions {
+            display: flex;
+            padding: 8px 16px;
+            align-items: center;
+            background-color: var(--mat-modal-content-bg);
+            border-top: 0.5px solid var(--gray-100);
+            justify-content: flex-end;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+
+            html[layout='joy'] & {
+            border: none;
+            }
+        }
+        .mat-dialog-title {
+            background: var(--mat-modal-title-bg);
+            color: var(--mat-modal-title-txt);
+            display: flex;
+            align-items: center;
+            padding: 4px 16px;
+            margin: 0;
+            min-height: 40px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+
+            .title {
+            font-size: 16px;
+            font-weight: 700;
+            flex: 1;
+            }
+        }
+        .close-btn {
+            background: inherit;
+            box-shadow: none;
+            outline: none;
+            border: none;
+            margin-left: auto;
+            position: relative;
+            cursor: pointer;
+
+            &::after {
+            color: var(--white);
+            content: '\2715';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            font-weight: 700;
+            }
+        }
+    }
+}
