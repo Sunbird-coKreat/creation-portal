@@ -461,6 +461,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.questionSetEditorComponentInput['action'] = 'creation';
     this.questionSetEditorComponentInput['programContext'] = _.merge({ framework: _.get(this.programScope, 'framework.code') }, this.programDetails);
     this.questionSetEditorComponentInput['enableQuestionCreation'] = false;
+    this.questionSetEditorComponentInput['enableAddFromLibrary'] = false;
     this.questionSetEditorComponentInput['setDefaultCopyright'] = true;
     this.questionSetEditorComponentInput['hideSubmitForReviewBtn'] = true;
   }
