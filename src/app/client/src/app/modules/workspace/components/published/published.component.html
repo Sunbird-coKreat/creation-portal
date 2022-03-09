@@ -32,31 +32,9 @@
       </div>
 
     </div>
-    <div class="sb-pageSection-content">
-      <div class="sb-table-responsive desktop-o-x-unset">
-        <app-content-list></app-content-list>
-      </div>
-      <div class="sb-pageSection-content-bottom">
-        <div class="d-flex flex-ai-center flex-jc-space-between my-20">
-          <div>
-            <a class="sb-color-primary fs-0-785 font-weight-bold" target="_blank" href="#">Download Course QR
-              Codes</a>
-          </div>
-          <div class="sb-pagination-container">
-            <div class="sb-pagination">
-              <a class="sb-item">&laquo;</a>
-              <a class="sb-item">&lt;</a>
-              <a class="sb-item sb-item-active">1</a>
-              <a class="sb-item no-border">...</a>
-              <a class="sb-item">10</a>
-              <a class="sb-item">11</a>
-              <a class="sb-item">12</a>
-              <a class="sb-item">&gt;</a>
-              <a class="sb-item">&raquo;</a>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
+      <app-loader></app-loader>
     </div>
+    <app-content-list *ngIf="!showLoader" [data]="contents" (getContents)="getContents($event)"></app-content-list>
   </div>
 </div>
