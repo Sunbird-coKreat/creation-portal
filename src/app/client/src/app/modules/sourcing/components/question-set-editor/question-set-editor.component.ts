@@ -77,8 +77,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.setDefaultCopyright = _.get(this.questionSetEditorComponentInput, 'setDefaultCopyright') || false;
     this.enableQuestionCreation = _.isUndefined(_.get(this.questionSetEditorComponentInput, 'enableQuestionCreation')) ? true :
       _.get(this.questionSetEditorComponentInput, 'enableQuestionCreation');
-    this.enableAddFromLibrary = _.isUndefined(_.get(this.questionSetEditorComponentInput, 'enableAddFromLibrary')) ? true :
-    _.get(this.questionSetEditorComponentInput, 'enableAddFromLibrary');
+    this.enableAddFromLibrary = _.get(this.questionSetEditorComponentInput, 'enableAddFromLibrary') === true ? true : false;
 
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
