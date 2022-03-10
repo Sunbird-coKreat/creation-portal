@@ -181,7 +181,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         publicStorageAccount: this.publicStorageAccount,
         hideSubmitForReviewBtn: this.hideSubmitForReviewBtn,
         questionSet: {
-          maxQuestionsLimit: 15
+          maxQuestionsLimit: this.sunbirdQuestionSetChildrenLimit
         },
         collection: {
           maxContentsLimit: this.sunbirdCollectionChildrenLimit
