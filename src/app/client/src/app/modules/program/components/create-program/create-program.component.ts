@@ -810,7 +810,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
 
       });
-      if (!this.projectTargetType || this.projectTargetType == 'collections') {
+      if (!this.projectTargetType || _.includes(['collections', 'questionSets'], this.projectTargetType)) {
         this.showTexbooklist()
       }
     }
