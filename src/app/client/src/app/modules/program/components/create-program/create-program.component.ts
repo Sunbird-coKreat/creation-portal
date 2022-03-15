@@ -1266,7 +1266,7 @@ showTexbooklist() {
 
     if(this.projectTargetType === 'questionSets') {
       delete requestData.request.not_exists;
-      requestData.request['program_id'] = this.programId;
+      requestData.request.filters['programId'] = this.programId;
     }
 
     return this.programsService.getCollectionList(requestData, this.projectTargetType).subscribe(
