@@ -810,7 +810,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
 
       });
-      if (!this.projectTargetType || this.projectTargetType == 'collections') {
+      if (!this.projectTargetType || _.includes(['collections', 'questionSets'], this.projectTargetType)) {
         this.showTexbooklist()
       }
     }
@@ -1266,7 +1266,7 @@ showTexbooklist() {
 
     if(this.projectTargetType === 'questionSets') {
       delete requestData.request.not_exists;
-      requestData.request['program_id'] = this.programId;
+      requestData.request.filters['programId'] = this.programId;
     }
 
     return this.programsService.getCollectionList(requestData, this.projectTargetType).subscribe(
