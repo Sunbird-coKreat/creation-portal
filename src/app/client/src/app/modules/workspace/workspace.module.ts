@@ -10,6 +10,8 @@ import { ContentListComponent } from './components/content-list/content-list.com
 import { SearchService } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedFeatureModule } from '@sunbird/shared-feature';
 
 @NgModule({
   declarations: [WorkspaceComponent, PublishedComponent, ContentListHeaderComponent, ContentListComponent],
@@ -19,7 +21,10 @@ import { TelemetryModule } from '@sunbird/telemetry';
     SuiModule,
     SharedModule,
     TelemetryModule,
-    MatDialogModule
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedFeatureModule
   ],
   providers: [
     SearchService

@@ -2,25 +2,44 @@
   <div class="ui pointing secondary menu sb-bg-color-primary-100">
     <div class="ui container">
       <div class="p-0 m-0 d-flex">
-        <a class="item active cursor-pointer">Published Content</a>
-        <a class="item cursor-pointer">My Content</a>
-        <a class="item cursor-pointer">Content for review</a>
-        <a class="item cursor-pointer">Content for collaboration</a>
+        <a (click)="selectTab('mycontent')" [ngClass]="{'active': tab === 'mycontent'}" class="item cursor-pointer">My
+          Content</a>
+        <a (click)="selectTab('published')" [ngClass]="{'active': tab === 'published'}"
+          class="item cursor-pointer">Published Content</a>
+        <a (click)="selectTab('review')" [ngClass]="{'active': tab === 'review'}" class="item cursor-pointer">Content
+          for review</a>
+        <a (click)="selectTab('collaboration')" [ngClass]="{'active': tab === 'collaboration'}"
+          class="item cursor-pointer">Content for collaboration</a>
       </div>
     </div>
   </div>
-  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab active">
-    <app-published></app-published>
+  <div [ngClass]="{'active':tab == 'mycontent'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+    <div class="ui container">
+      <div class="pt-24 mb-10">
+        <app-content-list *ngIf="tab=='mycontent'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+      </div>
+    </div>
   </div>
-  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
-    My Content
+  <div [ngClass]="{'active':tab == 'published'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+    <div class="ui container">
+      <div class="pt-24 mb-10">
+        <app-content-list *ngIf="tab=='published'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+      </div>
+    </div>
   </div>
-  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
-    Content for review
+  <div [ngClass]="{'active':tab == 'review'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+    <div class="ui container">
+      <div class="pt-24 mb-10">
+        <app-content-list *ngIf="tab=='review'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+      </div>
+    </div>
   </div>
-  <div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
-    Content for collaboration
+  <div [ngClass]="{'active':tab == 'collaboration'}"
+    class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
+    <div class="ui container">
+      <div class="pt-24 mb-10">
+        <app-content-list *ngIf="tab=='collaboration'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+      </div>
+    </div>
   </div>
 </sui-tabset>
-
-

@@ -1,3 +1,160 @@
+<div class="d-flex flex-jc-space-between d-flex sb-pageSection ">
+  <div>
+    <div class="sb-color-primary d-inline-block br-2 pr-10 mr-10">
+      <span class="fs-1-286 font-weight-bold">{{totalContentCount}}</span>
+      Total
+    </div>
+    <div class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
+      <span class="fs-1-286 font-weight-bold">{{countByStatus?.draft}}</span>
+      Draft
+    </div>
+    <div class="sb-color-success d-inline-block pr-10">
+      <span class="fs-1-286 font-weight-bold">{{countByStatus?.live}}</span>
+      Live
+    </div>
+  </div>
+  <div class="d-flex flex-jc-space-between">
+    <div class="sb-search-box medium mb-15">
+      <div class="input-div relative">
+        <i class="search icon"></i>
+        <input class="sb-search-input" [(ngModel)]="query" type="text" placeholder="Search..." />
+        <i (click)="search(true)" class="close icon"></i>
+      </div>
+      <button (click)="search()" class="sb-btn sb-btn-normal">Search</button>
+    </div>
+    <div class="d-flex">
+      <div *ngIf="filtersAppliedCount > 0" class="fs-0-785 font-italic sb-color-gray-300 d-flex ml-5 pt-5">
+        <div><i class="icon check circle pr-5 sb-color-success"></i></div>
+        <div style="width: 100px;">{{filtersAppliedCount}} Filters applied</div>
+        <!-- {{resourceService?.frmelmnts?.lbl?.filtersApplied}} -->
+      </div>
+      <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button" (click)="openFilterPopUpMat()"><i
+          class="filter icon"></i>
+        Apply Filter</button>
+      <button class="px-10 sb-btn sb-btn-primary sb-btn-normal" (click)="openCreatePopUpMat()"><i
+          class="plus outline icon"></i>Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Module createPopUpMat -->
+<ng-template #createPopUpMat>
+  <div class="sb-mat__modal">
+    <div class="mb-0 mat-dialog-title" mat-dialog-title="">
+      <div class="title" role="heading">Select to Create</div>
+      <button aria-label="close dialog" (click)=" closeDialog()" mat-dialog-close class="mat-close-btn">
+        <i class="close icon"></i>
+      </button>
+    </div>
+    <mat-dialog-content class="mat-dialog-content">
+      <sui-tabset>
+        <div class="ui pointing secondary menu sb-bg-color-primary-100">
+          <div class="ui container">
+            <div class="p-0 m-0 d-flex flex-jc-space-between">
+              <div class="item active cursor-pointer" suitabheader="1">Collection</div>
+              <div class="item cursor-pointer" suitabheader="2">Content</div>
+            </div>
+          </div>
+        </div>
+        <div class="ui segment p-0 m-0 sb-bg-color-primary-0 dynamicHeight tab active" suiTabContent="1">
+          <div class="ui d-flex flex-jc-center m-0">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Content Paylist</div>
+              </div>
+            </div>
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Book</div>
+              </div>
+            </div>
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Course</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ui segment p-0 m-0 sb-bg-color-primary-0 tab dynamicHeight" suiTabContent="2">
+          Collection
+        </div>
+      </sui-tabset>
+    </mat-dialog-content>
+  </div>
+</ng-template>
+<!-- Module createPopUpMat -->
+
+<ng-template #filterPopUpMat>
+  <div class="sb-mat__modal">
+    <div class="mb-0 mat-dialog-title" mat-dialog-title="">
+      <div class="title" role="heading">Filter</div>
+      <button aria-label="close dialog" (click)=" closeDialog()" mat-dialog-close class="mat-close-btn">
+        <i class="close icon"></i>
+      </button>
+    </div>
+    <mat-dialog-content class="mat-dialog-content">
+      <form [formGroup]="filterForm">
+        <div class="formSection grid two-column-grid">
+          <div class="sb-g-col-lg-1">
+            <label class="d-block fs-0-785 font-weight-bold">Board</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Medium</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Grade</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Select Subject</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Status</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Content Category</label>
+            <sui-multi-select class="selection w-100" #multiSelect>
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-multi-select>
+          </div>
+        </div>
+      </form>
+    </mat-dialog-content>
+    <mat-dialog-actions class="mb-0">
+      <div class="sb-modal-actions py-20">
+        <button class="sb-btn sb-btn-normal sb-btn-primary" type="button"> Apply </button>
+        <button class="sb-btn sb-btn-normal sb-btn-outline-primary" type="button"> Reset</button>
+      </div>
+    </mat-dialog-actions>
+  </div>
+</ng-template>
+
 <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
   <app-loader></app-loader>
 </div>
@@ -6,11 +163,39 @@
     <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
       <thead class="sb-table-header sb-table-thead-gray">
         <tr>
-          <th class="cursor-pointer sb-sorting w-15">Title</th>
-          <th class="cursor-pointer sb-sorting w-15">Content Category</th>
-          <th class="cursor-pointer sb-sorting w-15 text-center">Status</th>
+          <th class="cursor-pointer sb-sorting w-15" (click)="sortList('name')">
+            Title
+            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+            <span *ngIf="sortColumn == 'name'" class="d-inline-block">
+              <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+            </span>
+          </th>
+          <th class="cursor-pointer sb-sorting w-15" (click)="sortList('primaryCategory')">
+            Content Category
+            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'primaryCategory' "></i>
+            <span *ngIf="sortColumn == 'primaryCategory'" class="d-inline-block">
+              <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+            </span>
+          </th>
+          <th class="cursor-pointer sb-sorting w-15" (click)="sortList('status')">
+            Status
+            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'status' "></i>
+            <span *ngIf="sortColumn == 'status'" class="d-inline-block">
+              <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+            </span>
+          </th>
           <th class="cursor-pointer sb-sorting w-15">Creator</th>
-          <th class="cursor-pointer sb-sorting w-15">Last Updated date</th>
+          <th class="cursor-pointer sb-sorting w-15" (click)="sortList('lastUpdatedOn')">
+            Last Updated date
+            <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'lastUpdatedOn' "></i>
+            <span *ngIf="sortColumn == 'lastUpdatedOn'" class="d-inline-block">
+              <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+            </span>
+          </th>
           <th class="cursor-pointer sb-sorting w-15">&nbsp;</th>
         </tr>
       </thead>
@@ -78,11 +263,11 @@
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
-          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}"
-            (click)="NavigateToPage(page)" class="sb-item" appTelemetryInteract
+          <!-- <a *ngFor="let page of pager.pages" (click)="NavigateToPage(page)" class="sb-item">{{page}} some</a> -->
+          <!-- appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
+            [telemetryInteractPdata]="telemetryInteractPdata" -->
           <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}"
             (click)="NavigateToPage(pager.currentPage + 1)" class="sb-item" appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
@@ -93,8 +278,17 @@
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
+          <a *ngFor="let k of [1,2,3,4,5];" (click)="NavigateToPage(page)" class="sb-item">{{k}}</a>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<li *ngFor="let user of [1,2,3,4,5]; index as i;">
+  {{i}} {{user}}default
+</li>
+
+<app-project-filter *ngIf="showFiltersModal == true" (dismiss)="showFiltersModal = false"
+  (applyFilters)="applyFilters($event)" [filtersAppliedCount]="filtersAppliedCount">
+</app-project-filter>

@@ -128,6 +128,11 @@ export class ProjectFilterComponent implements OnInit {
         const genericOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('genericOrigionalMyPrograms') : [];
         this.getFiltersUnionFromList(genericOrigionalMyPrograms);
       }
+    } else if (this.router.url.includes('/workspace')) {
+      this.fetchFrameWorkDetails(this.userService.hashTagId);
+      this.showFilters['sourcingOrganisations'] = false;
+      this.isOnChangeFilterEnable = true;
+      this.activeUser = 'workspaceAdmin';
     } else {
       const genericOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('genericOrigionalMyPrograms') : [];
       this.getFiltersUnionFromList(genericOrigionalMyPrograms); // for sourcing reviewer
@@ -309,6 +314,10 @@ export class ProjectFilterComponent implements OnInit {
         appliedFilters = this.cacheService.get('contributeAllProgramAppliedFiltersTenantAccess');
         this.setAppliedFilters(appliedFilters);
         break;
+      case 'workspaceAdmin':
+        appliedFilters = this.cacheService.get('workspaceAdminAppliedFilters');
+        this.setAppliedFilters(appliedFilters);
+        break;
     }
   }
   setAppliedFilters(appliedFilters) { // for auto populate of applied filters
@@ -373,7 +382,7 @@ export class ProjectFilterComponent implements OnInit {
       case 'sourcingOrgAdmin':
         if (this.forTargetType === 'searchCriteria') {
          this.setPreferences['target_collection_category'] = [];
-          this.cacheService.set('sourcingMyProgramAppliedFiltersSearchCriteria', filterLocalStorage); 
+          this.cacheService.set('sourcingMyProgramAppliedFiltersSearchCriteria', filterLocalStorage);
         } else {
           this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage);
         }
@@ -401,7 +410,13 @@ export class ProjectFilterComponent implements OnInit {
         }
         break;
       case 'contributeOrgAdminAllProjectTenantAccess':
-        this.cacheService.set('contributeAllProgramAppliedFiltersTenantAccess', filterLocalStorage); break;
+        this.cacheService.set('contributeAllProgramAppliedFiltersTenantAccess', filterLocalStorage);
+      break;
+
+      case 'workspaceAdmin':
+        this.cacheService.set('workspaceAdminAppliedFilters', filterLocalStorage);
+      break;
+
     }
     resetFilter ? this.applyFilters.emit() : this.applyFilters.emit(this.setPreferences); // emiting the filters data to parent component
     this.dismissed();

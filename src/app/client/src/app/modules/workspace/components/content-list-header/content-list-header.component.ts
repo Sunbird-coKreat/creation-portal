@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-content-list-header',
@@ -10,10 +11,19 @@ export class ContentListHeaderComponent implements OnInit {
   @ViewChild('createPopUpMat') createPopUpMat: TemplateRef<any>;
   @ViewChild('filterPopUpMat') filterPopUpMat: TemplateRef<any>;
   dialogRef: any;
+  public filterForm: FormGroup;
+  showFiltersModal = false;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,
+    public sbFormBuilder: FormBuilder) { }
 
   ngOnInit(): void {
+    this.filterForm = this.sbFormBuilder.group({
+      board: [],
+      medium: [],
+      gradeLevel: [],
+      subject: []
+    });
   }
 
   openCreatePopUpMat() {
@@ -22,9 +32,10 @@ export class ContentListHeaderComponent implements OnInit {
     }
   }
   openFilterPopUpMat() {
-    if(this.filterPopUpMat){
-      this.dialogRef = this.dialog.open(this.filterPopUpMat);
-    }
+    this.showFiltersModal = true;
+    // if(this.filterPopUpMat){
+      // this.dialogRef = this.dialog.open(this.filterPopUpMat);
+    // }
   }
   closeDialog() {
     if(this.dialogRef){
@@ -32,4 +43,7 @@ export class ContentListHeaderComponent implements OnInit {
     }
   }
 
+  getProgramsListByRole(e) {
+
+  }
 }

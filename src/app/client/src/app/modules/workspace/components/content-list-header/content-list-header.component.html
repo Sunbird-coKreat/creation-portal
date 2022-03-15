@@ -84,6 +84,14 @@
   </div>
 </ng-template>
 <!-- Module createPopUpMat -->
+
+<app-project-filter
+  *ngIf="showFiltersModal"
+  (dismiss)="showFiltersModal = false"
+  (applyFilters)="getProgramsListByRole($event)"
+  filtersAppliedCount="10">
+</app-project-filter>
+
 <ng-template #filterPopUpMat>
   <div class="sb-mat__modal">
     <div class="mb-0 mat-dialog-title" mat-dialog-title="">
@@ -93,50 +101,52 @@
       </button>
     </div>
     <mat-dialog-content class="mat-dialog-content">
-      <div class="formSection grid two-column-grid">
-        <div class="sb-g-col-lg-1">
-          <label class="d-block fs-0-785 font-weight-bold">Board</label>
-          <sui-select class="selection w-100">
-            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
-            </sui-select-option>
-          </sui-select>
+      <form [formGroup]="filterForm">
+        <div class="formSection grid two-column-grid">
+          <div class="sb-g-col-lg-1">
+            <label class="d-block fs-0-785 font-weight-bold">Board</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Medium</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Grade</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Select Subject</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Status</label>
+            <sui-select class="selection w-100">
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-select>
+          </div>
+          <div class="sb-g-col-lg-1 my-10">
+            <label class="d-block fs-0-785 font-weight-bold">Content Category</label>
+            <sui-multi-select class="selection w-100" #multiSelect>
+              <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
+              </sui-select-option>
+            </sui-multi-select>
+          </div>
         </div>
-        <div class="sb-g-col-lg-1 my-10">
-          <label class="d-block fs-0-785 font-weight-bold">Medium</label>
-          <sui-select class="selection w-100">
-            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
-            </sui-select-option>
-          </sui-select>
-        </div>
-        <div class="sb-g-col-lg-1 my-10">
-          <label class="d-block fs-0-785 font-weight-bold">Grade</label>
-          <sui-select class="selection w-100">
-            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
-            </sui-select-option>
-          </sui-select>
-        </div>
-        <div class="sb-g-col-lg-1 my-10">
-          <label class="d-block fs-0-785 font-weight-bold">Select Subject</label>
-          <sui-select class="selection w-100">
-            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
-            </sui-select-option>
-          </sui-select>
-        </div>
-        <div class="sb-g-col-lg-1 my-10">
-          <label class="d-block fs-0-785 font-weight-bold">Status</label>
-          <sui-select class="selection w-100">
-            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
-            </sui-select-option>
-          </sui-select>
-        </div>
-        <div class="sb-g-col-lg-1 my-10">
-          <label class="d-block fs-0-785 font-weight-bold">Content Category</label>
-          <sui-multi-select class="selection w-100" #multiSelect>
-            <sui-select-option *ngFor="let option of multiSelect1" [value]="option">
-            </sui-select-option>
-          </sui-multi-select>
-        </div>
-      </div>
+      </form>
     </mat-dialog-content>
     <mat-dialog-actions class="mb-0">
       <div class="sb-modal-actions py-20">

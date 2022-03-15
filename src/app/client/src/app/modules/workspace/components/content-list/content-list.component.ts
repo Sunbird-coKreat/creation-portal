@@ -1,12 +1,13 @@
-import { Component, Input, OnInit, Output, SimpleChange, EventEmitter } from '@angular/core';
+import { isEmpty, first } from 'rxjs/operators';
+import { Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { IPagination } from '../../../sourcing/interfaces';
-import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
+import { ConfigService, PaginationService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
-import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
-import { SearchService } from '@sunbird/core';
-
+import { UserService, ProgramsService, SearchService } from '@sunbird/core';
+import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
-
 
 @Component({
   selector: 'app-content-list',
@@ -14,25 +15,46 @@ import * as _ from 'lodash-es';
   styleUrls: ['./content-list.component.scss']
 })
 export class ContentListComponent implements OnInit {
-
-  @Input() data: any;
+  @ViewChild('createPopUpMat') createPopUpMat: TemplateRef<any>;
+  @ViewChild('filterPopUpMat') filterPopUpMat: TemplateRef<any>;
+  @Input() selectedTab: string;
+  @Input() facets: [] = [];
+  dialogRef: any;
+  filters: any = {};
+  showFiltersModal = false;
+  query: string = '';
   list: any;
   result: any;
   showLoader = true;
-  pager: IPagination;
+  public pager: IPagination;
   pageNumber = 1;
   pageLimit = 200;
+  maxLimit = 1000;
+  countByStatus: any = { review: 0, draft: 0, live: 0 };
+
+  public filterForm: FormGroup;
+  public direction = 'desc';
+  public sortColumn = 'lastUpdatedOn';
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId: string;
+  public filtersAppliedCount: number = 0;
+  public totalContentCount: number = 0;
+  public liveContentCount: number = 0;
+  public draftContentCount: number = 0;
+  public reviewContentCount: number = 0;
   searchService: SearchService;
 
   constructor(private paginationService: PaginationService,
     public userService: UserService,
     public configService: ConfigService,
     searchService: SearchService,
+    public programsService: ProgramsService,
+    public dialog: MatDialog,
+    public sbFormBuilder: FormBuilder,
+    public cacheService: CacheService,
     private telemetryService: TelemetryService) {
     this.searchService = searchService;
   }
@@ -41,7 +63,17 @@ export class ContentListComponent implements OnInit {
     this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'content_list' }];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
-    this.getContents(0);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!_.isEmpty(this.facets) && this.selectedTab) {
+      this.getContents(0);
+      this.totalContentCount = _.get(this.facets, 'count');
+      this.countByStatus = _.get(_.first(_.get(this.facets, 'facets')), 'values').reduce((prev, curr) => {
+        prev[curr.name] = curr.count;
+        return prev;
+      }, {});
+    }
   }
 
   NavigateToPage(page: number): undefined | void {
@@ -49,20 +81,47 @@ export class ContentListComponent implements OnInit {
       return;
     }
     this.pageNumber = page;
-    this.pager = this.paginationService.getPager(this.data.count, this.pageNumber, this.pageLimit);
+    this.pager = this.paginationService.getPager(this.result.count > 1000 ? 1000: this.result.count, this.pageNumber, this.pageLimit);
     this.getContents(this.pageLimit * (this.pageNumber - 1));
+  }
+
+  getPublishedContentsFilter() {
+    return {
+      "status": ["Live"],
+      "createdBy": this.userService.userid,
+      "objectType": "Content",
+    };
+  }
+
+  getReviewContentsFilter() {
+    return {
+      "status": ["Review", "FlagReview"],
+      "createdBy": this.userService.userid,
+      "objectType": "Content",
+    };
+  }
+
+  getCollaborationFilter() {
+    return {
+      "status": ["Draft", "FlagDraft", "Review", "Processing", "Live", "Unlisted", "FlagReview"],
+      "collaborators": [this.userService.userid],
+      "objectType": "Content"
+    }
+  }
+
+  getMyContentsFilter() {
+    return {
+      status: ["Draft", "FlagDraft", "Review", "Processing", "Live", "Unlisted", "FlagReview"],
+      createdBy: this.userService.userid,
+      "objectType": "Content"
+    }
   }
 
   getContents(offset) {
     this.showLoader = true;
     const req = {
       "filters": {
-        "status": [
-          "Live"
-        ],
-        // @Todo - add created by to show only creator published content
-        // "createdBy": "5a587cc1-e018-4859-a0a8-e842650b9d64",
-        "objectType": "Content",
+        // @Todo add filter for category
         "primaryCategory": [
           "Course Assessment",
           "eTextbook",
@@ -79,21 +138,89 @@ export class ContentListComponent implements OnInit {
       },
       "offset": offset,
       "limit": 200,
-      "query": "",
+      "query": this.query,
       "sort_by": {
         "lastUpdatedOn": "desc"
       }
     };
 
+    switch (this.selectedTab) {
+      case "published":
+        req.filters = _.pickBy({ ...req.filters, ...this.getFilterDetails(), ...this.getPublishedContentsFilter() }, _.identity);
+        break;
+
+      case "mycontent":
+        req.filters = _.pickBy({ ...req.filters, ...this.getFilterDetails(), ...this.getMyContentsFilter() }, _.identity);
+        break;
+
+      case "review":
+        req.filters = _.pickBy({ ...req.filters, ...this.getFilterDetails(), ...this.getReviewContentsFilter() }, _.identity);
+        break;
+
+      case "collaboration":
+        req.filters = _.pickBy({ ...req.filters, ...this.getFilterDetails(), ...this.getCollaborationFilter() }, _.identity);
+        break;
+    }
+
     this.searchService.compositeSearch(req).subscribe(res => {
       if (res.responseCode === "OK") {
         this.list = _.get(res, 'result.content');
+        this.sortColumn = 'lastUpdatedOn';
+        this.direction = 'desc';
         this.result = _.get(res, 'result');
-        this.pager = this.paginationService.getPager(this.data.count, this.pageNumber, this.pageLimit);
+        this.pager = this.paginationService.getPager(this.result.count > 1000 ? 1000: this.result.count, this.pageNumber, this.pageLimit);
         this.showLoader = false;
       }
     }, error => {
       console.log(error);
     });
+  }
+
+  search(clearSearch?) {
+    if (clearSearch) {
+      this.query = '';
+    }
+
+    let offset = this.pageLimit * (this.pageNumber - 1);
+    this.getContents(offset);
+  }
+
+  applyFilters(filters) {
+    let offset = this.pageLimit * (this.pageNumber - 1);
+    this.getContents(offset)
+  }
+
+  // finding the applied filters count and putting them into request body other wise put origional req body to api call
+  getFilterDetails(setfilters?) {
+    const appliedfilters = this.cacheService.get('workspaceAdminAppliedFilters');  // getting the strored data from cache service
+    const applyFilters = setfilters ? setfilters : appliedfilters;
+    this.filtersAppliedCount = this.programsService.getFiltersAppliedCount(applyFilters); // getting applied filters count
+    return applyFilters;
+  }
+
+  sortList(column) {
+    this.list = this.programsService.sortCollection(this.list, this.sortColumn, this.direction);
+    if (this.direction === 'asc' || this.direction === '') {
+      this.direction = 'desc';
+    } else {
+      this.direction = 'asc';
+    }
+    this.sortColumn = column;
+  }
+
+  openCreatePopUpMat() {
+    if (this.createPopUpMat) {
+      this.dialogRef = this.dialog.open(this.createPopUpMat);
+    }
+  }
+
+  openFilterPopUpMat() {
+    this.showFiltersModal = true;
+  }
+
+  closeDialog() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 }
