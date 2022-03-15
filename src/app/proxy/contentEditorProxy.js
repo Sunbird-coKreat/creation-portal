@@ -13,6 +13,7 @@ const learnerURL = envHelper.LEARNER_URL;
 const kp_content_service_base_url = envHelper.kp_content_service_base_url;
 const kp_learning_service_base_url = envHelper.kp_learning_service_base_url;
 const kp_assessment_service_base_url = envHelper.kp_assessment_service_base_url;
+const localDev = envHelper.LOCAL_DEVELOPMENT;
 
 module.exports = function (app) {
   const proxyReqPathResolverMethod = function (req) {
@@ -165,6 +166,9 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         var originalUrl = req.originalUrl;
         originalUrl = originalUrl.replace("/action/", "");
+        if (localDev) {
+          originalUrl = originalUrl.replace("/v4/", "/v1/");
+        }
         return require("url").parse(kp_content_service_base_url + originalUrl)
           .path;
       },
@@ -265,6 +269,9 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         var originalUrl = req.originalUrl;
         originalUrl = originalUrl.replace("/action/", "");
+        if (localDev) {
+          originalUrl = originalUrl.replace("/v4/", "/v1/");
+        }
         return require("url").parse(kp_content_service_base_url + originalUrl)
           .path;
       },
@@ -278,6 +285,9 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         var originalUrl = req.originalUrl;
         originalUrl = originalUrl.replace("/action/", "");
+        if (localDev) {
+          originalUrl = originalUrl.replace("/v4/", "/v1/");
+        }
         return require("url").parse(kp_content_service_base_url + originalUrl)
           .path;
       },
