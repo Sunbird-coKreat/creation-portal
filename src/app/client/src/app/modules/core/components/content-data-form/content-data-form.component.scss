@@ -17,12 +17,16 @@
       }
     }
   }
-  sb-dynamic-checkbox label:after
-  {
-    color:#fff !important;
-    width:0.5rem!important;
-    height:0.5rem !important;
-    top:2.5px !important;
+  sb-dynamic-checkbox{
+    label{
+      padding-left: 1.5rem !important;
+      &:after
+      {
+        color:#fff !important;
+        width:1rem!important;
+        height:1rem !important;
+      }
+    }
   }
   .sb-dropdown{
     select{
@@ -67,19 +71,25 @@
       border-radius: 0.1875rem !important;
     }
   }
+  .sb-dropdown,
+  .treepicker-parent,
+  .multi-select-section-app
+  {
+    margin: 1rem 0;
+  }
 }
 sui-select{
-border-radius: 0.1875rem !important;
+  border-radius: 0.1875rem !important;
 }
 .dynamic-form .label-html div {
-font-size:0.785rem !important;
-line-height:1.4 !important;
-.font-italic{
   font-size:0.785rem !important;
-}
+  line-height:1.4 !important;
+  .font-italic{
+    font-size:0.785rem !important;
+  }
 }
 .two-column-grid {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-column-gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2rem;
 }

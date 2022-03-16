@@ -2,7 +2,7 @@ import { ConfigService, ResourceService, ToasterService, ServerResponse, Navigat
 import { FineUploader } from 'fine-uploader';
 import { ProgramsService, DataService, FrameworkService, ActionService, UserService, ContentService } from '@sunbird/core';
 import { Subscription, forkJoin, throwError, Observable, of } from 'rxjs';
-import { tap, first, map, takeUntil, catchError, count, isEmpty } from 'rxjs/operators';
+import { tap, first, map, takeUntil, catchError, count, isEmpty, startWith, pairwise } from 'rxjs/operators';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -84,6 +84,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public defaultContributeOrgReviewChecked = false;
   public disableUpload = false;
   public showPublishModal= false;
+  public showFrameworkChangeModal = false;
+  public saveFrameWorkValue = {};
   public uploadedDocument;
   public loading = false;
   //private isOpenNominations = true;
@@ -251,14 +253,37 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       targetPrimaryCategories: [[], Validators.required],
       target_collection_category: [this.selectedTargetCollection || null]
     });
+
     if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
-     if (this.selectedTargetCollection) {
-        this.onChangeTargetCollectionCategory();
-     }
     }
     this.setProjectScopeDetails();
   }
+
+  changeFrameWork() {
+    this.showFrameworkChangeModal = false;
+    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+      this.tempCollections.length = 0;
+      const pcollectionsFormArray = <FormArray>this.projectScopeForm.controls.pcollections;
+      pcollectionsFormArray.controls.length = 0;
+      this.projectScopeForm.value.pcollections.length = 0;
+      this.textbooks = {};
+
+      if (this.programDetails.config
+        && this.programDetails.config.collections
+        && this.programDetails.config.collections.length > 0) {
+          this.programDetails.config.collections.length = 0;
+      }
+    }
+
+    this.onFrameworkChange();
+  }
+
+  cancelFrameworkChange() {
+    this.projectScopeForm.get('framework').patchValue(this.saveFrameWorkValue['prev']);
+    this.showFrameworkChangeModal = false;
+  }
+
   setProjectScopeDetails() {
     this.programScope['targetPrimaryCategories'] = [];
     this.programScope['collectionCategories'] = [];
@@ -281,6 +306,28 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
                   }
                   this.isFormValueSet.projectScopeForm = true;
               }
+
+              if (!this.projectScopeForm.value.framework) {
+                this.projectScopeForm.controls['framework'].setValue((this.programScope['framework'][0] || null));
+                this.onFrameworkChange();
+              }
+
+              let frameworkValue = this.projectScopeForm.value.framework || null;
+              this.projectScopeForm.get('framework')
+              .valueChanges
+              .pipe(startWith(frameworkValue as string), pairwise())
+              .subscribe(([prev, next]: [any, any]) => {
+                if (!prev && next) {
+                  this.projectScopeForm.get('framework').patchValue(next);
+                  this.changeFrameWork();
+                } else if (prev.identifier != next.identifier) {
+                  this.saveFrameWorkValue['prev'] = prev;
+                  this.saveFrameWorkValue['next'] = next;
+                  this.showFrameworkChangeModal = true;
+                } else {
+                  return false;
+                }
+              });
           }).catch((err) => {
             console.log(err);
             this.toasterService.error(this.resource.frmelmnts.lbl.projectSource.foraFramework.noFrameworkError);
@@ -752,7 +799,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type),
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type, null, null, this.selectedTargetCollection),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
 
@@ -764,7 +811,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
 
       });
-      if (!this.projectTargetType || this.projectTargetType == 'collections') {
+      if (!this.projectTargetType || _.includes(['collections', 'questionSets'], this.projectTargetType)) {
         this.showTexbooklist()
       }
     }
@@ -935,6 +982,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     return hasError;
   }
 
+  applyFilters() {
+    const primaryCategory = this.projectScopeForm.value.target_collection_category;
+
+    if (!primaryCategory) {
+      this.toasterService.warning(this.resource.messages.emsg.NoTargetCollection);
+      return true;
+    }
+    this.filterApplied=true;
+    this.showTexbooklist();
+  }
+
   resetFilters() {
     this.filterApplied = false;
     this.resetSorting();
@@ -958,6 +1016,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['content_submission_enddate'].updateValueAndValidity();
     this.projectScopeForm.controls['targetPrimaryCategories'].setValidators(Validators.required);
     this.projectScopeForm.controls['targetPrimaryCategories'].updateValueAndValidity();
+    this.projectScopeForm.controls['framework'].setValidators(Validators.required);
+    this.projectScopeForm.controls['framework'].updateValueAndValidity();
     if (_.includes(['collections','questionSets'], this.projectTargetType)) {
       this.projectScopeForm.controls['target_collection_category'].setValidators(Validators.required);
       this.projectScopeForm.controls['target_collection_category'].updateValueAndValidity();
@@ -1164,8 +1224,13 @@ onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
     this.projectScopeForm.value.pcollections = [];
-    this.showTexbooklist();
+    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+      this.onFrameworkChange();
+    } else {
+      this.showTexbooklist();
+    }
   }
+
   if(this.programScope['userChannelData']) {
     this.setSelectedTargetCollectionObject();
   }
@@ -1181,9 +1246,15 @@ setSelectedTargetCollectionObject() {
 
 showTexbooklist() {
     const primaryCategory = this.projectScopeForm.value.target_collection_category;
+
     if (!primaryCategory) {
-      return;
+      return true;
     }
+
+    if (this.projectTargetType !== 'questionSets' && _.isEmpty(this.projectScopeForm.value.framework)) {
+      return true;
+    }
+
     // for scrolling window to top after Next button navigation
     const requestData = {
       request: {
@@ -1212,7 +1283,7 @@ showTexbooklist() {
 
     if(this.projectTargetType === 'questionSets') {
       delete requestData.request.not_exists;
-      requestData.request['program_id'] = this.programId;
+      requestData.request.filters['programId'] = this.programId;
     }
 
     return this.programsService.getCollectionList(requestData, this.projectTargetType).subscribe(
@@ -1311,16 +1382,17 @@ showTexbooklist() {
         'children': []
       };
 
-      _.forEach(this.textbooks[identifier].children, (item) => {
-        if (item.checked === true) {
-          obj.children.push({
-            'id': item.identifier,
-            'allowed_content_types': []
-          });
-        }
-      });
-
-      collections.push(obj);
+      if (this.textbooks[identifier]) {
+        _.forEach(this.textbooks[identifier].children, (item) => {
+          if (item.checked === true) {
+            obj.children.push({
+              'id': item.identifier,
+              'allowed_content_types': []
+            });
+          }
+        });
+        collections.push(obj);
+      }
     });
 
     return collections;
@@ -1328,7 +1400,7 @@ showTexbooklist() {
   setFrameworkAttributesToconfig() {
     if (!_.isEmpty(this.programScope['selectedFramework'])) {
       const frameworkSelected = this.programScope['selectedFramework'];
-      this.programConfig['framework'] = [frameworkSelected.code]
+      this.programConfig['framework'] = [frameworkSelected.code];
       this.programConfig['frameworkObj'] = {
         identifier : frameworkSelected.identifier,
         code: frameworkSelected.code,
@@ -1337,7 +1409,8 @@ showTexbooklist() {
       };
       if (this.isFormValueSet.projectScopeForm && this.projectTargetType === 'searchCriteria') {
         _.forEach(this.frameworkFormData,  (value, key) => {
-          this.programConfig[key] =_.isArray(value) ? value : [value];
+          const formData = _.isArray(value) ? value : [value];
+          this.programConfig[key] = _.compact(formData);
           const code = _.get(_.find(this.frameworkService.orgFrameworkCategories, {
             'code': key
           }), 'orgIdFieldName');
@@ -1779,7 +1852,6 @@ showTexbooklist() {
         const cb = (error, resp) => {
           if (!error && resp) {
             this.navigateTo(2);
-            //this.showTexbooklist();
             ($event.target as HTMLButtonElement).disabled = false;
           } else {
             this.toasterService.error(this.resource.messages.emsg.m0005);
@@ -1789,7 +1861,6 @@ showTexbooklist() {
         this.saveProgram(cb);
       } else if (this.createProgramForm.valid) {
         this.navigateTo(2);
-        //this.showTexbooklist();
       } else {
         this.validateAllFormFields(this.createProgramForm);
         return false;
@@ -1805,6 +1876,7 @@ showTexbooklist() {
       this.validateAllFormFields(this.createProgramForm);
       return false;
     }
+
     if (!this.projectScopeForm.valid) {
       this.formIsInvalid = true;
       this.validateAllFormFields(this.projectScopeForm);

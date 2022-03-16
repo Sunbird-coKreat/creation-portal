@@ -324,6 +324,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     const formFieldProperties = _.cloneDeep(this.helperService.getFormConfiguration());
     const formContextConfig = _.cloneDeep(this.helperService.getFormConfigurationforContext());
     this.formFieldProperties = _.unionBy(formFieldProperties, formContextConfig, 'code')
+    const contentPolicyCheckIndex = _.findIndex(this.formFieldProperties, field => field.code === "contentPolicyCheck");
+    if (contentPolicyCheckIndex !== -1) {
+      this.formFieldProperties.splice(this.formFieldProperties.length, 0, this.formFieldProperties.splice(contentPolicyCheckIndex, 1)[0]);
+    }
+
     this.getEditableFields();
     _.forEach(this.formFieldProperties, field => {
       if (field.editable && !_.includes(this.editableFields, field.code)) {
@@ -1000,8 +1005,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     };
 
     this.helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta, this.programContext.target_type);
-    const contextType = _.get(this.programContext, 'config.frameworkObj.type') || this.sessionContext.frameworkType;
-    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create');
+    const contextType = this.sessionContext.frameworkType || _.get(this.programContext, 'config.frameworkObj.type');
+    this.helperService.getformConfigforContext(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create', _.get(this.sessionContext, 'targetCollectionPrimaryCategory'));
   }
 
   changePolicyCheckValue (event) {
