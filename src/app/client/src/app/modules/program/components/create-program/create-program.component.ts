@@ -508,6 +508,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.questionSetEditorComponentInput['action'] = 'creation';
     this.questionSetEditorComponentInput['programContext'] = _.merge({ framework: _.get(this.programScope, 'framework.code') }, this.programDetails);
     this.questionSetEditorComponentInput['enableQuestionCreation'] = false;
+    this.questionSetEditorComponentInput['enableAddFromLibrary'] = false;
     this.questionSetEditorComponentInput['setDefaultCopyright'] = true;
     this.questionSetEditorComponentInput['hideSubmitForReviewBtn'] = true;
   }
@@ -1172,6 +1173,22 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (this.programDetails.type === 'restricted') {
         prgData['config'] = _.get(this.programDetails, 'config');
         prgData.config['contributors'] = this.selectedContributors;
+      }
+      else if (this.editPublished && _.includes(['questionSets'], this.projectTargetType)) {
+        prgData['collection_ids'] = [];
+        if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
+          const config = this.addCollectionsDataToConfig();
+          this.programConfig['framework'] = config.framework;
+          this.programConfig['board'] = config.board;
+          this.programConfig['gradeLevel'] = config.gradeLevel;
+          this.programConfig['medium'] = config.medium;
+          this.programConfig['subject'] = config.subject;
+          this.programConfig['collections'] = this.getCollections();
+          _.forEach(this.projectScopeForm.value.pcollections, item => {
+            prgData['collection_ids'].push(item);
+          });
+          prgData['config'] = this.programConfig;
+        }
       }
 
       if (!_.isEmpty(this.localBlueprintMap)) {
