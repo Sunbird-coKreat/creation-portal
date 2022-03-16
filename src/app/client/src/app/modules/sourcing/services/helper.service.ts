@@ -96,8 +96,8 @@ export class HelperService {
     }
   }
 
-  getformConfigforContext(channel?, context?, context_type?, objecttype?, operation?) {
-    const req = this.programsService.getformConfigData(channel, context, context_type, objecttype, operation).pipe(map((data) => {
+  getformConfigforContext(channel?, context?, context_type?, objecttype?, operation?, primarycategory?) {
+    const req = this.programsService.getformConfigData(channel, context, context_type, objecttype, operation, primarycategory).pipe(map((data) => {
       return _.get(data, 'result.data.properties');
     }));
     req.subscribe(
@@ -1386,6 +1386,7 @@ export class HelperService {
       this.frameworkService.frameworkData$.pipe(first()).subscribe((frameworkDetails: any) => {
         if (frameworkDetails && !frameworkDetails.err) {
           sessionContext.frameworkData = frameworkDetails.frameworkdata[sessionContext.framework].categories;
+          sessionContext['frameworkType'] = frameworkDetails.frameworkdata[sessionContext.framework].type;
           sessionContext.topicList = _.get(_.find(sessionContext.frameworkData, { code: 'topic' }), 'terms');
         }
       }, error => {

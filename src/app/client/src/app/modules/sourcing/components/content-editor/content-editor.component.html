@@ -27,11 +27,11 @@
                   <i [ngClass]="{'edit': visibility && visibility.showEditMetadata, 'eye': visibility && !(visibility.showEditMetadata)}" class="icon sb-color-primary cursor-pointer"></i>
                   <a class="cursor-pointer text-underline text-capitalize"
                   appTelemetryInteract
-                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata((visibility && visibility.showEditMetadata) ? 'Content details' : 'View details', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                   [telemetryInteractObject]="telemetryInteractObject"
                   [telemetryInteractCdata]="telemetryInteractCdata"
                   [telemetryInteractPdata]="telemetryInteractPdata"
-                  (click)="showEditform('editForm');">{{(visibility && visibility.showEditMetadata) ? 'Edit details' : 'View details'}}</a></span>
+                  (click)="showEditform('editForm');">{{(visibility && visibility.showEditMetadata) ? 'Content details' : 'View details'}}</a></span>
                   <!-- <a class="fsmall ml-16 sb-color-primary font-weight-normal" *ngIf="visibility && visibility.showEditMetadata && sessionContext.topicList">
                     <span class="sb-btn sb-btn-outline-primary sb-btn-normal mr-8" (click)="showEditform(); requiredAction = 'editForm'">edit metadata</span>
                   </a> -->
