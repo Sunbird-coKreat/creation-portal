@@ -54,6 +54,7 @@ let envVariables = {
   OPENSABER_SERVICE_URL: env.opensaber_service_url || 'http://opensaber-service:8080',
   USE_SUNBIRD_KONG_TOKEN: env.use_sunbird_kong_token || 'true',
   sunbird_kong_refresh_token_api: env.sunbird_kong_refresh_token_api || '',
+  LOCAL_DEVELOPMENT: env.local_development || false,
   // generic editor question set and coleections children contents limit
   SUNBIRD_QUESTIONSET_CHILDREN_LIMIT: env.sunbird_questionset_children_limit || 500,
   SUNBIRD_COLLECTION_CHILDREN_LIMIT: env.sunbird_collection_children_limit || 1200,
