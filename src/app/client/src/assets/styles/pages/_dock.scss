@@ -853,15 +853,15 @@ app-question-set-editor{
   [data-title]:hover::before{
     top: 20px !important;
     bottom: initial !important;
+    z-index: 9999;
+    font-weight: 600 !important;
   }
 }
 .sb-edit-form{
   .sb-textarea-container{
     margin: 1rem 0;
   }
-
   .sb-textarea{
-    border: .5px solid #333 !important;
     border-radius: 0 !important;
     height: 2.3rem;
     padding-top: .5rem !important;
