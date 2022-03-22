@@ -17,7 +17,7 @@ Before you install creation portal on your laptop, examine your environment and 
         git fetch upstream
         git checkout -b {LOCAL-BRANCH-NAME} upstream/{LATEST BRANCH}
     ```
-    > ***Note***: Stable versions of the sunbird portal are available via tags for each release, and the master branch contains latest stable release. For latest stable release [refer](https://github.com/Sunbird-Ed/creation-portal/branches)
+    > ***Note***: Stable versions of the creation portal are available via tags for each release, and the master branch contains latest stable release. For latest stable release [refer](https://github.com/Sunbird-Ed/creation-portal/branches)
 
 
 2. Add the following environment variables - Required for downloading editors (Via gulp task)
@@ -79,7 +79,7 @@ Before you install creation portal on your laptop, examine your environment and 
     > Once the file is updated with appropriate values, then you can proceed with running the application
 
 
-### Running ApplicationGo to the project directory
+### Running Application
 
 1. Creation portal or web application
 
