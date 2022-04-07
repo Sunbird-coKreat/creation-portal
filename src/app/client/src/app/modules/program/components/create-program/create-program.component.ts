@@ -1604,9 +1604,9 @@ showTexbooklist() {
   }
 
   initEditBlueprintForm(collection) {
-    let frameworkDetails = _.get(this.programScope, 'framework');
+    let frameworkDetails = _.get(this.programScope, 'selectedFramework');
     if (_.isArray(frameworkDetails)) {
-      frameworkDetails = _.first(this.programScope.framework);
+      frameworkDetails = _.first(frameworkDetails);
     }
     const frameworkCategories = _.get(frameworkDetails, 'categories', []);
     [this.initTopicOptions, this.initLearningOutcomeOptions] = this.programsService.initializeBlueprintMetadata(this.choosedTextBook, frameworkCategories);
