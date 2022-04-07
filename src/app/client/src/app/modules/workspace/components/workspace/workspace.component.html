@@ -16,21 +16,21 @@
   <div [ngClass]="{'active':tab == 'mycontent'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
     <div class="ui container">
       <div class="pt-24 mb-10">
-        <app-content-list *ngIf="tab=='mycontent'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+        <app-content-list *ngIf="tab=='mycontent'" [selectedTab]="tab"></app-content-list>
       </div>
     </div>
   </div>
   <div [ngClass]="{'active':tab == 'published'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
     <div class="ui container">
       <div class="pt-24 mb-10">
-        <app-content-list *ngIf="tab=='published'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+        <app-content-list *ngIf="tab=='published'" [selectedTab]="tab"></app-content-list>
       </div>
     </div>
   </div>
   <div [ngClass]="{'active':tab == 'review'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
     <div class="ui container">
       <div class="pt-24 mb-10">
-        <app-content-list *ngIf="tab=='review'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+        <app-content-list *ngIf="tab=='review'" [selectedTab]="tab"></app-content-list>
       </div>
     </div>
   </div>
@@ -38,7 +38,7 @@
     class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
     <div class="ui container">
       <div class="pt-24 mb-10">
-        <app-content-list *ngIf="tab=='collaboration'" [selectedTab]="tab" [facets]="facets"></app-content-list>
+        <app-content-list *ngIf="tab=='collaboration'" [selectedTab]="tab"></app-content-list>
       </div>
     </div>
   </div>

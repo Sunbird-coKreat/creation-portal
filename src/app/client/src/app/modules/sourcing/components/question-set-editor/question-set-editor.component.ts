@@ -42,6 +42,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   public sunbirdCollectionChildrenLimit: any;
   public publicStorageAccount: any;
   public enableQuestionCreation = true;
+  public enableAddFromLibrary = true;
   public setDefaultCopyright = false;
   public isQuestionMode = false;
 
@@ -76,6 +77,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.setDefaultCopyright = _.get(this.questionSetEditorComponentInput, 'setDefaultCopyright') || false;
     this.enableQuestionCreation = _.isUndefined(_.get(this.questionSetEditorComponentInput, 'enableQuestionCreation')) ? true :
       _.get(this.questionSetEditorComponentInput, 'enableQuestionCreation');
+    this.enableAddFromLibrary = _.get(this.questionSetEditorComponentInput, 'enableAddFromLibrary') === true ? true : false;
 
     this.editorParams = {
       questionSetId: _.get(this.questionSetEditorComponentInput, 'contentId'),
@@ -184,7 +186,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         collection: {
           maxContentsLimit: this.sunbirdCollectionChildrenLimit
         },
-        enableQuestionCreation: this.enableQuestionCreation
+        enableQuestionCreation: this.enableQuestionCreation,
+        enableAddFromLibrary: this.enableAddFromLibrary
       }
     };
     if (this.showQuestionEditor || this.enableQuestionCreation) {
@@ -232,6 +235,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     this.editorConfig.config.showSourcingStatus = false;
     this.editorConfig.config.hideSubmitForReviewBtn = false;
     delete this.editorConfig.config.enableQuestionCreation;
+    delete this.editorConfig.config.enableAddFromLibrary;
   }
 
   private getEditorMode() {
@@ -383,11 +387,11 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     case 'backContent':
       this.programsService.emitHeaderEvent(true);
       this.programStageService.removeLastStage();
-      if(this.enableQuestionCreation === false) this.collectionEditorEventEmitter.emit(event)
+      if(this.enableQuestionCreation === false || this.enableAddFromLibrary === false) this.collectionEditorEventEmitter.emit(event)
       break;
     case 'saveContent':
       this.programsService.emitHeaderEvent(true);
-      if(this.enableQuestionCreation === false) this.collectionEditorEventEmitter.emit(event)
+      if(this.enableQuestionCreation === false || this.enableAddFromLibrary === false) this.collectionEditorEventEmitter.emit(event)
       else if(this.isQuestionMode) {
         this.collectionEditorEventEmitter.emit(event)
         this.programStageService.removeLastStage();

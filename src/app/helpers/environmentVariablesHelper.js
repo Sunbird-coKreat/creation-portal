@@ -54,6 +54,7 @@ let envVariables = {
   OPENSABER_SERVICE_URL: env.opensaber_service_url || 'http://opensaber-service:8080',
   USE_SUNBIRD_KONG_TOKEN: env.use_sunbird_kong_token || 'true',
   sunbird_kong_refresh_token_api: env.sunbird_kong_refresh_token_api || '',
+  LOCAL_DEVELOPMENT: env.local_development || false,
   // generic editor question set and coleections children contents limit
   SUNBIRD_QUESTIONSET_CHILDREN_LIMIT: env.sunbird_questionset_children_limit || 500,
   SUNBIRD_COLLECTION_CHILDREN_LIMIT: env.sunbird_collection_children_limit || 1200,
@@ -141,9 +142,9 @@ let envVariables = {
   LEARNER_SERVICE_UPSTREAM_URL: env.sunbird_learner_service_upstream_url || 'http://localhost:9000/',
   DATASERVICE_URL: env.sunbird_dataservice_url || 'https://staging.open-sunbird.org/api/',
   PORTAL_EXT_PLUGIN_URL: process.env.sunbird_ext_plugin_url || 'http://player_player:3000/plugin/',
-  kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'http://content-service:9000/',
-  kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url,
-  kp_assessment_service_base_url: env.sunbird_kp_assessment_service_base_url || 'http://assessment-service:9000/',
+  kp_content_service_base_url: env.sunbird_kp_content_service_base_url || 'https://dock.sunbirded.org/api/',
+  kp_learning_service_base_url: env.sunbird_kp_learning_service_base_url || 'https://dock.sunbirded.org/api/',
+  kp_assessment_service_base_url: env.sunbird_kp_assessment_service_base_url || 'https://dock.sunbirded.org/api/',
 
 
   // Health Checks Configuration

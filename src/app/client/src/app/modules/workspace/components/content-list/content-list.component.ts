@@ -1,4 +1,5 @@
-import { isEmpty, first } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
+import { isEmpty, first, filter } from 'rxjs/operators';
 import { Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { IPagination } from '../../../sourcing/interfaces';
 import { ConfigService, PaginationService } from '@sunbird/shared';
@@ -18,7 +19,7 @@ export class ContentListComponent implements OnInit {
   @ViewChild('createPopUpMat') createPopUpMat: TemplateRef<any>;
   @ViewChild('filterPopUpMat') filterPopUpMat: TemplateRef<any>;
   @Input() selectedTab: string;
-  @Input() facets: [] = [];
+  protected facets: [] = [];
   dialogRef: any;
   filters: any = {};
   showFiltersModal = false;
@@ -45,6 +46,32 @@ export class ContentListComponent implements OnInit {
   public liveContentCount: number = 0;
   public draftContentCount: number = 0;
   public reviewContentCount: number = 0;
+  public filtersToShow = {
+    published: [
+      "board",
+      "medium",
+      "gradeLevel",
+      "subject",
+      "contentType"
+    ],
+    mycontent: [
+      "board",
+      "medium",
+      "gradeLevel",
+      "subject",
+      "status",
+      "contentType"
+    ],
+    review: [],
+    collaboration: [
+      "board",
+      "medium",
+      "gradeLevel",
+      "subject",
+      "status",
+      "contentType"
+    ]
+  };
   searchService: SearchService;
 
   constructor(private paginationService: PaginationService,
@@ -55,7 +82,8 @@ export class ContentListComponent implements OnInit {
     public dialog: MatDialog,
     public sbFormBuilder: FormBuilder,
     public cacheService: CacheService,
-    private telemetryService: TelemetryService) {
+    private telemetryService: TelemetryService,
+    private route: ActivatedRoute) {
     this.searchService = searchService;
   }
 
@@ -63,16 +91,17 @@ export class ContentListComponent implements OnInit {
     this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'content_list' }];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
+    this.facets =  _.get(this.route.snapshot.data.facets, 'result');
+    this.totalContentCount = _.get(this.facets, 'count');
+    this.countByStatus = _.get(_.first(_.get(this.facets, 'facets')), 'values').reduce((prev, curr) => {
+      prev[curr.name] = curr.count;
+      return prev;
+    }, {});
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!_.isEmpty(this.facets) && this.selectedTab) {
+    if (this.selectedTab) {
       this.getContents(0);
-      this.totalContentCount = _.get(this.facets, 'count');
-      this.countByStatus = _.get(_.first(_.get(this.facets, 'facets')), 'values').reduce((prev, curr) => {
-        prev[curr.name] = curr.count;
-        return prev;
-      }, {});
     }
   }
 
@@ -81,7 +110,7 @@ export class ContentListComponent implements OnInit {
       return;
     }
     this.pageNumber = page;
-    this.pager = this.paginationService.getPager(this.result.count > 1000 ? 1000: this.result.count, this.pageNumber, this.pageLimit);
+    this.pager = this.paginationService.getPager(this.result.count > 1000 ? 1000 : this.result.count, this.pageNumber, this.pageLimit);
     this.getContents(this.pageLimit * (this.pageNumber - 1));
   }
 
@@ -168,7 +197,7 @@ export class ContentListComponent implements OnInit {
         this.sortColumn = 'lastUpdatedOn';
         this.direction = 'desc';
         this.result = _.get(res, 'result');
-        this.pager = this.paginationService.getPager(this.result.count > 1000 ? 1000: this.result.count, this.pageNumber, this.pageLimit);
+        this.pager = this.paginationService.getPager(this.result.count > 1000 ? 1000 : this.result.count, this.pageNumber, this.pageLimit);
         this.showLoader = false;
       }
     }, error => {
@@ -223,4 +252,19 @@ export class ContentListComponent implements OnInit {
       this.dialogRef.close();
     }
   }
+
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      subtype,
+      pageid,
+      extra
+    }, _.isUndefined);
+  }
+
+  getTelemetryEvents(event) {
+    console.log('event is for telemetry', JSON.stringify(event));
+  }
+
 }

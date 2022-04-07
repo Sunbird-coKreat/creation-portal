@@ -21,6 +21,7 @@ export class ProjectFilterComponent implements OnInit {
   @Input() telemetryPageId;
   @Input() filtersAppliedCount;
   @Input() forTargetType;
+  @Input() filtersToShow: [] = [];
   @Output() dismiss = new EventEmitter<any>();
   @Output() applyFilters = new EventEmitter<any>();
   public initialProgramDetails = [];
@@ -41,6 +42,7 @@ export class ProjectFilterComponent implements OnInit {
   public showLoader: any;
   // tslint:disable-next-line: max-line-length
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
+  public contentStatus = ["Draft", "FlagDraft", "Review", "Processing", "Live", "Unlisted", "FlagReview"];
   constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
     public resourceService: ResourceService, public userService: UserService, public router: Router, public configService: ConfigService,
     public cacheService: CacheService, public learnerService: LearnerService, private browserCacheTtlService: BrowserCacheTtlService) { }
@@ -48,7 +50,7 @@ export class ProjectFilterComponent implements OnInit {
   ngOnInit() {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true); // checking the router path
     this.activeMyProgramsMenu = this.router.isActive('/contribute/myenrollprograms', true);
-    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'sourcing_organization' }];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
     this.createFilterForm(); // creating the filter form
@@ -60,10 +62,11 @@ export class ProjectFilterComponent implements OnInit {
       'contentTypes': [],
       'target_collection_category': [],
       'nominations': this.nominationContributionStatus, // adding default values for open, close and any
-      'contributions': this.nominationContributionStatus // adding default values for open, close and any
+      'contributions': this.nominationContributionStatus, // adding default values for open, close and any
+      'status': this.contentStatus
     };
     this.checkFilterShowCondition();
-     // getting content types as the content categories againts the project
+    // getting content types as the content categories againts the project
     this.getContentCategories();
   }
 
@@ -74,7 +77,7 @@ export class ProjectFilterComponent implements OnInit {
     _.map(programs, (program) => {
       const programContentTypes = program.targetprimarycategories ? _.map(program.targetprimarycategories, 'name') : program.content_types;
       this.currentFilters['contentTypes'] = _.flattenDeep(_.compact(_.uniq(_.concat(this.currentFilters['contentTypes'],
-      programContentTypes ))));
+        programContentTypes))));
     });
     // tslint:disable-next-line:max-line-length
     this.currentFilters['target_collection_category'] = this.sortFilters(collectionPrimaryCategories);
@@ -97,8 +100,18 @@ export class ProjectFilterComponent implements OnInit {
   }
   // check the filters to dispaly to user with respect to roles and tab's
   checkFilterShowCondition() {
-      // show filter for sourcing org admin for my projects
-    if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {
+    // show filter for sourcing org admin for my projects
+    if (this.router.url.includes('/sourcing/workspace')) {
+      this.fetchFrameWorkDetails(this.userService.hashTagId);
+      this.isOnChangeFilterEnable = true;
+      this.activeUser = 'workspaceAdmin';
+      this.showFilters = this.filtersToShow.reduce((prev: any, curr) => {
+        prev[curr] = true;
+        return prev;
+      }, {});
+
+      this.showFilters['sourcingOrganisations'] = false;
+    } else if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {
       this.fetchFrameWorkDetails(this.userService.hashTagId);
       this.showFilters['sourcingOrganisations'] = false;
       this.showFilters['nomination_date'] = true;
@@ -128,11 +141,6 @@ export class ProjectFilterComponent implements OnInit {
         const genericOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('genericOrigionalMyPrograms') : [];
         this.getFiltersUnionFromList(genericOrigionalMyPrograms);
       }
-    } else if (this.router.url.includes('/workspace')) {
-      this.fetchFrameWorkDetails(this.userService.hashTagId);
-      this.showFilters['sourcingOrganisations'] = false;
-      this.isOnChangeFilterEnable = true;
-      this.activeUser = 'workspaceAdmin';
     } else {
       const genericOrigionalMyPrograms = this.filtersAppliedCount ? this.cacheService.get('genericOrigionalMyPrograms') : [];
       this.getFiltersUnionFromList(genericOrigionalMyPrograms); // for sourcing reviewer
@@ -156,8 +164,8 @@ export class ProjectFilterComponent implements OnInit {
   // get all frame work details
   getAllTenantList() {
     this.programsService.getAllTenantList().subscribe((response: any) => {
-      const list =  _.map(_.get(response, 'result.content'), (org) => {
-       return  ({name: _.lowerCase(org['orgName']), id: org.id, orgName: org.orgName});
+      const list = _.map(_.get(response, 'result.content'), (org) => {
+        return ({ name: _.lowerCase(org['orgName']), id: org.id, orgName: org.orgName });
       });
       this.currentFilters['rootorg_id'] = _.sortBy(list, ['name']);
     });
@@ -192,7 +200,7 @@ export class ProjectFilterComponent implements OnInit {
           if (frameworkInfo && !frameworkInfo.err) {
             this.frameworkCategories = _.get(frameworkInfo, `frameworkdata.${frameworkName}.categories`);
             this.setFrameworkDataToProgram(); // set frame work details
-           this.showLoader = false; // hide loader
+            this.showLoader = false; // hide loader
           }
         });
     });
@@ -328,7 +336,7 @@ export class ProjectFilterComponent implements OnInit {
       this.setPreferences['subject'] = appliedFilters['subject'] ? appliedFilters['subject'] : [];
       this.setPreferences['content_types'] = appliedFilters['content_types'] ? appliedFilters['content_types'] : [];
       this.setPreferences['target_collection_category'] = appliedFilters['target_collection_category'] ?
-      appliedFilters['target_collection_category'] : [];
+        appliedFilters['target_collection_category'] : [];
       this.setPreferences['nomination_date'] = appliedFilters['nomination_date'] ? appliedFilters['nomination_date'] : '';
       this.setPreferences['contribution_date'] = appliedFilters['contribution_date'] ? appliedFilters['contribution_date'] : '';
       this.filterForm.controls['sourcingOrganisations'].setValue(this.setPreferences['rootorg_id']);
@@ -342,7 +350,7 @@ export class ProjectFilterComponent implements OnInit {
     }
 
     if (this.activeUser === 'contributeOrgAdminAllProject') {
-        // tslint:disable-next-line: max-line-length
+      // tslint:disable-next-line: max-line-length
       _.get(this.setPreferences, 'rootorg_id') ? this.fetchFrameWorkDetails(this.setPreferences['rootorg_id']) : this.fetchFrameWorkDetails(this.userService.hashTagId);
     }
 
@@ -373,7 +381,7 @@ export class ProjectFilterComponent implements OnInit {
       return result;
     }, []));
     const mapArray = _.map(sortArray, (value) =>
-    ({ name: value, code: value }));  // this is map name and code for form , have label and value field in form
+      ({ name: value, code: value }));  // this is map name and code for form , have label and value field in form
     return mapArray;
   }
   applyFilter(resetFilter?) { // when user clicks on apply filter and storing selected filter data in cache service
@@ -381,7 +389,7 @@ export class ProjectFilterComponent implements OnInit {
     switch (this.activeUser) {
       case 'sourcingOrgAdmin':
         if (this.forTargetType === 'searchCriteria') {
-         this.setPreferences['target_collection_category'] = [];
+          this.setPreferences['target_collection_category'] = [];
           this.cacheService.set('sourcingMyProgramAppliedFiltersSearchCriteria', filterLocalStorage);
         } else {
           this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage);
@@ -411,11 +419,11 @@ export class ProjectFilterComponent implements OnInit {
         break;
       case 'contributeOrgAdminAllProjectTenantAccess':
         this.cacheService.set('contributeAllProgramAppliedFiltersTenantAccess', filterLocalStorage);
-      break;
+        break;
 
       case 'workspaceAdmin':
         this.cacheService.set('workspaceAdminAppliedFilters', filterLocalStorage);
-      break;
+        break;
 
     }
     resetFilter ? this.applyFilters.emit() : this.applyFilters.emit(this.setPreferences); // emiting the filters data to parent component

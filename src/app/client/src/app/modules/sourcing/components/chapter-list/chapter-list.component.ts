@@ -520,14 +520,19 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.setLocalBlueprint();
         }
 
-        if (_.has(objectCategoryDefinition, "forms.childMetadata.properties") && this.frameworkService.orgFrameworkCategories) { _.forEach(this.frameworkService.orgFrameworkCategories, (orgFrameworkCategory) => {
-            _.forEach(objectCategoryDefinition.forms.childMetadata.properties, (prop) => {
-              if(prop.code == orgFrameworkCategory.code && prop.editable){
-                this.tags.push(prop.code);
-              }
+        const contextType = this.sessionContext['frameworkType'] || _.get(this.programContext, 'config.frameworkObj.type');
+        // tslint:disable-next-line:max-line-length
+        this.programsService.getformConfigData(this.programContext.rootorg_id, 'framework', contextType, 'content', 'create', _.get(this.sessionContext, 'targetCollectionPrimaryCategory')).subscribe((formData) => {
+          if (_.has(formData, 'result.data.properties') && this.frameworkService.orgFrameworkCategories) {
+            _.forEach(this.frameworkService.orgFrameworkCategories, (orgFrameworkCategory) => {
+              _.forEach(_.get(formData, 'result.data.properties'), (prop) => {
+                if (prop.code === orgFrameworkCategory.code && prop.editable) {
+                  this.tags.push(prop.code);
+                }
+              });
             });
-          });
-        }
+          }
+        });
 
         this.levelOneChapterList.push({
           identifier: 'all',
@@ -1903,6 +1908,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.addFormLibraryInput = {
       targetPrimaryCategories: this.programContext.targetprimarycategories,
       framework: this.sessionContext.framework,
+      existingContentCounts: this.countData['total'],
       collectionId: this.sessionContext.collection,
       collection: event.collection,
       editorConfig: {
