@@ -37,6 +37,10 @@
   </div>
 </div>
 
+<app-project-filter *ngIf="showFiltersModal == true" (dismiss)="showFiltersModal = false"
+  (applyFilters)="applyFilters($event)" [filtersAppliedCount]="filtersAppliedCount" [filtersToShow]="filtersToShow[selectedTab]">
+</app-project-filter>
+
 <!-- Module createPopUpMat -->
 <ng-template #createPopUpMat>
   <div class="sb-mat__modal">
@@ -263,11 +267,11 @@
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
-          <!-- <a *ngFor="let page of pager.pages" (click)="NavigateToPage(page)" class="sb-item">{{page}} some</a> -->
-          <!-- appTelemetryInteract
+          <a *ngFor="let page of pager.pages" (click)="NavigateToPage(page)" class="sb-item"
+            appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryInteractPdata" -->
+            [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
           <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}"
             (click)="NavigateToPage(pager.currentPage + 1)" class="sb-item" appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
@@ -278,17 +282,8 @@
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_last_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.totalPages]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">Last</a>
-          <a *ngFor="let k of [1,2,3,4,5];" (click)="NavigateToPage(page)" class="sb-item">{{k}}</a>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<li *ngFor="let user of [1,2,3,4,5]; index as i;">
-  {{i}} {{user}}default
-</li>
-
-<app-project-filter *ngIf="showFiltersModal == true" (dismiss)="showFiltersModal = false"
-  (applyFilters)="applyFilters($event)" [filtersAppliedCount]="filtersAppliedCount">
-</app-project-filter>

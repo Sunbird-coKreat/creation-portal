@@ -170,7 +170,7 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.organisationReports }}</a>
 
-      <a routerLink="workspace" *ngIf="(router.url.includes('/sourcing') || router.url.includes('/workspace')) && !router.url.includes('/contribute/help') && !router.url.includes('/sourcing/help')" [class.active]="activeTab['workspace']" (click)="handleActiveTabState('workspace')" appTelemetryInteract
+      <a routerLink="sourcing/workspace" *ngIf="(router.url.includes('/sourcing') || router.url.includes('sourcing/workspace')) && !router.url.includes('/contribute/help') && !router.url.includes('/sourcing/help')" [class.active]="activeTab['workspace']" (click)="handleActiveTabState('workspace')" appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('workspace', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch, pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
       [telemetryInteractCdata]="telemetryInteractCdata"

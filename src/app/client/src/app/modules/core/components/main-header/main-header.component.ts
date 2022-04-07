@@ -153,6 +153,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('myContent');
     } else if (this.router.isActive('/sourcing/orgreports', true)) {
       this.handleActiveTabState('organisationReports');
+    } else if (this.router.isActive('/sourcing/workspace', true)) {
+      this.handleActiveTabState('workspace');
     } else {
       this.handleActiveTabState('myPrograms');
     }

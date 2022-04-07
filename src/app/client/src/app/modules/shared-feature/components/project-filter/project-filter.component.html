@@ -139,6 +139,21 @@
               </sui-select>
             </div>
           </div>
+          <div class="six wide column py-10" *ngIf="showFilters['status']">
+            <div class="field">
+              <label class="d-block fs-0-785 font-weight-normal">{{resourceService?.frmelmnts?.lbl?.status}}</label>
+              <sui-multi-select formControlName="status" [(ngModel)]="setPreferences['status']" [options]="currentFilters['status']"
+                placeholder="{{resourceService?.frmelmnts?.lbl?.select?.status}}" class="selection p-5 b-100"
+                #status
+                appTelemetryInteract
+                [telemetryInteractEdata]="getTelemetryInteractEdata('status', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'apply_filters'})"
+                [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata">
+                <sui-select-option *ngFor="let status of status.filteredOptions" [value]="status">
+                </sui-select-option>
+              </sui-multi-select>
+            </div>
+          </div>
         </div>
       </form>
     </div>
