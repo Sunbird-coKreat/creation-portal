@@ -44,31 +44,35 @@
 <!-- Module createPopUpMat -->
 <ng-template #createPopUpMat>
   <div class="sb-mat__modal">
-    <div class="mb-0 mat-dialog-title" mat-dialog-title="">
-      <div class="title" role="heading">Select to Create</div>
-      <button aria-label="close dialog" (click)=" closeDialog()" mat-dialog-close class="mat-close-btn">
-        <i class="close icon"></i>
-      </button>
+    <div mat-dialog-title>
+      <div class="title" tabindex="0">Select to Create</div>
+      <button type="button" aria-label="close dialog" class="close-btn"
+        ((click)="closeDialog()" mat-dialog-close tabindex="0"></button>
     </div>
-    <mat-dialog-content class="mat-dialog-content">
+    <mat-dialog-content>
       <sui-tabset>
-        <div class="ui pointing secondary menu sb-bg-color-primary-100">
-          <div class="ui container">
+        <div class="ui pointing secondary menu sb-bg-color-primary-100 sb-header-sticky">
+          <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
             <div class="p-0 m-0 d-flex flex-jc-space-between">
-              <div class="item active cursor-pointer" suitabheader="1">Collection</div>
-              <div class="item cursor-pointer" suitabheader="2">Content</div>
+              <div (click)="selectTab('collection')" [ngClass]="{'active': tab === 'collection'}" class="item cursor-pointer">My
+                Collection</div>
+              <div (click)="selectTab('content')" [ngClass]="{'active': tab === 'content'}"
+                class="item cursor-pointer">Content</div>
             </div>
           </div>
         </div>
-        <div class="ui segment p-0 m-0 sb-bg-color-primary-0 dynamicHeight tab active" suiTabContent="1">
-          <div class="ui d-flex flex-jc-center m-0">
-            <div class="ui card text-center common-contribution-card">
-              <div class="content">
-                <i class="check circle icon"></i>
-                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                <div class="content-title pt-16 pb-8">Content Paylist</div>
+        <div [ngClass]="{'active':tab == 'collection'}" class="ui segment p-0 m-0 sb-bg-color-primary-0 dynamicHeight tab">
+            <div class="ui grid p-20 flex-jc-center m-0">
+            <div class="three wide column p-10">
+              <div class="ui card text-center common-contribution-card">
+                <div class="content">
+                  <i class="check circle icon"></i>
+                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                  <div class="content-title pt-16 pb-8">Content Paylist</div>
+                </div>
               </div>
             </div>
+            <div class="three wide column p-10">
             <div class="ui card text-center common-contribution-card">
               <div class="content">
                 <i class="check circle icon"></i>
@@ -76,6 +80,8 @@
                 <div class="content-title pt-16 pb-8">Book</div>
               </div>
             </div>
+            </div>
+            <div class="three wide column p-10">
             <div class="ui card text-center common-contribution-card">
               <div class="content">
                 <i class="check circle icon"></i>
@@ -83,10 +89,75 @@
                 <div class="content-title pt-16 pb-8">Course</div>
               </div>
             </div>
+            </div>
           </div>
         </div>
-        <div class="ui segment p-0 m-0 sb-bg-color-primary-0 tab dynamicHeight" suiTabContent="2">
-          Collection
+        <div [ngClass]="{'active':tab == 'content'}" class="ui segment p-0 m-0 sb-bg-color-primary-0 tab dynamicHeight">
+          <div class="ui grid p-20 flex-jc-center m-0">
+            <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Course Assessment</div>
+              </div>
+            </div>
+           </div>
+           <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Explanation Content</div>
+              </div>
+            </div>
+          </div>
+            <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">eTextbook</div>
+              </div>
+            </div>
+          </div>
+            <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Practice Questionsets</div>
+              </div>
+            </div>
+          </div>
+            <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Learning Resources</div>
+              </div>
+            </div>
+          </div>
+            <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Old Practice Questionsets</div>
+              </div>
+            </div>
+          </div>
+            <div class="three wide column p-10">
+            <div class="ui card text-center common-contribution-card">
+              <div class="content">
+                <i class="check circle icon"></i>
+                <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                <div class="content-title pt-16 pb-8">Techer Resource</div>
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
       </sui-tabset>
     </mat-dialog-content>
@@ -210,7 +281,7 @@
               {{ item.name }}
             </div>
             <div class="my-5">
-              <div *ngIf="item.board" class="sb-label sb-label-table sb-label-gray-0 mr-5">{{ item.board }}</div>
+              <div *ngIf="item.board" class="sb-label-value mr-5 mr-5">{{ item.board }}</div>
               <!-- <div class="sb-label sb-label-table sb-label-gray-0 mr-5">ICSC</div> -->
             </div>
           </td>
@@ -219,7 +290,7 @@
               {{ item.primaryCategory }}
             </span>
           </td>
-          <td class="text-center pl-0 pr-0">
+          <td>
             <div [ngClass]="{'sb-color-success': item.status == 'Live', 'sb-color-gray-100': item.status !== 'Live'}">{{
               item.status }}</div>
             <!-- <br> -->
@@ -230,9 +301,8 @@
             <div>{{item.lastUpdatedOn | fromNow }}</div>
           </td>
           <td>
-            <span>
-              <button class="sb-btn sb-btn-normal sb-btn-outline-primary mr-20" type="button">Open</button>
-            </span>
+            <span class="pull-right">
+            <button class="sb-btn sb-btn-normal sb-btn-outline-primary" type="button">Open</button>
             <div class="sb-dock-icon-tooltip d-inline-block">
               <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
                 <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
@@ -244,6 +314,7 @@
                 </div>
               </div>
             </div>
+          </span>
           </td>
         </tr>
       </tbody>

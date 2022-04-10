@@ -267,4 +267,10 @@ export class ContentListComponent implements OnInit {
     console.log('event is for telemetry', JSON.stringify(event));
   }
 
+  tab = 'collection';
+
+  selectTab(tabname) {
+    this.tab = tabname;
+  }
+
 }
