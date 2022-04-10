@@ -167,13 +167,12 @@
 
 <ng-template #filterPopUpMat>
   <div class="sb-mat__modal">
-    <div class="mb-0 mat-dialog-title" mat-dialog-title="">
-      <div class="title" role="heading">Filter</div>
-      <button aria-label="close dialog" (click)=" closeDialog()" mat-dialog-close class="mat-close-btn">
-        <i class="close icon"></i>
-      </button>
+    <div mat-dialog-title>
+      <div class="title" tabindex="0">Apply Filter</div>
+      <button type="button" aria-label="close dialog" class="close-btn"
+        ((click)="closeDialog()" mat-dialog-close tabindex="0"></button>
     </div>
-    <mat-dialog-content class="mat-dialog-content">
+    <mat-dialog-content>
       <form [formGroup]="filterForm">
         <div class="formSection grid two-column-grid">
           <div class="sb-g-col-lg-1">
