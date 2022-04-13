@@ -1,15 +1,16 @@
 <div class="d-flex flex-jc-space-between d-flex sb-pageSection ">
   <div>
     <div class="sb-color-primary d-inline-block br-2 pr-10 mr-10">
-      <span class="fs-1-286 font-weight-bold">{{totalContentCount}}</span>
+      <span class="fs-1-286 font-weight-bold">{{totalContentCount || 0}}</span>
       Total
     </div>
-    <div class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
-      <span class="fs-1-286 font-weight-bold">{{countByStatus?.draft}}</span>
+    <div *ngIf="selectedTab != 'published'"
+      class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
+      <span class="fs-1-286 font-weight-bold">{{countByStatus?.draft || 0}}</span>
       Draft
     </div>
     <div class="sb-color-success d-inline-block pr-10">
-      <span class="fs-1-286 font-weight-bold">{{countByStatus?.live}}</span>
+      <span class="fs-1-286 font-weight-bold">{{countByStatus?.live || 0}}</span>
       Live
     </div>
   </div>
@@ -164,7 +165,7 @@
 </div>
 <div *ngIf="!showLoader" class="sb-pageSection-content">
   <div class="sb-table-responsive desktop-o-x-unset">
-    <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+    <table *ngIf="list else: noResult" class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
       <thead class="sb-table-header sb-table-thead-gray">
         <tr>
           <th class="cursor-pointer sb-sorting w-15" (click)="sortList('name')">
@@ -237,10 +238,7 @@
               <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
                 <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
                 <div class="menu" suiDropdownMenu>
-                  <div class="item">Edit</div>
-                  <div class="item">Share</div>
-                  <div class="item">Preview</div>
-                  <div class="item">Delete</div>
+                  <div *ngIf="item.allowDelete" class="item" (click)="confirmDelete(item)">Delete</div>
                 </div>
               </div>
             </div>
@@ -248,6 +246,9 @@
         </tr>
       </tbody>
     </table>
+    <ng-template #noResult>
+      <app-no-result [data]="{messageText: frmelmnts?.lbl?.noOrgProjects}"></app-no-result>
+    </ng-template>
   </div>
   <div class="sb-pageSection-content-bottom">
     <div class="d-flex flex-ai-center flex-jc-space-between my-20">
@@ -287,3 +288,21 @@
     </div>
   </div>
 </div>
+
+<sui-modal *ngIf="showDeleteModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+  class="sb-modal" appBodyScroll (dismissed)="showDeleteModal = false" #modal>
+  <div class="sb-modal-header">
+    {{resourceService.frmelmnts.lbl.deleteContent}}
+  </div>
+  <div class="sb-modal-content">
+   {{resourceService.frmelmnts.lbl.areYouSureDeleteContent}}
+  </div>
+  <div class="sb-modal-actions" (click)="deleteContent()">
+    <button class="sb-btn sb-btn-normal sb-btn-primary">
+      {{resourceService.frmelmnts.btn.yes}}
+    </button>
+    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false">
+      {{resourceService.frmelmnts.btn.no}}
+    </button>
+  </div>
+</sui-modal>

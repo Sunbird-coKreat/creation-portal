@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
 {
-  path: '', component: WorkspaceComponent, pathMatch: 'full', resolve: { facets: ContentResolver}
+  path: '', component: WorkspaceComponent, pathMatch: 'full'
 }
 ];
 @NgModule({

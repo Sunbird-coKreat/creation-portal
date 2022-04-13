@@ -2,14 +2,14 @@
   <div class="ui pointing secondary menu sb-bg-color-primary-100">
     <div class="ui container">
       <div class="p-0 m-0 d-flex">
-        <a (click)="selectTab('mycontent')" [ngClass]="{'active': tab === 'mycontent'}" class="item cursor-pointer">My
+        <a *ngIf="userRoles.includes('CONTENT_CREATOR') || userRoles.includes('BOOK_CREATOR')" (click)="selectTab('mycontent')" [ngClass]="{'active': tab === 'mycontent'}" class="item cursor-pointer">My
           Content</a>
-        <a (click)="selectTab('published')" [ngClass]="{'active': tab === 'published'}"
-          class="item cursor-pointer">Published Content</a>
-        <a (click)="selectTab('review')" [ngClass]="{'active': tab === 'review'}" class="item cursor-pointer">Content
+        <a *ngIf="userRoles.includes('CONTENT_REVIEWER') || userRoles.includes('BOOK_REVIEWER')" (click)="selectTab('review')" [ngClass]="{'active': tab === 'review'}" class="item cursor-pointer">Content
           for review</a>
-        <a (click)="selectTab('collaboration')" [ngClass]="{'active': tab === 'collaboration'}"
+        <a *ngIf="userRoles.includes('CONTENT_CREATOR')" (click)="selectTab('collaboration')" [ngClass]="{'active': tab === 'collaboration'}"
           class="item cursor-pointer">Content for collaboration</a>
+        <a *ngIf="userRoles.includes('ORG_ADMIN')" (click)="selectTab('published')" [ngClass]="{'active': tab === 'published'}"
+          class="item cursor-pointer">Published Content</a>
       </div>
     </div>
   </div>

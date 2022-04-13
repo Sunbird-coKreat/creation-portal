@@ -10,6 +10,7 @@ import { SharedModule } from '@sunbird/shared';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
+import { ContentService } from './services/content/content.service';
 
 @NgModule({
   declarations: [WorkspaceComponent, ContentListComponent],
@@ -25,7 +26,8 @@ import { SharedFeatureModule } from '@sunbird/shared-feature';
     SharedFeatureModule
   ],
   providers: [
-    SearchService
+    SearchService,
+    ContentService
   ]
 })
 export class WorkspaceModule { }
