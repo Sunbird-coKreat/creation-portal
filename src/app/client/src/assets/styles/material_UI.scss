@@ -1,0 +1,121 @@
+/* Material Modals starts here */
+.cdk-overlay-pane {
+
+  /*&.material-modal {
+      overflow: auto;
+      width: 100%;
+      height: 100%;
+  }*/
+
+  .mat-dialog-container {
+      padding: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: transparent;
+      box-shadow: none;
+      position: relative;
+      outline: none !important;
+
+      .mat-dialog-content {
+          margin: 0;
+          padding: 0;
+          /* max-height: 100%;
+          overflow: auto;*/
+      }
+  }
+
+  &.overflow-visible {
+      max-width: 100% !important;
+
+      .mat-dialog-container {
+          overflow: inherit;
+
+          .mat-dialog-content {
+              overflow: inherit;
+          }
+      }
+
+      .sb-mat__modal__content {
+          overflow-y: visible;
+          max-height: inherit;
+      }
+  }
+
+  .sb-mat__modal {
+      max-width: 720px;
+      width: 100%;
+      margin: 2% auto 0 auto;
+
+      &--small {
+          max-width: 480px;
+      }
+
+      &--fullscreen {
+          max-width: 100%;
+          margin: 0 auto;
+      }
+
+      &__content {
+          padding: 16px;
+          max-height: 400px;
+          min-height: 100px;
+          background: var(--mat-modal-content-bg);
+          color: var(--mat-modal-content-txt);
+          overflow-y: auto;
+      }
+
+      &__actions {
+          display: flex;
+          padding: 8px 16px;
+          align-items: center;
+          background-color: var(--mat-modal-content-bg);
+          border-top: 0.5px solid var(--gray-100);
+          justify-content: flex-end;
+          border-bottom-left-radius: 4px;
+          border-bottom-right-radius: 4px;
+
+          html[layout='joy'] & {
+              border: none;
+          }
+      }
+
+      .mat-dialog-title {
+          background: var(--mat-modal-title-bg);
+          color: var(--mat-modal-title-txt);
+          display: flex;
+          align-items: center;
+          padding: 4px 16px;
+          margin: 0;
+          min-height: 40px;
+          border-top-left-radius: 4px;
+          border-top-right-radius: 4px;
+
+          .title {
+              font-size: 16px;
+              font-weight: 700;
+              flex: 1;
+          }
+      }
+
+      .close-btn {
+          background: inherit;
+          box-shadow: none;
+          outline: none;
+          border: none;
+          margin-left: auto;
+          position: relative;
+          cursor: pointer;
+
+          &::after {
+              color: var(--white);
+              content: '\2715';
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              font-size: 16px;
+              font-weight: 700;
+          }
+      }
+  }
+}
