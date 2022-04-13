@@ -88,6 +88,7 @@ export class ContentListComponent implements OnInit {
   };
   showDeleteModal:boolean = false;
   searchService: SearchService;
+  public tab = 'collection';
 
   constructor(private paginationService: PaginationService,
     public userService: UserService,
@@ -382,6 +383,7 @@ export class ContentListComponent implements OnInit {
     console.log('event is for telemetry', JSON.stringify(event));
   }
 
+<<<<<<< HEAD
   confirmDelete(item) {
     this.itemToDelete = item;
     this.showDeleteModal = true;
@@ -404,5 +406,8 @@ export class ContentListComponent implements OnInit {
       };
       this.sourcingService.apiErrorHandling(error, errInfo);
     });
+  }
+  selectTab(tabname) {
+    this.tab = tabname;
   }
 }

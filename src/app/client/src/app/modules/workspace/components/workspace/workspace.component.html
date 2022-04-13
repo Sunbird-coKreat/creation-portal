@@ -1,6 +1,6 @@
 <sui-tabset>
-  <div class="ui pointing secondary menu sb-bg-color-primary-100">
-    <div class="ui container">
+  <div class="ui pointing secondary menu">
+    <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
       <div class="p-0 m-0 d-flex">
         <a *ngIf="userRoles.includes('CONTENT_CREATOR') || userRoles.includes('BOOK_CREATOR')" (click)="selectTab('mycontent')" [ngClass]="{'active': tab === 'mycontent'}" class="item cursor-pointer">My
           Content</a>
