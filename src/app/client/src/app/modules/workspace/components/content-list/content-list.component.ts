@@ -383,7 +383,6 @@ export class ContentListComponent implements OnInit {
     console.log('event is for telemetry', JSON.stringify(event));
   }
 
-<<<<<<< HEAD
   confirmDelete(item) {
     this.itemToDelete = item;
     this.showDeleteModal = true;
