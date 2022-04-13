@@ -114,13 +114,6 @@ export class ContentListComponent implements OnInit {
     this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'content_list' }];
     this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
     this.telemetryInteractObject = {};
-    // this.facets = _.get(this.route.snapshot.data.facets, 'result');
-    // this.totalContentCount = _.get(this.facets, 'count');
-    // this.countByStatus = _.get(_.first(_.get(this.facets, 'facets')), 'values').reduce((prev, curr) => {
-    //   prev[curr.name] = curr.count;
-    //   return prev;
-    // }, {});
-
     if (this.userService.loggedIn) {
       this.userRoles();
     }
