@@ -1,65 +1,33 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CoreModule } from '@sunbird/core';
+import { WorkspaceComponent } from './components/workspace/workspace.component';
 import { WorkspaceRoutingModule } from './workspace-routing.module';
-import { SharedModule } from '@sunbird/shared';
-import { SlickModule } from 'ngx-slick';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
-import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from './services';
-import {
-  WorkspaceComponent, CreateContentComponent, DraftComponent,
-  ReviewSubmissionsComponent, PublishedComponent, UploadedComponent,
-  CollectionEditorComponent, ContentEditorComponent, GenericEditorComponent,
-  WorkspacesidebarComponent, DataDrivenComponent, DefaultTemplateComponent,
-  FlaggedComponent, UpForReviewComponent, UpforReviewFilterComponent,
-  BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
-  UpforreviewContentplayerComponent, FlagConentplayerComponent, ReviewsubmissionsContentplayerComponent,
-  PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, AllMyContentFilterComponent, CollaboratingOnComponent,
-  CollaborationContentFilterComponent
-} from './components';
-import { NgInviewModule } from 'angular-inport';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ContentListComponent } from './components/content-list/content-list.component';
+import { SearchService } from '@sunbird/core';
+import { SharedModule } from '@sunbird/shared';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { ReviewCommentsComponent } from './components/review-comments/review-comments.component';
-import { OrderModule } from 'ngx-order-pipe';
-import { PlayerHelperModule } from '@sunbird/player-helper';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedFeatureModule } from '@sunbird/shared-feature';
+import { ContentService } from './services/content/content.service';
 
 @NgModule({
+  declarations: [WorkspaceComponent, ContentListComponent],
   imports: [
-    CommonModule,
-    SlickModule,
     WorkspaceRoutingModule,
-    SharedModule,
+    CommonModule,
     SuiModule,
-    FormsModule,
-    CoreModule,
-    ReactiveFormsModule,
-    NgInviewModule,
+    SharedModule,
     TelemetryModule,
-    OrderModule,
-    PlayerHelperModule
+    MatDialogModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SharedFeatureModule
   ],
-  declarations: [WorkspaceComponent, WorkspacesidebarComponent,
-    CreateContentComponent, DraftComponent, ReviewSubmissionsComponent,
-    PublishedComponent, UploadedComponent, CollectionEditorComponent,
-    ContentEditorComponent, GenericEditorComponent, UpForReviewComponent, UpforReviewFilterComponent,
-    DataDrivenComponent, UpForReviewComponent, UpforReviewFilterComponent, DefaultTemplateComponent,
-    FlaggedComponent, BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
-    UpforreviewContentplayerComponent,
-    FlagConentplayerComponent,
-    ReviewsubmissionsContentplayerComponent,
-    PublishedPopupComponent,
-    RequestChangesPopupComponent,
-    LimitedPublishedComponent,
-    AllContentComponent,
-    FlagReviewerComponent,
-    AllMyContentFilterComponent,
-    CollaboratingOnComponent,
-    CollaborationContentFilterComponent,
-    ReviewCommentsComponent,
-    CollaborationContentFilterComponent,
-  ],
-  providers: [WorkSpaceService, EditorService, BatchService, ReviewCommentsService]
+  providers: [
+    SearchService,
+    ContentService
+  ]
 })
 export class WorkspaceModule { }

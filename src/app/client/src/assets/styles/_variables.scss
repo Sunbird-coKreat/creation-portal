@@ -89,6 +89,12 @@
 
   --rc-rgba-black: 0, 0, 0; // var(--black)
   --primary-theme: var(--primary-color);
+
+  // Material Modals(Dialog)
+  --mat-modal-title-bg: var(--primary-color);
+  --mat-modal-title-txt: var(--white);
+  --mat-modal-content-bg: var(--primary-color);
+  --mat-modal-content-txt: var(--white);
 }
 
 // Variables

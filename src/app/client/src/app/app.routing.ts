@@ -12,6 +12,9 @@ const appRoutes: Routes = [
     path: 'sourcing', loadChildren: () => import('app/modules/program/program.module').then(m => m.ProgramModule)
   },
   {
+    path: 'sourcing/workspace', loadChildren: () => import('app/modules/workspace/workspace.module').then(m => m.WorkspaceModule)
+  },
+  {
     path: 'contribute', loadChildren: () => import('app/modules/contribute/contribute.module').then(m => m.ContributeModule)
   },
   {
