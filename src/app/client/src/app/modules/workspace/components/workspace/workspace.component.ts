@@ -1,21 +1,53 @@
+import { UserService } from './../../../core/services/user/user.service';
 import { Component, OnInit } from '@angular/core';
-import {Router} from '@angular/router';
+import { SearchService } from '@sunbird/core';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-workspace',
-  templateUrl: './workspace.component.html'
+  templateUrl: './workspace.component.html',
+  styleUrls: ['./workspace.component.scss']
 })
 export class WorkspaceComponent implements OnInit {
+  tab: string;
+  searchService: SearchService;
+  public userRoles: any;
+  creator: boolean = false;
+  reviewer: boolean = false;
+  bothCreatorAndReviewer: boolean = false;
+  orgAdmin: boolean = false;
 
-  constructor(public router: Router) {
-    window.scroll({
-      top: 0,
-      left: 0,
-      behavior: 'smooth'
+  constructor(
+    private userService: UserService,
+    searchService: SearchService
+  ) {
+    this.searchService = searchService;
+  }
+
+  ngOnInit(): void {
+    this.userService.userData$.subscribe((user: any) => {
+      if (user && !user.err) {
+        this.userRoles = user?.userProfile?.userRoles;
+        this.creator = this.userRoles?.some(e => e === 'CONTENT_CREATOR' || e === 'BOOK_CREATOR');
+        this.reviewer = this.userRoles?.some(e => e === 'CONTENT_REVIEWER' || e === 'BOOK_REVIEWER' || e === 'REPORT_REVIEWER');
+        this.bothCreatorAndReviewer = this.creator && this.reviewer;
+        this.orgAdmin = this.userRoles?.includes('ORG_ADMIN');
+        this.decideActiveTab();
+      }
     });
   }
 
-  ngOnInit() {
+  selectTab(tabname) {
+    this.tab = tabname;
   }
 
+  decideActiveTab() {
+    if (this.creator) {
+      this.tab = 'mycontent';
+    } else if (this.reviewer) {
+      this.tab = 'review';
+    } else if (this.orgAdmin) {
+      this.tab = 'published';
+    }
+  }
 }
