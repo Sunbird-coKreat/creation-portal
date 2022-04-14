@@ -1,3 +1,4 @@
+import { ViewAllComponent } from './../../../shared-feature/components/view-all/view-all.component';
 import { IUserProfile } from './../../../shared/interfaces/userProfile';
 import { userProfile } from './../../../program/components/create-program/create-program.spec.data';
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
@@ -283,13 +284,11 @@ export class ContentListComponent implements OnInit {
     this.searchService.compositeSearch(req).subscribe(res => {
       if (res.responseCode === "OK") {
         this.list = res?.result?.content?.map(item => {
-          item['allowEdit'] = false;
           item['allowDelete'] = false;
 
           switch (this.selectedTab) {
             case 'mycontent':
-              item.allowEdit = (item.status === 'Draft' || item.status === 'FlagDraft');
-              item.allowDelete = (item.status === 'Draft' || item.status === 'FlagDraft');
+              item.allowDelete = this.allowDelete(item);
               break;
             case 'published':
               item['allowDelete'] = true;
@@ -312,6 +311,11 @@ export class ContentListComponent implements OnInit {
     }, error => {
       console.log(error);
     });
+  }
+
+  allowDelete(item) {
+    return (item.createdBy === this.userService.userid)
+      && (item.status === 'Draft' || item.status === 'FlagDraft');
   }
 
   search(clearSearch?) {

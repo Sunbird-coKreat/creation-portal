@@ -4,15 +4,15 @@
       <span class="fs-1-286 font-weight-bold">{{totalContentCount || 0}}</span>
       Total
     </div>
-    <div *ngIf="selectedTab == 'review' || selectedTab == 'mycontent' || selectedTab == 'collaboration'"
-      class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
-      <span class="fs-1-286 font-weight-bold">{{countByStatus?.review || 0}}</span>
-      Review
-    </div>
     <div *ngIf="selectedTab == 'mycontent' || selectedTab == 'collaboration'"
       class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
       <span class="fs-1-286 font-weight-bold">{{countByStatus?.draft || 0}}</span>
       Draft
+    </div>
+    <div *ngIf="selectedTab == 'review' || selectedTab == 'mycontent' || selectedTab == 'collaboration'"
+      class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
+      <span class="fs-1-286 font-weight-bold">{{countByStatus?.review || 0}}</span>
+      Review
     </div>
     <div class="sb-color-success d-inline-block pr-10">
       <span class="fs-1-286 font-weight-bold">{{countByStatus?.live || 0}}</span>
@@ -315,7 +315,7 @@
                 <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
                   <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
                   <div class="menu" suiDropdownMenu>
-                    <div *ngIf="item.allowDelete" class="item" (click)="confirmDelete(item)">Delete</div>
+                    <div [ngClass]="item.allowDelete ? 'item': 'disabled item'" (click)="item.allowDelete && confirmDelete(item)">Delete</div>
                   </div>
                 </div>
               </div>
