@@ -29,9 +29,9 @@
       <button (click)="search()" class="sb-btn sb-btn-normal">Search</button>
     </div>
     <div class="d-flex">
-      <div *ngIf="filtersAppliedCount > 0" class="fs-0-785 font-italic sb-color-gray-300 d-flex ml-5 pt-5">
+      <div *ngIf="filtersAppliedCount > 0" class="fs-0-785 font-italic sb-color-gray-300 d-flex ml-10 pt-10">
         <div><i class="icon check circle pr-5 sb-color-success"></i></div>
-        <div style="width: 100px;">{{filtersAppliedCount}} Filters applied</div>
+        <div class="w-100px">{{filtersAppliedCount}} Filters applied</div>
         <!-- {{resourceService?.frmelmnts?.lbl?.filtersApplied}} -->
       </div>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button" (click)="openFilterPopUpMat()"><i
