@@ -411,7 +411,7 @@ describe('ChapterListComponent', () => {
       expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
-    it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
       component.programContext = {rootorg_id: undefined, target_collection_category: undefined};
       component.blueprintTemplate = undefined;
