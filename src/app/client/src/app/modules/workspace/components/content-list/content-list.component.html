@@ -1,6 +1,6 @@
 <div class="d-flex flex-jc-space-between d-flex sb-pageSection ">
   <div>
-    <div class="sb-color-primary d-inline-block br-2 pr-10 mr-10">
+    <div class="d-inline-block br-2 pr-10 mr-10">
       <span class="fs-1-286 font-weight-bold">{{totalContentCount || 0}}</span>
       Total
     </div>
@@ -10,7 +10,7 @@
       Draft
     </div>
     <div *ngIf="selectedTab == 'review' || selectedTab == 'mycontent' || selectedTab == 'collaboration'"
-      class="sb-color-gray-100 d-inline-block br-2 pr-10 mr-10">
+      class="sb-color-error d-inline-block br-2 pr-10 mr-10">
       <span class="fs-1-286 font-weight-bold">{{countByStatus?.review || 0}}</span>
       Review
     </div>
@@ -29,9 +29,9 @@
       <button (click)="searchResults()" class="sb-btn sb-btn-normal">Search</button>
     </div>
     <div class="d-flex">
-      <div *ngIf="filtersAppliedCount > 0" class="fs-0-785 font-italic sb-color-gray-300 d-flex ml-5 pt-5">
+      <div *ngIf="filtersAppliedCount > 0" class="fs-0-785 font-italic sb-color-gray-300 d-flex ml-10 pt-10">
         <div><i class="icon check circle pr-5 sb-color-success"></i></div>
-        <div style="width: 100px;">{{filtersAppliedCount}} Filters applied</div>
+        <div class="w-100px">{{filtersAppliedCount}} Filters applied</div>
         <!-- {{resourceService?.frmelmnts?.lbl?.filtersApplied}} -->
       </div>
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button" (click)="openFilterPopUpMat()"><i
@@ -246,7 +246,7 @@
     <table *ngIf="list else: noResult" class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
       <thead class="sb-table-header sb-table-thead-gray">
         <tr>
-          <th class="cursor-pointer sb-sorting w-15" (click)="sortList('name')">
+          <th class="cursor-pointer sb-sorting w-20" (click)="sortList('name')">
             Title
             <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
             <span *ngIf="sortColumn == 'name'" class="d-inline-block">
@@ -299,8 +299,8 @@
             </span>
           </td>
           <td>
-            <div [ngClass]="{'sb-color-success': item.status == 'Live', 'sb-color-gray-100': item.status !== 'Live'}">{{
-              item.status }}</div>
+              <div [ngClass]="{'sb-color-success': item.status == 'Live','sb-color-error': item.status == 'review','sb-color-gray-100': item.status !== 'Draft'}">{{
+                item.status }}</div>
             <!-- <br> -->
             <!-- <div class="sb-color-gray-100">Draft</div> -->
           </td>
