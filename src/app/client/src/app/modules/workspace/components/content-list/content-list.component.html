@@ -391,29 +391,44 @@ class="sb-modal custom-lg-modal" (dismissed)="this.collectionListModal = false" 
 		<div class="sb-modal-content">
       <h5 class="font-weight-bold sb-color-red">{{resourceService?.frmelmnts?.lbl?.linkedContentErrorMessage}}</h5>
 			<div class="sb-table-responsive">
-				<table aria-hidden="true" class="sb-table sb-table-striped sb-table-sortable sb-table-blue-strip">
-					<thead>
-            <th class="w-10" id="contentType">{{headers.type}}</th>
-            <th class="w-30" id="contentName">{{headers.name}}</th>
-            <th class="w-10" id="contentSubject">{{headers.subject}}</th>
-            <th class="w-10" id="contentGrade">{{headers.grade}}</th>
-            <th class="w-10" id="contentMedium">{{headers.medium}}</th>
-            <th class="w-10" id="contentBoard">{{headers.board}}</th>
-            <th class="w-20" id="contentchannel">{{headers.channel}}</th>
+				<table aria-hidden="true" class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+					<thead class="sb-table-header sb-table-thead-gray">
+            <tr>
+              <th class="w-10" id="contentType">{{headers.type}}</th>
+              <th class="w-30" id="contentName">{{headers.name}}</th>
+              <th class="w-20" id="contentSubject">{{headers.subject}}</th>
+              <th class="w-20" id="contentGrade">{{headers.grade}}</th>
+              <th class="w-15" id="contentMedium">{{headers.medium}}</th>
+              <th class="w-10" id="contentBoard">{{headers.board}}</th>
+              <th class="w-15" id="contentchannel">{{headers.channel}}</th>
+            </tr>
           </thead>
-          <tbody>
+          <tbody class="sb-table-body">
             <tr *ngFor = "let row of collectionData">
-              <td class="white-space-inherit">{{row['contentType']}}</td>
-              <td class="white-space-inherit font-weight-bold">{{row['name']}}</td>
-              <td class="white-space-inherit">{{row['subject']?.join(", ") || '-'}}</td>
-              <td class="white-space-inherit">{{row['gradeLevel']?.join(", ") || '-'}}</td>
-              <td class="white-space-inherit">{{row['medium']?.join(", ") || '-'}}</td>
-              <td class="white-space-inherit">{{row['board']}}</td>
-              <td class="white-space-inherit">{{row['channel']}}</td>
+              <td>{{row['contentType']}}</td>
+              <td class="font-weight-bold">{{row['name']}}</td>
+              <td class="mouse-pointer">
+                <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupText="{{row['subject']?.join(', ') || '-'}}">
+                  {{row['subject']?.join(", ") || '-'}}
+                </div>
+              </td>
+              <td class="mouse-pointer">
+                <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupText="{{row['gradeLevel']?.join(', ') || '-'}}">
+                  {{row['gradeLevel']?.join(", ") || '-'}}
+                </div>
+              </td>
+              <td class="mouse-pointer">
+                <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupText="{{row['medium']?.join(', ') || '-'}}">
+                  {{row['medium']?.join(", ") || '-'}}
+                </div>
+              </td>
+              <td>{{row['board']}}</td>
+              <td>{{row['channel']}}</td>
             </tr>
           </tbody>
         </table>
 			</div>
+
 		</div>
 		<div class="sb-modal-actions">
 		<button class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0" (click)="modal.deny('denied')">
