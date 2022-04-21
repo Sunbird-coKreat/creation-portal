@@ -460,7 +460,8 @@ export class ContentListComponent extends WorkSpace implements OnInit {
    */
   public checkLinkedCollections(modal) {
     this.showDeleteModal = false;
-    if (this.selectedTab != 'published') {
+
+    if (this.itemToDelete?.status != 'Live') {
       this.deleteContent(this.currentContentId);
       return;
     }
