@@ -430,6 +430,7 @@ export class ContentListComponent extends WorkSpace implements OnInit {
   }
 
   deleteContent(identifier) {
+    this.showDeleteModal = false;
     this.helperService.retireContent(identifier).subscribe(response => {
       if (response && response.result && response.result.node_id) {
         this.list = this.list.filter(e => e.identifier !== identifier);
@@ -459,8 +460,6 @@ export class ContentListComponent extends WorkSpace implements OnInit {
    * @returns
    */
   public checkLinkedCollections(modal) {
-    this.showDeleteModal = false;
-
     if (this.itemToDelete?.status != 'Live') {
       this.deleteContent(this.currentContentId);
       return;
@@ -469,7 +468,7 @@ export class ContentListComponent extends WorkSpace implements OnInit {
     if (!_.isUndefined(modal)) {
       this.deleteModal = modal;
     }
-    this.showCollectionLoader = false;
+    this.showCollectionLoader = true;
     if (this.itemToDelete?.mimeType=== 'application/vnd.ekstep.content-collection') {
       this.deleteContent(this.currentContentId);
       return;
@@ -484,7 +483,6 @@ export class ContentListComponent extends WorkSpace implements OnInit {
           return;
         }
 
-        this.showCollectionLoader = true;
         const collections = _.get(response, 'result.content', []);
         const channels = _.map(collections, (collection) => {
           return _.get(collection, 'channel');
@@ -519,14 +517,20 @@ export class ContentListComponent extends WorkSpace implements OnInit {
              if (!_.isUndefined(this.deleteModal)) {
               this.deleteModal.deny();
             }
+          this.showCollectionLoader = false;
+          this.showDeleteModal = false;
           this.collectionListModal = true;
           },
           (error) => {
+            this.showCollectionLoader = false;
+            this.showDeleteModal = false;
            this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0014'));
             console.log(error);
           });
         },
         (error) => {
+          this.showCollectionLoader = false;
+          this.showDeleteModal = false;
          this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0015'));
           console.log(error);
         });

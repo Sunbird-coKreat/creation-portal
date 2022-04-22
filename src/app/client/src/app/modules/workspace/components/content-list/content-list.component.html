@@ -299,8 +299,10 @@
             </span>
           </td>
           <td>
-              <div [ngClass]="{'sb-color-success': item.status == 'Live','sb-color-error': item.status == 'review','sb-color-gray-100': item.status !== 'Draft'}">{{
-                item.status }}</div>
+            <div
+              [ngClass]="{'sb-color-success': item.status == 'Live','sb-color-error': item.status == 'review','sb-color-gray-100': item.status !== 'Draft'}">
+              {{
+              item.status }}</div>
             <!-- <br> -->
             <!-- <div class="sb-color-gray-100">Draft</div> -->
           </td>
@@ -315,7 +317,8 @@
                 <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
                   <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
                   <div class="menu" suiDropdownMenu>
-                    <div [ngClass]="item.allowDelete ? 'item': 'disabled item'" (click)="item.allowDelete && confirmDelete(item)">Delete</div>
+                    <div [ngClass]="item.allowDelete ? 'item': 'disabled item'"
+                      (click)="item.allowDelete && confirmDelete(item)">Delete</div>
                   </div>
                 </div>
               </div>
@@ -372,67 +375,75 @@
     {{resourceService.frmelmnts.lbl.deleteContent}}
   </div>
   <div class="sb-modal-content">
-    {{resourceService.frmelmnts.lbl.areYouSureDeleteContent}}
+    <ng-container *ngIf="!showCollectionLoader; else collectionLoader">
+      {{resourceService.frmelmnts.lbl.areYouSureDeleteContent}}
+    </ng-container>
+    <ng-template #collectionLoader>
+      <app-loader></app-loader>
+    </ng-template>
   </div>
-  <div class="sb-modal-actions" (click)="checkLinkedCollections(modal)">
-    <button class="sb-btn sb-btn-normal sb-btn-primary">
+  <div class="sb-modal-actions">
+    <button [disabled]="showCollectionLoader" class="sb-btn sb-btn-normal sb-btn-primary" (click)="checkLinkedCollections(modal)">
       {{resourceService.frmelmnts.btn.yes}}
     </button>
-    <button class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false">
+    <button [disabled]="showCollectionLoader" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="showDeleteModal = false">
       {{resourceService.frmelmnts.btn.no}}
     </button>
   </div>
 </sui-modal>
 
 <sui-modal *ngIf="collectionListModal" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'large'"
-class="sb-modal custom-lg-modal" (dismissed)="this.collectionListModal = false" #modal>
-		<div class="sb-modal-header">
-		</div>
-		<div class="sb-modal-content">
-      <h5 class="font-weight-bold sb-color-red">{{resourceService?.frmelmnts?.lbl?.linkedContentErrorMessage}}</h5>
-			<div class="sb-table-responsive">
-				<table aria-hidden="true" class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
-					<thead class="sb-table-header sb-table-thead-gray">
-            <tr>
-              <th class="w-10" id="contentType">{{headers.type}}</th>
-              <th class="w-30" id="contentName">{{headers.name}}</th>
-              <th class="w-20" id="contentSubject">{{headers.subject}}</th>
-              <th class="w-20" id="contentGrade">{{headers.grade}}</th>
-              <th class="w-15" id="contentMedium">{{headers.medium}}</th>
-              <th class="w-10" id="contentBoard">{{headers.board}}</th>
-              <th class="w-15" id="contentchannel">{{headers.channel}}</th>
-            </tr>
-          </thead>
-          <tbody class="sb-table-body">
-            <tr *ngFor = "let row of collectionData">
-              <td>{{row['contentType']}}</td>
-              <td class="font-weight-bold">{{row['name']}}</td>
-              <td class="mouse-pointer">
-                <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupText="{{row['subject']?.join(', ') || '-'}}">
-                  {{row['subject']?.join(", ") || '-'}}
-                </div>
-              </td>
-              <td class="mouse-pointer">
-                <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupText="{{row['gradeLevel']?.join(', ') || '-'}}">
-                  {{row['gradeLevel']?.join(", ") || '-'}}
-                </div>
-              </td>
-              <td class="mouse-pointer">
-                <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupText="{{row['medium']?.join(', ') || '-'}}">
-                  {{row['medium']?.join(", ") || '-'}}
-                </div>
-              </td>
-              <td>{{row['board']}}</td>
-              <td>{{row['channel']}}</td>
-            </tr>
-          </tbody>
-        </table>
-			</div>
+  class="sb-modal custom-lg-modal" (dismissed)="this.collectionListModal = false" #modal>
+  <div class="sb-modal-header">
+  </div>
+  <div class="sb-modal-content">
+    <h5 class="font-weight-bold sb-color-red">{{resourceService?.frmelmnts?.lbl?.linkedContentErrorMessage}}</h5>
+    <div class="sb-table-responsive">
+      <table aria-hidden="true" class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+        <thead class="sb-table-header sb-table-thead-gray">
+          <tr>
+            <th class="w-10" id="contentType">{{headers.type}}</th>
+            <th class="w-30" id="contentName">{{headers.name}}</th>
+            <th class="w-20" id="contentSubject">{{headers.subject}}</th>
+            <th class="w-20" id="contentGrade">{{headers.grade}}</th>
+            <th class="w-15" id="contentMedium">{{headers.medium}}</th>
+            <th class="w-10" id="contentBoard">{{headers.board}}</th>
+            <th class="w-15" id="contentchannel">{{headers.channel}}</th>
+          </tr>
+        </thead>
+        <tbody class="sb-table-body">
+          <tr *ngFor="let row of collectionData">
+            <td>{{row['contentType']}}</td>
+            <td class="font-weight-bold">{{row['name']}}</td>
+            <td class="mouse-pointer">
+              <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup
+                popupText="{{row['subject']?.join(', ') || '-'}}">
+                {{row['subject']?.join(", ") || '-'}}
+              </div>
+            </td>
+            <td class="mouse-pointer">
+              <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup
+                popupText="{{row['gradeLevel']?.join(', ') || '-'}}">
+                {{row['gradeLevel']?.join(", ") || '-'}}
+              </div>
+            </td>
+            <td class="mouse-pointer">
+              <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup
+                popupText="{{row['medium']?.join(', ') || '-'}}">
+                {{row['medium']?.join(", ") || '-'}}
+              </div>
+            </td>
+            <td>{{row['board']}}</td>
+            <td>{{row['channel']}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-		</div>
-		<div class="sb-modal-actions">
-		<button class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0" (click)="modal.deny('denied')">
-			{{resourceService?.frmelmnts?.btn?.close}}
-		</button>
-		</div>
+  </div>
+  <div class="sb-modal-actions">
+    <button class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0" (click)="modal.deny('denied')">
+      {{resourceService?.frmelmnts?.btn?.close}}
+    </button>
+  </div>
 </sui-modal>
