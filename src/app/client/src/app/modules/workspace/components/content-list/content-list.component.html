@@ -349,7 +349,8 @@
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
-          <a *ngFor="let page of pager.pages" (click)="NavigateToPage(page)" class="sb-item" appTelemetryInteract
+          <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}"
+            (click)="NavigateToPage(page)" class="sb-item" appTelemetryInteract
             [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_pagination', configService.telemetryLabels.eventType.click,undefined, telemetryPageId, {values: [page]})"
             [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
             [telemetryInteractPdata]="telemetryInteractPdata">{{page}}</a>
@@ -379,7 +380,7 @@
       {{resourceService.frmelmnts.lbl.areYouSureDeleteContent}}
     </ng-container>
     <ng-template #collectionLoader>
-      <app-loader></app-loader>
+      Please wait...
     </ng-template>
   </div>
   <div class="sb-modal-actions">
