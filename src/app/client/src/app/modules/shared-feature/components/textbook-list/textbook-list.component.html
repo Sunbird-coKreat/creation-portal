@@ -24,7 +24,7 @@
 			<span *ngIf="!textbookFiltersApplied">{{resourceService.frmelmnts.lbl.addFilters | interpolate:'{TARGET_NAME}': targetCollections}}</span>
 			<span *ngIf="textbookFiltersApplied">{{ resourceService.frmelmnts.lbl.modifyFilters }}</span>
 		</button>
-		<button *ngIf="sourcingOrgReviewer" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10"
+		<button *ngIf="sourcingOrgReviewer && programDetails.target_type !== 'questionSets'" type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary ml-10"
 		(click)="downloadCSV()" appTelemetryInteract
 		[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('download_' + targetCollections?.replace(' ', '_').toLowerCase() + '_details',
 		configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,

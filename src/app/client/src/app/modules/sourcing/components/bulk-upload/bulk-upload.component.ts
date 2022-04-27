@@ -336,13 +336,13 @@ export class BulkUploadComponent implements OnInit {
           }
         }
 
-        let status = _.get(content, 'status', '');
-        if ((this.stageStatus === 'review' && status === 'Review') || (this.stageStatus === 'publish' && status === 'Live')) {
-          status = 'Success';
+        result['status'] = _.get(content, 'status', '');
+        result['failedReason'] = '';
+        if ((this.stageStatus === 'review' && result['status'] === 'Review') || (this.stageStatus === 'publish' && result['status'] === 'Live')) {
+          result['status'] = 'Success';
+        } else {
+          result['failedReason'] = _.get(content, 'importError', '') ||  _.get(content, 'publishError', '');
         }
-        result['status'] = status
-        result['failedReason'] = _.get(content, 'importError', '') ||  _.get(content, 'publishError', '');
-
         return result;
       });
       const fileName = _.get(this.storedCollectionData, 'name') ? `Bulk Upload ${this.storedCollectionData.name.trim()}` : `Bulk Upload ${this.programContext.name.trim()}`;
