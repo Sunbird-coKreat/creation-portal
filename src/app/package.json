@@ -71,7 +71,7 @@
     "@project-sunbird/ext-framework-server": "0.1.10",
     "@project-sunbird/form-service": "0.0.12",
     "@project-sunbird/review-comment": "0.0.8",
-    "async": "^2.5.0",
+    "async": "^2.6.4",
     "asyncawait": "^1.0.7",
     "azure-storage": "^2.10.2",
     "body-parser": "^1.17.2",
