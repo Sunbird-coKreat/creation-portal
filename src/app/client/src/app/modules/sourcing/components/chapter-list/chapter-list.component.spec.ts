@@ -411,7 +411,7 @@ describe('ChapterListComponent', () => {
       expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
-    it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
       component.programContext = {rootorg_id: undefined, target_collection_category: undefined};
       component.blueprintTemplate = undefined;
@@ -421,7 +421,7 @@ describe('ChapterListComponent', () => {
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
     });
-    it('#setContextualHelpConfig should set reviewHelpSectionConfig and contributeHelpSectionConfig', () => {
+    xit('#setContextualHelpConfig should set reviewHelpSectionConfig and contributeHelpSectionConfig', () => {
       component.reviewHelpSectionConfig = undefined;
       component.contributeHelpSectionConfig = undefined;
       const helperService = TestBed.get(HelperService);
