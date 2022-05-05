@@ -246,9 +246,10 @@ describe('ProgramNominationsComponent', () => {
   it('#sortCollection() should set nominations value', () => {
     component.direction = 'desc';
     component.nominations = [];
-    spyOn(programsService, 'sortCollection').and.returnValue([]);
+    spyOn(programsService, 'sortCollection').and.callFake(() => {});
     spyOn(component, 'sortCollection').and.callThrough();
     component.sortCollection('name');
+    expect(component.sortCollection).toHaveBeenCalled();
     expect(programsService.sortCollection).toHaveBeenCalled();
     expect(component.direction).toEqual('asc');
     expect(component.sortColumn).toEqual('name');
