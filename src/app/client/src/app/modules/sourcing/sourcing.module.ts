@@ -20,7 +20,6 @@ import { CollectionComponent } from './components/collection/collection.componen
 import { ResourceReorderComponent } from './components/resource-reorder/resource-reorder.component';
 import { ContentEditorComponent } from './components/content-editor/content-editor.component';
 import { CollectionHierarchyService } from './services/collection-hierarchy/collection-hierarchy.service';
-import { SlickModule } from 'ngx-slick';
 import { SharedFeatureModule } from '../shared-feature';
 import { RouterModule } from '@angular/router';
 import { CoreModule } from '@sunbird/core';
@@ -65,7 +64,6 @@ import { AccessibilityInfoComponent } from './components/accessibility-info/acce
     QumlLibraryModule,
     PlayerHelperModule,
     TelemetryModule,
-    SlickModule.forRoot(),
     SourcingRoutingModule,
     DynamicModule.withComponents([QuestionListComponent,
       QuestionCreationComponent, ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,

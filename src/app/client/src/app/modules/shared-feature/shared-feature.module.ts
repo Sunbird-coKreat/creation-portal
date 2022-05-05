@@ -8,7 +8,6 @@ import {
   UserLocationComponent, EnrollContributorComponent, TextbookListComponent, ProgramListComponent, OrgUsersListComponent, ProjectFilterComponent, ProgramHeaderComponent, ResourceTemplateComponent
 } from './components';
 import { DaysToGoPipe } from './pipes';
-import { SlickModule } from 'ngx-slick';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,7 +19,6 @@ import { HelpPageComponent } from './components/help-page/help-page.component';
 @NgModule({
   imports: [
     CommonModule,
-    SlickModule,
     SharedModule,
     CoreModule,
     TelemetryModule,

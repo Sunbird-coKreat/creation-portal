@@ -3,7 +3,6 @@ import { SharedModule } from '@sunbird/shared';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContributeRoutingModule } from './contibute-routing.module';
 import { ProgramComponent } from './components/program/program.component';
@@ -35,7 +34,6 @@ import { QumlPlayerService } from '../sourcing';
     CommonModule,
     ContributeRoutingModule,
     CommonConsumptionModule,
-    SlickModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
