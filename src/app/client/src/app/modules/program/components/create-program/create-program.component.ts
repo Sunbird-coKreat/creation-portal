@@ -1224,7 +1224,7 @@ onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
     this.projectScopeForm.value.pcollections = [];
-    if (!_.isEmpty(this.projectScopeForm.value.framework)) {
+    if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
       this.onFrameworkChange();
     } else {
       this.showTexbooklist();
