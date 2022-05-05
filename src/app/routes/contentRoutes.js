@@ -12,12 +12,10 @@ var morgan = require('morgan')
 const logApiStatus = envHelper.dock_api_call_log_status
 const programServiceUrl = envHelper.DOCK_PROGRAM_SERVICE_URL
 const isAPIWhitelisted = require('../helpers/apiWhiteList');
-
 module.exports = (app) => {
   // Generate telemetry fot proxy service
     app.all('/content/*', telemetryHelper.generateTelemetryForContentService,
         telemetryHelper.generateTelemetryForProxy)
-
     if(logApiStatus){
         app.use('/content/*', morgan(function (tokens, req, res) {
             var message = '';
@@ -40,7 +38,6 @@ module.exports = (app) => {
                 ].join(' ')});
         }))
     }
-
     app.all('/content/course/v1/search',
         healthService.checkDependantServiceHealth(['CONTENT', 'CASSANDRA']),
         permissionsHelper.checkPermission(),
@@ -62,33 +59,31 @@ module.exports = (app) => {
                 }
             }
         }))
-
-    app.get('/content/program/v1/print/*',
-        permissionsHelper.checkPermission(),
-        proxyUtils.verifyToken(),
-        proxy(programServiceUrl, {
-            limit: reqDataLimitOfContentUpload,
-            proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-            proxyReqPathResolver: (req) => {
-              var originalUrl = req.originalUrl
-              originalUrl = originalUrl.replace('/content/', '')
-              const URl = require('url').parse(programServiceUrl + originalUrl).path.replace('//', '/');
-              return URl
-            },
-            userResDecorator: (proxyRes, proxyResData, req, res) => {
-                try {
-                    logger.info({msg: '/content/program/v1/print/docx called'});
-                    const data = JSON.parse(proxyResData.toString('utf8'));
-                    if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
-                    else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
-                } catch (err) {
-                    logger.error({msg: 'content api user res decorator json parse error', proxyResData});
-                    return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
-                }
-            }
-        })
-    )
-
+    // app.get('/content/program/v1/print/*',
+    //     permissionsHelper.checkPermission(),
+    //     proxyUtils.verifyToken(),
+    //     proxy(programServiceUrl, {
+    //         limit: reqDataLimitOfContentUpload,
+    //         proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+    //         proxyReqPathResolver: (req) => {
+    //           var originalUrl = req.originalUrl
+    //           originalUrl = originalUrl.replace('/content/', '')
+    //           const URl = require('url').parse(programServiceUrl + originalUrl).path.replace('//', '/');
+    //           return URl
+    //         },
+    //         userResDecorator: (proxyRes, proxyResData, req, res) => {
+    //             try {
+    //                 logger.info({msg: '/content/program/v1/print/docx called'});
+    //                 const data = JSON.parse(proxyResData.toString('utf8'));
+    //                 if (req.method === 'GET' && proxyRes.statusCode === 404 && (typeof data.message === 'string' && data.message.toLowerCase() === 'API not found with these values'.toLowerCase())) res.redirect('/')
+    //                 else return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res, data)
+    //             } catch (err) {
+    //                 logger.error({msg: 'content api user res decorator json parse error', proxyResData});
+    //                 return proxyUtils.handleSessionExpiry(proxyRes, proxyResData, req, res)
+    //             }
+    //         }
+    //     })
+    // )
     app.post('/content/program/v1/configuration/search',
         isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
@@ -102,7 +97,6 @@ module.exports = (app) => {
         userResDecorator: userResDecorator
         })
     )
-
     app.all('/content/program/*',
         isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
@@ -125,7 +119,6 @@ module.exports = (app) => {
             }
         })
     )
-
     app.all('/content/reg/*',
         isAPIWhitelisted.isAllowed(),
         permissionsHelper.checkPermission(),
@@ -148,7 +141,6 @@ module.exports = (app) => {
             }
         })
     )
-
     app.all('/content/*',
         healthService.checkDependantServiceHealth(['CONTENT', 'CASSANDRA']),
         isAPIWhitelisted.isAllowed(),
@@ -180,7 +172,6 @@ module.exports = (app) => {
         })
     )
 }
-
 const userResDecorator = (proxyRes, proxyResData, req, res) => {
     try {
         const data = JSON.parse(proxyResData.toString('utf8'));

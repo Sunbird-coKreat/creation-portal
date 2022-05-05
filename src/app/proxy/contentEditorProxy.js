@@ -139,291 +139,294 @@ module.exports = function (app) {
   );
   // Proxy for content create ,update & review Start
   // @Todo deprecated
-  app.use(
-    [
-      "/action/content/v3/create",
-      "/action/content/v3/hierarchy/add",
-      "/action/content/v3/hierarchy/remove",
-      "/action/content/v3/hierarchy/*",
-      "/action/content/v3/import",
-    ],
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
-  // Proxy for content create ,update & review Start
-  app.get("/action/collection/v4/hierarchy/*",
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        if (localDev) {
-          originalUrl = originalUrl.replace("/v4/", "/v1/");
-        }
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.use(
+  //   [
+  //     "/action/content/v3/create",
+  //     "/action/content/v3/hierarchy/add",
+  //     "/action/content/v3/hierarchy/remove",
+  //     "/action/content/v3/hierarchy/*",
+  //     "/action/content/v3/import",
+  //   ],
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
+  // // Proxy for content create ,update & review Start
+  // app.get("/action/collection/v4/hierarchy/*",
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       if (localDev) {
+  //         originalUrl = originalUrl.replace("/v4/", "/v1/");
+  //       }
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  // @Todo deprecated
-  app.use(
-    ["/action/content/v3/update/*"],
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // // @Todo deprecated
+  // app.use(
+  //   ["/action/content/v3/update/*"],
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  // @Todo deprecated
-  app.post(
-    "/action/content/v3/upload/*",
-    proxy(kp_content_service_base_url, {
-      preserveHostHdr: true,
-      limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-      userResDecorator: userResDecorator,
-    })
-  );
+  // // @Todo deprecated
+  // app.post(
+  //   "/action/content/v3/upload/*",
+  //   proxy(kp_content_service_base_url, {
+  //     preserveHostHdr: true,
+  //     limit: reqDataLimitOfContentUpload,
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //     userResDecorator: userResDecorator,
+  //   })
+  // );
 
-  app.post("/action/content/v4/import",
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.post("/action/content/v4/import",
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.get("/action/content/v4/read/*",
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.get("/action/content/v4/read/*",
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.post("/action/content/v4/create",
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.post("/action/content/v4/create",
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       if (localDev) {
+  //         originalUrl = originalUrl.replace("/v4/", "/v1/");
+  //       }
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.post(
-    "/action/content/v4/upload/*",
-    proxy(kp_content_service_base_url, {
-      preserveHostHdr: true,
-      limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-      userResDecorator: userResDecorator,
-    })
-  );
+  // app.post(
+  //   "/action/content/v4/upload/*",
+  //   proxy(kp_content_service_base_url, {
+  //     preserveHostHdr: true,
+  //     limit: reqDataLimitOfContentUpload,
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //     userResDecorator: userResDecorator,
+  //   })
+  // );
 
-  app.patch(
-    "/action/collection/v4/hierarchy/add",
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        if (localDev) {
-          originalUrl = originalUrl.replace("/v4/", "/v1/");
-        }
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.patch(
+  //   "/action/collection/v4/hierarchy/add",
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       if (localDev) {
+  //         originalUrl = originalUrl.replace("/v4/", "/v1/");
+  //       }
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.delete(
-    "/action/collection/v4/hierarchy/remove",
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        if (localDev) {
-          originalUrl = originalUrl.replace("/v4/", "/v1/");
-        }
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.delete(
+  //   "/action/collection/v4/hierarchy/remove",
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       if (localDev) {
+  //         originalUrl = originalUrl.replace("/v4/", "/v1/");
+  //       }
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.patch("/action/content/v4/update/*",
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.patch("/action/content/v4/update/*",
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  // @Todo deprecated(only few)
-  app.use(
-    [
-      "/action/content/v3/review/*",
-      "/action/assessment/v3/items/*",
-      "/action/content/v3/publish/*",
-      "/action/content/v3/reject/*",
-      "/action/content/v3/retire/*",
-      "/action/assessment/v3/items/retire/*",
-      "/action/system/v3/content/update/*",
-    ],
-    proxy(kp_learning_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_learning_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // // @Todo deprecated(only few)
+  // app.use(
+  //   [
+  //     "/action/content/v3/review/*",
+  //     "/action/assessment/v3/items/*",
+  //     "/action/content/v3/publish/*",
+  //     "/action/content/v3/reject/*",
+  //     "/action/content/v3/retire/*",
+  //     "/action/assessment/v3/items/retire/*",
+  //     "/action/system/v3/content/update/*",
+  //   ],
+  //   proxy(kp_learning_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_learning_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.post("/action/content/v4/review/*",
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.post("/action/content/v4/review/*",
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.post("/action/content/v4/reject/*",
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.post("/action/content/v4/reject/*",
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.delete("/action/content/v4/retire/*",
-    proxy(kp_content_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(kp_content_service_base_url + originalUrl)
-          .path;
-      },
-    })
-  );
+  // app.delete("/action/content/v4/retire/*",
+  //   proxy(kp_content_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(kp_content_service_base_url + originalUrl)
+  //         .path;
+  //     },
+  //   })
+  // );
 
-  app.use(
-    [
-      "/action/itemset/v3/create",
-      "/action/itemset/v3/update/*",
-      "/action/itemset/v3/read/*",
-      "/action/itemset/v3/review/*",
-      "/action/itemset/v3/retire/*",
-      "/action/questionset/v4/system/update/*",
-      "/action/question/v4/system/update/*",
-    ],
-    bodyParser.json({ limit: "50mb" }),
-    proxy(kp_assessment_service_base_url, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(
-          kp_assessment_service_base_url + originalUrl
-        ).path;
-      },
-    })
-  );
+  // app.use(
+  //   [
+  //     "/action/itemset/v3/create",
+  //     "/action/itemset/v3/update/*",
+  //     "/action/itemset/v3/read/*",
+  //     "/action/itemset/v3/review/*",
+  //     "/action/itemset/v3/retire/*",
+  //     "/action/questionset/v4/system/update/*",
+  //     "/action/question/v4/system/update/*",
+  //   ],
+  //   bodyParser.json({ limit: "50mb" }),
+  //   proxy(kp_assessment_service_base_url, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(
+  //         kp_assessment_service_base_url + originalUrl
+  //       ).path;
+  //     },
+  //   })
+  // );
 
-  app.use(
-    ["/action/object/category/*"],
-    proxy(contentServiceBaseUrl, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        return require("url").parse(contentServiceBaseUrl + originalUrl).path;
-      },
-    })
-  );
+  // app.use(
+  //   ["/action/object/category/*"],
+  //   proxy(contentServiceBaseUrl, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       return require("url").parse(contentServiceBaseUrl + originalUrl).path;
+  //     },
+  //   })
+  // );
 
-  app.use(
-    [
-      "/action/program/v1/process/create",
-      "/action/program/v1/process/update",
-      "/action/program/v1/process/search",
-      "/action/question/v1/bulkUpload",
-      "/action/question/v1/bulkUploadStatus",
-    ],
-    proxy(contentURL, {
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
-      proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
-        originalUrl = originalUrl.replace("/action/", "");
-        console.log(
-          "bulkUpload ",
-          contentURL,
-          "  ===  ",
-          require("url").parse(contentURL + originalUrl).path
-        );
-        return require("url").parse(contentURL + originalUrl).path;
-      },
-      userResDecorator: userResDecorator,
-    })
-  );
+  // app.use(
+  //   [
+  //     "/action/program/v1/process/create",
+  //     "/action/program/v1/process/update",
+  //     "/action/program/v1/process/search",
+  //     "/action/question/v1/bulkUpload",
+  //     "/action/question/v1/bulkUploadStatus",
+  //   ],
+  //   proxy(contentURL, {
+  //     proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+  //     proxyReqPathResolver: function (req) {
+  //       var originalUrl = req.originalUrl;
+  //       originalUrl = originalUrl.replace("/action/", "");
+  //       console.log(
+  //         "bulkUpload ",
+  //         contentURL,
+  //         "  ===  ",
+  //         require("url").parse(contentURL + originalUrl).path
+  //       );
+  //       return require("url").parse(contentURL + originalUrl).path;
+  //     },
+  //     userResDecorator: userResDecorator,
+  //   })
+  // );
   // Proxy for content create , update & review END
 
   app.use(
