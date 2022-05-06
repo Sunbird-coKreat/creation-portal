@@ -364,7 +364,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusClass = 'sb-color-error';
     } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      this.resourceStatusClass = 'sb-color-success';
+      this.resourceStatusClass = 'sb-color-warning';
     } else if (this.sourcingReviewStatus === 'Rejected') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
       this.resourceStatusClass = 'sb-color-error';
