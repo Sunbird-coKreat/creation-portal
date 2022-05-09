@@ -618,6 +618,10 @@
     },
     "originData": {
       "type": "object"
+    },
+    "downloadUrl": {
+      "type": "string",
+      "format": "url"
     }
   }
 }
