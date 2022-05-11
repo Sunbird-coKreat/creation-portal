@@ -1,21 +1,23 @@
-import { Component, OnInit, ViewChild, OnDestroy, Output, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit,  ViewChild, OnDestroy, Output, Input, EventEmitter, TemplateRef } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ISessionContext, IChapterListComponentInput, IResourceTemplateComponentInput } from '../../../sourcing/interfaces';
 import { ProgramTelemetryService } from '../../../program/services';
 import { ConfigService, ResourceService, ToasterService} from '@sunbird/shared';
-import { UserService, ProgramsService } from '@sunbird/core';
+import { UserService, ProgramsService, FrameworkService } from '@sunbird/core';
 import { empty } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-resource-template',
   templateUrl: './resource-template.component.html',
   styleUrls: ['./resource-template.component.scss']
 })
-export class ResourceTemplateComponent implements OnInit, OnDestroy {
+export class ResourceTemplateComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('modal') private modal;
   @ViewChild('questionTypeModal') questionTypeModal;
   @ViewChild('modeofcreationmodal') modeofcreationmodal;
+  @ViewChild('categoriesModal') categoriesModal: TemplateRef<any>;
 
   @Input() resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
   @Output() templateSelection = new EventEmitter<any>();
@@ -36,9 +38,17 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   public showQuestionTypeModal = false;
   public defaultFileSize: any;
   public defaultVideoSize: any;
+  public tab = 'collection';
+  dialogRef: any;
+  public scope: any = {
+    'contentCategories': [],
+    'collectionCategories': [],
+    'selectedCategory': {}
+    };
   constructor( public programTelemetryService: ProgramTelemetryService, public userService: UserService,
     public configService: ConfigService, public resourceService: ResourceService,
-    private programsService: ProgramsService, private toasterService: ToasterService) {
+    private programsService: ProgramsService, private toasterService: ToasterService, public dialog: MatDialog,
+    public frameworkService: FrameworkService) {
       this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
       (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
      this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
@@ -47,11 +57,13 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
+    //this.templateList = _.get(this.resourceTemplateComponentInput, 'templateList');
+    this.scope.contentCategories = _.get(this.resourceTemplateComponentInput, 'contentCategories');
+    this.scope.collectionCategories = _.get(this.resourceTemplateComponentInput, 'collectionCategories');
     this.programContext = _.get(this.resourceTemplateComponentInput, 'programContext');
     this.sessionContext = _.get(this.resourceTemplateComponentInput, 'sessionContext');
     this.unitIdentifier  = _.get(this.resourceTemplateComponentInput, 'unitIdentifier');
-    this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
+    this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     // tslint:disable-next-line:max-line-length
@@ -60,7 +72,24 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
      this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.unitIdentifier, 'Content', '1.0', {l1: this.sessionContext.collection});
   }
 
+  ngAfterViewInit() {
+    console.log(this.categoriesModal);
+      if (this.categoriesModal) {
+      //const channelData$ = this.frameworkService.readChannel();
+      //channelData$.subscribe((channelData) => {
+        //this.scope['userChannelData'] = channelData;
+        //const channelCats = _.get(this.scope['userChannelData'], 'primaryCategories');
+        //const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+        //this.scope['contentCategories'] = _.get(channeltargetObjectTypeGroup, 'Content');
+        //this.scope['collectionCategories'] = _.get(channeltargetObjectTypeGroup, 'Collection');
+        this.dialogRef = this.dialog.open(this.categoriesModal);
+      //});
+    }
+
+  }
+
   handleSubmit() {
+    this.templateSelected = this.scope.selectedCategory;
     this.programsService.getCategoryDefinition(this.templateSelected.name, this.programContext.rootorg_id, this.templateSelected.targetObjectType).subscribe((res) => {
       this.selectedtemplateDetails = res.result.objectCategoryDefinition;
       const catMetaData = this.selectedtemplateDetails.objectMetadata;
@@ -176,6 +205,9 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
       defaultfileSize:  this.defaultFileSize,
       defaultVideoSize: this.defaultVideoSize
     };
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
     this.templateSelection.emit({ type: 'next', template: this.templateSelected, templateDetails: this.selectedtemplateDetails });
   }
 

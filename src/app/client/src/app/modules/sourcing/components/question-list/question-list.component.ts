@@ -551,25 +551,31 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleActionButtons() {
+    let submissionDateFlag;
     this.visibility = {};
-    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
-    this.visibility['showSave'] = submissionDateFlag && this.canSave();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
-     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.resourceDetails, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
+
+    if (_.get(this.sessionContext, 'workspaceContent') && _.get(this.sessionContext, 'workspaceContent') === true) {
+      submissionDateFlag = true;
+    } else {
+      submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    }
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
+      this.visibility['showSave'] = submissionDateFlag && this.canSave();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.resourceDetails, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
   }
 
   canDeleteQuestion() {

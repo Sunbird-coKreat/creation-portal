@@ -11,7 +11,9 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ContentService } from './services/content/content.service';
-
+import { DynamicModule } from 'ng-dynamic-component';
+import { SourcingModule } from '../sourcing/sourcing.module';
+import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../sourcing';
 @NgModule({
   declarations: [WorkspaceComponent, ContentListComponent],
   imports: [
@@ -23,7 +25,9 @@ import { ContentService } from './services/content/content.service';
     MatDialogModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedFeatureModule
+    SharedFeatureModule,
+    SourcingModule,
+    DynamicModule.withComponents([CollectionComponent, DashboardComponent, ChapterListComponent])
   ],
   providers: [
     SearchService,

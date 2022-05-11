@@ -992,6 +992,28 @@ export class HelperService {
       return response;
     }));
   }
+  manageWorkSpacePublish (programContext, contentData) {
+    this.publishContent(contentData.identifier, this.userService.userProfile.userId)
+    .subscribe(res => {
+        this.publishContentOnOrigin('accept', contentData.identifier, contentData, programContext, this.onAfterWorkspaceReviewAction);
+    }, (err) => {
+      const errInfo = {
+        errorMsg: this.resourceService.messages.fmsg.m00102,
+
+      };
+      this.sourcingService.apiErrorHandling(err, errInfo);
+    });
+  }
+  onAfterWorkspaceReviewAction (action) {
+    if (action === 'accept' || action === 'acceptWithChanges') {
+      this.toasterService.success(this.resourceService.messages.smsg.m0066);
+    } else if (action === 'reject') {
+      this.toasterService.success(this.resourceService.messages.smsg.m0067);
+    }
+    this.sendNotification.next(_.capitalize(action));
+    this.programStageService.removeLastStage();
+    this.programsService.emitHeaderEvent(true);
+  }
 
   // tslint:disable-next-line:max-line-length
   manageSourcingActions (action, sessionContext, programContext, unitIdentifier, contentData, rejectComment = '', isMetadataOverridden =  false) {
@@ -1031,7 +1053,7 @@ export class HelperService {
     } else if (programContext.target_type === 'searchCriteria') {
       if (this.checkIfContentisWithProgram(contentData.identifier, programContext)) { return; }
       if (action === 'accept' || action === 'acceptWithChanges') {
-        this.publishContentOnOrigin(action, contentData.identifier, contentData, programContext);
+        this.publishContentOnOrigin(action, contentData.identifier, contentData, programContext, this.attachContentToProgram);
       } else {
         const me = this;
         setTimeout(() => {
@@ -1071,7 +1093,7 @@ export class HelperService {
     });
   }
 
-  publishContentOnOrigin(action, contentId, contentMetaData, programContext) {
+  publishContentOnOrigin(action, contentId, contentMetaData, programContext, callbackFunction?) {
     if (programContext.target_type === 'searchCriteria') {
       contentMetaData['createdFor'] = [programContext.rootorg_id];
     } else {
@@ -1119,7 +1141,7 @@ export class HelperService {
       if (res && res.result) {
         const me = this;
         setTimeout(() => {
-          me.attachContentToProgram(action, contentId, programContext);
+          callbackFunction(action, contentId, programContext);
         }, 1000);
       }
     }, err => {
@@ -1466,6 +1488,9 @@ export class HelperService {
     if (_.get(templateDetails, 'appIcon')) {
       obj['appIcon'] = _.get(templateDetails, 'appIcon');
     }
+    if (sessionContext.workspaceContent === true) {
+      obj['createdFor'] = [this.userService.userProfile.rootOrgId];
+    }
     if (_.get(templateDetails, 'modeOfCreation') === 'question') {
       obj['questionCategories'] =  [templateDetails.questionCategory];
       if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
@@ -1504,6 +1529,11 @@ export class HelperService {
     return this.actionService.post(option);
   }
 
+  canWorkspaceReviewerPerformActions(contentMetaData) {
+    return !!(this.router.url.includes('/sourcing')
+    && !contentMetaData.sampleContent === true && contentMetaData.status === 'Review'
+    && this.userService.userid !== contentMetaData.createdBy);
+  }
   canSourcingReviewerPerformActions(contentMetaData, sourcingReviewStatus, programContext, originCollectionData, selectedOriginUnitStatus) {
     const resourceStatus = contentMetaData.status;
     // tslint:disable-next-line:max-line-length

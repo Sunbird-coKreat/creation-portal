@@ -467,8 +467,21 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   handleActionButtons() {
+    let submissionDateFlag;
     this.visibility = {};
-    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+
+    if (_.get(this.sessionContext, 'workspaceContent') && _.get(this.sessionContext, 'workspaceContent') === true) {
+      submissionDateFlag = true;
+      this.visibility['showSourcingPublish'] = this.helperService.canWorkspaceReviewerPerformActions(this.contentMetaData);
+      this.visibility['showSendForCorrections'] = this.visibility['showSourcingPublish'] && this.canSendForCorrections();
+      this.visibility['showSourcingReject'] =  false;
+    } else {
+      submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+      this.visibility['showSourcingPublish'] = this.helperService.canSourcingReviewerPerformActions(this.contentMetaData, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
+      this.visibility['showSourcingReject'] = this.visibility['showSourcingPublish'];
+      this.visibility['showSendForCorrections'] = this.visibility['showSourcingPublish'] && this.canSendForCorrections();
+    }
+
     // tslint:disable-next-line:max-line-length
     this.visibility['showChangeFile'] = submissionDateFlag && this.canChangeFile();
     // tslint:disable-next-line:max-line-length
@@ -482,8 +495,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     // tslint:disable-next-line:max-line-length
     this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
     // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.contentMetaData, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
-    this.visibility['showSendForCorrections'] = this.visibility['showSourcingActionButtons'] && this.canSendForCorrections();
   }
 
   canSendForCorrections() {
@@ -522,13 +533,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
 
   canPublishContent() {
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
+    return (this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true &&
     // tslint:disable-next-line:max-line-length
     this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
   }
 
   canReviewContent() {
-    // tslint:disable-next-line:max-line-length
     return !!(this.router.url.includes('/contribute') && !this.contentMetaData.sampleContent === true && this.hasAccessFor(['REVIEWER']) && this.resourceStatus === 'Review' && this.userService.userid !== this.contentMetaData.createdBy);
   }
 
@@ -1348,11 +1358,29 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     );
   }
 
+  sourcingAction (action) {
+    let rejectComment = '';
+    if (action === 'reject' && this.FormControl.value.rejectComment.length) {
+      rejectComment = this.FormControl.value.rejectComment;
+    }
+    if (_.get(this.sessionContext, 'workspaceContent') === true) {
+      if (action === 'accept') {
+        this.helperService.manageWorkSpacePublish(this.programContext, this.contentMetaData);
+        return false;
+      } else {
+        this.requestCorrectionsBySourcing();
+      }
+    } else {
+      this.attachContentToTextbook(action);
+    }
+  }
+
   attachContentToTextbook (action) {
     let rejectComment = '';
     if (action === 'reject' && this.FormControl.value.rejectComment.length) {
       rejectComment = this.FormControl.value.rejectComment;
     }
+
     if (this.contentMetaData.interceptionPoints) {
       const interceptionPoints = _.get(this.contentMetaData.interceptionPoints, 'items');
       if (interceptionPoints) {

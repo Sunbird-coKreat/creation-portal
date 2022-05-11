@@ -1,3 +1,63 @@
+<!-- Module categoriesListModal -->
+  <ng-template #categoriesModal>
+  <!--app-resource-template *ngIf='showPrimaryCategoriesModal'
+  [resourceTemplateComponentInput]="resourceTemplateComponentInput"
+  (templateSelection)="handleCategorySelection($event)">
+  </app-resource-template-->
+  <div class="sb-mat__modal">
+    <div mat-dialog-title>
+      <div class="title" tabindex="0">Select to Create</div>
+      <button type="button" aria-label="close dialog" class="close-btn" ((click)="closeDialog()" mat-dialog-close
+        tabindex="0"></button>
+    </div>
+    <mat-dialog-content>
+      <sui-tabset>
+        <div class="ui pointing secondary menu sb-bg-color-primary-100 sb-header-sticky">
+          <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
+            <div class="p-0 m-0 d-flex flex-jc-space-between">
+              <div *ngIf="scope['collectionCategories'].length" (click)="tab='collection'" [ngClass]="{'active': tab === 'collection'}"
+                class="item cursor-pointer">Collection</div>
+              <div *ngIf="scope['contentCategories'].length" (click)="tab='content'" [ngClass]="{'active': tab === 'content'}" class="item cursor-pointer">
+                Content</div>
+            </div>
+          </div>
+        </div>
+        <div [ngClass]="{'active':tab == 'collection'}"
+          class="ui segment p-0 m-0 sb-bg-color-primary-0 dynamicHeight tab">
+          <div class="ui grid p-20 flex-jc-center m-0">
+            <div class="three wide column p-10" *ngFor="let template of scope['collectionCategories']" (click)="scope['selectedCategory'] = template" >
+              <div class="ui card text-center common-contribution-card" [ngClass]="{'active': scope['selectedCategory'] === template}">
+                <div class="content">
+                  <i class="check circle icon"></i>
+                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                  <div class="content-title pt-16 pb-8">{{template.name}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div [ngClass]="{'active':tab == 'content'}" class="ui segment p-0 m-0 sb-bg-color-primary-0 tab dynamicHeight">
+          <div class="ui grid p-20 flex-jc-center m-0">
+            <div class="three wide column p-10" *ngFor="let template of scope['contentCategories']" (click)="scope['selectedCategory'] = template" >
+              <div class="ui card text-center common-contribution-card" [ngClass]="{'active': scope['selectedCategory'] === template}">
+                <div class="content">
+                  <i class="check circle icon"></i>
+                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
+                  <div class="content-title pt-16 pb-8">{{template.name}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sui-tabset>
+    </mat-dialog-content>
+    <mat-dialog-actions class="sb-mat__modal__actions">
+        <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': scope['selectedCategory']?.name, 'sb-btn-disabled': !scope['selectedCategory']?.name}" (click)="handleSubmit()">Continue</button>
+    </mat-dialog-actions>
+  </div>
+</ng-template>
+<!-- Module createPopUpMat -->
+<!--
 <sui-modal [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
   appBodyScroll (dismissed)="modal.deny(); templateSelection.emit({type: 'close'})" #modal>
   <div class="sb-modal-header">
@@ -22,7 +82,6 @@
       </div>
     </div>
   </div>
-  <!-- Selection of Question in modal -->
 
   <div class="sb-modal-actions">
     <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleSubmit()"
@@ -35,6 +94,7 @@
     </button>
   </div>
 </sui-modal>
+-->
 <sui-modal *ngIf="showModeofCreationModal" [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
   appBodyScroll (dismissed)="showModeofCreationModal=false" #modeofcreationmodal>
   <div class="sb-modal-header">
@@ -57,7 +117,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="handleModeOfCreation()"
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': selectedtemplateDetails['modeOfCreation'], 'sb-btn-disabled': !selectedtemplateDetails['modeOfCreation']}" (click)="handleModeOfCreation()"
     appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"
@@ -115,7 +175,7 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': showButton, 'sb-btn-disabled': !showButton}" (click)="submit()"
+    <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': selectedtemplateDetails['questionCategory'], 'sb-btn-disabled': !selectedtemplateDetails['questionCategory']}" (click)="submit()"
     appTelemetryInteract
             [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('templateSelection-button', 'click', 'chapter-list')"
             [telemetryInteractObject]="telemetryInteractObject"

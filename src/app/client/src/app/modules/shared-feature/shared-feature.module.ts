@@ -16,6 +16,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
   SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule} from 'ng2-semantic-ui-v9';
 import { HelpPageComponent } from './components/help-page/help-page.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   imports: [
@@ -29,6 +30,7 @@ import { HelpPageComponent } from './components/help-page/help-page.component';
     SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule,
     FormsModule,
     ReactiveFormsModule,
+    MatDialogModule,
     SuiModule
   ],
   declarations: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,

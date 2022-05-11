@@ -1,3 +1,5 @@
+<ng-container *ngIf="currentStage === 'contentListComponent'">
+
 <div class="d-flex flex-jc-space-between d-flex sb-pageSection ">
   <div>
     <div class="sb-color-primary d-inline-block br-2 pr-10 mr-10">
@@ -37,7 +39,7 @@
       <button class="sb-btn sb-btn-normal sb-btn-outline-primary mx-10" type="button" (click)="openFilterPopUpMat()"><i
           class="filter icon"></i>
         Apply Filter</button>
-      <button *ngIf="creator" class="px-10 sb-btn sb-btn-primary sb-btn-normal" (click)="openCreatePopUpMat()"><i
+      <button *ngIf="creator" class="px-10 sb-btn sb-btn-primary sb-btn-normal" (click)="showResourceTemplate()"><i
           class="plus outline icon"></i>Create</button>
     </div>
   </div>
@@ -47,6 +49,11 @@
   (applyFilters)="applyFilters($event)" [filtersAppliedCount]="filtersAppliedCount"
   [filtersToShow]="filtersToShow[selectedTab]">
 </app-project-filter>
+
+<app-resource-template *ngIf="showPrimaryCategoriesModal === true"
+  [resourceTemplateComponentInput]="workspaceScope['resourceTemplateComponentInput']"
+  (templateSelection)="handleCategorySelection($event)">
+</app-resource-template>
 
 <!-- Module createPopUpMat -->
 <ng-template #createPopUpMat>
@@ -61,10 +68,9 @@
         <div class="ui pointing secondary menu sb-bg-color-primary-100 sb-header-sticky">
           <div class="ui container p-0 m-0 d-flex flex-ai-center flex-jc-center">
             <div class="p-0 m-0 d-flex flex-jc-space-between">
-              <div (click)="selectTab('collection')" [ngClass]="{'active': tab === 'collection'}"
-                class="item cursor-pointer">My
-                Collection</div>
-              <div (click)="selectTab('content')" [ngClass]="{'active': tab === 'content'}" class="item cursor-pointer">
+              <div *ngIf="workspaceScope['collectionCategories'].length" (click)="selectTab('collection')" [ngClass]="{'active': tab === 'collection'}"
+                class="item cursor-pointer">Collection</div>
+              <div *ngIf="workspaceScope['contentCategories'].length" (click)="selectTab('content')" [ngClass]="{'active': tab === 'content'}" class="item cursor-pointer">
                 Content</div>
             </div>
           </div>
@@ -72,30 +78,12 @@
         <div [ngClass]="{'active':tab == 'collection'}"
           class="ui segment p-0 m-0 sb-bg-color-primary-0 dynamicHeight tab">
           <div class="ui grid p-20 flex-jc-center m-0">
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
+            <div class="three wide column p-10" *ngFor="let template of workspaceScope['collectionCategories']" (click)="workspaceScope['selectedCategory'] = template" >
+              <div class="ui card text-center common-contribution-card" [ngClass]="{'active': workspaceScope['selectedCategory'] === template}">
                 <div class="content">
                   <i class="check circle icon"></i>
                   <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Content Paylist</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Book</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Course</div>
+                  <div class="content-title pt-16 pb-8">{{template.name}}</div>
                 </div>
               </div>
             </div>
@@ -103,66 +91,12 @@
         </div>
         <div [ngClass]="{'active':tab == 'content'}" class="ui segment p-0 m-0 sb-bg-color-primary-0 tab dynamicHeight">
           <div class="ui grid p-20 flex-jc-center m-0">
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
+            <div class="three wide column p-10" *ngFor="let template of workspaceScope['contentCategories']" (click)="workspaceScope['selectedCategory'] = template" >
+              <div class="ui card text-center common-contribution-card" [ngClass]="{'active': workspaceScope['selectedCategory'] === template}">
                 <div class="content">
                   <i class="check circle icon"></i>
                   <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Course Assessment</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Explanation Content</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">eTextbook</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Practice Questionsets</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Learning Resources</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Old Practice Questionsets</div>
-                </div>
-              </div>
-            </div>
-            <div class="three wide column p-10">
-              <div class="ui card text-center common-contribution-card">
-                <div class="content">
-                  <i class="check circle icon"></i>
-                  <img class="mt-16" src="../assets/images/book.png" rel="placeholder">
-                  <div class="content-title pt-16 pb-8">Techer Resource</div>
+                  <div class="content-title pt-16 pb-8">{{template.name}}</div>
                 </div>
               </div>
             </div>
@@ -170,6 +104,9 @@
         </div>
       </sui-tabset>
     </mat-dialog-content>
+    <mat-dialog-actions class="sb-mat__modal__actions">
+        <button class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': workspaceScope['selectedCategory']?.name, 'sb-btn-disabled': !workspaceScope['selectedCategory']?.name}" (click)="submitForCreation()">Continue</button>
+    </mat-dialog-actions>
   </div>
 </ng-template>
 <!-- Module createPopUpMat -->
@@ -310,12 +247,15 @@
           </td>
           <td>
             <span class="pull-right">
-              <button class="sb-btn sb-btn-normal sb-btn-outline-primary" type="button">Open</button>
+              <button class="sb-btn sb-btn-normal sb-btn-outline-primary" type="button" (click)="openContent(item)">
+                {{resourceService.frmelmnts.btn.open}}</button>
               <div class="sb-dock-icon-tooltip d-inline-block">
                 <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
                   <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
                   <div class="menu" suiDropdownMenu>
-                    <div *ngIf="item.allowDelete" class="item" (click)="confirmDelete(item)">Delete</div>
+                    <div *ngIf="item.allowDelete" class="item" (click)="confirmDelete(item)">
+                      {{resourceService?.frmelmnts?.lbl?.delete}}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -383,3 +323,7 @@
     </button>
   </div>
 </sui-modal>
+</ng-container>
+<ng-container *ngIf="currentStage !== 'contentListComponent'">
+	<ndc-dynamic [ndcDynamicComponent]="component" [ndcDynamicInputs]="dynamicInputs" [ndcDynamicOutputs]="outputs"></ndc-dynamic>
+</ng-container>

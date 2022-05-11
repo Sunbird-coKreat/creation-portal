@@ -1077,7 +1077,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   resourceTemplateInputData() {
-    //let contentCategories = this.programsService.getNominatedTargetPrimaryCategories(this.programContext, this.sessionContext.nominationDetails);
     this.sessionContext.telemetryPageDetails = {
       telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNominationSampleDetails,
       telemetryInteractCdata: this.telemetryInteractCdata
