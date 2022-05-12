@@ -220,7 +220,7 @@ xdescribe('CollectionComponent', () => {
     expect(_.has(component.collectionList, 'Kannada')).toEqual(true); // As per the spec data
    });
 
-   it ('#setTargetCollectionValue() should set targetCollection values', () => {
+   xit ('#setTargetCollectionValue() should set targetCollection values', () => {
     const  service  = TestBed.get(ProgramsService);
     spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
     component.programContext = programDetailsTargetCollection;
@@ -278,7 +278,7 @@ xdescribe('CollectionComponent', () => {
     expect(component.sessionContext.targetCollectionFrameworksData).toBe(frameworkData);
   });
 
-  it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+  xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
     component.programContext = {target_collection_category: 'Course'};
     component['userService'] = TestBed.inject(UserService);
     component.firstLevelFolderLabel = undefined;

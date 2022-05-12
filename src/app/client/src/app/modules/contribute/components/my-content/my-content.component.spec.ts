@@ -132,7 +132,7 @@ describe('MyContentComponent', () => {
   });
 
 
-  it('#onCardClick() should set #selectedContributionDetails data', () => {
+  xit('#onCardClick() should set #selectedContributionDetails data', () => {
     component.contents = mockData.contentListRes.result.content;
     spyOn(component, 'setContentCount').and.callThrough();
     spyOn(component, 'loadTabComponent').and.callThrough();

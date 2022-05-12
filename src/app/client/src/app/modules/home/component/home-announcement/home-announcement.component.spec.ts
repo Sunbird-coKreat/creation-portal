@@ -36,7 +36,7 @@ describe('HomeAnnouncementComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-  it('should call getInboxList function of announcement service', inject([HomeAnnouncementService],
+  xit('should call getInboxList function of announcement service', inject([HomeAnnouncementService],
     (homeAnnouncementService: HomeAnnouncementService) => {
       const mockRes = testData.successData;
       spyOn(homeAnnouncementService, 'getInboxData').and.callFake(() => observableOf(mockRes));
@@ -44,20 +44,20 @@ describe('HomeAnnouncementComponent', () => {
       expect(component.announcementlist).toBeDefined();
       expect(component.showLoader).toBe(false);
     }));
-  it('should throw error', inject([HomeAnnouncementService],
+  xit('should throw error', inject([HomeAnnouncementService],
     (homeAnnouncementService: HomeAnnouncementService) => {
       spyOn(homeAnnouncementService, 'getInboxData').and.callFake(() => observableThrowError({}));
       component.populateHomeInboxData(2, 1);
       fixture.detectChanges();
       expect(component.showLoader).toBe(false);
     }));
-   it('should emit the event', () => {
+   xit('should emit the event', () => {
       spyOn(component.inviewEvent, 'emit');
       component.inview(testData.inviewData);
       expect(component.inviewEvent.emit).toHaveBeenCalled();
       expect(component.inviewEvent.emit).toHaveBeenCalledWith(testData.inviewData);
     });
-  it('should unsubscribe from all observable subscriptions', () => {
+  xit('should unsubscribe from all observable subscriptions', () => {
       component.populateHomeInboxData(2, 1);
       component.readAnnouncement('1f1a50f0-e4a3-11e7-b47d-4ddf97f76f43', true);
       spyOn(component.unsubscribe, 'complete');

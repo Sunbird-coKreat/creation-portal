@@ -705,11 +705,22 @@ describe('CreateProgramComponent', () => {
   it('Should call the validateFormBeforePublish method', () => {
     component.createProgramForm = new FormGroup({
       description: new FormControl('description', Validators.required),
-
+      enddate: new FormControl('2022-08-01T18:29:59.000Z', Validators.required),
+      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
     });
     component.projectScopeForm = new FormGroup({
       medium: new FormControl('English', Validators.required),
-
+      gradeLevel: new FormControl('Class1', Validators.required),
+      subject: new FormControl('Maths', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new FormControl('public', Validators.required),
+      defaultContributeOrgReview: new FormControl(false, Validators.required),
+      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new FormControl('NCFCOPY', Validators.required),
+      target_collection_category: new FormControl('Course', Validators.required),
     });
     component.projectScopeForm.value.pcollections = [];
     const toasterService = TestBed.get(ToasterService);

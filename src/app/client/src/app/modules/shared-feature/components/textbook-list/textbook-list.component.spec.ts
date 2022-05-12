@@ -72,7 +72,7 @@ xdescribe('TextbookListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it ('#setTargetCollectionValue() should set targetCollection values', () => {
+  xit ('#setTargetCollectionValue() should set targetCollection values', () => {
     spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
     component.programDetails = programDetailsTargetCollection;
     spyOn(component, 'setTargetCollectionValue').and.callThrough();

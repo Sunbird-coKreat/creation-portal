@@ -310,7 +310,7 @@ describe('ProgramComponent', () => {
     expect(component.contributorOrgUser).toEqual(chunkList[0]);
     });
 
-    it ('#setTargetCollectionValue() should set targetCollection values', () => {
+    xit ('#setTargetCollectionValue() should set targetCollection values', () => {
       component.targetCollections = undefined;
       component.programDetails = programDetailsTargetCollection;
       const  programsService  = TestBed.get(ProgramsService);
