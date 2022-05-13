@@ -13,6 +13,8 @@ import { throwError } from 'rxjs';
 import { ProgramTelemetryService } from '../../../program/services';
 import { ConfigService, ResourceService, ToasterService, BrowserCacheTtlService } from '@sunbird/shared';
 import { UserService, ProgramsService } from '@sunbird/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const routerStub = {
   navigate: jasmine.createSpy('navigate')
@@ -44,7 +46,7 @@ describe('ResourceTemplateComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule, TelemetryModule, HttpClientTestingModule, RouterTestingModule],
+      imports: [SuiModule, TelemetryModule, HttpClientTestingModule, RouterTestingModule, MatDialogModule],
       declarations: [ResourceTemplateComponent],
       providers: [ ProgramTelemetryService, ConfigService, TelemetryService, ResourceService, CacheService, BrowserCacheTtlService, ToasterService, DatePipe, ProgramsService, DatePipe,
         { provide: Router, useValue: routerStub },
@@ -78,7 +80,8 @@ describe('ResourceTemplateComponent', () => {
     component.ngOnInit();
     expect(component.unitIdentifier).toEqual('do_1131700101604311041350');
     expect(component.telemetryPageId).toEqual('dummyPage');
-    expect(component.templateList).toBeDefined();
+    expect(component.scope.contentCategories).toBeDefined();
+    expect(component.scope.collectionCategories).toBeDefined();
     expect(component.sessionContext).toBeDefined();
   });
 
