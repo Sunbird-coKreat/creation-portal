@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { of,throwError as observableThrowError } from 'rxjs';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContributorsListComponent } from './contributors-list.component';
 import { TelemetryService } from './../../../telemetry/services/telemetry/telemetry.service';
@@ -77,7 +77,7 @@ describe('ContributorsListComponent', () => {
     expect(component.getData).toHaveBeenCalled();
   });
 
-  xit('getOrgList should call the registryService.getOrgList', () => {
+  it('getOrgList should call the registryService.getOrgList', () => {
     const registryService = TestBed.get(RegistryService);
     spyOn(registryService, 'getOrgList').and.returnValue(of(mockData.orgList));
     spyOn(component, 'getOrgList').and.callThrough();
@@ -87,7 +87,16 @@ describe('ContributorsListComponent', () => {
     expect(registryService.getOrgList).toHaveBeenCalled();
   });
 
-  xit('getPageId should set telemetryPageId', () => {
+  it('getOrgList should throw error on service error', () => {
+    const registryService = TestBed.get(RegistryService);
+    spyOn(registryService, 'getOrgList').and.callFake(() => observableThrowError({}));
+    component.getOrgList();
+    expect(component.getOrgList).toThrowError();
+  });
+
+
+
+  it('getPageId should set telemetryPageId', () => {
     spyOn(component, 'getPageId').and.callThrough();
     const pageId = component.getPageId();
     expect(component.telemetryPageId).toEqual('create-program');
@@ -105,9 +114,7 @@ describe('ContributorsListComponent', () => {
     expect(component.getUsers).toHaveBeenCalled();
   });
 
-  xit('navigateToPage should set pager value', () => {
-    const paginationService = TestBed.get(PaginationService);
-    spyOn(paginationService, 'getPager').and.returnValue([]);
+  it('navigateToPage should set pager value', () => {
     component.pager = mockData.pager;
     component.paginatedList[44] = [];
     component.listCnt = 1;
@@ -116,7 +123,6 @@ describe('ContributorsListComponent', () => {
     spyOn(component, 'navigateToPage').and.callThrough();
     component.navigateToPage(45);
     expect(component.pageNumber).toEqual(45);
-    expect(paginationService.getPager).toHaveBeenCalled();
   });
 
   it('clearSearch should call getData', () => {
@@ -171,4 +177,49 @@ describe('ContributorsListComponent', () => {
     expect(component.showLoader).toEqual(false);
     expect(component.isDisabledSaveBtn).toEqual(false);
   });
+
+  it('#updateSelection() should update the user selection to Org', ()=> {
+    component.contributorType = 'Organisation';
+    spyOn(component, 'updateSelection');
+    component.updateSelection('Organisation','');
+    expect(component.updateSelection).toHaveBeenCalled();
+  });
+  it('#updateSelection() should update the user selection to Individual', ()=> {
+    component.contributorType = 'Individual';
+    spyOn(component, 'updateSelection');
+    component.updateSelection('Individual','');
+    expect(component.updateSelection).toHaveBeenCalled();
+  });
+
+  it('#getIndividualList() should get the list of user profiles', ()=> {
+    const registryService = TestBed.get(RegistryService);
+    spyOn(registryService, 'getUserList').and.callFake(() => {});
+    spyOn(component, 'getIndividualList');
+    component.getIndividualList(500, 0);
+    expect(component.getIndividualList).toHaveBeenCalled();
+  }); 
+
+  it('getIndividualList should throw error on service error', () => {
+    const registryService = TestBed.get(RegistryService);
+    spyOn(registryService, 'getUserList').and.callFake(() => observableThrowError({}));
+    component.getIndividualList();
+    expect(component.getIndividualList).toThrowError();
+  });
+
+  xit('getUsersProfile should return user list', () => {
+    const programsService = TestBed.get(ProgramsService);
+    spyOn(programsService, 'getOrgUsersDetails').and.callFake(() => {});
+    //spyOn(component, 'getOrgUsersDetails').and.callThrough();
+    component.getUsersProfile('','','','','');
+    expect(component.getUsersProfile).toHaveBeenCalled();
+  });
+
+  it('getUsersProfile should throw error on service errorreturn user list', () => {
+    const programsService = TestBed.get(ProgramsService);
+    spyOn(programsService, 'getOrgUsersDetails').and.callFake(() => observableThrowError({}));
+    component.getUsersProfile('','','','','');
+    expect(component.getUsersProfile).toThrowError();
+  });
+  
 });
+

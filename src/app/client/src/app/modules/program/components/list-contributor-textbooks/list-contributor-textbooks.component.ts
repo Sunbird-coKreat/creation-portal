@@ -80,9 +80,9 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
-    this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
+  /*   this.activatedRoute.fragment.pipe(map(fragment => fragment || 'None')).subscribe((frag) => {
       this.selectedNominationDetails = frag;
-    });
+    }); */
     this.contributor = this.selectedNominationDetails;
     this.nominatedContentTypes = this.contributor.nominationData.targetprimarycategories ? _.join(_.map(this.contributor.nominationData.targetprimarycategories, 'name'), ', ') : _.join(this.helperService.mapContentTypesToCategories(this.contributor.nominationData.content_types), ', ');
     this.getPageId();

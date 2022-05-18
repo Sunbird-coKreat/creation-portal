@@ -250,20 +250,18 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
   });
 
-  xit('getProgramDetails Should call apiErrorHandling method', () => {
+  it('getProgramDetails Should call apiErrorHandling method', () => {
     TestBed.get(ActivatedRoute).snapshot.params = of({ programId: 'abcd12345'});
     component.telemetryPageId = 'create-program';
     component.telemetryInteractCdata = {};
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'getProgram').and.returnValue(throwError({}));
-    const sourcingService = TestBed.get(SourcingService);
-    spyOn(sourcingService, 'apiErrorHandling').and.callFake(() => {});
     spyOn(component, 'getProgramDetails').and.callThrough();
     programsService.getProgram();
     expect(programsService.getProgram).toHaveBeenCalled();
     expect(component.programDetails).toEqual({});
     expect(component.selectedTargetCollection).toBeUndefined();
-    expect(sourcingService.apiErrorHandling).toHaveBeenCalled();
+    expect(component.getProgramDetails).toThrowError();
   });
 
   it('getUploadVideo Should call sourcingService.getVideo method', () => {
@@ -776,6 +774,20 @@ describe('CreateProgramComponent', () => {
       }
     ]);
     expect(component.editTargetObjectFlag).toBeFalsy();
+  });
+
+  it('#setProjectScopeDetails should set set Project Scope Details', () => {
+
+    const frameworkService = TestBed.get(FrameworkService);
+    spyOn(frameworkService, 'readChannel').and.returnValue(of({channelData: 'channelData'}));
+    spyOn(component, 'getFramework').and.returnValue(of({response: 'response'}));
+    
+    spyOn(frameworkService, 'getMasterCategories').and.callFake(() => {});
+    spyOn(component, 'setProjectScopeDetails').and.callFake(() => {});
+    component.setProjectScopeDetails();
+    expect(component.setProjectScopeDetails).toHaveBeenCalled();
+   // expect(component.getUserProfile).toThrowError();
+
   });
 
 });
