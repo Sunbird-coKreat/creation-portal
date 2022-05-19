@@ -1,7 +1,3 @@
-import { ActionService } from '../../../core/services/action/action.service';
-import { HelperService } from '../../../sourcing/services/helper.service';
-import { TranscriptService } from '../../../core/services/transcript/transcript.service';
-import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.service';
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
@@ -11,6 +7,10 @@ import { TranscriptMetadata } from './transcript';
 import { SearchService } from '@sunbird/core';
 import { ActivatedRoute } from '@angular/router';
 import { ToasterService, ConfigService, ResourceService } from '@sunbird/shared';
+import { ActionService } from '../../../core/services/action/action.service';
+import { HelperService } from '../../../sourcing/services/helper.service';
+import { TranscriptService } from '../../../core/services/transcript/transcript.service';
+import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.service';
 
 @Component({
   selector: 'app-transcripts',
@@ -24,6 +24,7 @@ export class TranscriptsComponent implements OnInit {
   public transcriptForm: FormGroup;
   public langControl = 'language';
   public languageOptions;
+  public supportedLanguages;
   public assetList = [];
   public loader = true;
   public disableDoneBtn = true;
@@ -50,18 +51,20 @@ export class TranscriptsComponent implements OnInit {
   ) {
     const languages = (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')) ?
       // tslint:disable-next-line:max-line-length
-      (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : 'English, Hindi, Assamese, Bengali,Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya';
-    this.languageOptions = _.sortBy(languages.split(',').map(function (item) {
-      return item.trim();
-    }), lanauge => lanauge);
+      (<HTMLInputElement>document.getElementById('sunbirdTranscriptSupportedLanguages')).value : '[{"language":"English","languageCode":"en"},{"language":"Hindi","languageCode":"hi"},{"language":"Assamese","languageCode":"as"},{"language":"Bengali","languageCode":"bn"},{"language":"Gujarati","languageCode":"gu"},{"language":"Kannada","languageCode":"ka"},{"language":"Marathi","languageCode":"mr"},{"language":"Odia","languageCode":"or"},{"language":"Tamil","languageCode":"ta"},{"language":"Telugu","languageCode":"te"}]';
 
+    this.supportedLanguages = JSON.parse(languages);
+    this.languageOptions = _.sortBy(_.map(this.supportedLanguages , 'language'));
+
+
+    // tslint:disable-next-line:max-line-length
     const sunbirdTranscriptFileFormat = (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')) ? (<HTMLInputElement>document.getElementById('sunbirdTranscriptFileFormat')).value : 'srt';
-    this.acceptedFileFormats = sunbirdTranscriptFileFormat.split(',').map(function (item) {
+    this.acceptedFileFormats = sunbirdTranscriptFileFormat.split(',').map((item) => {
       return item.trim();
     });
 
     this.acceptFileExtensions = this.acceptedFileFormats.map(item => {
-      return "." + item;
+      return '.' + item;
     }).toString();
   }
 
@@ -119,6 +122,7 @@ export class TranscriptsComponent implements OnInit {
     return this.fb.group({
       identifier: [data ? data.identifier : null],
       language: [data ? data.language : null],
+      languageCode: [data ? data.languageCode : null],
       transcriptFile: '',
       fileName: [data ? data.artifactUrl.split('/').pop() : null]
     });
@@ -134,7 +138,7 @@ export class TranscriptsComponent implements OnInit {
 
   attachFile(event, index) {
     if (!this.getLanguageControl(index).value) {
-      event.target.value = "";
+      event.target.value = '';
       this.toasterService.warning('Please select language first');
       return false;
     }
@@ -142,7 +146,7 @@ export class TranscriptsComponent implements OnInit {
     this.disableDoneBtn = false;
     const file = event.target.files[0];
     if (!this.fileValidation(file)) {
-      event.target.value = "";
+      event.target.value = '';
       return false;
     }
 
@@ -192,7 +196,7 @@ export class TranscriptsComponent implements OnInit {
   }
 
   download(identifier) {
-    const item = _.find(this.contentMetaData.transcripts, e => e.identifier == identifier);
+    const item = _.find(this.contentMetaData.transcripts, e => e.identifier === identifier);
     if (_.get(item, 'artifactUrl')) {
       window.open(_.get(item, 'artifactUrl'), '_blank');
     } else {
@@ -216,7 +220,7 @@ export class TranscriptsComponent implements OnInit {
             return true;
           }
         }
-      })
+      });
     }
 
     this.disableDoneBtn = false;
@@ -258,6 +262,12 @@ export class TranscriptsComponent implements OnInit {
             switchMap(asset => {
               transcriptMetadata.language = item.get('language').value;
               transcriptMetadata.identifier = _.get(asset, 'result.identifier');
+              const seletedLanguage = _.find(this.supportedLanguages, (lan) => {
+                return lan.language.toLowerCase() === transcriptMetadata.language.toLowerCase();
+              });
+              if (seletedLanguage.languageCode) {
+                transcriptMetadata.languageCode = seletedLanguage.languageCode;
+              }
               return this.generatePreSignedUrl(asset, item);
             }),
             switchMap((rsp) => {
@@ -276,6 +286,12 @@ export class TranscriptsComponent implements OnInit {
           forkReq = this.createOrUpdateAsset(item).pipe(switchMap((rs) => {
             transcriptMetadata.identifier = _.get(orgAsset, 'identifier');
             transcriptMetadata.language = item.get('language').value;
+            const seletedLanguage = _.find(this.supportedLanguages, (lan) => {
+              return lan.language.toLowerCase() === transcriptMetadata.language.toLowerCase();
+            });
+            if (seletedLanguage.languageCode) {
+              transcriptMetadata.languageCode = seletedLanguage.languageCode;
+            }
             transcriptMetadata.artifactUrl = _.get(orgAsset, 'artifactUrl');
             transcriptMeta.push(transcriptMetadata);
             return of(transcriptMetadata);
@@ -298,8 +314,7 @@ export class TranscriptsComponent implements OnInit {
         console.log(error);
         this.closePopup.emit();
       });
-    }
-    else if (!_.isEmpty(this.contentMetaData.transcripts)) {
+    } else if (!_.isEmpty(this.contentMetaData.transcripts)) {
       this.updateContent(transcriptMeta).subscribe(response => {
         this.toasterService.success(this.resourceService?.messages?.smsg?.transcriptUpdate);
         this.closePopup.emit();
@@ -318,8 +333,7 @@ export class TranscriptsComponent implements OnInit {
 
     if (lastItem.get('fileName').value && lastItem.get('language').value) {
       this.disableAddItemBtn = false;
-    }
-    else {
+    } else {
       this.disableAddItemBtn = true;
     }
   }
@@ -403,7 +417,7 @@ export class TranscriptsComponent implements OnInit {
         'mediaType': 'text',
         'language': []
       }
-    }
+    };
   }
 
   getAssetList(): void {

@@ -58,7 +58,7 @@ let envVariables = {
   // generic editor question set and coleections children contents limit
   SUNBIRD_QUESTIONSET_CHILDREN_LIMIT: env.sunbird_questionset_children_limit || 500,
   SUNBIRD_COLLECTION_CHILDREN_LIMIT: env.sunbird_collection_children_limit || 1200,
-  SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES: env.sunbird_transcript_supported_languages || 'English, Hindi, Assamese, Bengali, Gujarati, Kannada, Malayalam, Marathi, Nepali, Odia, Punjabi, Tamil, Telugu, Urdu, Sanskrit, Maithili, Munda, Santali, Juang, Ho, Oriya',
+  SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES: env.sunbird_transcript_supported_languages || '[{"language":"English","languageCode":"en"},{"language":"Hindi","languageCode":"hi"},{"language":"Assamese","languageCode":"as"},{"language":"Bengali","languageCode":"bn"},{"language":"Gujarati","languageCode":"gu"},{"language":"Kannada","languageCode":"ka"},{"language":"Marathi","languageCode":"mr"},{"language":"Odia","languageCode":"or"},{"language":"Tamil","languageCode":"ta"},{"language":"Telugu","languageCode":"te"}]',
   SUNBIRD_TRANSCRIPT_FILE_FORMAT: env.sunbird_transcript_file_format || 'srt',
   SUNBIRD_TRANSCRIPT_REQUIRED: env.sunbird_transcript_required || false,
   SUNBIRD_BULK_UPLOAD_NAME_LENGTH: env.sunbird_bulk_upload_name_length || '50',
