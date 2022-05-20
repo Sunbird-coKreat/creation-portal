@@ -3,9 +3,9 @@ import { SharedModule, ToasterService, ConfigService, ResourceService, Navigatio
 import { ProgramsService, UserService, FrameworkService, NotificationService, ContentHelperService, RegistryService } from '@sunbird/core';
 import { DynamicModule } from 'ng-dynamic-component';
 import * as _ from 'lodash-es';
-import {  throwError , of, Subject } from 'rxjs';
+import { throwError, of, Subject } from 'rxjs';
 import * as SpecData from './program-nominations.spec.data';
-import {userDetail, chunkedUserList} from '../../services/programUserTestData';
+import { userDetail, chunkedUserList } from '../../services/programUserTestData';
 import { ProgramNominationsComponent } from './program-nominations.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
@@ -20,15 +20,16 @@ import { ContributorProfilePopupComponent } from '../contributor-profile-popup/c
 import { convertToParamMap } from '@angular/router';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
-import {ProgramTelemetryService} from '../../services';
+import { ProgramTelemetryService } from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const errorInitiate = false;
 const userServiceStub = {
   get() {
     if (errorInitiate) {
-      return throwError ({
+      return throwError({
         result: {
           responseCode: 404
         }
@@ -38,25 +39,25 @@ const userServiceStub = {
     }
   },
   userid: SpecData.userProfile.userId,
-  userProfile : SpecData.userProfile,
+  userProfile: SpecData.userProfile,
   appId: '12345'
 };
 
 const extPluginServiceStub = {
   get() {
     if (errorInitiate) {
-      return throwError ({
+      return throwError({
         result: {
           responseCode: 404
         }
       });
     } else {
-      return of({err: null, result: SpecData.programDetailsWithUserDetails});
+      return of({ err: null, result: SpecData.programDetailsWithUserDetails });
     }
   },
   post() {
     if (errorInitiate) {
-      return throwError ({
+      return throwError({
         result: {
           responseCode: 404
         }
@@ -71,7 +72,7 @@ const frameworkServiceStub = {
   initialize() {
     return null;
   },
-  frameworkData$:  of(SpecData.frameWorkData)
+  frameworkData$: of(SpecData.frameWorkData)
 };
 
 describe('ProgramNominationsComponent', () => {
@@ -82,10 +83,19 @@ describe('ProgramNominationsComponent', () => {
   let registryService: RegistryService;
   let fixture: ComponentFixture<ProgramNominationsComponent>;
 
-  class RouterStub {
-    navigate = jasmine.createSpy('navigate');
+  let mockRouter = {
+    navigate: jasmine.createSpy('navigate'),
+    getCurrentNavigation: () => {
+      return {
+        extras: {
+          state: {
+            arcadeSelectedGame: '-LAbVp7C0lTu9CV-Mgt-'
+          }
+        }
+      }
+    },
+    url: '/sourcing'
   }
-  const routerStub = { url: '/sourcing' };
 
   const fakeActivatedRoute = {
     snapshot: {
@@ -100,13 +110,13 @@ describe('ProgramNominationsComponent', () => {
       }
     },
     queryParamMap: of(convertToParamMap({
-        tab: 'contributionDashboard'
+      tab: 'contributionDashboard'
     }))
   };
   const resourceBundle = {
     messages: {
       emsg: {
-        blueprintViolation : 'Please provide all required blueprint values'
+        blueprintViolation: 'Please provide all required blueprint values'
       }
     }
   };
@@ -118,6 +128,7 @@ describe('ProgramNominationsComponent', () => {
         SharedModule.forRoot(),
         ReactiveFormsModule,
         FormsModule,
+        RouterTestingModule,
         TelemetryModule.forRoot(),
         HttpClientTestingModule
       ],
@@ -129,7 +140,7 @@ describe('ProgramNominationsComponent', () => {
         ContributorProfilePopupComponent
       ],
       providers: [
-        { provide: Router, useValue: routerStub },
+        { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: UserService, useValue: userServiceStub },
         { provide: ResourceService, useValue: resourceBundle },
@@ -150,6 +161,25 @@ describe('ProgramNominationsComponent', () => {
     registryService = TestBed.inject(RegistryService);
     collectionHierarchyService = TestBed.inject(CollectionHierarchyService);
     // fixture.detectChanges();
+    let router: Router = TestBed.inject(Router);
+    component.telemetryImpression = {
+      context: {
+        env: fakeActivatedRoute.snapshot.data.telemetry.env,
+        cdata: [{}],
+        pdata: {
+          id: 'userService.appId',
+          ver: 'version',
+          pid: 'PID'
+        },
+        did: ''
+      },
+      edata: {
+        type: 'snapshot.data.telemetry.type',
+        pageid: 'getPageId',
+        uri: 'router.url',
+        duration: 10
+      }
+    };
   });
 
   it('should have create and defined component', () => {
@@ -158,33 +188,33 @@ describe('ProgramNominationsComponent', () => {
 
   xit('should contribution dashboard data should not be empty', () => {
     spyOn(programsService, 'get').and.callFake(() => {
-        return of(SpecData.readProgramApiSuccessRes);
+      return of(SpecData.readProgramApiSuccessRes);
     });
     let postAlreadyCalled = false;
     spyOn(programsService, 'post').and.callFake(() => {
-        if (postAlreadyCalled) {
-            return of(SpecData.approvedNominationListApiSuccessRes);
-        }
-        postAlreadyCalled = true;
-        return of(SpecData.nominationListCountApiSuccessRes);
+      if (postAlreadyCalled) {
+        return of(SpecData.approvedNominationListApiSuccessRes);
+      }
+      postAlreadyCalled = true;
+      return of(SpecData.nominationListCountApiSuccessRes);
     });
     spyOn(collectionHierarchyService, 'getContentAggregation').and.callFake(() => {
-        return of(SpecData.searchContentApiSuccessRes);
+      return of(SpecData.searchContentApiSuccessRes);
     });
     spyOn(collectionHierarchyService, 'getCollectionWithProgramId').and.callFake(() => {
-        return of(SpecData.programCollectionListApiSuccessRes);
+      return of(SpecData.programCollectionListApiSuccessRes);
     });
     component.getProgramDetails();
     expect(component.contributionDashboardData.length).toBe(2);
   });
 
   it('#ngOnInit() method should initialize', () => {
-    spyOn(component, 'getPageId').and.callFake(() => {});
-    spyOn(component, 'getProgramDetails').and.callFake(() => {});
-    spyOn(programStageService, 'initialize').and.callFake(() => {});
-    spyOn(programStageService, 'addStage').and.callFake(() => {});
-    spyOn(programStageService, 'getStage').and.returnValue(of({stages: {}}));
-    spyOn(component, 'changeView').and.callFake(() => {});
+    spyOn(component, 'getPageId').and.callFake(() => { });
+    spyOn(component, 'getProgramDetails').and.callFake(() => { });
+    spyOn(programStageService, 'initialize').and.callFake(() => { });
+    spyOn(programStageService, 'addStage').and.callFake(() => { });
+    spyOn(programStageService, 'getStage').and.returnValue(of({ stages: {} }));
+    spyOn(component, 'changeView').and.callFake(() => { });
     component.ngOnInit();
     expect(component.filterApplied).toBeNull();
     expect(component.programId).toBeDefined();
@@ -202,7 +232,7 @@ describe('ProgramNominationsComponent', () => {
   it('#ngAfterViewInit() should set variable', () => {
     spyOn(component, 'ngAfterViewInit').and.callThrough();
     component.ngAfterViewInit();
-    expect(component.telemetryImpression).toBeUndefined();
+    expect(component.telemetryImpression).toBeDefined();
   });
 
   xit('#setTelemetryPageId() should return routes pageid', () => {
@@ -213,31 +243,31 @@ describe('ProgramNominationsComponent', () => {
     expect(pageId).toBeDefined();
   });
 
-  xit('#setTelemetryPageId() should set telemetryPageId for textbook', () => {
+  it('#setTelemetryPageId() should set telemetryPageId for textbook', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('textbook');
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  xit('#setTelemetryPageId() should set telemetryPageId for nomination', () => {
+  it('#setTelemetryPageId() should set telemetryPageId for nomination', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('nomination');
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  xit('#setTelemetryPageId() should set telemetryPageId for user', () => {
+  it('#setTelemetryPageId() should set telemetryPageId for user', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('user');
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  xit('#setTelemetryPageId() should set telemetryPageId for contributionDashboard', () => {
+  it('#setTelemetryPageId() should set telemetryPageId for contributionDashboard', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('contributionDashboard');
     expect(component.telemetryPageId).toBeDefined();
   });
 
-  xit('#setTelemetryPageId() should set telemetryPageId for report', () => {
+  it('#setTelemetryPageId() should set telemetryPageId for report', () => {
     spyOn(component, 'setTelemetryPageId').and.callThrough();
     component.setTelemetryPageId('report');
     expect(component.telemetryPageId).toBeDefined();
@@ -268,21 +298,21 @@ describe('ProgramNominationsComponent', () => {
 
   xit('should call generateCSV method', () => {
     spyOn(programsService, 'get').and.callFake(() => {
-        return of(SpecData.readProgramApiSuccessRes);
+      return of(SpecData.readProgramApiSuccessRes);
     });
     let postAlreadyCalled = false;
     spyOn(programsService, 'post').and.callFake(() => {
-        if (postAlreadyCalled) {
-            return of(SpecData.approvedNominationListApiSuccessRes);
-        }
-        postAlreadyCalled = true;
-        return of(SpecData.nominationListCountApiSuccessRes);
+      if (postAlreadyCalled) {
+        return of(SpecData.approvedNominationListApiSuccessRes);
+      }
+      postAlreadyCalled = true;
+      return of(SpecData.nominationListCountApiSuccessRes);
     });
     spyOn(collectionHierarchyService, 'getContentAggregation').and.callFake(() => {
-        return of(SpecData.searchContentApiSuccessRes);
+      return of(SpecData.searchContentApiSuccessRes);
     });
     spyOn(collectionHierarchyService, 'getCollectionWithProgramId').and.callFake(() => {
-        return of(SpecData.programCollectionListApiSuccessRes);
+      return of(SpecData.programCollectionListApiSuccessRes);
     });
     spyOn(programsService, 'generateCSV');
 
@@ -300,103 +330,326 @@ describe('ProgramNominationsComponent', () => {
   xit('get the user list when there is a search input', () => {
     spyOn(component, 'sortUsersList');
     component.searchInput = 'jnc68';
-    const  registryService  = TestBed.get(RegistryService);
+    const registryService = TestBed.get(RegistryService);
     const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput);
     expect(component.sortUsersList).toHaveBeenCalledWith(userList);
-    });
- xit('call the sortUsersList method when there is input', () => {
+  });
+  xit('call the sortUsersList method when there is input', () => {
     component.pageLimit = 1;
     component.searchInput = 'jnc68';
     component.sortUsersList(userDetail.result.response.content);
-    const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
+    const sortedList = programsService.sortCollection(userDetail.result.response.content, 'selectedRole', 'desc');
     expect(component.paginatedSourcingUsers).toBe(sortedList);
     expect(component.sourcingOrgUser).toBe(chunkedUserList[0]);
     expect(component.sourcingOrgUserCnt).toBe(chunkedUserList[0].length);
   });
   xit('call the sortUsersList method when there is empty input', () => {
-     component.pageLimit = 1;
-     component.searchInput = '';
-     component.sortUsersList(userDetail.result.response.content);
-     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc');
-     expect(component.paginatedSourcingUsers).toBe(sortedList);
-     expect(component.sourcingOrgUser).toBe(userDetail.result.response.content);
-     expect(component.sourcingOrgUserCnt).toBe(userDetail.result.response.content.length);
-    });
-    xit ('#setTargetCollectionValue() should set targetCollection values', () => {
-      spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
-      component.programDetails = SpecData.programDetailsTargetCollection;
-      spyOn(component, 'setTargetCollectionValue').and.callThrough();
-      component.setTargetCollectionValue();
-      expect(component.targetCollection).not.toBeUndefined();
-    });
-    it ('#setTargetCollectionValue() should not set targetCollection values in program-nomination', () => {
-      component.targetCollection = undefined;
-      component.programDetails = undefined;
-      spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
-      spyOn(component, 'setTargetCollectionValue').and.callThrough();
-      component.setTargetCollectionValue();
-      expect(component.targetCollection).toBeUndefined();
-      });
-    it ('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
-      component.programDetails = SpecData.programDetailsTargetCollection;
-      spyOn(component, 'setTargetCollectionValue').and.callThrough();
-      spyOn(programsService, 'setTargetCollectionName').and.callThrough();
-      component.setTargetCollectionValue();
-      expect(programsService.setTargetCollectionName).toHaveBeenCalled();
-    });
-    it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
-      const collection = {};
-      const  helperService  = TestBed.get(HelperService);
-      spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
-      spyOn(component, 'setFrameworkCategories').and.callThrough();
-      component.setFrameworkCategories(collection);
-      expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
-    });
-    xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
-      component['programDetails'] = {target_collection_category: 'Course'};
-      component['userService'] = TestBed.inject(UserService);
-      component.firstLevelFolderLabel = undefined;
-      spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
-      component.getCollectionCategoryDefinition();
-      expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
-      expect(component.firstLevelFolderLabel).toBeDefined();
-    });
-    it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
-      component['programDetails'] = {target_collection_category: undefined};
-      component['userService'] = TestBed.inject(UserService);
-      component.firstLevelFolderLabel = undefined;
-      spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
-      component.getCollectionCategoryDefinition();
-      expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
-    });
-    it('#getTelemetryInteractEdata() should return object with defined value', () => {
-      spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
-      const returnObj = component.getTelemetryInteractEdata('download_contribution_details',
+    component.pageLimit = 1;
+    component.searchInput = '';
+    component.sortUsersList(userDetail.result.response.content);
+    const sortedList = programsService.sortCollection(userDetail.result.response.content, 'selectedRole', 'desc');
+    expect(component.paginatedSourcingUsers).toBe(sortedList);
+    expect(component.sourcingOrgUser).toBe(userDetail.result.response.content);
+    expect(component.sourcingOrgUserCnt).toBe(userDetail.result.response.content.length);
+  });
+  xit('#setTargetCollectionValue() should set targetCollection values', () => {
+    spyOn(programsService, 'setTargetCollectionName').and.returnValue('Digital Textbook');
+    component.programDetails = SpecData.programDetailsTargetCollection;
+    spyOn(component, 'setTargetCollectionValue').and.callThrough();
+    component.setTargetCollectionValue();
+    expect(component.targetCollection).not.toBeUndefined();
+  });
+  it('#setTargetCollectionValue() should not set targetCollection values in program-nomination', () => {
+    component.targetCollection = undefined;
+    component.programDetails = undefined;
+    spyOn(programsService, 'setTargetCollectionName').and.returnValue(undefined);
+    spyOn(component, 'setTargetCollectionValue').and.callThrough();
+    component.setTargetCollectionValue();
+    expect(component.targetCollection).toBeUndefined();
+  });
+  it('#setTargetCollectionValue() should call programsService.setTargetCollectionName()', () => {
+    component.programDetails = SpecData.programDetailsTargetCollection;
+    spyOn(component, 'setTargetCollectionValue').and.callThrough();
+    spyOn(programsService, 'setTargetCollectionName').and.callThrough();
+    component.setTargetCollectionValue();
+    expect(programsService.setTargetCollectionName).toHaveBeenCalled();
+  });
+
+  it('#setFrameworkCategories() should call helperService.setFrameworkCategories()', () => {
+    const collection = {};
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'setFrameworkCategories').and.returnValue({});
+    spyOn(component, 'setFrameworkCategories').and.callThrough();
+    component.setFrameworkCategories(collection);
+    expect(helperService.setFrameworkCategories).toHaveBeenCalledWith({});
+  });
+  xit('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
+    component['programDetails'] = { target_collection_category: 'Course' };
+    component['userService'] = TestBed.inject(UserService);
+    component.firstLevelFolderLabel = undefined;
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCategoryDefinition).toHaveBeenCalled();
+    expect(component.firstLevelFolderLabel).toBeDefined();
+  });
+
+  it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    component['programDetails'] = { target_collection_category: undefined };
+    component['userService'] = TestBed.inject(UserService);
+    component.firstLevelFolderLabel = undefined;
+    spyOn(component['programsService'], 'getCategoryDefinition').and.returnValue(of(SpecData.objectCategoryDefinition));
+    component.getCollectionCategoryDefinition();
+    expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
+  });
+
+  it('#getTelemetryInteractEdata() should return object with defined value', () => {
+    spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
+    const returnObj = component.getTelemetryInteractEdata('download_contribution_details',
       'click', 'launch', 'sourcing_my_projects', undefined);
-      expect(returnObj).not.toContain(undefined);
-    });
-    it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
-      const contextualHelpConfig = {
-        'sourcing': {
-          'assignUsersToProject': {
-            'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
-            'header': 'This table allow you to see a list of users',
-            'message':  ''
-          },
-          'noUsersFound': {
-            'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
-            'header': 'no users found',
-            'message':  ''
-          }
+    expect(returnObj).not.toContain(undefined);
+  });
+
+  it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+    const contextualHelpConfig = {
+      'sourcing': {
+        'assignUsersToProject': {
+          'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+          'header': 'This table allow you to see a list of users',
+          'message': ''
+        },
+        'noUsersFound': {
+          'url': 'https://dock.preprod.ntp.net.in/help/contribute/reviewer/review-contributions/index.html',
+          'header': 'no users found',
+          'message': ''
         }
-      };
-      component.assignUsersHelpConfig = undefined;
-      component.noUsersFoundHelpConfig = undefined;
-      const helperService = TestBed.get(HelperService);
-      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
-      spyOn(component, 'setContextualHelpConfig').and.callThrough();
-      component.setContextualHelpConfig();
-      expect(component.assignUsersHelpConfig).toBeDefined();
-      expect(component.noUsersFoundHelpConfig).toBeDefined();
+      }
+    };
+    component.assignUsersHelpConfig = undefined;
+    component.noUsersFoundHelpConfig = undefined;
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+    // spyOn(component, 'setContextualHelpConfig').and.callThrough();
+    component.setContextualHelpConfig();
+    expect(component.assignUsersHelpConfig).toBeDefined();
+    expect(component.noUsersFoundHelpConfig).toBeDefined();
+  });
+
+  it('#resetStatusFilter() Should reset Status Filter', () => {
+
+    mockRouter.navigate([], {});
+    expect(mockRouter.navigate).toHaveBeenCalled();
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getUserPreferencesforProgram').and.returnValue(of({ result: { sourcing_preference: 'notnull' } }));
+    spyOn(component, 'getProgramCollection').and.returnValue(of({ result: {} }));
+    component.resetStatusFilter('textbook');
+    component.visitedTab = ['user'];
+    component.resetStatusFilter('nomination');
+    expect(component['programsService'].getUserPreferencesforProgram).toHaveBeenCalled();
+  });
+
+  it('#resetStatusFilter() Should reset Status Filter for nomination tab', () => {
+
+    mockRouter.navigate([], {});
+    expect(mockRouter.navigate).toHaveBeenCalled();
+    component.visitedTab = ['user'];
+    component.resetStatusFilter('nomination');
+    // expect(component.resetStatusFilter).toHaveBeenCalled();
+  });
+
+  it('#resetStatusFilter() Should reset Status Filter for user tab', () => {
+
+    mockRouter.navigate([], {});
+    expect(mockRouter.navigate).toHaveBeenCalled();
+    component.visitedTab = ['nomination'];
+    component.resetStatusFilter('user');
+    // expect(component.resetStatusFilter).toHaveBeenCalled();
+  });
+
+  it('#resetStatusFilter() Should reset Status Filter for contributionDashboard tab', () => {
+
+    mockRouter.navigate([], {});
+    expect(mockRouter.navigate).toHaveBeenCalled();
+    component.programCollections = [];
+    spyOn(component, 'getProgramCollection').and.returnValue(of({ result: {} }));
+    spyOn(component, 'getNominationList').and.callFake(() => { });
+
+    component.visitedTab = ['nomination'];
+    component.resetStatusFilter('contributionDashboard');
+    expect(component.getProgramCollection).toHaveBeenCalled();
+  });
+
+  it('sortUsersList should sort the Users List', () => {
+    component.pageLimit = 1;
+    component.searchInput = 'jnc68';
+    const usersList = ['bbbb', 'bbbbb']
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'] , 'sortCollection').and.returnValue(['bbbb', 'bbbbb']);
+    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {});
+    component.sortUsersList(usersList, true);
+    expect(programsService.sortCollection).toHaveBeenCalled();
+    expect(component.logTelemetryImpressionEvent).toHaveBeenCalled();
+  });
+
+  it('onStatusChange should change the status', () => {
+    component.onStatusChange('notAll');
+    expect(component.filterApplied).toBeTruthy();
+  });
+
+  
+  it('getSampleContent should get Sample Content', () => {
+    component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
+    spyOn(component['collectionHierarchyService'] , 'getContentAggregation').and.returnValue(of({result:{count:22,QuestionSet:{},content:{}}}));
+    spyOn(component, 'setNominationSampleCounts').and.callFake(() => {});
+    component.getSampleContent();
+    expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
+  });
+
+  it('getProgramCollection should get Program Collection for questionSets', () => {
+    component.programDetails={
+      target_type: 'questionSets'
+    }
+    component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
+    spyOn(component['collectionHierarchyService'] , 'getCollectionWithProgramId').and.returnValue(of({result:{xyz: 'xyz'}}));
+    component.getProgramCollection();
+    
+    expect(component['collectionHierarchyService'].getCollectionWithProgramId).toHaveBeenCalled();
+  });
+
+  it('getProgramCollection should get Program Collection for searchCriteria', () => {
+    component.programDetails={
+      target_type: 'searchCriteria'
+    }
+    component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
+    spyOn(component['collectionHierarchyService'] , 'getnonCollectionProgramContents').and.returnValue(of({result:{xyz: 'xyz'}}));
+    component.getProgramCollection();
+    
+    expect(component['collectionHierarchyService'].getnonCollectionProgramContents).toHaveBeenCalled();
+  });
+
+  it('getDashboardData should get get Dashboard Data', () => {
+    component.programDetails={
+      target_type: 'collections'
+    }
+    component.contentAggregationData = [{},{},{}];
+    component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
+    spyOn(component['collectionHierarchyService'] , 'setProgram').and.returnValue(of({result:{xyz: 'xyz'}}));
+    spyOn(component['collectionHierarchyService'] , 'getContentCounts').and.returnValue(of({result:{sourcingPending: 'xyz',
+    sourcingAccepted:'9',sourcingRejected:'',contributorName:''}}));
+    spyOn(component, 'getOverAllCounts').and.callFake(() => {});
+    
+    component.getDashboardData([{organisation_id:1},{organisation_id:1},{organisation_id:1}]);
+    expect(component['collectionHierarchyService'].setProgram).toHaveBeenCalled();
+    expect(component['collectionHierarchyService'].getContentCounts).toHaveBeenCalled();
+  });
+
+  it('openContent should set reviewContributionHelpConfig', () => {
+    component.sessionContext = {nominationDetails : {
+      organisation_id : 'organisation_id',
+      user_id : 'user_id'
+    }};
+    component['contentHelperService']  = TestBed.inject(ContentHelperService);
+    spyOn(programStageService, 'addStage').and.callFake(() => {});
+    spyOn(component['contentHelperService'] , 'initialize').and.callFake(() => {});
+    spyOn(component['contentHelperService'] , 'openContent').and.callFake(() => {
+      return $.Deferred().resolve(1);
     });
+    component.openContent('');
+    expect(component['contentHelperService'].initialize).toHaveBeenCalled();
+    expect(component['contentHelperService'].openContent).toHaveBeenCalled();
+  });
+
+  it('getOriginForApprovedContents should get Origin For Approved Contents', () => {
+    component.programDetails={
+      acceptedcontents: [{},{}]
+    }
+    component['collectionHierarchyService']  = TestBed.inject(CollectionHierarchyService);
+    spyOn(component['collectionHierarchyService'] , 'getOriginForApprovedContents').and.returnValue(of({result:{count: 1,content:[],QuestionSet:[]}}));
+    component.getOriginForApprovedContents();
+    expect(component['collectionHierarchyService'].getOriginForApprovedContents).toHaveBeenCalled();
+  });
+
+  it('viewContribution should show contribution', () => {
+    component.programDetails={
+      target_type: 'notsearchCriteria',
+      program_id: 123,
+      config:{
+        components:[{ 'id': 'ng.sunbird.chapterList' }]
+      }
+    };
+    component.nominations=['abc','xyz']
+    const collection = {
+      identifier:'',
+      name:'',
+      primaryCategory:''
+    }
+    component.telemetryInteractCdata = [{id: 'userService.channel', type: 'sourcing_organization'}, {id: 'programId', type: 'project'}];
+    component['helperService']  = TestBed.inject(HelperService);
+    spyOn(programStageService, 'addStage').and.callFake(() => {});
+    spyOn(component['helperService'] , 'getSharedProperties').and.returnValue({result:{}});
+    spyOn(component,'setFrameworkCategories').and.callFake(() => {});
+    component.viewContribution(collection);
+    expect(programStageService.addStage).toHaveBeenCalled();
+    expect(component['helperService'].getSharedProperties).toHaveBeenCalled();
+    expect(component.setFrameworkCategories).toHaveBeenCalled();
+     
+  });
+
+  it('navigateToSourcingPage should get Program Details', () => {
+  component.pagerUsers={
+    totalPages:10,
+    totalItems: 12,
+    currentPage: 12,
+    pageSize: 12,
+    startPage: 12,
+    endPage: 12,
+    startIndex: 12,
+    endIndex: 12,
+    pages: [1,2,3]
+  };
+  component.paginatedSourcingUsers=['fff'];
+    component['paginationService']  = TestBed.inject(PaginationService);
+    spyOn(component['paginationService'] , 'getPager').and.callFake(() => { });
+    component.navigateToSourcingPage(1);
+    expect(component['paginationService'].getPager).toHaveBeenCalled();
+  });
+
+  it('NavigateTonominationPage should get Program Details', () => {
+    component.pager={
+      totalPages:10,
+      totalItems: 12,
+      currentPage: 12,
+      pageSize: 12,
+      startPage: 12,
+      endPage: 12,
+      startIndex: 12,
+      endIndex: 12,
+      pages: [1,2,3]
+    };
+    component.pageLimit = 29;
+    component.paginatedSourcingUsers=['fff'];
+      component['paginationService']  = TestBed.inject(PaginationService);
+      spyOn(component['paginationService'] , 'getPager').and.callFake(() => { });
+      spyOn(programsService , 'post').and.returnValue(of({result:[{totalPages:20}]}));
+      spyOn(component , 'getSampleContent').and.callFake(() => { });
+      spyOn(component , 'getDashboardData').and.callFake(() => { });
+      component.NavigateTonominationPage(3);
+      expect(component['paginationService'].getPager).toHaveBeenCalled();
+      expect(programsService.post).toHaveBeenCalled();
+      expect(component.getSampleContent).toHaveBeenCalled();
+    });
+  
+
+  it('updateUserRoleMapping should update User Role Mapping', () => {
+    const user={
+      newRole :"NONE"
+    };
+      component['toasterService']  = TestBed.inject(ToasterService);
+      spyOn(programsService , 'updateProgram').and.returnValue(of({result:{ssf:'sfg'}}));
+      spyOn(component['toasterService'], 'success').and.callFake(() => { });
+      component.updateUserRoleMapping({},user);
+      expect(programsService.updateProgram).toHaveBeenCalled();
+
+    });
+  
+  
 });

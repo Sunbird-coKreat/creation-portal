@@ -688,7 +688,7 @@ describe('CreateProgramComponent', () => {
     expect(component.saveAsDraftAndNext).toHaveBeenCalled();
   });
 
-/*   fit('Should call the validateFormBeforePublish method', () => {
+/*   it('Should call the validateFormBeforePublish method', () => {
     component.projectScopeForm.value.pcollections = [];
     const toasterService = TestBed.get(ToasterService);
     component.createProgramForm.controls.targetPrimaryCategories.setValue(false);
@@ -780,7 +780,7 @@ describe('CreateProgramComponent', () => {
 
     const frameworkService = TestBed.get(FrameworkService);
     spyOn(frameworkService, 'readChannel').and.returnValue(of({channelData: 'channelData'}));
-    spyOn(component, 'getFramework').and.returnValue(of({response: 'response'}));
+    spyOn(component, 'getFramework').and.returnValue(Promise.resolve(true))
     
     spyOn(frameworkService, 'getMasterCategories').and.callFake(() => {});
     spyOn(component, 'setProjectScopeDetails').and.callFake(() => {});
@@ -789,5 +789,60 @@ describe('CreateProgramComponent', () => {
    // expect(component.getUserProfile).toThrowError();
 
   });
+
+  it('#initiateCollectionEditor should initiate Collection Editor', () => {
+
+    component['helperService'] = TestBed.inject(HelperService);
+    spyOn( component['helperService'], 'createContent').and.returnValue(of({channelData: 'channelData'}));
+    spyOn(component, 'initializeCollectionEditorInput').and.callFake(() => {});
+    
+    component.initiateCollectionEditor([]);
+    expect(component.initializeCollectionEditorInput).toHaveBeenCalled();
+    expect( component['helperService'].createContent).toHaveBeenCalled();
+
+  });
+
+ xit('#initializeCollectionEditorInput should initialize Collection Editor Input', () => {
+    component['sourcingService'] = TestBed.inject(SourcingService);
+    spyOn( component['sourcingService'], 'generateAssetCreateRequest').and.returnValue(of({channelData: 'channelData'}));
+    spyOn(component['sourcingService'], 'generatePreSignedUrl').and.returnValue(of({pre_signed_url: 'pre_signed_url'}));
+    spyOn(component, 'uploadToBlob').and.returnValue(of({pre_signed_url: 'pre_signed_url'}));
+    spyOn(component, 'updateContentWithURL').and.returnValue(of({pre_signed_url: 'pre_signed_url'}));
+    component.uploadDocument();
+    expect(component.uploadToBlob).toHaveBeenCalled();
+    expect(component.updateContentWithURL).toHaveBeenCalled();
+    expect( component['sourcingService'].generateAssetCreateRequest).toHaveBeenCalled();
+
+  });
+
+  it('#getDefaultChannelFramework should get Default Channel Framework', () => {
+    component.programScope={
+      userChannelData:
+      {
+        frameworks : ['frameworks'],
+        type: 'type'
+
+      },
+        selectedFramework:
+        {
+          categories:[{code:'board',terms:[{name:'name'}]},{code:'ccc'}]
+        }
+    }
+        component['frameworkService'] = TestBed.inject(FrameworkService);
+        spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{
+          userChannelData:
+          {
+            defaultFramework : ['frameworks'],
+            type: 'type'
+    
+          }
+        }}));
+        component.getDefaultChannelFramework();
+        expect(component.isFormValueSet.projectScopeForm ).toBeFalsy();
+        /*       expect(component.updateContentWithURL).toHaveBeenCalled();
+        expect( component['sourcingService'].generateAssetCreateRequest).toHaveBeenCalled();
+     */
+      });
+  
 
 });

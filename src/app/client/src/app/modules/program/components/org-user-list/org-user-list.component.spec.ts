@@ -1,26 +1,92 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OrgUserListComponent } from './org-user-list.component';
-import {userDetail, chunkedUserList} from '../../services/programUserTestData';
-import { ProgramsService , RegistryService} from '@sunbird/core';
-import { APP_BASE_HREF,DatePipe } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TelemetryModule } from '@sunbird/telemetry';
+import { NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { SourcingService, HelperService } from '../../../sourcing/services';
-import { contextualHelpConfig } from './org-user-list.component.spec.data';
-xdescribe('OrgUserListComponent', () => {
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
+import { SharedModule, ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { DynamicModule } from 'ng-dynamic-component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import {APP_BASE_HREF, DatePipe} from '@angular/common';
+import * as SpecData from './org-user-list.component.spec.data';
+import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
+import { throwError, Subject, of } from 'rxjs';
+import { ProgramsService, RegistryService, UserService, FrameworkService, NotificationService, ContentHelperService } from '@sunbird/core';
+import { HelperService } from '../../../sourcing/services/helper.service';
+import { SourcingService } from './../../../sourcing/services';
+import { ProgramTelemetryService } from '../../services';
+import { ProgramStageService } from '../../services/program-stage/program-stage.service';
+import {userDetail, chunkedUserList} from '../../services/programUserTestData';
+
+
+describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
-
+  let telemetryService;
+  const errorInitiate = false;
+  const userServiceStub = {
+    get() {
+      if (errorInitiate) {
+        return throwError ({
+          result: {
+            responseCode: 404
+          }
+        });
+      }
+    },
+    isUserBelongsToOrg() {
+    },
+    userid: SpecData.userProfile.userId,
+    userProfile : SpecData.userProfile
+  };
+  const fakeActivatedRoute = {
+    snapshot: {
+      params: {
+        programId: '12345'
+      },
+      data: {
+        telemetry: {
+          env: 'workspace', pageid: 'list-contributor', subtype: 'scroll', type: 'list',
+          object: { type: '', ver: '1.0' }
+        }
+      }
+    },
+    fragment: of(SpecData.contributor)
+  };
+  const resourceBundle = {
+    messages: {
+      emsg: {
+        blueprintViolation : 'Please provide all required blueprint values'
+      }
+    }
+  };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports:[ReactiveFormsModule, SuiModule, FormsModule, TelemetryModule],
-      declarations: [ OrgUserListComponent ],
+     imports: [
+            DynamicModule,
+            SuiModule,
+            SharedModule.forRoot(),
+            ReactiveFormsModule,
+            FormsModule,
+            TelemetryModule.forRoot(),
+            HttpClientTestingModule,
+            RouterModule.forRoot([])
+        ],
+      declarations: [ OrgUserListComponent],
       providers: [
-        ProgramsService,
-        RegistryService,DatePipe
+        { provide: Router },
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+        { provide: UserService, useValue: userServiceStub },
+        { provide: APP_BASE_HREF, useValue: '/' },
+        { provide: ResourceService, useValue: resourceBundle },
+        ToasterService , ConfigService, DatePipe, ProgramStageService,
+        ProgramsService,RegistryService, FrameworkService, HelperService, Subject,
+        ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
+        SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
       ],
+      schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
   }));
@@ -28,57 +94,95 @@ xdescribe('OrgUserListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(OrgUserListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    // fixture.detectChanges();
+    component.telemetryImpression = {
+      context: {
+        env: fakeActivatedRoute.snapshot.data.telemetry.env,
+        cdata:[ {} ],
+        pdata: {
+          id: 'userService.appId',
+          ver: 'version',
+          pid: 'PID'
+        },
+        did: ''
+      },
+      edata: {
+        type: 'snapshot.data.telemetry.type',
+        pageid: 'getPageId',
+        uri:  'router.url',
+        duration: 10
+      }
+    };
+    telemetryService = TestBed.inject(TelemetryService);
+    spyOn(telemetryService, 'initialize');
+
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('reset the user list when there is no search input', () => {
-    spyOn(component, 'sortUsersList');
-    component.searchInput = '';
-    expect(component.sortUsersList).toHaveBeenCalledWith(userDetail.result.response.content);
-  });
-  it('get the user list when there is a search input', () => {
-    spyOn(component, 'sortUsersList');
+
+  it('getUserDetailsBySearch should get the user list when there is a search input', () => {
+
     component.searchInput = 'jnc68';
-    const  registryService  = TestBed.get(RegistryService);
-    const userList = registryService.getSearchedUserList(userDetail.result.response.content, component.searchInput)
-    expect(component.sortUsersList).toHaveBeenCalledWith(userList);
-    });
- it('call the sortUsersList method when there is input', () => {
+    component.searchLimitCount = 1;
+    const registryService = TestBed.get(RegistryService);
+    spyOn(registryService, 'getSearchedUserList').and.returnValue(['bbbb', 'bbbbb']);
+    
+    spyOn(component, 'sortUsersList').and.callFake(() => {});
+    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {});
+    component.getUserDetailsBySearch();
+    expect(component.sortUsersList).toHaveBeenCalled();
+  });
+
+  it('sortUsersList should call the sortUsersList method when there is input', () => {
     component.pageLimit = 1;
     component.searchInput = 'jnc68';
-    const  programsService  = TestBed.get(ProgramsService);
-    component.sortUsersList(userDetail.result.response.content);
-    const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
-    expect(component.paginatedContributorOrgUsers).toBe(sortedList);
-    expect(component.contributorOrgUsers).toBe(chunkedUserList[0]);
-    expect(component.orgUserscnt).toBe(chunkedUserList[0].length);
+    const usersList = ['bbbb', 'bbbbb']
+    const programsService = TestBed.get(ProgramsService);
+    spyOn(programsService, 'sortCollection').and.returnValue(['bbbb', 'bbbbb']);
+    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {});
+    component.sortUsersList(usersList, true);
+    expect(programsService.sortCollection).toHaveBeenCalled();
+    expect(component.logTelemetryImpressionEvent).toHaveBeenCalled();
   });
-  it('call the sortUsersList method when there is empty input', () => {
-     component.pageLimit = 1;
-     component.searchInput = '';
-     const  programsService  = TestBed.get(ProgramsService);
-     component.sortUsersList(userDetail.result.response.content);
-     const sortedList = programsService.sortCollection(userDetail.result.response.content,  'selectedRole', 'desc')
-     expect(component.paginatedContributorOrgUsers).toBe(sortedList);
-     expect(component.contributorOrgUsers).toBe(userDetail.result.response.content);
-     expect(component.orgUserscnt).toBe(userDetail.result.response.content.length);
-    });
+
+
   it('#getTelemetryInteractEdata() should return object with defined value', () => {
     spyOn(component, 'getTelemetryInteractEdata').and.callThrough();
     const returnObj = component.getTelemetryInteractEdata('copy_link',
-    'click', 'launch', 'sourcing_my_projects', undefined);
+      'click', 'launch', 'sourcing_my_projects', undefined);
     expect(returnObj).not.toContain(undefined);
-    });
-    it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
-      component.mangeUsersContextualConfig = undefined;
-      const helperService = TestBed.get(HelperService);
-      spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
-      spyOn(component, 'setContextualHelpConfig').and.callThrough();
-      component.setContextualHelpConfig();
-      expect(component.mangeUsersContextualConfig).toBeDefined();
-    });
+  });
+
+  it('#setContextualHelpConfig should set mangeUsersContextualConfig', () => {
+    component.mangeUsersContextualConfig = undefined;
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'getContextualHelpConfig').and.returnValue(SpecData.contextualHelpConfig);
+    spyOn(component, 'setContextualHelpConfig').and.callThrough();
+    component.setContextualHelpConfig();
+    expect(component.mangeUsersContextualConfig).toBeDefined();
+  });
+
+  it('#updateUserRole should update User Role', () => {
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'updateUserRole').and.returnValue(of({}));
+    spyOn(component['programsService'], 'updateUser').and.returnValue(of({}));
+    component.updateUserRole('','','');
+    expect(component['programsService'].updateUserRole).toHaveBeenCalled();
+
+  });
+
+  it('#ngOnInit should initialize the member variables', () => {
+   component.telemetryInteractCdata = [{}];
+   component.telemetryInteractPdata = {};
+   component.telemetryInteractObject = {};
+   component['registryService'] = TestBed.inject(RegistryService);
+   spyOn(component['registryService'], 'searchLimitCount').and.returnValue(10);
+   component.ngOnInit();
+    expect(component.telemetryInteractCdata).toBeDefined();
+    expect(component.telemetryInteractPdata).toBeDefined();
+    expect(component.telemetryInteractObject).toBeDefined();
+  });
 });
