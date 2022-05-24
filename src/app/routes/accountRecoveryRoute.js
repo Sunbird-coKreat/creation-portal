@@ -7,16 +7,20 @@ const proxy = require('express-http-proxy')
 const proxyUtils = require('../proxy/proxyUtils.js')
 const logger = require('sb_logger_util_v2');
 const {encrypt, encriptWithTime} = require('../helpers/crypto');
+
+
 module.exports = (app) => {
-  // app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.SUNBIRD_LEARNER_URL, {
-  //   proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
-  //   proxyReqPathResolver: (req) => {
-  //     logger.info({msg: '/learner/user/v1/fuzzy/search called'});
-  //     return envHelper.SUNBIRD_LEARNER_URL + 'private/user/v1/search';
-  //     // return require('url').parse(envHelper.SUNBIRD_LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
-  //   }
-  // }))
-  app.post('/learner/user/v1/password/reset', bodyParser.urlencoded({ extended: false }), bodyParser.json({ limit: '10mb' }),
+
+  app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.SUNBIRD_LEARNER_URL, {
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+    proxyReqPathResolver: (req) => {
+      logger.info({msg: '/learner/user/v1/fuzzy/search called'});
+      return envHelper.SUNBIRD_LEARNER_URL + 'private/user/v1/search';
+      // return require('url').parse(envHelper.SUNBIRD_LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
+    }
+  }))
+
+  app.post('/learner/user/v1/password/reset', bodyParser.urlencoded({ extended: false }), bodyParser.json({ limit: '10mb' }), 
     proxy(envHelper.LEARNER_URL, {
       proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: (req) => {
@@ -25,8 +29,9 @@ module.exports = (app) => {
         // return require('url').parse(envHelper.LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
       }
   }))
+
   app.all('/learner/otp/v1/verify',
-    bodyParser.urlencoded({ extended: false }), bodyParser.json({ limit: '10mb' }),
+    bodyParser.urlencoded({ extended: false }), bodyParser.json({ limit: '10mb' }), 
     proxy(envHelper.LEARNER_URL, {
       proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
       proxyReqPathResolver: (req) => {
