@@ -9,6 +9,7 @@ const reqDataLimitOfContentUpload = '50mb'
 const contentServiceBaseUrl = envHelper.CONTENT_URL
 const logger = require('sb_logger_util_v2')
 const isAPIWhitelisted = require('../helpers/apiWhiteList');
+const localDev = envHelper.LOCAL_DEVELOPMENT;
 
 module.exports = function (app) {
     const proxyReqPathResolverMethod = function (req) {
@@ -131,14 +132,17 @@ module.exports = function (app) {
         proxy(contentProxyUrl, {
         proxyReqOptDecorator: proxyHeaders.decorateRequestHeaders(),
         proxyReqPathResolver: function (req) {
-            let urlParam = req.originalUrl.replace('/api/', '')
-            let query = require('url').parse(req.url).query
-            console.log('/api/questionset  ', require('url').parse(contentProxyUrl + urlParam).path);
-            if (query) {
-              return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
-            } else {
-              return require('url').parse(contentProxyUrl + urlParam).path
-            }
+          let urlParam = req.originalUrl;
+          if (!localDev) {
+            urlParam = req.originalUrl.replace('/api/', '')
+          }
+          let query = require('url').parse(req.url).query
+          console.log('/api/questionset  ', require('url').parse(contentProxyUrl + urlParam).path);
+          if (query) {
+            return require('url').parse(contentProxyUrl + urlParam + '?' + query).path
+          } else {
+            return require('url').parse(contentProxyUrl + urlParam).path
+          }
         },
         userResDecorator: function (proxyRes, proxyResData,  req, res) {
             try {
