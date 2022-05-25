@@ -665,6 +665,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         (response) => {
             const frameworkRes = _.first(response);
             this.sessionContext.frameworkData = _.get(frameworkRes, 'categories');
+            this.sessionContext['frameworkType'] = frameworkRes.type;
             this.sessionContext.topicList = _.get(_.find(this.sessionContext.frameworkData, { code: 'topic' }), 'terms');
             this.checkActiveTab();
         },
