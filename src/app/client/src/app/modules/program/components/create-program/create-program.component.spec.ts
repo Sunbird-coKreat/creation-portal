@@ -1031,6 +1031,9 @@ describe('CreateProgramComponent', () => {
       },
       
     }
+    component.projectScopeForm = new FormGroup({
+      framework: new FormControl(['framework'], Validators.required),
+    });
         component['frameworkService'] = TestBed.inject(FrameworkService);
         spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{
           userChannelData:

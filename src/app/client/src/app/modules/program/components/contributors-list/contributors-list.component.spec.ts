@@ -16,7 +16,7 @@ import { SourcingService } from './../../../sourcing/services';
 import * as mockData from './contributors-list.component.spec.data';
 import { ActivatedRoute } from '@angular/router';
 
-xdescribe('ContributorsListComponent', () => {
+describe('ContributorsListComponent', () => {
   let component: ContributorsListComponent;
   let fixture: ComponentFixture<ContributorsListComponent>;
 
@@ -105,7 +105,7 @@ xdescribe('ContributorsListComponent', () => {
     expect(pageId).toEqual('create-program');
   });
 
-  it('getOrgCreatorInfo should call registryService.getUserdetailsByOsIds', () => {
+  xit('getOrgCreatorInfo should call registryService.getUserdetailsByOsIds', () => {
     spyOn(component, 'getOrgCreatorInfo').and.callThrough();
     const registryService = TestBed.get(RegistryService);
     spyOn(component, 'getUsers').and.returnValue(Promise.resolve(true));
