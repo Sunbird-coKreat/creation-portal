@@ -170,6 +170,7 @@ describe('OrgUserListComponent', () => {
   });
 
   it('#updateUserRole should update User Role', () => {
+    //component.resourceService={messages:{smsg:{m0065:''}}}
     component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'updateUserRole').and.returnValue(of({}));
     spyOn(component['programsService'], 'updateUser').and.returnValue(of({}));
