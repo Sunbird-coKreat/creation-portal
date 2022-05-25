@@ -33,7 +33,8 @@ describe('MyContentComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, QumlLibraryModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
                 PlayerHelperModule, SuiPopupModule],
@@ -47,9 +48,6 @@ describe('MyContentComponent', () => {
       ],
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MyContentComponent);
     component = fixture.componentInstance;
   });

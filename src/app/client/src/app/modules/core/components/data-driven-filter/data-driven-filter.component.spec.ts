@@ -42,7 +42,8 @@ describe('DataDrivenFilterComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC', 'CONTENT_REVIEWER']
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule,RouterTestingModule, TelemetryModule.forRoot()],
       // declarations: [MainHeaderComponent],      
@@ -52,9 +53,6 @@ describe('DataDrivenFilterComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DataDrivenFilterComponent);
     component = fixture.componentInstance;
     frameworkService = TestBed.get(FrameworkService);

@@ -55,7 +55,8 @@ describe('UnEnrollBatchComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
@@ -72,8 +73,6 @@ describe('UnEnrollBatchComponent', () => {
         { provide: Router, useClass: RouterStub }]
     })
       .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(UnEnrollBatchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -116,8 +116,10 @@ xdescribe('ContentUploaderComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
-    //helperService = jasmine.createSpy('HelperService');
+ 
+
+  beforeEach(() => {
+     //helperService = jasmine.createSpy('HelperService');
     // helperService.getNotification();
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
@@ -133,9 +135,6 @@ xdescribe('ContentUploaderComponent', () => {
                   { provide: ActivatedRoute, useValue: activatedRouteStub }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentUploaderComponent);
     component = fixture.debugElement.componentInstance;
     debugElement = fixture.debugElement;
@@ -311,7 +310,9 @@ xdescribe('ContentUploaderComponent', () => {
     url = jasmine.createSpy('url');
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule, SharedModule, CoreModule ],
@@ -326,9 +327,6 @@ xdescribe('ContentUploaderComponent', () => {
                   { provide: ActivatedRoute, useValue: activatedRouteStub }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentUploaderComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
@@ -484,7 +482,7 @@ xdescribe('ContentUploaderComponent', () => {
 
   let helperService: any;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     helperService = jasmine.createSpy('HelperService');
     // helperService.getNotification();
     TestBed.configureTestingModule({
@@ -501,9 +499,6 @@ xdescribe('ContentUploaderComponent', () => {
     schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentUploaderComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;

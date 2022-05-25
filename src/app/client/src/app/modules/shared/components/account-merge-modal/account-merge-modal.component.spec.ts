@@ -17,7 +17,9 @@ xdescribe('AccountMergeModalComponent', () => {
     languageSelected$: observableOf({})
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, TelemetryModule.forRoot(), RouterTestingModule, HttpClientTestingModule],
       declarations: [AccountMergeModalComponent, InterpolatePipe],
@@ -25,9 +27,6 @@ xdescribe('AccountMergeModalComponent', () => {
         {provide: ResourceService, useValue: resourceBundle}]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AccountMergeModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

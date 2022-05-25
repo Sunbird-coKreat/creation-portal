@@ -49,7 +49,9 @@ describe('UploadedComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [UploadedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
@@ -63,9 +65,6 @@ describe('UploadedComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UploadedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

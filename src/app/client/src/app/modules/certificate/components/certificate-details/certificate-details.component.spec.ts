@@ -42,7 +42,8 @@ xdescribe('CertificateDetailsComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, FormsModule, SharedModule.forRoot(), SuiModule, TelemetryModule.forRoot(), PlayerHelperModule],
       declarations: [CertificateDetailsComponent],
@@ -52,9 +53,6 @@ xdescribe('CertificateDetailsComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CertificateDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

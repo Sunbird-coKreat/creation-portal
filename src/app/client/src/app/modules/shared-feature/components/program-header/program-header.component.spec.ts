@@ -72,7 +72,7 @@ xdescribe('ProgramHeaderComponent', () => {
   };
   // let serviceSpy: jasmine.SpyObj<ProgramStageService>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TelemetryModule.forRoot(), HttpClientTestingModule, RouterTestingModule],
       declarations: [ ProgramHeaderComponent ],
@@ -84,9 +84,6 @@ xdescribe('ProgramHeaderComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
 
     fixture = TestBed.createComponent(ProgramHeaderComponent);
     de = fixture.debugElement;

@@ -45,7 +45,8 @@ describe('CourseConsumptionComponent', () => {
     navigate = jasmine.createSpy('navigate');
   }
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CourseConsumptionComponent],
       imports: [RouterTestingModule, HttpClientModule, FormsModule, SuiModule, ChartsModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
@@ -66,9 +67,6 @@ describe('CourseConsumptionComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CourseConsumptionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

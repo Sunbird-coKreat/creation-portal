@@ -6,15 +6,14 @@ describe('ContentDataFormComponent', () => {
   let component: ContentDataFormComponent;
   let fixture: ComponentFixture<ContentDataFormComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ ContentDataFormComponent ],
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentDataFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -40,7 +40,8 @@ xdescribe('TermsAndConditionsPopupComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       imports: [HttpClientTestingModule,RouterTestingModule, TelemetryModule.forRoot(), SuiModule],
@@ -54,9 +55,6 @@ xdescribe('TermsAndConditionsPopupComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(TermsAndConditionsPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

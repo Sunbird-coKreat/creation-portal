@@ -33,7 +33,9 @@ describe('OtpComponent', () => {
     navigate = jasmine.createSpy('navigate');
   }
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [OtpComponent, InterpolatePipe],
       imports: [HttpClientTestingModule, TelemetryModule.forRoot(), FormsModule, ReactiveFormsModule],
@@ -46,9 +48,6 @@ describe('OtpComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OtpComponent);
     component = fixture.componentInstance;
     const fb = TestBed.get(FormBuilder);

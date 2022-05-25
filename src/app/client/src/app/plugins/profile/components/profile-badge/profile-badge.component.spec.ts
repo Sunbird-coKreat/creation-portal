@@ -13,7 +13,9 @@ describe('ProfileBadgeComponent', () => {
   let component: ProfileBadgeComponent;
   let fixture: ComponentFixture<ProfileBadgeComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), HttpClientTestingModule, CoreModule, RouterTestingModule],
       declarations: [ProfileBadgeComponent],
@@ -21,9 +23,6 @@ describe('ProfileBadgeComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProfileBadgeComponent);
     component = fixture.componentInstance;
   });

@@ -10,16 +10,15 @@ describe('TopicPickerComponent', () => {
     let component: TopicPickerComponent;
     let fixture: ComponentFixture<TopicPickerComponent>;
 
-    beforeEach(async(() => {
+
+
+    beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, HttpClientTestingModule,RouterTestingModule],
             declarations: [ TopicPickerComponent ],
             providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService]
         })
         .compileComponents();
-    }));
-
-    beforeEach(() => {
         fixture = TestBed.createComponent(TopicPickerComponent);
         component = fixture.componentInstance;
     });

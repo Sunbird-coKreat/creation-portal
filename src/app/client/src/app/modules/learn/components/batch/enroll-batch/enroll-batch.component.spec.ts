@@ -58,7 +58,9 @@ describe('EnrollBatchComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
@@ -72,9 +74,6 @@ describe('EnrollBatchComponent', () => {
         { provide: Router, useValue: { navigate: (route) => { } } }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(EnrollBatchComponent);
     component = fixture.componentInstance;
     courseBatchService = TestBed.get(CourseBatchService);

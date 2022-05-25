@@ -18,7 +18,9 @@ xdescribe('MainMenuComponent', () => {
   }
   class FakeActivatedRoute {
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule, TelemetryModule, HttpClientTestingModule,RouterTestingModule, CoreModule, SharedModule.forRoot()],
       providers: [HttpClient, ResourceService, ConfigService, UserService,DatePipe,TelemetryService,
@@ -26,9 +28,6 @@ xdescribe('MainMenuComponent', () => {
         { provide: Router, useClass: RouterStub }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MainMenuComponent);
     component = fixture.componentInstance;
   });

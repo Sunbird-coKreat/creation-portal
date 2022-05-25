@@ -31,7 +31,8 @@ describe('CommingSoonComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+ 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SuiModule , HttpClientTestingModule, SharedModule.forRoot()],
       declarations: [CommingSoonComponent],
@@ -43,8 +44,6 @@ describe('CommingSoonComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(CommingSoonComponent);
     component = fixture.componentInstance;
   });

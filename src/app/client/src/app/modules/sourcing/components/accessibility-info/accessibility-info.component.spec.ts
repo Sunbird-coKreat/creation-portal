@@ -37,7 +37,9 @@ describe('AccessibilityInfoComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, RouterTestingModule, TelemetryModule, HttpClientTestingModule, SharedModule],
       declarations: [ AccessibilityInfoComponent ],
@@ -48,9 +50,6 @@ describe('AccessibilityInfoComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AccessibilityInfoComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();

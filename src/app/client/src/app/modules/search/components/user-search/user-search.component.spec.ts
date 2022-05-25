@@ -59,7 +59,9 @@ describe('UserSearchComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, CoreModule,RouterTestingModule, SharedModule.forRoot()],
       declarations: [UserSearchComponent, UserFilterComponent],
@@ -71,9 +73,6 @@ describe('UserSearchComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UserSearchComponent);
     component = fixture.componentInstance;
   });

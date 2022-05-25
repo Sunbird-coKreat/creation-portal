@@ -39,7 +39,9 @@ describe('CollectionPlayerComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CollectionPlayerComponent],
       imports: [SuiModule, HttpClientTestingModule, CoreModule, SharedModule.forRoot(), RouterTestingModule , TelemetryModule.forRoot()],
@@ -48,9 +50,6 @@ describe('CollectionPlayerComponent', () => {
         { provide: ResourceService, useValue: resourceBundle }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CollectionPlayerComponent);
     component = fixture.componentInstance;
   });

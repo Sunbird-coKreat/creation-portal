@@ -15,7 +15,9 @@ describe('EnrollContributorComponent', () => {
   let component: EnrollContributorComponent;
   let fixture: ComponentFixture<EnrollContributorComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule,  SuiModule, TelemetryModule, FormsModule, ReactiveFormsModule ],
       declarations: [InterpolatePipe, EnrollContributorComponent ],
@@ -24,9 +26,6 @@ describe('EnrollContributorComponent', () => {
          {provide: APP_BASE_HREF, useValue: '/', NavigationHelperService}, NavigationHelperService]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(EnrollContributorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

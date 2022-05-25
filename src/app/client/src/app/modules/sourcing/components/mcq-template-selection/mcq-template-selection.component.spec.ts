@@ -13,7 +13,9 @@ describe('McqTemplateSelectionComponent', () => {
   let component: McqTemplateSelectionComponent;
   let fixture: ComponentFixture<McqTemplateSelectionComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SharedModule.forRoot(), TelemetryModule, SuiModule, HttpClientTestingModule],
       declarations: [McqTemplateSelectionComponent],
@@ -27,9 +29,6 @@ describe('McqTemplateSelectionComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(McqTemplateSelectionComponent);
     component = fixture.componentInstance;
   });

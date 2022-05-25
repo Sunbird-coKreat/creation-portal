@@ -33,7 +33,8 @@ describe('SearchComponent', () => {
     });
   }
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ SearchComponent ],
       imports: [SharedModule.forRoot(), SuiModule, FormsModule, RouterTestingModule, HttpClientTestingModule],
@@ -47,8 +48,6 @@ describe('SearchComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-  beforeEach(() => {
     router = TestBed.get(Router);
     location = TestBed.get(Location);
     fixture = TestBed.createComponent(SearchComponent);

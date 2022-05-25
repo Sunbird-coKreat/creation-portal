@@ -115,7 +115,11 @@ describe('ProgramComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         DynamicModule,
@@ -166,11 +170,6 @@ describe('ProgramComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-  afterEach(() => {
-    fixture.destroy();
-  });
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProgramComponent);
     fixture.detectChanges();
     component = fixture.componentInstance;

@@ -59,7 +59,9 @@ xdescribe('DashboardComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule,RouterTestingModule, TelemetryModule.forRoot()],
       declarations: [ DashboardComponent, AppLoaderComponent ],
@@ -76,9 +78,6 @@ xdescribe('DashboardComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);
     component = fixture.componentInstance;
     const navigationHelperService = TestBed.get(NavigationHelperService);

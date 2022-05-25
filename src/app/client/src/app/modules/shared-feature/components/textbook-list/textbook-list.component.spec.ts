@@ -43,7 +43,9 @@ xdescribe('TextbookListComponent', () => {
   let programsService: ProgramsService;
   let fixture: ComponentFixture<TextbookListComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SharedModule.forRoot(), TelemetryModule, RouterTestingModule, CoreModule, FormsModule, ReactiveFormsModule],
       declarations: [ TextbookListComponent ],
@@ -58,9 +60,6 @@ xdescribe('TextbookListComponent', () => {
         CollectionHierarchyService]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(TextbookListComponent);
     component = fixture.componentInstance;
     programsService = TestBed.inject(ProgramsService);

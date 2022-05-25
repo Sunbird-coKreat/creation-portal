@@ -27,7 +27,9 @@ describe('ValidateTeacherIdentifierPopupComponent', () => {
   let component: ValidateTeacherIdentifierPopupComponent;
   let fixture: ComponentFixture<ValidateTeacherIdentifierPopupComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ValidateTeacherIdentifierPopupComponent],
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
@@ -35,9 +37,6 @@ describe('ValidateTeacherIdentifierPopupComponent', () => {
       providers: [ToasterService, ResourceService, { provide: UserService, useValue: mockUserService }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ValidateTeacherIdentifierPopupComponent);
     component = fixture.componentInstance;
     component.userFeedData = mockUserData.feedSuccessResponse.result.response.userFeed[0];

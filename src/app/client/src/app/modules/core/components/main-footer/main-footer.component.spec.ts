@@ -38,7 +38,8 @@ xdescribe('MainFooterComponent', () => {
         },
         path: 'resource'
     };
-    beforeEach(async(() => {
+
+    beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [MainFooterComponent],
             providers: [CacheService, ConfigService, { provide: ResourceService, useValue: { instance: 'SUNBIRD' } }, {
@@ -48,9 +49,6 @@ xdescribe('MainFooterComponent', () => {
             imports: [HttpClientModule, WebExtensionModule.forRoot(), TelemetryModule.forRoot(), SharedModule, RouterTestingModule],
         })
             .compileComponents();
-    }));
-
-    beforeEach(() => {
         fixture = TestBed.createComponent(MainFooterComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

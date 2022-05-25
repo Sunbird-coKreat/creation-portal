@@ -30,7 +30,9 @@ describe('UpforreviewContentplayerComponent', () => {
     }
   }
 };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ UpforreviewContentplayerComponent ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -43,9 +45,6 @@ describe('UpforreviewContentplayerComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UpforreviewContentplayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

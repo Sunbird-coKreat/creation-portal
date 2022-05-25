@@ -953,13 +953,16 @@ describe('CreateProgramComponent', () => {
     expect(component.editTargetObjectFlag).toBeFalsy();
   });
 
- it('#setProjectScopeDetails should set set Project Scope Details', () => {
+ it('#setProjectScopeDetails should set Project Scope Details', () => {
   component.projectTargetType = 'collections';
   component.programDetails={
     config:{
       framework:'framework'
     }
   }
+  component.projectScopeForm = new FormGroup({
+    framework: new FormControl(['framework'], Validators.required),
+  });
     component['frameworkService'] = TestBed.inject(FrameworkService);
     spyOn(component['frameworkService'] , 'readChannel').and.returnValue(of({channelData: 'channelData'}));
     spyOn(component, 'getFramework').and.returnValue(Promise.resolve(true))

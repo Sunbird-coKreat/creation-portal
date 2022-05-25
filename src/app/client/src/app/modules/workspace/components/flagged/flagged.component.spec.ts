@@ -64,7 +64,9 @@ describe('FlaggedComponent', () => {
     'ANNOUNCEMENT_SENDER': ['01232002070124134414'],
     'CONTENT_REVIEWER': ['01232002070124134414']
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [FlaggedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
@@ -79,9 +81,6 @@ describe('FlaggedComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FlaggedComponent);
     component = fixture.componentInstance;
   });

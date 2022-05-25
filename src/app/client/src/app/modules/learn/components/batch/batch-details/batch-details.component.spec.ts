@@ -37,7 +37,9 @@ const resourceServiceMockData = {
 describe('BatchDetailsComponent', () => {
   let component: BatchDetailsComponent;
   let fixture: ComponentFixture<BatchDetailsComponent>;
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), CoreModule, SuiModule],
       declarations: [BatchDetailsComponent],
@@ -46,9 +48,6 @@ describe('BatchDetailsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BatchDetailsComponent);
     component = fixture.componentInstance;
   });

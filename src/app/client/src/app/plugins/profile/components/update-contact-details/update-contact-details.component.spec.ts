@@ -14,7 +14,9 @@ describe('UpdateContactDetailsComponent', () => {
   let component: UpdateContactDetailsComponent;
   let fixture: ComponentFixture<UpdateContactDetailsComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
         HttpClientTestingModule, SuiModule, RouterTestingModule, TelemetryModule.forRoot()],
@@ -23,9 +25,6 @@ describe('UpdateContactDetailsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UpdateContactDetailsComponent);
     component = fixture.componentInstance;
   });

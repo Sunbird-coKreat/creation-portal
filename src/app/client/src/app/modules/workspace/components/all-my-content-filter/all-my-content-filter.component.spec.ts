@@ -21,7 +21,9 @@ describe('AllMyContentFilterComponent', () => {
     'params': observableOf({ pageNumber: '1' }),
     'queryParams': observableOf({ subject: ['english', 'odia'] })
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ AllMyContentFilterComponent ],
       imports: [HttpClientTestingModule, SharedModule.forRoot()],
@@ -34,9 +36,6 @@ describe('AllMyContentFilterComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AllMyContentFilterComponent);
     component = fixture.componentInstance;
     inputEl = fixture.debugElement.query(By.css('input[class="upForReviewSearchBox"]'));

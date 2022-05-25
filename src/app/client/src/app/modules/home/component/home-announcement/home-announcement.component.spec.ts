@@ -19,7 +19,8 @@ describe('HomeAnnouncementComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), HttpClientTestingModule, RouterTestingModule,
       NgInviewModule, TelemetryModule],
@@ -30,8 +31,6 @@ describe('HomeAnnouncementComponent', () => {
         { provide: RouterOutlet, useValue: fakeActivatedRoute }]
     })
       .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(HomeAnnouncementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

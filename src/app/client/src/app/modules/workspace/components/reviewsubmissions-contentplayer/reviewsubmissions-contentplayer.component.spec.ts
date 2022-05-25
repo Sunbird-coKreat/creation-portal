@@ -33,7 +33,9 @@ describe('ReviewsubmissionsContentplayerComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       schemas: [NO_ERRORS_SCHEMA],
       declarations: [ReviewsubmissionsContentplayerComponent],
@@ -44,9 +46,6 @@ describe('ReviewsubmissionsContentplayerComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ReviewsubmissionsContentplayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -24,7 +24,9 @@ describe('PageSectionComponent', () => {
   let component: PageSectionComponent;
   let fixture: ComponentFixture<PageSectionComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule, NgInviewModule, TelemetryModule.forRoot(), RouterTestingModule],
       declarations: [PageSectionComponent],
@@ -33,9 +35,6 @@ describe('PageSectionComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PageSectionComponent);
     component = fixture.componentInstance;
   });

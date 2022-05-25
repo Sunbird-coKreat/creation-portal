@@ -48,7 +48,8 @@ describe('OrgSearchComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), RouterTestingModule],
       declarations: [OrgSearchComponent],
@@ -60,9 +61,6 @@ describe('OrgSearchComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrgSearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -15,7 +15,9 @@ describe('OtpPopupComponent', () => {
   let component: OtpPopupComponent;
   let fixture: ComponentFixture<OtpPopupComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
         HttpClientTestingModule, SuiModule, TelemetryModule.forRoot() , RouterTestingModule],
@@ -24,9 +26,6 @@ describe('OtpPopupComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OtpPopupComponent);
     component = fixture.componentInstance;
   });

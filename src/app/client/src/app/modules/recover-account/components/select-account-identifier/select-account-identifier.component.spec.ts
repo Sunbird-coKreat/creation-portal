@@ -44,7 +44,9 @@ describe('SelectAccountIdentifierComponent', () => {
       this.queryParamsMock = params;
     }
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [SelectAccountIdentifierComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -55,9 +57,6 @@ describe('SelectAccountIdentifierComponent', () => {
         { provide: ResourceService, useValue: resourceServiceMockData }
       ]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(SelectAccountIdentifierComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

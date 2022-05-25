@@ -15,16 +15,15 @@ describe('NoResultComponent', () => {
     },
     languageSelected$: of({})
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ SharedModule.forRoot() ],
       providers: [ ResourceService,
       { provide: ResourceService, useValue: resourceBundle }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(NoResultComponent);
     component = fixture.componentInstance;
   });

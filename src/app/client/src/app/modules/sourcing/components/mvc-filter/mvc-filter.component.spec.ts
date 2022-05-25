@@ -19,7 +19,8 @@ xdescribe('MvcFilterComponent', () => {
   let debugElement: DebugElement;
 
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, ReactiveFormsModule, SuiPopupModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [ MvcFilterComponent ],
@@ -27,9 +28,6 @@ xdescribe('MvcFilterComponent', () => {
     ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MvcFilterComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;

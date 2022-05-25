@@ -9,16 +9,14 @@ describe('WorkspacesidebarComponent', () => {
   let component: WorkspacesidebarComponent;
   let fixture: ComponentFixture<WorkspacesidebarComponent>;
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkspacesidebarComponent ],
       providers: [ ConfigService],
       imports: [RouterTestingModule, HttpClientTestingModule, CoreModule, SharedModule.forRoot(), SuiModule]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(WorkspacesidebarComponent);
     component = fixture.componentInstance;
   });

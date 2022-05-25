@@ -119,7 +119,8 @@ describe('ChapterListComponent', () => {
   };
   const compState = 'chapterListComponent';
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, RouterTestingModule, TelemetryModule.forRoot(), SuiModule,
         SuiTabsModule, FormsModule, DynamicModule],
@@ -137,8 +138,6 @@ describe('ChapterListComponent', () => {
             ProgramsService, CollectionHierarchyService, ResourceService, DatePipe,]
     })
     .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(ChapterListComponent);
     component = fixture.debugElement.componentInstance;
     de = fixture.debugElement;

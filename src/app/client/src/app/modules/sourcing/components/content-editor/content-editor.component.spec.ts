@@ -66,7 +66,9 @@ xdescribe('ContentEditorComponent', () => {
     url = jasmine.createSpy('url');
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [PlayerHelperModule, SuiModule, FormsModule, RouterTestingModule, TelemetryModule],
       declarations: [ ContentEditorComponent ],
@@ -80,9 +82,6 @@ xdescribe('ContentEditorComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentEditorComponent);
     component = fixture.componentInstance;
     component.contentEditorComponentInputs = contentEditorComponentInput;

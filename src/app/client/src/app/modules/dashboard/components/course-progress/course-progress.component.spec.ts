@@ -66,7 +66,9 @@ describe('CourseProgressComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, SuiModule, FormsModule, SharedModule.forRoot(), OrderModule,
         CoreModule, DashboardModule, TelemetryModule.forRoot()],
@@ -78,9 +80,6 @@ describe('CourseProgressComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CourseProgressComponent);
     component = fixture.componentInstance;
   });

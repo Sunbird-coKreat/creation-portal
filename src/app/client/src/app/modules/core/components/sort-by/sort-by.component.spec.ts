@@ -18,7 +18,9 @@ describe('SortByComponent', () => {
     'parent': 'search/Courses/1',
     'queryParams': observableFrom([{ sortType: 'asc', sort_by: 'createdOn' }])
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ SortByComponent ],
       imports: [HttpClientTestingModule, SharedModule.forRoot()],
@@ -29,9 +31,6 @@ describe('SortByComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(SortByComponent);
     component = fixture.componentInstance;
     component.sortingOptions =  [
