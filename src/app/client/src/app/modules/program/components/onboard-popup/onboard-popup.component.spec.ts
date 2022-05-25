@@ -21,7 +21,7 @@ describe('OnboardPopupComponent', () => {
   let fixture: ComponentFixture<OnboardPopupComponent>;
   let component: OnboardPopupComponent;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ RouterTestingModule, FormsModule, SuiModule, SuiModalModule, SuiProgressModule,
         SuiAccordionModule, TelemetryModule.forRoot(),
@@ -31,12 +31,15 @@ describe('OnboardPopupComponent', () => {
         ConfigService, {provide: APP_BASE_HREF, useValue: '/'}]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OnboardPopupComponent);
     component = fixture.componentInstance;
   });
+
+  
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

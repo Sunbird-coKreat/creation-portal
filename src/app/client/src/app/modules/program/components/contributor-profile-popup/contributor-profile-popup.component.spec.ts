@@ -33,9 +33,7 @@ describe('ContributorProfilePopupComponent', () => {
     }
   };
 
-
-
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, HttpClientTestingModule,
         FormsModule, CoreModule, TelemetryModule, RouterTestingModule,
@@ -47,12 +45,14 @@ describe('ContributorProfilePopupComponent', () => {
         {provide: ActivatedRoute, useValue: fakeActivatedRoute}],
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContributorProfilePopupComponent);
     component = fixture.componentInstance;
   });
+  
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     console.log(component);

@@ -41,7 +41,7 @@ describe('ContributorsListComponent', () => {
     hashTagId: '01309282781705830427'
   };
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, HttpClientTestingModule,
         FormsModule, CoreModule, TelemetryModule, RouterTestingModule,
@@ -53,12 +53,14 @@ describe('ContributorsListComponent', () => {
         {provide: ActivatedRoute, useValue: fakeActivatedRoute}],
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContributorsListComponent);
     component = fixture.componentInstance;
   });
+  
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     console.log(component);

@@ -78,7 +78,7 @@ describe('CreateProgramComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, HttpClientTestingModule, FormsModule, CoreModule, TelemetryModule,
         RouterTestingModule, SharedModule.forRoot(), SuiModule],
@@ -98,12 +98,15 @@ describe('CreateProgramComponent', () => {
        schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CreateProgramComponent);
     component = fixture.componentInstance;
   });
+
+  
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

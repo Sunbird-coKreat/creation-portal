@@ -28,7 +28,8 @@ describe('OrgReportsComponent', () => {
   };
   const resourceBundle = mockData.resourceBundle;
   const routerStub = { url: '/sourcing/orgreports' };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
       schemas: [NO_ERRORS_SCHEMA],
@@ -41,13 +42,15 @@ describe('OrgReportsComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrgReportsComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();
   });
+  
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('can load instance', () => {
     expect(component).toBeTruthy();

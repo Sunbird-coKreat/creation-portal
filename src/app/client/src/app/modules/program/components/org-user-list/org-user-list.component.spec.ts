@@ -62,36 +62,34 @@ describe('OrgUserListComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-     imports: [
-            DynamicModule,
-            SuiModule,
-            SharedModule.forRoot(),
-            ReactiveFormsModule,
-            FormsModule,
-            TelemetryModule.forRoot(),
-            HttpClientTestingModule,
-            RouterModule.forRoot([])
-        ],
-      declarations: [ OrgUserListComponent],
-      providers: [
-        { provide: Router },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-        { provide: UserService, useValue: userServiceStub },
-        { provide: APP_BASE_HREF, useValue: '/' },
-        { provide: ResourceService, useValue: resourceBundle },
-        ToasterService , ConfigService, DatePipe, ProgramStageService,
-        ProgramsService,RegistryService, FrameworkService, HelperService, Subject,
-        ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
-        SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    })
-    .compileComponents();
-  }));
 
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [
+             DynamicModule,
+             SuiModule,
+             SharedModule.forRoot(),
+             ReactiveFormsModule,
+             FormsModule,
+             TelemetryModule.forRoot(),
+             HttpClientTestingModule,
+             RouterModule.forRoot([])
+         ],
+       declarations: [ OrgUserListComponent],
+       providers: [
+         { provide: Router },
+         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+         { provide: UserService, useValue: userServiceStub },
+         { provide: APP_BASE_HREF, useValue: '/' },
+         { provide: ResourceService, useValue: resourceBundle },
+         ToasterService , ConfigService, DatePipe, ProgramStageService,
+         ProgramsService,RegistryService, FrameworkService, HelperService, Subject,
+         ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
+         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
+       ],
+       schemas: [NO_ERRORS_SCHEMA]
+     })
+     .compileComponents();
     fixture = TestBed.createComponent(OrgUserListComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();
@@ -117,6 +115,12 @@ describe('OrgUserListComponent', () => {
     spyOn(telemetryService, 'initialize');
 
   });
+
+  
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
