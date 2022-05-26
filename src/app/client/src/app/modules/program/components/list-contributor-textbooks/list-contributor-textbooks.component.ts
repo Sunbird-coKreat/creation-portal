@@ -84,7 +84,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.selectedNominationDetails = frag;
     });
     this.contributor = this.selectedNominationDetails;
-    this.nominatedContentTypes = this.contributor.nominationData.targetprimarycategories ? _.join(_.map(this.contributor.nominationData.targetprimarycategories, 'name'), ', ') : _.join(this.helperService.mapContentTypesToCategories(this.contributor.nominationData.content_types), ', ');
+    // tslint:disable-next-line:max-line-length
+    this.nominatedContentTypes = this.contributor?.nominationData?.targetprimarycategories ? _.join(_.map(this.contributor.nominationData.targetprimarycategories, 'name'), ', ') : _.join(this.helperService.mapContentTypesToCategories(this.contributor?.nominationData.content_types), ', ');
     this.getPageId();
     this.programStageService.initialize();
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
@@ -107,16 +108,16 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.setActiveDate();
       this.setProgramRole();
 
-      if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
+      if (!this.programContext?.target_type || this.programContext?.target_type === 'collections') {
         this.getProgramTextbooks();
-      } else if (this.programDetails.target_type == 'searchCriteria') {
+      } else if (this.programDetails?.target_type === 'searchCriteria') {
         this.getOriginForApprovedContents().subscribe((res) => {
           this.getProgramContents();
-        })
+        });
       }
       this.getNominationCounts();
       this.roles = _.get(this.programContext, 'config.roles');
-      this.configData = _.find(this.programContext.config.components, {'id': 'ng.sunbird.chapterList'});
+      this.configData = _.find(this.programContext?.config?.components, {'id': 'ng.sunbird.chapterList'});
     }, error => {
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
@@ -197,8 +198,8 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     return this.programsService.get(req).pipe(tap((programDetails: any) => {
       this.programDetails = programDetails.result;
       this.targetCollections = this.programsService.setTargetCollectionName(this.programDetails, 'plural');
-      this.mediums = _.join(this.programDetails.config['medium'], ', ');
-      this.grades = _.join(this.programDetails.config['gradeLevel'], ', ');
+      this.mediums = _.join(this.programDetails?.config['medium'], ', ');
+      this.grades = _.join(this.programDetails?.config['gradeLevel'], ', ');
     }));
   }
   getOriginForApprovedContents() {
@@ -388,7 +389,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
 
   setProgramRole() {
     this.sessionContext.currentRoles = ['REVIEWER'] ;
-    const currentRoles = _.filter(this.programContext.config.roles, role => this.sessionContext.currentRoles.includes(role.name));
+    const currentRoles = _.filter(this.programContext?.config?.roles, role => this.sessionContext.currentRoles.includes(role.name));
     this.sessionContext.currentRoleIds = !_.isEmpty(currentRoles) ? _.map(currentRoles, role => role.id) : null;
   }
   viewContribution(collection) {
@@ -433,14 +434,14 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
      const req = {
        request: {
            program_id: this.programId,
-           user_id: this.contributor.nominationData.user_id,
+           user_id: this.contributor?.nominationData?.user_id,
            status: nominationStatus,
-           updatedby: this.userService.userProfile.userId
+           updatedby: this.userService?.userProfile?.userId
          }
         };
      if (nominationStatus === 'Rejected') {
-       if (this.FormControl.value.rejectComment) {
-        req.request['feedback'] = this.FormControl.value.rejectComment;
+       if (this.FormControl?.value?.rejectComment) {
+        req.request['feedback'] = this.FormControl?.value?.rejectComment;
        } else {
          return;
        }
@@ -448,7 +449,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
      this.programsService.updateNomination(req).subscribe((res) => {
       this.contributor.nominationData.status = nominationStatus;
       this.contributor.nominationData.programData = this.programDetails;
-       this.notificationService.onAfterNominationUpdate(this.contributor.nominationData)
+       this.notificationService.onAfterNominationUpdate(this.contributor?.nominationData)
        .subscribe(
          response => { },
          error => console.log(error)
@@ -458,7 +459,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         this.router.navigate(['/sourcing/nominations/' + this.programId],
          {queryParams: { tab: 'nomination' }, queryParamsHandling: 'merge' });
        });
-        this.toasterService.success(this.resourceService.messages.smsg.m0010);
+        this.toasterService.success(this.resourceService?.messages?.smsg?.m0010);
      },
      (err) => {
        this.showRequestChangesPopup = false;
@@ -466,7 +467,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
         this.router.navigate(['/sourcing/nominations/' + this.programId],
          {queryParams: { tab: 'nomination' }, queryParamsHandling: 'merge' });
        });
-       this.toasterService.success(this.resourceService.messages.fmsg.m0026);
+       this.toasterService.success(this.resourceService?.messages?.fmsg?.m0026);
      });
   }
   setActiveDate() {
@@ -488,7 +489,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       this.currentStage = _.last(this.state.stages).stage;
     }
 
-    if (this.programDetails && this.programDetails.target_type == 'searchCriteria' && this.currentStage === 'listContributorTextbook') {
+    if (this.programDetails && this.programDetails?.target_type === 'searchCriteria' && this.currentStage === 'listContributorTextbook') {
       this.showLoader = true;
       setTimeout(() => {
         this.fetchProgramDetails().subscribe((programDetails) => {

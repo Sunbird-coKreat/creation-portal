@@ -18,7 +18,9 @@ describe('CardComponent', () => {
   }
   class FakeActivatedRoute {
   }
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ CardComponent, CdnprefixPipe ],
@@ -27,9 +29,6 @@ describe('CardComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CardComponent);
     component = fixture.componentInstance;
   });

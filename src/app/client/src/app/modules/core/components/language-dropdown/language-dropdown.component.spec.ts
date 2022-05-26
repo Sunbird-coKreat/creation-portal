@@ -43,7 +43,8 @@ describe('LanguageDropdownComponent', () => {
             }
         }
     };
-    beforeEach(async(() => {
+   
+    beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, RouterModule.forRoot([])],
             providers: [ConfigService, OrgDetailsService, CacheService, BrowserCacheTtlService, UtilService,
@@ -53,8 +54,6 @@ describe('LanguageDropdownComponent', () => {
             schemas: [NO_ERRORS_SCHEMA]
         })
             .compileComponents();
-    }));
-    beforeEach(() => {
         fixture = TestBed.createComponent(LanguageDropdownComponent);
         component = fixture.componentInstance;
     });

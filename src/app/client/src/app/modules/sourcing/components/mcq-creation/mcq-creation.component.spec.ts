@@ -38,7 +38,8 @@ xdescribe('McqCreationComponent', () => {
         navigate = jasmine.createSpy('navigate');
         url = jasmine.createSpy('url');
       };
-    beforeEach(async(() => {
+   
+    beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, SharedModule.forRoot()
                 , FormsModule, ReactiveFormsModule, TelemetryModule, SuiModule, HttpClientTestingModule],
@@ -57,8 +58,6 @@ xdescribe('McqCreationComponent', () => {
             schemas: [NO_ERRORS_SCHEMA],
         })
             .compileComponents();
-    }));
-    beforeEach(() => {
         fixture = TestBed.createComponent(McqCreationComponent);
         component = fixture.componentInstance;
     });

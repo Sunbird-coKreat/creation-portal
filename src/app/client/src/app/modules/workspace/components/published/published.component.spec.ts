@@ -53,7 +53,9 @@ describe('PublishedComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [PublishedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SuiModule , SharedModule.forRoot(),
@@ -67,9 +69,6 @@ describe('PublishedComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublishedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -28,7 +28,9 @@ const mockUserService = { userProfile: { userId: '68777b59-b28b-4aee-88d6-50d46e
 describe('GenericEditorComponent', () => {
   let component: GenericEditorComponent;
   let fixture: ComponentFixture<GenericEditorComponent>;
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [GenericEditorComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, CoreModule, TelemetryModule.forRoot()],
@@ -45,9 +47,6 @@ describe('GenericEditorComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(GenericEditorComponent);
     component = fixture.componentInstance;
   });

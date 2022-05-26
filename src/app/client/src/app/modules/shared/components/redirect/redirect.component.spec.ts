@@ -45,7 +45,8 @@ describe('RedirectComponent', () => {
 
   }
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [RedirectComponent],
       imports: [
@@ -66,9 +67,6 @@ describe('RedirectComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(RedirectComponent);
     component = fixture.componentInstance;
   });

@@ -41,7 +41,8 @@ xdescribe('ProminentFilterComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC', 'CONTENT_REVIEWER']
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule,RouterTestingModule, SuiModule, TelemetryModule.forRoot()],
       providers: [ConfigService, CacheService, ResourceService,
@@ -50,9 +51,6 @@ xdescribe('ProminentFilterComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProminentFilterComponent);
     component = fixture.componentInstance;
     frameworkService = TestBed.get(FrameworkService);

@@ -16,17 +16,13 @@ describe('BrowserCompatibilityComponent', () => {
     browser: 'chrome'
   };
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, HttpClientTestingModule],
       declarations: [BrowserCompatibilityComponent, CdnprefixPipe],
       providers: [ResourceService, DeviceDetectorService, ConfigService, CacheService, BrowserCacheTtlService]
     })
       .compileComponents();
-  }));
-
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BrowserCompatibilityComponent);
     component = fixture.componentInstance;
   });

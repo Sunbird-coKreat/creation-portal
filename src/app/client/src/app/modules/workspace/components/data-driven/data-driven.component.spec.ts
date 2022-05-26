@@ -55,7 +55,9 @@ describe('DataDrivenComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule, RouterTestingModule, SharedModule.forRoot(), CoreModule,
         TelemetryModule.forRoot()],
@@ -67,9 +69,6 @@ describe('DataDrivenComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixtureParent = TestBed.createComponent(DataDrivenComponent);
     componentParent = fixtureParent.componentInstance;
     fixtureChild = TestBed.createComponent(DefaultTemplateComponent);

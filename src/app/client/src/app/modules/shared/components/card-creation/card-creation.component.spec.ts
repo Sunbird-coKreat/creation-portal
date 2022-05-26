@@ -14,7 +14,9 @@ describe('CardCreationComponent', () => {
   let component: CardCreationComponent;
   let fixture: ComponentFixture<CardCreationComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
       declarations: [ ],
@@ -22,9 +24,6 @@ describe('CardCreationComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CardCreationComponent);
     component = fixture.componentInstance;
   });

@@ -34,7 +34,9 @@ describe('ResourceComponent', () => {
     };
     public changeQueryParams(queryParams) { this.queryParamsMock.next(queryParams); }
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, RouterTestingModule,SuiModule, TelemetryModule.forRoot()],
       declarations: [ResourceComponent],
@@ -43,9 +45,6 @@ describe('ResourceComponent', () => {
       { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ResourceComponent);
     component = fixture.componentInstance;
     toasterService = TestBed.get(ToasterService);

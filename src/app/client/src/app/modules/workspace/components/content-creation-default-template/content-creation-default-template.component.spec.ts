@@ -36,7 +36,8 @@ describe('DefaultTemplateComponent', () => {
     'url': observableOf({ 'path': 'textbook' })
   };
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [ DefaultTemplateComponent ],
@@ -48,9 +49,6 @@ describe('DefaultTemplateComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DefaultTemplateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

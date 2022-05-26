@@ -67,7 +67,9 @@ describe('BatchPageSectionComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [BatchPageSectionComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -81,9 +83,6 @@ describe('BatchPageSectionComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BatchPageSectionComponent);
     childfixture = TestBed.createComponent(BatchCardComponent);
     component = fixture.componentInstance;

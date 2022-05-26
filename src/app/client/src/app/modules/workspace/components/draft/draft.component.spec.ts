@@ -59,7 +59,9 @@ describe('DraftComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [DraftComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
@@ -74,9 +76,6 @@ describe('DraftComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DraftComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

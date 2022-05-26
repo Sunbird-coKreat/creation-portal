@@ -45,7 +45,8 @@ describe('AppComponent', () => {
   let userService;
   let timerCallback;
   let resourceService;
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule,
         RouterTestingModule],
@@ -62,9 +63,6 @@ describe('AppComponent', () => {
         TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry }, SearchService, ContentService],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     const navigationHelperService = TestBed.get(NavigationHelperService);

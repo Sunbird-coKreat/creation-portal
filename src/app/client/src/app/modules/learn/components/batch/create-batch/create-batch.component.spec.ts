@@ -63,7 +63,9 @@ describe('CreateBatchComponent', () => {
   let component: CreateBatchComponent;
   let fixture: ComponentFixture<CreateBatchComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     TestBed.configureTestingModule({
@@ -76,9 +78,6 @@ describe('CreateBatchComponent', () => {
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }],
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CreateBatchComponent);
     component = fixture.componentInstance;
   });

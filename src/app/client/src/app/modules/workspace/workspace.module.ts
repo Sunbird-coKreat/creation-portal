@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { CoreModule } from '@sunbird/core';
 import { WorkspaceRoutingModule } from './workspace-routing.module';
 import { SharedModule } from '@sunbird/shared';
-import { SlickModule } from 'ngx-slick';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from './services';
@@ -28,7 +27,6 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
 @NgModule({
   imports: [
     CommonModule,
-    SlickModule,
     WorkspaceRoutingModule,
     SharedModule,
     SuiModule,

@@ -17,7 +17,8 @@ describe('CustomMultiSelectComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule, SuiModule],
       declarations: [ CustomMultiSelectComponent ],
@@ -26,9 +27,6 @@ describe('CustomMultiSelectComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CustomMultiSelectComponent);
     component = fixture.componentInstance;
   });

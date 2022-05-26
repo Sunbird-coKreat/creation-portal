@@ -52,7 +52,9 @@ describe('CourseSearchComponent', () => {
     public changeQueryParams(queryParams) { this.queryParamsMock.next(queryParams); }
     public changeParams(params) { this.paramsMock.next(params); }
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule,RouterTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [CourseSearchComponent],
@@ -61,9 +63,6 @@ describe('CourseSearchComponent', () => {
       { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CourseSearchComponent);
     component = fixture.componentInstance;
     toasterService = TestBed.get(ToasterService);

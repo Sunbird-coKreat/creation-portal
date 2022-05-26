@@ -56,7 +56,9 @@ describe('SignUpComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), RecaptchaModule, CoreModule,
         HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
@@ -69,9 +71,6 @@ describe('SignUpComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
   });

@@ -64,7 +64,9 @@ describe('FlagReviewerComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC']
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [FlagReviewerComponent],
       imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
@@ -79,9 +81,6 @@ describe('FlagReviewerComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FlagReviewerComponent);
     component = fixture.componentInstance;
   });

@@ -55,7 +55,9 @@ describe('AllContentComponent', () => {
     }
   };
   const bothParams = { 'params': { 'pageNumber': '1' }, 'queryParams': { 'sort_by': 'Updated On' } };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [AllContentComponent],
       imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot()],
@@ -70,9 +72,6 @@ describe('AllContentComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AllContentComponent);
     component = fixture.componentInstance;
   });

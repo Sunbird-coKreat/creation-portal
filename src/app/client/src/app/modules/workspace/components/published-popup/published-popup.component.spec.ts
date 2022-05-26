@@ -67,7 +67,8 @@ describe('PublishedPopupComponent', () => {
     }, 'responseCode': 'CLIENT_ERROR', 'result': {}
   };
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [PublishedPopupComponent],
@@ -78,9 +79,6 @@ describe('PublishedPopupComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublishedPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -44,7 +44,9 @@ describe('RecoverAccountComponent', () => {
       this.queryParamsMock = params;
     }
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [RecoverAccountComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -55,9 +57,6 @@ describe('RecoverAccountComponent', () => {
         { provide: ResourceService, useValue: resourceServiceMockData }
       ]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(RecoverAccountComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

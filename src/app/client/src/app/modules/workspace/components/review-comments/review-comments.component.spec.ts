@@ -107,7 +107,9 @@ describe('ReviewCommentsComponent', () => {
   let component: ReviewCommentsComponent;
   let fixture: ComponentFixture<ReviewCommentsComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ ReviewCommentsComponent ],
       schemas: [NO_ERRORS_SCHEMA],
@@ -119,9 +121,6 @@ describe('ReviewCommentsComponent', () => {
         TelemetryModule.forRoot(), OrderModule],
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ReviewCommentsComponent);
     component = fixture.componentInstance;
   });

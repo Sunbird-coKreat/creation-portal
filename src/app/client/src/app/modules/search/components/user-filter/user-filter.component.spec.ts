@@ -26,21 +26,20 @@ describe('UserFilterComponent', () => {
    navigate = jasmine.createSpy('navigate');
  }
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot()],
-      declarations: [ UserFilterComponent ],
-      providers: [ResourceService, SearchService, PaginationService, UserService,
-        LearnerService, ContentService, ConfigService, ToasterService, UserSearchService,
-        { provide: Router, useClass: RouterStub },
-      { provide: ActivatedRoute, useValue: fakeActivatedRoute},
-      {provide: APP_BASE_HREF, useValue: '/'}],
-      schemas: [NO_ERRORS_SCHEMA]
-    })
-    .compileComponents();
-  }));
+
 
   beforeEach(() => {
+    TestBed.configureTestingModule({
+        imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot()],
+        declarations: [ UserFilterComponent ],
+        providers: [ResourceService, SearchService, PaginationService, UserService,
+          LearnerService, ContentService, ConfigService, ToasterService, UserSearchService,
+          { provide: Router, useClass: RouterStub },
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute},
+        {provide: APP_BASE_HREF, useValue: '/'}],
+        schemas: [NO_ERRORS_SCHEMA]
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(UserFilterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

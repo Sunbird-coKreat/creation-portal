@@ -62,7 +62,9 @@ xdescribe('LimitedPublishedComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LimitedPublishedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
@@ -77,9 +79,6 @@ xdescribe('LimitedPublishedComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(LimitedPublishedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

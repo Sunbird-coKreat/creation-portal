@@ -30,7 +30,7 @@ export class ContentHelperService {
   public defaultVideoSize: any;
   constructor(private configService: ConfigService, private programComponentsService: ProgramComponentsService,
     private programStageService: ProgramStageService, private userService: UserService, private helperService: HelperService,
-    private programsService: ProgramsService, public resourceService: ResourceService, 
+    private programsService: ProgramsService, public resourceService: ResourceService,
     public actionService: ActionService, public activatedRoute: ActivatedRoute, private sourcingService: SourcingService) {
       this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
       (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
@@ -117,38 +117,38 @@ export class ContentHelperService {
     }
     openContent(content) {
       return new Promise((resolve, reject) => {
-        this._contentId = content.identifier;
+        this._contentId = content?.identifier;
         this._templateDetails = {
-          'name' : content.primaryCategory
+          'name' : content?.primaryCategory
         };
-        const appEditorConfig = this.configService.contentCategoryConfig.sourcingConfig.files;
-        const acceptedFile = appEditorConfig[content.mimeType];
+        const appEditorConfig = this.configService?.contentCategoryConfig?.sourcingConfig?.files;
+        const acceptedFile = _.get(appEditorConfig, 'content.mimeType');
         this._templateDetails['filesConfig'] = {};
         this._templateDetails.filesConfig['accepted'] = acceptedFile || '';
         this._templateDetails.filesConfig['size'] = {
           defaultfileSize:  this.defaultFileSize,
           defaultVideoSize: this.defaultVideoSize
         };
-        this._templateDetails.questionCategories = content.questionCategories;
-        if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(content.questionCategories)) {
+        this._templateDetails.questionCategories = content?.questionCategories;
+        if (content && content?.mimeType === 'application/vnd.ekstep.ecml-archive' && !_.isEmpty(content?.questionCategories)) {
           this._templateDetails.onClick = 'questionSetComponent';
-        } else if (content.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(content.questionCategories)) {
+        } else if (content && content?.mimeType === 'application/vnd.ekstep.ecml-archive' && _.isEmpty(content?.questionCategories)) {
           this._templateDetails.onClick = 'editorComponent';
-        } else if (content.mimeType === 'application/vnd.ekstep.quml-archive') {
+        } else if (content && content?.mimeType === 'application/vnd.ekstep.quml-archive') {
           this._templateDetails.onClick = 'questionSetComponent';
-        } else if (content.mimeType === 'application/vnd.sunbird.questionset'){
+        } else if (content && content?.mimeType === 'application/vnd.sunbird.questionset'){
           this._templateDetails.onClick = 'questionSetEditorComponent';
         } else {
           this._templateDetails.onClick = 'uploadComponent';
         }
         this.programsService.emitHeaderEvent(false);
         const componentInstance = this.programComponentsService.getComponentInstance(this._templateDetails.onClick);
-        this.componentLoadHandler('preview', componentInstance, this._templateDetails.onClick, {'content': content})
+        this.componentLoadHandler('preview', componentInstance, this._templateDetails.onClick, {'content': content});
         const ret = {
           'currentComponent': this.currentOpenedComponent,
           'dynamicInputs': this.dynamicComponentsInput,
           'currentComponentName': this._templateDetails.onClick
-        }
+        };
         return resolve(ret);
       });
     }
@@ -158,15 +158,15 @@ export class ContentHelperService {
     }
     initiateInputs(action?, content?) {
       // this.showLoader = false;
-      const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
-      this._sessionContext.programId = this._programDetails.program_id;
+      const sourcingStatus = !_.isUndefined(content) ? content?.sourcingStatus : null;
+      this._sessionContext.programId = this._programDetails?.program_id;
       this._sessionContext.telemetryPageDetails = {
         telemetryPageId : this.configService.telemetryLabels.pageId.contribute.submitNomination,
         telemetryInteractCdata: this._telemetryInteractCdata
       };
       this.dynamicComponentsInput = {
         contentUploadComponentInput: {
-          config: _.find(this._programDetails.config.components, {'id': 'ng.sunbird.uploadComponent'}),
+          config: _.find(this._programDetails?.config?.components, {'id': 'ng.sunbird.uploadComponent'}),
           sessionContext: this._sessionContext,
           templateDetails: this._templateDetails,
           selectedSharedContext: this._selectedSharedContext,
@@ -177,7 +177,7 @@ export class ContentHelperService {
           content: content,
         },
         practiceQuestionSetComponentInput: {
-          config: _.find(this._programDetails.config.components, {'id': 'ng.sunbird.practiceSetComponent'}),
+          config: _.find(this._programDetails?.config?.components, {'id': 'ng.sunbird.practiceSetComponent'}),
           sessionContext: this._sessionContext,
           templateDetails: this._templateDetails,
           selectedSharedContext: this._selectedSharedContext,
@@ -210,9 +210,9 @@ export class ContentHelperService {
     setFrameworkCategories() {
       this._sessionContext.targetCollectionFrameworksData = {};
       // tslint:disable-next-line:max-line-length
-      this._sessionContext.targetCollectionFrameworksData['framework'] = _.isArray(this._programDetails.config.framework) ? _.first(this._programDetails.config.framework) : this._programDetails.config.framework;
+      this._sessionContext.targetCollectionFrameworksData['framework'] = _.isArray(this._programDetails?.config?.framework) ? _.first(this._programDetails?.config?.framework) : this._programDetails?.config?.framework;
     }
-    setNominationDetails(nominationDetails){
+    setNominationDetails(nominationDetails) {
       this._sessionContext.nominationDetails = nominationDetails;
     }
     hasAccessFor(roles: Array<string>, currentRoles) {
@@ -222,7 +222,7 @@ export class ContentHelperService {
       const sourcingInstance = this.programsService.ifSourcingInstance() ? true : false;
       if (sourcingInstance) {
         const isSourcingOrgReviewer = this.userService.isSourcingOrgReviewer(programDetails);
-        if (isSourcingOrgReviewer && (content.status === 'Live'|| (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
+        if (isSourcingOrgReviewer && (content.status === 'Live' || (content.prevStatus === 'Live' && content.status === 'Draft' ))) {
           return true;
         } else {
           return false;

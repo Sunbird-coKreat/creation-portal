@@ -10,16 +10,15 @@ describe('AppLoaderComponent', () => {
   let component: AppLoaderComponent;
   let fixture: ComponentFixture<AppLoaderComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ AppLoaderComponent ],
       providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AppLoaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

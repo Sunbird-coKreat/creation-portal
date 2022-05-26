@@ -11,7 +11,9 @@ describe('ShareLinkComponent', () => {
   let component: ShareLinkComponent;
   let fixture: ComponentFixture<ShareLinkComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule , HttpClientTestingModule ],
       declarations: [ShareLinkComponent],
@@ -19,9 +21,6 @@ describe('ShareLinkComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ShareLinkComponent);
     component = fixture.componentInstance;
   });

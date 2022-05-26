@@ -46,7 +46,9 @@ describe('OrganisationComponent', () => {
   const consumptionDataset = 'consumption';
   const dashboardBaseUrl = 'dashBoard/organization';
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [OrganisationComponent],
       imports: [HttpClientModule, FormsModule, RouterTestingModule,SuiModule, ChartsModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
@@ -68,9 +70,6 @@ describe('OrganisationComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrganisationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

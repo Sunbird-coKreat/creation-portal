@@ -2253,7 +2253,7 @@ export const contentUploadComponentInput = {
   };
 
 export const editTargetObjectFormMock = [
-  {
+  {section:{
 		"name": "Details",
 		"fields": [
 			{
@@ -2347,6 +2347,7 @@ export const editTargetObjectFormMock = [
 			}
 		]
 	}
+}
 ]
 
 export const questionsetReadResp = {

@@ -48,7 +48,9 @@ describe('QuestionListComponent', () => {
     navigate = jasmine.createSpy('navigate');
     url = jasmine.createSpy('url');
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, ReactiveFormsModule, PlayerHelperModule,
                   RouterTestingModule, TelemetryModule, SharedModule],
@@ -65,9 +67,6 @@ describe('QuestionListComponent', () => {
       DeviceDetectorService, { provide: UserService, useValue: UserServiceStub }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(QuestionListComponent);
     component = fixture.debugElement.componentInstance;
     component.sessionContext = {targetCollectionFrameworksData: {

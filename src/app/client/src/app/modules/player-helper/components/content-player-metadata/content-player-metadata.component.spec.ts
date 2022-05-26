@@ -10,16 +10,15 @@ describe('ContentPlayerMetadataComponent', () => {
   let component: ContentPlayerMetadataComponent;
   let fixture: ComponentFixture<ContentPlayerMetadataComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), HttpClientTestingModule, CoreModule],
       declarations: [ContentPlayerMetadataComponent],
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentPlayerMetadataComponent);
     component = fixture.componentInstance;
   });

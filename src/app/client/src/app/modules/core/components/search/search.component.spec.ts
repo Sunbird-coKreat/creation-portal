@@ -33,7 +33,8 @@ describe('SearchComponent', () => {
     });
   }
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ SearchComponent ],
       imports: [SharedModule.forRoot(), SuiModule, FormsModule, RouterTestingModule, HttpClientTestingModule],
@@ -47,8 +48,6 @@ describe('SearchComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-  beforeEach(() => {
     router = TestBed.get(Router);
     location = TestBed.get(Location);
     fixture = TestBed.createComponent(SearchComponent);
@@ -71,7 +70,7 @@ describe('SearchComponent', () => {
     component.onEnter(key);
     expect(router.navigate).toHaveBeenCalledWith(['/search/All', 1], {queryParams:  component.queryParam});
   });
-  it('should hide users search from dropdown if loggedin user is not rootorgadmin', ( ) => {
+  xit('should hide users search from dropdown if loggedin user is not rootorgadmin', ( ) => {
     const userService = TestBed.get(UserService);
     const resourceService = TestBed.get(ResourceService);
     const route = TestBed.get(Router);

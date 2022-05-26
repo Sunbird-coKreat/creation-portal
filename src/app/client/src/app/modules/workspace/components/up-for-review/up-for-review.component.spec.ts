@@ -67,7 +67,9 @@ describe('UpForReviewComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC', 'CONTENT_REVIEWER']
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [UpForReviewComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
@@ -82,9 +84,6 @@ describe('UpForReviewComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UpForReviewComponent);
     component = fixture.componentInstance;
   });

@@ -22,7 +22,9 @@ describe('SelectOrgComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot(),
         RouterTestingModule],
@@ -31,9 +33,6 @@ describe('SelectOrgComponent', () => {
       providers: [{ provide: ActivatedRoute, useValue: fakeActivatedRoute }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(SelectOrgComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
