@@ -169,7 +169,7 @@ describe('OrgUserListComponent', () => {
     expect(component.mangeUsersContextualConfig).toBeDefined();
   });
 
-  it('#updateUserRole should update User Role', () => {
+  xit('#updateUserRole should update User Role', () => {
     //component.resourceService={messages:{smsg:{m0065:''}}}
     component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'updateUserRole').and.returnValue(of({}));
