@@ -58,6 +58,10 @@ xdescribe('CertificateDetailsComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should verify the certificate', () => {
     component.loader = true;
     const certificateService = TestBed.get(CertificateService);

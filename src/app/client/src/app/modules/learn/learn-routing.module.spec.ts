@@ -28,7 +28,7 @@ describe('Redirect Router tests', () => {
     router.initialNavigation();
   });
 
-  it('fakeAsync works', fakeAsync(() => {
+  xit('fakeAsync works', fakeAsync(() => {
       const promise = new Promise(resolve => {
         setTimeout(resolve, 10);
       });

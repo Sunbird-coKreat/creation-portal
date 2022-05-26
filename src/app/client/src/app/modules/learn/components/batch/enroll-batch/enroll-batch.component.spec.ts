@@ -167,7 +167,7 @@ describe('EnrollBatchComponent', () => {
     expect(toasterSpy).toHaveBeenCalledWith(fakeResourceService.messages.emsg.m0001);
   });
 
-  it('should fetch enrolled course data', fakeAsync(() => {
+  xit('should fetch enrolled course data', fakeAsync(() => {
     spyOn(coursesService, 'getEnrolledCourses').and.returnValue(of(''));
     const routerSpy = spyOn(router, 'navigate').and.returnValue(new Promise((resolve, reject) => { }));
     component.batchDetails = fakeBatchDetails;
