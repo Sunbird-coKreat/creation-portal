@@ -32,6 +32,7 @@
   "dependencies": {
     "@angular-devkit/core": "^9.1.15",
     "@angular/animations": "^9.1.13",
+    "@angular/cdk": "10.2.7",
     "@angular/common": "^9.1.13",
     "@angular/compiler": "^9.1.13",
     "@angular/core": "^9.1.13",
@@ -45,7 +46,7 @@
     "@project-sunbird/client-services": "4.2.5",
     "@project-sunbird/common-consumption-v8": "3.6.4",
     "@project-sunbird/sb-styles": "0.0.9",
-    "@project-sunbird/sunbird-collection-editor-v9": "4.9.22",
+    "@project-sunbird/sunbird-collection-editor-v9": "4.10.3",
     "@project-sunbird/sunbird-epub-player-v9": "4.5.5",
     "@project-sunbird/sunbird-pdf-player-v9": "4.2.0",
     "@project-sunbird/sunbird-quml-player-v9": "4.9.5",

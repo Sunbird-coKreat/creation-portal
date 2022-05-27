@@ -1490,7 +1490,9 @@ export class HelperService {
     if (_.get(templateDetails, 'modeOfCreation') === 'questionset') {
       option.url = 'questionset/v1/create';
       option.data.request['questionset'] = {};
-      option.data.request['questionset'] = obj;
+      const questionsetObject = obj;
+      questionsetObject['createdFor'] = this.userService?.userProfile?.rootOrgId ? [this.userService?.userProfile?.rootOrgId] : [];
+      option.data.request['questionset'] = questionsetObject;
     } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
       option.url = 'question/v1/create';
       option.data.request['question'] = {};
