@@ -50,7 +50,9 @@ const resourceServiceMockData = {
 describe('PublicContentPlayerComponent', () => {
   let component: PublicContentPlayerComponent;
   let fixture: ComponentFixture<PublicContentPlayerComponent>;
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreModule, SharedModule.forRoot(), RouterTestingModule, HttpClientTestingModule,
       TelemetryModule.forRoot()],
@@ -62,13 +64,15 @@ describe('PublicContentPlayerComponent', () => {
         { provide: Router, useClass: RouterStub }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublicContentPlayerComponent);
     component = fixture.componentInstance;
     component.contentId = 'd0_33567325';
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should config content player if content status is "Live"', () => {
     const windowScrollService = TestBed.get(WindowScrollService);

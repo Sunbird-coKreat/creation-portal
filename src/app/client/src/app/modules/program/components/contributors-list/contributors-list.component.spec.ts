@@ -41,7 +41,8 @@ describe('ContributorsListComponent', () => {
     hashTagId: '01309282781705830427'
   };
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, HttpClientTestingModule,
         FormsModule, CoreModule, TelemetryModule, RouterTestingModule,
@@ -53,11 +54,12 @@ describe('ContributorsListComponent', () => {
         {provide: ActivatedRoute, useValue: fakeActivatedRoute}],
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContributorsListComponent);
     component = fixture.componentInstance;
+  });
+  
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {
@@ -97,7 +99,7 @@ describe('ContributorsListComponent', () => {
   it('getOrgCreatorInfo should call registryService.getUserdetailsByOsIds', () => {
     spyOn(component, 'getOrgCreatorInfo').and.callThrough();
     const registryService = TestBed.get(RegistryService);
-    spyOn(component, 'getUsers').and.returnValue(Promise.resolve([]));
+    spyOn(component, 'getUsers').and.returnValue(Promise.resolve(true));
     spyOn(registryService, 'getUserdetailsByOsIds').and.returnValue(of(mockData.userDetails));
     const data = [{'createdBy': 123}, {'createdBy': 456}]
     component.getOrgCreatorInfo(data, Promise.resolve, Promise.reject);

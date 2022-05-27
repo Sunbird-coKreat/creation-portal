@@ -58,7 +58,9 @@ describe('EnrollBatchComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
@@ -72,9 +74,6 @@ describe('EnrollBatchComponent', () => {
         { provide: Router, useValue: { navigate: (route) => { } } }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(EnrollBatchComponent);
     component = fixture.componentInstance;
     courseBatchService = TestBed.get(CourseBatchService);
@@ -82,6 +81,10 @@ describe('EnrollBatchComponent', () => {
     coursesService = TestBed.get(CoursesService);
     router = TestBed.get(Router);
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should fetch details using the batch id', () => {
     const courseBatchServiceSpy = spyOn(courseBatchService, 'getEnrollToBatchDetails').and.callFake(() => of(fakeBatchDetails));

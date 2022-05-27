@@ -20,7 +20,9 @@ describe('CollaborationContentFilterComponent', () => {
     'params': observableOf({ pageNumber: '1' }),
     'queryParams': observableOf({ subject: ['english', 'odia'] })
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ CollaborationContentFilterComponent ],
       imports: [HttpClientTestingModule, SharedModule.forRoot()],
@@ -33,14 +35,15 @@ describe('CollaborationContentFilterComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CollaborationContentFilterComponent);
     component = fixture.componentInstance;
     inputEl = fixture.debugElement.query(By.css('input[class="upForReviewSearchBox"]'));
     fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should call removeFilterSelection method ', inject([ConfigService, Router],
     (configService, route) => {
       component.queryParams = { subject: ['english'] };

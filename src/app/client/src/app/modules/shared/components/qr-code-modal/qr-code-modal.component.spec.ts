@@ -23,22 +23,24 @@ describe('QrCodeModalComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, RouterTestingModule, HttpClientModule, TelemetryModule.forRoot(), SharedModule.forRoot()],
       providers: [ConfigService, { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(QrCodeModalComponent);
     component = fixture.componentInstance;
     const resourceService: any = TestBed.get(ResourceService);
     resourceService._instance = 'sunbird';
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
 
 
   xit('should call onSubmit method and naviagte to search results page', inject([Router],

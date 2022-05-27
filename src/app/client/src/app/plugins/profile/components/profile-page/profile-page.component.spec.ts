@@ -56,7 +56,9 @@ describe('ProfilePageComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,  SharedModule.forRoot(), CoreModule,
         TelemetryModule, NgInviewModule,  RouterTestingModule],
@@ -68,12 +70,14 @@ describe('ProfilePageComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProfilePageComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should call user service', () => {
     const resourceService = TestBed.get(ResourceService);

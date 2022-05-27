@@ -28,7 +28,9 @@ describe('CreateContentComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SharedModule.forRoot(), HttpClientTestingModule, CoreModule, TelemetryModule],
       declarations: [CreateContentComponent],
@@ -36,12 +38,12 @@ describe('CreateContentComponent', () => {
        {provide: ActivatedRoute, useValue: fakeActivatedRoute}]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CreateContentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should set the role for content creation', () => {

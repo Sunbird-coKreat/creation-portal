@@ -15,19 +15,22 @@ describe('NoResultComponent', () => {
     },
     languageSelected$: of({})
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ SharedModule.forRoot() ],
       providers: [ ResourceService,
       { provide: ResourceService, useValue: resourceBundle }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(NoResultComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should take input for showing the no result message  ', () => {
      component.data = data;
      component.message = data.message;

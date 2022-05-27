@@ -63,7 +63,7 @@ xdescribe('UpdateBatchComponent', () => {
   let component: UpdateBatchComponent;
   let fixture: ComponentFixture<UpdateBatchComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
@@ -72,12 +72,14 @@ xdescribe('UpdateBatchComponent', () => {
       providers: [ToasterService, ResourceService, UserService, TelemetryService, { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }],
     });
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UpdateBatchComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should fetch batch details and show update Form model', () => {
     const batchService = TestBed.get(BatchService);

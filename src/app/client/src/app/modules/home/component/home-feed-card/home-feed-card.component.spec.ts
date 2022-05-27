@@ -8,19 +8,23 @@ describe('HomeFeedCardComponent', () => {
   let component: HomeFeedCardComponent;
   let fixture: ComponentFixture<HomeFeedCardComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,RouterTestingModule,SharedModule.forRoot()],
       declarations: [ HomeFeedCardComponent ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(HomeFeedCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
