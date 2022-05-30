@@ -26,7 +26,8 @@ xdescribe('RecursiveTreeComponent', () => {
   let component: RecursiveTreeComponent;
   let mockResponseData;
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         SuiModule,
@@ -69,9 +70,6 @@ xdescribe('RecursiveTreeComponent', () => {
         {provide: APP_BASE_HREF, useValue: '/'}
       ]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(RecursiveTreeComponent);
     component = fixture.componentInstance;
     component.programContext = recursiveTreeComponentInput.programContext;
@@ -82,6 +80,11 @@ xdescribe('RecursiveTreeComponent', () => {
       mockResponseData = outputData;
     });
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     component.resourceService.frmelmnts.lbl = 'All Chapter(s)';

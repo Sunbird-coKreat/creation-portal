@@ -6,18 +6,22 @@ xdescribe('OrgUserListComponent', () => {
   let component: OrgUsersListComponent;
   let fixture: ComponentFixture<OrgUsersListComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ OrgUsersListComponent ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrgUsersListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

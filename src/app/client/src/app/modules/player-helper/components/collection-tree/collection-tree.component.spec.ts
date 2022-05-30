@@ -34,7 +34,9 @@ describe('CollectionTreeComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SuiAccordionModule, HttpClientTestingModule, HttpClientModule],
       declarations: [CollectionTreeComponent, FancyTreeComponent],
@@ -44,9 +46,6 @@ describe('CollectionTreeComponent', () => {
         { provide: APP_BASE_HREF, useValue: '/' }
       ]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CollectionTreeComponent);
     component = fixture.componentInstance;
     component.options = {
@@ -66,6 +65,11 @@ describe('CollectionTreeComponent', () => {
       }
     };
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     component.nodes = {

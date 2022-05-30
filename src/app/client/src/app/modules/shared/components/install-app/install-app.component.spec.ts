@@ -10,20 +10,22 @@ describe('InstallAppComponent', () => {
     let comp: InstallAppComponent;
     let fixture: ComponentFixture<InstallAppComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
-          declarations: [ InstallAppComponent, InterpolatePipe ],
-          providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService],
-          schemas: [NO_ERRORS_SCHEMA]
-        })
-        .compileComponents();
-    }));
+    
     beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            declarations: [ InstallAppComponent, InterpolatePipe ],
+            providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService],
+            schemas: [NO_ERRORS_SCHEMA]
+          })
+          .compileComponents();
         fixture = TestBed.createComponent(InstallAppComponent);
         comp = fixture.componentInstance;
     });
-
+    afterEach(() => {
+        fixture.destroy();
+      });
+    
     it('can load instance', () => {
         expect(comp).toBeTruthy();
     });

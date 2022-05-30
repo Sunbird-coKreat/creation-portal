@@ -17,7 +17,9 @@ describe('CustomMultiSelectComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule, SuiModule],
       declarations: [ CustomMultiSelectComponent ],
@@ -26,12 +28,13 @@ describe('CustomMultiSelectComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CustomMultiSelectComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should call checkbox when checkbox value is false ', () => {
     const name = 'NCERT';
     component.checkBox = {};

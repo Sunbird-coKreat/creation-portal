@@ -11,16 +11,15 @@ describe('PageHelpComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule],
       declarations: [ PageHelpComponent ],
       providers: [{ provide: ResourceService, useValue: resourceBundle }]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PageHelpComponent);
     component = fixture.componentInstance;
     component.helpSectionConfig =  {
@@ -31,6 +30,11 @@ describe('PageHelpComponent', () => {
     component.popupPlacement = 'bottom left';
     // fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

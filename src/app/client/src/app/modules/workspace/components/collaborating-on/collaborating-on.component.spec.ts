@@ -53,7 +53,9 @@ describe('CollaboratingOnComponent', () => {
     }
   };
   const bothParams = { 'params': { 'pageNumber': '1' }, 'queryParams': { 'sort_by': 'Updated On' } };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CollaboratingOnComponent],
       imports: [HttpClientTestingModule, OrderModule,RouterTestingModule, SharedModule.forRoot()],
@@ -68,12 +70,13 @@ describe('CollaboratingOnComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CollaboratingOnComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should call search api and returns result count more than 1',
   inject([SearchService, WorkSpaceService], (searchService, workSpaceService) => {
     spyOn(searchService, 'compositeSearch').and.callFake(() => observableOf(Response.searchSuccessWithCountTwo));

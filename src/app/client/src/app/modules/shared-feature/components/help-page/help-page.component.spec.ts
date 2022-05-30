@@ -14,7 +14,9 @@ xdescribe('HelpPageComponent', () => {
   let component: HelpPageComponent;
   let fixture: ComponentFixture<HelpPageComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ CoreModule, SharedModule.forRoot(), TelemetryModule, SuiModule, HttpClientTestingModule, RouterTestingModule ],
       declarations: [ HelpPageComponent ],
@@ -22,13 +24,14 @@ xdescribe('HelpPageComponent', () => {
     ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(HelpPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

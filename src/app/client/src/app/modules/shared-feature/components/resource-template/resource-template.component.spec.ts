@@ -42,7 +42,9 @@ describe('ResourceTemplateComponent', () => {
   let component: ResourceTemplateComponent;
   let fixture: ComponentFixture<ResourceTemplateComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, TelemetryModule, HttpClientTestingModule, RouterTestingModule],
       declarations: [ResourceTemplateComponent],
@@ -54,13 +56,13 @@ describe('ResourceTemplateComponent', () => {
         { provide: APP_BASE_HREF, useValue: '/' }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ResourceTemplateComponent);
     component = fixture.componentInstance;
     component.resourceTemplateComponentInput = resourceTemplateComponentInput;
     component.unitIdentifier = 'do_1131700101604311041350';
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

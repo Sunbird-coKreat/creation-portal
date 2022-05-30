@@ -58,41 +58,44 @@ const errorInitiate = false;
       }
     }
   };
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-     imports: [
-            DynamicModule,
-            SuiModule,
-            SharedModule.forRoot(),
-            ReactiveFormsModule,
-            FormsModule,
-            TelemetryModule.forRoot(),
-            HttpClientTestingModule,
-            RouterModule.forRoot([])
-        ],
-      declarations: [ ListContributorTextbooksComponent, DaysToGoPipe],
-      providers: [
-        { provide: Router, useValue: routerStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-        { provide: UserService, useValue: userServiceStub },
-        { provide: APP_BASE_HREF, useValue: '/' },
-        { provide: ResourceService, useValue: resourceBundle },
-        ToasterService, ConfigService, DatePipe, ProgramStageService, 
-        ProgramsService, FrameworkService, HelperService, Subject,
-        ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
-        SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    })
-    .compileComponents();
-  }));
+
 
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [
+             DynamicModule,
+             SuiModule,
+             SharedModule.forRoot(),
+             ReactiveFormsModule,
+             FormsModule,
+             TelemetryModule.forRoot(),
+             HttpClientTestingModule,
+             RouterModule.forRoot([])
+         ],
+       declarations: [ ListContributorTextbooksComponent, DaysToGoPipe],
+       providers: [
+         { provide: Router, useValue: routerStub },
+         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
+         { provide: UserService, useValue: userServiceStub },
+         { provide: APP_BASE_HREF, useValue: '/' },
+         { provide: ResourceService, useValue: resourceBundle },
+         ToasterService, ConfigService, DatePipe, ProgramStageService, 
+         ProgramsService, FrameworkService, HelperService, Subject,
+         ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
+         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
+       ],
+       schemas: [NO_ERRORS_SCHEMA]
+     })
+     .compileComponents();
     fixture = TestBed.createComponent(ListContributorTextbooksComponent);
     component = fixture.componentInstance;
     component.stageSubscription= new Subject;
     // fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

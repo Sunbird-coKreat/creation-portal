@@ -17,7 +17,9 @@ describe('MergeAccountStatusComponent', () => {
     languageSelected$: observableOf({})
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule],
       declarations: [MergeAccountStatusComponent],
@@ -26,13 +28,15 @@ describe('MergeAccountStatusComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MergeAccountStatusComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

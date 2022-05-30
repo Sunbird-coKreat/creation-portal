@@ -11,7 +11,9 @@ describe('ContentCreditsComponent', () => {
   let component: ContentCreditsComponent;
   let fixture: ComponentFixture<ContentCreditsComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule , HttpClientTestingModule ],
       declarations: [ContentCreditsComponent, InterpolatePipe],
@@ -19,12 +21,14 @@ describe('ContentCreditsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ContentCreditsComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should take content data as  INPUT  ', () => {
     component.contentData = Response.metaData;
     const actualKeys = Object.keys(component.contentData);

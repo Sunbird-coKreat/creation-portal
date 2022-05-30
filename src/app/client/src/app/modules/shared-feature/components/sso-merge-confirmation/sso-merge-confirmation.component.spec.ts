@@ -24,7 +24,9 @@ xdescribe('SsoMergeConfirmationComponent', () => {
   }
 
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, TelemetryModule.forRoot()],
       declarations: [SsoMergeConfirmationComponent, InterpolatePipe],
@@ -35,12 +37,12 @@ xdescribe('SsoMergeConfirmationComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(SsoMergeConfirmationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

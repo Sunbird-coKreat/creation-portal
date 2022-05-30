@@ -27,7 +27,8 @@ describe('ProgramListComponent', () => {
       telemetry: { env: 'sourcing-portal', type: 'view', subtype: 'paginate', pageid: 'list-program' }
     }}
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ SharedModule.forRoot(), SuiModule,
         TelemetryModule, ReactiveFormsModule , RouterTestingModule, HttpClientTestingModule],
@@ -40,12 +41,14 @@ describe('ProgramListComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProgramListComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });

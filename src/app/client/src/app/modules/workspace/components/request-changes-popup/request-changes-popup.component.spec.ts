@@ -81,7 +81,9 @@ describe('RequestChangesPopupComponent', () => {
   const navigationHelperServiceStub = {
     getPreviousUrl: () => ({})
 };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule, RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [RequestChangesPopupComponent],
@@ -93,13 +95,14 @@ describe('RequestChangesPopupComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(RequestChangesPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should initialize the component expected calls for getCheckListConfig  ', () => {
     const workspaceservice = TestBed.get(WorkSpaceService);
     component.contentId = fakeActivatedRoute.parent.params['contentId'];

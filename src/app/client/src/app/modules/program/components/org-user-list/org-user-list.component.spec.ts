@@ -13,7 +13,9 @@ xdescribe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports:[ReactiveFormsModule, SuiModule, FormsModule, TelemetryModule],
       declarations: [ OrgUserListComponent ],
@@ -23,12 +25,12 @@ xdescribe('OrgUserListComponent', () => {
       ],
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrgUserListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

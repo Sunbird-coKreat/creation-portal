@@ -40,7 +40,9 @@ describe('QuestionSetEditorComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule.withRoutes([])],
       declarations: [QuestionSetEditorComponent],
@@ -54,13 +56,14 @@ describe('QuestionSetEditorComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(QuestionSetEditorComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();
     debugElement = fixture.debugElement;
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

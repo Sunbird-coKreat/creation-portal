@@ -34,7 +34,9 @@ describe('BatchCardComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
@@ -47,11 +49,12 @@ describe('BatchCardComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BatchCardComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should take Batch INPUT', () => {
