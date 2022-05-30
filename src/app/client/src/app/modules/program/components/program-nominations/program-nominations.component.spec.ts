@@ -110,7 +110,9 @@ describe('ProgramNominationsComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         DynamicModule,
@@ -140,9 +142,6 @@ describe('ProgramNominationsComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProgramNominationsComponent);
     component = fixture.componentInstance;
     programsService = TestBed.inject(ProgramsService);
@@ -151,6 +150,11 @@ describe('ProgramNominationsComponent', () => {
     collectionHierarchyService = TestBed.inject(CollectionHierarchyService);
     // fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should have create and defined component', () => {
     expect(component).toBeDefined();

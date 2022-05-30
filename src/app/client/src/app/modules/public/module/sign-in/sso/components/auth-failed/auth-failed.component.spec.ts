@@ -17,7 +17,9 @@ describe('AuthFailedComponent', () => {
     languageSelected$: observableOf({})
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule],
       declarations: [AuthFailedComponent, InterpolatePipe],
@@ -25,13 +27,15 @@ describe('AuthFailedComponent', () => {
         {provide: ResourceService, useValue: resourceBundle}]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AuthFailedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

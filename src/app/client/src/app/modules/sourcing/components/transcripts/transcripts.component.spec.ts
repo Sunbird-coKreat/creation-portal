@@ -32,7 +32,9 @@ describe('TranscriptsComponent', () => {
     navigate = jasmine.createSpy('navigate');
     url = jasmine.createSpy('url');
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ TranscriptsComponent ],
@@ -56,14 +58,16 @@ describe('TranscriptsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(TranscriptsComponent);
     component = fixture.componentInstance;
     component.contentMetaData = contentMetaData;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeDefined();

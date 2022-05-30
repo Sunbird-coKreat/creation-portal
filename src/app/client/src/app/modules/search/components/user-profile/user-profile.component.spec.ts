@@ -51,7 +51,9 @@ describe('UserProfileComponent', () => {
         }
     };
 
-    beforeEach(async(() => {
+   
+
+    beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, SharedModule.forRoot(), RouterTestingModule, OrderModule],
             declarations: [UserProfileComponent],
@@ -65,13 +67,15 @@ describe('UserProfileComponent', () => {
             schemas: [NO_ERRORS_SCHEMA]
         })
             .compileComponents();
-    }));
-
-    beforeEach(() => {
         fixture = TestBed.createComponent(UserProfileComponent);
         component = fixture.componentInstance;
         component.userDetails = Response.successData;
     });
+
+    afterEach(() => {
+        fixture.destroy();
+      });
+    
 
     it('should call search api and get success', () => {
         const searchService = TestBed.get(UserSearchService);

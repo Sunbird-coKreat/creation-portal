@@ -46,7 +46,9 @@ describe('PublicCourseConsumptionPageComponent', () => {
   let component: PublicCourseConsumptionPageComponent;
   let fixture: ComponentFixture<PublicCourseConsumptionPageComponent>;
   let activatedRouteStub, courseService, toasterService, courseConsumptionService, navigationHelperService;
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [ PublicCourseConsumptionPageComponent ],
@@ -56,9 +58,6 @@ describe('PublicCourseConsumptionPageComponent', () => {
         CourseProgressService, CourseBatchService, ContentUtilsServiceService],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublicCourseConsumptionPageComponent);
     component = fixture.componentInstance;
     activatedRouteStub = TestBed.get(ActivatedRoute);
@@ -69,6 +68,10 @@ describe('PublicCourseConsumptionPageComponent', () => {
     spyOn(navigationHelperService, 'navigateToResource').and.returnValue('');
     spyOn(toasterService, 'error').and.returnValue('');
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should fetch course details on page load', () => {
     activatedRouteStub.snapshot.firstChild.params = {courseId: 'do_212347136096788480178'};

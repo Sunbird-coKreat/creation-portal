@@ -17,7 +17,9 @@ describe('AnnouncementInboxCardComponent', () => {
   let component: AnnouncementInboxCardComponent;
   let fixture: ComponentFixture<AnnouncementInboxCardComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, HttpClientModule],
       declarations: [AnnouncementInboxCardComponent, DateFormatPipe],
@@ -25,9 +27,6 @@ describe('AnnouncementInboxCardComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AnnouncementInboxCardComponent);
     component = fixture.componentInstance;
   });

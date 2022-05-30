@@ -49,7 +49,9 @@ describe('UserOrgManagementComponent', () => {
   let component: UserOrgManagementComponent;
   let fixture: ComponentFixture<UserOrgManagementComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         SharedModule.forRoot(),
@@ -72,14 +74,16 @@ describe('UserOrgManagementComponent', () => {
         {provide: APP_BASE_HREF, useValue: '/'}
       ]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UserOrgManagementComponent);
     component = fixture.componentInstance;
     component.slug = 'sunbird';
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create User-Org-Management component', () => {
     expect(component).toBeTruthy();

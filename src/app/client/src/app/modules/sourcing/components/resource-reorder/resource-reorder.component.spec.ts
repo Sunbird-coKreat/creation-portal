@@ -43,7 +43,8 @@ xdescribe('ResourceReorderComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, RouterModule.forRoot([]), TelemetryModule.forRoot()],
       declarations: [ ResourceReorderComponent ],
@@ -55,8 +56,6 @@ xdescribe('ResourceReorderComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(ResourceReorderComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
@@ -81,6 +80,11 @@ xdescribe('ResourceReorderComponent', () => {
       };
     // fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   beforeAll(() => {
     hierarchyServiceStub.addResourceToHierarchy = jasmine.createSpy(' addHierarchySpy').and.callFake(() => {

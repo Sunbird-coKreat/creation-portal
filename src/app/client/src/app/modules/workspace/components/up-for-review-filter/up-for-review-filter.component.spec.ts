@@ -20,7 +20,9 @@ describe('UpforReviewFilterComponent', () => {
     'params': observableOf({ pageNumber: '1' }),
     'queryParams': observableOf({ subject: ['english', 'odia'] })
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ UpforReviewFilterComponent ],
       imports: [HttpClientTestingModule, SharedModule.forRoot()],
@@ -33,14 +35,15 @@ describe('UpforReviewFilterComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UpforReviewFilterComponent);
     component = fixture.componentInstance;
     inputEl = fixture.debugElement.query(By.css('input[class="upForReviewSearchBox"]'));
     fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should call removeFilterSelection method ', inject([ConfigService, Router],
     (configService, route) => {
       component.queryParams = { subject: ['english'] };

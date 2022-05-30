@@ -28,7 +28,9 @@ describe('OrgFilterComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), RouterTestingModule],
       declarations: [OrgFilterComponent, OrgSearchComponent],
@@ -41,14 +43,16 @@ describe('OrgFilterComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrgFilterComponent);
     component = fixture.componentInstance;
     parentfixture = TestBed.createComponent(OrgSearchComponent);
     parentcomponent = parentfixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should call resetFilters method ', inject([ConfigService, Router],
     (configService, route) => {

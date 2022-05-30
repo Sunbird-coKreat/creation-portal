@@ -75,7 +75,8 @@ xdescribe('CollectionComponent', () => {
   let fixture: ComponentFixture<CollectionComponent>;
 
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ CollectionComponent, DaysToGoPipe ],
       imports: [HttpClientTestingModule, TelemetryModule.forRoot(), RouterTestingModule],
@@ -109,9 +110,6 @@ xdescribe('CollectionComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CollectionComponent);
     component = fixture.componentInstance;
     component.showError = false;

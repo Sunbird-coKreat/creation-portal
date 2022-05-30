@@ -46,7 +46,9 @@ describe('PublicCollectionPlayerComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [PublicCollectionPlayerComponent],
       imports: [CoreModule, HttpClientTestingModule, RouterTestingModule,
@@ -59,13 +61,14 @@ describe('PublicCollectionPlayerComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublicCollectionPlayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should create', () => {
     const windowScrollService = TestBed.get(WindowScrollService);
     spyOn(windowScrollService, 'smoothScroll');

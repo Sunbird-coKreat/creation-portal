@@ -3,7 +3,6 @@ import { SharedModule } from '@sunbird/shared';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedFeatureModule } from '@sunbird/shared-feature';
 import { ProgramRoutingModule } from './program-routing.module';
@@ -35,7 +34,6 @@ import { CommonFormElementsModule } from 'common-form-elements-web-v9';
     CommonModule,
     ProgramRoutingModule,
     CommonConsumptionModule,
-    SlickModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,

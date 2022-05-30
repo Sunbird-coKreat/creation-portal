@@ -115,7 +115,9 @@ describe('ProgramComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         DynamicModule,
@@ -166,14 +168,13 @@ describe('ProgramComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-  afterEach(() => {
-    fixture.destroy();
-  });
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProgramComponent);
     fixture.detectChanges();
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should have a defined component', () => {

@@ -52,7 +52,9 @@ describe('ExploreComponent', () => {
     };
     public changeQueryParams(queryParams) { this.queryParamsMock.next(queryParams); }
   }
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, RouterTestingModule,SuiModule, TelemetryModule.forRoot()],
       declarations: [ExploreComponent],
@@ -61,9 +63,6 @@ describe('ExploreComponent', () => {
       { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ExploreComponent);
     component = fixture.componentInstance;
     toasterService = TestBed.get(ToasterService);
@@ -85,6 +84,10 @@ describe('ExploreComponent', () => {
       return throwError({});
     });
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+  
   it('should emit filter data when getFilters is called with data', () => {
     spyOn(component.dataDrivenFilterEvent, 'emit');
     component.getFilters([{ code: 'board', range: [{index: 0, name: 'NCRT'}, {index: 1, name: 'CBSC'}]}]);

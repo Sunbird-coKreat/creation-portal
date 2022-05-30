@@ -3,7 +3,7 @@ import { ProfileService } from './services';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '@sunbird/shared';
-import { SlickModule } from 'ngx-slick';
+
 import { ProfileRoutingModule } from './profile-routing.module';
 import {
   ProfilePageComponent, ProfileBadgeComponent, UpdateContactDetailsComponent, UpdateUserDetailsComponent,
@@ -28,7 +28,7 @@ import { AvatarModule } from 'ngx-avatar';
     ReactiveFormsModule,
     // WebExtensionModule,
     TelemetryModule,
-    SlickModule,
+    
     AvatarModule,
     SharedFeatureModule
   ],

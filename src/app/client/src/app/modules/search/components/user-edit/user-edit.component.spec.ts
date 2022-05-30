@@ -37,7 +37,9 @@ describe('UserEditComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, ReactiveFormsModule, FormsModule, SharedModule.forRoot(), CoreModule,
         TelemetryModule.forRoot(), RouterTestingModule],
@@ -79,12 +81,14 @@ describe('UserEditComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UserEditComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should act upon query params change', () => {
     component.ngOnInit();

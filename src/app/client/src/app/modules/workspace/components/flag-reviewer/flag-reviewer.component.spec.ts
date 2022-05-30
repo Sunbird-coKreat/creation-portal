@@ -64,7 +64,9 @@ describe('FlagReviewerComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC']
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [FlagReviewerComponent],
       imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
@@ -79,12 +81,13 @@ describe('FlagReviewerComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FlagReviewerComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should call search api and returns result count more than 1', inject([SearchService], (searchService) => {
     const userService = TestBed.get(UserService);
     const learnerService = TestBed.get(LearnerService);
