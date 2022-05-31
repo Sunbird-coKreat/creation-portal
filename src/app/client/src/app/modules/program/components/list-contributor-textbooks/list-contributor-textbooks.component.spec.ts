@@ -171,7 +171,7 @@ const errorInitiate = false;
     expect(component.getProgramContents).toHaveBeenCalled();
   });
 
-  it('#openContent should set reviewContributionHelpConfig', () => {
+  xit('#openContent should set reviewContributionHelpConfig', () => {
     component.contributor = SpecData.contributor;
     component.sessionContext = {nominationDetails : {
       organisation_id : 'organisation_id',

@@ -71,9 +71,7 @@ describe('ExploreCourseComponent', () => {
     sendOrgDetails = true;
     sendSearchResult = true;
     sendFormApi = true;
-    afterEach(() => {
-      fixture.destroy();
-    });
+ 
     spyOn(orgDetailsService, 'getOrgDetails').and.callFake((options) => {
       if (sendOrgDetails) {
         return of({hashTagId: '123'});
@@ -95,6 +93,9 @@ describe('ExploreCourseComponent', () => {
     spyOn(cacheService, 'get').and.callFake((options) => {
       return undefined;
     });
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
   xit('should emit filter data when getFilters is called with data', () => {
     spyOn(component.dataDrivenFilterEvent, 'emit');
