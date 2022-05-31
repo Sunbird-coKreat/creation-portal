@@ -235,7 +235,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       enddate: [programEndDate, Validators.required],
       content_submission_enddate: [contentSubmissionEndDate, Validators.required],
       type: [{ value: _.get(this.programDetails, 'type') || 'public', disabled: this.editPublished }],
-      defaultContributeOrgReview: [{ value: _.get(this.programDetails, 'config.defaultContributeOrgReview') || null, disabled: this.editPublished }]
+      defaultContributeOrgReview: [{ value: _.get(this.programDetails, 'config.defaultContributeOrgReview') || null, disabled: this.editPublished }],
+      enableReviewEdit: [{ value: _.get(this.programDetails, 'config.enableReviewEdit', false), disabled: this.editPublished }],
     });
     this.createProgramForm.get('type').valueChanges.subscribe(projectType => {
         this.openForNominations(projectType);
@@ -1052,6 +1053,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['target_type'] = this.projectTargetType;
     programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    this.programConfig.enableReviewEdit = this.createProgramForm.value.enableReviewEdit;
+
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
       if (_.includes(this.selectedTargetCategories, o.name)) {

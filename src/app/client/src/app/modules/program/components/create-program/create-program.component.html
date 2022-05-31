@@ -129,26 +129,38 @@
                     </div>
                   </div>
                 </div>
-                <div class="twelve wide column" [ngClass]="editPublished ? 'disabled field':''">
-                  <div class="sb-checkbox sb-checkbox-primary">
-                    <input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
-                           name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
-                           [checked]="defaultContributeOrgReviewChecked"
-                           (change)="defaultContributeOrgReviewChanged($event)" appTelemetryInteract
-                           [telemetryInteractEdata]="getTelemetryInteractEdata('skip_two_level_review', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.radioButton, telemetryPageId)"
-                           [telemetryInteractObject]="telemetryInteractObject"
-                           [telemetryInteractCdata]="telemetryInteractCdata"
-                           [telemetryInteractPdata]="telemetryInteractPdata">
-                    <label
-                      for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
+                <div  class="row">
+                  <div class="three wide column" [ngClass]="editPublished ? 'disabled field':''">
+                    <div class="sb-checkbox sb-checkbox-primary">
+                      <input type="checkbox" [disabled]="editPublished" id="defaultContributeOrgReview"
+                             name="defaultContributeOrgReview" formControlName="defaultContributeOrgReview"
+                             [checked]="defaultContributeOrgReviewChecked"
+                             (change)="defaultContributeOrgReviewChanged($event)" appTelemetryInteract
+                             [telemetryInteractEdata]="getTelemetryInteractEdata('skip_two_level_review', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.radioButton, telemetryPageId)"
+                             [telemetryInteractObject]="telemetryInteractObject"
+                             [telemetryInteractCdata]="telemetryInteractCdata"
+                             [telemetryInteractPdata]="telemetryInteractPdata">
+                      <label
+                        for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
+                    </div>
+                    <div *ngIf="createProgramForm.controls['type'].value !== 'restricted'"
+                         class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
+                      {{resource?.frmelmnts?.lbl?.twoLevelReviewNote}}
+                    </div>
+                    <div *ngIf="createProgramForm.controls['type'].value === 'restricted'"
+                         class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
+                      {{resource?.frmelmnts?.lbl?.restricted?.twoLevelReviewNote}}
+                    </div>
                   </div>
-                  <div *ngIf="createProgramForm.controls['type'].value !== 'restricted'"
-                       class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
-                    {{resource?.frmelmnts?.lbl?.twoLevelReviewNote}}
-                  </div>
-                  <div *ngIf="createProgramForm.controls['type'].value === 'restricted'"
-                       class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
-                    {{resource?.frmelmnts?.lbl?.restricted?.twoLevelReviewNote}}
+                  <div class="three wide column" [ngClass]="editPublished ? 'disabled field':''"
+                       *ngIf="projectTargetType === 'questionSets'">
+                    <div class="sb-checkbox sb-checkbox-primary">
+                      <input type="checkbox" id="enableReview" formControlName="enableReviewEdit">
+                      <label for="enableReview">{{resource?.frmelmnts?.lbl?.enableReview}}</label>
+                    </div>
+                    <div class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block va-top pl-20">
+                      {{resource?.frmelmnts?.lbl?.enableReviewNote}}
+                    </div>
                   </div>
                 </div>
                 <div class="three wide column"
