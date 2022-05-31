@@ -149,7 +149,7 @@ describe('ContributorsListComponent', () => {
     component.orgSortColumn = 'name';
     spyOn(component, 'applySort').and.callThrough();
     const programsService = TestBed.get(ProgramsService);
-    spyOn(programsService, 'sortCollection').and.returnValue([]);
+    spyOn(programsService, 'sortCollection').and.returnValue(['jvv']);
     component.applySort([], component.orgSortColumn);
     expect(programsService.sortCollection).toHaveBeenCalled();
   });
