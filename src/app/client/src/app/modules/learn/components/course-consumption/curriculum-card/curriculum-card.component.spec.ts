@@ -7,20 +7,20 @@ describe('CurriculumCardComponent', () => {
   let component: CurriculumCardComponent;
   let fixture: ComponentFixture<CurriculumCardComponent>;
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [ CurriculumCardComponent ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CurriculumCardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
-
+  afterEach(() => {
+    fixture.destroy();
+  });
   it('should create', () => {
     expect(component).toBeTruthy();
   });

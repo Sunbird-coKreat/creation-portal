@@ -21,8 +21,6 @@ describe('OnboardPopupComponent', () => {
   let fixture: ComponentFixture<OnboardPopupComponent>;
   let component: OnboardPopupComponent;
 
-
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ RouterTestingModule, FormsModule, SuiModule, SuiModalModule, SuiProgressModule,
@@ -37,6 +35,7 @@ describe('OnboardPopupComponent', () => {
     component = fixture.componentInstance;
   });
 
+  
   afterEach(() => {
     fixture.destroy();
   });

@@ -374,7 +374,7 @@ describe('ChapterListComponent', () => {
       const  service  = TestBed.get(ProgramsService);
       spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
       component.programContext = programDetailsTargetCollection;
-      spyOn(component, 'setTargetCollectionValue').and.callThrough();
+      spyOn(component, 'setTargetCollectionValue').and.returnValue('some value');
       component.setTargetCollectionValue();
       expect(component.targetCollection).not.toBeUndefined();
     });
