@@ -100,9 +100,13 @@
             </div>
           </div>
         </div>
-        <div class="pb-20 w-100 text-right"  *ngIf="showSkipReview">
+        <div class="pb-20 w-100 text-right" *ngIf="showSkipReview">
           <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.twoLevelReviewSkippedNote}}" suiPopup [popupPlacement]="'top'"></i>
           <span class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.twoLevelReviewSkipped}}</span>
+        </div>
+        <div class="pb-20 w-100 text-right" *ngIf="programDetails?.config?.enableReviewEdit">
+          <i class="icon check circle sb-color-secondary-200 fs-1-286 va-text-top" popupText="{{resourceService.frmelmnts.lbl.enableReviewNote}}" suiPopup [popupPlacement]="'top'"></i>
+          <span class="font-weight-normal fs-0-92">{{resourceService.frmelmnts.lbl.enableReview}}</span>
         </div>
         <div *ngIf="canNominate">
           <hr class="my-10">
