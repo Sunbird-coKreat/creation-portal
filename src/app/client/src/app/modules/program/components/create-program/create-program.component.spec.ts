@@ -18,7 +18,7 @@ import { UserService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as moment from 'moment';
 import * as alphaNumSort from 'alphanum-sort';
-import { Component, ViewChild} from '@angular/core';
+import { Component, DebugElement, ViewChild} from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ProgramTelemetryService } from '../../services';
@@ -37,7 +37,14 @@ describe('CreateProgramComponent', () => {
           object: { type: '', ver: '1.0' }
         }
       }
-    }
+    },
+     
+      queryParams: {
+        targetType :'',
+        queryParamsHandling:''
+      },
+   
+  
   };
   const userServiceStub = {
     userProfile : mockData.userProfile,
@@ -52,10 +59,12 @@ describe('CreateProgramComponent', () => {
         blueprintViolation : 'Please provide all required blueprint values'
       },
       smsg: {
-        questionset: { updated: '' }
+        questionset: { updated: '' },
+        selectOneContributor: ''
       }
     }
   };
+
   const routerStub = { url: '/sourcing/orgreports' };
 
   const contentServiceMock = {
@@ -68,8 +77,6 @@ describe('CreateProgramComponent', () => {
       return ({ subscribe: (e) => e() })
     }
   };
-
-
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -95,6 +102,7 @@ describe('CreateProgramComponent', () => {
     component = fixture.componentInstance;
   });
 
+  
   afterEach(() => {
     fixture.destroy();
   });
@@ -104,16 +112,16 @@ describe('CreateProgramComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  xit('#ngOnInit() should initalize varibles', () => {
+  it('#ngOnInit() should initalize variables', () => {
     component.enableQuestionSetEditor = undefined;
-    component.assetConfig = {pdfFiles: 'sample.pdf'};
+    component.assetConfig = {pdfFiles: "sample.pdf"};
     component.openProjectTargetTypeModal = false;
-    spyOn(document, 'getElementById').and.returnValue({value: 'data'});
+    spyOn(document, 'getElementById').and.returnValue({value: "data"});
     spyOn(component, 'getPageId').and.callFake(() => {});
     spyOn(component, 'getProgramDetails').and.callFake(() => {});
     spyOn(component, 'initializeProjectTargetTypeForm').and.callFake(() => {});
     spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
-    spyOn(component, 'initializeProjectScopeForm').and.callFake(() => {});
+   // spyOn(component, 'initializeProjectScopeForm').and.callFake(() => {});
     spyOn(component, 'setTelemetryStartData').and.callFake(() => {});
     spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
@@ -129,14 +137,28 @@ describe('CreateProgramComponent', () => {
     expect(component.getPageId).toHaveBeenCalled();
     expect(component.getProgramDetails).toHaveBeenCalled();
     expect(component.initializeProjectTargetTypeForm).not.toHaveBeenCalled();
-    expect(component.initializeCreateProgramForm).toHaveBeenCalled();
-    expect(component.initializeProjectScopeForm).toHaveBeenCalled();
+    expect(component.initializeCreateProgramForm).not.toHaveBeenCalled();
+   // expect(component.initializeProjectScopeForm).toHaveBeenCalled();
     expect(component.setTelemetryStartData).toHaveBeenCalled();
     expect(component['pageStartTime']).toBeDefined();
   });
 
+  it('#ngOnInit() should initalize variables when program id is undefined', () => {
+    component.enableQuestionSetEditor = undefined;
+    component.assetConfig = {pdfFiles: "sample.pdf"};
+    component.openProjectTargetTypeModal = false;
+    TestBed.get(ActivatedRoute).snapshot.params = of({ programId: undefined});
+    spyOn(component, 'initializeProjectTargetTypeForm').and.callFake(() => {});
+    spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
+    spyOn(component, 'ngOnInit').and.callThrough();
+    component.ngOnInit();
+    expect(component.programId).toBeUndefined();
+    expect(component.initializeProjectTargetTypeForm).toHaveBeenCalled();
+    expect(component.initializeCreateProgramForm).toHaveBeenCalled();
+  });
+
   // Failing sometimes due to setTimeOut in implementation
-  xit('Should call the initiateDocumentUploadModal method', () => {
+  it('Should call the initiateDocumentUploadModal method', () => {
     component.showDocumentUploader = false;
     component.loading = true;
     component.isClosable = false;
@@ -183,17 +205,24 @@ describe('CreateProgramComponent', () => {
     expect(toasterService.error).toHaveBeenCalled();
   });
 
-  xit('Should call the uploadDocument method', () => {
+  it('Should call the uploadDocument method', () => {
     component.uploader = {
-      getFile(data) { return {type: 'pdf'}; },
-      getName(data) { return 'sample.pdf'; },
+      getFile(data) { return {type: "pdf"}; },
+      getName(data) { return "sample.pdf"; },
       reset() {}
     };
 
     const sourcingService = TestBed.get(SourcingService);
-    spyOn(sourcingService, 'generateAssetCreateRequest').and.returnValue({});
-    spyOn(sourcingService, 'createMediaAsset').and.returnValue(of({result: {node_id: '12345'}}));
-    spyOn(sourcingService, 'generatePreSignedUrl').and.returnValue(of({result: {pre_signed_url: ''}}));
+
+    spyOn(sourcingService, 'generateAssetCreateRequest').and.callFake(() => {});
+    sourcingService.generateAssetCreateRequest('abcd', 'pdf', 'pdf', {});
+
+    spyOn(sourcingService, 'createMediaAsset').and.callFake(() => {});
+    sourcingService.createMediaAsset();
+
+    spyOn(sourcingService, 'generatePreSignedUrl').and.callFake(() => {});
+    sourcingService.generatePreSignedUrl({}, 'do_1234');
+
     spyOn(component, 'uploadToBlob').and.callFake(() => {});
     spyOn(component, 'uploadDocument');
     component.uploadDocument();
@@ -233,20 +262,38 @@ describe('CreateProgramComponent', () => {
     expect(component.initializeCreateProgramForm).toHaveBeenCalled();
   });
 
-  xit('getProgramDetails Should call apiErrorHandling method', () => {
-    component.programId = 'abcd12345';
+  it('getProgramDetails Should get Program Details ', () => {
+    component['programsService']  = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getProgram').and.returnValue(of({result: {
+      status:'status',
+      guidelines_url:'guidelines_url',
+      config:{
+        defaultContributeOrgReview:'defaultContributeOrgReview',
+        contributors:'contributors'
+      },
+      target_collection_category:'target_collection_category',
+      target_type:'target_type'
+    }
+    }));
+    spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
+    spyOn(component, 'setPreSelectedContributors').and.callFake(() => {});
+    component.getProgramDetails();
+    expect(component.initializeCreateProgramForm).toHaveBeenCalled();
+    expect(component.setPreSelectedContributors).toHaveBeenCalled();
+  });
+
+  it('getProgramDetails Should call apiErrorHandling method', () => {
+    TestBed.get(ActivatedRoute).snapshot.params = of({ programId: 'abcd12345'});
     component.telemetryPageId = 'create-program';
     component.telemetryInteractCdata = {};
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'getProgram').and.returnValue(throwError({}));
-    const sourcingService = TestBed.get(SourcingService);
-    spyOn(sourcingService, 'apiErrorHandling').and.callFake(() => {});
     spyOn(component, 'getProgramDetails').and.callThrough();
     programsService.getProgram();
     expect(programsService.getProgram).toHaveBeenCalled();
     expect(component.programDetails).toEqual({});
     expect(component.selectedTargetCollection).toBeUndefined();
-    expect(sourcingService.apiErrorHandling).toHaveBeenCalled();
+    expect(component.getProgramDetails).toThrowError();
   });
 
   it('getUploadVideo Should call sourcingService.getVideo method', () => {
@@ -262,12 +309,12 @@ describe('CreateProgramComponent', () => {
     expect(component.showDocumentUploader).toBeFalsy();
   });
 
-  xit('getUploadVideo Should call apiErrorHandling method', () => {
+  it('getUploadVideo Should call apiErrorHandling method', () => {
     const sourcingService = TestBed.get(SourcingService);
     spyOn(sourcingService, 'getVideo').and.returnValue(throwError({}));
     spyOn(sourcingService, 'apiErrorHandling').and.callFake(() => {});
     spyOn(component, 'getUploadVideo').and.callThrough();
-    component.getUploadVideo('12345');
+    component.getUploadVideo("12345");
     expect(sourcingService.getVideo).toHaveBeenCalled();
     expect(sourcingService.apiErrorHandling).toHaveBeenCalled();
   });
@@ -336,11 +383,12 @@ describe('CreateProgramComponent', () => {
     expect(component.direction).toEqual('asc');
   });
 
-  xit('getMaxDate should return empty string', () => {
-    component.editPublished = undefined;
+  it('getMaxDate should return empty string', () => {
+    component.editPublished = true;
     spyOn(component, 'getMaxDate').and.callThrough();
-    const res = component.getMaxDate('nomination_enddate');
-    expect(res).toEqual('');
+    const res = component.getMaxDate("nomination_enddate");
+    //expect(res).toEqual('');
+    expect(res).toBeFalsy();
   });
 
   it('getPageId should return page id', () => {
@@ -383,6 +431,7 @@ describe('CreateProgramComponent', () => {
   it('#getCollectionCategoryDefinition() Should call programsService.getCategoryDefinition() method', () => {
     component.selectedTargetCollection = 'Course';
     component.userprofile = {rootOrgId: '12345'};
+    component.fetchedCategory = 'not course';
     component.blueprintTemplate = undefined;
     component.firstLevelFolderLabel = undefined;
     component['programsService'] = TestBed.inject(ProgramsService);
@@ -445,6 +494,23 @@ describe('CreateProgramComponent', () => {
   });
 
   it('should call  setValidations', () => {
+    component.createProgramForm = new FormGroup({
+      description: new FormControl('description', ),
+      enddate: new FormControl('2021-08-01T18:29:59.000Z',),
+      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z',),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', ),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', ),
+      type:new FormControl('type', ),
+    });
+
+    component.projectScopeForm = new FormGroup({
+      target_collection_category: new FormControl('Course', Validators.required),
+      framework:new FormControl('framework', Validators.required),
+    });
+
+    
+    component.projectTargetType='questionSets';
+    spyOn(component, 'openForNominations').and.callFake(() => {});
     spyOn(component, 'setValidations').and.callFake(() => {});
     component.setValidations();
     expect(component.setValidations).toHaveBeenCalled();
@@ -456,7 +522,7 @@ describe('CreateProgramComponent', () => {
     expect(component.setValidations).toHaveBeenCalled();
   });
 
-  xit('Should call the onChangeTargetCollectionCategory method', () => {
+/*   it('Should call the onChangeTargetCollectionCategory method', () => {
     component.projectScopeForm.value.pcollections = [{}];
     spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
     spyOn(component, 'showTexbooklist').and.callFake(() => {});
@@ -465,12 +531,44 @@ describe('CreateProgramComponent', () => {
     expect(component.projectScopeForm.value.pcollections).toEqual([]);
     expect(component.getCollectionCategoryDefinition).toHaveBeenCalled();
     expect(component.tempCollections).toEqual([]);
+    
+  }); */
+
+  it('Should call the onChangeTargetCollectionCategory method', () => {
+    component.projectScopeForm = new FormGroup({
+      target_collection_category: new FormControl('Course', Validators.required),
+      framework:new FormControl('framework', Validators.required),
+    });
+    component.selectedTargetCollection = 'Course';
+    spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
+    spyOn(component, 'showTexbooklist').and.callFake(() => {});
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getformConfigData').and.returnValue(of({result:{data:{properties:{categories:'categories'}}}}));
+    component['frameworkService'] = TestBed.inject(FrameworkService);
+    spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{data:{properties:'kkk'}}}));
+    
+    component.onChangeTargetCollectionCategory();
+    expect(component.showTexbooklist).toHaveBeenCalled();
+    expect(component.projectScopeForm.value.pcollections).toEqual([]);
+    expect(component.getCollectionCategoryDefinition).toHaveBeenCalled();
+    expect(component.tempCollections).toEqual([]);
   });
 
   it('should call showTexbooklist', () => {
-    spyOn(component, 'showTexbooklist').and.callFake(() => {});
+    component.projectScopeForm = new FormGroup({
+      framework: new FormControl({framework:'framework'}, Validators.required),
+      target_collection_category: new FormControl({course:'Course'}, Validators.required),
+    });
+    component.frameworkFormData = {vv:'cvv'};
+    component.userprofile={
+      rootOrgId:'rootOrgId'
+    }
+    component.projectTargetType === 'NotquestionSets' 
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'getCollectionList').and.returnValue(of({result:{count:3}}));
+    
     component.showTexbooklist();
-    expect(component.showTexbooklist).toHaveBeenCalled();
+    expect(component['programsService'].getCollectionList).toHaveBeenCalled();
   });
 
   it('should call getCollections', () => {
@@ -504,13 +602,13 @@ describe('CreateProgramComponent', () => {
     expect(component.setTelemetryStartData).toHaveBeenCalled();
   });
 
-  xit('generateTelemetryEndEvent should call telemetryService.end', () => {
+  it('generateTelemetryEndEvent should call telemetryService.end', () => {
     component.programId = '3cbbfb00-f66e-11eb-8d22-35d6fc24c6f9';
-    component['pageStartTime'] = 0;
-    const telemetryService = TestBed.get('TelemetryService');
+    component["pageStartTime"] = 0;
+    const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'end').and.callFake(() => {});
     spyOn(component, 'generateTelemetryEndEvent').and.callThrough();
-    component.generateTelemetryEndEvent('create');
+    component.generateTelemetryEndEvent("create");
     expect(telemetryService.end).toHaveBeenCalled();
   });
 
@@ -552,8 +650,8 @@ describe('CreateProgramComponent', () => {
     expect(component.editBlueprintFlag).toBeTruthy();
   });
 
-  xit('totalQuestions should return revisedTotalCount', () => {
-    component.localBlueprint = {questionTypes: {'type': 5}, totalQuestions: 0};
+  it('totalQuestions should return revisedTotalCount', () => {
+    component.localBlueprint = {questionTypes: {"type": 5}, totalQuestions: 0};
     spyOn(component, 'totalQuestions').and.callThrough();
     const count = component.totalQuestions();
     expect(count).toEqual(5);
@@ -581,23 +679,40 @@ describe('CreateProgramComponent', () => {
     expect(component.editBlueprintFlag).toBeFalsy();
   });
 
-  xit('mapBlueprintToId should call toasterService.error', () => {
-    const toasterService = TestBed.get('ToasterService');
-    spyOn(toasterService, 'error').and.callFake(() => {});
-    spyOn(component, 'isBlueprintValid').and.returnValue(false);
-    spyOn(component, 'mapBlueprintToId').and.callThrough();
-    component.mapBlueprintToId();
-    expect(component.isBlueprintValid).toHaveBeenCalled();
-    expect(toasterService.error).toHaveBeenCalled();
+  xit('changeFrameWork should change FrameWork', () => {
+    component.showFrameworkChangeModal = false;
+    component.projectScopeForm = new FormGroup({
+      framework: new FormControl('framework', Validators.required),
+      pcollections: new FormControl(['pcollections'], Validators.required),
+    });
+   // component.projectScopeForm.value.pcollections = ['nnnn'];
+    spyOn(component, 'onFrameworkChange').and.returnValue(true);
+    component.changeFrameWork();
+   expect(component.onFrameworkChange).toHaveBeenCalled();
   });
 
-  xit('initEditBlueprintForm should call programsService.initializeBlueprintMetadata', () => {
+  xit('mapBlueprintToId should call toasterService.error', () => {
+ 
+    const toasterService = TestBed.get(ToasterService);
+    spyOn(toasterService, 'error').and.callFake(() => {});
+    //spyOn(component, 'isBlueprintValid').and.returnValue(true);
+    //spyOn(component, 'mapBlueprintToId').and.callFake(() => {});
+   // component.mapBlueprintToId();
+   // expect(component.isBlueprintValid).toHaveBeenCalled();
+    expect(toasterService.error).toHaveBeenCalled();
+
+  });
+
+  it('initEditBlueprintForm should call programsService.initializeBlueprintMetadata', () => {
     component.choosedTextBook = {};
     component.localBlueprintMap = {};
+    component.programScope = {
+      framework: 'framework'
+    };
     component.blueprintTemplate = {properties:
       [
-        {code: 'topics', options: []},
-        {code: 'learningOutcomes', options: []}
+        {code: "topics", options: []},
+        {code: "learningOutcomes", options: []}
       ]
     };
     const programsService = TestBed.get(ProgramsService);
@@ -619,10 +734,11 @@ describe('CreateProgramComponent', () => {
     expect(component.getChapterLevelCount).toHaveBeenCalled();
   });
 
-  xit('getCollectionHierarchy should call programsService.getContentOriginEnvironment', () => {
+  it('getCollectionHierarchy should call programsService.getContentOriginEnvironment', () => {
     component.programDetails = {config: {collections: []}};
     component.textbooks = {};
-    component['programsService'] = TestBed.get(ProgramsService);
+    component.tempCollections = ['do_1133407744582696961763'];
+    component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getHierarchyFromOrigin').and.returnValue(of(mockData.hierarchyRead));
     spyOn(component, 'initChaptersSelectionForm').and.callFake(() => {});
     spyOn(component, 'getCollectionHierarchy').and.callThrough();
@@ -630,9 +746,9 @@ describe('CreateProgramComponent', () => {
     expect(component['programsService'].getHierarchyFromOrigin).toHaveBeenCalled();
   });
 
-  xit('should call updateSelection', () => {
+  it('should call updateSelection', () => {
     spyOn(component, 'updateSelection').and.callFake(() => {});
-    component.updateSelection('do_1234');
+    component.updateSelection("do_1234");
     expect(component.updateSelection).toHaveBeenCalled();
   });
 
@@ -654,18 +770,143 @@ describe('CreateProgramComponent', () => {
     expect(component.saveAsDraftAndNext).toHaveBeenCalled();
   });
 
-  xit('Should call the validateFormBeforePublish method', () => {
+/*   it('Should call the validateFormBeforePublish method', () => {
     component.projectScopeForm.value.pcollections = [];
     const toasterService = TestBed.get(ToasterService);
+    component.createProgramForm.controls.targetPrimaryCategories.setValue(false);
+    component.projectScopeForm.controls.target_collection_category.setValue(false);
+    spyOn(component, 'validateDates').and.returnValue(true);
+    component.selectedContributorsCnt = 0;
     component.validateFormBeforePublish();
-    expect(toasterService.warning).toHaveBeenCalledWith('Please select at least a one collection');
+    expect(toasterService.warning).toHaveBeenCalled();
+    expect(component.disableCreateProgramBtn).toBeFalsy();
+  });  */
+
+  it('validateFormBeforePublish method Should return false when createProgramForm is invalid ', () => {
+    component.createProgramForm = new FormGroup({
+      description: new FormControl('description', Validators.required),
+      enddate: new FormControl('', Validators.required),
+      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    });
+    component.projectScopeForm = new FormGroup({
+      medium: new FormControl('English', Validators.required),
+      gradeLevel: new FormControl('Class1', Validators.required),
+      subject: new FormControl('Maths', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new FormControl('public', Validators.required),
+      defaultContributeOrgReview: new FormControl(false, Validators.required),
+      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new FormControl('', Validators.required),
+      target_collection_category: new FormControl('Course', Validators.required),
+    });
+    component.projectScopeForm.value.pcollections = [];
+    component.validateFormBeforePublish();
     expect(component.disableCreateProgramBtn).toBeFalsy();
   });
 
-  it('should call publishProject', () => {
-    spyOn(component, 'publishProject').and.callFake(() => {});
-    component.publishProject({});
-    expect(component.publishProject).toHaveBeenCalled();
+  it('validateFormBeforePublish method Should return false when projectScopeForm is invalid ', () => {
+    component.createProgramForm = new FormGroup({
+      description: new FormControl('description', Validators.required),
+      enddate: new FormControl('2022-08-01T18:29:59.000Z', Validators.required),
+      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    });
+    component.projectScopeForm = new FormGroup({
+      medium: new FormControl('', Validators.required),
+      gradeLevel: new FormControl('Class1', Validators.required),
+      subject: new FormControl('Maths', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new FormControl('public', Validators.required),
+      defaultContributeOrgReview: new FormControl(false, Validators.required),
+      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new FormControl('', Validators.required),
+      target_collection_category: new FormControl('Course', Validators.required),
+    });
+    component.projectScopeForm.value.pcollections = [];
+    component['programsService'] = TestBed.inject(ProgramsService);
+    component.validateFormBeforePublish();
+    expect(component.disableCreateProgramBtn).toBeFalsy();
+  });
+
+  it('validateFormBeforePublish method Should return false when createProgramForm is invalid ', () => {
+    component.createProgramForm = new FormGroup({
+      description: new FormControl('description', Validators.required),
+      enddate: new FormControl('', Validators.required),
+      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    });
+    component.projectScopeForm = new FormGroup({
+      medium: new FormControl('English', Validators.required),
+      gradeLevel: new FormControl('Class1', Validators.required),
+      subject: new FormControl('Maths', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new FormControl('public', Validators.required),
+      defaultContributeOrgReview: new FormControl(false, Validators.required),
+      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new FormControl('', Validators.required),
+      target_collection_category: new FormControl('Course', Validators.required),
+    });
+    component.projectScopeForm.value.pcollections = [];
+    component.validateFormBeforePublish();
+    expect(component.disableCreateProgramBtn).toBeFalsy();
+  });
+
+
+
+  it('validateFormBeforePublish method Should return false when validateDates is truthy ', () => {
+    component.createProgramForm = new FormGroup({
+      description: new FormControl('description', Validators.required),
+      enddate: new FormControl('2022-08-01T18:29:59.000Z', Validators.required),
+      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    });
+    component.projectScopeForm = new FormGroup({
+      medium: new FormControl('medium', Validators.required),
+      gradeLevel: new FormControl('Class1', Validators.required),
+      subject: new FormControl('Maths', Validators.required),
+      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new FormControl('public', Validators.required),
+      defaultContributeOrgReview: new FormControl(false, Validators.required),
+      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new FormControl('framework', Validators.required),
+      target_collection_category: new FormControl('Course', Validators.required),
+    });
+
+    component.projectScopeForm.value.pcollections = [];
+    component['helperService'] = TestBed.inject(HelperService);
+    spyOn(component['helperService'], 'validateForm').and.returnValue(true);
+    spyOn(component, 'validateDates').and.returnValue(true);
+    component.validateFormBeforePublish();
+    expect(component.disableCreateProgramBtn).toBeFalsy();
+  });
+
+  
+
+  
+  xit('should call publishProject', () => {
+   // const r:HTMLInputElement =fixture.debugElement.nativeElement.querySelector()
+   component.createProgramForm = new FormGroup({
+    type: new FormControl('', Validators.required),
+  });
+  component.createProgramForm.setValue({
+    type: 'public', 
+  });
+  const mockEvt = { target: { xyz: [] } };
+
+    component['programsService'] = TestBed.inject(ProgramsService);
+    spyOn(component['programsService'], 'publishProgram').and.returnValue(of({}));
+    component.publishProject(mockEvt);
+    expect(component['programsService'].publishProgram).toHaveBeenCalled();
+  
   });
 
   it('#editTargetNode should set #selectedTargetNodeData and #editTargetObjectFlag', () => {
@@ -711,5 +952,104 @@ describe('CreateProgramComponent', () => {
     ]);
     expect(component.editTargetObjectFlag).toBeFalsy();
   });
+
+ xit('#setProjectScopeDetails should set Project Scope Details', () => {
+  component.projectTargetType = 'collections';
+  component.programDetails={
+    config:{
+      framework:'framework'
+    }
+  }
+  component.projectScopeForm = new FormGroup({
+    framework: new FormControl(['framework'], Validators.required),
+  });
+    component['frameworkService'] = TestBed.inject(FrameworkService);
+    spyOn(component['frameworkService'] , 'readChannel').and.returnValue(of({channelData: 'channelData'}));
+    spyOn(component, 'getFramework').and.returnValue(Promise.resolve(true))
+    
+    spyOn(component['frameworkService'] , 'getMasterCategories').and.callFake(() => {});
+    
+    component.setProjectScopeDetails();
+    //expect(component['frameworkService'].getMasterCategories).toHaveBeenCalled();
+    expect(component['frameworkService'].readChannel).toHaveBeenCalled();
+
+  });
+
+ it('#initiateCollectionEditor should initiate Collection Editor', () => {
+
+    component['helperService'] = TestBed.inject(HelperService);
+    spyOn(component, 'initializeCollectionEditorInput').and.callFake(() => {});
+    spyOn( component['helperService'], 'createContent').and.returnValue(of({result:{identifier: 'identifier'}}));
+    component.initiateCollectionEditor({xyz:'xyz'});
+    expect(component.initializeCollectionEditorInput).toHaveBeenCalled();
+
+  });
+
+ it('#initializeCollectionEditorInput should initialize Collection Editor Input', () => {
+
+  component.programScope={
+    framework:{
+      code:'board'
+    },
+    selectedTargetCollectionObject:{
+      targetObjectType:'xyz'
+    },
+  }
+
+    component.initializeCollectionEditorInput();
+   expect(component.questionSetEditorComponentInput['hideSubmitForReviewBtn']).toBeTruthy();
+   expect(component.questionSetEditorComponentInput['setDefaultCopyright']).toBeTruthy();
+   expect(component.questionSetEditorComponentInput['enableQuestionCreation']).toBeFalsy();
+  });
+
+  it('#collectionEditorEventListener should listen to event for collection Editor for save content', () => {
+    component.showProgramScope = false;
+      component.collectionEditorEventListener({event:{action:'saveContent'}});
+     expect(component.collectionEditorVisible).toBeFalsy();
+    });
+
+    it('#collectionEditorEventListener should listen to event for collection Editor for backContent', () => {
+      component.collectionEditorEventListener({e:{action:'backContent'}});
+     expect(component.collectionEditorVisible).toBeFalsy();
+    });
+
+  xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
+    component.programScope={
+      selectedFramework:{
+        categories:
+          {
+            code : 'board'
+          }
+        
+      },
+      userChannelData:
+      {
+        defaultFramework:'defaultFramework',
+        frameworks : ['frameworks'],
+        type: 'type'
+
+      },
+      
+    }
+    component.projectScopeForm = new FormGroup({
+      framework: new FormControl(['framework'], Validators.required),
+      board: new FormControl(['board'], Validators.required)
+    });
+        component['frameworkService'] = TestBed.inject(FrameworkService);
+        spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{
+          userChannelData:
+          {
+            defaultFramework : ['frameworks'],
+            type: 'type'
+    
+          }
+        }}));
+        component.getDefaultChannelFramework();
+        expect(component.isFormValueSet.projectScopeForm ).toBeFalsy();
+        /*       expect(component.updateContentWithURL).toHaveBeenCalled();
+        expect( component['sourcingService'].generateAssetCreateRequest).toHaveBeenCalled();
+     */
+      });
+  
 
 });

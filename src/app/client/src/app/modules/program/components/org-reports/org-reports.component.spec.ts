@@ -28,7 +28,6 @@ describe('OrgReportsComponent', () => {
   };
   const resourceBundle = mockData.resourceBundle;
   const routerStub = { url: '/sourcing/orgreports' };
- 
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -47,7 +46,7 @@ describe('OrgReportsComponent', () => {
     component = fixture.componentInstance;
     // fixture.detectChanges();
   });
-
+  
   afterEach(() => {
     fixture.destroy();
   });
