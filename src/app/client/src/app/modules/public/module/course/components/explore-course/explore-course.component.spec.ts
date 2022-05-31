@@ -49,7 +49,9 @@ describe('ExploreCourseComponent', () => {
     public changeQueryParams(queryParams) { this.queryParamsMock.next(queryParams); }
     public changeParams(params) { this.paramsMock.next(params); }
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [ExploreCourseComponent],
@@ -58,9 +60,6 @@ describe('ExploreCourseComponent', () => {
       { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ExploreCourseComponent);
     component = fixture.componentInstance;
     toasterService = TestBed.get(ToasterService);
@@ -72,6 +71,9 @@ describe('ExploreCourseComponent', () => {
     sendOrgDetails = true;
     sendSearchResult = true;
     sendFormApi = true;
+    afterEach(() => {
+      fixture.destroy();
+    });
     spyOn(orgDetailsService, 'getOrgDetails').and.callFake((options) => {
       if (sendOrgDetails) {
         return of({hashTagId: '123'});
