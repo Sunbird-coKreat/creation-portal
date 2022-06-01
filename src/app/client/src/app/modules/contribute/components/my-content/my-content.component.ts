@@ -59,6 +59,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   private navigationHelperService: NavigationHelperService;
   public isQumlPlayer: Boolean = false;
   public baseUrl: string;
+  public videoFileFormat: boolean;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
@@ -245,6 +246,11 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     } else {
       this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
       this.getConfigByContent(content.identifier);
+      if (_.includes(content.mimeType.toString(), 'video')) {
+        this.videoFileFormat = true;
+      } else {
+        this.videoFileFormat = false;
+      }
     }
   }
 
