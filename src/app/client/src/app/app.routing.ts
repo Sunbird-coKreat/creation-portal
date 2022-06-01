@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { ErrorPageComponent, AuthGuard } from '@sunbird/core';
 import { RouterModule, Routes } from '@angular/router';
+import * as telemetryLabels from '../app/modules/shared/services/config/telemetry-label.config.json';
+const telemetryPage = telemetryLabels.default;
+
 const appRoutes: Routes = [
   {
     path: 'resources', loadChildren: () => import('app/modules/resource/resource.module').then(m => m.ResourceModule)
@@ -12,7 +15,11 @@ const appRoutes: Routes = [
     path: 'sourcing', loadChildren: () => import('app/modules/program/program.module').then(m => m.ProgramModule)
   },
   {
-    path: 'sourcing/workspace', loadChildren: () => import('app/modules/workspace/workspace.module').then(m => m.WorkspaceModule)
+    path: 'sourcing/workspace', data: {
+      telemetry: { env: 'sourcing-portal', type: telemetryPage.pageType.list, subtype: telemetryPage.pageSubtype.paginate,
+      pageid: telemetryPage.pageId.sourcing.projectContributions }
+    },
+    loadChildren: () => import('app/modules/workspace/workspace.module').then(m => m.WorkspaceModule)
   },
   {
     path: 'contribute', loadChildren: () => import('app/modules/contribute/contribute.module').then(m => m.ContributeModule)

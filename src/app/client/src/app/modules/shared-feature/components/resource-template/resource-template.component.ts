@@ -175,6 +175,10 @@ export class ResourceTemplateComponent implements OnInit, AfterViewInit, OnDestr
         this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';
         this.selectedtemplateDetails.mimeType = ['application/vnd.sunbird.questionset'];
         break;
+      case 'collection':
+        this.selectedtemplateDetails.onClick = 'questionSetEditorComponent';
+        this.selectedtemplateDetails.mimeType = _.map(this.selectedtemplateDetails.editors, 'mimetype');
+        break;
       case 'question':
         this.selectedtemplateDetails.onClick = 'questionSetComponent';
         const temp = _.find(this.selectedtemplateDetails.editors, {'type': 'question'});
