@@ -18,6 +18,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { MyContentComponent } from './components/my-content/my-content.component';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { QumlPlayerService } from '../sourcing';
 @NgModule({
   providers: [
@@ -44,6 +45,7 @@ import { QumlPlayerService } from '../sourcing';
     SharedFeatureModule,
     PlayerHelperModule,
     QumlLibraryModule,
+    SunbirdVideoPlayerModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [
