@@ -20,7 +20,7 @@ jobs:
           name: Installing prerequisites
           command: |-
             curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-            sudo apt install nodejs@12.20 -y
+            sudo apt install nodejs -y
             node --version
       - run:
           name: node version 12
