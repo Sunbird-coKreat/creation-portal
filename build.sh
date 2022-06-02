@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
-
+NODE_VERSION=14.19.0
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -16,8 +16,8 @@ commit_hash=$(git rev-parse --short HEAD)
 
 rm -rf src/app/app_dist/
 rm -rf src/app/player-dist.tar.gz
-nvm install 12.16.1
-nvm use 12.16.1
+nvm install $NODE_VERSION
+nvm use $NODE_VERSION
 cd src/app
 npm set progress=false
 npm install  --unsafe-perm
