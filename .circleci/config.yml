@@ -19,12 +19,11 @@ jobs:
       - run:
           name: Installing prerequisites
           command: |-
-            curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-            sudo apt install nodejs -y
-            node --version
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+            nvm -v
       - run:
           name: node version 12
-          command: 'nvm use 12'
+          command: 'nvm install 12.20.1'
       - run:
           name: Installing angular cli
           command: 'npm install -g @angular/cli@6.0.8 --no-progress'
