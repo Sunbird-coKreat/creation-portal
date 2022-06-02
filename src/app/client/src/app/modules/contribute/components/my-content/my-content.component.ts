@@ -246,7 +246,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     } else {
       this.slectedContent.originPreviewUrl = this.helperService.getContentOriginUrl(this.slectedContent.origin);
       this.getConfigByContent(content.identifier);
-      if (_.includes(content.mimeType.toString(), 'video')) {
+      if (content.mimeType && _.includes(content.mimeType.toString(), 'video')) {
         this.videoFileFormat = true;
       } else {
         this.videoFileFormat = false;
