@@ -18,7 +18,10 @@ jobs:
           path: ~/portal
       - run:
           name: Installing prerequisites
-          command: `nvm install 12.20 && nvm use 12`
+          command: |-
+            curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+            sudo apt install nodejs -y
+            nvm use 12
       - run:
           name: Installing angular cli
           command: 'npm install -g @angular/cli@6.0.8 --no-progress'
