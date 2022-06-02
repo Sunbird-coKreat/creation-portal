@@ -11,7 +11,8 @@ jobs:
   test-cases:
     working_directory: ~/portal/src/app/client
     machine:
-      image: ubuntu-1604:202101-01
+      #https://circleci.com/docs2/2.0/configuration-reference#available-machine-images
+      image:  ubuntu-2004:202201-02
     steps:
       - checkout:
           path: ~/portal
@@ -23,9 +24,9 @@ jobs:
       - run:
           name: Installing npm deps
           command: 'npm install --no-progress'
-      - save_cache: # special step to save the dependency cache	
-          key: dependency-cache-{{ checksum "package.json" }}	
-          paths: ./node_modules    
+      - save_cache: # special step to save the dependency cache
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths: ./node_modules
       - run:
           name: ng lint and building
           command: 'mkdir -p /tmp/logs && node --max_old_space_size=6000 ./node_modules/@angular/cli/bin/ng build --prod --optimization=false --buildOptimizer=false | tee /tmp/logs/build.log'
