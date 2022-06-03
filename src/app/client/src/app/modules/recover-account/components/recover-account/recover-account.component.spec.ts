@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
-describe('RecoverAccountComponent', () => {
+xdescribe('RecoverAccountComponent', () => {
   let component: RecoverAccountComponent;
   let fixture: ComponentFixture<RecoverAccountComponent>;
   class RouterStub {
@@ -44,7 +44,7 @@ describe('RecoverAccountComponent', () => {
       this.queryParamsMock = params;
     }
   }
-  
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

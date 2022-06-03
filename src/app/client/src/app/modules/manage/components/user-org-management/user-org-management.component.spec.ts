@@ -11,7 +11,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { UserOrgManagementComponent } from './user-org-management.component';
 import { throwError as observableThrowError, of as observableOf, of } from 'rxjs';
 import { mockManageData } from './user-org-management.mock.spec';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
 const fakeActivatedRoute = {
   snapshot: {
@@ -44,7 +44,7 @@ const resourceMockData = {
   }
 };
 
-describe('UserOrgManagementComponent', () => {
+xdescribe('UserOrgManagementComponent', () => {
 
   let component: UserOrgManagementComponent;
   let fixture: ComponentFixture<UserOrgManagementComponent>;

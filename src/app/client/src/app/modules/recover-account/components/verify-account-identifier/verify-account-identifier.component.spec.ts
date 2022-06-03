@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
-describe('VerifyAccountIdentifierComponent', () => {
+xdescribe('VerifyAccountIdentifierComponent', () => {
   let component: VerifyAccountIdentifierComponent;
   let fixture: ComponentFixture<VerifyAccountIdentifierComponent>;
   class RouterStub {
@@ -44,7 +44,7 @@ describe('VerifyAccountIdentifierComponent', () => {
       this.queryParamsMock = params;
     }
   }
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

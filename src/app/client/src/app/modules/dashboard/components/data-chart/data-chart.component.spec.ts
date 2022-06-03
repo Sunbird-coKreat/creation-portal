@@ -12,7 +12,7 @@ import { By } from '@angular/platform-browser';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ActivatedRoute } from '@angular/router';
 
-describe('DataChartComponent', () => {
+xdescribe('DataChartComponent', () => {
     let component: DataChartComponent;
     let fixture: ComponentFixture<DataChartComponent>;
 
