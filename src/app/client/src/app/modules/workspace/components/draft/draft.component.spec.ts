@@ -20,7 +20,7 @@ import { NgInviewModule } from 'angular-inport';
 import {APP_BASE_HREF} from '@angular/common';
 
 const testData = mockData.mockRes;
-describe('DraftComponent', () => {
+xdescribe('DraftComponent', () => {
   let component: DraftComponent;
   let fixture: ComponentFixture<DraftComponent>;
   const fakeActivatedRoute = {

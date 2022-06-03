@@ -9,7 +9,7 @@ import * as mockData from './create-content.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ActivatedRoute } from '@angular/router';
-describe('CreateContentComponent', () => {
+xdescribe('CreateContentComponent', () => {
   let component: CreateContentComponent;
   let fixture: ComponentFixture<CreateContentComponent>;
   const fakeActivatedRoute = {

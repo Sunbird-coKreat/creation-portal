@@ -19,7 +19,7 @@ import { NgInviewModule } from 'angular-inport';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
-describe('PublishedComponent', () => {
+xdescribe('PublishedComponent', () => {
   let component: PublishedComponent;
   let fixture: ComponentFixture<PublishedComponent>;
   const fakeActivatedRoute = {

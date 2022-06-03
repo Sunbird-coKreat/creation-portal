@@ -17,7 +17,7 @@ import * as _ from 'lodash-es';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 
-describe('BatchListComponent', () => {
+xdescribe('BatchListComponent', () => {
   let component: BatchListComponent;
   let fixture: ComponentFixture<BatchListComponent>;
   let childcomponent: BatchCardComponent;
