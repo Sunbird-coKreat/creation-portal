@@ -12,6 +12,7 @@ import { MyContentComponent } from './my-content.component';
 import { mockData } from './my-content.component.spec.data';
 import { of, throwError as observableThrowError } from 'rxjs';
 import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player-v9';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { SuiPopupModule } from 'ng2-semantic-ui-v9';
 
 describe('MyContentComponent', () => {
@@ -36,8 +37,9 @@ describe('MyContentComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, QumlLibraryModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
-                PlayerHelperModule, SuiPopupModule],
+      imports: [HttpClientTestingModule, QumlLibraryModule, RouterTestingModule,
+        SharedModule.forRoot(), TelemetryModule.forRoot(),
+        PlayerHelperModule, SuiPopupModule, SunbirdVideoPlayerModule],
       declarations: [ MyContentComponent ],
       providers: [
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
@@ -55,7 +57,7 @@ describe('MyContentComponent', () => {
   afterEach(() => {
     fixture.destroy();
   });
-  
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
