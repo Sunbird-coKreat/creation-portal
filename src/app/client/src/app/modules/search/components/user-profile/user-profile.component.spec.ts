@@ -18,7 +18,7 @@ import { Response } from './user-profile.component.spec.data';
 import { OrderModule } from 'ngx-order-pipe';
 import {APP_BASE_HREF} from '@angular/common';
 
-describe('UserProfileComponent', () => {
+xdescribe('UserProfileComponent', () => {
     let component: UserProfileComponent;
     let fixture: ComponentFixture<UserProfileComponent>;
     const resourceBundle = {
@@ -51,7 +51,7 @@ describe('UserProfileComponent', () => {
         }
     };
 
-   
+
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -75,7 +75,7 @@ describe('UserProfileComponent', () => {
     afterEach(() => {
         fixture.destroy();
       });
-    
+
 
     it('should call search api and get success', () => {
         const searchService = TestBed.get(UserSearchService);

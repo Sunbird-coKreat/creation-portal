@@ -18,7 +18,7 @@ import { Response } from './user-delete.component.spec.data';
 
 
 
-describe('UserDeleteComponent', () => {
+xdescribe('UserDeleteComponent', () => {
   let component: UserDeleteComponent;
   let fixture: ComponentFixture<UserDeleteComponent>;
   const resourceBundle = {
