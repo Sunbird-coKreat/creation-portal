@@ -13,7 +13,7 @@ import { TelemetryService } from '@sunbird/telemetry';
 
 
 const testData = mockData.mockRes;
-describe('ReviewsubmissionsContentplayerComponent', () => {
+xdescribe('ReviewsubmissionsContentplayerComponent', () => {
   let component: ReviewsubmissionsContentplayerComponent;
   let fixture: ComponentFixture<ReviewsubmissionsContentplayerComponent>;
   const resourceBundle = {
@@ -33,7 +33,7 @@ describe('ReviewsubmissionsContentplayerComponent', () => {
     },
     languageSelected$: observableOf({})
   };
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

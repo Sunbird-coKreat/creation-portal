@@ -12,9 +12,9 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './collaborating.component.spec.data';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
 import { OrderModule } from 'ngx-order-pipe';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
-describe('CollaboratingOnComponent', () => {
+xdescribe('CollaboratingOnComponent', () => {
   let component: CollaboratingOnComponent;
   let fixture: ComponentFixture<CollaboratingOnComponent>;
   const resourceBundle = {

@@ -16,7 +16,7 @@ import { fakeBatchDetails } from './enroll-batch.component.spec.data';
 import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
 import { By } from '@angular/platform-browser';
-describe('EnrollBatchComponent', () => {
+xdescribe('EnrollBatchComponent', () => {
   let component: EnrollBatchComponent;
   let fixture: ComponentFixture<EnrollBatchComponent>;
   let courseBatchService: CourseBatchService;

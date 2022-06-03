@@ -9,7 +9,7 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Observable, of as observableOf } from 'rxjs';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
-describe('CollaborationContentFilterComponent', () => {
+xdescribe('CollaborationContentFilterComponent', () => {
   let component: CollaborationContentFilterComponent;
   let fixture: ComponentFixture<CollaborationContentFilterComponent>;
   let inputEl: DebugElement;

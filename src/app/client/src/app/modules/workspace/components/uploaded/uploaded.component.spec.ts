@@ -14,7 +14,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 const testData = mockData.mockRes;
-describe('UploadedComponent', () => {
+xdescribe('UploadedComponent', () => {
   let component: UploadedComponent;
   let fixture: ComponentFixture<UploadedComponent>;
   const fakeActivatedRoute = {
@@ -49,7 +49,7 @@ describe('UploadedComponent', () => {
       }
     }
   };
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

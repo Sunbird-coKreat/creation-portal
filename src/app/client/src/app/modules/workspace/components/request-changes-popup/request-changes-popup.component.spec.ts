@@ -13,7 +13,7 @@ import { RequestChangesPopupComponent } from './request-changes-popup.component'
 import { WorkSpaceService } from './../../services';
 import { mockRes } from './request-change-pop.component.spec.data';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
-describe('RequestChangesPopupComponent', () => {
+xdescribe('RequestChangesPopupComponent', () => {
   let component: RequestChangesPopupComponent;
   let fixture: ComponentFixture<RequestChangesPopupComponent>;
 
