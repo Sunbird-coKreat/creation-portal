@@ -195,16 +195,7 @@
             "codeCoverageExclude": [
               "src/assets/**",
               "src/thidparty/**",
-              "src/app/modules/offline/**",
-              "src/app/client/src/app/modules/certificate",
-              "src/app/client/src/app/modules/dashboard",
-              "src/app/client/src/app/modules/learn",
-              "src/app/client/src/app/modules/manage",
-              "src/app/client/src/app/modules/merge-account",
-              "src/app/client/src/app/modules/recover-account",
-              "src/app/client/src/app/modules/resource",
-              "src/app/client/src/app/modules/search",
-              "src/app/client/src/app/modules/workspace"
+              "src/app/modules/offline/**"
             ]
           }
         },
