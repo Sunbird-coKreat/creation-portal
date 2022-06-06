@@ -5,7 +5,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 
 
-describe('WorkspaceComponent', () => {
+xdescribe('WorkspaceComponent', () => {
   let component: WorkspaceComponent;
   let fixture: ComponentFixture<WorkspaceComponent>;
 
@@ -13,7 +13,7 @@ describe('WorkspaceComponent', () => {
     navigate = jasmine.createSpy('navigate');
   }
 
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

@@ -13,7 +13,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('CourseSearchComponent', () => {
+xdescribe('CourseSearchComponent', () => {
   let component: CourseSearchComponent;
   let fixture: ComponentFixture<CourseSearchComponent>;
   let toasterService, formService, searchService, coursesService, activatedRoute, cacheService, learnerService;

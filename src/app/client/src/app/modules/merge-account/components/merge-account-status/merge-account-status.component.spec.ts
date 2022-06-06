@@ -6,7 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {of as observableOf} from 'rxjs';
 import {ResourceService} from '@sunbird/shared';
 
-describe('MergeAccountStatusComponent', () => {
+xdescribe('MergeAccountStatusComponent', () => {
   let component: MergeAccountStatusComponent;
   let fixture: ComponentFixture<MergeAccountStatusComponent>;
 

@@ -16,7 +16,7 @@ import { of, throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { fakeOpenBatchDetails } from './unenroll-batch.component.spec.data';
 import { By } from '@angular/platform-browser';
-describe('UnEnrollBatchComponent', () => {
+xdescribe('UnEnrollBatchComponent', () => {
   let component: UnEnrollBatchComponent;
   let fixture: ComponentFixture<UnEnrollBatchComponent>;
   let courseBatchService;
@@ -55,7 +55,7 @@ describe('UnEnrollBatchComponent', () => {
       }
     }
   };
- 
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],

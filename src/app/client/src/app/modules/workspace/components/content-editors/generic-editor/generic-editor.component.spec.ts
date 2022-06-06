@@ -25,10 +25,10 @@ class RouterStub {
 }
 class NavigationHelperServiceStub { }
 const mockUserService = { userProfile: { userId: '68777b59-b28b-4aee-88d6-50d46e4c35090'} };
-describe('GenericEditorComponent', () => {
+xdescribe('GenericEditorComponent', () => {
   let component: GenericEditorComponent;
   let fixture: ComponentFixture<GenericEditorComponent>;
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

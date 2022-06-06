@@ -11,7 +11,7 @@ import { Response } from './resource.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterTestingModule } from '@angular/router/testing';
-describe('ResourceComponent', () => {
+xdescribe('ResourceComponent', () => {
   let component: ResourceComponent;
   let fixture: ComponentFixture<ResourceComponent>;
   let toasterService, userService, pageApiService, resourceService;

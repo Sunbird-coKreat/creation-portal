@@ -29,10 +29,10 @@ class NavigationHelperServiceStub {
   public navigateToWorkSpace() {}
 }
 const mockUserService = { userProfile: { userId: '68777b59-b28b-4aee-88d6-50d46e4c35090'} };
-describe('CollectionEditorComponent', () => {
+xdescribe('CollectionEditorComponent', () => {
   let component: CollectionEditorComponent;
   let fixture: ComponentFixture<CollectionEditorComponent>;
-  
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CollectionEditorComponent],

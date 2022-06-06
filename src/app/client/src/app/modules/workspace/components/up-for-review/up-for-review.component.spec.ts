@@ -12,9 +12,9 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './up-for-review.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
-describe('UpForReviewComponent', () => {
+xdescribe('UpForReviewComponent', () => {
   let component: UpForReviewComponent;
   let fixture: ComponentFixture<UpForReviewComponent>;
   const resourceBundle = {

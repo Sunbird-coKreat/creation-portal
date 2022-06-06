@@ -20,7 +20,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common';
 
 const testData = mockData.mockRes;
-describe('CourseConsumptionComponent', () => {
+xdescribe('CourseConsumptionComponent', () => {
   let component: CourseConsumptionComponent;
   let fixture: ComponentFixture<CourseConsumptionComponent>;
   let router: Router;

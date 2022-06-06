@@ -103,7 +103,7 @@ const commentList = {
   }
 };
 
-describe('ReviewCommentsComponent', () => {
+xdescribe('ReviewCommentsComponent', () => {
   let component: ReviewCommentsComponent;
   let fixture: ComponentFixture<ReviewCommentsComponent>;
 

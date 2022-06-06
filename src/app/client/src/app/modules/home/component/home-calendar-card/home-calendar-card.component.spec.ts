@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { HomeCalendarCardComponent } from './home-calendar-card.component';
 
-describe('HomeCalendarCardComponent', () => {
+xdescribe('HomeCalendarCardComponent', () => {
   let component: HomeCalendarCardComponent;
   let fixture: ComponentFixture<HomeCalendarCardComponent>;
 

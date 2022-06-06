@@ -15,7 +15,7 @@ import { DataChartComponent } from '../data-chart/data-chart.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import {APP_BASE_HREF} from '@angular/common';
 
-describe('UsageReportsComponent', () => {
+xdescribe('UsageReportsComponent', () => {
   let component: UsageReportsComponent;
   let fixture: ComponentFixture<UsageReportsComponent>;
   const fakeActivatedRoute = {

@@ -53,11 +53,11 @@ const resourceBundle = {
   },
   languageSelected$: observableOf({})
 };
-describe('ReviewSubmissionsComponent', () => {
+xdescribe('ReviewSubmissionsComponent', () => {
   let component: ReviewSubmissionsComponent;
   let fixture: ComponentFixture<ReviewSubmissionsComponent>;
 
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

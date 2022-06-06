@@ -18,7 +18,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 import { PageApiService } from '@sunbird/core';
 
-describe('BatchPageSectionComponent', () => {
+xdescribe('BatchPageSectionComponent', () => {
   let component: BatchPageSectionComponent;
   let fixture: ComponentFixture<BatchPageSectionComponent>;
   let childcomponent: BatchCardComponent;
