@@ -24,7 +24,7 @@ import { DynamicModule } from 'ng-dynamic-component';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { HelperService } from '../../services/helper.service';
 
-describe('ChapterListComponent', () => {
+xdescribe('ChapterListComponent', () => {
   let component: ChapterListComponent;
   let fixture: ComponentFixture<ChapterListComponent>;
   let errorInitiate, de: DebugElement;
