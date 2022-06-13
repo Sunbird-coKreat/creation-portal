@@ -124,7 +124,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public formFieldProperties: any;
   public isValidFrameworkFields = false;
   public frameworkFormData: any;
-  private fetchedCategory: string = '';
+  public fetchedCategory: string = '';
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,

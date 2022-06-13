@@ -45,7 +45,9 @@ describe('AppComponent', () => {
   let userService;
   let timerCallback;
   let resourceService;
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule,
         RouterTestingModule],
@@ -62,9 +64,6 @@ describe('AppComponent', () => {
         TelemetryService, { provide: TELEMETRY_PROVIDER, useValue: EkTelemetry }, SearchService, ContentService],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     const navigationHelperService = TestBed.get(NavigationHelperService);
@@ -94,7 +93,9 @@ describe('AppComponent', () => {
 
 afterEach(() => {
   jasmine.clock().uninstall();
+  fixture.destroy();
 });
+
   it('should config telemetry service for login Session', () => {
     const learnerService = TestBed.get(LearnerService);
     const publicDataService = TestBed.get(PublicDataService);

@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
  import { SharedModule } from '@sunbird/shared';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { SlickModule } from 'ngx-slick';
 import { NgInviewModule } from 'angular-inport';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -23,7 +22,6 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
     SharedModule,
     SuiModule,
     DashboardModule,
-    SlickModule,
     FormsModule,
     LearnRoutingModule,
     CoreModule,

@@ -30,7 +30,12 @@ describe('BulkApprovalComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+  afterEach(() => {
+    fixture.destroy();
+  });
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule, TelemetryModule,
         RouterTestingModule, SharedModule.forRoot()],      
@@ -44,9 +49,6 @@ describe('BulkApprovalComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BulkApprovalComponent);
     fixture.detectChanges();
     component = fixture.componentInstance;

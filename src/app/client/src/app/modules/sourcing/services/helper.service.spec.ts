@@ -8,17 +8,23 @@ import { SharedModule, ConfigService, ToasterService, ResourceService } from '@s
 import { ProgramStageService } from '../../program/services';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClient } from '@angular/common/http';
-import { of as observableOf, throwError as observableError } from 'rxjs';
+import { of as observableOf, of, throwError as observableError } from 'rxjs';
 import { childMetaFormData } from './sourcing/helper.service.spec.data';
 import { CacheService } from 'ng2-cache-service';
 import { SourcingService } from '../../sourcing/services';
 
-describe('HelperService', () => {
+xdescribe('HelperService', () => {
   const resourceBundle = {
     messages: {
       fmsg: {
         m00100: 'toaster error message',
         approvingFailed: 'toaster error message'
+      },
+      emsg: {
+        m00100: 'toaster error message',
+        approvingFailed: 'toaster error message',
+        contentRejectedForProgram: 'toaster error message',
+        contentAcceptedForProgram: 'toaster error message'
       }
     }
   };
@@ -41,16 +47,26 @@ describe('HelperService', () => {
       }
     }
   };
+  const errorRespone = {
+    'id': '',
+    'ver': 'private',
+    'ts': '2019-08-09 06:36:01:735+0000',
+    'params': {
+        'resmsgid': null,
+        'msgid': '9ee5a376-9e09-76d0-abb5-ebcf658e645b',
+        'err': 'INVALID_PARAMETER',
+        'status': 'INVALID_PARAMETER',
+        'errmsg': 'Please provide valid accessCode.'
+    },
+    'responseCode': 'CLIENT_ERROR',
+    'result': {
+    }
+  };
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  let helperService;
-  let actionService;
-  let contentService;
-  let programsService;
-  let frameworkService;
-  let toasterService;
-  let publicDataService;
+  let helperService, actionService, programStageService, contentService, learnerService;
+  let programsService, frameworkService, toasterService, publicDataService, sourcingService, httpClient;
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
@@ -65,9 +81,9 @@ describe('HelperService', () => {
         ProgramStageService,
         ProgramsService,
         NotificationService,
-        CacheService, 
-        FrameworkService, 
-        LearnerService,  
+        CacheService,
+        FrameworkService,
+        LearnerService,
         HttpClient,
         SourcingService,
         { provide: UserService, useValue: userServiceStub },
@@ -76,20 +92,24 @@ describe('HelperService', () => {
         { provide: Router, useClass: RouterStub },
       ]
     });
-    helperService = TestBed.get(HelperService);
-    actionService = TestBed.get(ActionService);
-    contentService = TestBed.get(ContentService);
-    programsService = TestBed.get(ProgramsService);
-    frameworkService =  TestBed.get(FrameworkService);
-    toasterService = TestBed.get(ToasterService);
-    publicDataService = TestBed.get(PublicDataService);
+    helperService = TestBed.inject(HelperService);
+    actionService = TestBed.inject(ActionService);
+    contentService = TestBed.inject(ContentService);
+    programsService = TestBed.inject(ProgramsService);
+    frameworkService =  TestBed.inject(FrameworkService);
+    toasterService = TestBed.inject(ToasterService);
+    publicDataService = TestBed.inject(PublicDataService);
+    programStageService = TestBed.inject(ProgramStageService);
+    sourcingService = TestBed.inject(SourcingService);
+    learnerService = TestBed.inject(LearnerService);
+    httpClient = TestBed.inject(HttpClient);
   });
 
   it('should be created', () => {
     expect(HelperService).toBeTruthy();
   });
 
-  xit('#initialize() should call #fetchChannelData()', () => {
+  it('#initialize() should call #fetchChannelData()', () => {
     const programDetails = {
       rootorg_id: '12345'
     };
@@ -101,8 +121,8 @@ describe('HelperService', () => {
   });
 
   it('#getCategoryMetaData() should call programsService.getCategoryDefinition()', () => {
-    spyOn(programsService, 'getCategoryDefinition').and.returnValue(observableOf({res: 'dummyData'}));
-    spyOn(helperService, 'getCategoryMetaData').and.callThrough();
+    spyOn(programsService, 'getCategoryDefinition').and.returnValue(of({res: 'dummyData'}));
+    //spyOn(helperService, 'getCategoryMetaData').and.callThrough();
     helperService.getCategoryMetaData('dummyCategory', '12345', 'content');
     expect(programsService.getCategoryDefinition).toHaveBeenCalledWith('dummyCategory', '12345', 'content');
     expect(helperService.selectedCategoryMetaData).toEqual({res: 'dummyData'});
@@ -126,6 +146,36 @@ describe('HelperService', () => {
     helperService.getCollectionOrContentCategoryDefinition(targetCollectionMeta, assetMeta);
     expect(programsService.getCollectionCategoryDefinition).toHaveBeenCalledWith(targetCollectionMeta.primaryCategory,
       targetCollectionMeta.channelId);
+  });
+
+  it('#formConfigforContext should set _formConfigForContext', () => {
+    helperService.formConfigforContext = childMetaFormData;
+    expect(helperService._formConfigForContext).toEqual(childMetaFormData);
+  });
+
+  it('#formConfigforContext should give _formConfigForContext', () => {
+    const dummyData = {name: 'sample textbook'};
+    helperService._formConfigForContext = dummyData;
+    const data  = helperService.formConfigforContext;
+    expect(data).toEqual(dummyData);
+  });
+
+  it('#getFormConfigurationforContext should give copy of FormConfigurationforContext', () => {
+    spyOn(helperService, 'getFormConfigurationforContext').and.callThrough();
+    const result = helperService.getFormConfigurationforContext();
+    expect(result).toEqual(helperService._formConfigForContext);
+  });
+
+  it('#selectedCollectionMetaData should set _selectedCollectionMetaData', () => {
+    helperService.selectedCollectionMetaData = childMetaFormData;
+    expect(helperService._selectedCollectionMetaData).toEqual(childMetaFormData);
+  });
+
+  it('#selectedCollectionMetaData should give _selectedCollectionMetaData', () => {
+    const dummyData = {name: 'sample textbook'};
+    helperService._selectedCollectionMetaData = dummyData;
+    const data  = helperService.selectedCollectionMetaData;
+    expect(data).toEqual(dummyData);
   });
 
   it('#selectedCategoryMetaData should set _categoryMetaData', () => {
@@ -289,12 +339,16 @@ describe('HelperService', () => {
     expect(toasterService.error).toHaveBeenCalled();
   });
 
-  it('#getContentOriginUrl() should return content url', () => {
+  it('#getContentOriginUrl() and #getQuestionSetOriginUrl() should return content url', () => {
     spyOn(programsService, 'getContentOriginEnvironment').and.returnValue('https://dock.sunbirded.org');
     spyOn(helperService, 'getContentOriginUrl').and.callThrough();
     const contentUrl = helperService.getContentOriginUrl('do_12345');
     expect(programsService.getContentOriginEnvironment).toHaveBeenCalled();
     expect(contentUrl).toEqual('https://dock.sunbirded.org/resources/play/content/do_12345');
+
+    spyOn(helperService, 'getQuestionSetOriginUrl').and.callThrough();
+    const contentUrlNew = helperService.getQuestionSetOriginUrl('do_12345');
+    expect(contentUrlNew).toEqual('https://dock.sunbirded.org/resources/play/questionset/do_12345');
   });
 
   it('#getTextbookDetails() should call actionService.get()', () => {
@@ -346,7 +400,7 @@ describe('HelperService', () => {
   it('#updateQuestionSetStatus() should call actionService.patch()', () => {
     spyOn(actionService, 'patch').and.returnValue(observableOf({}));
     spyOn(helperService, 'updateQuestionSetStatus').and.callThrough();
-    helperService.updateQuestionSetStatus('do_12345', 'draft');
+    helperService.updateQuestionSetStatus('do_12345', 'draft', 'comment');
     expect(actionService.patch).toHaveBeenCalled();
   });
 
@@ -354,6 +408,281 @@ describe('HelperService', () => {
     spyOn(helperService, 'getContextualHelpConfig').and.callThrough();
     const sunbirdContextualHelpConfig = helperService.getContextualHelpConfig();
     expect(sunbirdContextualHelpConfig).toBeUndefined();
+  });
+
+  it('#reviewQuestionSet() should call actionService.post()', () => {
+    spyOn(actionService, 'post').and.returnValue(observableOf({}));
+    spyOn(helperService, 'reviewQuestionSet').and.callThrough();
+    helperService.reviewQuestionSet('do_12345');
+    expect(actionService.post).toHaveBeenCalled();
+  });
+
+  it('#retireContent() should call actionService.post()', () => {
+    spyOn(actionService, 'delete').and.returnValue(observableOf({}));
+    spyOn(helperService, 'retireContent').and.callThrough();
+    helperService.retireContent('do_12345', 'questionSets');
+    expect(actionService.delete).toHaveBeenCalled();
+  });
+
+  xit('#checkIfContentPublishedOrRejected() should return boolean value', () => {
+    spyOn(toasterService, 'error').and.callThrough();
+    spyOn(programStageService, 'removeLastStage').and.callThrough();
+    const data = {
+      acceptedcontents: ['do_12345', 'do_123']
+    };
+    helperService.checkIfContentPublishedOrRejected(data, 'accept', 'do_12345');
+    expect(actionService.delete).toHaveBeenCalled();
+    // const datanew = {
+    //   rejectedcontents: ['do_12345', 'do_123']
+    // };
+    // helperService.checkIfContentPublishedOrRejected(datanew, 'reject', 'do_12345');
+    // expect(toasterService.error).toHaveBeenCalled();
+  });
+
+
+  it('#canAcceptContribution() should return boolean value', () => {
+    const programDetails = {
+      'program_id': '68443a40-3678-11ec-a56f-4b503455085f',
+      'startdate': '2021-10-26T16:19:19.116Z',
+      'enddate': '2022-12-03T18:29:59.000Z',
+      'nomination_enddate': '2021-11-12T18:29:59.000Z',
+      'shortlisting_enddate': '2022-11-19T18:29:59.000Z',
+      'content_submission_enddate': '2022-11-26T18:29:59.000Z',
+      'status': 'Live'
+    };
+    spyOn(programsService, 'isProjectLive').and.callThrough();
+    spyOn(helperService, 'canAcceptContribution').and.callThrough();
+    const res = helperService.canAcceptContribution(programDetails);
+    expect(res).toBeTruthy();
+  });
+
+  it('#isOpenForNomination() should return boolean value', () => {
+    const programDetails = {
+      'program_id': '68443a40-3678-11ec-a56f-4b503455085f',
+      'startdate': '2021-10-26T16:19:19.116Z',
+      'enddate': '2022-12-03T18:29:59.000Z',
+      'nomination_enddate': '2021-11-12T18:29:59.000Z',
+      'shortlisting_enddate': '2022-11-19T18:29:59.000Z',
+      'content_submission_enddate': '2022-11-26T18:29:59.000Z',
+      'status': 'Live'
+    };
+    spyOn(programsService, 'isProjectLive').and.callThrough();
+    spyOn(helperService, 'isOpenForNomination').and.callThrough();
+    const res = helperService.isOpenForNomination(programDetails);
+    expect(res).toBeFalsy();
+  });
+
+  it('#getSourceCategoryValues() should return source category valuese', () => {
+    const targetCollectionFrameworksData = {
+      framework: 'NCF'
+    };
+    const res = helperService.getSourceCategoryValues('', targetCollectionFrameworksData);
+    expect(res).toEqual({});
+  });
+
+  it('#fetchProgramFramework() should get freamework deatils', () => {
+    spyOn(frameworkService, 'initialize').and.callThrough();
+    const sessionContext = {
+      framework: 'NCF'
+    };
+    spyOn(toasterService, 'error').and.callThrough();
+    spyOn(sourcingService, 'apiErrorHandling').and.callThrough();
+    spyOn(helperService, 'fetchProgramFramework').and.callThrough();
+    helperService.fetchProgramFramework({});
+    sourcingService.apiErrorHandling(errorRespone, {errorMsg: 'Fetching framework details failed'});
+    helperService.fetchProgramFramework(sessionContext);
+    expect(toasterService.error).toHaveBeenCalled();
+  });
+
+  it('#setFrameworkCategories() should return freamework categories', () => {
+    const sessionContext = {
+      framework: 'NCF'
+    };
+    spyOn(helperService, 'setFrameworkCategories').and.callThrough();
+    const res = helperService.setFrameworkCategories(sessionContext);
+    expect(res).toEqual({});
+  });
+
+  it('#validateFormConfiguration() should return boolean value', () => {
+    const data = {
+      framework: 'NCF',
+      targetFWIds: 'NCF'
+    };
+    spyOn(helperService, 'validateFormConfiguration').and.callThrough();
+    const formFields = [{"code":"targetBoardIds","visible":true,"depends":[],"editable":true,"dataType":"list","sourceCategory":"board","output":"identifier","renderingHints":{"class":"sb-g-col-lg-1 required"},"description":"Board","label":"Board/Syllabus of the audience","required":true,"name":"Board/Syllabus","inputType":"select","placeholder":"Select Board/Syllabus","validations":[{"type":"required","message":"Board is required"}]}];
+    const res = helperService.validateFormConfiguration(data, formFields);
+    expect(res).toBeFalsy();
+  });
+
+  it('#hasEmptyElement() should return value', () => {
+    spyOn(helperService, 'hasEmptyElement').and.callThrough();
+    const res = helperService.hasEmptyElement(['framework']);
+    expect(res).toBeFalsy();
+    const data = helperService.hasEmptyElement(undefined);
+    expect(data).toBeTruthy();
+  });
+
+  it('#convertNameToIdentifier() should return value', () => {
+    spyOn(helperService, 'convertNameToIdentifier').and.callThrough();
+    const res = helperService.convertNameToIdentifier('framework', 'value', 'key', 'code', 'collectionMeta', 'mapBy');
+    expect(res).toEqual([]);
+  });
+
+  it('#getFormattedFrameworkMetaWithOutCollection() should return value', () => {
+    const data = {
+      framework: 'NCF',
+      targetFWIds: 'NCF'
+    };
+    spyOn(helperService, 'getFormattedFrameworkMetaWithOutCollection').and.callThrough();
+    const res = helperService.getFormattedFrameworkMetaWithOutCollection({}, data);
+    expect(res).toEqual({});
+  });
+
+  it('#getFormattedFrameworkMeta() should return value', () => {
+    const data = {
+      framework: 'NCF',
+      targetFWIds: 'NCF'
+    };
+    spyOn(helperService, 'getFormattedFrameworkMeta').and.callThrough();
+    const res = helperService.getFormattedFrameworkMeta({}, data);
+    expect(res.targetFWIds).toEqual('NCF');
+  });
+
+  it('#setTargetFrameWorkData() should call', () => {
+    const data = {
+      framework: 'NCF',
+      targetFWIds: 'NCF'
+    };
+    spyOn(helperService, 'setTargetFrameWorkData').and.callThrough();
+    const res = helperService.setTargetFrameWorkData(data);
+    expect(helperService.setTargetFrameWorkData).toHaveBeenCalled();
+  });
+
+  it('#getContentCorrectionComments() should return value', () => {
+    const program = {
+      target_type: 'searchCriteria',
+      sourcingrejectedcomments: 'test'
+    };
+    const contentMetaData = {
+      identifier: 'do_123',
+      status: 'Draft',
+      prevStatus: 'Review',
+      rejectComment: 'test',
+      requestChanges: 'test',
+      framework: 'NCF',
+      targetFWIds: 'NCF'
+    };
+    spyOn(helperService, 'getContentCorrectionComments').and.callThrough();
+    const res = helperService.getContentCorrectionComments(contentMetaData, {}, program);
+    expect(res).toEqual('test');
+  });
+
+  it('#checkIfContentisWithProgram() should return value', () => {
+    const acceptedcontents = {
+      acceptedcontents: ['do_12345', 'do_123']
+    };
+    spyOn(helperService, 'checkIfContentisWithProgram').and.callThrough();
+    const res = helperService.checkIfContentisWithProgram('do_123', acceptedcontents);
+    expect(res).toBeFalsy();
+
+    const rejectedContents = {
+      rejectedContents: ['do_123']
+    };
+    spyOn(toasterService, 'error').and.callThrough();
+    const returnVal = helperService.checkIfContentisWithProgram('do_123', rejectedContents);
+    expect(returnVal).toBeTruthy();
+    expect(toasterService.error).toHaveBeenCalled();
+  });
+
+  it('#publishContentOnOrigin() should publish content', () => {
+    const contentMetaData = {
+      identifier: 'do_123',
+      status: 'Draft',
+      prevStatus: 'Review',
+      rejectComment: 'test',
+      requestChanges: 'test',
+      framework: 'NCF',
+      targetFWIds: 'NCF',
+      mimeType: 'application/vnd.sunbird.questionset'
+    };
+    const program = {
+      // target_type: 'searchCriteria',
+      sourcingrejectedcomments: 'test',
+      rootorg_id: 'rootorg_id'
+    };
+    spyOn(learnerService, 'post').and.returnValue(observableOf({}));
+    spyOn(helperService, 'publishContentOnOrigin').and.callThrough();
+    helperService.publishContentOnOrigin('accept', 'do_123', contentMetaData, program);
+    expect(helperService.publishContentOnOrigin).toHaveBeenCalled();
+  });
+
+  xit('#attachContentToProgram() should add content to program', () => {
+    const program = {
+      sourcingrejectedcomments: 'test',
+      rootorg_id: 'rootorg_id',
+      acceptedcontents: ['do_12345', 'do_123'],
+      rejectedContents: ['do_1234']
+    };
+    spyOn(toasterService, 'error').and.callThrough();
+    spyOn(publicDataService, 'post').and.returnValue(observableOf({}));
+    spyOn(programsService, 'updateProgram').and.returnValue({});
+    spyOn(helperService, 'attachContentToProgram').and.callThrough();
+    helperService.attachContentToProgram('accept', 'do_123', program, 'test');
+    expect(helperService.attachContentToProgram).toHaveBeenCalled();
+    expect(toasterService.error).toHaveBeenCalled();
+  });
+
+  it('#getDynamicHeaders() should get headers', () => {
+    spyOn(httpClient, 'get').and.returnValue(observableOf({}));
+    spyOn(helperService, 'getDynamicHeaders').and.callThrough();
+    helperService.getDynamicHeaders('url', 'questionSets');
+    expect(helperService.getDynamicHeaders).toHaveBeenCalled();
+  });
+
+  it('#isIndividualAndNotSample() should return value', () => {
+    spyOn(helperService, 'isIndividualAndNotSample').and.callThrough();
+    helperService.isIndividualAndNotSample('individual', false);
+    expect(helperService.isIndividualAndNotSample).toHaveBeenCalled();
+  });
+
+  it('#getContextObj() should return value', () => {
+    spyOn(helperService, 'getContextObj').and.callThrough();
+    helperService.getContextObj('topic', {}, 'searchCriteria');
+    expect(helperService.getContextObj).toHaveBeenCalled();
+
+    helperService.getContextObj('topic', {}, 'questionSets');
+    expect(helperService.getContextObj).toHaveBeenCalled();
+  });
+
+  it('#fetchRootMetaData() should return value', () => {
+    spyOn(helperService, 'fetchRootMetaData').and.callThrough();
+    helperService.fetchRootMetaData([
+      'channel',
+      'framework',
+      'board',
+      'medium',
+      'gradeLevel',
+      'subject'
+    ], {}, 'searchCriteria');
+    expect(helperService.fetchRootMetaData).toHaveBeenCalled();
+  });
+
+  it('#getSharedContextObjectProperty() should return value', () => {
+    const programDetails = {
+      'program_id': '68443a40-3678-11ec-a56f-4b503455085f',
+      'startdate': '2021-10-26T16:19:19.116Z',
+      'enddate': '2022-12-03T18:29:59.000Z',
+      'nomination_enddate': '2021-11-12T18:29:59.000Z',
+      'shortlisting_enddate': '2022-11-19T18:29:59.000Z',
+      'content_submission_enddate': '2022-11-26T18:29:59.000Z',
+      'status': 'Live'
+    };
+    spyOn(helperService, 'getSharedContextObjectProperty').and.callThrough();
+    helperService.getSharedContextObjectProperty(programDetails, 'rootorg_id');
+    expect(helperService.getSharedContextObjectProperty).toHaveBeenCalled();
+
+    const returnVal = helperService.getSharedContextObjectProperty(programDetails, 'channel', {'channel': '123'});
+    expect(returnVal).toBeTruthy();
   });
 
 });

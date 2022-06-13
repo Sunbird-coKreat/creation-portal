@@ -31,7 +31,9 @@ xdescribe('FlagConentplayerComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [FlagConentplayerComponent],
       imports: [HttpClientTestingModule,
@@ -42,12 +44,12 @@ xdescribe('FlagConentplayerComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FlagConentplayerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should throw error if content api throws error', () => {

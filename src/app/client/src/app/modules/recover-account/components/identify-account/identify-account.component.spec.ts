@@ -55,7 +55,9 @@ xdescribe('IdentifyAccountComponent', () => {
       this.queryParamsMock = params;
     }
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [IdentifyAccountComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -66,13 +68,15 @@ xdescribe('IdentifyAccountComponent', () => {
         { provide: ResourceService, useValue: resourceServiceMockData }
       ]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(IdentifyAccountComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

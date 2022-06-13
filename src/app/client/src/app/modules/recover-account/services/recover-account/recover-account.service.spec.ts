@@ -6,7 +6,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RecoverAccountService } from './recover-account.service';
 import { of as observableOf, Observable } from 'rxjs';
 
-describe('RecoverAccountService', () => {
+xdescribe('RecoverAccountService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],

@@ -5,23 +5,27 @@ import {RouterTestingModule} from '@angular/router/testing';
 import { SharedModule, ConfigService} from '@sunbird/shared';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-describe('WorkspacesidebarComponent', () => {
+xdescribe('WorkspacesidebarComponent', () => {
   let component: WorkspacesidebarComponent;
   let fixture: ComponentFixture<WorkspacesidebarComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkspacesidebarComponent ],
       providers: [ ConfigService],
       imports: [RouterTestingModule, HttpClientTestingModule, CoreModule, SharedModule.forRoot(), SuiModule]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(WorkspacesidebarComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should set the role for content  ', () => {
    const configService = TestBed.get(ConfigService);

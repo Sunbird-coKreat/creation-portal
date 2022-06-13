@@ -7,20 +7,24 @@ describe('TranscriptsReviewComponent', () => {
   let component: TranscriptsReviewComponent;
   let fixture: ComponentFixture<TranscriptsReviewComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ TranscriptsReviewComponent ],
       providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(TranscriptsReviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -13,7 +13,7 @@ import { SharedModule, ResourceService, ConfigService, ToasterService, Navigatio
 import { PublishedPopupComponent } from './published-popup.component';
 import { WorkSpaceService, ReviewCommentsService } from './../../services';
 import {mockRes} from './published-popup.component.spec.data';
-describe('PublishedPopupComponent', () => {
+xdescribe('PublishedPopupComponent', () => {
   let component: PublishedPopupComponent;
   let fixture: ComponentFixture<PublishedPopupComponent>;
 
@@ -67,7 +67,9 @@ describe('PublishedPopupComponent', () => {
     }, 'responseCode': 'CLIENT_ERROR', 'result': {}
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [PublishedPopupComponent],
@@ -78,13 +80,15 @@ describe('PublishedPopupComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublishedPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should initialize the component expected calls for getCheckListConfig  ', () => {
     const workspaceservice = TestBed.get(WorkSpaceService);

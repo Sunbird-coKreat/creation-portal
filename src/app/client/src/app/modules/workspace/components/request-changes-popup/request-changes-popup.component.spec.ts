@@ -13,7 +13,7 @@ import { RequestChangesPopupComponent } from './request-changes-popup.component'
 import { WorkSpaceService } from './../../services';
 import { mockRes } from './request-change-pop.component.spec.data';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
-describe('RequestChangesPopupComponent', () => {
+xdescribe('RequestChangesPopupComponent', () => {
   let component: RequestChangesPopupComponent;
   let fixture: ComponentFixture<RequestChangesPopupComponent>;
 
@@ -81,7 +81,9 @@ describe('RequestChangesPopupComponent', () => {
   const navigationHelperServiceStub = {
     getPreviousUrl: () => ({})
 };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule, RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [RequestChangesPopupComponent],
@@ -93,13 +95,14 @@ describe('RequestChangesPopupComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(RequestChangesPopupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should initialize the component expected calls for getCheckListConfig  ', () => {
     const workspaceservice = TestBed.get(WorkSpaceService);
     component.contentId = fakeActivatedRoute.parent.params['contentId'];

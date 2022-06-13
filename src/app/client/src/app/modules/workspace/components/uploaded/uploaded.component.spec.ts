@@ -14,7 +14,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { NgInviewModule } from 'angular-inport';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 const testData = mockData.mockRes;
-describe('UploadedComponent', () => {
+xdescribe('UploadedComponent', () => {
   let component: UploadedComponent;
   let fixture: ComponentFixture<UploadedComponent>;
   const fakeActivatedRoute = {
@@ -49,7 +49,9 @@ describe('UploadedComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [UploadedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
@@ -63,13 +65,15 @@ describe('UploadedComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UploadedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should call search api and returns result count more than 1', inject([SearchService], (searchService) => {
     spyOn(searchService, 'compositeSearch').and.callFake(() => observableOf(testData.searchSuccessWithCountTwo));

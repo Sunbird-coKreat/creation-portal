@@ -15,14 +15,15 @@ import { DataChartComponent } from '../data-chart/data-chart.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import {APP_BASE_HREF} from '@angular/common';
 
-describe('UsageReportsComponent', () => {
+xdescribe('UsageReportsComponent', () => {
   let component: UsageReportsComponent;
   let fixture: ComponentFixture<UsageReportsComponent>;
   const fakeActivatedRoute = {
     snapshot: { data: { telemetry: { pageid: 'org-admin-dashboard', env: 'dashboard', type: 'view' } } }
   };
   const routerStub = { url: '/dashBoard/organization' };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot()],
       schemas: [NO_ERRORS_SCHEMA],
@@ -34,12 +35,13 @@ describe('UsageReportsComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UsageReportsComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('can load instance', () => {
     expect(component).toBeTruthy();
   });

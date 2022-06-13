@@ -18,7 +18,9 @@ describe('AccountRecoveryInfoComponent', () => {
   let component: AccountRecoveryInfoComponent;
   let fixture: ComponentFixture<AccountRecoveryInfoComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
         HttpClientTestingModule, SuiModule, TelemetryModule.forRoot() , RouterTestingModule],
@@ -26,13 +28,15 @@ describe('AccountRecoveryInfoComponent', () => {
       providers: [ResourceService, ProfileService]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AccountRecoveryInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should select email id radio button by default and call initialize initializeFormFields() ', () => {
     spyOn(component, 'initializeFormFields').and.callThrough();

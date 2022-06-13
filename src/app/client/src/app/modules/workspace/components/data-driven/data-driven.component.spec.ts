@@ -15,7 +15,7 @@ import { mockFrameworkData } from './data-driven.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('DataDrivenComponent', () => {
+xdescribe('DataDrivenComponent', () => {
   let componentParent: DataDrivenComponent;
   let fixtureParent: ComponentFixture<DataDrivenComponent>;
   let componentChild: DefaultTemplateComponent;
@@ -55,7 +55,9 @@ describe('DataDrivenComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule, RouterTestingModule, SharedModule.forRoot(), CoreModule,
         TelemetryModule.forRoot()],
@@ -67,15 +69,15 @@ describe('DataDrivenComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixtureParent = TestBed.createComponent(DataDrivenComponent);
     componentParent = fixtureParent.componentInstance;
     fixtureChild = TestBed.createComponent(DefaultTemplateComponent);
     componentChild = fixtureChild.componentInstance;
     // navigationHelperService = TestBed.get('NavigationHelperService');
     fixtureParent.detectChanges();
+  });
+  afterEach(() => {
+    fixtureParent.destroy();
   });
 
   it('should fetch framework details', () => {

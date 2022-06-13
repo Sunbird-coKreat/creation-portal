@@ -8,15 +8,13 @@ xdescribe('DataFormComponent', () => {
   let component: DataFormComponent;
   let fixture: ComponentFixture<DataFormComponent>;
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, FormsModule, RouterTestingModule, SuiModule],
       declarations: [ DataFormComponent ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DataFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -20,7 +20,7 @@ import { NgInviewModule } from 'angular-inport';
 import {APP_BASE_HREF} from '@angular/common';
 
 const testData = mockData.mockRes;
-describe('DraftComponent', () => {
+xdescribe('DraftComponent', () => {
   let component: DraftComponent;
   let fixture: ComponentFixture<DraftComponent>;
   const fakeActivatedRoute = {
@@ -59,7 +59,9 @@ describe('DraftComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [DraftComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
@@ -74,13 +76,15 @@ describe('DraftComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DraftComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should call search api and returns result count more than 1', inject([SearchService, WorkSpaceService],
     (searchService, workSpaceService) => {

@@ -6,19 +6,23 @@ describe('FullPageModalComponent', () => {
   let component: FullPageModalComponent;
   let fixture: ComponentFixture<FullPageModalComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule],
       declarations: [ FullPageModalComponent ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FullPageModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

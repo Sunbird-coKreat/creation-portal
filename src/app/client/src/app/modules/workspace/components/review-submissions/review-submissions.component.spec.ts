@@ -53,11 +53,13 @@ const resourceBundle = {
   },
   languageSelected$: observableOf({})
 };
-describe('ReviewSubmissionsComponent', () => {
+xdescribe('ReviewSubmissionsComponent', () => {
   let component: ReviewSubmissionsComponent;
   let fixture: ComponentFixture<ReviewSubmissionsComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ReviewSubmissionsComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
@@ -72,13 +74,15 @@ describe('ReviewSubmissionsComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ReviewSubmissionsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
 
   // If search api returns more than one review content

@@ -14,18 +14,22 @@ describe('FancyTreeComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ FancyTreeComponent ],
       providers: [ { provide: ActivatedRoute, useValue: fakeActivatedRoute } ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FancyTreeComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     component.nodes = {

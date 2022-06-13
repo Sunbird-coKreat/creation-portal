@@ -26,7 +26,9 @@ describe('BatchInfoComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [BatchInfoComponent],
@@ -35,11 +37,12 @@ describe('BatchInfoComponent', () => {
         { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
         schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BatchInfoComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

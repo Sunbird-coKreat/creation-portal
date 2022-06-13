@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import * as mockData from './line-chart.service.spec.data';
 const testData = <any>mockData.mockRes;
 
-describe('LineChartService', () => {
+xdescribe('LineChartService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [LineChartService]

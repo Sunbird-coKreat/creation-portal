@@ -34,7 +34,8 @@ snapshot: {
   }
 }};
 
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,RouterTestingModule, SharedModule.forRoot(), CoreModule],
       providers: [{ provide: Router, useClass: RouterStub },
@@ -42,11 +43,11 @@ snapshot: {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(FlagContentComponent);
     component = fixture.componentInstance;
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
   it('should call get content', () => {
     const playerService = TestBed.get(PlayerService);
