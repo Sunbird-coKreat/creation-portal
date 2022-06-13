@@ -1491,7 +1491,16 @@ export class HelperService {
       option.url = 'questionset/v1/create';
       option.data.request['questionset'] = {};
       const questionsetObject = obj;
-      questionsetObject['createdFor'] = this.userService?.userProfile?.rootOrgId ? [this.userService?.userProfile?.rootOrgId] : [];
+      if (programContext.target_type === 'searchCriteria') {
+        questionsetObject['createdFor'] = [programContext.rootorg_id];
+      } else {
+        const channel =  _.get(this._selectedCollectionMetaData, 'originData.channel');
+        if (_.isString(channel)) {
+          questionsetObject['createdFor'] = [channel];
+        } else if (_.isArray(channel)) {
+          questionsetObject['createdFor'] = channel;
+        }
+      }
       option.data.request['questionset'] = questionsetObject;
     } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
       option.url = 'question/v1/create';
