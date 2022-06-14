@@ -10,7 +10,7 @@ import { HomeAnnouncementService } from './home-announcement.service';
 import { ConfigService , BrowserCacheTtlService} from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 
-describe('HomeAnnouncementService', () => {
+xdescribe('HomeAnnouncementService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,RouterTestingModule],

@@ -37,7 +37,9 @@ describe('MvcLibraryComponent', () => {
     },
     slug: 'custchannel'
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot()],
       declarations: [ MvcLibraryComponent ],
@@ -48,13 +50,15 @@ describe('MvcLibraryComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MvcLibraryComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

@@ -146,7 +146,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         timeDiff: this.userService.getServerTimeDiff,
         defaultLicense: this.frameworkService.getDefaultLicense(),
         endpoint: '/data/v3/telemetry',
-        env: this.showQuestionEditor ? 'question_editor' : 'collection_editor',
+        env: this.showQuestionEditor ? 'questionset_editor' : 'collection_editor',
         user: {
           id: this.userService.userid,
           orgIds: this.userProfile.organisationIds,

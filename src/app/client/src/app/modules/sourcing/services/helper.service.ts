@@ -982,15 +982,17 @@ export class HelperService {
   }
 
   getDynamicHeaders(configUrl, projectTargetType) {
-    const req = {
-      url: `${configUrl}schemas/collection/1.0/config.json`,
-    };
-    if(projectTargetType === 'questionSets') {
-      req.url = `${configUrl}schemas/questionset/1.0/config.json`;
+    if (configUrl) {
+      const req = {
+        url: `${configUrl}schemas/collection/1.0/config.json`,
+      };
+      if (projectTargetType === 'questionSets') {
+        req.url = `${configUrl}schemas/questionset/1.0/config.json`;
+      }
+      return this.httpClient.get(req.url).pipe(map((response) => {
+        return response;
+      }));
     }
-    return this.httpClient.get(req.url).pipe(map((response) => {
-      return response;
-    }));
   }
   manageWorkSpacePublish (programContext, contentData) {
     this.publishContent(contentData.identifier, this.userService.userProfile.userId)
@@ -1515,7 +1517,18 @@ export class HelperService {
     if (_.get(templateDetails, 'modeOfCreation') === 'questionset') {
       option.url = 'questionset/v1/create';
       option.data.request['questionset'] = {};
-      option.data.request['questionset'] = obj;
+      const questionsetObject = obj;
+      if (programContext.target_type === 'searchCriteria') {
+        questionsetObject['createdFor'] = [programContext.rootorg_id];
+      } else {
+        const channel =  _.get(this._selectedCollectionMetaData, 'originData.channel');
+        if (_.isString(channel)) {
+          questionsetObject['createdFor'] = [channel];
+        } else if (_.isArray(channel)) {
+          questionsetObject['createdFor'] = channel;
+        }
+      }
+      option.data.request['questionset'] = questionsetObject;
     } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
       option.url = 'question/v1/create';
       option.data.request['question'] = {};

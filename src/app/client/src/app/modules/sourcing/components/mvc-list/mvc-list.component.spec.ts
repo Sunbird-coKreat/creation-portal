@@ -16,7 +16,9 @@ describe('MvcListComponent', () => {
   let fixture: ComponentFixture<MvcListComponent>;
   let debugElement: DebugElement;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiPopupModule, RouterTestingModule, FormsModule, ReactiveFormsModule, HttpClientTestingModule],
       declarations: [ MvcListComponent, InterpolatePipe ],
@@ -25,13 +27,13 @@ describe('MvcListComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MvcListComponent);
     component = fixture.componentInstance;
     // fixture.detectChanges();
     debugElement = fixture.debugElement;
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

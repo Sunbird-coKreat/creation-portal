@@ -24,7 +24,8 @@
   ],
   "restrictProps": {
     "create" : [
-      "children"
+      "children",
+      "status"
     ],
     "update" : [
       "children", "visibility", "code", "status", "mimeType"

@@ -618,6 +618,14 @@
     },
     "originData": {
       "type": "object"
+    },
+    "downloadUrl": {
+      "type": "string",
+      "format": "url"
+    },
+    "isCollaborationEnabled": {
+      "type":  "boolean",
+      "default": false
     }
   }
 }

@@ -18,7 +18,7 @@ import { Response } from './user-delete.component.spec.data';
 
 
 
-describe('UserDeleteComponent', () => {
+xdescribe('UserDeleteComponent', () => {
   let component: UserDeleteComponent;
   let fixture: ComponentFixture<UserDeleteComponent>;
   const resourceBundle = {
@@ -40,7 +40,9 @@ describe('UserDeleteComponent', () => {
     'params': observableOf({ 'userId': '6d4da241-a31b-4041-bbdb-dd3a898b3f85' })
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), RouterTestingModule],
       declarations: [UserDeleteComponent],
@@ -75,9 +77,6 @@ describe('UserDeleteComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UserDeleteComponent);
     component = fixture.componentInstance;
     component.userDetails = Response.successData;

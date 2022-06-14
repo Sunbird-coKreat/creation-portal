@@ -39,7 +39,9 @@ const resourceServiceMockData = {
 describe('PublicBatchDetailsComponent', () => {
   let component: PublicBatchDetailsComponent;
   let fixture: ComponentFixture<PublicBatchDetailsComponent>;
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), CoreModule, SuiModule],
       declarations: [PublicBatchDetailsComponent],
@@ -48,12 +50,14 @@ describe('PublicBatchDetailsComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublicBatchDetailsComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should fetch only open batchs of course by courseid', () => {
     const courseBatchService = TestBed.get(CourseBatchService);

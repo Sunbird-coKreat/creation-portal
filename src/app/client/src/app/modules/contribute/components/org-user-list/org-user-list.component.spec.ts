@@ -53,7 +53,8 @@ describe('OrgUserListComponent', () => {
   };
 
   const routerStub = { url: '/sourcing/orgreports' };
-  beforeEach(async(() => {
+  
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(),
          TelemetryModule.forRoot(), RouterTestingModule,
@@ -73,11 +74,12 @@ describe('OrgUserListComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(OrgUserListComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create', () => {

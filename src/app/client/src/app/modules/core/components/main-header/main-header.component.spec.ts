@@ -18,7 +18,9 @@ describe('MainHeaderComponent', () => {
   let component: MainHeaderComponent;
   let fixture: ComponentFixture<MainHeaderComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule,
         TelemetryModule.forRoot(), RouterTestingModule],
@@ -30,12 +32,13 @@ describe('MainHeaderComponent', () => {
         LearnerService]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MainHeaderComponent);
     component = fixture.componentInstance;
     component.routerEvents  = observableOf({id: 1, url: '/explore', urlAfterRedirects: '/explore'});
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   xit('should subscribe to user service', () => {
