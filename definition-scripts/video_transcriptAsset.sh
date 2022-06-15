@@ -24,7 +24,8 @@ curl --location --request POST '{{host}}/object/category/definition/v4/create' \
                         "mimeType": {
                             "type": "string",
                             "enum": [
-                                "application/x-subrip"
+                                "application/x-subrip",
+                                "text/vtt"
                             ],
                             "default": "application/x-subrip"
                         }
