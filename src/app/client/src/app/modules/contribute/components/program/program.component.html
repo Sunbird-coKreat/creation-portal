@@ -245,7 +245,8 @@
 						</div>
 					  </div>
 					<div class="mt-12" *ngIf="!loaders.showUsersLoader && OrgUsersCnt == 0">
-						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
+						<app-no-result *ngIf="!searchInput" [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"> </app-no-result>
+						<app-no-result *ngIf="searchInput" [data]="{ messageText: 'frmelmnts.lbl.noOrgUsersinSearch'}"> </app-no-result>
 						<app-page-help *ngIf="noUsersFoundHelpConfig" class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'" [pageid]="'contribution_no_users_found_help'"></app-page-help>
 					</div>
 					  <div class="ui tweleve wide column mb-20" *ngIf="loaders.showUsersLoader">
