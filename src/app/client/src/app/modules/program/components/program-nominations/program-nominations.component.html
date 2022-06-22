@@ -408,7 +408,8 @@
                         </div>
                     </div>
 					<div class="mt-12" *ngIf="!showUsersLoader && sourcingOrgUserCnt == 0">
-						<app-no-result [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"></app-no-result>
+                        <app-no-result *ngIf="!searchInput" [data]="{ messageText: 'frmelmnts.lbl.noOrgUsers'}"></app-no-result>
+                        <app-no-result *ngIf="searchInput" [data]="{ messageText: 'frmelmnts.lbl.noOrgUsersinSearch'}"></app-no-result>
                         <app-page-help *ngIf="noUsersFoundHelpConfig" class="d-flex flex-ai-jc-center" [helpSectionConfig]="noUsersFoundHelpConfig" [popupPlacement]="'bottom left'" [pageid]="'sourcing_no_users_help'"></app-page-help>
 					</div>
 				  </div>
