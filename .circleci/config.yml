@@ -5,6 +5,11 @@ jobs:
       image: circleci/classic:latest
     steps:
       - checkout
+      - run: 
+          name: Installing prerequisites
+          command: |-
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+            node --version
       - run:
           name: run build file
           command: /bin/bash -x build.sh ${CIRCLE_SHA1} test
@@ -17,7 +22,7 @@ jobs:
           path: ~/portal
       - run:
           name: Installing angular cli
-          command: 'npm install -g @angular/cli@6.0.8 --no-progress'
+          command: 'npm install -g @angular/cli@10.2.4 --no-progress'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
