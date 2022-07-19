@@ -25,7 +25,9 @@ describe('UserLocationComponent', () => {
   let fixture: ComponentFixture<UserLocationComponent>;
   let configService;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         SuiModule,
@@ -42,13 +44,13 @@ describe('UserLocationComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UserLocationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     configService = TestBed.get(ConfigService);
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should create user-location component', () => {

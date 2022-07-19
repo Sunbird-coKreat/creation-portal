@@ -10,8 +10,7 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import { SourcingService } from '../../services';
 import { Subject} from 'rxjs';
 import * as _ from 'lodash-es';
-import { map} from 'rxjs/operators';
-import { ThrowStmt } from '@angular/compiler';
+import { map, retry} from 'rxjs/operators';
 
 @Component({
   selector: 'app-question-set-editor',
@@ -147,7 +146,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         timeDiff: this.userService.getServerTimeDiff,
         defaultLicense: this.frameworkService.getDefaultLicense(),
         endpoint: '/data/v3/telemetry',
-        env: this.showQuestionEditor ? 'question_editor' : 'collection_editor',
+        env: this.showQuestionEditor ? 'questionset_editor' : 'collection_editor',
         user: {
           id: this.userService.userid,
           orgIds: this.userProfile.organisationIds,
@@ -190,6 +189,10 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         enableAddFromLibrary: this.enableAddFromLibrary
       }
     };
+    if (_.get(this.sessionContext, 'workspaceContent') && _.get(this.sessionContext, 'workspaceContent') === true) {
+      this.editorConfig.context.labels.reject_collection_btn_label =  this.resourceService.frmelmnts.btn.sendForCorrections;
+      this.editorConfig.context.labels.publish_collection_btn_label =  this.resourceService.frmelmnts.btn.publishToConsume;
+    }
     if (this.showQuestionEditor || this.enableQuestionCreation) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
     }
@@ -240,25 +243,36 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
 
   private getEditorMode() {
     const contentStatus = this.collectionDetails.status.toLowerCase();
-    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    let submissionDateFlag;
+    if (_.get(this.sessionContext, 'workspaceContent') === true) {
+      submissionDateFlag = true;
+      if (this.canSubmit()) {
+        return 'edit';
+      }
+      if (this.canReviewContent()) {
+        return 'review';
+      }
+      if (this.canSourcingReviewerPerformActions()) {
+        return 'sourcingReview';
+      }
+    } else {
+      submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+      //If loggedin user is an orgAdmin and project status is draft
+      //If loggedin user is a contentCreator and content status is draft
+      if (this.canModifyProjects() || (submissionDateFlag && this.canSubmit())) {
+        return 'edit';
+      }
 
-    // If loggedin user is an orgAdmin and project status is draft
-    if(this.canModifyProjects()) {
-      return 'edit';
+      if (submissionDateFlag && this.canReviewContent()) {
+        return 'orgReview';
+      }
+
+      if (this.canSourcingReviewerPerformActions()) {
+        return 'sourcingReview';
+      }
     }
 
-    // If loggedin user is a contentCreator and content status is draft
-    if (submissionDateFlag && this.canSubmit()) {
-      return 'edit';
-    }
 
-    if (submissionDateFlag && this.canReviewContent()) {
-      return 'orgReview';
-    }
-
-    if (this.canSourcingReviewerPerformActions()) {
-      return 'sourcingReview';
-    }
 
     return 'read';
   }
@@ -323,10 +337,14 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
 
   canSourcingReviewerPerformActions() {
     const resourceStatus = this.collectionDetails.status.toLowerCase();
-    const sourcingReviewStatus = _.get(this.questionSetEditorInput, 'sourcingStatus') || '';
-    const originCollectionData = _.get(this.questionSetEditorInput, 'originCollectionData');
-    const selectedOriginUnitStatus = _.get(this.questionSetEditorInput, 'content.originUnitStatus');
-    return this.helperService.canSourcingReviewerPerformActions(this.collectionDetails, sourcingReviewStatus, this.programContext, originCollectionData, selectedOriginUnitStatus);
+    if (_.get(this.sessionContext, 'workspaceComponent') === true) {
+      return !!(resourceStatus === 'live')
+    } else {
+      const sourcingReviewStatus = _.get(this.questionSetEditorInput, 'sourcingStatus') || '';
+      const originCollectionData = _.get(this.questionSetEditorInput, 'originCollectionData');
+      const selectedOriginUnitStatus = _.get(this.questionSetEditorInput, 'content.originUnitStatus');
+      return this.helperService.canSourcingReviewerPerformActions(this.collectionDetails, sourcingReviewStatus, this.programContext, originCollectionData, selectedOriginUnitStatus);
+    }
   }
 
   getEditableFields() {
@@ -343,7 +361,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     const resourceStatus = this.collectionDetails.status.toLowerCase();
 
     // tslint:disable-next-line:max-line-length
-    return !!(this.router.url.includes('/contribute') && !this.collectionDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && resourceStatus === 'review' && this.userService.userid !== this.collectionDetails.createdBy);
+    return !!(((_.get(this.sessionContext,'workspaceContent') === true) || this.router.url.includes('/contribute') ) && !this.collectionDetails.sampleContent === true && this.hasAccessFor(['REVIEWER']) && resourceStatus === 'review' && this.userService.userid !== this.collectionDetails.createdBy);
   }
 
   canSubmit() {
@@ -397,11 +415,18 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         this.programStageService.removeLastStage();
       }
       break;
+    case 'publishContent':
+      this.programsService.emitHeaderEvent(true);
+      // When a content is created for workspace, when reviewer publishes it, it also should published to consumptionRepo
+      if (_.get(this.sessionContext, 'workspaceContent') === true) {
+        this.helperService.publishContentOnOrigin('accept', event.identifier, this.collectionDetails, this.programContext, this.helperService.onAfterWorkspaceReviewAction);
+      }
     case 'saveCollection': // saving as draft
     default:
       this.programStageService.removeLastStage();
       this.programsService.emitHeaderEvent(true);
       break;
+
    }
   }
 

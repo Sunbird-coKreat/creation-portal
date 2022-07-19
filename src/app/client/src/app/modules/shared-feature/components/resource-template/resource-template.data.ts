@@ -1,4 +1,14 @@
 export const resourceTemplateComponentInput = {
+    contentCategories: [{
+      identifier: 'obj-cat:learning-resource_content_all',
+      name: 'Learning Resource',
+      targetObjectType: 'Content'
+    }],
+    collectionCategories: [{
+      identifier: 'obj-cat:digital-textbook_collection_all',
+      name: 'Digital Textbook',
+      targetObjectType: 'Collection'
+    }],
     templateList: [
       {
         filesConfig: { accepted: 'pdf', size: '50' },

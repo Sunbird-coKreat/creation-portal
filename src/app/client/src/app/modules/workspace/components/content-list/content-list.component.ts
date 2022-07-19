@@ -1,21 +1,22 @@
 import { IUserProfile } from './../../../shared/interfaces/userProfile';
 import { userProfile } from './../../../program/components/create-program/create-program.spec.data';
 import { SourcingService } from './../../../sourcing/services/sourcing/sourcing.service';
-import { ResourceService } from './../../../shared/services/resource/resource.service';
-import { ToasterService } from './../../../shared/services/toaster/toaster.service';
 import { HelperService } from './../../../sourcing/services/helper.service';
 import { ActivatedRoute } from '@angular/router';
 import { isEmpty, first, filter } from 'rxjs/operators';
 import { Component, Input, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { IPagination } from '../../../sourcing/interfaces';
-import { ConfigService, PaginationService } from '@sunbird/shared';
+import { ConfigService, PaginationService, ToasterService, ResourceService} from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
-import { UserService, ProgramsService, SearchService } from '@sunbird/core';
+import { UserService, ProgramsService, SearchService, FrameworkService, ContentHelperService } from '@sunbird/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 import { ContentService } from '../../services/content/content.service';
+import { ProgramStageService, ProgramTelemetryService} from '../../../program/services';
+import { programConfigObj } from '../../../program/components/create-program/programconfig';
+import { InitialState, ISessionContext, IUserParticipantDetails } from '../../../contribute/interfaces';
 
 @Component({
   selector: 'app-content-list',
@@ -89,6 +90,23 @@ export class ContentListComponent implements OnInit {
   showDeleteModal:boolean = false;
   searchService: SearchService;
   public tab = 'collection';
+  public showPrimaryCategoriesModal: boolean = false;
+  public workspaceScope: any = {
+    'contentCategories': [],
+    'collectionCategories': [],
+    'selectedCategory': {}
+    };
+  public dynamicInputs;
+  public component: any;
+  public sessionContext: ISessionContext = {};
+  public programDetails: any = {
+    config: programConfigObj
+  }
+  public currentStage: any;
+  public stageSubscription: any;
+  public state: InitialState = {
+    stages: []
+  };
 
   constructor(private paginationService: PaginationService,
     public userService: UserService,
@@ -105,20 +123,43 @@ export class ContentListComponent implements OnInit {
     private toasterService: ToasterService,
     private resourceService: ResourceService,
     private sourcingService: SourcingService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    public frameworkService: FrameworkService,
+    public contentHelperService: ContentHelperService,
+    public programStageService: ProgramStageService
   ) {
     this.searchService = searchService;
   }
 
   ngOnInit(): void {
-    this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'content_list' }];
-    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-    this.telemetryInteractObject = {};
     if (this.userService.loggedIn) {
       this.userRoles();
     }
+    this.getPageId();
+    this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'content_list' }];
+    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+    this.telemetryInteractObject = {};
+    this.programStageService.initialize();
+    this.sessionContext['telemetryPageDetails'] = {
+      telemetryPageId : this.telemetryPageId,
+      telemetryInteractCdata: this.telemetryInteractCdata
+    };
+    this.stageSubscription = this.programStageService.getStage().subscribe(state => {
+      this.state.stages = state.stages;
+      this.changeView();
+    });
+    this.programStageService.addStage('contentListComponent');
+    this.currentStage = 'contentListComponent';
   }
-
+  getPageId() {
+    this.telemetryPageId = _.get(this.activatedRoute,'snapshot.data.telemetry.pageid');
+    return this.telemetryPageId;
+  }
+  changeView() {
+    if (!_.isEmpty(this.state.stages)) {
+      this.currentStage = _.last(this.state.stages).stage;
+    }
+  }
   userRoles() {
     this.userService.userData$.subscribe((user: any) => {
       if (user && !user.err) {
@@ -127,6 +168,18 @@ export class ContentListComponent implements OnInit {
         this.creator = userRoles?.some(e => e === 'CONTENT_CREATOR' || e === 'BOOK_CREATOR');
         this.reviewer = userRoles?.some(e => e === 'CONTENT_REVIEWER' || e === 'BOOK_REVIEWER' || e === 'REPORT_REVIEWER');
         this.bothCreatorAndReviewer = this.creator && this.reviewer;
+
+        this.sessionContext.currentOrgRole = 'user';
+        if (this.orgAdmin) {
+          this.sessionContext.currentOrgRole = 'admin';
+        }
+        if (this.creator && !this.reviewer) {
+          this.sessionContext.currentRoles = ['CONTRIBUTOR'];
+        } else if (!this.creator && this.reviewer) {
+          this.sessionContext.currentRoles = ['REVIEWER'];
+        } else if (this.bothCreatorAndReviewer) {
+          this.sessionContext.currentRoles = ['REVIEWER', 'CONTRIBUTOR'];
+        }
       }
     });
   }
@@ -345,11 +398,60 @@ export class ContentListComponent implements OnInit {
     }
     this.sortColumn = column;
   }
+  openContent(content) {
+    const channelData$ = this.frameworkService.readChannel();
+      channelData$.subscribe((channelData) => {
+        this.workspaceScope['userChannelData'] = channelData;
+        this.setProgramandSessionContext();
+        this.contentHelperService.initialize(this.programDetails, this.sessionContext);
+        this.contentHelperService.openContent(content).then((response) => {
+        this.setContentComponent(response);
+      }).catch((error) => this.raiseError(error, 'Errror in opening the content componnet'));
+    });
+  }
+  handleCategorySelection(event) {
+    this.contentHelperService.initialize(this.programDetails, this.sessionContext);
+    this.contentHelperService.handleContentCreation(event).then((response) => {
+      this.setContentComponent(response);
+    }).catch((error) => this.raiseError(error, 'Errror in opening the content componnet'));
+  }
+  setContentComponent(response) {
+    this.dynamicInputs = response.dynamicInputs;
+    this.component = response.currentComponent;
+    this.programStageService.addStage(response.currentComponentName);
+  }
+  showResourceTemplate() {
+      const channelData$ = this.frameworkService.readChannel();
+      channelData$.subscribe((channelData) => {
+        this.workspaceScope['userChannelData'] = channelData;
+        this.setProgramandSessionContext();
+        const channelCats = _.get(this.workspaceScope['userChannelData'], 'primaryCategories');
+        const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
+        this.workspaceScope['contentCategories'] = _.get(channeltargetObjectTypeGroup, 'Content');
+        this.workspaceScope['collectionCategories'] = _.get(channeltargetObjectTypeGroup, 'Collection');
+        this.workspaceScope['resourceTemplateComponentInput'] = {
+          contentCategories: this.workspaceScope['contentCategories'],
+          collectionCategories: this.workspaceScope['collectionCategories'],
+          programContext: {},
+          sessionContext: this.sessionContext,
+          unitIdentifier: null
+        };
+        this.showPrimaryCategoriesModal = true;
+        //this.dialogRef = this.dialog.open(this.createPopUpMat);
+      });
+  }
+  setProgramandSessionContext() {
+    const channelData = this.workspaceScope['userChannelData'];
+    this.programDetails.config.framework = channelData.defaultFramework;
+    this.programDetails['rootorg_id'] = this.userService.userProfile.rootOrgId;
+    this.programDetails['target_type'] = 'searchCriteria';
 
-  openCreatePopUpMat() {
-    if (this.createPopUpMat) {
-      this.dialogRef = this.dialog.open(this.createPopUpMat);
-    }
+    this.sessionContext['workspaceContent'] = true;
+    this.sessionContext['framework'] = channelData.defaultFramework;
+    const channelFramework = _.find(channelData.frameworks, {'identifier': channelData.defaultFramework});
+    this.sessionContext['frameworkType'] = channelFramework.type;
+    this.sessionContext['selectedSharedProperties'] = this.helperService.getSharedProperties(this.programDetails);
+    this.sessionContext = _.assign(this.sessionContext, this.sessionContext['selectedSharedProperties']);
   }
 
   openFilterPopUpMat() {
@@ -401,5 +503,17 @@ export class ContentListComponent implements OnInit {
   }
   selectTab(tabname) {
     this.tab = tabname;
+  }
+
+  raiseError(error, errorMsg) {
+    const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
+    this.toasterService.error(errorMes || errorMsg);
+    const errInfo = {
+      errorMsg:  errorMsg,
+      telemetryPageId: _.get(this.activatedRoute,'snapshot.data.telemetry.pageid'),
+      telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.sessionContext.programId , type: 'project'}],
+      env : this.activatedRoute.snapshot.data.telemetry.env,
+    };
+    this.sourcingService.apiErrorHandling(error, errInfo);
   }
 }

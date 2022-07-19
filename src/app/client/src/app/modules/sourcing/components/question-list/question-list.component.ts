@@ -355,7 +355,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   setResourceStatus() {
     if (this.resourceStatus === 'Review') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.reviewInProgress;
-      this.resourceStatusClass = 'sb-color-warning';
+      this.resourceStatusClass = 'sb-color-primary';
     } else if (this.resourceStatus === 'Draft' && this.resourceDetails.rejectComment && this.resourceDetails.rejectComment !== '') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.notAccepted;
       this.resourceStatusClass = 'sb-color-error';
@@ -364,7 +364,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.resourceStatusClass = 'sb-color-error';
     } else if (this.resourceStatus === 'Live' && _.isEmpty(this.sourcingReviewStatus)) {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.approvalPending;
-      this.resourceStatusClass = 'sb-color-success';
+      this.resourceStatusClass = 'sb-color-warning';
     } else if (this.sourcingReviewStatus === 'Rejected') {
       this.resourceStatusText = this.resourceService.frmelmnts.lbl.rejected;
       this.resourceStatusClass = 'sb-color-error';
@@ -551,25 +551,31 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleActionButtons() {
+    let submissionDateFlag;
     this.visibility = {};
-    const submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
-    this.visibility['showSave'] = submissionDateFlag && this.canSave();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
-     // tslint:disable-next-line:max-line-length
-    this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
-    // tslint:disable-next-line:max-line-length
-    this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.resourceDetails, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
+
+    if (_.get(this.sessionContext, 'workspaceContent') && _.get(this.sessionContext, 'workspaceContent') === true) {
+      submissionDateFlag = true;
+    } else {
+      submissionDateFlag = this.programsService.checkForContentSubmissionDate(this.programContext);
+    }
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showCreateQuestion'] = submissionDateFlag && this.canCreateQuestion();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showDeleteQuestion'] = submissionDateFlag && this.canDeleteQuestion();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showRequestChanges'] = submissionDateFlag && this.canReviewContent();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showPublish'] = submissionDateFlag && this.canPublishContent();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showSubmit'] = submissionDateFlag && this.canSubmit();
+      this.visibility['showSave'] = submissionDateFlag && this.canSave();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showEditMetadata'] = submissionDateFlag && this.canEditMetadata();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showEdit'] = submissionDateFlag && this.canEdit();
+      // tslint:disable-next-line:max-line-length
+      this.visibility['showSourcingActionButtons'] = this.helperService.canSourcingReviewerPerformActions(this.resourceDetails, this.sourcingReviewStatus, this.programContext, this.originCollectionData, this.selectedOriginUnitStatus);
   }
 
   canDeleteQuestion() {

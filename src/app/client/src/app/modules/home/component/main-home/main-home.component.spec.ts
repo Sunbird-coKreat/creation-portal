@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed, inject, tick, fakeAsync } from '@angu
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Observable, of } from 'rxjs';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { SlickModule } from 'ngx-slick';
 import { UserService, CoursesService, LearnerService, FrameworkService, ContentService,
   PlayerService } from '@sunbird/core';
 import { SharedModule, ResourceService, ConfigService, ToasterService } from '@sunbird/shared';
@@ -56,7 +55,7 @@ class ActivatedRouteStub {
   };
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SlickModule, SharedModule.forRoot(), NgInviewModule, TelemetryModule.forRoot()],
+      imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SharedModule.forRoot(), NgInviewModule, TelemetryModule.forRoot()],
       declarations: [MainHomeComponent],
       providers: [UserService, CoursesService, ResourceService, LearnerService,
          ToasterService, FrameworkService, CacheService, ContentService, PlayerService,

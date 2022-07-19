@@ -30,7 +30,7 @@ export class ContentHelperService {
   public defaultVideoSize: any;
   constructor(private configService: ConfigService, private programComponentsService: ProgramComponentsService,
     private programStageService: ProgramStageService, private userService: UserService, private helperService: HelperService,
-    private programsService: ProgramsService, public resourceService: ResourceService, 
+    private programsService: ProgramsService, public resourceService: ResourceService,
     public actionService: ActionService, public activatedRoute: ActivatedRoute, private sourcingService: SourcingService) {
       this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
       (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;
@@ -136,7 +136,7 @@ export class ContentHelperService {
           this._templateDetails.onClick = 'editorComponent';
         } else if (content.mimeType === 'application/vnd.ekstep.quml-archive') {
           this._templateDetails.onClick = 'questionSetComponent';
-        } else if (content.mimeType === 'application/vnd.sunbird.questionset'){
+        } else if (content.mimeType === 'application/vnd.sunbird.questionset' || content.mimeType === 'application/vnd.ekstep.content-collection') {
           this._templateDetails.onClick = 'questionSetEditorComponent';
         } else {
           this._templateDetails.onClick = 'uploadComponent';
@@ -209,8 +209,8 @@ export class ContentHelperService {
     }
     setFrameworkCategories() {
       this._sessionContext.targetCollectionFrameworksData = {};
-      // tslint:disable-next-line:max-line-length
       this._sessionContext.targetCollectionFrameworksData['framework'] = _.isArray(this._programDetails.config.framework) ? _.first(this._programDetails.config.framework) : this._programDetails.config.framework;
+
     }
     setNominationDetails(nominationDetails){
       this._sessionContext.nominationDetails = nominationDetails;

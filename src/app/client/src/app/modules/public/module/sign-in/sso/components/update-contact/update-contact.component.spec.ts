@@ -26,7 +26,9 @@ describe('UpdateContactComponent', () => {
   const fakeUserService = {
     getUserByKey: observableOf(mockUpdateContactData.userData)
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot(),
         RouterTestingModule],
@@ -38,13 +40,15 @@ describe('UpdateContactComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UpdateContactComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

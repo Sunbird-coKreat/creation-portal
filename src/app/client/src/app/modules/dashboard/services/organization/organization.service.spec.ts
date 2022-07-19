@@ -12,7 +12,7 @@ import { DashboardUtilsService } from './../dashboard-utils/dashboard-utils.serv
 import * as mockData from './organization.service.spec.data';
 const testData = <any>mockData.mockRes;
 
-describe('OrganisationService', () => {
+xdescribe('OrganisationService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],

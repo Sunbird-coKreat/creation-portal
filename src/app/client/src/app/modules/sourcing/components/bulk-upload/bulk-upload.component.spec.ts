@@ -6,14 +6,16 @@ xdescribe('BulkUploadComponent', () => {
   let component: BulkUploadComponent;
   let fixture: ComponentFixture<BulkUploadComponent>;
 
-  beforeEach(async(() => {
+  afterEach(() => {
+    fixture.destroy();
+  });
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ BulkUploadComponent ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BulkUploadComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

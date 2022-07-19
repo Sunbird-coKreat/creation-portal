@@ -3,7 +3,6 @@ import { SharedModule } from '@sunbird/shared';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { SlickModule } from 'ngx-slick';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContributeRoutingModule } from './contibute-routing.module';
 import { ProgramComponent } from './components/program/program.component';
@@ -19,6 +18,7 @@ import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { MyContentComponent } from './components/my-content/my-content.component';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { QumlPlayerService } from '../sourcing';
 @NgModule({
   providers: [
@@ -35,7 +35,6 @@ import { QumlPlayerService } from '../sourcing';
     CommonModule,
     ContributeRoutingModule,
     CommonConsumptionModule,
-    SlickModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
@@ -46,6 +45,7 @@ import { QumlPlayerService } from '../sourcing';
     SharedFeatureModule,
     PlayerHelperModule,
     QumlLibraryModule,
+    SunbirdVideoPlayerModule,
     DynamicModule.withComponents([CollectionComponent, DashboardComponent])
   ],
   exports: [

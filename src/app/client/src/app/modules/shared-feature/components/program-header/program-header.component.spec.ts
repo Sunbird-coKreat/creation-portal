@@ -72,7 +72,9 @@ xdescribe('ProgramHeaderComponent', () => {
   };
   // let serviceSpy: jasmine.SpyObj<ProgramStageService>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [TelemetryModule.forRoot(), HttpClientTestingModule, RouterTestingModule],
       declarations: [ ProgramHeaderComponent ],
@@ -84,10 +86,6 @@ xdescribe('ProgramHeaderComponent', () => {
       ]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
-
     fixture = TestBed.createComponent(ProgramHeaderComponent);
     de = fixture.debugElement;
     programStageService = TestBed.get(ProgramStageService);
@@ -97,11 +95,13 @@ xdescribe('ProgramHeaderComponent', () => {
     component.programDetails = mockRes.inputData;
     component.nominationDetails = mockRes.inputData;
     component.roles = mockRes.inputData;
-  });
-
-  beforeEach(() => {
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create the app', async(() => {
     expect(component).toBeTruthy();

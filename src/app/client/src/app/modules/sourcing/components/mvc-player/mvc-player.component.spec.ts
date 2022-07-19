@@ -26,7 +26,9 @@ xdescribe('MvcPlayerComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, RouterTestingModule,
          PlayerHelperModule, SuiModalModule, SuiAccordionModule],
@@ -37,13 +39,15 @@ xdescribe('MvcPlayerComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(MvcPlayerComponent);
     component = fixture.componentInstance;
     debugElement = fixture.debugElement;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

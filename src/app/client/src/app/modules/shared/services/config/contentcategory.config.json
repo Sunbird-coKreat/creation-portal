@@ -64,6 +64,10 @@
             {
                 "mimetype": "video/mp4",
                 "type": "upload"
+            },
+            {
+                "mimetype": "application/vnd.ekstep.content-collection",
+                "type": "collection"
             }
         ],
         "files": {

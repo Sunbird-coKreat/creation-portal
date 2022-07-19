@@ -118,8 +118,8 @@
                 >{{resourceService.frmelmnts.btn.sendForCorrections}}</button>
               <button id="acceptContent" suiPopup
               popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentAcceptMessage : resourceService.frmelmnts.lbl.contentAcceptMessage | interpolate:'{category}': programContext?.target_collection_category && programContext?.target_collection_category[0]}}"
-              [popupPlacement]="'top'"  *ngIf="visibility && visibility.showSourcingActionButtons"
-              class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="attachContentToTextbook('accept')"
+              [popupPlacement]="'top'"  *ngIf="visibility && visibility.showSourcingPublish"
+              class="sb-btn sb-btn-secondary sb-btn-normal mr-8" (click)="sourcingAction('accept')"
               appTelemetryInteract [ngClass]="{'sb-btn-secondary': enableContentActions, 'sb-btn-disabled': !enableContentActions}" [disabled]="!enableContentActions"
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('publish', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit,telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -127,7 +127,7 @@
                 [telemetryInteractPdata]="telemetryInteractPdata"
               >{{resourceService.frmelmnts.btn.publishToConsume}}</button>
               <button id="rejectContent" class="sb-btn sb-btn-error sb-btn-normal mr-8"
-              suiPopup popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentRejectMessage : resourceService.frmelmnts.lbl.contentRejectMessage | interpolate:'{category}': programContext.target_collection_category && programContext.target_collection_category[0]}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingActionButtons" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
+              suiPopup popupText="{{programContext?.target_type ==='searchCriteria' ? resourceService.frmelmnts.lbl.noCollectionsProject.contentRejectMessage : resourceService.frmelmnts.lbl.contentRejectMessage | interpolate:'{category}': programContext.target_collection_category && programContext.target_collection_category[0]}}" [popupPlacement]="'top'" *ngIf="visibility && visibility.showSourcingReject" (click)="popupAction='rejectContent'; showRequestChangesPopup = true"
               appTelemetryInteract [ngClass]="{'sb-btn-error': enableContentActions, 'sb-btn-disabled': !enableContentActions}" [disabled]="!enableContentActions"
                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('reject', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                 [telemetryInteractObject]="telemetryInteractObject"
@@ -435,7 +435,7 @@ class="sb-modal sb-file-upload-modal" appBodyScroll (dismissed)="closeUploadModa
         [telemetryInteractCdata]="telemetryInteractCdata"
         [telemetryInteractPdata]="telemetryInteractPdata"
     > Submit Review </button>
-    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='rejectContent'"  (click)="attachContentToTextbook('reject');showRequestChangesPopup = false;"
+    <button id="submitReview" type="submit" class="sb-btn sb-btn-normal" [ngClass]="{'sb-btn-primary': FormControl.form.valid, 'sb-btn-disabled': !FormControl.form.valid}" *ngIf="popupAction=='rejectContent'"  (click)="sourcingAction('reject');showRequestChangesPopup = false;"
     appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('submit_review', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.submit, telemetryPageId,{key:'dialog_id',value:'add_review_comments'})"
         [telemetryInteractObject]="telemetryInteractObject"
