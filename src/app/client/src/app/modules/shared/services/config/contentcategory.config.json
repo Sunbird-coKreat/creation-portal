@@ -82,7 +82,8 @@
           "audio/ogg": "ogg",
           "audio/x-wav": "x-wav",
           "audio/wav": "wav",
-          "application/x-subrip": "srt"
+          "application/x-subrip": "srt",
+          "text/vtt": "vtt"
         },
         "asset":{
             "imageFiles": "jpeg, png, jpg",
