@@ -252,7 +252,7 @@
               <div class="sb-dock-icon-tooltip d-inline-block">
                 <div class="ui dropdown sb-dotted-dropdown" suiDropdown autoClose="itemClick">
                   <div class="p-8 w-auto"><span class="sb-dotmenu"></span></div>
-                  <div class="menu" suiDropdownMenu>
+                  <div class="menu" suiDropdownMenu *ngIf="item.allowDelete">
                     <div *ngIf="item.allowDelete" class="item" (click)="confirmDelete(item)">
                       {{resourceService?.frmelmnts?.lbl?.delete}}
                     </div>
