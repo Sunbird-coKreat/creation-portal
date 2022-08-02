@@ -14,7 +14,7 @@
     </div>
   </div>
   <div [ngClass]="{'active':tab == 'mycontent'}" class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight tab">
-    <div class="ui container">
+    <div class="ui container mx--35">
       <div class="pt-24 mb-10">
         <app-content-list *ngIf="tab=='mycontent'" [selectedTab]="tab"></app-content-list>
       </div>
