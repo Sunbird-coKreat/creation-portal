@@ -26,7 +26,7 @@
       <div class="input-div relative">
         <i class="search icon"></i>
         <input class="sb-search-input" [(ngModel)]="query" type="text" placeholder="Search..." />
-        <i (click)="search(true)" class="close icon"></i>
+        <i (click)="search(true)" *ngIf="query" class="close icon"></i>
       </div>
       <button (click)="search()" class="sb-btn sb-btn-normal">Search</button>
     </div>
