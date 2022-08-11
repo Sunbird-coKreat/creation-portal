@@ -305,3 +305,7 @@
     }
   }
 }
+button.text-color:hover{
+  color: var(--primary-800);
+  text-decoration: underline;
+}
