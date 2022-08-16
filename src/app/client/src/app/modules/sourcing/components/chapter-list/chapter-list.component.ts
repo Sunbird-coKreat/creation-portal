@@ -92,6 +92,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public selectedStatusOptions: any = [];
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
+  showQuestionModal: boolean = false;
   publishQuestionset = true;
   bulkUploadEnabled = true;
   contentName: string;
@@ -133,8 +134,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   printUrl;
   downloadCsvUrl;
   displayDownloadCsv = false;
+  displayShowQuestionPreview= false;
   public reviewHelpSectionConfig: any;
   public contributeHelpSectionConfig: any;
+  public questionIdentifierList:Array<string> = [];
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -216,6 +220,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     // clearing the selected questionId when user comes back from question list
     delete this.sessionContext['questionList'];
+
 
     this.dynamicOutputs = {
       uploadedContentMeta: (contentMeta) => {
@@ -518,6 +523,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             });
           }
           this.setLocalBlueprint();
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.showQuestionPreview')) {
+          this.displayShowQuestionPreview = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.showQuestionPreview');
         }
 
         const contextType = this.sessionContext['frameworkType'] || _.get(this.programContext, 'config.frameworkObj.type');
@@ -1236,7 +1245,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return true;
       }
     } else {
-      if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+      if ((this.sessionContext.nominationDetails?.status === 'Approved' || this.sessionContext.nominationDetails?.status === 'Rejected')
        && content.sampleContent === true) {
         return false;
       // tslint:disable-next-line:max-line-length
@@ -1947,5 +1956,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       },
       searchFormConfig: this.searchConfig.properties
     };
+  }
+
+  questionModalClose(){
+    this.showQuestionModal = false;
   }
 }

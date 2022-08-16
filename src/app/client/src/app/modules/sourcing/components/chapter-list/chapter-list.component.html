@@ -214,6 +214,7 @@
                   <a class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10" [href]="printUrl + '?id=' + collectionData.identifier + '&format=docx&version='+docxVersion" target="_blank" *ngIf="displayPrintPreview && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.printPreview}}</a>
                   <a class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10" [href]="downloadCsvUrl + '?id=' + collectionData.identifier + '&format=csv'" target="_blank" *ngIf="displayDownloadCsv && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.downloadCsv}}</a>
                   <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit ml-10" (click)="showPublishConfirmationModal = true;" *ngIf="publishQuestionset && projectTargetType === 'questionSets' && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.publishQuestionset}}</button>
+                  <button class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10 text-color" style="margin-bottom: 0.75rem" target="_blank" (click)="showQuestionModal=true" *ngIf="displayShowQuestionPreview && sourcingOrgReviewer">Questions Preview</button>
                 </div>
               </div>
           </div>
@@ -462,3 +463,12 @@
 				[telemetryInteractPdata]="telemetryInteractPdata"> {{resourceService.frmelmnts?.btn?.no}} </button>
   </div>
 </sui-modal>
+
+<app-modal-preview
+  *ngIf= "showQuestionModal"
+  [showQuestionModal]="showQuestionModal"
+  [programContext]="programContext"
+  [selectedStatus]="selectedStatusOptions"
+  [collectionHierarchy]="collectionHierarchy"
+  (showQuestionOutput)="questionModalClose()"
+  [sessionContext]="sessionContext"></app-modal-preview>
