@@ -171,7 +171,10 @@ let envVariables = {
 
   // Kafka Configuration
   sunbird_processing_kafka_host: process.env.sunbird_processing_kafka_host,
-  sunbird_sso_kafka_topic: process.env.sunbird_sso_kafka_topic
+  sunbird_sso_kafka_topic: process.env.sunbird_sso_kafka_topic,
+
+  //Cloud service Provider
+  cloud_storage_provider: 'AZURE'
 }
 
 envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_cassandra_urls !== '')

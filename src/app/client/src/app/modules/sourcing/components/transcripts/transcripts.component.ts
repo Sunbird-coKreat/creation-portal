@@ -356,12 +356,11 @@ export class TranscriptsComponent implements OnInit {
   uploadToBlob(response, item): Observable<any> {
     try {
       const signedURL = response.result.pre_signed_url;
+      const headers = this.helperService.addCloudStorageProviderHeaders();
       const config = {
         processData: false,
         contentType: 'Asset',
-        headers: {
-          'x-ms-blob-type': 'BlockBlob'
-        }
+        headers: headers
       };
 
       return this.transcriptService.http.put(signedURL, item.get('transcriptFile')['file'], config);

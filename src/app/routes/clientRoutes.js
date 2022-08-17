@@ -161,6 +161,7 @@ function getLocals(req) {
   locals.sunbirdContextualHelpConfig = envHelper.SUNBIRD_CONTEXTUAL_HELP_CONFIG;
   locals.sunbirdAccessibilityGuidelinesUrl = envHelper.sunbird_accessibility_guidelines_url;
   locals.allowedFrameworkTypes = envHelper.ALLOWED_FRAMEWORK_TYPES;
+  locals.cloudStorageProvider = envHelper.cloud_storage_provider;
   return locals
 }
 

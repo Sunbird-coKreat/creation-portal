@@ -154,6 +154,10 @@
   <% if (allowedFrameworkTypes) { %>
     <input type="hidden" id="allowedFrameworkTypes" value="<%=allowedFrameworkTypes%>" />
   <% } %>
+  <% if (cloudStorageProvider) { %>
+    <input type="hidden" id="cloudStorageProvider" value="<%=cloudStorageProvider%>" />
+  <% } %>
+  
   <app-root></app-root>
 </body>
 

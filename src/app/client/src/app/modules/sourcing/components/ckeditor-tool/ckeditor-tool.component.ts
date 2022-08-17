@@ -596,12 +596,11 @@ getAllVideos(offset, query) {
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
         })).subscribe((response) => {
           const signedURL = response.result.pre_signed_url;
+          const headers = this.helperService.addCloudStorageProviderHeaders();
           const config = {
             processData: false,
             contentType: 'Asset',
-            headers: {
-              'x-ms-blob-type': 'BlockBlob'
-            }
+            headers: headers
           };
           this.uploadToBlob(signedURL, this.uploader.getFile(0), config).subscribe(() => {
             const fileURL = signedURL.split('?')[0];
