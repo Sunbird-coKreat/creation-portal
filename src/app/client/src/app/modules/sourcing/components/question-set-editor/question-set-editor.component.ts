@@ -188,7 +188,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
           maxContentsLimit: this.sunbirdCollectionChildrenLimit
         },
         enableQuestionCreation: this.enableQuestionCreation,
-        enableAddFromLibrary: this.enableAddFromLibrary
+        enableAddFromLibrary: this.enableAddFromLibrary,
+        qualityFormConfig: _.get(this.programContext, 'qualityFormConfig', null)
       }
     };
     if (this.showQuestionEditor || this.enableQuestionCreation) {
