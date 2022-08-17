@@ -78,6 +78,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   uploadButton: boolean;
   allFormFields: Array<any>;
   telemetryImpression: any;
+  action = { name : 'play' };
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
@@ -124,6 +125,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   // interactive video
   public unFormatedinterceptionTime;
   public interceptionTime: any = '00:00';
+  public originalInterceptionTime: any = '00:00';
   public interceptionMetaData: any;
   public showquestionCreationUploadModal: boolean;
   public creationComponent;
@@ -355,7 +357,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         return this.accessibilityFormFields;
       })), of(accessibilityFormFields))
     )).subscribe((response: any) => {
-       console.log(response);
+       // console.log(response);
     }, (err: any) => {
       const errInfo = {
         errorMsg: this.resourceService.messages.emsg.formConfigError,
@@ -645,6 +647,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }
       this.checkFileSizeLimit(fileUpload, mimeType);
     }
+    this.action = { name : 'play' };
   }
 
   formatBytes(bytes, decimals = 2) {
@@ -945,6 +948,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.ischeckBulkUploadStatus = false;
   }
   public closeUploadModal() {
+    this.action = { name : 'play' };
     this.optionalAddTranscript = false;
     this.loading = false;
     if (this.modal && this.modal.deny && this.changeFile_instance) {
@@ -1327,6 +1331,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   changeFile() {
+    this.action = { name : 'pause' };
     this.changeFile_instance = true;
     this.uploadButton = false;
     this.showUploadModal = true;
@@ -1451,6 +1456,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   addInterception() {
+    this.action = { name : 'pause' };
     this.showquestionCreationUploadModal = true;
     if (this.unFormatedinterceptionTime !== '') {
       this.interceptionTime = this.format(this.unFormatedinterceptionTime);
@@ -1462,8 +1468,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   eventHandler(event) {
-    if (_.isUndefined(this.totalDuration) && event.target) {
-      this.totalDuration = _.get(event.target, 'player.player_.cache_.duration');
+    if (event.type === 'durationchange' && event.duration && !this.totalDuration) {
+      this.totalDuration = event.duration;
     }
     if (event.type && event.type === 'timeupdate') {
       this.unFormatedinterceptionTime =  Math.floor(Math.round(event.target.player.player_.cache_.currentTime * 10) / 10);
@@ -1477,12 +1483,15 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
       const isTimeValid = this.validateEnteredTime(timeStamp);
       if (isTimeValid) {
+        this.action = { name : 'play' };
         this.showquestionCreationUploadModal = false;
         let creator = this.userService.userProfile.firstName;
         if (!_.isEmpty(this.userService.userProfile.lastName)) {
           creator = this.userService.userProfile.firstName + ' ' + this.userService.userProfile.lastName;
         }
         const rootorgId = _.get(this.programContext, 'rootorg_id');
+        const primaryCategoryInteractiveVideo = (<HTMLInputElement>document.getElementById('interactiveVideoCategory'))
+        ? (<HTMLInputElement>document.getElementById('interactiveVideoCategory')).value : '';
         this.frameworkService.readChannel(rootorgId).subscribe(channelData => {
           const channelCats = _.get(channelData, 'primaryCategories');
           const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');
@@ -1502,7 +1511,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
                   'code': UUID.UUID(),
                   'mimeType': 'application/vnd.sunbird.questionset',
                   'createdBy': this.userService.userid,
-                  'primaryCategory': primaryCategories[0],
+                  'primaryCategory': primaryCategoryInteractiveVideo,
                   'creator': creator,
                   'author': creator,
                   'programId': this.sessionContext.programId,
@@ -1670,10 +1679,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public closeQuestionCreationUploadModal() {
+    this.action = { name : 'play' };
     this.showquestionCreationUploadModal = false;
   }
 
   public handleQuestionSetDelete(data, event) {
+    this.action = { name : 'pause' };
     event.stopPropagation();
     this.selectedQuestionSet = {} ;
     this.showConfirmationModal = true;
@@ -1681,11 +1692,13 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public closeConfirmationModal() {
+    this.action = { name : 'play' };
     this.selectedQuestionSet  = {};
     this.showConfirmationModal = false;
   }
 
   public deleteQuestionSet() {
+    this.action = { name : 'play' };
     const option = {
       url : `questionset/v1/retire/${this.selectedQuestionSet.identifier}`,
       header: {
@@ -1741,16 +1754,24 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public openQuestionSetEditModal(data, event) {
+    this.action = { name : 'pause' };
     event.stopPropagation();
     this.selectedQuestionSetEdit = data;
+    this.originalInterceptionTime = this.format(data.interceptionPoint);
     this.interceptionTime = this.format(data.interceptionPoint);
     this.showQuestionSetEditModal = true;
   }
 
   public  editInterceptionDetails() {
     const timeStamp = this.interceptionTime.replace(':', '.').split('.');
-    const isTimeValid = this.validateEnteredTime(timeStamp);
-    if (isTimeValid) {
+    let isTimeValid = false;
+    if (this.interceptionTime === this.originalInterceptionTime) {
+        isTimeValid = true;
+    } else {
+        isTimeValid = this.validateEnteredTime(timeStamp);
+    }
+    if (isTimeValid){
+      this.action = { name : 'play' };
       const updatedInterceptionData = [];
       const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
       this.interceptionMetaData.items.map(item => {
@@ -1789,7 +1810,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       }))
       .subscribe(result => {
         this.existingContentVersionKey = _.get(result, 'versionKey');
-        console.log(result);
+        // console.log(result);
         this.showQuestionSetEditModal = false;
         this.handleQuestionSetPreview(this.selectedQuestionSetEdit);
       });
@@ -1797,6 +1818,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public closeQuestionSetEditModal() {
+    this.action = { name : 'play' };
     this.showQuestionSetEditModal = false;
   }
 
@@ -1837,11 +1859,17 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public validateEnteredTime(timeStamp) {
     const getTimeStamp = parseFloat(timeStamp[0]) * 60 + parseFloat(timeStamp[1]);
     // tslint:disable-next-line:max-line-length
-    const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === timeStamp);
+    const enteredTimeStamp = this.interceptionMetaData.items && this.interceptionMetaData.items.find( obj => obj.interceptionPoint === getTimeStamp);
     if (getTimeStamp > this.totalDuration) {
       this.toasterService.error(this.resourceService.messages.emsg.interactive.video.invalid);
       return false;
     } else if (this.interceptionTime === '00:00') {
+      this.toasterService.error(this.resourceService.messages.emsg.interactive.video.selectTimestamp);
+      return false;
+    } else if (this.interceptionTime === '') {
+      this.toasterService.error(this.resourceService.messages.emsg.interactive.video.selectTimestamp);
+      return false;
+    } else if (this.interceptionTime === undefined) {
       this.toasterService.error(this.resourceService.messages.emsg.interactive.video.selectTimestamp);
       return false;
     } else if (enteredTimeStamp !== undefined) {
@@ -1854,6 +1882,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   // interactive video Change END
 
   public addEditTranscript() {
+    this.action = { name : 'pause' };
     this.loading = false;
     this.showTranscriptPopup = true;
     this.showUploadModal = false;
@@ -1861,6 +1890,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   public closeTranscriptPopup(): void {
+    this.action = { name : 'play' };
     this.readContent(this.contentMetaData.identifier).subscribe(res => {
       this.contentMetaData = res;
       this.existingContentVersionKey = res.versionKey;

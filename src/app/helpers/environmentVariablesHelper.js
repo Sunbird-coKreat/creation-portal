@@ -65,6 +65,7 @@ let envVariables = {
   SUNBIRD_BULK_UPLOAD_DESC_LENGTH: env.sunbird_bulk_upload_description_length || '500',
   sunbird_accessibility_guidelines_url: env.sunbird_accessibility_guidelines_url || '',
   ALLOWED_FRAMEWORK_TYPES: env.allowed_framework_types || 'K-12,TPD',
+  DOCK_INTERACTIVE_VIDEO_CATEGORY: env.dock_interactive_video_category || 'Interactive Video Question Set',
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
   PORTAL_API_CACHE_TTL: env.sunbird_api_response_cache_ttl || '600',
