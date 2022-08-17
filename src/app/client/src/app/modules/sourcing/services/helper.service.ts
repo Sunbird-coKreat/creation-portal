@@ -1548,9 +1548,6 @@ export class HelperService {
         break;
 
       case 'AWS':
-        presignedHeaders = {
-          // This header is specific to amazon storage provider.
-        }
         break;
 
       case 'GCP':
