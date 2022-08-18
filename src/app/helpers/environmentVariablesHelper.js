@@ -10,6 +10,7 @@ let envVariables = {
   sunbird_instance_name: env.sunbird_instance || 'Sunbird',
   DEFAULT_CHANNEL: env.sunbird_default_channel,
   PORTAL_API_WHITELIST_CHECK: env.sunbird_enable_api_whitelist || 'true',
+  ENABLE_REVIEW_EDIT: env.enable_review_edit || false,
 
 
   // Application Start-up - Hosts and PORT Configuration
@@ -132,7 +133,6 @@ let envVariables = {
   //Cloud service Provider
   cloud_storage_provider: env.sunbird_cloud_storage_provider,
 
-
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
   sunbird_primary_bundle_language: env.sunbird_portal_primary_bundle_language || 'en',
@@ -175,11 +175,9 @@ let envVariables = {
   // Kafka Configuration
   sunbird_processing_kafka_host: process.env.sunbird_processing_kafka_host,
   sunbird_sso_kafka_topic: process.env.sunbird_sso_kafka_topic
-
 }
 
 envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_cassandra_urls !== '')
   ? env.sunbird_cassandra_urls.split(',') : ['localhost']
 
 module.exports = envVariables
-

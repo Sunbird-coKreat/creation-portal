@@ -154,10 +154,12 @@
   <% if (allowedFrameworkTypes) { %>
     <input type="hidden" id="allowedFrameworkTypes" value="<%=allowedFrameworkTypes%>" />
   <% } %>
+  <% if (enableReviewEdit) { %>
+    <input type="hidden" id="enableReviewEdit" value="<%=enableReviewEdit%>" />
+  <% } %>
   <% if (cloudStorageProvider) { %>
     <input type="hidden" id="cloudStorageProvider" value="<%=cloudStorageProvider%>" />
   <% } %>
-  
   <app-root></app-root>
 </body>
 
