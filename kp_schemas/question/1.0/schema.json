@@ -626,6 +626,9 @@
     "isReviewModificationAllowed": {
       "type":  "boolean",
       "default": false
+    },
+    "reviewerQualityChecks": {
+      "type": "object"
     }
   }
 }
