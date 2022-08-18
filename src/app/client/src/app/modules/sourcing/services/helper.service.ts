@@ -35,6 +35,7 @@ export class HelperService {
   private _selectedCollectionMetaData: any;
   private _telemetryPageId: any;
   private _telemetryInteractCdata: any;
+  public cloudStorageProvider:string;
   constructor(private configService: ConfigService, private contentService: ContentService,
     private toasterService: ToasterService, private publicDataService: PublicDataService,
     private actionService: ActionService, private resourceService: ResourceService,
@@ -42,7 +43,10 @@ export class HelperService {
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
     public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute,
     public httpClient: HttpClient,
-    private sourcingService: SourcingService, private router: Router) { }
+    private sourcingService: SourcingService, private router: Router) { 
+      this.cloudStorageProvider = (<HTMLInputElement>document.getElementById('cloudStorageProvider')) ?
+      (<HTMLInputElement>document.getElementById('cloudStorageProvider')).value : '';
+    }
 
   initialize(programDetails) {
     if (!this.getAvailableLicences()) {
@@ -1532,5 +1536,28 @@ export class HelperService {
   getContextualHelpConfig() {
     return (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
     JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
+  }
+
+  addCloudStorageProviderHeaders() {
+    let presignedHeaders: any = {};
+    switch (this.cloudStorageProvider) {
+      case 'AZURE':
+        presignedHeaders = {
+          'x-ms-blob-type': 'BlockBlob' // This header is specific to azure storage provider.
+        }
+        break;
+
+      case 'AWS':
+        break;
+
+      case 'GCP':
+        presignedHeaders = {
+          // This header is specific to Google storage provider.
+        }
+        break;
+
+    }
+
+   return presignedHeaders;
   }
 }

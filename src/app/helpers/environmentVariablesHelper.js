@@ -130,6 +130,8 @@ let envVariables = {
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
   SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
+  //Cloud service Provider
+  cloud_storage_provider: env.sunbird_cloud_storage_provider,
 
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
@@ -179,4 +181,3 @@ envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_
   ? env.sunbird_cassandra_urls.split(',') : ['localhost']
 
 module.exports = envVariables
-

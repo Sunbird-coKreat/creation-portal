@@ -731,12 +731,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           this.updateContentWithURL(fileURL, mimeType, contentId);
         });
       } else {
+        const headers = this.helperService.addCloudStorageProviderHeaders();
         const config = {
           processData: false,
           contentType: contentType,
-          headers: {
-            'x-ms-blob-type': 'BlockBlob'
-          }
+          headers: headers
         };
         this.uploadToBlob(signedURL, config).subscribe(() => {
           const fileURL = signedURL.split('?')[0];
