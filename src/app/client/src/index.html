@@ -156,6 +156,11 @@
   <% } %>
   <% if (interactiveVideoCategory) { %>
     <input type="hidden" id="interactiveVideoCategory" value="<%=interactiveVideoCategory%>" />
+  <% if (enableReviewEdit) { %>
+    <input type="hidden" id="enableReviewEdit" value="<%=enableReviewEdit%>" />
+  <% } %>
+  <% if (cloudStorageProvider) { %>
+    <input type="hidden" id="cloudStorageProvider" value="<%=cloudStorageProvider%>" />
   <% } %>
   <app-root></app-root>
 </body>
