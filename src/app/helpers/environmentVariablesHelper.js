@@ -130,7 +130,7 @@ let envVariables = {
   SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
   //Cloud service Provider
-  cloud_storage_provider: process.env.cloud_storage_provider,
+  cloud_storage_provider: env.cloud_storage_provider,
 
 
   // Default Language Configuration
