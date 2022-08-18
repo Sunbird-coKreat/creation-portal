@@ -129,6 +129,9 @@ let envVariables = {
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
   SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
+  //Cloud service Provider
+  cloud_storage_provider: process.env.cloud_storage_provider,
+
 
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
@@ -171,10 +174,8 @@ let envVariables = {
 
   // Kafka Configuration
   sunbird_processing_kafka_host: process.env.sunbird_processing_kafka_host,
-  sunbird_sso_kafka_topic: process.env.sunbird_sso_kafka_topic,
+  sunbird_sso_kafka_topic: process.env.sunbird_sso_kafka_topic
 
-  //Cloud service Provider
-  cloud_storage_provider: 'AZURE'
 }
 
 envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_cassandra_urls !== '')
