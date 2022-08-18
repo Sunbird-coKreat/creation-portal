@@ -1172,8 +1172,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (this.programDetails.type === 'restricted') {
         prgData['config'] = _.get(this.programDetails, 'config');
         prgData.config['contributors'] = this.selectedContributors;
-      }
-      else if (this.editPublished && _.includes(['questionSets'], this.projectTargetType)) {
+      } else if (this.editPublished && _.includes(['questionSets'], this.projectTargetType) && this.projectScopeForm) {
         prgData['collection_ids'] = [];
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();

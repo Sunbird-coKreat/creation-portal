@@ -41,7 +41,7 @@ import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-
 import { TranscriptsComponent } from './components/transcripts/transcripts.component';
 import { TranscriptsReviewComponent } from './components/transcripts-review/transcripts-review.component';
 import { AccessibilityInfoComponent } from './components/accessibility-info/accessibility-info.component';
-
+import { ModalPreviewComponent } from './components/modal-preview/modal-preview.component';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
@@ -51,7 +51,8 @@ import { AccessibilityInfoComponent } from './components/accessibility-info/acce
     ResourceReorderComponent, ContentEditorComponent, MvcLibraryComponent,
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
     BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent, TranscriptsReviewComponent,
-    AccessibilityInfoComponent],
+    AccessibilityInfoComponent,
+    ModalPreviewComponent],
   imports: [
     RouterModule,
     CoreModule,
