@@ -137,7 +137,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   displayShowQuestionPreview= false;
   public reviewHelpSectionConfig: any;
   public contributeHelpSectionConfig: any;
-  public questionIdentifierList:Array<string> = [];
+  public questionIdentifierList: Array<string> = [];
+  enableReviewEdit = false;
 
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -159,6 +160,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
     this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
     (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
+    this.enableReviewEdit =  (<HTMLInputElement>document.getElementById('enableReviewEdit')) ?
+    (<HTMLInputElement>document.getElementById('enableReviewEdit')).value === 'true' : false;
   }
 
   ngOnInit() {
@@ -169,6 +172,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.programContext['enableReviewEdit'] = this.enableReviewEdit;
     this.setUserAccess();
     this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
@@ -220,7 +224,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     // clearing the selected questionId when user comes back from question list
     delete this.sessionContext['questionList'];
-
 
     this.dynamicOutputs = {
       uploadedContentMeta: (contentMeta) => {
@@ -508,6 +511,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled')) {
           this.displayDownloadCsv = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled');
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.enableReviewEdit')) {
+          this.programContext['enableReviewEdit'] = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.enableReviewEdit');
         }
 
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {

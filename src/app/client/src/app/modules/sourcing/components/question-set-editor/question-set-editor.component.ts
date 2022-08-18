@@ -132,6 +132,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         did: this.deviceId,
         uid: this.userService.userid,
         programId: this.programContext.program_id,
+        enableReviewEdit: _.get(this.programContext, 'enableReviewEdit', false),
         contributionOrgId: _.get(this.sessionContext, 'nominationDetails.organisation_id', '') ,
         pdata: {
           id: this.userService.appId,

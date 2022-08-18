@@ -10,6 +10,7 @@ let envVariables = {
   sunbird_instance_name: env.sunbird_instance || 'Sunbird',
   DEFAULT_CHANNEL: env.sunbird_default_channel,
   PORTAL_API_WHITELIST_CHECK: env.sunbird_enable_api_whitelist || 'true',
+  ENABLE_REVIEW_EDIT: env.enable_review_edit || false,
 
 
   // Application Start-up - Hosts and PORT Configuration
