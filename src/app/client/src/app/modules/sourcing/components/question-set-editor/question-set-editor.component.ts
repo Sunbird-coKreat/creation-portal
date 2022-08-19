@@ -189,7 +189,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         },
         enableQuestionCreation: this.enableQuestionCreation,
         enableAddFromLibrary: this.enableAddFromLibrary,
-        qualityFormConfig: _.get(this.programContext, 'qualityFormConfig', null)
+        qualityFormConfig: _.get(this.programContext, 'qualityFormConfig', null),
+        isReviewerQualityCheckEnabled: _.get(this.programContext, 'isReviewerQualityCheckEnabled', false),
       }
     };
     if (this.showQuestionEditor || this.enableQuestionCreation) {
