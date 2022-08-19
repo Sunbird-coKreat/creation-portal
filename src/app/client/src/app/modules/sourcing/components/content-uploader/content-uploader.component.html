@@ -148,7 +148,7 @@
         <div class="ui container msg-box">
           <div class="msg-box__content">
             <div class="container msg-box__content__blank-box">
-                <sunbird-video-player *ngIf="videoFileFormat" [playerConfig]="playerConfig" (telemetryEvent)="telemetryEvent($event)" (playerEvent)="eventHandler($event)"></sunbird-video-player>
+                <sunbird-video-player *ngIf="videoFileFormat" [playerConfig]="playerConfig" [action]="action" (telemetryEvent)="telemetryEvent($event)" (playerEvent)="eventHandler($event)"></sunbird-video-player>
                 <app-player  *ngIf="!videoFileFormat" class="content-player"  [playerConfig]="playerConfig"></app-player>
             </div>
           </div>
