@@ -163,6 +163,7 @@ function getLocals(req) {
   locals.allowedFrameworkTypes = envHelper.ALLOWED_FRAMEWORK_TYPES;
   locals.enableReviewEdit = envHelper.ENABLE_REVIEW_EDIT;
   locals.cloudStorageProvider = envHelper.cloud_storage_provider;
+  locals.interactiveVideoQsetCategory = envHelper.DOCK_INTERACTIVE_VIDEO_QSET_CATEGORY;
   return locals
 }
 
