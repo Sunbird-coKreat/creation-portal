@@ -2052,4 +2052,25 @@ showTexbooklist() {
   getFormData(event) {
     this.frameworkFormData = event;
   }
+
+  duplicateQuestionSet(tempCollection) {
+    this.sourcingService.duplicateQuestionSet({
+      createdBy: this.userprofile.id,
+      createdFor: [this.userprofile.id],
+      name: tempCollection.name
+    }, tempCollection.identifier)
+      .subscribe((response) => {
+        const nodeId = _.get(response, 'result.node_id');
+        if (nodeId) {
+          this.programDetails.config.collections.push({
+            allowed_content_types: [],
+            children: [],
+            id: nodeId[tempCollection.identifier],
+          });
+          setTimeout(() => {
+            this.showTexbooklist();
+          }, 2000);
+        }
+      });
+  }
 }

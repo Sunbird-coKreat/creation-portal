@@ -280,4 +280,16 @@ export class SourcingService {
       }
     };
   }
+
+  duplicateQuestionSet(req, questionSetId) {
+    const reqParam = {
+      url: `${this.configService.urlConFig.URLS.QUESTIONSET.COPY + questionSetId}`,
+      data: {
+        request: {
+          questionset: req
+        }
+      }
+    };
+    return this.actionService.post(reqParam);
+  }
 }
