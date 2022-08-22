@@ -12,6 +12,8 @@ import { environment } from '@sunbird/environment';
 import { TelemetryService, IInteractEventEdata } from '@sunbird/telemetry';
 import { combineLatest, of, throwError } from 'rxjs';
 import { skipWhile, map, mergeMap, tap, delay, first } from 'rxjs/operators';
+import { HelperService } from '../../../../../modules/sourcing/services/helper.service';
+
 jQuery.fn.iziModal = iziModal;
 enum state {
   UP_FOR_REVIEW = 'upForReview',
@@ -52,7 +54,7 @@ export class CollectionEditorComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute, private userService: UserService, private _zone: NgZone, private router: Router,
     private configService: ConfigService, private tenantService: TenantService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, private workspaceService: WorkSpaceService,
-    private frameworkService: FrameworkService) {
+    private frameworkService: FrameworkService, private helperService: HelperService,) {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const deviceId = (<HTMLInputElement>document.getElementById('deviceId'));
     this.deviceId = deviceId ? deviceId.value : '';
@@ -222,6 +224,8 @@ export class CollectionEditorComponent implements OnInit, OnDestroy {
     window.config.build_number = this.buildNumber;
     window.config.enableTelemetryValidation = environment.enableTelemetryValidation; // telemetry validation
     window.config.lock = _.pick(this.queryParams, 'lockKey', 'expiresAt', 'expiresIn');
+    const presignedHeaders = this.helperService.addCloudStorageProviderHeaders();
+    window.config.cloudStorage.presigned_headers = presignedHeaders;
     if (this.routeParams.type.toLowerCase() === 'textbook') {
       window.config.plugins.push({
         id: 'org.ekstep.suggestcontent',
