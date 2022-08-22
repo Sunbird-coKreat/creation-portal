@@ -139,6 +139,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public contributeHelpSectionConfig: any;
   public questionIdentifierList: Array<string> = [];
   enableReviewEdit = false;
+  public qualityParamConfig: any;
 
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -515,6 +516,14 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
         if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.enableReviewEdit')) {
           this.programContext['enableReviewEdit'] = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.enableReviewEdit');
+        }
+
+        if (_.has(objectCategoryDefinition, 'forms.reviewerQualityCheck')) {
+          this.programContext['qualityFormConfig'] = _.get(objectCategoryDefinition, 'forms.reviewerQualityCheck.properties');
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.isReviewerQualityCheckEnabled')) {
+          this.programContext['isReviewerQualityCheckEnabled'] = _.get(objectCategoryDefinition.objectMetadata, 'config.isReviewerQualityCheckEnabled');
         }
 
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {
