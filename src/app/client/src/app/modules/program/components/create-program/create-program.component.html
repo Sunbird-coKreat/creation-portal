@@ -646,6 +646,12 @@
                                     <i
                                       class="edit outline icon"></i>{{resource?.frmelmnts?.lbl?.editBlueprint}}
                                   </div>
+                                  <div
+                                       class="sb-color-primary fxsmall cursor-pointer text-none"
+                                       (click)="duplicateQuestionSet(tempCollection)">
+                                    <i
+                                      class="copy outline icon"></i>{{resource?.frmelmnts?.lbl?.duplicateQuestionSet}}
+                                  </div>
                                 </div>
                                 <div *ngIf="!editPublished" class="two wide column text-right cursor-pointer"
                                      (click)="onCollectionCheck(tempCollection, false)"
