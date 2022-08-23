@@ -43,7 +43,7 @@ export class HelperService {
     private notificationService: NotificationService, private userService: UserService, private cacheService: CacheService,
     public frameworkService: FrameworkService, public learnerService: LearnerService, public activatedRoute: ActivatedRoute,
     public httpClient: HttpClient,
-    private sourcingService: SourcingService, private router: Router) { 
+    private sourcingService: SourcingService, private router: Router) {
       this.cloudStorageProvider = (<HTMLInputElement>document.getElementById('cloudStorageProvider')) ?
       (<HTMLInputElement>document.getElementById('cloudStorageProvider')).value : '';
     }

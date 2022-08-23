@@ -122,6 +122,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   setEditorConfig() {
+    const presignedHeaders = this.helperService.addCloudStorageProviderHeaders();
     // tslint:disable-next-line:max-line-length
     this.editorConfig = {
       context: {
@@ -161,6 +162,9 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         },
         channelData: this.frameworkService['_channelData'],
         cloudStorageUrls : this.userService.cloudStorageUrls,
+        cloudStorage: {
+          presigned_headers: presignedHeaders
+        },
         labels: {
           // tslint:disable-next-line:max-line-length
           submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
@@ -196,6 +200,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
     if (this.showQuestionEditor || this.enableQuestionCreation) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
     }
+
     this.getEditableFields();
     this.getCorrectionComments();
     this.getDikshaPreviewUrl();
