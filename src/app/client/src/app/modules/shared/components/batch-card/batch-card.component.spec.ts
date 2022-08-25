@@ -1,5 +1,5 @@
 import { BatchCardComponent } from './batch-card.component';
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject, waitForAsync } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SuiModule } from 'ng2-semantic-ui-v9';

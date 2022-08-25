@@ -1,5 +1,5 @@
 import { UserService, LearnerService, ContentService, CoreModule } from '@sunbird/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ResourceService, ConfigService, SharedModule } from '@sunbird/shared';
 import { MainMenuComponent } from './main-menu.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';

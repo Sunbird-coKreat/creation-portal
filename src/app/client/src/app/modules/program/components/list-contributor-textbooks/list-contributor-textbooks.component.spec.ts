@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ListContributorTextbooksComponent } from './list-contributor-textbooks.component';
 import { NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
@@ -77,7 +77,7 @@ const errorInitiate = false;
              FormsModule,
              TelemetryModule.forRoot(),
              HttpClientTestingModule,
-             RouterModule.forRoot([])
+             RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })
          ],
        declarations: [ ListContributorTextbooksComponent, DaysToGoPipe],
        providers: [

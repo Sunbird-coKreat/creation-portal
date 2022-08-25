@@ -6,7 +6,7 @@ import { CacheService } from 'ng2-cache-service';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import {TelemetryModule, TelemetryService} from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OtpComponent } from './otp.component';
 import { OtpComponentMockResponse } from './otp.component.spec.data';
 import { SignupService } from '../../services';

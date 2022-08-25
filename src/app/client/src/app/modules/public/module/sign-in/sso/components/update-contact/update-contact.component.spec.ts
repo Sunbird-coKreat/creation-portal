@@ -1,5 +1,5 @@
 import { FormsModule } from '@angular/forms';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { UpdateContactComponent } from './update-contact.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

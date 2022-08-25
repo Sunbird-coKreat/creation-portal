@@ -1,7 +1,7 @@
 import { ResourceService } from './../../../shared/services/resource/resource.service';
 import { ToasterService } from './../../../shared/services/toaster/toaster.service';
 import { BrowserCacheTtlService } from './../../../shared/services/browser-cache-ttl/browser-cache-ttl.service';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OnboardPopupComponent } from './onboard-popup.component';
 import { By } from '@angular/platform-browser';
 import { SuiModalModule, SuiProgressModule, SuiAccordionModule } from 'ng2-semantic-ui-v9';

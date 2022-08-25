@@ -1,6 +1,6 @@
 import { CollectionHierarchyService } from './../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { DaysToGoPipe } from './../../../shared-feature/pipes/days-to-go.pipe';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ConfigService, ResourceService, ToasterService, UtilService,
    BrowserCacheTtlService, NavigationHelperService } from '@sunbird/shared';

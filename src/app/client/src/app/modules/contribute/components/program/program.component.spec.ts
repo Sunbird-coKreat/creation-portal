@@ -1,4 +1,4 @@
-import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
+import { TestBed, inject, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { SharedModule, ToasterService, ResourceService, NavigationHelperService, PaginationService, ConfigService } from '@sunbird/shared';
 import { FrameworkService, UserService, ExtPluginService, RegistryService, ProgramsService, ActionService, ContentHelperService } from '@sunbird/core';
 import { FormBuilder, FormGroup } from '@angular/forms';

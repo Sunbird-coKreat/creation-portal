@@ -6,7 +6,7 @@ import { CertificateService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { CacheService } from 'ng2-cache-service';
 import { Router, ActivatedRoute } from '@angular/router';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { CertificateDetailsComponent } from './certificate-details.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule, ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';

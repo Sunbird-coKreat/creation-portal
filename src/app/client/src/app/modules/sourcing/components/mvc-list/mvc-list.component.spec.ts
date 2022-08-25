@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { SuiPopupModule } from 'ng2-semantic-ui-v9';
 import { MvcListComponent } from './mvc-list.component';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';

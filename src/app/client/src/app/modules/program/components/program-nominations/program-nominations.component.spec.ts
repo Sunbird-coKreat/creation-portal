@@ -1,4 +1,4 @@
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { SharedModule, ToasterService, ConfigService, ResourceService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import { ProgramsService, UserService, FrameworkService, NotificationService, ContentHelperService, RegistryService } from '@sunbird/core';
 import { DynamicModule } from 'ng-dynamic-component';

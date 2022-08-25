@@ -1,5 +1,5 @@
 import { of,throwError as observableThrowError } from 'rxjs';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ContributorsListComponent } from './contributors-list.component';
 import { TelemetryService } from './../../../telemetry/services/telemetry/telemetry.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

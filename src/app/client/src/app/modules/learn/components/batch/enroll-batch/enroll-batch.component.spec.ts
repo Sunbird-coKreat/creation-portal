@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DashboardModule } from './../../../../dashboard/dashboard.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LearnModule } from '@sunbird/learn';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { EnrollBatchComponent } from './enroll-batch.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { QuestionListComponent } from './question-list.component';
 import { McqCreationComponent } from '../mcq-creation/mcq-creation.component';
 import { By } from '@angular/platform-browser';

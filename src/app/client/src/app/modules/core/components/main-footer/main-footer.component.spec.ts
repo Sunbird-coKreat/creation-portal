@@ -1,7 +1,7 @@
 import { RouterTestingModule } from '@angular/router/testing';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { ActivatedRoute } from '@angular/router';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceService, ConfigService, SharedModule } from '@sunbird/shared';
 import { MainFooterComponent } from './main-footer.component';

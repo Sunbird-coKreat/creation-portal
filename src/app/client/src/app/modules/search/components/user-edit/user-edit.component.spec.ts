@@ -1,6 +1,6 @@
 import { throwError as observableThrowError, of as observableOf, Observable } from 'rxjs';
 import { UserSearchService } from './../../services';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   SharedModule, ServerResponse, PaginationService, ResourceService,

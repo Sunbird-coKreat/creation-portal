@@ -1,6 +1,6 @@
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { throwError as observableThrowError, of as observableOf, Observable } from 'rxjs';
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { ResourceService, ConfigService, SharedModule } from '@sunbird/shared';

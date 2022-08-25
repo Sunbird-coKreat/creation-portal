@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {
   ResourceService, ToasterService, SharedModule, ConfigService,
   UtilService, BrowserCacheTtlService, NavigationHelperService

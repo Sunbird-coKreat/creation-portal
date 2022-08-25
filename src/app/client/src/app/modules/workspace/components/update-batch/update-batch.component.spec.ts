@@ -10,7 +10,7 @@ import { SearchService, ContentService } from '@sunbird/core';
 import { UserService, LearnerService, CoursesService, PermissionService } from '@sunbird/core';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { async, ComponentFixture, TestBed, tick , fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync, waitForAsync } from '@angular/core/testing';
 import {SharedModule, ResourceService, ToasterService} from '@sunbird/shared';
 import {CoreModule} from '@sunbird/core';
 import { By } from '@angular/platform-browser';

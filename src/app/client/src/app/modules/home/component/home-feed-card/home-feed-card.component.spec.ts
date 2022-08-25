@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { SharedModule } from '@sunbird/shared';
 import { HomeFeedCardComponent } from './home-feed-card.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

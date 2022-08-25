@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule, ResourceService, ConfigService , ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
 import { CreateProgramComponent } from './create-program.component';
 import { CacheService } from 'ng2-cache-service';

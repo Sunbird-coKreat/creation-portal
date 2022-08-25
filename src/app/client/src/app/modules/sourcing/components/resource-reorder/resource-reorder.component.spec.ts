@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
@@ -46,7 +46,7 @@ xdescribe('ResourceReorderComponent', () => {
  
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, RouterModule.forRoot([]), TelemetryModule.forRoot()],
+      imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' }), TelemetryModule.forRoot()],
       declarations: [ ResourceReorderComponent ],
       providers: [ProgramTelemetryService, ConfigService, ToasterService, CacheService, HelperService, BrowserCacheTtlService,
                   DatePipe,

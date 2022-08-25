@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { SharedModule, ResourceService, WindowScrollService, ToasterService } from '@sunbird/shared';
 import { ReviewCommentsComponent } from './review-comments.component';
 import { CoreModule, UserService, PermissionService } from '@sunbird/core';

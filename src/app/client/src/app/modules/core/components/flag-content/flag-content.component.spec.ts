@@ -2,7 +2,7 @@
 import {throwError as observableThrowError, of as observableOf,  Observable } from 'rxjs';
 import { ContentService, PlayerService, UserService, LearnerService, CoreModule } from '@sunbird/core';
 import { SharedModule , ResourceService, ToasterService} from '@sunbird/shared';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FlagContentComponent } from './flag-content.component';

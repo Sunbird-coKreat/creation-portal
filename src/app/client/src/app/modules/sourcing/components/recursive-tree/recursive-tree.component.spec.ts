@@ -1,5 +1,5 @@
 import { InterpolatePipe } from '@sunbird/shared';
-import { async, TestBed, inject, ComponentFixture } from '@angular/core/testing';
+import { TestBed, inject, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { FrameworkService, UserService, ExtPluginService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import {  throwError , of } from 'rxjs';
@@ -117,7 +117,7 @@ xdescribe('RecursiveTreeComponent', () => {
     });
   });
 
-  it('should execute createResource on event & collection', async(() => {
+  it('should execute createResource on event & collection', waitForAsync(() => {
     fixture.detectChanges();
     const spy = spyOn(component, 'createResource').and.callThrough();
     component.createResource({stopPropagation() {return null; }}, 'do_id=232323343434rff');

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { TranscriptsReviewComponent } from './transcripts-review.component';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
