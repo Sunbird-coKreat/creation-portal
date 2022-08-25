@@ -1366,6 +1366,10 @@ showTexbooklist() {
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
+
+      const colIndex = this.programDetails.config.collections.findIndex(x => x.id === collectionId);
+      this.programDetails.config.collections.splice(colIndex, 1);
+      
       delete this.textbooks[collectionId];
     }
   }
