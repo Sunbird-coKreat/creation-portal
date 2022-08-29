@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { PageHelpComponent } from './page-help.component';
 import { ResourceService } from '../../services/index';
 import { SuiModule } from 'ng2-semantic-ui-v9';
@@ -49,7 +49,7 @@ describe('PageHelpComponent', () => {
   });
 
   it('openLink should call window.open', () => {
-    spyOn(window, 'open').and.callFake(() => {});
+    spyOn(window, 'open').and.returnValue({} as any);
     spyOn(component, 'openLink').and.callThrough();
     component.openLink('https://dock.preprod.ntp.net.in/help/contribute/administrator/manage-users/index.html');
     expect(component.openLink).toHaveBeenCalled();

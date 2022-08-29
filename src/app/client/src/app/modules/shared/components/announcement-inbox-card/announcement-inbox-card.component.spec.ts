@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, inject, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { By } from '@angular/platform-browser';

@@ -1,5 +1,5 @@
 import { BehaviorSubject, throwError, of } from 'rxjs';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import * as _ from 'lodash-es';
 import { DataDrivenFilterComponent } from './data-driven-filter.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
@@ -93,7 +93,7 @@ describe('DataDrivenFilterComponent', () => {
     resourceService._languageSelected.next({value: 'en', label: 'English', dir: 'ltr'});
     spyOn(cacheService, 'get').and.returnValue(undefined);
     spyOn(cacheService, 'set').and.returnValue(undefined);
-    spyOn(component.dataDrivenFilter, 'emit').and.returnValue([]);
+    spyOn(component.dataDrivenFilter, 'emit').and.returnValue([] as any);
     component.ngOnInit();
     expect(component.formFieldProperties).toBeDefined();
     expect(component.filtersDetails).toBeDefined();

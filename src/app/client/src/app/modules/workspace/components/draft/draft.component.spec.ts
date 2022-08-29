@@ -1,7 +1,7 @@
 
 import {throwError as observableThrowError, of as observableOf,  Observable } from 'rxjs';
 // Import NG testing module(s)
-import { ComponentFixture, TestBed, inject, tick, fakeAsync, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject, tick, fakeAsync,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
@@ -208,7 +208,7 @@ xdescribe('DraftComponent', () => {
     inject([SuiModalService, ConfigService, Router, SearchService],
     (modalService, configService, route) => {
       spyOn(component, 'fetchDrafts').and.callThrough();
-      spyOn(component, 'delete').and.callFake(() => observableOf({}));
+      spyOn(component, 'delete').and.callFake(() => observableOf(testData.deleteSuccess));
       spyOn(modalService, 'open').and.callFake(() => observableOf({}));
       // spyOn(modalService, 'approve').and.callFake(() => observableOf({}));
       component.draftList = testData.localSingleContentData;

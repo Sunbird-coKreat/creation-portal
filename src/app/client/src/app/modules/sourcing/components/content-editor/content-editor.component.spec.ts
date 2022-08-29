@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 
 import { ContentEditorComponent } from './content-editor.component';
 import { contentEditorComponentInput, playerConfig } from './content-editor.spec.data';

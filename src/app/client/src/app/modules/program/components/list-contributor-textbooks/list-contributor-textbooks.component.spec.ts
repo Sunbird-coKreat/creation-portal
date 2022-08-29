@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 
 import { ListContributorTextbooksComponent } from './list-contributor-textbooks.component';
 import { NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
@@ -247,7 +247,7 @@ const errorInitiate = false;
       'targetObjectType': 'Content'
     }}};
     spyOn(programStageService, 'initialize').and.callFake(() => {});
-    spyOn(component, 'getPageId').and.callFake(() => {});
+    spyOn(component, 'getPageId').and.callFake(() => {return ''});
     spyOn(component, 'changeView').and.callFake(() => {});
     spyOn(programsService, 'get').and.callFake(() => of({}));
     spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of({}));
@@ -268,7 +268,7 @@ const errorInitiate = false;
       'targetObjectType': 'Content'
     }}};
     spyOn(programStageService, 'initialize').and.callFake(() => {});
-    spyOn(component, 'getPageId').and.callFake(() => {});
+    spyOn(component, 'getPageId').and.callFake(() => {return ''});
     spyOn(component, 'changeView').and.callFake(() => {});
     spyOn(programsService, 'get').and.callFake(() => of({}));
     spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of({}));
@@ -289,7 +289,17 @@ const errorInitiate = false;
 
   it('#getNominationCounts should get nomination counts ', () => {
     // spyOn(component, 'fetchNominationCounts').and.returnValue(of(throwError({})));
-    spyOn(component, 'fetchNominationCounts').and.returnValue(of({}));
+    spyOn(component, 'fetchNominationCounts').and.returnValue(of({result:{identifier: 'identifier'},
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:''}));
     component.getNominationCounts();
     expect(component.totalCount).toBeDefined();
   });

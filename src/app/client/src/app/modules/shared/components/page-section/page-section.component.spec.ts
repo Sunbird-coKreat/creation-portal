@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { PageSectionComponent } from './page-section.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SuiModule } from 'ng2-semantic-ui-v9';

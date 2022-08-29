@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA, DebugElement } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -135,7 +135,7 @@ describe('MvcLibraryComponent', () => {
 
   xit('#fetchContentList() should show filter when content list empty', () => {
     const contentService: ContentService = TestBed.get(ContentService);
-    spyOn(contentService, 'post').and.returnValue(observableOf({result : { content: []}}));
+    spyOn(contentService, 'post').and.returnValue(observableOf(mockMvcLibraryData.mvcSearchSuccess));
     spyOn(component, 'openFilter').and.callThrough();
     component.fetchContentList();
     expect(component.openFilter).toHaveBeenCalled();

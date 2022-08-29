@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
@@ -127,13 +127,13 @@ xdescribe('ResourceReorderComponent', () => {
 
   it('#emitAfterMoveEvent() should call moveEvent', () => {
     component.contentId = testData.afterMove.contentId;
-    spyOn(component.moveEvent, 'emit').and.returnValue(testData.afterMove);
+    spyOn(component.moveEvent, 'emit').and.returnValue(testData.afterMove as any);
     component.emitAfterMoveEvent(testData.afterMove.collection.identifier);
     expect(component.moveEvent.emit).toHaveBeenCalledWith(testData.afterMove);
   });
 
   it('#cancelMove() should call moveEvent', () => {
-    spyOn(component.moveEvent, 'emit').and.returnValue(testData.cancelMove);
+    spyOn(component.moveEvent, 'emit').and.returnValue(testData.cancelMove as any);
     component.cancelMove();
     expect(component.moveEvent.emit).toHaveBeenCalledWith(testData.cancelMove);
   });

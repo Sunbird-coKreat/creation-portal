@@ -2,7 +2,7 @@
 import { of as observableOf } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { mockUserData } from './../../services/user/user.mock.spec.data';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { MainHeaderComponent } from './main-header.component';
 import { ConfigService, ResourceService, ToasterService, SharedModule, BrowserCacheTtlService } from '@sunbird/shared';
@@ -42,7 +42,7 @@ describe('MainHeaderComponent', () => {
   });
 
   xit('should subscribe to user service', () => {
-    spyOn(document, 'getElementById').and.returnValue('true');
+    spyOn(document, 'getElementById').and.returnValue('true' as any);
     const userService = TestBed.get(UserService);
     const learnerService = TestBed.get(LearnerService);
     userService._authenticated = true;
@@ -53,7 +53,7 @@ describe('MainHeaderComponent', () => {
   });
 
   it('Should subscribe to tenant service and update logo and tenant name', () => {
-    spyOn(document, 'getElementById').and.returnValue('true');
+    spyOn(document, 'getElementById').and.returnValue('true' as any);
     const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(mockUserData.tenantSuccess));
     service.getTenantInfo('Sunbird');
@@ -63,14 +63,14 @@ describe('MainHeaderComponent', () => {
   });
 
   it('Should not update logo unless tenant service returns it', () => {
-    spyOn(document, 'getElementById').and.returnValue('true');
+    spyOn(document, 'getElementById').and.returnValue('true' as any);
     component.ngOnInit();
     expect(component.tenantInfo.logo).toBeUndefined();
     expect(component.tenantInfo.titleName).toBeUndefined();
   });
 
   xit('Should update the logo on initialization', () => {
-    spyOn(document, 'getElementById').and.returnValue('true');
+    spyOn(document, 'getElementById').and.returnValue('true'as any);
     const service = TestBed.get(TenantService);
     spyOn(service, 'get').and.returnValue(observableOf(mockUserData.tenantSuccess));
     service.getTenantInfo('Sunbird');
@@ -104,14 +104,14 @@ describe('MainHeaderComponent', () => {
   });
   it('Should call getHeaderEmitter and assign value to showSubHeader', () => {
     component.showSubHeader = true;
-    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(false));
+    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(false) as any);
     spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     expect(component.showSubHeader).toBeFalsy();
   });
   it('Should call getHeaderEmitter and assign value to showSubHeader as true', () => {
     component.showSubHeader = false;
-    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(true));
+    spyOn(component.programsService, 'getHeaderEmitter').and.returnValue(observableOf(true)as any);
     spyOn(component, 'ngOnInit').and.callThrough();
     component.ngOnInit();
     expect(component.showSubHeader).toBeTruthy();

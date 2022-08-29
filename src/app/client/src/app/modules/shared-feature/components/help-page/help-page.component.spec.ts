@@ -1,5 +1,5 @@
 import { ConfigService } from './../../../shared/services/config/config.service';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HelpPageComponent } from './help-page.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';

@@ -1,4 +1,4 @@
-import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { TestBed, ComponentFixture,  } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { UserUploadComponent } from '../user-upload/user-upload.component';
 import { UserService } from '../../../core/services/user/user.service';

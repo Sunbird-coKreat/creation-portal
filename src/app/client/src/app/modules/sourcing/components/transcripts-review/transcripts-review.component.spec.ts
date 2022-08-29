@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { TranscriptsReviewComponent } from './transcripts-review.component';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -50,7 +50,7 @@ describe('TranscriptsReviewComponent', () => {
   });
 
   it('downloadFile should call window.open', () => {
-    spyOn(window, 'open').and.callFake(() => {});
+    spyOn(window, 'open').and.returnValue({} as any);
     spyOn(component, 'downloadFile').and.callThrough();
     component.downloadFile("https://dockstorage.blob.core.windows.net/sunbird-content-dock/content/assets/do_11341782099017728011533/srt-e.srt");
     expect(window.open).toHaveBeenCalled();

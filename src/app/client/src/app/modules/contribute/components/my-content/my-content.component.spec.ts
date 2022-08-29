@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -78,7 +78,7 @@ describe('MyContentComponent', () => {
 
   it('#initialize() should fetch content details when API success', () => {
     spyOn(component, 'getContents').and.callFake(() => of(mockData.contentListRes.result));
-    spyOn(component, 'getAllTenantList').and.callFake(() => of({}));
+    spyOn(component, 'getAllTenantList').and.callFake(() => of({})as any) ;
     spyOn(component, 'getFrameworks').and.callFake(() => of(mockData.frameworkListRes.result));
     spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of(mockData.publishedContentListRes.result));
     spyOn(component, 'getUserProfiles').and.callFake(() => of(mockData.userContentListRes.result));
@@ -92,7 +92,7 @@ describe('MyContentComponent', () => {
 
   it('#initialize() should not call #getUserProfiles when #publishedContents empty', () => {
     spyOn(component, 'getContents').and.callFake(() => of(mockData.contentListRes.result));
-    spyOn(component, 'getAllTenantList').and.callFake(() => of({}));
+    spyOn(component, 'getAllTenantList').and.callFake(() => of({})as any);
     spyOn(component, 'getFrameworks').and.callFake(() => of(mockData.frameworkListRes.result));
     spyOn(component, 'getOriginForApprovedContents').and.callFake(() => of(mockData.publishedContentListRes));
     spyOn(component, 'getUserProfiles').and.callThrough();
@@ -165,7 +165,7 @@ describe('MyContentComponent', () => {
     const helperService: HelperService = TestBed.inject(HelperService);
     spyOn(helperService, 'getContentOriginUrl').and.callThrough();
     spyOn(component, 'getConfigByContent').and.callThrough();
-    const data = { origin: 123, identifier: 123};
+    const data = { origin: 123, identifier: '123'};
     component.onPreview(data);
     expect(component.getConfigByContent).toHaveBeenCalledWith(data.identifier);
     expect(helperService.getContentOriginUrl).toHaveBeenCalledWith(data.origin);
@@ -275,7 +275,7 @@ describe('MyContentComponent', () => {
 
   it('#getConfigByContent() should play content preview when API success', () => {
     const playerService: PlayerService = TestBed.inject(PlayerService);
-    spyOn(playerService, 'getConfigByContent').and.returnValue(of({context: { pdata : { pid: ''}, cdata: {}}}));
+    spyOn(playerService, 'getConfigByContent').and.returnValue(of({context: { pdata : { pid: ''}, cdata: {}}}) as any);
     spyOn(component, 'loadTabComponent').and.callThrough();
     component.getConfigByContent('do_123');
     expect(component.loadTabComponent).toHaveBeenCalledWith('previewTab');

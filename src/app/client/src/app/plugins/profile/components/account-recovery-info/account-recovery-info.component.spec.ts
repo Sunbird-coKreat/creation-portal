@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { AccountRecoveryInfoComponent } from './account-recovery-info.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SuiModule } from 'ng2-semantic-ui-v9';

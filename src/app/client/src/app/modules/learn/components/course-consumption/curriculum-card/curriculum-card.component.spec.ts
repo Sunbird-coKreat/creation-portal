@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CurriculumCardComponent } from './curriculum-card.component';
 import {SharedModule} from '@sunbird/shared';
 import {CoreModule} from '@sunbird/core';

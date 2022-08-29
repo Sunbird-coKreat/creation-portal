@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { QuestionListComponent } from './question-list.component';
 import { McqCreationComponent } from '../mcq-creation/mcq-creation.component';
 import { By } from '@angular/platform-browser';
@@ -176,7 +176,7 @@ describe('QuestionListComponent', () => {
     spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(true);
     spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(true);
     spyOn(component, 'createDefaultAssessmentItem').and.returnValue(of(questionData));
-    spyOn(component, 'updateItemset').and.returnValue(of({}));
+    spyOn(component, 'updateItemset').and.returnValue(of(questionData));
     component.programContext = programContext;
     component.createNewQuestion();
     expect(component.checkCurrentQuestionStatus).toHaveBeenCalled();
@@ -382,7 +382,7 @@ describe('QuestionListComponent', () => {
     component.sessionContext['questionList'] = ['do_123'];
     spyOn(component, 'checkCurrentQuestionStatus').and.returnValue(false);
     spyOn(component.questionCreationChild, 'validateCurrentQuestion').and.returnValue(false);
-    spyOn(component, 'getQuestionDetails').and.callFake(() => {});
+    spyOn(component, 'getQuestionDetails').and.returnValue({} as any);
     spyOn(component, 'handleQuestionTabChange').and.callThrough();
     component.handleQuestionTabChange('do_12345');
     expect(component.handleQuestionTabChange).toHaveBeenCalled();

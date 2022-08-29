@@ -1,5 +1,5 @@
 import { BehaviorSubject, throwError, of } from 'rxjs';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import * as _ from 'lodash-es';
 import { ProminentFilterComponent } from './prominent-filter.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';

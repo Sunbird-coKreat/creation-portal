@@ -1,5 +1,5 @@
 import { of,throwError as observableThrowError } from 'rxjs';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { ContributorsListComponent } from './contributors-list.component';
 import { TelemetryService } from './../../../telemetry/services/telemetry/telemetry.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -136,7 +136,7 @@ describe('ContributorsListComponent', () => {
   });
 
   it('showFilteredResults should call #applyPagination() and #hideLoader()', () => {
-    spyOn(component, 'applyPagination').and.returnValue([]);
+    spyOn(component, 'applyPagination').and.returnValue([] as any);
     spyOn(component, 'hideLoader').and.callFake(() => {});
     spyOn(component, 'showFilteredResults').and.callThrough();
     component.showFilteredResults([]);

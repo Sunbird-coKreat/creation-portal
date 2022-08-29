@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CommingSoonComponent } from './comming-soon.component';
 import { ResourceService, BrowserCacheTtlService, SharedModule } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';

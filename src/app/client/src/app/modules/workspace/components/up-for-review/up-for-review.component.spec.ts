@@ -1,7 +1,7 @@
 
 import {of as observableOf, throwError as observableThrowError,  Observable } from 'rxjs';
 import { UpForReviewComponent } from './up-for-review.component';
-import { ComponentFixture, TestBed, inject, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SharedModule, PaginationService, ToasterService, ResourceService, ConfigService } from '@sunbird/shared';

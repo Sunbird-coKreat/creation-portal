@@ -2,7 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DashboardModule } from './../../../../dashboard/dashboard.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LearnModule } from '@sunbird/learn';
-import { ComponentFixture, TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { EnrollBatchComponent } from './enroll-batch.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
@@ -128,7 +128,7 @@ xdescribe('EnrollBatchComponent', () => {
   it('should enroll to course on click of enroll button', () => {
     const enrollButton = fixture.debugElement.query(By.css('#enrollToCourse'));
     spyOn(courseBatchService, 'getEnrollToBatchDetails').and.callFake(() => of(fakeBatchDetails));
-    const courseBatchServiceSpy = spyOn(courseBatchService, 'enrollToCourse').and.callFake(() => of(''));
+    const courseBatchServiceSpy = spyOn(courseBatchService, 'enrollToCourse').and.callFake(() => of('') as any);
     spyOnProperty(component.userService, 'userid').and.returnValue('d0d8a341-9637-484c-b871-0c27015af238');
     const fetchEnrolledCourseDataSpy = spyOn(component, 'fetchEnrolledCourseData');
     const telemetryLogEvent = spyOn(component, 'telemetryLogEvents');

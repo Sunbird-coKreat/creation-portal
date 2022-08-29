@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import {SuiModule} from 'ng2-semantic-ui-v9';
 import {ActivatedRoute, Router} from '@angular/router';
 import {of as observableOf} from 'rxjs';

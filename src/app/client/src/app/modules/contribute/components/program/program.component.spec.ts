@@ -1,4 +1,4 @@
-import { TestBed, inject, ComponentFixture, waitForAsync } from '@angular/core/testing';
+import { TestBed, inject, ComponentFixture,  } from '@angular/core/testing';
 import { SharedModule, ToasterService, ResourceService, NavigationHelperService, PaginationService, ConfigService } from '@sunbird/shared';
 import { FrameworkService, UserService, ExtPluginService, RegistryService, ProgramsService, ActionService, ContentHelperService } from '@sunbird/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -28,6 +28,7 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';
 import { TelemetryService } from '@sunbird/telemetry';
 import { SourcingService } from '../../../sourcing/services';
+import { ServerResponse } from 'http';
 
 const userServiceStub = {
   get() {
@@ -248,7 +249,7 @@ xdescribe('ProgramComponent', () => {
   it('#getProgramDetails() should get Program Details', () => {
     component.programId = '12345';
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'getProgram').and.returnValue(of({ result: { config: { roles: [{ a: 'sss' }, { b: 'rrr' }] } } }));
+    spyOn(component['programsService'], 'getProgram').and.returnValue(of({ result: { config: { roles: [{ a: 'sss' }, { b: 'rrr' }] } } })as any);
     spyOn(component['programsService'], 'getProgramTargetPrimaryCategories').and.callFake(() => { });
     spyOn(component, 'getNominationStatus').and.callFake(() => { });
     spyOn(component, 'setTargetCollectionValue').and.callFake(() => { });
@@ -263,11 +264,11 @@ xdescribe('ProgramComponent', () => {
     component.programId = '12345';
     component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
     component['contentHelperService'] = TestBed.inject(ContentHelperService);
-    spyOn(component['collectionHierarchyService'], 'getContentAggregation').and.returnValue(of({ result: { content: { roles: [{ a: 'sss' }, { b: 'rrr' }] } } }));
-    spyOn(component['contentHelperService'], 'shouldContentBeVisible').and.callFake(() => { });
-    spyOn(component['contentHelperService'], 'checkSourcingStatus').and.callFake(() => { });
-    spyOn(component['contentHelperService'], 'getContentDisplayStatus').and.callFake(() => { });
-    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => { });
+    spyOn(component['collectionHierarchyService'], 'getContentAggregation').and.returnValue(of({ result: { content: { roles: [{ a: 'sss' }, { b: 'rrr' }] } } })as any);
+    spyOn(component['contentHelperService'], 'shouldContentBeVisible').and.callFake(() => {return false});
+    spyOn(component['contentHelperService'], 'checkSourcingStatus').and.callFake(() => {return 'Approved'});
+    spyOn(component['contentHelperService'], 'getContentDisplayStatus').and.callFake(() => []);
+    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {return false});
     component.getProgramContents();
 
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
@@ -283,13 +284,18 @@ xdescribe('ProgramComponent', () => {
         result: {
           content: { roles: [{ a: 'sss' }, { b: 'rrr' }] },
           Question: { Question: [{ a: 'sss' }, { b: 'rrr' }] },
-          QuestionSet: { QuestionSet: [{ a: 'sss' }, { b: 'rrr' }] },
+          QuestionSet: { QuestionSet: [{ a: 'sss' }, { b: 'rrr' }] }
         },
+        id: '',
+        params: { resmsgid: '', status: '' },
+        responseCode: '200',
+        ts: '',
+        ver:''
       }
-    ));
-    spyOn(component['collectionHierarchyService'], 'getContentCounts').and.callFake(() => { });
+    )) as unknown as ServerResponse;
+    spyOn(component['collectionHierarchyService'], 'getContentCounts').and.callFake(() => {return { sourcingOrgStatus: {}, total: 2, sample: 2, review: 2, draft: 2, rejected: 2, correctionsPending: 2, live: 2, individualStatus: {}, individualStatusForSample: {}, mvcContributionsCount: 2 } });
     spyOn(component['collectionHierarchyService'], 'getIndividualCollectionStatus').and.callFake(() => { });
-    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => { });
+    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => { return true});
     component.showTexbooklist(['aaa']);
 
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
@@ -299,7 +305,7 @@ xdescribe('ProgramComponent', () => {
     component.nominationDetails = { rolemapping: { ccc: 'cccc' } };
     spyOn(component['userService'], 'getMyRoleForProgram').and.returnValue(['CONTRIBUTOR']);
     spyOn(component, 'sortOrgUsers').and.callFake(() => { });
-    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => { });
+    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {return true });
     const result = component.setOrgUsers([{ "selectedRole": "user" }]);
     expect(result).toBeTruthy();
   });
@@ -316,9 +322,9 @@ xdescribe('ProgramComponent', () => {
     component['programsService'] = TestBed.inject(ProgramsService);
 
     spyOn(component['userService'], 'getMyRoleForProgram').and.returnValue(['CONTRIBUTOR']);
-    spyOn(component['programsService'], 'ifSourcingInstance').and.callFake(() => { });
-    spyOn(component['helperService'], 'isOpenForNomination').and.callFake(() => { });
-    spyOn(component['helperService'], 'canAcceptContribution').and.callFake(() => { });
+    spyOn(component['programsService'], 'ifSourcingInstance').and.callFake(() => {return true });
+    spyOn(component['helperService'], 'isOpenForNomination').and.callFake(() => { return true});
+    spyOn(component['helperService'], 'canAcceptContribution').and.callFake(() => { return true});
     component.handleActionButtons();
     expect(component.visibility).toBeTruthy();
   });
@@ -330,7 +336,15 @@ xdescribe('ProgramComponent', () => {
     component.contentId = '0';
     component['helperService'] = TestBed.inject(HelperService);
 
-    spyOn(component['helperService'], 'retireContent').and.returnValue(of({ result: { node_id: 'node_id' } }));
+    spyOn(component['helperService'], 'retireContent').and.returnValue(of(
+      { result: { node_id: 'node_id' },
+      id: '',
+      params: { resmsgid: '', status: '' },
+      responseCode: '200',
+      ts: '',
+      ver:''
+     }
+      ));
     component.deleteContent();
 
     expect(component['helperService'].retireContent).toHaveBeenCalled();
@@ -342,7 +356,12 @@ xdescribe('ProgramComponent', () => {
     }
     component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
 
-    spyOn(component['collectionHierarchyService'], 'getOriginForApprovedContents').and.returnValue(of({ result: { count: 5, content: ['count'], QuestionSet: [{}] } }));
+    spyOn(component['collectionHierarchyService'], 'getOriginForApprovedContents').and.returnValue(of({ result: { count: 5, content: ['count'], QuestionSet: [{}] },
+    id: '',
+    params: { resmsgid: '', status: '' },
+    responseCode: '200',
+    ts: '',
+    ver:'' }));
     component.getOriginForApprovedContents();
 
     expect(component['collectionHierarchyService'].getOriginForApprovedContents).toHaveBeenCalled();
@@ -355,8 +374,12 @@ xdescribe('ProgramComponent', () => {
     component['userService'] = TestBed.inject(UserService);
     component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
     
-    spyOn(component['userService'], 'isUserBelongsToOrg').and.callFake(() => { });
-    spyOn(component['collectionHierarchyService'], 'getContentAggregation').and.returnValue(of({ result: { count: 5, content: ['count'], QuestionSet: [{}] } }));
+    spyOn(component['userService'], 'isUserBelongsToOrg').and.callFake(() => { return true});
+    spyOn(component['collectionHierarchyService'], 'getContentAggregation').and.returnValue(of({ result: { count: 5, content: ['count'], QuestionSet: [{}] }, id: '',
+    params: { resmsgid: '', status: '' },
+    responseCode: '200',
+    ts: '',
+    ver:'' }));
     component.getProgramContentAggregation();
 
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
@@ -408,7 +431,12 @@ xdescribe('ProgramComponent', () => {
         collection_ids: 'collection_ids',
         defaultContributeOrgReview: {},
         type: 'restricted'
-      }
+      }, 
+      id: '',
+      params: { resmsgid: '', status: '' },
+      responseCode: '200',
+      ts: '',
+      ver:'' 
 
     }));
 
@@ -456,7 +484,7 @@ xdescribe('ProgramComponent', () => {
       id: 'id'
     }];
     spyOn(component['userService'], 'isContributingOrgContributor').and.callFake(() => { });
-    spyOn(component['userService'], 'isDefaultContributingOrg').and.callFake(() => { });
+    spyOn(component['userService'], 'isDefaultContributingOrg').and.callFake(() => {return true });
     component.setProgramRole();
 
     expect(component['userService'].isContributingOrgContributor).toHaveBeenCalled();

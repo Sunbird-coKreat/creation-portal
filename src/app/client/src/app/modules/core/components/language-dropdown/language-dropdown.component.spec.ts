@@ -1,6 +1,6 @@
 
 import { of as observableOf, Observable } from 'rxjs';
-import { ComponentFixture, TestBed, inject, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { SharedModule, ResourceService, ConfigService, BrowserCacheTtlService, UtilService } from '@sunbird/shared';
 import { CoreModule, OrgDetailsService, ContentService, PublicDataService } from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

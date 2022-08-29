@@ -1,6 +1,6 @@
 
 import {throwError as observableThrowError, of as observableOf,  Observable } from 'rxjs';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { PublicBatchDetailsComponent } from './public-batch-details.component';
 import { SharedModule, ResourceService } from '@sunbird/shared';

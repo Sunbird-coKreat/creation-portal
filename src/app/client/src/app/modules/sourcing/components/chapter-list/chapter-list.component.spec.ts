@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import * as _ from 'lodash-es';
 import { ChapterListComponent } from './chapter-list.component';
 import { RecursiveTreeComponent } from '../recursive-tree/recursive-tree.component';
@@ -374,7 +374,7 @@ xdescribe('ChapterListComponent', () => {
       const  service  = TestBed.get(ProgramsService);
       spyOn(service, 'setTargetCollectionName').and.returnValue('Digital Textbook');
       component.programContext = programDetailsTargetCollection;
-      spyOn(component, 'setTargetCollectionValue').and.returnValue('some value');
+      spyOn(component, 'setTargetCollectionValue').and.returnValue('some value' as any);
       component.setTargetCollectionValue();
       expect(component.targetCollection).not.toBeUndefined();
     });

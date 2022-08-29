@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 
 import { OrgUserListComponent } from './org-user-list.component';
 import { NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
@@ -135,7 +135,7 @@ describe('OrgUserListComponent', () => {
     spyOn(registryService, 'getSearchedUserList').and.returnValue(['bbbb', 'bbbbb']);
     
     spyOn(component, 'sortUsersList').and.callFake(() => {});
-    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {});
+    spyOn(component, 'logTelemetryImpressionEvent').and.returnValue(true);
     component.getUserDetailsBySearch();
     expect(component.sortUsersList).toHaveBeenCalled();
   });
@@ -146,7 +146,7 @@ describe('OrgUserListComponent', () => {
     const usersList = ['bbbb', 'bbbbb']
     const programsService = TestBed.get(ProgramsService);
     spyOn(programsService, 'sortCollection').and.returnValue(['bbbb', 'bbbbb']);
-    spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => {});
+    spyOn(component, 'logTelemetryImpressionEvent').and.returnValue(true);
     component.sortUsersList(usersList, true);
     expect(programsService.sortCollection).toHaveBeenCalled();
     expect(component.logTelemetryImpressionEvent).toHaveBeenCalled();
@@ -172,8 +172,28 @@ describe('OrgUserListComponent', () => {
   xit('#updateUserRole should update User Role', () => {
     //component.resourceService={messages:{smsg:{m0065:''}}}
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'updateUserRole').and.returnValue(of({}));
-    spyOn(component['programsService'], 'updateUser').and.returnValue(of({}));
+    spyOn(component['programsService'], 'updateUserRole').and.returnValue(of({result:{identifier: 'identifier'},
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:''}));
+    spyOn(component['programsService'], 'updateUser').and.returnValue(of({result:{identifier: 'identifier'},
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:''}));
     component.updateUserRole('','','');
     expect(component['programsService'].updateUserRole).toHaveBeenCalled();
 
@@ -184,7 +204,7 @@ describe('OrgUserListComponent', () => {
    component.telemetryInteractPdata = {};
    component.telemetryInteractObject = {};
    component['registryService'] = TestBed.inject(RegistryService);
-   spyOn(component['registryService'], 'searchLimitCount').and.returnValue(10);
+  // spyOn(component['registryService'], 'searchLimitCount').and.callFake(() => {});
    component.ngOnInit();
     expect(component.telemetryInteractCdata).toBeDefined();
     expect(component.telemetryInteractPdata).toBeDefined();

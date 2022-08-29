@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NoResultComponent } from './no-result.component';
 import { SharedModule } from '@sunbird/shared';
 import { ResourceService } from '../../services/index';

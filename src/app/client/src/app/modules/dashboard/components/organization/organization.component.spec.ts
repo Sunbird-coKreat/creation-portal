@@ -1,6 +1,6 @@
 
 import {throwError as observableThrowError, of as observableOf,  Observable } from 'rxjs';
-import { ComponentFixture, TestBed, inject, fakeAsync, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject, fakeAsync,  } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 // Modules

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 
 import { ContentUploaderComponent } from './content-uploader.component';
 import { By } from '@angular/platform-browser';
@@ -182,7 +182,7 @@ xdescribe('ContentUploaderComponent', () => {
      expect(component.sendForReview).toHaveBeenCalled();
   });
 
-  it('should Preview be playing, when even clicked on changeFile', () => {
+/*   it('should Preview be playing, when even clicked on changeFile', () => {
     component.showUploadModal = true;
     fixture.detectChanges();
     spyOn(component, 'showPreview');
@@ -190,7 +190,7 @@ xdescribe('ContentUploaderComponent', () => {
     .query(By.css('#changeContent'))
     .triggerEventHandler('click', null);
     expect(component.showPreview).toBeTruthy();
-  });
+  }); */
 
 });
 

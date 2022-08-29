@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { RecoverAccountService } from './../../services';
 import { RecoverAccountComponent } from './recover-account.component';
 import { CoreModule } from '@sunbird/core';
