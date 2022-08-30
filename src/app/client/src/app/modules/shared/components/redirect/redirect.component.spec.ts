@@ -4,7 +4,7 @@ import {
   BrowserCacheTtlService,
   ToasterService,
   NavigationHelperService } from '@sunbird/shared';
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { RedirectComponent } from './redirect.component';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

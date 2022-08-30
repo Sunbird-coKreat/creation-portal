@@ -6,7 +6,7 @@ import { UserService, LearnerService, CoursesService, PermissionService, TenantS
   PublicDataService, SearchService, ContentService, CoreModule, OrgDetailsService, DeviceRegisterService
 } from '@sunbird/core';
 import { TelemetryService, TELEMETRY_PROVIDER } from '@sunbird/telemetry';
-import { TestBed, async, ComponentFixture, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, ComponentFixture, fakeAsync, tick,  } from '@angular/core/testing';
 import { mockData } from './app.component.spec.data';
 import { AppComponent } from './app.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -74,11 +74,11 @@ describe('AppComponent', () => {
     spyOn(navigationHelperService, 'initialize').and.callFake(() => {});
     spyOn(telemetryService, 'initialize');
     spyOn(telemetryService, 'getDeviceId').and.callFake((cb) => cb('123'));
-    spyOn(document, 'querySelector').and.returnValue({ setAttribute: () => { }});
+    spyOn(document, 'querySelector').and.returnValue({ setAttribute: () => { } } as any);
     spyOn(Fingerprint2, 'constructor').and.returnValue({get: () => {}});
     spyOn(document, 'getElementById').and.callFake((id) => {
       if (id === 'buildNumber') {
-        return { value: '1.1.12.0' };
+        return { value: '1.1.12.0' }  as any;
       }
       if (id === 'deviceId') {
         return { value: 'device' };

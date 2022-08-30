@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { TranscriptsComponent } from './transcripts.component';
 import { contentMetaData, dummyItems} from './transcripts.component.spec.data';
 import { ResourceService, ToasterService, SharedModule, ConfigService, ServerResponse, 
@@ -88,18 +88,18 @@ describe('TranscriptsComponent', () => {
     expect(component.getAssetList).toHaveBeenCalled();
   });
 
-  xit('getLanguage should return data', () => {
-    spyOn(component.items, 'controls').and.callFake(() => {return dummyItems.controls})
+/*   it('getLanguage should return data', () => {
+    spyOn(component.items, 'controls').and.returnValue({} as any);
     spyOn(component, 'getLanguage').and.callThrough();
     const language = component.getLanguage(0);
     expect(language).toEqual('dummyData');
-  });
+  }); */
 
   it('attachFile should set file', () => {
     spyOn(component, 'setFile').and.callFake(() => {});
-    spyOn(component, 'getLanguageControl').and.callFake(() => {return {value: true}});
+    spyOn(component, 'getLanguageControl').and.callFake(() => {return {value: true} as any});
     spyOn(component, 'fileValidation').and.callFake(()=> {return true});
-    spyOn(component, 'getFileNameControl').and.callFake(() => { return {patchValue(data) {}}});
+    spyOn(component, 'getFileNameControl').and.callFake(() => { return {patchValue(data) {}} as any});
     spyOn(component, 'enableDisableAddItemButton').and.callFake(() => {});
     spyOn(component, 'attachFile').and.callThrough();
     component.attachFile({target: {files: ['example.srt']}},0);
@@ -123,9 +123,9 @@ describe('TranscriptsComponent', () => {
 
   it('reset should call enableDisableAddItemButton', () => {
     component.disableDoneBtn = true;
-    spyOn(component, 'getFileControl').and.callFake(() => { return {reset() {}}});
-    spyOn(component, 'getFileNameControl').and.callFake(() => { return {reset() {}}});
-    spyOn(component, 'getLanguageControl').and.callFake(() => { return {reset() {}}});
+    spyOn(component, 'getFileControl').and.callFake(() => { return {reset() {}} as any});
+    spyOn(component, 'getFileNameControl').and.callFake(() => { return {reset() {}}as any});
+    spyOn(component, 'getLanguageControl').and.callFake(() => { return {reset() {}} as any});
     spyOn(component, 'enableDisableAddItemButton').and.callFake(() => {});
     spyOn(component, 'reset').and.callThrough();
     component.reset(0);
@@ -135,7 +135,7 @@ describe('TranscriptsComponent', () => {
 
   it('download should call window.open', () => {
     component.contentMetaData = contentMetaData;
-    spyOn(window, 'open').and.callFake(() => {});
+    spyOn(window, 'open').and.returnValue({} as any);
     spyOn(component, 'download').and.callThrough();
     component.download(contentMetaData.transcripts[0]['identifier']);
     expect(window.open).toHaveBeenCalled();
@@ -150,7 +150,7 @@ describe('TranscriptsComponent', () => {
 
   xit('addItem should add data in items', () => {
     component.disableAddItemBtn = false;
-    spyOn(component, 'createItem').and.callFake(() => {});
+    spyOn(component, 'createItem').and.returnValue({} as any);
     spyOn(component, 'addItem').and.callThrough();
     component.addItem({});
     expect(component.createItem).toHaveBeenCalled();

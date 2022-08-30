@@ -1,6 +1,6 @@
 import { CollectionHierarchyService } from './../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { DaysToGoPipe } from './../../../shared-feature/pipes/days-to-go.pipe';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ConfigService, ResourceService, ToasterService, UtilService,
    BrowserCacheTtlService, NavigationHelperService } from '@sunbird/shared';
@@ -262,7 +262,17 @@ xdescribe('CollectionComponent', () => {
             primaryCategory: 'Digital Textbook',
             name: 'test content'
           }
-        }
+        },
+        id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:''
       };
     const frameworkData = {framework: 'cbse_framework'};
     const  helperService  = TestBed.get(HelperService);
