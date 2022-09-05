@@ -1540,20 +1540,19 @@ export class HelperService {
 
   addCloudStorageProviderHeaders() {
     let presignedHeaders: any = {};
-    switch (this.cloudStorageProvider) {
-      case 'AZURE':
+    switch (this.cloudStorageProvider.toLowerCase()) {
+      case 'azure':
         presignedHeaders = {
           'x-ms-blob-type': 'BlockBlob' // This header is specific to azure storage provider.
-        }
+        };
+        break;
+      case 'aws':
         break;
 
-      case 'AWS':
-        break;
-
-      case 'GCP':
+      case 'gcloud':
         presignedHeaders = {
           // This header is specific to Google storage provider.
-        }
+        };
         break;
 
     }
