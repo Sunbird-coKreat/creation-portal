@@ -79,7 +79,7 @@ export class ModalPreviewComponent implements OnInit {
         }
       });
     } 
-    else{
+    else if(this.questionList.length === 0){
       this.showQuestionModal =false;
       this.onModalClose();
       this.toasterService.error(this.resourceService.messages.emsg.questionPreview?.getQuestion);
