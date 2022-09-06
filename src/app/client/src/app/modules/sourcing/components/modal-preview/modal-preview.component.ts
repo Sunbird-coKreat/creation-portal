@@ -23,6 +23,7 @@ export class ModalPreviewComponent implements OnInit {
   questionList = [];
   questionStatusMap = {};
   pageNumber = 1;
+
   constructor(
     public resourceService: ResourceService,
     public actionService: ActionService,
@@ -78,11 +79,10 @@ export class ModalPreviewComponent implements OnInit {
           this.questionList.concat(...resp.result.questions);
         }
       });
-    } 
-    else if(this.questionList.length === 0){
-      this.showQuestionModal =false;
+    } else if (this.questionList.length === 0) {
+      this.showQuestionModal = false;
       this.onModalClose();
-      this.toasterService.error(this.resourceService.messages.emsg.questionPreview?.getQuestion);
+      this.toasterService.error(this.resourceService.messages?.emsg?.questionPreview?.getQuestion);
     }
   }
 

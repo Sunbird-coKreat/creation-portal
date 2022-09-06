@@ -14,9 +14,15 @@ describe('ModalPreviewComponent', () => {
   let fixture: ComponentFixture<ModalPreviewComponent>;
 
   const resourceBundle = {
-    languageSelected$: observableOf({})
+    languageSelected$: observableOf({}),
+    messages: {
+      emsg: {
+        questionPreview : {
+          getQuestion: 'No Questions submitted for approval by contribution reviewer yet'
+        }
+      }
+    }
   };
-
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -31,6 +37,7 @@ describe('ModalPreviewComponent', () => {
       .compileComponents();
     fixture = TestBed.createComponent(ModalPreviewComponent);
     component = fixture.componentInstance;
+    component.questionList = [];
     fixture.detectChanges();
   });
 
