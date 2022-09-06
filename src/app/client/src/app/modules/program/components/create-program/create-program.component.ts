@@ -1049,7 +1049,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       programData = { ...this.createProgramForm.value };
     }
     programData['target_type'] = this.projectTargetType;
-    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
+    if(this.isFormValueSet.projectScopeForm) {
+      programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
+    }
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
