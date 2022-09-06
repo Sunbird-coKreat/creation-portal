@@ -7,6 +7,7 @@ import {of as observableOf} from 'rxjs';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {CacheService} from 'ng2-cache-service';
 import {HttpClient, HttpHandler} from '@angular/common/http';
+import { ToasterService } from '@sunbird/shared';
 
 describe('ModalPreviewComponent', () => {
   let component: ModalPreviewComponent;
@@ -23,6 +24,7 @@ describe('ModalPreviewComponent', () => {
       declarations: [ModalPreviewComponent],
       providers: [
         ConfigService, HttpClient, HttpHandler, CacheService, BrowserCacheTtlService,
+        ToasterService,
         {provide: ResourceService, useValue: resourceBundle}
       ]
     })
