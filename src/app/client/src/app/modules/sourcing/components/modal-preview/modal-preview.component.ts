@@ -1,8 +1,9 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ResourceService} from '@sunbird/shared';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ResourceService, ToasterService} from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import {Router} from '@angular/router';
 import {ActionService} from '@sunbird/core';
+
 
 @Component({
   selector: 'app-modal-preview',
@@ -26,7 +27,8 @@ export class ModalPreviewComponent implements OnInit {
   constructor(
     public resourceService: ResourceService,
     public actionService: ActionService,
-    public router: Router) {
+    public router: Router,
+    public toasterService: ToasterService) {
   }
 
   ngOnInit(): void {
@@ -77,6 +79,10 @@ export class ModalPreviewComponent implements OnInit {
           this.questionList.concat(...resp.result.questions);
         }
       });
+    } else if (this.questionList.length === 0) {
+      this.showQuestionModal = false;
+      this.onModalClose();
+      this.toasterService.error(this.resourceService.messages?.emsg?.questionPreview?.getQuestion);
     }
   }
 
