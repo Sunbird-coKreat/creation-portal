@@ -74,6 +74,9 @@
 
   .item-status {
     flex: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-right: $base-block-space*3;
   }
 
   .item-tag{
