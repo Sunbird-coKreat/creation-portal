@@ -624,6 +624,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
     this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
     let contentId = this.contentId;
+    if (content && this.reusedContributions.indexOf(content.identifier) !== -1) {
+      content.isAddedFromLibrary = true;
+    }
     if(this.projectTargetType === 'questionSets') {
       if(action === 'creation') contentId = undefined;
     }
