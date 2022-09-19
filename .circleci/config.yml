@@ -38,6 +38,9 @@ jobs:
           name: Executing test cases
           command: 'npm run test-coverage | tee /tmp/logs/test_cases.log'
       - run:
+          name: Node version
+          command: 'node --version'
+      - run:
           name: install sonar scanner
           command: npm install -g sonarqube-scanner
       - run:
