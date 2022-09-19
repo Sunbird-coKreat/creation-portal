@@ -88,7 +88,7 @@ export class BulkUploadComponent implements OnInit {
 
    ngOnInit() {
     if (_.get(this.programContext, 'target_type') && this.programContext.target_type === 'searchCriteria') {
-      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',')  + 'noncollection-bulk-content-upload-format.csv';
+      this.sampleMetadataCsvUrl = (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ? (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value.split(',') : ''  + 'noncollection-bulk-content-upload-format.csv';
     }
 
     this.bulkUploadNameLength = (<HTMLInputElement>document.getElementById('sunbirdBulkUploadNameLength')) ?
