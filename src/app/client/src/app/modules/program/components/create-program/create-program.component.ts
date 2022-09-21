@@ -54,18 +54,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public tempCollections = [];
   public showProgramScope: boolean = false;
   public textbooks: any = {};
-  //private userBoard;
-  //private frameworkCategories;
   public programScope: any = {};
   private originalProgramScope: any = {};
   public userprofile;
-  //public programData: any = {};
   public programConfig: any = _.cloneDeep(programConfigObj);
-  //public showTextBookSelector = false;
   public stepNo= 1;
   public formIsInvalid = false;
   public pickerMinDate = new Date(new Date().setHours(23,59,59));
-  //public pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -1371,7 +1366,7 @@ showTexbooklist() {
 
       const colIndex = this.programDetails.config.collections.findIndex(x => x.id === collectionId);
       this.programDetails.config.collections.splice(colIndex, 1);
-      
+
       delete this.textbooks[collectionId];
     }
   }
