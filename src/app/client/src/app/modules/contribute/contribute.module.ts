@@ -17,7 +17,7 @@ import { OrgUserListComponent } from './components/org-user-list/org-user-list.c
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 import { MyContentComponent } from './components/my-content/my-content.component';
-import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { QumlPlayerService } from '../sourcing';
 @NgModule({
