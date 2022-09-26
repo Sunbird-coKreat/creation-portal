@@ -162,12 +162,21 @@ export class AzureFileUploaderService {
     });
   }
 
+  getcloudStorageProvider() {
+    return (<HTMLInputElement>document.getElementById('cloudStorageProvider')) ?
+    (<HTMLInputElement>document.getElementById('cloudStorageProvider')).value : '';
+  }
+
   addBlockList (uri: string, requestData: any): Observable<any> {
+    let headers: any = {
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    };
+    const cloudStorageProvider = this.getcloudStorageProvider();
+    if (cloudStorageProvider.toLowerCase() === 'azure') {
+      headers['x-ms-blob-content-type'] = this.selectedFile.type;
+    }
     const httpOptions = {
-      headers: new HttpHeaders({
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'x-ms-blob-content-type': this.selectedFile.type
-      })
+      headers: new HttpHeaders(headers)
     };
     return this.httpClient.put<any>(uri, requestData, httpOptions)
       .pipe(
@@ -176,13 +185,16 @@ export class AzureFileUploaderService {
   }
 
   addBlock (uri: string, requestData: any, controller: any): Observable<any> {
-
+    let headers: any = {
+      'content-type': 'video/mp4'
+    };
+    const cloudStorageProvider = this.getcloudStorageProvider();
+    if (cloudStorageProvider.toLowerCase() === 'azure') {
+      headers['x-ms-blob-type'] = 'BlockBlob';
+    }
     return new Observable((observer) => {
       const fetchPromise = fetch(uri, {
-        'headers': {
-          'Content-Type': 'video/mp4',
-          'x-ms-blob-type': 'BlockBlob'
-        },
+        'headers': headers,
         'body': requestData,
         'method': 'PUT',
         'signal': controller.signal

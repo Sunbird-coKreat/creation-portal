@@ -600,12 +600,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       })).subscribe((response) => {
         const signedURL = response.result.pre_signed_url;
+        const headers = this.helperService.addCloudStorageProviderHeaders();
         const config = {
           processData: false,
           contentType: 'Asset',
-          headers: {
-            'x-ms-blob-type': 'BlockBlob'
-          }
+          headers: headers
         };
         this.uploadToBlob(signedURL, this.uploader.getFile(0), config).subscribe(() => {
           const fileURL = signedURL.split('?')[0];
@@ -1050,7 +1049,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       programData = { ...this.createProgramForm.value };
     }
     programData['target_type'] = this.projectTargetType;
-    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
+    if(this.isFormValueSet.projectScopeForm) {
+      programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
+    }
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
@@ -1173,8 +1174,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       if (this.programDetails.type === 'restricted') {
         prgData['config'] = _.get(this.programDetails, 'config');
         prgData.config['contributors'] = this.selectedContributors;
-      }
-      else if (this.editPublished && _.includes(['questionSets'], this.projectTargetType)) {
+      } else if (this.editPublished && _.includes(['questionSets'], this.projectTargetType) && this.projectScopeForm) {
         prgData['collection_ids'] = [];
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
@@ -1368,6 +1368,10 @@ showTexbooklist() {
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
+
+      const colIndex = this.programDetails.config.collections.findIndex(x => x.id === collectionId);
+      this.programDetails.config.collections.splice(colIndex, 1);
+      
       delete this.textbooks[collectionId];
     }
   }
@@ -2053,5 +2057,26 @@ showTexbooklist() {
   }
   getFormData(event) {
     this.frameworkFormData = event;
+  }
+
+  duplicateQuestionSet(tempCollection) {
+    this.sourcingService.duplicateQuestionSet({
+      createdBy: this.userprofile.id,
+      createdFor: [this.userprofile.id],
+      name: tempCollection.name
+    }, tempCollection.identifier)
+      .subscribe((response) => {
+        const nodeId = _.get(response, 'result.node_id');
+        if (nodeId) {
+          this.programDetails.config.collections.push({
+            allowed_content_types: [],
+            children: [],
+            id: nodeId[tempCollection.identifier],
+          });
+          setTimeout(() => {
+            this.showTexbooklist();
+          }, 2000);
+        }
+      });
   }
 }

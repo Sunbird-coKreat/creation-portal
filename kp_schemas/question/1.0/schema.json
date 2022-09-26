@@ -623,9 +623,12 @@
       "type": "string",
       "format": "url"
     },
-    "isCollaborationEnabled": {
+    "isReviewModificationAllowed": {
       "type":  "boolean",
       "default": false
+    },
+    "reviewerQualityChecks": {
+      "type": "object"
     }
   }
 }

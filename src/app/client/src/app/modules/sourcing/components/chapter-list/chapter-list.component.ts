@@ -92,6 +92,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public selectedStatusOptions: any = [];
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
+  showQuestionModal: boolean = false;
   publishQuestionset = true;
   bulkUploadEnabled = true;
   contentName: string;
@@ -133,8 +134,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   printUrl;
   downloadCsvUrl;
   displayDownloadCsv = false;
+  displayShowQuestionPreview= false;
   public reviewHelpSectionConfig: any;
   public contributeHelpSectionConfig: any;
+  public questionIdentifierList: Array<string> = [];
+  enableReviewEdit = false;
+  public qualityParamConfig: any;
+
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -155,6 +161,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
     this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
     (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
+    this.enableReviewEdit =  (<HTMLInputElement>document.getElementById('enableReviewEdit')) ?
+    (<HTMLInputElement>document.getElementById('enableReviewEdit')).value === 'true' : false;
   }
 
   ngOnInit() {
@@ -165,6 +173,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.currentStage = 'chapterListComponent';
     this.sessionContext = _.get(this.chapterListComponentInput, 'sessionContext');
     this.programContext = _.get(this.chapterListComponentInput, 'programContext');
+    this.programContext['enableReviewEdit'] = this.enableReviewEdit;
     this.setUserAccess();
     this.setTargetCollectionValue();
     this.currentUserID = this.userService.userid;
@@ -505,6 +514,18 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           this.displayDownloadCsv = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.downloadCsvEnabled');
         }
 
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.enableReviewEdit')) {
+          this.programContext['enableReviewEdit'] = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.enableReviewEdit');
+        }
+
+        if (_.has(objectCategoryDefinition, 'forms.reviewerQualityCheck')) {
+          this.programContext['qualityFormConfig'] = _.get(objectCategoryDefinition, 'forms.reviewerQualityCheck.properties');
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.isReviewerQualityCheckEnabled')) {
+          this.programContext['isReviewerQualityCheckEnabled'] = _.get(objectCategoryDefinition.objectMetadata, 'config.isReviewerQualityCheckEnabled');
+        }
+
         if (_.has(objectCategoryDefinition, "objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled")) {
           this.dynamicHeadersEnabled = objectCategoryDefinition.objectMetadata.config.sourcingSettings.collection.dynamicHeadersEnabled;
         }
@@ -518,6 +539,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             });
           }
           this.setLocalBlueprint();
+        }
+
+        if (_.has(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.showQuestionPreview')) {
+          this.displayShowQuestionPreview = _.get(objectCategoryDefinition.objectMetadata, 'config.sourcingSettings.collection.showQuestionPreview');
         }
 
         const contextType = this.sessionContext['frameworkType'] || _.get(this.programContext, 'config.frameworkObj.type');
@@ -599,6 +624,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
     this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
     let contentId = this.contentId;
+    if (content && this.reusedContributions.indexOf(content.identifier) !== -1) {
+      content.isAddedFromLibrary = true;
+    }
     if(this.projectTargetType === 'questionSets') {
       if(action === 'creation') contentId = undefined;
     }
@@ -1236,7 +1264,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           return true;
       }
     } else {
-      if ((this.sessionContext.nominationDetails.status === 'Approved' || this.sessionContext.nominationDetails.status === 'Rejected')
+      if ((this.sessionContext.nominationDetails?.status === 'Approved' || this.sessionContext.nominationDetails?.status === 'Rejected')
        && content.sampleContent === true) {
         return false;
       // tslint:disable-next-line:max-line-length
@@ -1947,5 +1975,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       },
       searchFormConfig: this.searchConfig.properties
     };
+  }
+
+  questionModalClose(){
+    this.showQuestionModal = false;
   }
 }

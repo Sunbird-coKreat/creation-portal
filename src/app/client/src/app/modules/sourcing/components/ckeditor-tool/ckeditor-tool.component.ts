@@ -8,6 +8,7 @@ import * as _ from 'lodash-es';
 import { catchError, map} from 'rxjs/operators';
 import { throwError, Observable} from 'rxjs';
 import { SourcingService } from '../../services';
+import { HelperService } from '../../services/helper.service';
 // import MathText from '../../../../../assets/libs/mathEquation/plugin/mathTextPlugin.js';
 
 @Component({
@@ -51,7 +52,8 @@ export class CkeditorToolComponent implements OnInit, AfterViewInit, OnChanges {
     toasterService: ToasterService,
     resourceService: ResourceService,
     public actionService: ActionService,
-    private contentService: ContentService
+    private contentService: ContentService,
+    private helperService: HelperService
   ) {
     this.userService = userService;
     this.configService = configService;
@@ -596,12 +598,11 @@ getAllVideos(offset, query) {
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
         })).subscribe((response) => {
           const signedURL = response.result.pre_signed_url;
+          const headers = this.helperService.addCloudStorageProviderHeaders();
           const config = {
             processData: false,
             contentType: 'Asset',
-            headers: {
-              'x-ms-blob-type': 'BlockBlob'
-            }
+            headers: headers
           };
           this.uploadToBlob(signedURL, this.uploader.getFile(0), config).subscribe(() => {
             const fileURL = signedURL.split('?')[0];

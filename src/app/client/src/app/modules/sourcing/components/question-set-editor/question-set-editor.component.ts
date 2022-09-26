@@ -122,6 +122,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   setEditorConfig() {
+    const presignedHeaders = this.helperService.addCloudStorageProviderHeaders();
     // tslint:disable-next-line:max-line-length
     this.editorConfig = {
       context: {
@@ -132,6 +133,8 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         did: this.deviceId,
         uid: this.userService.userid,
         programId: this.programContext.program_id,
+        isAddedFromLibrary: _.get(this.questionSetEditorComponentInput, 'content.isAddedFromLibrary', false),
+        enableReviewEdit: _.get(this.programContext, 'enableReviewEdit', false),
         contributionOrgId: _.get(this.sessionContext, 'nominationDetails.organisation_id', '') ,
         pdata: {
           id: this.userService.appId,
@@ -160,6 +163,9 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         },
         channelData: this.frameworkService['_channelData'],
         cloudStorageUrls : this.userService.cloudStorageUrls,
+        cloudStorage: {
+          presigned_headers: presignedHeaders
+        },
         labels: {
           // tslint:disable-next-line:max-line-length
           submit_collection_btn_label: this.sessionContext.sampleContent ? this.resourceService.frmelmnts.btn.submit : this.resourceService.frmelmnts.btn.submitForReview,
@@ -187,12 +193,15 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
           maxContentsLimit: this.sunbirdCollectionChildrenLimit
         },
         enableQuestionCreation: this.enableQuestionCreation,
-        enableAddFromLibrary: this.enableAddFromLibrary
+        enableAddFromLibrary: this.enableAddFromLibrary,
+        qualityFormConfig: _.get(this.programContext, 'qualityFormConfig', null),
+        isReviewerQualityCheckEnabled: _.get(this.programContext, 'isReviewerQualityCheckEnabled', false),
       }
     };
     if (this.showQuestionEditor || this.enableQuestionCreation) {
       this.editorConfig.context.framework = this.collectionDetails.framework || this.frameworkService['_channelData'].defaultFramework;
     }
+
     this.getEditableFields();
     this.getCorrectionComments();
     this.getDikshaPreviewUrl();

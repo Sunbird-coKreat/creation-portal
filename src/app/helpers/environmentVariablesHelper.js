@@ -10,6 +10,7 @@ let envVariables = {
   sunbird_instance_name: env.sunbird_instance || 'Sunbird',
   DEFAULT_CHANNEL: env.sunbird_default_channel,
   PORTAL_API_WHITELIST_CHECK: env.sunbird_enable_api_whitelist || 'true',
+  ENABLE_REVIEW_EDIT: env.enable_review_edit || false,
 
 
   // Application Start-up - Hosts and PORT Configuration
@@ -65,6 +66,7 @@ let envVariables = {
   SUNBIRD_BULK_UPLOAD_DESC_LENGTH: env.sunbird_bulk_upload_description_length || '500',
   sunbird_accessibility_guidelines_url: env.sunbird_accessibility_guidelines_url || '',
   ALLOWED_FRAMEWORK_TYPES: env.allowed_framework_types || 'K-12,TPD',
+  DOCK_INTERACTIVE_VIDEO_QSET_CATEGORY: env.dock_interactive_video_qset_category || 'Interactive Video Question Set',
   // TTL and Intervals
   CONFIG_REFRESH_INTERVAL: env.config_refresh_interval || 10,
   PORTAL_API_CACHE_TTL: env.sunbird_api_response_cache_ttl || '600',
@@ -129,6 +131,8 @@ let envVariables = {
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
   SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
+  //Cloud service Provider
+  cloud_storage_provider: env.sunbird_cloud_storage_provider, // azure, aws or gcloud
 
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
@@ -178,4 +182,3 @@ envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_
   ? env.sunbird_cassandra_urls.split(',') : ['localhost']
 
 module.exports = envVariables
-
