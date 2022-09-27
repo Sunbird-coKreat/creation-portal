@@ -43,7 +43,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player/lib/assets/",
                 "output": "/assets/"
               },
               {
