@@ -38,7 +38,7 @@ jobs:
           name: Executing test cases
           command: 'npm run test-coverage | tee /tmp/logs/test_cases.log'
       - run:
-          name: Install  Node.js v14.20.0 with build in nvm tool
+          name: Install  Node.js v14 with build in nvm tool
           command: |
             export NVM_DIR="/opt/circleci/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
