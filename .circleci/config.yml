@@ -42,7 +42,7 @@ jobs:
           command: |
             export NVM_DIR="/opt/circleci/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v14 && nvm use v14.20.0 && nvm alias default v14.20.0
+            nvm install v14 && nvm use v14 && nvm alias default v14
             node -v
       - run:
           name: Altered Node version
