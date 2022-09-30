@@ -2068,6 +2068,12 @@ showTexbooklist() {
       .subscribe((response) => {
         const nodeId = _.get(response, 'result.node_id');
         if (nodeId) {
+          const pcollectionIds = this.projectScopeForm.value.pcollections;
+          pcollectionIds.push(nodeId[tempCollection.identifier]);
+          this.projectScopeForm.patchValue({pcollections: pcollectionIds});
+          if (!this.programDetails.config.collections) {
+            this.programDetails.config.collections = [];
+          }
           this.programDetails.config.collections.push({
             allowed_content_types: [],
             children: [],

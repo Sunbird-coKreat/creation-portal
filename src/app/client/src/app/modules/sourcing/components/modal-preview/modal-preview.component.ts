@@ -75,8 +75,12 @@ export class ModalPreviewComponent implements OnInit {
 
       this.actionService.post(req).subscribe(resp => {
         if (resp.responseCode.toLowerCase() === 'ok') {
-          this.questionList = [...this.questionList, ...resp.result.questions];
-          this.questionList.concat(...resp.result.questions);
+          const identifierListObj={}
+          resp.result.questions.forEach(el=>{
+            identifierListObj[el.identifier] = el
+          });
+          const sortedIdentifierArray = identifierList.map(el=> identifierListObj[el]);
+          this.questionList = [...this.questionList, ...sortedIdentifierArray];
         }
       });
     } else if (this.questionList.length === 0) {
@@ -98,16 +102,6 @@ export class ModalPreviewComponent implements OnInit {
 
   onModalClose() {
     this.showQuestionOutput.emit();
-  }
-
-  getLimitedQuestionList() {
-    const currentDisplayCount = this.displayQuestionList.length;
-    const remainQuestionCount = this.questionList.length - currentDisplayCount;
-    const initialLimit = 10;
-    const limitCount = currentDisplayCount + (
-      remainQuestionCount > initialLimit ? initialLimit : remainQuestionCount
-    );
-    this.displayQuestionList = _.take(this.questionList, limitCount);
   }
 
   getIdentifiersList(): Array<string> {
