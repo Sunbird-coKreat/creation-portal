@@ -93,7 +93,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
   showQuestionModal: boolean = false;
-  publishQuestionset = true;
+  publishQuestionset = false;
   bulkUploadEnabled = true;
   contentName: string;
   public userProfile: any;
