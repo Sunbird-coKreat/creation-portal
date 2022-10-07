@@ -95,7 +95,7 @@
           <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
           <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
         </span></th>
-                <th class="w-10">{{ resourceService?.frmelmnts?.lbl?.contentType }}</th>
+                <th class="w-10">{{ contentTypeHeaderText }}</th>
                 <th class="w-15">{{ resourceService?.frmelmnts?.lbl?.MediumClassSubject }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService?.frmelmnts?.lbl?.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('contributionDate')">{{ resourceService?.frmelmnts?.lbl?.nominatedDate }}&nbsp;&nbsp;
