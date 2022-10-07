@@ -1190,6 +1190,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       sourceURL : node.sourceURL,
       createdOn : node.createdOn,
       sampleContent: node.sampleContent || null,
+      qType: node.qType,
       sharedContext: {
         ...sharedMeta
       },

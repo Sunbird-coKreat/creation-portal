@@ -20,6 +20,7 @@
   "cacheEnabled": false,
   "schema_restrict_api": true,
   "headers": [
+    {"label": "Question Type", "key": "qType"},
     {"label": "Skill Tested", "key": "bloomsLevel"}
   ],
   "restrictProps": {
