@@ -50,6 +50,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};
   public showResourceTemplatePopup = false;
+  public showResourceTemplateQTypePopup = false;
   private myOrgId = '';
   public templateDetails;
   public unitIdentifier;
@@ -1299,6 +1300,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
+    this.showResourceTemplateQTypePopup = false;
     this.sessionContext['templateDetails'] =  event.templateDetails;
     if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent' || this.projectTargetType === 'questionSets')) {
       const creationInput  = {
@@ -1423,6 +1425,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
+        this.showResourceTemplateQTypePopup = event.showPopup;
         break;
     }
     this.resourceTemplateInputData();
