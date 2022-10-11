@@ -19,6 +19,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
 
   @Input() resourceTemplateComponentInput: IResourceTemplateComponentInput = {};
   @Output() templateSelection = new EventEmitter<any>();
+  @Input() showResourceTemplateQTypePopup;
   showButton = false;
   showInteractiveQuestionTypes = true;
   showCuriosityQuestion = true;
@@ -61,6 +62,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
   }
 
   handleSubmit() {
+    this.showResourceTemplateQTypePopup=false;
     this.programsService.getCategoryDefinition(this.templateSelected.name, this.programContext.rootorg_id, this.templateSelected.targetObjectType).subscribe((res) => {
       this.selectedtemplateDetails = res.result.objectCategoryDefinition;
       const catMetaData = this.selectedtemplateDetails.objectMetadata;
