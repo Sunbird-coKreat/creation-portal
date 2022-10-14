@@ -8,7 +8,10 @@ import {ActionService} from '@sunbird/core';
 @Component({
   selector: 'app-modal-preview',
   templateUrl: './modal-preview.component.html',
-  styleUrls: ['./modal-preview.component.scss']
+  styleUrls: [
+    './modal-preview.component.scss',
+    '../ckeditor-tool/ckeditor-tool.component.scss'
+]
 })
 export class ModalPreviewComponent implements OnInit {
   @Input() showQuestionModal = false;
