@@ -17,21 +17,24 @@ jobs:
     working_directory: ~/portal/src/app/client
     machine:
       image: ubuntu-2004:202010-01
-    docker:
-      image: 'node:16.14.0'
     steps:
       - checkout:
           path: ~/portal
       - run:
-          name: Installing prerequisites
-          command: |-
-            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            node --version
+          name: Install  Node.js v14.20.1 with build in nvm tool
+          command: |
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm install v14 && nvm use v14.20.1 && nvm alias default v14.20.1
+            node -v
+      - run:
+          name: Altered Node version
+          command: 'node --version'
       - run:
           name: Installing angular cli
           command: 'npm install -g @angular/cli@10.2.4 --no-progress'
       - restore_cache:
-          key:  dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Installing npm deps
           command: 'npm install --no-progress'
