@@ -5,7 +5,7 @@ jobs:
       image: circleci/classic:latest
     steps:
       - checkout
-      - run: 
+      - run:
           name: Installing prerequisites
           command: |-
             curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
@@ -46,7 +46,7 @@ jobs:
             node -v
       - run:
           name: Altered Node version
-          command: 'node --version' 
+          command: 'node --version'
       - run:
           name: install sonar scanner
           command: npm install -g sonarqube-scanner
