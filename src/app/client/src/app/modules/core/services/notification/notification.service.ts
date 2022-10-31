@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { of, throwError, forkJoin } from 'rxjs';
+import { of, throwError, forkJoin, Observable } from 'rxjs';
 import { ResourceService, ServerResponse, ConfigService } from '@sunbird/shared';
 import { mergeMap, tap } from 'rxjs/operators';
 import { LearnerService } from '../learner/learner.service';
@@ -264,5 +264,21 @@ export class NotificationService {
         return throwError(error);
       }
     );
+  }
+  sendNotificationToContributorOrg(user_ids: Array<string>, bodyData: string): Observable<ServerResponse>{
+    const reqData = {
+      mode: 'sms',
+      subject: 'VidyaDaan',
+      body: bodyData,
+      recipientUserIds: [...user_ids]
+    };
+    // const option = {
+    //   url: 'user/v1/notification/email',
+      
+    //   data: {
+    //     request: reqData
+    //   }
+    // };
+    return this.sendNotification(reqData).pipe()
   }
 }

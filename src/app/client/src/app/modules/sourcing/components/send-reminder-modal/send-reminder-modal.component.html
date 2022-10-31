@@ -1,0 +1,36 @@
+<sui-modal *ngIf="sendReminderModal" [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
+    class="sb-modal" (dismissed)="onModalClose()" #modal>
+    <div class="sb-modal-header">
+        Select to Send Reminder
+    </div>
+    <div class="sb-modal-content">
+        Select one or more to send reminders
+        <div class="flex-dc mt-10 mb-15">
+            <div class="twelve wide column">
+                <div class="sb-checkbox sb-checkbox-primary p-0 m-0">
+                    <input type="checkbox" [(ngModel)]="userContributor" (change)="onUserCheck($event, 'Contributor')">
+                    <label class="fsmall pl-32">
+                        Contributor
+                    </label>
+                </div>
+            </div>
+            <div class="twelve wide column">
+                <div class="sb-checkbox sb-checkbox-primary p-0 m-0">
+                    <input type="checkbox" [(ngModel)]="userReviewer"(change)="onUserCheck($event, 'Reviewer')">
+                    <label class="fsmall pl-32">
+                        Reviewer
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sb-modal-actions">
+        <button type="button" class="sb-btn sb-btn-normal"
+        [ngClass]="!(userContributor || userReviewer) ? 'sb-btn-disabled' : 'sb-btn-primary'"
+        [disabled]="!(userContributor || userReviewer)"
+        (click)="sendReminderSMS()"
+        >
+            Send
+        </button>
+    </div>
+</sui-modal>

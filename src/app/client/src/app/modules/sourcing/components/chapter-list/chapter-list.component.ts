@@ -141,6 +141,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public questionIdentifierList: Array<string> = [];
   enableReviewEdit = false;
   public qualityParamConfig: any;
+  public sendReminderModal =false;
 
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -1983,5 +1984,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   questionModalClose(){
     this.showQuestionModal = false;
+  }
+  sendReminderModalClose(){
+    this.sendReminderModal =false;
   }
 }
