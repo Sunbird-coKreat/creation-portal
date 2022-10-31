@@ -23,6 +23,9 @@ jobs:
       - run:
           name: Install  Node.js
           command: |-
+            sudo apt-get update && sudo apt install -y libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 \
+                  xvfb gtk2-engines-pixbuf \
+                  xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable
             curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
             sudo apt install nodejs -y
             node --version
