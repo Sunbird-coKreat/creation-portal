@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, Output} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import { combineLatest, of } from "rxjs";
 import { ProgramsService, UserService, NotificationService } from '@sunbird/core';
 import { ActivatedRoute } from "@angular/router";
 import { map } from "rxjs/operators";
+import { ResourceService, ToasterService} from '@sunbird/shared';
+import * as _ from 'lodash-es';
 
 @Component({
     selector: 'app-send-reminder-modal',
@@ -10,16 +12,36 @@ import { map } from "rxjs/operators";
     styleUrls: ['./send-reminder-modal.component.scss']
   })
 
-  export class SendReminderModalComponent {
-    
+  export class SendReminderModalComponent implements OnInit {
+    @Input() programDetail;
     @Input() sendReminderModal;
     @Output() showSendReminderModal = new EventEmitter();
     public userContributor = false;
     public userReviewer = false;
+    public contributors;
+    public reviewers;
 
     constructor(
       public programsService: ProgramsService, public userService: UserService,
-      public activatedRoute: ActivatedRoute, private notificationService: NotificationService){}
+      public activatedRoute: ActivatedRoute, private notificationService: NotificationService,
+      private resourceService: ResourceService, public toasterService: ToasterService,){}
+  ngOnInit(): void {
+    const filters = {
+      program_id: this.activatedRoute.snapshot.params.programId
+    }
+    if (this.userService.isUserBelongsToOrg()) {
+      filters['organisation_id'] = this.userService.getUserOrgId();
+    } else {
+      filters['user_id'] = this.userService.userid;
+    }
+    this.programsService.getNominationList(filters).pipe(
+      map((data:any)=> data.result[0].rolemapping)
+    ).subscribe((data) => {
+      console.log('resp', data);
+      this.contributors = data.CONTRIBUTOR ? data.CONTRIBUTOR : [];
+      this.reviewers = data.REVIEWER ? data.REVIEWER : [];
+  })
+  }
 
     onUserCheck(event, userType){
         switch (userType) {
@@ -36,42 +58,33 @@ import { map } from "rxjs/operators";
   }
 
   sendReminderSMS(){
-    // const review$ = this.userReviewer ? this.programsService.getNominationList({}) : of([]);
-    // const contributor$ = this.userContributor ? this.programsService.getOrgUsersDetails({}) : of([]);
-    // combineLatest([review$, contributor$]).pipe().subscribe((resp)=> {
-    //     const nomination = {
-    //         contributorIds: resp[0],
-    //         reviewIds: resp[1]
-    //     }
-    //     this.notificationService.sendNotificationToContributorOrg(nomination);
-    // })
-      const filters = {
-        program_id: this.activatedRoute.snapshot.params.programId
-      }
-      if (this.userService.isUserBelongsToOrg()) {
-        filters['organisation_id'] = this.userService.getUserOrgId();
-      } else {
-        filters['user_id'] = this.userService.userid;
-      }
-      this.programsService.getNominationList(filters).pipe(
-        map((data:any)=> data.result[0].rolemapping)
-      ).subscribe((data) => {
-        console.log('resp', data);
-        const reviewers = this.userReviewer ? data.REVIEWER : [];
-        const contributors = this.userContributor ? data.CONTRIBUTOR : [];
+    let successMsg = this.resourceService.messages.smsg.reminderSent;
 
-        if(reviewers.length > 0){
-          this.notificationService.sendNotificationToContributorOrg(reviewers, "Send Back to Reveiwer").subscribe((resp)=>{
-            console.log(resp);
-          });
+    if(this.contributors && this.contributors.length > 0){ 
+      let contriMsgBody = this.resourceService.messages.reminder.contributor.msg.body;
+      contriMsgBody = _.replace(contriMsgBody, '{CURRENT_PROJECT_NAME}', this.programDetail.name);
+      contriMsgBody = _.replace(contriMsgBody, '{CONTENT_SUBMISSION_ENDDATE}', this.programDetail.content_submission_enddate);
+      console.log('contri msg', contriMsgBody);      
+      this.notificationService.sendNotificationToContributorOrg(this.contributors, contriMsgBody).subscribe((resp)=>{
+        if(resp.result.response==='SUCCESS'){
+          successMsg = _.replace(successMsg, '{ORG_USER}', 'contributors')
+          this.toasterService.success(successMsg);
         }
-        if(contributors.length > 0){
-          this.notificationService.sendNotificationToContributorOrg(contributors, "Send Back to Contributor").subscribe((resp)=>{
-            console.log(resp);
-          });
+      });
+    }
+    if(this.reviewers && this.reviewers.length > 0){
+      let revMsgBody = this.resourceService.messages.reminder.reviewer.msg.body;
+      revMsgBody = _.replace(revMsgBody, '{CURRENT_PROJECT_NAME}', this.programDetail.name);
+      revMsgBody = _.replace(revMsgBody, '{CONTENT_SUBMISSION_ENDDATE}', this.programDetail.content_submission_enddate);
+      console.log('revi msg', revMsgBody);
+      this.notificationService.sendNotificationToContributorOrg(this.reviewers, revMsgBody).subscribe((resp)=>{
+        if(resp.result.response==='SUCCESS'){
+          successMsg = _.replace(successMsg, '{ORG_USER}', 'reviewers')
+          this.toasterService.success(successMsg);
         }
-        // nomination = { reviwerUserId: reviewers, contributorsUserId: contributors, body1: "hello R", body2: "hello C"}
-        // this.notificationService.
-    })
+      console.log("hello", resp);
+      });
+    }
+
   }
 }

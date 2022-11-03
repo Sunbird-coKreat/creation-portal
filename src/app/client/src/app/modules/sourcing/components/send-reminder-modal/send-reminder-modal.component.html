@@ -1,24 +1,24 @@
 <sui-modal *ngIf="sendReminderModal" [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'small'"
     class="sb-modal" (dismissed)="onModalClose()" #modal>
     <div class="sb-modal-header">
-        Select to Send Reminder
+        {{resourceService.frmelmnts.lbl.sendReminder}}
     </div>
     <div class="sb-modal-content">
-        Select one or more to send reminders
+        {{resourceService.frmelmnts.lbl.selectUserToSendReminder}}
         <div class="flex-dc mt-10 mb-15">
             <div class="twelve wide column">
                 <div class="sb-checkbox sb-checkbox-primary p-0 m-0">
-                    <input type="checkbox" [(ngModel)]="userContributor" (change)="onUserCheck($event, 'Contributor')">
-                    <label class="fsmall pl-32">
-                        Contributor
+                    <input type="checkbox" [(ngModel)]="userContributor" (change)="onUserCheck($event, 'Contributor')" [disabled]="(!contributors || !contributors.length)" id="userContributorBox">
+                    <label for="userContributorBox" class="fsmall pl-32">
+                        {{resourceService.frmelmnts.lbl.contributors}}
                     </label>
                 </div>
             </div>
             <div class="twelve wide column">
                 <div class="sb-checkbox sb-checkbox-primary p-0 m-0">
-                    <input type="checkbox" [(ngModel)]="userReviewer"(change)="onUserCheck($event, 'Reviewer')">
-                    <label class="fsmall pl-32">
-                        Reviewer
+                    <input type="checkbox" [(ngModel)]="userReviewer"(change)="onUserCheck($event, 'Reviewer')" [disabled]="(!reviewers || !reviewers.length)" id="userReviewerBox">
+                    <label for="userReviewerBox" class="fsmall pl-32">
+                        {{resourceService.frmelmnts.lbl.reviewers}}
                     </label>
                 </div>
             </div>
@@ -30,7 +30,7 @@
         [disabled]="!(userContributor || userReviewer)"
         (click)="sendReminderSMS()"
         >
-            Send
+        {{resourceService.frmelmnts.btn.send}}
         </button>
     </div>
 </sui-modal>
