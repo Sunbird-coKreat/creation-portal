@@ -210,7 +210,7 @@
                 [storedCollectionData]="storedCollectionData"
                 ></app-bulk-upload>
                 <div class="d-flex">
-                  <button class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10 text-color" style="margin-bottom: 0.75rem" target="_blank" (click)="sendReminderModal=true" *ngIf="sourcingOrgReviewer">{{resourceService.frmelmnts.lbl.sendReminder}}</button>
+                  <button class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10 text-color" style="margin-bottom: 0.75rem" target="_blank" (click)="sendReminderModal=true" *ngIf="sourcingOrgReviewer && sendReminderButton">{{resourceService.frmelmnts.lbl.sendReminder}}</button>
                   <button type="button" class="sb-btn sb-btn-normal sb-btn-primary text-inherit ml-10" style="margin-bottom: 0.75rem" (click)="viewBlueprint()" *ngIf="localBlueprint">{{resourceService?.frmelmnts?.lbl?.viewBlueprint}}</button>
                   <a class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10" [href]="printUrl + '?id=' + collectionData.identifier + '&format=docx&version='+docxVersion" target="_blank" *ngIf="displayPrintPreview && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.printPreview}}</a>
                   <a class="sb-btn sb-btn-normal sb-btn-outline-info text-inherit ml-10" [href]="downloadCsvUrl + '?id=' + collectionData.identifier + '&format=csv'" target="_blank" *ngIf="displayDownloadCsv && sourcingOrgReviewer">{{resourceService?.frmelmnts?.btn?.downloadCsv}}</a>

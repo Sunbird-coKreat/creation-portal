@@ -152,7 +152,7 @@
                 </div>
                 <div class="twelve wide column" *ngIf="projectTargetType === 'questionSets'">
                   <div class="sb-checkbox sb-checkbox-primary">
-                    <input type="checkbox" id="sendReminderEnablebox" >
+                    <input type="checkbox" id="sendReminderEnablebox" [checked] = "isSendReminderEnabled" (change)="isSendReminderChanged($event)">
                     <label for="sendReminderEnablebox">{{resource?.frmelmnts?.lbl?.sendReminder}}</label>
                   </div>
                   <div

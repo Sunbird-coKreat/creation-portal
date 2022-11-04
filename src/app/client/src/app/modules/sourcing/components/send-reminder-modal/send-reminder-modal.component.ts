@@ -49,7 +49,7 @@ import * as _ from 'lodash-es';
                 this.userContributor = event.target.checked;
             break;
             case 'Reviewer':
-                this.userReviewer = event.target.checked
+                this.userReviewer = event.target.checked;
             break;
     }
   }
@@ -58,33 +58,29 @@ import * as _ from 'lodash-es';
   }
 
   sendReminderSMS(){
-    let successMsg = this.resourceService.messages.smsg.reminderSent;
-
-    if(this.contributors && this.contributors.length > 0){ 
+    if(this.userContributor && this.contributors && this.contributors.length > 0){ 
       let contriMsgBody = this.resourceService.messages.reminder.contributor.msg.body;
       contriMsgBody = _.replace(contriMsgBody, '{CURRENT_PROJECT_NAME}', this.programDetail.name);
       contriMsgBody = _.replace(contriMsgBody, '{CONTENT_SUBMISSION_ENDDATE}', this.programDetail.content_submission_enddate);
-      console.log('contri msg', contriMsgBody);      
       this.notificationService.sendNotificationToContributorOrg(this.contributors, contriMsgBody).subscribe((resp)=>{
         if(resp.result.response==='SUCCESS'){
-          successMsg = _.replace(successMsg, '{ORG_USER}', 'contributors')
-          this.toasterService.success(successMsg);
+          this.toasterService.success(this.resourceService.messages.smsg.reminderSentContributor);
         }
+      },(error) => {
+        this.toasterService.error(this.resourceService.messages.emsg.failedToSendReminderToContributor)
       });
     }
-    if(this.reviewers && this.reviewers.length > 0){
+    if(this.userReviewer && this.reviewers && this.reviewers.length > 0){
       let revMsgBody = this.resourceService.messages.reminder.reviewer.msg.body;
       revMsgBody = _.replace(revMsgBody, '{CURRENT_PROJECT_NAME}', this.programDetail.name);
       revMsgBody = _.replace(revMsgBody, '{CONTENT_SUBMISSION_ENDDATE}', this.programDetail.content_submission_enddate);
-      console.log('revi msg', revMsgBody);
       this.notificationService.sendNotificationToContributorOrg(this.reviewers, revMsgBody).subscribe((resp)=>{
         if(resp.result.response==='SUCCESS'){
-          successMsg = _.replace(successMsg, '{ORG_USER}', 'reviewers')
-          this.toasterService.success(successMsg);
+          this.toasterService.success(this.resourceService.messages.smsg.reminderSentReviewer);
         }
-      console.log("hello", resp);
+      },(error) => {
+        this.toasterService.error(this.resourceService.messages.emsg.failedToSendReminderToReviwer)
       });
     }
-
   }
 }

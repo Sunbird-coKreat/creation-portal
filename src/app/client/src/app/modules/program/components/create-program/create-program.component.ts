@@ -120,6 +120,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public isValidFrameworkFields = false;
   public frameworkFormData: any;
   public fetchedCategory: string = '';
+  public isSendReminderEnabled: boolean = true;
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -147,6 +148,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'false';
     const allowedTypes = (<HTMLInputElement>document.getElementById('allowedFrameworkTypes'))
     ? (<HTMLInputElement>document.getElementById('allowedFrameworkTypes')).value : '';
+    this.isSendReminderEnabled =  (<HTMLInputElement>document.getElementById('isSendReminderEnabled')) ?
+    (<HTMLInputElement>document.getElementById('isSendReminderEnabled')).value === 'true' : false;
+
     this.allowedFrameworkTypes = (allowedTypes) ? allowedTypes.split(',') : ["K-12", "TPD"];
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
@@ -175,6 +179,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
       this.disableUpload = (this.editPublished && _.get(this.programDetails, 'guidelines_url')) ? true : false;
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.isSendReminderEnabled = _.get(this.programDetails, 'config.isSendReminderEnabled');
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : '';
 
@@ -1048,6 +1053,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
     }
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    this.programConfig.isSendReminderEnabled = this.isSendReminderEnabled;
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
       if (_.includes(this.selectedTargetCategories, o.name)) {
@@ -2079,5 +2085,8 @@ showTexbooklist() {
           }, 2000);
         }
       });
+  }
+  isSendReminderChanged($event){
+    this.isSendReminderEnabled = $event.target.checked;
   }
 }

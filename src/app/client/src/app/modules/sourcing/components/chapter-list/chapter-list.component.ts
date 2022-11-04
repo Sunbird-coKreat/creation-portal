@@ -142,6 +142,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   enableReviewEdit = false;
   public qualityParamConfig: any;
   public sendReminderModal =false;
+  public sendReminderButton;
 
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -194,6 +195,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.sessionContext['targetCollectionObjectType'] = _.get(this.collection, 'objectType');
     }
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.sendReminderButton = _.get(this.chapterListComponentInput, 'programContext.config.isSendReminderEnabled');
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
