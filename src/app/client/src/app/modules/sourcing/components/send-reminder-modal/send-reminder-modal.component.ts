@@ -34,12 +34,12 @@ import * as _ from 'lodash-es';
     } else {
       filters['user_id'] = this.userService.userid;
     }
-    this.programsService.getNominationList(filters).pipe(
-      map((data:any)=> data.result[0].rolemapping)
-    ).subscribe((data) => {
-      console.log('resp', data);
-      this.contributors = data.CONTRIBUTOR ? data.CONTRIBUTOR : [];
-      this.reviewers = data.REVIEWER ? data.REVIEWER : [];
+    this.programsService.getNominationList(filters).subscribe((data) => {
+      if(data.result && data.result.length> 0 ){
+      const userRolemapping = data.result[0].rolemapping;
+      this.contributors = userRolemapping.CONTRIBUTOR ? userRolemapping.CONTRIBUTOR : [];
+      this.reviewers = userRolemapping.REVIEWER ? userRolemapping.REVIEWER : [];     
+      }
   })
   }
 
@@ -59,10 +59,7 @@ import * as _ from 'lodash-es';
 
   sendReminderSMS(){
     if(this.userContributor && this.contributors && this.contributors.length > 0){ 
-      let contriMsgBody = this.resourceService.messages.reminder.contributor.msg.body;
-      contriMsgBody = _.replace(contriMsgBody, '{CURRENT_PROJECT_NAME}', this.programDetail.name);
-      contriMsgBody = _.replace(contriMsgBody, '{CONTENT_SUBMISSION_ENDDATE}', this.programDetail.content_submission_enddate);
-      this.notificationService.sendNotificationToContributorOrg(this.contributors, contriMsgBody).subscribe((resp)=>{
+      this.notificationService.sendNotificationToContributorOrg(this.contributors, '').subscribe((resp)=>{
         if(resp.result.response==='SUCCESS'){
           this.toasterService.success(this.resourceService.messages.smsg.reminderSentContributor);
         }
@@ -71,10 +68,7 @@ import * as _ from 'lodash-es';
       });
     }
     if(this.userReviewer && this.reviewers && this.reviewers.length > 0){
-      let revMsgBody = this.resourceService.messages.reminder.reviewer.msg.body;
-      revMsgBody = _.replace(revMsgBody, '{CURRENT_PROJECT_NAME}', this.programDetail.name);
-      revMsgBody = _.replace(revMsgBody, '{CONTENT_SUBMISSION_ENDDATE}', this.programDetail.content_submission_enddate);
-      this.notificationService.sendNotificationToContributorOrg(this.reviewers, revMsgBody).subscribe((resp)=>{
+      this.notificationService.sendNotificationToContributorOrg(this.reviewers, '').subscribe((resp)=>{
         if(resp.result.response==='SUCCESS'){
           this.toasterService.success(this.resourceService.messages.smsg.reminderSentReviewer);
         }

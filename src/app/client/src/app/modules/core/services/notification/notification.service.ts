@@ -272,13 +272,6 @@ export class NotificationService {
       body: bodyData,
       recipientUserIds: [...user_ids]
     };
-    // const option = {
-    //   url: 'user/v1/notification/email',
-      
-    //   data: {
-    //     request: reqData
-    //   }
-    // };
     return this.sendNotification(reqData).pipe()
   }
 }
