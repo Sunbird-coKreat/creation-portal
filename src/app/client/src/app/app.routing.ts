@@ -27,9 +27,6 @@ const appRoutes: Routes = [
     path: 'recover', loadChildren: () => import('app/modules/recover-account/recover-account.module').then(m => m.RecoverAccountModule)
   },
   {
-    path: 'accountMerge', loadChildren: () => import('app/modules/merge-account/merge-account.module').then(m => m.MergeAccountModule)
-  },
-  {
     path: 'contribution-portal', loadChildren: () => import('app/modules/public/public.module').then(m => m.PublicModule)
   },
   {
