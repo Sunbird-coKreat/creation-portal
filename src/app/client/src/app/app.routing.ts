@@ -21,9 +21,6 @@ const appRoutes: Routes = [
     path: 'profile', loadChildren: () => import('app/plugins/profile/profile.module').then(m => m.ProfileModule)
   },
   {
-    path: 'certs', loadChildren: () => import('app/modules/certificate/certificate.module').then(m => m.CertificateModule)
-  },
-  {
     path: 'contribution-portal', loadChildren: () => import('app/modules/public/public.module').then(m => m.PublicModule)
   },
   {
