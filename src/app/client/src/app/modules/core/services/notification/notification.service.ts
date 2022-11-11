@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { of, throwError, forkJoin, Observable } from 'rxjs';
 import { ResourceService, ServerResponse, ConfigService } from '@sunbird/shared';
-import { mergeMap, tap } from 'rxjs/operators';
+import { mergeMap, switchMap, tap } from 'rxjs/operators';
 import { LearnerService } from '../learner/learner.service';
 import { ProgramsService } from '../programs/programs.service';
 import * as _ from 'lodash-es';
@@ -265,13 +265,31 @@ export class NotificationService {
       }
     );
   }
-  sendNotificationToContributorOrg(user_ids: Array<string>, bodyData: string): Observable<ServerResponse>{
-    const reqData = {
-      mode: 'sms',
-      subject: 'VidyaDaan',
-      body: bodyData,
-      recipientUserIds: [...user_ids]
+  sendNotificationToContributorOrg(user_ids: Array<string>, programDetail){
+    const mode = 'sms';
+    const templateRequest = {
+      key: 'smsContentReject',
+      status: 'active'
     };
-    return this.sendNotification(reqData).pipe()
+    return this.getSmsTemplate(templateRequest).pipe(
+      switchMap((response)=>{
+        const configuration = _.get(response, 'result.configuration');
+        if (_.isEmpty(configuration)) {
+          return throwError('Failed to get the sms template');
+        }
+        let body = configuration.value;
+        body = _.replace(body, '$url', this.smsURL+"/contribute");
+        body = _.replace(body, '$contentName', _.truncate(programDetail.submissionDate, {length: 25}));
+        body = _.replace(body, '$projectName', _.truncate(programDetail.name, {length: 25}));
+
+        const request = {
+          mode: 'sms',
+          subject: 'VidyaDaan',
+          body: body,
+          recipientUserIds: [...user_ids]
+        };
+        return this.sendNotification(request);
+      })
+    )
   }
 }

@@ -5,6 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { map } from "rxjs/operators";
 import { ResourceService, ToasterService} from '@sunbird/shared';
 import * as _ from 'lodash-es';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector: 'app-send-reminder-modal',
@@ -24,7 +25,8 @@ import * as _ from 'lodash-es';
     constructor(
       public programsService: ProgramsService, public userService: UserService,
       public activatedRoute: ActivatedRoute, private notificationService: NotificationService,
-      private resourceService: ResourceService, public toasterService: ToasterService,){}
+      private resourceService: ResourceService, public toasterService: ToasterService,
+      private datePipe: DatePipe){}
   ngOnInit(): void {
     const filters = {
       program_id: this.activatedRoute.snapshot.params.programId
@@ -58,8 +60,12 @@ import * as _ from 'lodash-es';
   }
 
   sendReminderSMS(){
+    const programDetail={
+      name: this.programDetail.name,
+      submissionDate : this.datePipe.transform(this.programDetail.content_submission_enddate,'dd MMMM yyyy')
+    }
     if(this.userContributor && this.contributors && this.contributors.length > 0){ 
-      this.notificationService.sendNotificationToContributorOrg(this.contributors, '').subscribe((resp)=>{
+      this.notificationService.sendNotificationToContributorOrg(this.contributors, programDetail).subscribe((resp)=>{
         if(resp.result.response==='SUCCESS'){
           this.toasterService.success(this.resourceService.messages.smsg.reminderSentContributor);
         }
@@ -68,7 +74,7 @@ import * as _ from 'lodash-es';
       });
     }
     if(this.userReviewer && this.reviewers && this.reviewers.length > 0){
-      this.notificationService.sendNotificationToContributorOrg(this.reviewers, '').subscribe((resp)=>{
+      this.notificationService.sendNotificationToContributorOrg(this.reviewers, programDetail).subscribe((resp)=>{
         if(resp.result.response==='SUCCESS'){
           this.toasterService.success(this.resourceService.messages.smsg.reminderSentReviewer);
         }
@@ -76,5 +82,7 @@ import * as _ from 'lodash-es';
         this.toasterService.error(this.resourceService.messages.emsg.failedToSendReminderToReviwer)
       });
     }
+    this.userContributor = false;
+    this.userReviewer = false;
   }
 }
