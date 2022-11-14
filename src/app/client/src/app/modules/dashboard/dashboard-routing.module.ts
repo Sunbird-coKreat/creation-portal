@@ -1,11 +1,10 @@
 import { NgModule, Component } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent } from './components/';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 
 const routes: Routes = [
   {
-    path: 'myActivity', component: CourseConsumptionComponent,
+    path: 'myActivity',
     data: {
       telemetry: { env: 'course', pageid: 'course-creator-dashboard', type: 'view' },
       breadcrumbs: [{ label: 'Home', url: '/home' },
@@ -13,7 +12,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'activity/course/consumption/:id/:timePeriod', component: CourseConsumptionComponent,
+    path: 'activity/course/consumption/:id/:timePeriod',
     data: {
       telemetry: { env: 'course', pageid: 'course-creator-dashboard', type: 'view' },
       breadcrumbs: [{ label: 'Home', url: '/home' },
@@ -21,7 +20,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'organization', component: UsageReportsComponent, canActivate: [AuthGuard],
+    path: 'organization', canActivate: [AuthGuard],
     data: {
       roles: 'dashboardRole',
       telemetry: { env: 'dashboard', pageid: 'org-admin-dashboard', type: 'view' },
@@ -30,7 +29,7 @@ const routes: Routes = [
     }
   },
   {
-    path: 'organization/creation/:id/:timePeriod', component: OrganisationComponent,
+    path: 'organization/creation/:id/:timePeriod', 
     data: {
       telemetry: { env: 'profile', pageid: 'org-admin-dashboard', type: 'view' },
       breadcrumbs: [{ label: 'Home', url: '/home' },
