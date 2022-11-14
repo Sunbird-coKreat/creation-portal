@@ -39,8 +39,8 @@ import { DatePipe } from '@angular/common';
     this.programsService.getNominationList(filters).subscribe((data) => {
       if(data.result && data.result.length> 0 ){
       const userRolemapping = data.result[0].rolemapping;
-      this.contributors = userRolemapping.CONTRIBUTOR ? userRolemapping.CONTRIBUTOR : [];
-      this.reviewers = userRolemapping.REVIEWER ? userRolemapping.REVIEWER : [];     
+      this.contributors = userRolemapping?.CONTRIBUTOR ? userRolemapping.CONTRIBUTOR : [];
+      this.reviewers = userRolemapping?.REVIEWER ? userRolemapping.REVIEWER : [];     
       }
   })
   }

@@ -16,7 +16,7 @@
             </div>
             <div class="twelve wide column">
                 <div class="sb-checkbox sb-checkbox-primary p-0 m-0">
-                    <input type="checkbox" [(ngModel)]="userReviewer"(change)="onUserCheck($event, 'Reviewer')" [disabled]="(!reviewers || !reviewers.length)" id="userReviewerBox">
+                    <input type="checkbox" [(ngModel)]="userReviewer"(change)="onUserCheck($event, 'Reviewer')" [disabled]="(!reviewers || !reviewers.length || !programDetail.config.defaultContributeOrgReview)" id="userReviewerBox">
                     <label for="userReviewerBox" class="fsmall pl-32">
                         {{resourceService.frmelmnts.lbl.reviewers}}
                     </label>
