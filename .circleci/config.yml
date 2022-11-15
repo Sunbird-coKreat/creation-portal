@@ -20,6 +20,11 @@ jobs:
     steps:
       - checkout:
           path: ~/portal
+      - run: 
+          name: Installing prerequisites
+          command: |-
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+            node --version
       - run:
           name: Installing angular cli
           command: 'npm install -g @angular/cli@10.2.4 --no-progress'
