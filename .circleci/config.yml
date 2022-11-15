@@ -23,6 +23,7 @@ jobs:
       - run: 
           name: Installing prerequisites
           command: |-
+            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 536F8F1DE80F6A35
             curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
             node --version
       - run:
