@@ -69,8 +69,9 @@ import { DatePipe } from '@angular/common';
         if(resp.result.response==='SUCCESS'){
           this.toasterService.success(this.resourceService.messages.smsg.reminderSentContributor);
         }
-      },(error) => {
-        this.toasterService.error(this.resourceService.messages.emsg.failedToSendReminderToContributor)
+        (error) => {
+          this.toasterService.error(this.resourceService.messages.emsg.failedToSendReminderToContributor)
+        }
       });
     }
     if(this.userReviewer && this.reviewers && this.reviewers.length > 0){
@@ -78,9 +79,9 @@ import { DatePipe } from '@angular/common';
         if(resp.result.response==='SUCCESS'){
           this.toasterService.success(this.resourceService.messages.smsg.reminderSentReviewer);
         }
-      },(error) => {
+      (error) => {
         this.toasterService.error(this.resourceService.messages.emsg.failedToSendReminderToReviwer)
-      });
+      }});
     }
     this.userContributor = false;
     this.userReviewer = false;

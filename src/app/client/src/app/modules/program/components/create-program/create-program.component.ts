@@ -120,7 +120,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public isValidFrameworkFields = false;
   public frameworkFormData: any;
   public fetchedCategory: string = '';
-  public isSendReminderEnabled: boolean = true;
+  public isSendReminderEnabled: boolean;
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -1053,7 +1053,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
     }
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    if (this.projectTargetType=='questionSets'){
     this.programConfig.isSendReminderEnabled = this.isSendReminderEnabled;
+    }
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
       if (_.includes(this.selectedTargetCategories, o.name)) {
