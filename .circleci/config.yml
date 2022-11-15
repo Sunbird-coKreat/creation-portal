@@ -21,6 +21,16 @@ jobs:
       - checkout:
           path: ~/portal
       - run:
+          name: Installing prerequisites
+          command: |-
+            sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6DB5542C356545CF # Adding Heroku keys, else the apt update will fail.
+            sudo apt-get update && sudo apt install -y ca-certificates libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 \
+                  xvfb gtk2-engines-pixbuf \
+                  xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+            sudo apt install nodejs -y
+            node --version
+      - run:
           name: Installing angular cli
           command: 'npm install -g @angular/cli@10.2.4 --no-progress'
       - restore_cache:
@@ -37,13 +47,6 @@ jobs:
       - run:
           name: Executing test cases
           command: 'npm run test-coverage | tee /tmp/logs/test_cases.log'
-      - run:
-          name: Install  Node.js v14.20.1 with build in nvm tool
-          command: |
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v14
-            node -v
       - run:
           name: Altered Node version
           command: 'node --version'
