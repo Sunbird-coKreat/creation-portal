@@ -16,7 +16,7 @@ jobs:
   test-cases:
     working_directory: ~/portal/src/app/client
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:202111-02
     steps:
       - checkout:
           path: ~/portal
@@ -37,13 +37,6 @@ jobs:
       - run:
           name: Executing test cases
           command: 'npm run test-coverage | tee /tmp/logs/test_cases.log'
-      - run:
-          name: Install  Node.js v14.20.1 with build in nvm tool
-          command: |
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm install v14
-            node -v
       - run:
           name: Altered Node version
           command: 'node --version' 
