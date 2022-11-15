@@ -11,6 +11,7 @@ let envVariables = {
   DEFAULT_CHANNEL: env.sunbird_default_channel,
   PORTAL_API_WHITELIST_CHECK: env.sunbird_enable_api_whitelist || 'true',
   ENABLE_REVIEW_EDIT: env.enable_review_edit || false,
+  IS_SEND_REMINDER_ENABLED:env.sunbird_send_reminder_enabled || 'false',
 
 
   // Application Start-up - Hosts and PORT Configuration

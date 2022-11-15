@@ -164,6 +164,7 @@ function getLocals(req) {
   locals.enableReviewEdit = envHelper.ENABLE_REVIEW_EDIT;
   locals.cloudStorageProvider = envHelper.cloud_storage_provider;
   locals.interactiveVideoQsetCategory = envHelper.DOCK_INTERACTIVE_VIDEO_QSET_CATEGORY;
+  locals.isSendReminderEnabled = envHelper.IS_SEND_REMINDER_ENABLED;
   return locals
 }
 

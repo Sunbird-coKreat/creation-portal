@@ -42,6 +42,7 @@ import { TranscriptsComponent } from './components/transcripts/transcripts.compo
 import { TranscriptsReviewComponent } from './components/transcripts-review/transcripts-review.component';
 import { AccessibilityInfoComponent } from './components/accessibility-info/accessibility-info.component';
 import { ModalPreviewComponent } from './components/modal-preview/modal-preview.component';
+import { SendReminderModalComponent } from './components/send-reminder-modal/send-reminder-modal.component';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
@@ -52,7 +53,7 @@ import { ModalPreviewComponent } from './components/modal-preview/modal-preview.
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
     BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent, TranscriptsReviewComponent,
     AccessibilityInfoComponent,
-    ModalPreviewComponent],
+    ModalPreviewComponent, SendReminderModalComponent],
   imports: [
     RouterModule,
     CoreModule,

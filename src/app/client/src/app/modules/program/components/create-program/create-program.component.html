@@ -139,8 +139,7 @@
                            [telemetryInteractObject]="telemetryInteractObject"
                            [telemetryInteractCdata]="telemetryInteractCdata"
                            [telemetryInteractPdata]="telemetryInteractPdata">
-                    <label
-                      for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
+                    <label for="defaultContributeOrgReview">{{resource?.frmelmnts?.lbl?.twoLevelReview}}</label>
                   </div>
                   <div *ngIf="createProgramForm.controls['type'].value !== 'restricted'"
                        class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
@@ -149,6 +148,16 @@
                   <div *ngIf="createProgramForm.controls['type'].value === 'restricted'"
                        class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
                     {{resource?.frmelmnts?.lbl?.restricted?.twoLevelReviewNote}}
+                  </div>
+                </div>
+                <div class="twelve wide column" *ngIf="projectTargetType === 'questionSets'">
+                  <div class="sb-checkbox sb-checkbox-primary">
+                    <input type="checkbox" id="sendReminderEnablebox" [checked] = "isSendReminderEnabled" (change)="isSendReminderChanged($event)">
+                    <label for="sendReminderEnablebox">{{resource?.frmelmnts?.lbl?.enableSendReminder}}</label>
+                  </div>
+                  <div
+                       class="fxsmall font-italic sb-color-gray-300 mb-10 d-inline-block w-40 va-top pl-20">
+                       {{resource?.frmelmnts.lbl.sendReminderNote}}
                   </div>
                 </div>
                 <div class="three wide column"
