@@ -32,12 +32,12 @@ jobs:
             node --version
       - run:
           name: Installing angular cli
-          command: 'npm install -g @angular/cli@11.2.14 --no-progress'
+          command: 'npm install -g @angular/cli@10.2.4 --no-progress'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Installing npm deps
-          command: 'npm install --no-progress'
+          command: 'npm install --no-progress --legacy-peer-deps'
       - save_cache: # special step to save the dependency cache
           key: dependency-cache-{{ checksum "package.json" }}
           paths: ./node_modules
