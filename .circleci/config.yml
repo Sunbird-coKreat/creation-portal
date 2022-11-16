@@ -28,10 +28,17 @@ jobs:
                   xvfb gtk2-engines-pixbuf \
                   xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable
             curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
-            wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - 6DB5542C356545CF
-            echo "deb http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list
-            apt-get update
-            apt-get install -y google-chrome-stable xvfb
+            echo "deb http://dl.google.com/linux/chrome/deb/ stable main" | tee -a /etc/apt/sources.list
+            # Fetch Chrome's PGP keys for secure installation
+            - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+            # Update aptitude's package sources
+            - apt-get -qq update -y
+            # Install latest Chrome stable, Xvfb packages
+            - apt-get -qq install -y google-chrome-stable xvfb gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable imagemagick x11-apps default-jre
+            # Launch Xvfb
+            - Xvfb :0 -ac -screen 0 1024x768x24 &
+            # Export display for Chrome
+            - export DISPLAY=:99
             sudo apt install nodejs -y
             node --version
       - run:
