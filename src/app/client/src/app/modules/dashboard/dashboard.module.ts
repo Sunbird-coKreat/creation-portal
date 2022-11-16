@@ -8,11 +8,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TelemetryModule } from '@sunbird/telemetry';
 // Custome component(s) and services
-import {
-  CourseConsumptionService, DashboardUtilsService, OrganisationService,
-  RendererService, LineChartService, DownloadService, CourseProgressService,
-  UsageService
-} from './services';
+import { UsageService } from './services';
 
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 // SB core and shared services
@@ -36,11 +32,6 @@ import { OrderModule } from 'ngx-order-pipe';
   declarations: [],
   exports: [],
   providers: [
-    RendererService,
-    DashboardUtilsService,
-    SearchService,
-    LineChartService,
-    CourseConsumptionService,
-    OrganisationService, DownloadService, CourseProgressService, UsageService]
+        SearchService, UsageService]
 })
 export class DashboardModule { }
