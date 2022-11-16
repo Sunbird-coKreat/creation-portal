@@ -55,11 +55,11 @@ export class RecursiveTreeComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.visibility['showAddresource'] = submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showEditResource'] = this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showEditResource'] = submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showMoveResource'] = this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showMoveResource'] = submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
-    this.visibility['showDeleteResource'] = this.hasAccessFor(['CONTRIBUTOR']);
+    this.visibility['showDeleteResource'] = submissionDateFlag && this.hasAccessFor(['CONTRIBUTOR']);
     // tslint:disable-next-line:max-line-length
     this.visibility['showPreviewResource'] = this.hasAccessFor(['REVIEWER']);
     this.visibility['showActionMenu'] = this.shouldActionMenuBeVisible();

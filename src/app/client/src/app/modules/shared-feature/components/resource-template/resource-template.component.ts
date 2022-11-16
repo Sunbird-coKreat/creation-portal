@@ -70,7 +70,7 @@ export class ResourceTemplateComponent implements OnInit, OnDestroy {
           this.toasterService.error(this.resourceService.messages.emsg.m0026);
       } else {
         const supportedMimeTypes = catMetaData.schema.properties.mimeType.enum;
-        const interactionTypes = _.get(catMetaData, 'schema.properties.interactionTypes.items.enum');
+        const interactionTypes = _.get(catMetaData, 'schema.properties.interactionTypes.items.enum') || [];
         //const supportedMimeTypes = ['application/vnd.ekstep.quml-archive', 'application/vnd.ekstep.h5p-archive'];
 
         let catEditorConfig = !_.isEmpty(_.get(catMetaData, 'config.sourcingConfig.editor')) ? catMetaData.config.sourcingConfig.editor : [];
