@@ -1,23 +1,24 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const reportHelper = require('../helpers/reportHelper.js')
+const StorageService = require('../helpers/cloudStorage/index.js/index');
 
 module.exports = function (app) {
 
     app.get('/courseReports/:slug/:filename',
         proxyUtils.verifyToken(),
         reportHelper.validateRoles(['CONTENT_CREATOR']),
-        reportHelper.azureBlobStream());
+        StorageService.CLOUD_CLIENT.fileReadStream());
 
     app.get('/reports/:reportPrefix?/:slug/:filename',
         proxyUtils.verifyToken(),
         reportHelper.validateSlug(['public']),
         reportHelper.validateRoles(['ORG_ADMIN', 'REPORT_VIEWER']),
-        reportHelper.azureBlobStream());
+        StorageService.CLOUD_CLIENT.fileReadStream());
 
     app.get('/admin-reports/:slug/:filename',
         proxyUtils.verifyToken(),
         reportHelper.validateSlug(['geo-summary', 'geo-detail', 'geo-summary-district', 'user-summary', 'user-detail',
             'validated-user-summary', 'validated-user-summary-district', 'validate-user-detail']),
         reportHelper.validateRoles(['ORG_ADMIN']),
-        reportHelper.azureBlobStream());
+        StorageService.CLOUD_CLIENT.fileReadStream());
 }

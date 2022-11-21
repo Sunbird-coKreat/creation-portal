@@ -132,8 +132,15 @@ let envVariables = {
   sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
   SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
-  //Cloud service Provider
+  //Cloud Agnostic Changes
   cloud_storage_provider: env.sunbird_cloud_storage_provider, // azure, aws or gcloud
+  sunbird_cloud_storage_key: env.sunbird_cloud_storage_key,
+  sunbird_cloud_storage_secret: env.sunbird_cloud_storage_secret,
+  sunbird_cloud_report_container: env.sunbird_cloud_report_container  || 'reports',
+  sunbird_cloud_storage_region: env.sunbird_cloud_storage_region,
+  sunbird_cloud_storage_container: env.sunbird_cloud_storage_container || '',
+  sunbird_gcloud_project_id: env.sunbird_gcloud_project_id || '',
+
 
   // Default Language Configuration
   sunbird_default_language: env.sunbird_portal_default_language || 'en',
