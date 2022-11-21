@@ -1,6 +1,6 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const reportHelper = require('../helpers/reportHelper.js')
-const StorageService = require('../helpers/cloudStorage/index.js/index');
+const StorageService = require('../helpers/cloudStorage/index');
 
 module.exports = function (app) {
 
