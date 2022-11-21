@@ -6,7 +6,7 @@
 
  const cloudService  = require('client-cloud-services');
  const envHelper     = require('../../helpers/environmentVariablesHelper');
- const cloudProvider = envHelper.sunbird_cloud_storage_provider;
+ const cloudProvider = envHelper.cloud_storage_provider;
 
  /**
   * Based on Environment Cloud Provider value
