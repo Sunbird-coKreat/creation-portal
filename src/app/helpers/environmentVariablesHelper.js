@@ -134,8 +134,8 @@ let envVariables = {
 
   //Cloud Agnostic Changes
   cloud_storage_provider: env.sunbird_cloud_storage_provider, // azure, aws or gcloud
-  sunbird_cloud_storage_key: env.sunbird_cloud_storage_key,
-  sunbird_cloud_storage_secret: env.sunbird_cloud_storage_secret,
+  sunbird_cloud_storage_key: env.sunbird_azure_account_name,
+  sunbird_cloud_storage_secret: env.sunbird_azure_account_key,
   sunbird_cloud_report_container: env.sunbird_cloud_report_container  || 'reports',
   sunbird_cloud_storage_region: env.sunbird_cloud_storage_region,
   sunbird_cloud_storage_container: env.sunbird_cloud_storage_container || '',
