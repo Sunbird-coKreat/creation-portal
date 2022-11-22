@@ -14,7 +14,9 @@ module.exports = function (app) {
         reportHelper.validateSlug(['public']),
         reportHelper.validateRoles(['ORG_ADMIN', 'REPORT_VIEWER']),
         (req, res, next) => {
-          req.params.slug = req.params.reportPrefix + '/' + req.params.slug;
+          if(req.params.reportPrefix) {
+            req.params.slug = req.params.reportPrefix + '/' + req.params.slug;
+          }
           console.log("req.params ", req.params)
           next()
         },
