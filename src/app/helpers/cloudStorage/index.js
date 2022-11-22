@@ -20,7 +20,7 @@
        credential: envHelper.sunbird_cloud_storage_secret,
        reportsContainer: envHelper.sunbird_cloud_report_container
      };
-     let azureClient = cloudService.init(cloudProvider);
+     let azureClient = cloudService.init('azure');
      const azureStorage = new azureClient(azureConfig);
      exports.CLOUD_CLIENT = azureStorage;
      break;
@@ -32,7 +32,7 @@
        containerName: envHelper.sunbird_cloud_storage_container,
        reportsContainer: envHelper.sunbird_cloud_report_container
      };
-     let awsClient = cloudService.init(cloudProvider);
+     let awsClient = cloudService.init('aws');
      const awsStorage = new awsClient(awsConfig);
      exports.CLOUD_CLIENT = awsStorage;
      break;
@@ -44,7 +44,7 @@
        containerName: envHelper.sunbird_cloud_storage_container,
        reportsContainer: envHelper.sunbird_cloud_report_container
      };
-     let gcpClient = cloudService.init(cloudProvider);
+     let gcpClient = cloudService.init('gcloud');
      const gcpStorage = new gcpClient(gcpConfig);
      exports.CLOUD_CLIENT = gcpStorage;
      break;
