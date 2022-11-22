@@ -13,7 +13,7 @@
   * Export respective Storage Service
   */
  if (!cloudProvider) throw new Error("Cloud Storage Service - Provider is not initialized");
- switch (cloudProvider) {
+ switch (cloudProvider.toLowerCase()) {
    case 'azure':
      let azureConfig = {
        identity: envHelper.sunbird_cloud_storage_key,
