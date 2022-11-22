@@ -13,6 +13,11 @@ module.exports = function (app) {
         proxyUtils.verifyToken(),
         reportHelper.validateSlug(['public']),
         reportHelper.validateRoles(['ORG_ADMIN', 'REPORT_VIEWER']),
+        (req, res, next) => {
+          req.params.slug = req.params.reportPrefix + '/' + req.params.slug;
+          console.log("req.params ", req.params)
+          next()
+        },
         StorageService.CLOUD_CLIENT.fileReadStream());
 
     app.get('/admin-reports/:slug/:filename',
