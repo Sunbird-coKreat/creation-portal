@@ -20,9 +20,9 @@ const appRoutes: Routes = [
   {
     path: 'profile', loadChildren: () => import('app/plugins/profile/profile.module').then(m => m.ProfileModule)
   },
-  {
-    path: 'certs', loadChildren: () => import('app/modules/certificate/certificate.module').then(m => m.CertificateModule)
-  },
+  // {
+  //   path: 'certs', loadChildren: () => import('app/modules/certificate/certificate.module').then(m => m.CertificateModule)
+  // },
   {
     path: 'recover', loadChildren: () => import('app/modules/recover-account/recover-account.module').then(m => m.RecoverAccountModule)
   },
