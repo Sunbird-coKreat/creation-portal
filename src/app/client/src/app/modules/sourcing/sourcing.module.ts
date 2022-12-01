@@ -35,7 +35,7 @@ import { QuestionSetEditorComponent } from './components/question-set-editor/que
 import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
-import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { ResourceLibraryModule } from "@project-sunbird/sunbird-resource-library";
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { TranscriptsComponent } from './components/transcripts/transcripts.component';
