@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ProfilePageComponent } from './components';
+// import { ProfilePageComponent } from './components';
 const telemetryEnv = 'profile';
 const objectType = 'profile';
 const routes: Routes = [
   {
-    path: '', component: ProfilePageComponent,
+    // path: '', component: ProfilePageComponent,
     data: {
       telemetry: {
         env: telemetryEnv, type: 'view', mode: 'create', subtype: 'paginate', object: { type: objectType, ver: '1.0' }
