@@ -17,7 +17,7 @@ import {
   UpforreviewContentplayerComponent, FlagConentplayerComponent, ReviewsubmissionsContentplayerComponent,
   PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
    FlagReviewerComponent, CollaboratingOnComponent,
-  CollaborationContentFilterComponent
+  CollaborationContentFilterComponent,BatchListComponent, BatchPageSectionComponent,AllMyContentFilterComponent,AllContentComponent
 } from './components';
 import { NgInviewModule } from 'angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -56,7 +56,7 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
     CollaboratingOnComponent,
     CollaborationContentFilterComponent,
     ReviewCommentsComponent,
-    CollaborationContentFilterComponent,
+    CollaborationContentFilterComponent,BatchListComponent, BatchPageSectionComponent,AllMyContentFilterComponent,AllContentComponent
   ],
   providers: [WorkSpaceService, EditorService, BatchService, ReviewCommentsService]
 })
