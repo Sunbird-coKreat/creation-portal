@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CoreModule } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
 import {
-  HomeCalendarCardComponent, HomeFeedCardComponent, MainHomeComponent, HomeAnnouncementComponent, NotificationComponent
+  HomeCalendarCardComponent, HomeFeedCardComponent, MainHomeComponent, NotificationComponent
 } from './component';
 import { HomeAnnouncementService } from './service/index';
 import { NgInviewModule } from 'angular-inport';
@@ -29,7 +29,6 @@ import { TelemetryModule } from '@sunbird/telemetry';
     MainHomeComponent,
     HomeFeedCardComponent,
     HomeCalendarCardComponent,
-    HomeAnnouncementComponent,
     NotificationComponent,
   ],
   providers: [HomeAnnouncementService]
