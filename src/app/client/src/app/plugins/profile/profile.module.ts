@@ -6,7 +6,7 @@ import { SharedModule } from '@sunbird/shared';
 
 import { ProfileRoutingModule } from './profile-routing.module';
 import {
-  ProfilePageComponent, ProfileBadgeComponent, UpdateContactDetailsComponent, UpdateUserDetailsComponent,
+  UpdateContactDetailsComponent, UpdateUserDetailsComponent,
   AccountRecoveryInfoComponent
 } from './components';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
@@ -32,7 +32,7 @@ import { AvatarModule } from 'ngx-avatar';
     AvatarModule,
     SharedFeatureModule
   ],
-  declarations: [ProfilePageComponent, ProfileBadgeComponent, UpdateContactDetailsComponent, UpdateUserDetailsComponent,
+  declarations: [UpdateContactDetailsComponent, UpdateUserDetailsComponent,
    AccountRecoveryInfoComponent],
   providers: []
 })
