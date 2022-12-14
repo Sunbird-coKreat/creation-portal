@@ -1043,6 +1043,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
+  getGuidelinesOriginURL(src) {
+    const replaceText = '/assets/public/';
+    //const aws_s3_urls = this.userService.cloudStorageUrls || ['https://dockstorage.blob.core.windows.net/sunbird-content-dock/'];
+    const cloudGuidelinesStorage = 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/';
+    if (src.indexOf(cloudGuidelinesStorage) !== -1) {
+      src = src.replace(cloudGuidelinesStorage, replaceText);
+    }
+    return src;
+  }
+
   saveProgram(cb) {
     let programData;
     if (this.isFormValueSet.createProgramForm) {
@@ -1069,7 +1080,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['startdate'] = new Date();
     programData['slug'] = 'sunbird';
     // tslint:disable-next-line: max-line-length
-    programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
+    programData['guidelines_url'] = _.get(this.programDetails, 'guidelines_url');
+    if (this.uploadedDocument && _.get(this.uploadedDocument, 'artifactUrl')) {
+      programData['guidelines_url'] = this.getGuidelinesOriginURL(_.get(this.uploadedDocument, 'artifactUrl'));
+    }
+
     programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programConfig['blueprintMap']) {
@@ -1371,7 +1386,7 @@ showTexbooklist() {
 
       const colIndex = this.programDetails.config.collections.findIndex(x => x.id === collectionId);
       this.programDetails.config.collections.splice(colIndex, 1);
-      
+
       delete this.textbooks[collectionId];
     }
   }
