@@ -6,7 +6,7 @@ import { CoreModule, ActionService, ContentService } from '@sunbird/core';
 import { SharedModule, ToasterService, ConfigService } from '@sunbird/shared';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClient } from '@angular/common/http';
-describe('SourcingService', () => {
+xdescribe('SourcingService', () => {
 
   const mockError = {
     error: {
