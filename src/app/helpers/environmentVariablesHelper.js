@@ -74,7 +74,8 @@ let envVariables = {
   CACHE_TTL: env.sunbird_cache_ttl || 1800,
   RESPONSE_CACHE_TTL: env.sunbird_response_cache_ttl || '180', // used in tenant helper to cache the tenant response info
   sunbird_portal_updateLoginTimeEnabled:env.sunbird_portal_updateLoginTimeEnabled || false,
-
+  sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
+  SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
 
   // Telemetry Configuration
   PORTAL_TELEMETRY_PACKET_SIZE: env.sunbird_telemetry_packet_size || 1000,
@@ -125,12 +126,14 @@ let envVariables = {
   CLOUD_STORAGE_URLS: env.sunbird_cloud_storage_urls,
   PORTAL_CASSANDRA_CONSISTENCY_LEVEL: env.sunbird_cassandra_consistency_level || 'one',
   PORTAL_CASSANDRA_REPLICATION_STRATEGY: env.sunbird_cassandra_replication_strategy || '{"class":"SimpleStrategy","replication_factor":1}',
-  sunbird_azure_report_container_name: env.sunbird_azure_report_container_name || 'reports',
-  sunbird_azure_account_name: env.sunbird_azure_account_name,
-  sunbird_azure_account_key: env.sunbird_azure_account_key,
   sunbird_portal_cdn_blob_url: env.sunbird_portal_cdn_blob_url || '',
-  sunbird_portal_video_max_size: env.sunbird_portal_video_max_size || '50',
-  SUNBIRD_CONTEXTUAL_HELP_CONFIG: env.sunbird_contextual_help_config,
+
+  // START - deprecated below 3 variables from release-5.1.0
+  sunbird_azure_report_container_name: env.sunbird_azure_report_container_name || 'reports',
+  sunbird_azure_account_name: env.sunbird_azure_account_name || '',
+  sunbird_azure_account_key: env.sunbird_azure_account_key || '',
+  // END - deprecated above 3 variables from release-5.1.0
+
 
   //Cloud Agnostic Changes
   cloud_storage_provider: env.sunbird_cloud_storage_provider, // azure, aws or gcloud
