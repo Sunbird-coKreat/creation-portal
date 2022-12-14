@@ -629,6 +629,9 @@
     },
     "reviewerQualityChecks": {
       "type": "object"
+    },
+    "migrationVersion": {
+      "type": "number"
     }
   }
 }
