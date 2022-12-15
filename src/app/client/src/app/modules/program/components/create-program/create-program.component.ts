@@ -1043,6 +1043,17 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     }
   }
+  getGuidelinesOriginURL(src) {
+    const replaceText = '/assets/public/';
+    const aws_s3_urls = this.userService.cloudStorageUrls;
+
+    _.forEach(aws_s3_urls, url => {
+      if (src.indexOf(url) !== -1) {
+        src = src.replace(url, replaceText);
+      }
+    });
+    return src;
+  }
   saveProgram(cb) {
     let programData;
     if (this.isFormValueSet.createProgramForm) {
@@ -1072,7 +1083,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['startdate'] = new Date();
     programData['slug'] = 'sunbird';
     // tslint:disable-next-line: max-line-length
-    programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
+    programData['guidelines_url'] = _.get(this.programDetails, 'guidelines_url');
+    if (this.uploadedDocument && _.get(this.uploadedDocument, 'artifactUrl')) {
+      programData['guidelines_url'] = this.getGuidelinesOriginURL(_.get(this.uploadedDocument, 'artifactUrl'));
+    }
     programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programConfig['blueprintMap']) {
