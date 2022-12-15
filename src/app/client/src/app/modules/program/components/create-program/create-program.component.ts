@@ -1046,11 +1046,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
 
   getGuidelinesOriginURL(src) {
     const replaceText = '/assets/public/';
-    //const aws_s3_urls = this.userService.cloudStorageUrls || ['https://dockstorage.blob.core.windows.net/sunbird-content-dock/'];
-    const cloudGuidelinesStorage = 'https://dockstorage.blob.core.windows.net/sunbird-content-dock/';
-    if (src.indexOf(cloudGuidelinesStorage) !== -1) {
-      src = src.replace(cloudGuidelinesStorage, replaceText);
-    }
+    const aws_s3_urls = this.userService.cloudStorageUrls || ['https://dockstorage.blob.core.windows.net/sunbird-content-dock/',
+      'https://ekstep-public-qa.s3-ap-south-1.amazonaws.com/',
+      'https://s3.ap-south-1.amazonaws.com/ekstep-public-qa/'];
+
+    _.forEach(aws_s3_urls, url => {
+      if (src.indexOf(url) !== -1) {
+        src = src.replace(url, replaceText);
+      }
+    });
     return src;
   }
 
