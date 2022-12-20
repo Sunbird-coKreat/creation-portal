@@ -6,15 +6,20 @@ const tags = (argv.tags !== true) && argv.tags
 
 module.exports = function (config) {
   config.set({
-    basePath: '',
-    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    basePath: '',  
+    frameworks: ['parallel','jasmine', '@angular-devkit/build-angular'],
     plugins: [
+      require('karma-parallel'),
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-mocha-reporter'),
       require('karma-coverage-istanbul-reporter'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
+    parallelOptions: {
+      executors: -1, // Defaults to cpu-count - 1
+      shardStrategy: 'round-robin'
+      },
     browserNoActivityTimeout: 100000,
     client: {
       jasmine: {

@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "ng": "ng",
-    "start": "ng build --deployUrl dist/ && mv ../dist/index.html ../dist/index.ejs",
+    "start": "ng build --deployUrl dist/ && move ../dist/index.html ../dist/index.ejs",
     "proxy": "ng serve --proxy-config proxy.config.js",
     "build": "node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build --prod --deployUrl dist/",
     "build-dev": "ng build --prod --build-optimizer=false --deployUrl dist/",
@@ -15,12 +15,12 @@
     "test-coverage": "ng test src --code-coverage=true --watch=false --sourceMap=false",
     "desktop-test-coverage": "ng test desktop --watch=false",
     "build-cdn": "ng build --prod",
-    "build-offline": "ng build --project offline --deployUrl dist/ --c=offline && mv ../dist/index.html ../dist/index.ejs",
+    "build-offline": "ng build --project offline --deployUrl dist/ --c=offline && move ../dist/index.html ../dist/index.ejs",
     "start-offline": "nodemon  --exec 'npm run build-offline'",
-    "build-offline-prod": "ng build --project offline  --c=offlineProduction && mv ../dist/index.html ../dist/index.ejs",
+    "build-offline-prod": "ng build --project offline  --c=offlineProduction && move ../dist/index.html ../dist/index.ejs",
     "inject-cdn-fallback": "gulp inject:cdnFallBack:script",
     "offline-dev": "ng build --project desktop --watch=true --outputPath=<desktop_portal_dist_file>",
-    "offline-prod": "ng build --project desktop --prod && mv ../dist/index.html ../dist/index.ejs"
+    "offline-prod": "ng build --project desktop --prod && move ../dist/index.html ../dist/index.ejs"
   },
   "nodemonConfig": {
     "ext": "png,jpeg,js,ts,html,json,css,scss"
@@ -80,6 +80,7 @@
     "jquery": "^3.3.1",
     "jquery.fancytree": "^2.28.1",
     "jspdf": "^1.5.3",
+    "karma-parallel": "^0.3.1",
     "katex": "^0.12.0",
     "lodash-es": "^4.17.11",
     "medium-zoom": "^1.0.4",
