@@ -269,7 +269,7 @@ export class NotificationService {
   sendNotificationToContributorOrg(user_ids: Array<string>, programDetail){
     const mode = 'sms';
     const templateRequest = {
-      key: 'sendSmsReminder',
+      key: 'PrashnavaliReminder',
       status: 'active'
     };
     return this.getSmsTemplate(templateRequest).pipe(
@@ -283,7 +283,6 @@ export class NotificationService {
         let body = configuration.value;
         body = _.replace(body, '$projectName', _.truncate(programDetail.name, {length: 25}));
         body = _.replace(body, '$projectDate', _.truncate(programDetail.submissionDate, {length: 25}));
-        body = _.replace(body, '$url', this.smsURL+"/contribute");
 
         const request = {
           mode: 'sms',
