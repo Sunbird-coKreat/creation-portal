@@ -276,7 +276,7 @@ export class NotificationService {
       switchMap((response)=>{
         const configuration = _.get(response, 'result.configuration');
         if (_.isEmpty(configuration)) {
-          this.toasterService.info(this.resourceService.messages.imsg.featureNotEnabled);
+          this.toasterService.error(this.resourceService.messages.emsg.failedToGetSmsTemplate);
           return throwError('Failed to get the sms template');
         } 
         else {
