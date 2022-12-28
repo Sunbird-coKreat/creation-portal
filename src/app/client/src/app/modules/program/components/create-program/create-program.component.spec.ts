@@ -1050,6 +1050,5 @@ xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
         expect( component['sourcingService'].generateAssetCreateRequest).toHaveBeenCalled();
      */
       });
-  
 
 });
