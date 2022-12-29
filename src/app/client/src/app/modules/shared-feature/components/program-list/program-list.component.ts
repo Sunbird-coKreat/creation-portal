@@ -60,12 +60,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public activeTab='';
   public myProjectContextHelpConfig: any;
   public myProjectNotFoundHelpConfig: any;
+  public contentTypeHeaderText;
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
     private sourcingService: SourcingService, private helperService: HelperService) {
+      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
     }
 
   ngOnInit() {
@@ -163,7 +165,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   setActiveTab(targetType) {
     this.forTargetType = targetType;
     let tabName = (targetType === 'collections') ? 'collections' : 'noCollections'
-    if(targetType === 'questionSets') tabName = 'questionSets';
+    if(targetType === 'questionSets') {
+      tabName = 'questionSets';
+      this.contentTypeHeaderText = this.resourceService.frmelmnts.lbl.questionTypeHeaderText;
+    }else{
+      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
+    }
     this.router.navigate([], { relativeTo: this.activatedRoute, queryParams: { targetType: tabName }, queryParamsHandling: 'merge' });
     this.getProgramsListByRole();
   }

@@ -1,13 +1,17 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ResourceService} from '@sunbird/shared';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ResourceService, ToasterService} from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import {Router} from '@angular/router';
 import {ActionService} from '@sunbird/core';
 
+
 @Component({
   selector: 'app-modal-preview',
   templateUrl: './modal-preview.component.html',
-  styleUrls: ['./modal-preview.component.scss']
+  styleUrls: [
+    './modal-preview.component.scss',
+    '../ckeditor-tool/ckeditor-tool.component.scss'
+]
 })
 export class ModalPreviewComponent implements OnInit {
   @Input() showQuestionModal = false;
@@ -26,7 +30,8 @@ export class ModalPreviewComponent implements OnInit {
   constructor(
     public resourceService: ResourceService,
     public actionService: ActionService,
-    public router: Router) {
+    public router: Router,
+    public toasterService: ToasterService) {
   }
 
   ngOnInit(): void {
@@ -73,10 +78,18 @@ export class ModalPreviewComponent implements OnInit {
 
       this.actionService.post(req).subscribe(resp => {
         if (resp.responseCode.toLowerCase() === 'ok') {
-          this.questionList = [...this.questionList, ...resp.result.questions];
-          this.questionList.concat(...resp.result.questions);
+          const identifierListObj={}
+          resp.result.questions.forEach(el=>{
+            identifierListObj[el.identifier] = el
+          });
+          const sortedIdentifierArray = identifierList.map(el=> identifierListObj[el]);
+          this.questionList = [...this.questionList, ...sortedIdentifierArray];
         }
       });
+    } else if (this.questionList.length === 0) {
+      this.showQuestionModal = false;
+      this.onModalClose();
+      this.toasterService.error(this.resourceService.messages?.emsg?.questionPreview?.getQuestion);
     }
   }
 
@@ -92,16 +105,6 @@ export class ModalPreviewComponent implements OnInit {
 
   onModalClose() {
     this.showQuestionOutput.emit();
-  }
-
-  getLimitedQuestionList() {
-    const currentDisplayCount = this.displayQuestionList.length;
-    const remainQuestionCount = this.questionList.length - currentDisplayCount;
-    const initialLimit = 10;
-    const limitCount = currentDisplayCount + (
-      remainQuestionCount > initialLimit ? initialLimit : remainQuestionCount
-    );
-    this.displayQuestionList = _.take(this.questionList, limitCount);
   }
 
   getIdentifiersList(): Array<string> {

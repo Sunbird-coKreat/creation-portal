@@ -50,6 +50,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public levelOneChapterList: Array<any> = [];
   public selectedChapterOption: any = {};
   public showResourceTemplatePopup = false;
+  public showResourceTemplateTypePopUp = false;
   private myOrgId = '';
   public templateDetails;
   public unitIdentifier;
@@ -93,7 +94,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   showConfirmationModal = false;
   showRemoveConfirmationModal = false;
   showQuestionModal: boolean = false;
-  publishQuestionset = true;
+  publishQuestionset = false;
   bulkUploadEnabled = true;
   contentName: string;
   public userProfile: any;
@@ -140,6 +141,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public questionIdentifierList: Array<string> = [];
   enableReviewEdit = false;
   public qualityParamConfig: any;
+  public sendReminderModal =false;
+  public sendReminderButton;
 
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
@@ -192,6 +195,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       this.sessionContext['targetCollectionObjectType'] = _.get(this.collection, 'objectType');
     }
     this.sharedContext = _.get(this.chapterListComponentInput, 'programContext.config.sharedContext');
+    this.sendReminderButton = _.get(this.chapterListComponentInput, 'programContext.config.isSendReminderEnabled');
     this.telemetryPageId = _.get(this.sessionContext, 'telemetryPageDetails.telemetryPageId');
     this.telemetryInteractCdata = _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata') || [];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
@@ -624,6 +628,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     const sourcingStatus = !_.isUndefined(content) ? content.sourcingStatus : null;
     this.sessionContext.telemetryPageDetails.telemetryPageId = this.getTelemetryPageIdForContentDetailsPage();
     let contentId = this.contentId;
+    if (content && this.reusedContributions.indexOf(content.identifier) !== -1) {
+      content.isAddedFromLibrary = true;
+    }
     if(this.projectTargetType === 'questionSets') {
       if(action === 'creation') contentId = undefined;
     }
@@ -1187,6 +1194,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       sourceURL : node.sourceURL,
       createdOn : node.createdOn,
       sampleContent: node.sampleContent || null,
+      qType: node.qType,
       sharedContext: {
         ...sharedMeta
       },
@@ -1295,6 +1303,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   handleTemplateSelection(event) {
     this.showResourceTemplatePopup = false;
+    this.showResourceTemplateTypePopUp = false;
     this.sessionContext['templateDetails'] =  event.templateDetails;
     if (event.template && event.templateDetails && !(event.templateDetails.onClick === 'uploadComponent' || this.projectTargetType === 'questionSets')) {
       const creationInput  = {
@@ -1419,6 +1428,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         break;
       default:
         this.showResourceTemplatePopup = event.showPopup;
+        this.showResourceTemplateTypePopUp = event.showPopup;
         break;
     }
     this.resourceTemplateInputData();
@@ -1976,5 +1986,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   questionModalClose(){
     this.showQuestionModal = false;
+  }
+  sendReminderModalClose(){
+    this.sendReminderModal =false;
   }
 }

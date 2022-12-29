@@ -172,7 +172,7 @@ export class AzureFileUploaderService {
       'content-type': 'application/x-www-form-urlencoded; charset=UTF-8'
     };
     const cloudStorageProvider = this.getcloudStorageProvider();
-    if (cloudStorageProvider === 'AZURE') {
+    if (cloudStorageProvider.toLowerCase() === 'azure') {
       headers['x-ms-blob-content-type'] = this.selectedFile.type;
     }
     const httpOptions = {
@@ -189,7 +189,7 @@ export class AzureFileUploaderService {
       'content-type': 'video/mp4'
     };
     const cloudStorageProvider = this.getcloudStorageProvider();
-    if (cloudStorageProvider === 'AZURE') {
+    if (cloudStorageProvider.toLowerCase() === 'azure') {
       headers['x-ms-blob-type'] = 'BlockBlob';
     }
     return new Observable((observer) => {

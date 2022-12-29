@@ -91,6 +91,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public telemetryPageId: string;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   public targetCollection: string;
   public targetCollections: string;
   public selectedCollectionIds = [];
@@ -132,6 +133,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.getPageId();
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
+    this.telemetryInteractObject = {};
     this.telemetryInteractPdata = {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { of, throwError, forkJoin } from 'rxjs';
-import { ResourceService, ServerResponse, ConfigService } from '@sunbird/shared';
-import { mergeMap, tap } from 'rxjs/operators';
+import { of, throwError, forkJoin, Observable } from 'rxjs';
+import { ResourceService, ServerResponse, ConfigService, ToasterService} from '@sunbird/shared';
+import { mergeMap, switchMap, tap } from 'rxjs/operators';
 import { LearnerService } from '../learner/learner.service';
 import { ProgramsService } from '../programs/programs.service';
 import * as _ from 'lodash-es';
@@ -16,7 +16,8 @@ export class NotificationService {
     private learnerService: LearnerService,
     private programsService: ProgramsService,
     private config: ConfigService,
-    private contentService: ContentService) {
+    private contentService: ContentService,
+    public toasterService: ToasterService) {
       this.smsURL = (<HTMLInputElement>document.getElementById('dockSmsUrl'))
       ? (<HTMLInputElement>document.getElementById('dockSmsUrl')).value : window.location.origin;
      }
@@ -264,5 +265,34 @@ export class NotificationService {
         return throwError(error);
       }
     );
+  }
+  sendNotificationToContributorOrg(user_ids: Array<string>, programDetail){
+    const mode = 'sms';
+    const templateRequest = {
+      key: 'sendSmsReminder',
+      status: 'active'
+    };
+    return this.getSmsTemplate(templateRequest).pipe(
+      switchMap((response)=>{
+        const configuration = _.get(response, 'result.configuration');
+        if (_.isEmpty(configuration)) {
+          this.toasterService.info(this.resourceService.messages.imsg.featureNotEnabled);
+          return throwError('Failed to get the sms template');
+        } 
+        else {
+        let body = configuration.value;
+        body = _.replace(body, '$projectName', _.truncate(programDetail.name, {length: 25}));
+        body = _.replace(body, '$projectDate', _.truncate(programDetail.submissionDate, {length: 25}));
+        body = _.replace(body, '$url', this.smsURL+"/contribute");
+
+        const request = {
+          mode: 'sms',
+          subject: 'VidyaDaan',
+          body: body,
+          recipientUserIds: [...user_ids]
+        };
+        return this.sendNotification(request);}
+      })
+    )
   }
 }

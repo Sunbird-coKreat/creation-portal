@@ -11,7 +11,7 @@ import { SourcingService, HelperService } from '../../../sourcing/services';
 import { MyContentComponent } from './my-content.component';
 import { mockData } from './my-content.component.spec.data';
 import { of, throwError as observableThrowError } from 'rxjs';
-import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player-v9';
+import { QumlLibraryModule } from '@project-sunbird/sunbird-quml-player';
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { SuiPopupModule } from 'ng2-semantic-ui-v9';
 

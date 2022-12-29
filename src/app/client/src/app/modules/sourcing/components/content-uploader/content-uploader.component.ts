@@ -1490,7 +1490,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         }
         const rootorgId = _.get(this.programContext, 'rootorg_id');
         const primaryCategoryInteractiveVideoQSet = (<HTMLInputElement>document.getElementById('interactiveVideoQsetCategory'))
-        ? (<HTMLInputElement>document.getElementById('interactiveVideoCategory')).value : '';
+        ? (<HTMLInputElement>document.getElementById('interactiveVideoQsetCategory')).value : '';
         this.frameworkService.readChannel(rootorgId).subscribe(channelData => {
           const channelCats = _.get(channelData, 'primaryCategories');
           const channeltargetObjectTypeGroup = _.groupBy(channelCats, 'targetObjectType');

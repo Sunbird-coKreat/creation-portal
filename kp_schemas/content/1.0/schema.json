@@ -1342,6 +1342,9 @@
         "items": {
             "type": "object"
         }
+      },
+      "migrationVersion": {
+        "type": "number"
       }
     }
 }

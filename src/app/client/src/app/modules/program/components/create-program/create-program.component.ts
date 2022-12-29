@@ -54,18 +54,13 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public tempCollections = [];
   public showProgramScope: boolean = false;
   public textbooks: any = {};
-  //private userBoard;
-  //private frameworkCategories;
   public programScope: any = {};
   private originalProgramScope: any = {};
   public userprofile;
-  //public programData: any = {};
   public programConfig: any = _.cloneDeep(programConfigObj);
-  //public showTextBookSelector = false;
   public stepNo= 1;
   public formIsInvalid = false;
   public pickerMinDate = new Date(new Date().setHours(23,59,59));
-  //public pickerMinDateForEndDate = new Date(new Date().setHours(0, 0, 0, 0));
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
@@ -125,6 +120,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public isValidFrameworkFields = false;
   public frameworkFormData: any;
   public fetchedCategory: string = '';
+  public isSendReminderEnabled: boolean;
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -152,6 +148,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       ? (<HTMLInputElement>document.getElementById('enableQuestionSetEditor')).value : 'false';
     const allowedTypes = (<HTMLInputElement>document.getElementById('allowedFrameworkTypes'))
     ? (<HTMLInputElement>document.getElementById('allowedFrameworkTypes')).value : '';
+    this.isSendReminderEnabled =  (<HTMLInputElement>document.getElementById('isSendReminderEnabled')) ?
+    (<HTMLInputElement>document.getElementById('isSendReminderEnabled')).value === 'true' : false;
+
     this.allowedFrameworkTypes = (allowedTypes) ? allowedTypes.split(',') : ["K-12", "TPD"];
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
@@ -180,6 +179,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       this.editPublished = _.includes(['Live', 'Unlisted'], _.get(this.programDetails, 'status'));
       this.disableUpload = (this.editPublished && _.get(this.programDetails, 'guidelines_url')) ? true : false;
       this.defaultContributeOrgReviewChecked = _.get(this.programDetails, 'config.defaultContributeOrgReview') ? false : true;
+      this.isSendReminderEnabled = _.get(this.programDetails, 'config.isSendReminderEnabled');
       // tslint:disable-next-line: max-line-length
       this.selectedTargetCollection = !_.isEmpty(_.compact(_.get(this.programDetails, 'target_collection_category'))) ? _.get(this.programDetails, 'target_collection_category')[0] : '';
 
@@ -1043,14 +1043,30 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       });
     }
   }
+  getGuidelinesOriginURL(src) {
+    const replaceText = '/assets/public/';
+    const aws_s3_urls = this.userService.cloudStorageUrls;
+
+    _.forEach(aws_s3_urls, url => {
+      if (src.indexOf(url) !== -1) {
+        src = src.replace(url, replaceText);
+      }
+    });
+    return src;
+  }
   saveProgram(cb) {
     let programData;
     if (this.isFormValueSet.createProgramForm) {
       programData = { ...this.createProgramForm.value };
     }
     programData['target_type'] = this.projectTargetType;
-    programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
+    if(this.isFormValueSet.projectScopeForm) {
+      programData['target_collection_category'] = (this.isFormValueSet.projectScopeForm && _.includes(['collections','questionSets'], this.projectTargetType)) ? [this.projectScopeForm.value.target_collection_category] : [];
+    }
     this.programConfig.defaultContributeOrgReview = !this.defaultContributeOrgReviewChecked;
+    if (this.projectTargetType=='questionSets'){
+    this.programConfig.isSendReminderEnabled = this.isSendReminderEnabled;
+    }
     programData['content_types']  = [];
     programData['targetprimarycategories'] = _.filter(this.programScope['targetPrimaryObjects'], (o) => {
       if (_.includes(this.selectedTargetCategories, o.name)) {
@@ -1067,7 +1083,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['startdate'] = new Date();
     programData['slug'] = 'sunbird';
     // tslint:disable-next-line: max-line-length
-    programData['guidelines_url'] = (this.uploadedDocument) ? _.get(this.uploadedDocument, 'artifactUrl') : _.get(this.programDetails, 'guidelines_url');
+    programData['guidelines_url'] = _.get(this.programDetails, 'guidelines_url');
+    if (this.uploadedDocument && _.get(this.uploadedDocument, 'artifactUrl')) {
+      programData['guidelines_url'] = this.getGuidelinesOriginURL(_.get(this.uploadedDocument, 'artifactUrl'));
+    }
     programData['status'] = this.editPublished ? 'Live' : 'Draft';
 
     if (!this.programConfig['blueprintMap']) {
@@ -1366,6 +1385,10 @@ showTexbooklist() {
 
       const cindex = this.tempCollections.findIndex(x => x.identifier === collectionId);
       this.tempCollections.splice(cindex, 1);
+
+      const colIndex = this.programDetails.config.collections.findIndex(x => x.id === collectionId);
+      this.programDetails.config.collections.splice(colIndex, 1);
+
       delete this.textbooks[collectionId];
     }
   }
@@ -2062,6 +2085,12 @@ showTexbooklist() {
       .subscribe((response) => {
         const nodeId = _.get(response, 'result.node_id');
         if (nodeId) {
+          const pcollectionIds = this.projectScopeForm.value.pcollections;
+          pcollectionIds.push(nodeId[tempCollection.identifier]);
+          this.projectScopeForm.patchValue({pcollections: pcollectionIds});
+          if (!this.programDetails.config.collections) {
+            this.programDetails.config.collections = [];
+          }
           this.programDetails.config.collections.push({
             allowed_content_types: [],
             children: [],
@@ -2072,5 +2101,8 @@ showTexbooklist() {
           }, 2000);
         }
       });
+  }
+  isSendReminderChanged($event){
+    this.isSendReminderEnabled = $event.target.checked;
   }
 }

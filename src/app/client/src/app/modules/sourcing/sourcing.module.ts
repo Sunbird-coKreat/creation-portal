@@ -32,16 +32,17 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 import { NgInviewModule } from 'angular-inport';
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor-v9';
+import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
-import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player-v9';
+import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { ResourceLibraryModule } from "@project-sunbird/sunbird-resource-library";
 import { SunbirdVideoPlayerModule } from '@project-sunbird/sunbird-video-player-v9';
 import { TranscriptsComponent } from './components/transcripts/transcripts.component';
 import { TranscriptsReviewComponent } from './components/transcripts-review/transcripts-review.component';
 import { AccessibilityInfoComponent } from './components/accessibility-info/accessibility-info.component';
 import { ModalPreviewComponent } from './components/modal-preview/modal-preview.component';
+import { SendReminderModalComponent } from './components/send-reminder-modal/send-reminder-modal.component';
 @NgModule({
   declarations: [QuestionListComponent, QuestionCreationComponent,
     ChapterListComponent, McqCreationComponent, CkeditorToolComponent ,
@@ -52,7 +53,7 @@ import { ModalPreviewComponent } from './components/modal-preview/modal-preview.
     MvcListComponent, MvcFilterComponent, MvcPlayerComponent, SkeletonLoaderComponent,
     BulkApprovalComponent, BulkUploadComponent, QuestionSetEditorComponent, TranscriptsComponent, TranscriptsReviewComponent,
     AccessibilityInfoComponent,
-    ModalPreviewComponent],
+    ModalPreviewComponent, SendReminderModalComponent],
   imports: [
     RouterModule,
     CoreModule,
