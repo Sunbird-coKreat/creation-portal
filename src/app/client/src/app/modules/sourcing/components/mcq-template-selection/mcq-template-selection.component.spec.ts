@@ -1,5 +1,5 @@
 import { TelemetryService } from '../../../telemetry/services/telemetry/telemetry.service';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { McqTemplateSelectionComponent } from './mcq-template-selection.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ProgramTelemetryService } from '../../../program/services';
@@ -53,7 +53,7 @@ describe('McqTemplateSelectionComponent', () => {
     component.sessionContext = {
       collection: 'do_1131700101604311041350'
     };
-    const data = spyOn(component, 'getTelemetryInteractObject').and.returnValue({ object: { pageId: 'dummaypage' } });
+    const data = spyOn(component, 'getTelemetryInteractObject').and.returnValue({} as any);
     component.getTelemetryInteractObject('do_1131700101604311041350', 'type');
     expect(component.getTelemetryInteractObject).toHaveBeenCalledWith('do_1131700101604311041350', 'type');
     expect(data).toBeDefined();

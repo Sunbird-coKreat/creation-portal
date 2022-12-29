@@ -1,5 +1,5 @@
 import { mockChartData } from './usage-reports.spec.data';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { Observable, of as observableOf } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { UsageService } from './../../services';
@@ -54,7 +54,7 @@ xdescribe('UsageReportsComponent', () => {
   it('makes expected calls of ngOnInit and render the report ', () => {
     const usageService = TestBed.get(UsageService);
     component.slug = 'sunbird';
-    spyOn(document, 'getElementById').and.returnValue('sunbird');
+    spyOn(document, 'getElementById').and.returnValue('sunbird' as any);
     spyOn(component, 'renderReport').and.callThrough();
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockChartData.configData));
     component.ngOnInit();
@@ -68,7 +68,7 @@ xdescribe('UsageReportsComponent', () => {
     const usageService = TestBed.get(UsageService);
     const toasterService = TestBed.get(ToasterService);
     component.slug = 'sunbird';
-    spyOn(document, 'getElementById').and.returnValue('sunbird');
+    spyOn(document, 'getElementById').and.returnValue('sunbird' as any);
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockChartData.configData));
     spyOn(component, 'renderReport').and.callThrough();
     spyOn(component, 'downloadCSV').and.callThrough();

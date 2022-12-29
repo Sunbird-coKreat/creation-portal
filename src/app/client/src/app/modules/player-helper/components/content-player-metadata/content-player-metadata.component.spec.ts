@@ -1,7 +1,7 @@
 import { CoreModule } from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule } from '@sunbird/shared';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { ContentPlayerMetadataComponent } from './content-player-metadata.component';
 import {mockRes} from './contnet-player-metadata.spec.data';
 import { NO_ERRORS_SCHEMA } from '@angular/core';

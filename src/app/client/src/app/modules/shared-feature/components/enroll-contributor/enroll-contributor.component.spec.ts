@@ -1,5 +1,5 @@
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { TelemetryModule, TelemetryService} from '@sunbird/telemetry';
 import { EnrollContributorComponent } from './enroll-contributor.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

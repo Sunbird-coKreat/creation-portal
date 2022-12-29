@@ -16,7 +16,7 @@ xdescribe('DeviceRegisterService', () => {
         });
         spyOn(document, 'getElementById').and.callFake((id) => {
             if (id === 'buildNumber') {
-                return { value: '1.9.0.1' };
+                return { value: '1.9.0.1' } as any;
             }
             if (id === 'deviceId') {
                 return { value: 'deviceId' };
@@ -32,7 +32,7 @@ xdescribe('DeviceRegisterService', () => {
 
     it('should be created and should fetch basic details',
         inject([DeviceRegisterService, HttpClient], (deviceRegisterService: DeviceRegisterService, http: HttpClient) => {
-            spyOn(http, 'post').and.callFake(() => of({}));
+            spyOn(http, 'post').and.callFake(() => of({} as any));
             deviceRegisterService.registerDevice();
             const url = 'deviceRegisterApideviceId';
             expect(http.post).toHaveBeenCalled();
