@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule, ResourceService, ConfigService , ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { RouterTestingModule } from '@angular/router/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
 import { CreateProgramComponent } from './create-program.component';
 import { CacheService } from 'ng2-cache-service';
@@ -116,8 +116,8 @@ it('#ngOnInit() should initalize variables', () => {
     component.enableQuestionSetEditor = undefined;
     component.assetConfig = {pdfFiles: "sample.pdf"};
     component.openProjectTargetTypeModal = false;
-    spyOn(document, 'getElementById').and.returnValue({value: "data"});
-    spyOn(component, 'getPageId').and.callFake(() => {});
+    spyOn(document, 'getElementById').and.returnValue({value: "data"}as any);
+    spyOn(component, 'getPageId').and.callFake(() => {return ''});
     spyOn(component, 'getProgramDetails').and.callFake(() => {});
     spyOn(component, 'initializeProjectTargetTypeForm').and.callFake(() => {});
     spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
@@ -223,7 +223,7 @@ it('Should call the uploadDocument method', () => {
     spyOn(sourcingService, 'generatePreSignedUrl').and.callFake(() => {});
     sourcingService.generatePreSignedUrl({}, 'do_1234');
 
-    spyOn(component, 'uploadToBlob').and.callFake(() => {});
+    spyOn(component, 'uploadToBlob').and.callFake(() => of({}));
     spyOn(component, 'uploadDocument');
     component.uploadDocument();
     expect(component.uploadDocument).toHaveBeenCalled();
@@ -273,7 +273,17 @@ it('Should call the initializeCreateProgramForm method', () => {
       },
       target_collection_category:'target_collection_category',
       target_type:'target_type'
-    }
+    },
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:'' 
     }));
     spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
     spyOn(component, 'setPreSelectedContributors').and.callFake(() => {});
@@ -473,7 +483,7 @@ it('should call resetFilters', () => {
       subject: new FormControl('Maths', Validators.required),
     });
     spyOn(component, 'resetSorting').and.callFake(() => {});
-    spyOn(component, 'showTexbooklist').and.callFake(() => {});
+    spyOn(component, 'showTexbooklist').and.callFake(() => {return true});
     spyOn(component, 'resetFilters').and.callThrough();
     component.resetFilters();
     expect(component.resetFilters).toHaveBeenCalled();
@@ -541,9 +551,19 @@ it('Should call the onChangeTargetCollectionCategory method', () => {
     });
     component.selectedTargetCollection = 'Course';
     spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
-    spyOn(component, 'showTexbooklist').and.callFake(() => {});
+    spyOn(component, 'showTexbooklist').and.callFake(() => {return true});
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'getformConfigData').and.returnValue(of({result:{data:{properties:{categories:'categories'}}}}));
+    spyOn(component['programsService'], 'getformConfigData').and.returnValue(of({result:{data:{properties:{categories:'categories'}}},
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:'' }));
     component['frameworkService'] = TestBed.inject(FrameworkService);
     spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{data:{properties:'kkk'}}}));
     
@@ -565,14 +585,25 @@ xit('should call showTexbooklist', () => {
     }
     component.projectTargetType === 'NotquestionSets' 
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'getCollectionList').and.returnValue(of({result:{count:3}}));
+    spyOn(component['programsService'], 'getCollectionList').and.returnValue(of({result:{count:3},
+      id: 'api.programsService',
+      params: {
+          err: null,
+          errmsg : null,
+          msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+          resmsgid : null,
+          status : 'success'},
+     responseCode: 'OK',
+     ts:'',
+     ver:'' }));
     
     component.showTexbooklist();
     expect(component['programsService'].getCollectionList).toHaveBeenCalled();
   });
 
-it('should call getCollections', () => {
-    spyOn(component, 'getCollections').and.callFake(() => {});
+
+  it('should call getCollections', () => {
+    spyOn(component, 'getCollections').and.callFake(() => {return []});
     component.getCollections();
     expect(component.getCollections).toHaveBeenCalled();
   });
@@ -614,7 +645,7 @@ it('generateTelemetryEndEvent should call telemetryService.end', () => {
 
   it('chooseChapters should call getCollectionHierarchy', () => {
     component.textbooks = ['1234'];
-    spyOn(component, 'getCollectionHierarchy').and.callFake(() => {});
+    spyOn(component, 'getCollectionHierarchy').and.callThrough();
     spyOn(component, 'chooseChapters').and.callThrough();
     component.chooseChapters({identifier: '12345'});
     expect(component.getCollectionHierarchy).toHaveBeenCalled();
@@ -633,7 +664,7 @@ it('chooseChapters should call initChaptersSelectionForm', () => {
 
 it('editBlueprint should call getCollectionHierarchy', () => {
     component.textbooks = ['1234'];
-    spyOn(component, 'getCollectionHierarchy').and.callFake(() => {});
+    spyOn(component, 'getCollectionHierarchy').and.callThrough();
     spyOn(component, 'editBlueprint').and.callThrough();
     component.editBlueprint({identifier: '12345'});
     expect(component.getCollectionHierarchy).toHaveBeenCalled();
@@ -686,7 +717,7 @@ it('onChangeTopics should call programsService.filterBlueprintMetadata', () => {
       pcollections: new FormControl(['pcollections'], Validators.required),
     });
    // component.projectScopeForm.value.pcollections = ['nnnn'];
-    spyOn(component, 'onFrameworkChange').and.returnValue(true);
+    spyOn(component, 'onFrameworkChange').and.callFake(() => {return true});
     component.changeFrameWork();
    expect(component.onFrameworkChange).toHaveBeenCalled();
   });
@@ -721,8 +752,10 @@ xit('initEditBlueprintForm should call programsService.initializeBlueprintMetada
     expect(programsService.initializeBlueprintMetadata).toHaveBeenCalled();
   });
 
-it('should call isBlueprintValid', () => {
-    spyOn(component, 'isBlueprintValid').and.callFake(() => {});
+
+  it('should call isBlueprintValid', () => {
+    spyOn(component, 'isBlueprintValid').and.returnValue(true);
+
     component.isBlueprintValid();
     expect(component.isBlueprintValid).toHaveBeenCalled();
   });
@@ -758,14 +791,18 @@ it('should call getChapterLevelCount', () => {
     expect(component.getChapterLevelCount).toHaveBeenCalled();
   });
 
-it('should call onChangeSelection', () => {
-    spyOn(component, 'onChangeSelection').and.callFake(() => {});
+
+  it('should call onChangeSelection', () => {
+    spyOn(component, 'onChangeSelection').and.returnValue(true);
+
     component.onChangeSelection();
     expect(component.onChangeSelection).toHaveBeenCalled();
   });
 
-it('should call saveAsDraftAndNext', () => {
-    spyOn(component, 'saveAsDraftAndNext').and.callFake(() => {});
+
+  it('should call saveAsDraftAndNext', () => {
+    spyOn(component, 'saveAsDraftAndNext').and.returnValue(true);
+
     component.saveAsDraftAndNext({});
     expect(component.saveAsDraftAndNext).toHaveBeenCalled();
   });
@@ -903,7 +940,26 @@ it('validateFormBeforePublish method Should return false when validateDates is t
   const mockEvt = { target: { xyz: [] } };
 
     component['programsService'] = TestBed.inject(ProgramsService);
-    spyOn(component['programsService'], 'publishProgram').and.returnValue(of({}));
+    spyOn(component['programsService'], 'publishProgram').and.returnValue(of({result: {
+      status:'status',
+      guidelines_url:'guidelines_url',
+      config:{
+        defaultContributeOrgReview:'defaultContributeOrgReview',
+        contributors:'contributors'
+      },
+      target_collection_category:'target_collection_category',
+      target_type:'target_type'
+    },
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:'' }));
     component.publishProject(mockEvt);
     expect(component['programsService'].publishProgram).toHaveBeenCalled();
   
@@ -979,7 +1035,17 @@ it('#updateTargetNode should update QuestionSet', () => {
 
     component['helperService'] = TestBed.inject(HelperService);
     spyOn(component, 'initializeCollectionEditorInput').and.callFake(() => {});
-    spyOn( component['helperService'], 'createContent').and.returnValue(of({result:{identifier: 'identifier'}}));
+    spyOn( component['helperService'], 'createContent').and.returnValue(of({result:{identifier: 'identifier'},
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:''}));
     component.initiateCollectionEditor({xyz:'xyz'});
     expect(component.initializeCollectionEditorInput).toHaveBeenCalled();
 

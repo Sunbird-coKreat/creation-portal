@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { SuiPopupModule } from 'ng2-semantic-ui-v9';
 import { MvcListComponent } from './mvc-list.component';
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
@@ -55,14 +55,14 @@ describe('MvcListComponent', () => {
 
   it('should call onShowAddedContentChange to show the added content', () => {
     component.showAddedContent = true;
-    spyOn(component.moveEvent, 'emit').and.returnValue(mockData.showAddedContent);
+    spyOn(component.moveEvent, 'emit').and.returnValue(mockData.showAddedContent as any);
     component.onShowAddedContentChange();
     expect(component.moveEvent.emit).toHaveBeenCalledWith(mockData.showAddedContent);
   });
 
   it('should call onShowAddedContentChange to hide added content', () => {
     component.showAddedContent = false;
-    spyOn(component.moveEvent, 'emit').and.returnValue(mockData.hideAddedContent);
+    spyOn(component.moveEvent, 'emit').and.returnValue(mockData.hideAddedContent as any);
     component.onShowAddedContentChange();
     expect(component.moveEvent.emit).toHaveBeenCalledWith(mockData.hideAddedContent);
   });
@@ -86,7 +86,7 @@ describe('MvcListComponent', () => {
 
   it('should call updateContentViewed to hide added content', () => {
     component.inViewLogs = [];
-    spyOn(component.moveEvent, 'emit').and.returnValue(mockData.contentVisits);
+    spyOn(component.moveEvent, 'emit').and.returnValue(mockData.contentVisits as any);
     component.updateContentViewed();
     expect(component.moveEvent.emit).toHaveBeenCalledWith(mockData.contentVisits);
   });

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, inject, tick, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject, tick, fakeAsync, waitForAsync } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Observable, of } from 'rxjs';
 import { SuiModule } from 'ng2-semantic-ui-v9';
@@ -53,7 +53,7 @@ class ActivatedRouteStub {
     },
     languageSelected$: of({})
   };
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, SuiModule,RouterTestingModule, SharedModule.forRoot(), NgInviewModule, TelemetryModule.forRoot()],
       declarations: [MainHomeComponent],

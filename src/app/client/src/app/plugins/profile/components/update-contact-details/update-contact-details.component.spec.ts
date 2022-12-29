@@ -1,6 +1,6 @@
 import { UpdateContactDetailsComponent } from './update-contact-details.component';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ResourceService, SharedModule } from '@sunbird/shared';
 import { CoreModule } from '@sunbird/core';

@@ -1,7 +1,7 @@
 
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { BatchPageSectionComponent } from './batch-page-section.component';
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

@@ -1,5 +1,5 @@
 import { TelemetryService } from './../../../telemetry/services/telemetry/telemetry.service';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { BulkApprovalComponent } from './bulk-approval.component';
 import { RouterTestingModule } from '@angular/router/testing';
