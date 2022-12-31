@@ -12,8 +12,8 @@
     "cassandra-driver": "^3.5.0"
   },
   "devDependencies": {
-    "webpack-cli": "3.1.2",
-    "webpack": "4.20.2",
+    "webpack-cli": "5.0.1",
+    "webpack": "5.75.0",
     "webpack-node-externals": "1.7.2"
   }
 }
