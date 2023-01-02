@@ -345,6 +345,7 @@ export const addParticipentResponseSample = {
           "err": null,
           "errmsg": null
       },
+      "ver":"",
       "responseCode": "OK",
       "result": {
           "program_id": "048e6950-c7c8-11ea-92a2-0581aba2eb51",
@@ -827,6 +828,7 @@ export const addParticipentResponseSample = {
       "err": null,
       "errmsg": null
     },
+    "ver":"",
     "responseCode": "OK",
     "result": {
       "nomination": {
@@ -1034,6 +1036,7 @@ export const addParticipentResponseSample = {
       "err": null,
       "errmsg": null
     },
+    "ver":"",
     "responseCode": "OK",
     "result": [{
       "id": 12539,

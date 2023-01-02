@@ -2249,7 +2249,17 @@ export const contentUploadComponentInput = {
         'programId': 'f8931290-f8d6-11eb-8d22-35d6fc24c6f9',
         'resourceType': 'Course'
       }
-    }
+    },
+    id: 'api.programsService',
+    params: {
+        err: null,
+        errmsg : null,
+        msgid : '31df557d-ce56-e489-9cf3-27b74c90a920',
+        resmsgid : null,
+        status : 'success'},
+   responseCode: 'OK',
+   ts:'',
+   ver:'' 
   };
 
 export const editTargetObjectFormMock = [

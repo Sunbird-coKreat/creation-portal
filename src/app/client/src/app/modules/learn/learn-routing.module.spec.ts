@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { TestBed, fakeAsync, tick, async } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Router, Routes, RouterModule } from '@angular/router';
 import { RedirectComponent } from './../shared/components/redirect/redirect.component';
@@ -39,7 +39,7 @@ xdescribe('Redirect Router tests', () => {
     })
   );
 
-  it('can navigate to [/learn/redirect] (async)', async(() => {
+  it('can navigate to [/learn/redirect] (async)', waitForAsync(() => {
     TestBed.get(Router)
       .navigate(['/learn/redirect'])
       .then(() => {

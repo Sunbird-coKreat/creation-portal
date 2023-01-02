@@ -1,6 +1,6 @@
 
 import { of as observableOf, Observable, throwError as observableThrowError } from 'rxjs';
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -167,7 +167,7 @@ describe('PublicCollectionPlayerComponent', () => {
       searchUrl: '/search',
       queryParams: { key: 'collection' }
     };
-    spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl);
+    spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl as any);
     const router = TestBed.get(Router);
     expect(router.navigate).toBeDefined([previousUrl.searchUrl, previousUrl.queryParams]);
   });
@@ -176,7 +176,7 @@ describe('PublicCollectionPlayerComponent', () => {
     const previousUrl = {
       otherUrl: '/browse/play/collection/do_3123405048187617282365',
     };
-    spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl);
+    spyOn(component.navigationHelperService, 'getPreviousUrl').and.returnValue(previousUrl as any);
     const router = TestBed.get(Router);
     expect(router.navigate).toBeDefined([previousUrl.otherUrl]);
   });

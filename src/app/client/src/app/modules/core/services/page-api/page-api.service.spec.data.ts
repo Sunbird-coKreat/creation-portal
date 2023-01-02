@@ -8,6 +8,8 @@ export const testData = {
             resmsgid : null,
             status : 'success'},
        responseCode: 'OK',
+       ts:'',
+       ver:'',
         result: {
             response: {
                 id: '0122838911932661768',

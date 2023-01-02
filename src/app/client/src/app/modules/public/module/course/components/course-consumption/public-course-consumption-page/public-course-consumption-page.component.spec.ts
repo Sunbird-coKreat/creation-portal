@@ -1,7 +1,7 @@
 
 import {of,  Observable } from 'rxjs';
 import { CourseHierarchyGetMockResponse } from '../public-course-player/public-course-player.component.mock.data';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { PublicCourseConsumptionPageComponent } from './public-course-consumption-page.component';
 import {SharedModule, ResourceService, ToasterService, ContentUtilsServiceService, NavigationHelperService } from '@sunbird/shared';
 import { CoreModule, CoursesService } from '@sunbird/core';
