@@ -1,10 +1,11 @@
 const envHelper = require('./../helpers/environmentVariablesHelper.js')
 const _ = require('lodash')
-var azure = require('azure-storage')
+// var azure = require('azure-storage')
 const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
-const blobService = azure.createBlobService(envHelper.sunbird_azure_account_name, envHelper.sunbird_azure_account_key);
+// const blobService = azure.createBlobService(envHelper.sunbird_azure_account_name, envHelper.sunbird_azure_account_key);
 const logger = require('sb_logger_util_v2');
+const storageService = require('../helpers/cloudStorage/index');
 
 const validateSlug = (allowedFolders = []) => {
     return (req, res, next) => {
@@ -81,7 +82,7 @@ function azureBlobStream() {
         let fileToGet =  req.params.slug + '/' + req.params.filename;
         if(req.params.reportPrefix){ fileToGet = req.params.reportPrefix + '/' + fileToGet;}
         if (fileToGet.includes('.json')) {
-            const readStream = blobService.createReadStream(container, fileToGet);
+            const readStream = storageService.CLOUD_CLIENT.createReadStream(container, fileToGet);
             readStream.pipe(res);
             readStream.on('end', () => {
                 res.end();
@@ -125,7 +126,7 @@ function azureBlobStream() {
                     Expiry: expiryDate
                 }
             };
-            blobService.doesBlobExist(container,fileToGet, (err, resp) => {
+            storageService.CLOUD_CLIENT.createReadStream(container,fileToGet, (err, resp) => {
                 if (err || ! (_.get(resp,'exists')) ) {
                     console.log('Error with status code 404 - ', err);
                     const response = {
@@ -133,14 +134,14 @@ function azureBlobStream() {
                         params: {
                             err: "CLIENT_ERROR",
                             status: "failed",
-                            errmsg: "Blob not found"
+                            errmsg: "Storage service provider not found"
                         },
                         result: {}
                     }
                     res.status(404).send(apiResponse(response));
                 } else {
-                    var token = blobService.generateSharedAccessSignature(container, fileToGet, sharedAccessPolicy);
-                    var sasUrl = blobService.getUrl(container, fileToGet, token);
+                    const token = storageService.CLOUD_CLIENT.generateSharedAccessSignature(container, fileToGet, sharedAccessPolicy);
+                    const sasUrl = storageService.CLOUD_CLIENT.getUrl(container, fileToGet, token);
                     const response = {
                         responseCode: "OK",
                         params: {
