@@ -271,7 +271,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: this.configService.urlConFig.URLS.DOCKCONTENT.PUBLISH + '/' + contentId,      
+      url: this.configService.urlConFig.URLS.DOCKCONTENT.PUBLISH + '/' + contentId,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -417,7 +417,7 @@ export class HelperService {
     });
   }
 
-  publishQuestionSetToConsumption(questionSetId) {
+  publishQuestionSetToConsumption(questionSetId, programContext) {
     const option = {
       url: 'questionset/v1/read/' + questionSetId,
       param: { 'mode': 'edit' }
@@ -426,24 +426,35 @@ export class HelperService {
     return this.actionService.get(option).pipe(
       mergeMap((res: any) => {
         const questionSetData  = res.result.questionset;
-
-        const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
-        if (_.isString(channel)) {
-          questionSetData['createdFor'] = [channel];
-        } else if (_.isArray(channel)) {
-          questionSetData['createdFor'] = channel;
+        if (programContext.target_type === 'searchCriteria') {
+          questionSetData['createdFor'] = [programContext.rootorg_id];
+        } else {
+          const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
+          if (_.isString(channel)) {
+            questionSetData['createdFor'] = [channel];
+          } else if (_.isArray(channel)) {
+            questionSetData['createdFor'] = channel;
+          }
         }
 
         const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
               ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org'
 
         const reqFormat = {
-            source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`,
-            metadata: {..._.pick(this._selectedCollectionMetaData, ['framework']),
-                          ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
-                          ..._.pick(questionSetData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
-                          ...{'lastPublishedBy': this.userService.userProfile.userId}}
+            source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`
         };
+
+        if (programContext.target_type === 'searchCriteria') {
+          reqFormat['metadata'] = {..._.pick(questionSetData, ['framework']),
+          ..._.pick(_.get(questionSetData, 'originData'), ['channel']),
+          ..._.pick(questionSetData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
+          ...{'lastPublishedBy': this.userService.userProfile.userId}}
+        } else {
+          reqFormat['metadata'] = {..._.pick(this._selectedCollectionMetaData, ['framework']),
+          ..._.pick(_.get(this._selectedCollectionMetaData, 'originData'), ['channel']),
+          ..._.pick(questionSetData, ['name', 'code', 'mimeType', 'contentType', 'createdFor']),
+          ...{'lastPublishedBy': this.userService.userProfile.userId}}
+        }
 
         const reqOption = {
           url: this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1,
