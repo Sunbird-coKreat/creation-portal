@@ -269,21 +269,20 @@ export class NotificationService {
   sendNotificationToContributorOrg(user_ids: Array<string>, programDetail){
     const mode = 'sms';
     const templateRequest = {
-      key: 'sendSmsReminder',
+      key: 'PrashnavaliReminder',
       status: 'active'
     };
     return this.getSmsTemplate(templateRequest).pipe(
       switchMap((response)=>{
         const configuration = _.get(response, 'result.configuration');
         if (_.isEmpty(configuration)) {
-          this.toasterService.info(this.resourceService.messages.imsg.featureNotEnabled);
+          this.toasterService.error(this.resourceService.messages.emsg.failedToGetSmsTemplate);
           return throwError('Failed to get the sms template');
         } 
         else {
         let body = configuration.value;
         body = _.replace(body, '$projectName', _.truncate(programDetail.name, {length: 25}));
         body = _.replace(body, '$projectDate', _.truncate(programDetail.submissionDate, {length: 25}));
-        body = _.replace(body, '$url', this.smsURL+"/contribute");
 
         const request = {
           mode: 'sms',
