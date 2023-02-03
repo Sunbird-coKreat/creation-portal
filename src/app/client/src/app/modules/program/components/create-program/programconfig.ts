@@ -212,9 +212,7 @@ var programConfig = {
     'mediumIds',
     'gradeLevelIds',
     'subjectIds',
-    'topic',
-    'learningOutcome',
-    'learningOutcomeIds'
+    'topic'
   ]
 };
 
