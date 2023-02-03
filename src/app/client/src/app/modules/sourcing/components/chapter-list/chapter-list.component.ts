@@ -1705,8 +1705,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       contents = _.filter(contents, leaf => {
         if (prevStatus && leaf.status === 'Draft' && (leaf.prevStatus === 'Review' || leaf.prevStatus === 'Live')) {
           return true;
-        } else if (this.isContributingOrgReviewer() && leaf.status === 'Draft' && !leaf.prevStatus && leaf.createdBy != createdBy) {
-          return false;
         } else {
           return _.includes(status, leaf.status);
         }
