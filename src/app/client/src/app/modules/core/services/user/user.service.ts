@@ -193,7 +193,7 @@ export class UserService {
    * get method to fetch cloudStorageUrls.
    */
   get cloudStorageUrls(): string[] {
-    return this._cloudStorageUrls;
+    return _.compact(this._cloudStorageUrls);
   }
 
   public initialize(loggedIn) {

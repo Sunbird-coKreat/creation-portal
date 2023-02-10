@@ -330,7 +330,19 @@ module.exports = function (app) {
       },
     })
   );
-
+  
+  app.post("/action/content/v4/publish/*",
+    proxy(kp_content_service_base_url, {
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
+        originalUrl = originalUrl.replace("/action/", "");
+        return require("url").parse(kp_content_service_base_url + originalUrl)
+          .path;
+      },
+    })
+  );
+  
   app.post("/action/content/v4/review/*",
     proxy(kp_content_service_base_url, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
