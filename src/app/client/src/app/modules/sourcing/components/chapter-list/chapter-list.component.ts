@@ -603,7 +603,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
   publishQuestionToConsumption(): void {
     let identifier = this.collectionData.identifier;
-    this.helperService.publishQuestionSetToConsumption(identifier).subscribe((res) => {
+    this.helperService.publishQuestionSetToConsumption(identifier, this.programContext).subscribe((res) => {
       this.showPublishConfirmationModal = false;
       if(res.responseCode === 'OK') {
         this.toasterService.success(this.resourceService.messages.smsg.questionset.publishing);
