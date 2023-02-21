@@ -325,6 +325,7 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         var originalUrl = req.originalUrl;
         originalUrl = originalUrl.replace("/action/", "");
+        console.log("v3 apis calling..."+originalUrl, kp_content_service_base_url);
         return require("url").parse(kp_learning_service_base_url + originalUrl)
           .path;
       },
@@ -337,6 +338,7 @@ module.exports = function (app) {
       proxyReqPathResolver: function (req) {
         var originalUrl = req.originalUrl;
         originalUrl = originalUrl.replace("/action/", "");
+        console.log("v4 apis calling..."+originalUrl, kp_content_service_base_url);
         return require("url").parse(kp_content_service_base_url + originalUrl)
           .path;
       },
