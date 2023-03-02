@@ -1,5 +1,4 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { DashboardModule } from './../../../../dashboard/dashboard.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LearnModule } from '@sunbird/learn';
 import { ComponentFixture, TestBed, fakeAsync, tick,  } from '@angular/core/testing';
@@ -65,7 +64,7 @@ xdescribe('EnrollBatchComponent', () => {
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
       imports: [SharedModule.forRoot(), TelemetryModule.forRoot(), CoreModule, SuiModule, LearnModule, RouterTestingModule,
-        DashboardModule, HttpClientTestingModule],
+        HttpClientTestingModule],
       providers: [CourseConsumptionService, TelemetryService, CourseBatchService, CourseProgressService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         {

@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Modules
 import { ChartsModule } from 'ng2-charts';
 import { SuiModule } from 'ng2-semantic-ui-v9';
-import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TelemetryModule } from '@sunbird/telemetry';
 // Custome component(s) and services
 import {
@@ -14,7 +13,7 @@ import {
   UsageService
 } from './services';
 import {
-  OrganisationComponent, CourseConsumptionComponent, CourseProgressComponent, UsageReportsComponent,
+  OrganisationComponent, UsageReportsComponent,
   DataTableComponent, DataChartComponent
 } from './components';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
@@ -26,7 +25,6 @@ import { OrderModule } from 'ngx-order-pipe';
 @NgModule({
   imports: [
     CommonModule,
-    DashboardRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     ChartsModule,
@@ -36,9 +34,9 @@ import { OrderModule } from 'ngx-order-pipe';
     TelemetryModule,
     NgxDaterangepickerMd.forRoot()
   ],
-  declarations: [CourseConsumptionComponent, OrganisationComponent, CourseProgressComponent, UsageReportsComponent,
+  declarations: [OrganisationComponent, UsageReportsComponent,
     DataTableComponent, DataChartComponent],
-  exports: [CourseProgressComponent, DataTableComponent],
+  exports: [DataTableComponent],
   providers: [
     RendererService,
     DashboardUtilsService,

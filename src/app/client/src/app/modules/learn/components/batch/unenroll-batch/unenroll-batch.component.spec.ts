@@ -1,7 +1,6 @@
 import { UserService } from '@sunbird/core';
 import { CourseBatchService } from '../../../services';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { DashboardModule } from '../../../../dashboard/dashboard.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LearnModule } from '@sunbird/learn';
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
@@ -61,7 +60,7 @@ xdescribe('UnEnrollBatchComponent', () => {
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
       imports: [SharedModule.forRoot(), TelemetryModule.forRoot(), CoreModule, SuiModule, LearnModule, RouterTestingModule,
-        DashboardModule, HttpClientTestingModule],
+        HttpClientTestingModule],
       providers: [
         UserService,
         {
