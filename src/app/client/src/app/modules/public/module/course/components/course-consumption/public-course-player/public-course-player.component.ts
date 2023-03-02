@@ -1,15 +1,12 @@
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash-es';
 import {
-  ILoaderMessage, ConfigService, ICollectionTreeOptions, ToasterService, ResourceService,
+  ILoaderMessage, ConfigService, ICollectionTreeOptions,
   NavigationHelperService
 } from '@sunbird/shared';
-import { CourseConsumptionService } from '@sunbird/learn';
 import { IImpressionEventInput } from '@sunbird/telemetry';
-import * as TreeModel from 'tree-model';
 
 @Component({
   selector: 'app-public-course-player',
@@ -47,9 +44,7 @@ export class PublicCoursePlayerComponent implements OnInit, OnDestroy, AfterView
   public unsubscribe = new Subject<void>();
 
   constructor(public activatedRoute: ActivatedRoute, private configService: ConfigService,
-    private courseConsumptionService: CourseConsumptionService,
     public router: Router,
-    private toasterService: ToasterService, private resourceService: ResourceService,
     public navigationhelperService: NavigationHelperService) {
     this.collectionTreeOptions = this.configService.appConfig.collectionTreeOptions;
   }
@@ -57,18 +52,18 @@ export class PublicCoursePlayerComponent implements OnInit, OnDestroy, AfterView
   ngOnInit() {
     const routeParams: any = { ...this.activatedRoute.snapshot.params };
     this.courseId = routeParams.courseId;
-    const inputParams = {params: this.configService.appConfig.CourseConsumption.contentApiQueryParams};
-    this.courseConsumptionService.getCourseHierarchy(routeParams.courseId, inputParams).pipe(
+   // const inputParams = {params: this.configService.appConfig.CourseConsumption.contentApiQueryParams};
+/*     this.courseConsumptionService.getCourseHierarchy(routeParams.courseId, inputParams).pipe(
       takeUntil(this.unsubscribe))
       .subscribe(courseHierarchy => {
         this.loader = false;
         this.courseHierarchy = courseHierarchy;
         this.parseChildContent();
         this.collectionTreeNodes = { data: this.courseHierarchy };
-      });
+      }); */
   }
 
-  private parseChildContent() {
+/*   private parseChildContent() {
     const model = new TreeModel();
     const mimeTypeCount = {};
     this.treeModel = model.parse(this.courseHierarchy);
@@ -84,7 +79,7 @@ export class PublicCoursePlayerComponent implements OnInit, OnDestroy, AfterView
     _.forEach(mimeTypeCount, (value, key) => {
       this.curriculum.push({ mimeType: key, count: value });
     });
-  }
+  } */
   ngAfterViewInit () {
     setTimeout(() => {
       this.setTelemetryCourseImpression();

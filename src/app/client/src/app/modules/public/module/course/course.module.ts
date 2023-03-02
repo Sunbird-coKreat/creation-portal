@@ -10,7 +10,6 @@ import { PublicCourseComponent, PublicCourseConsumptionPageComponent,
   ExploreCourseComponent, PublicCoursePlayerComponent, PublicBatchDetailsComponent } from './components';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
   SuiRatingModule, SuiCollapseModule } from 'ng2-semantic-ui-v9';
-import { CourseConsumptionService, CourseBatchService, CourseProgressService } from '@sunbird/learn';
 import { FormsModule } from '@angular/forms';
 import { PlayerHelperModule } from '@sunbird/player-helper';
 
@@ -28,7 +27,7 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
     FormsModule,
     PlayerHelperModule
   ],
-  providers: [CourseConsumptionService, CourseBatchService, CourseProgressService],
+  providers: [],
   declarations: [ PublicCourseComponent, PublicCourseConsumptionPageComponent, ExploreCourseComponent,
     PublicCoursePlayerComponent, PublicBatchDetailsComponent ]
 })

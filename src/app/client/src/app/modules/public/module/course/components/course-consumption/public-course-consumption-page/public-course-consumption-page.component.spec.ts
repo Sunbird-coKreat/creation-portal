@@ -7,7 +7,6 @@ import {SharedModule, ResourceService, ToasterService, ContentUtilsServiceServic
 import { CoreModule, CoursesService } from '@sunbird/core';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import {CourseConsumptionService, CourseProgressService, CourseBatchService} from '@sunbird/learn';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -54,8 +53,8 @@ describe('PublicCourseConsumptionPageComponent', () => {
       declarations: [ PublicCourseConsumptionPageComponent ],
       providers: [{ provide: ActivatedRoute, useClass: ActivatedRouteStub },
         { provide: ResourceService, useValue: resourceServiceMockData },
-        CourseConsumptionService,  { provide: Router, useClass: MockRouter },
-        CourseProgressService, CourseBatchService, ContentUtilsServiceService],
+        { provide: Router, useClass: MockRouter },
+         ContentUtilsServiceService],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
     fixture = TestBed.createComponent(PublicCourseConsumptionPageComponent);
@@ -63,7 +62,6 @@ describe('PublicCourseConsumptionPageComponent', () => {
     activatedRouteStub = TestBed.get(ActivatedRoute);
     courseService = TestBed.get(CoursesService);
     toasterService = TestBed.get(ToasterService);
-    courseConsumptionService = TestBed.get(CourseConsumptionService);
     navigationHelperService = TestBed.get(NavigationHelperService);
     spyOn(navigationHelperService, 'navigateToResource').and.returnValue('');
     spyOn(toasterService, 'error').and.returnValue('');

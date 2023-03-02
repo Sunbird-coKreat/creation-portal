@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule } from '@sunbird/telemetry';
+import { ChartsModule } from 'ng2-charts';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 // Custome component(s) and services
 import {
   CourseConsumptionService, DashboardUtilsService, OrganisationService,
@@ -24,6 +26,8 @@ import { OrderModule } from 'ngx-order-pipe';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    ChartsModule,
+    SuiModule,
     SharedModule,
     OrderModule,
     TelemetryModule,

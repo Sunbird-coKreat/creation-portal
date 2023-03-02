@@ -6,7 +6,6 @@
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
 // import { CoursePlayerComponent } from './course-player.component';
 // import { SharedModule, ResourceService, WindowScrollService, ToasterService, ContentUtilsServiceService } from '@sunbird/shared';
-// import { CourseConsumptionService, CourseProgressService, CourseBatchService, AssessmentScoreService } from '@sunbird/learn';
 // import { CourseHierarchyGetMockResponse, CourseHierarchyGetMockResponseFlagged } from './course-player.component.mock.data';
 // import { TelemetryModule } from '@sunbird/telemetry';
 // import { enrolledBatch } from './../../batch/batch-details/batch-details.component.data';

@@ -2,7 +2,6 @@ import { UserService } from '@sunbird/core';
 import { CourseBatchService } from '../../../services';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { LearnModule } from '@sunbird/learn';
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { UnEnrollBatchComponent } from './unenroll-batch.component';
@@ -59,7 +58,7 @@ xdescribe('UnEnrollBatchComponent', () => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
-      imports: [SharedModule.forRoot(), TelemetryModule.forRoot(), CoreModule, SuiModule, LearnModule, RouterTestingModule,
+      imports: [SharedModule.forRoot(), TelemetryModule.forRoot(), CoreModule, SuiModule, RouterTestingModule,
         HttpClientTestingModule],
       providers: [
         UserService,

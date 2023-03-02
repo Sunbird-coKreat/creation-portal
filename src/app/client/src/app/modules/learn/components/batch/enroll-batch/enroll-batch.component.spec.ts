@@ -1,6 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { LearnModule } from '@sunbird/learn';
 import { ComponentFixture, TestBed, fakeAsync, tick,  } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { EnrollBatchComponent } from './enroll-batch.component';
@@ -63,7 +62,7 @@ xdescribe('EnrollBatchComponent', () => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
-      imports: [SharedModule.forRoot(), TelemetryModule.forRoot(), CoreModule, SuiModule, LearnModule, RouterTestingModule,
+      imports: [SharedModule.forRoot(), TelemetryModule.forRoot(), CoreModule, SuiModule, RouterTestingModule,
         HttpClientTestingModule],
       providers: [CourseConsumptionService, TelemetryService, CourseBatchService, CourseProgressService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },

@@ -7,7 +7,6 @@
 // import { CoreModule, CoursesService } from '@sunbird/core';
 // import { NO_ERRORS_SCHEMA } from '@angular/core';
 // import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-// import {CourseConsumptionService, CourseProgressService, CourseBatchService} from '@sunbird/learn';
 // import { HttpClientTestingModule } from '@angular/common/http/testing';
 // import { RouterTestingModule } from '@angular/router/testing';
 

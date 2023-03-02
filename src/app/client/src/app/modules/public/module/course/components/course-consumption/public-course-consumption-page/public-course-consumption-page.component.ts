@@ -1,11 +1,8 @@
-import { combineLatest, Subject, throwError } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { ResourceService, ToasterService, ConfigService, ContentUtilsServiceService, ITelemetryShare } from '@sunbird/shared';
-import { CourseConsumptionService } from '@sunbird/learn';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash-es';
-import * as moment from 'moment';
 import { IImpressionEventInput } from '@sunbird/telemetry';
 import { NavigationHelperService } from '@sunbird/shared';
 
@@ -29,7 +26,7 @@ export class PublicCourseConsumptionPageComponent implements OnInit, OnDestroy {
 
   public unsubscribe = new Subject<void>();
   constructor(public navigationHelperService: NavigationHelperService, private activatedRoute: ActivatedRoute,
-    private courseConsumptionService: CourseConsumptionService, public toasterService: ToasterService,
+    public toasterService: ToasterService,
     private resourceService: ResourceService, public router: Router, public contentUtilsServiceService: ContentUtilsServiceService,
     private configService: ConfigService) {
   }
@@ -41,7 +38,7 @@ export class PublicCourseConsumptionPageComponent implements OnInit, OnDestroy {
     if (!this.courseId) {
       return this.redirectToExplore();
     }
-    const inputParams = {params: this.configService.appConfig.CourseConsumption.contentApiQueryParams};
+ /*    const inputParams = {params: this.configService.appConfig.CourseConsumption.contentApiQueryParams};
     this.courseConsumptionService.getCourseHierarchy(this.courseId, inputParams).pipe(takeUntil(this.unsubscribe))
     .subscribe((courseHierarchy: any) => {
       this.courseHierarchy = courseHierarchy;
@@ -49,7 +46,7 @@ export class PublicCourseConsumptionPageComponent implements OnInit, OnDestroy {
     }, (error) => {
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
       this.redirectToExplore();
-    });
+    }); */
   }
   onShareLink() {
     this.sharelinkModal = true;
