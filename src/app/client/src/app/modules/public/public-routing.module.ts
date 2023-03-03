@@ -15,12 +15,6 @@ const routes: Routes = [
     path: ':slug/explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
   },
   {
-    path: 'explore-course', loadChildren: () => import('./module/course/course.module').then(m => m.CourseModule)
-  },
-  {
-    path: ':slug/explore-course', loadChildren: () => import('./module/course/course.module').then(m => m.CourseModule)
-  },
-  {
     path: ':slug/signup', loadChildren: () => import('./module/signup/signup.module').then(m => m.SignupModule)
   },
   {
