@@ -32,9 +32,7 @@ const routes: Routes = [
   {
     path: 'sign-in/sso', loadChildren: () => import('./module/sign-in/sso/sso.module').then(m => m.SsoModule)
   },
-  {
-    path: 'play', loadChildren: () => import('./module/player/player.module').then(m => m.PlayerModule)
-  }];
+];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
