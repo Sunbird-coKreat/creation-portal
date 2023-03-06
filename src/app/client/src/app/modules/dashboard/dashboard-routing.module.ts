@@ -1,10 +1,6 @@
-import { NgModule, Component } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AuthGuard } from '../core/guard/auth-gard.service';
-
-
+import { NgModule } from '@angular/core';
 @NgModule({
   imports: [],
-  exports: [RouterModule]
+  exports: []
 })
 export class DashboardRoutingModule { }
