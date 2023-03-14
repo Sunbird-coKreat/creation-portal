@@ -3,7 +3,7 @@ import { PublicDataService, UserService, ActionService, ContentService } from '@
 import { ConfigService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { map, catchError } from 'rxjs/operators';
 import * as $ from 'jquery';
-import 'datatables.net';
+//import 'datatables.net';
 import * as _ from 'lodash-es';
 import { ExportToCsv } from 'export-to-csv';
 import { forkJoin, throwError, Subscription } from 'rxjs';
