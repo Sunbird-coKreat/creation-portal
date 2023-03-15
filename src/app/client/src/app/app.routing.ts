@@ -3,9 +3,6 @@ import { ErrorPageComponent, AuthGuard } from '@sunbird/core';
 import { RouterModule, Routes } from '@angular/router';
 const appRoutes: Routes = [
   {
-    path: 'resources', loadChildren: () => import('app/modules/resource/resource.module').then(m => m.ResourceModule)
-  },
-  {
     path: 'sourcing', loadChildren: () => import('app/modules/program/program.module').then(m => m.ProgramModule)
   },
   {
