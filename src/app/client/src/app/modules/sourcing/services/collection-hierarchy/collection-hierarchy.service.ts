@@ -7,7 +7,6 @@ import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
-import { isUndefined } from 'util';
 
 @Injectable()
 
@@ -146,7 +145,7 @@ export class CollectionHierarchyService {
     if (allFields) {
       delete(option.data.request.fields);
     }
-    if (!isUndefined(preferencefilters)) {
+    if (preferencefilters != undefined) {
         if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
           option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
         }
@@ -191,7 +190,7 @@ export class CollectionHierarchyService {
     const collectionsByStatus = this.groupStatusForCollections(groupedByCollectionId);
     const collectionsByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
 
-    if (!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) {
+    if (collections != undefined || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, orgLevelDataWithReject);
     }
     return {
@@ -205,7 +204,7 @@ export class CollectionHierarchyService {
       individualStatus: collectionsByStatus,
       individualStatusForSample: collectionsByStatusForSample,
       mvcContributionsCount: this.getMvcContentCounts(collections),
-      ...((!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) && {sourcingOrgStatus : sourcingOrgStatus})
+      ...((collections != undefined || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) && {sourcingOrgStatus : sourcingOrgStatus})
     };
   }
   getMvcContentCounts(collections) {
@@ -287,7 +286,7 @@ export class CollectionHierarchyService {
     tempcontentGroupByStatus['correctionsPending'] = _.has(contentGroupByStatus, 'Draft') ?
     this.getRejectOrDraft(contentGroupByStatus['Draft'], 'correctionsPending') : [];
     const contentGroupByStatusForSample = this.groupStatusForCollections(groupedByCollectionIdForSample);
-    if (!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) {
+    if (collections != undefined || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) {
       sourcingOrgStatus = this.getSourcingOrgStatus(collections, contentGroupByStatus);
     }
     return  {
@@ -299,7 +298,7 @@ export class CollectionHierarchyService {
       correctionsPending: _.has(tempcontentGroupByStatus, 'correctionsPending') ? tempcontentGroupByStatus.correctionsPending.length : 0,
       live: _.has(contentGroupByStatus, 'Live') ? contentGroupByStatus.Live.length : 0,
       individualStatusForSample: contentGroupByStatusForSample,
-      ...((!_.isUndefined(collections) || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) && {sourcingOrgStatus : sourcingOrgStatus})
+      ...((collections != undefined || (this._programDetails && this._programDetails.target_type === 'searchCriteria')) && {sourcingOrgStatus : sourcingOrgStatus})
      };
   }
 
@@ -352,7 +351,7 @@ export class CollectionHierarchyService {
         }
       }
     };
-    if (!isUndefined(this._preferencefilters)) {
+    if (this._preferencefilters != undefined) {
       if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
       }
@@ -397,24 +396,24 @@ export class CollectionHierarchyService {
         'primaryCategory'
       ]
     }
-    if (!_.isUndefined(organisationId)) {
+    if (organisationId != undefined) {
       option.data.request.filters['organisationId'] = organisationId;
-    } else if (!_.isUndefined(userId)) {
+    } else if (userId != undefined) {
       option.data.request.filters['createdBy'] = userId;
     }
 
-    if (!_.isUndefined(sampleContentCheck)) {
+    if (sampleContentCheck != undefined) {
       option.data.request.filters['sampleContent'] = sampleContentCheck;
       option.data.request.filters['status'] = ['Draft', 'Review'];
     } else {
       option.data.request['not_exists'] = ['sampleContent'];
       option.data.request['limit'] = 10000;
     }
-    if (!_.isUndefined(onlyCount)) {
+    if (onlyCount != undefined) {
       option.data.request['limit'] = 0;
     }
 
-    if (!isUndefined(this._preferencefilters)) {
+    if (this._preferencefilters != undefined) {
       if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
       }
@@ -480,7 +479,7 @@ export class CollectionHierarchyService {
 
   getAllAcceptedContentsCount(textbookMeta, collections?) {
     let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
-    if (_.isUndefined(collections)) {
+    if (collections != undefined) {
       return liveContents;
     }
 
@@ -497,7 +496,7 @@ export class CollectionHierarchyService {
 
   getAllPendingForApprovalCount(textbookMeta, collections?) {
     let liveContents = _.has(textbookMeta, 'Live') ? _.map(textbookMeta.Live, 'identifier') : [];
-    if (_.isUndefined(collections)) {
+    if (collections != undefined) {
       return liveContents.length;
     }
 

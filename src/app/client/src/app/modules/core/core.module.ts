@@ -14,7 +14,7 @@ import {
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
   LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent, ContentDataFormComponent
 } from './components';
-import { ManageModule } from '../manage/manage.module';
+//import { ManageModule } from '../manage/manage.module';
 import { AuthGuard } from './guard/auth-gard.service';
 import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
@@ -26,7 +26,7 @@ import { CommonFormElementsModule } from 'common-form-elements-web-v9';
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule,
     SharedModule,
-    ManageModule,
+    //ManageModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
