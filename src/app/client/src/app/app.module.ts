@@ -17,7 +17,7 @@ import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storag
 import { CacheSessionStorage } from 'ng2-cache-service/dist/src/services/storage/session-storage/cache-session-storage.service';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
-import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
+//import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
@@ -30,7 +30,7 @@ import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-
     CoreModule,
     CommonModule,
     HttpClientModule,
-    ChatLibModule,
+   // ChatLibModule,
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
     SuiRatingModule, SuiCollapseModule,
     SharedModule.forRoot(),
@@ -48,7 +48,7 @@ import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-
   providers: [
     CacheService,
     DatePipe,
-    ChatLibService,
+    //ChatLibService,
     { provide: CacheStorageAbstract, useClass: CacheSessionStorage },
     { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true },
     { provide: QuestionCursor, useExisting: QumlPlayerService },

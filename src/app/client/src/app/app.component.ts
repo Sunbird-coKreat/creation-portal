@@ -3,20 +3,19 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { TelemetryService, ITelemetryContext } from '@sunbird/telemetry';
 import {
   UtilService, ResourceService, ToasterService, IUserData, IUserProfile,
-  NavigationHelperService, ConfigService, BrowserCacheTtlService
+  NavigationHelperService, ConfigService
 } from '@sunbird/shared';
-import { Component, HostListener, OnInit, ViewChild, Inject, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import {
-  UserService, PermissionService, CoursesService, TenantService, OrgDetailsService, DeviceRegisterService,
+  UserService, PermissionService, TenantService, OrgDetailsService, DeviceRegisterService,
   SessionExpiryInterceptor, FormService, ProgramsService
 } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { ProfileService } from '@sunbird/profile';
-import { Observable, of, throwError, combineLatest, BehaviorSubject, forkJoin } from 'rxjs';
-import { first, filter, mergeMap, tap, map, skipWhile, startWith, takeUntil } from 'rxjs/operators';
+import { Observable, of, throwError, combineLatest, BehaviorSubject } from 'rxjs';
+import { first, filter, mergeMap, tap, map, skipWhile, startWith } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/common';
-import { ShepherdService } from 'angular-shepherd';
 import { Location } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 
@@ -103,16 +102,16 @@ export class AppComponent implements OnInit, OnDestroy {
   isDesktopDevice = true;
   devicePopupShown = false;
   chatbotInputObj: any = {};
-  constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
+  constructor(private cacheService: CacheService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     private permissionService: PermissionService, public resourceService: ResourceService,
-    private deviceRegisterService: DeviceRegisterService, private courseService: CoursesService, private tenantService: TenantService,
+    private deviceRegisterService: DeviceRegisterService, private tenantService: TenantService,
     private telemetryService: TelemetryService, public router: Router, private configService: ConfigService,
     private orgDetailsService: OrgDetailsService, private activatedRoute: ActivatedRoute,
     private profileService: ProfileService, private toasterService: ToasterService, public utilService: UtilService,
     public formService: FormService, private programsService: ProgramsService, private location: Location,
     @Inject(DOCUMENT) private _document: any, public sessionExpiryInterceptor: SessionExpiryInterceptor,
-    private shepherdService: ShepherdService, public deviceDetectorService: DeviceDetectorService) {
+    public deviceDetectorService: DeviceDetectorService) {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
       ? (<HTMLInputElement>document.getElementById('instance')).value : 'sunbird';
 
