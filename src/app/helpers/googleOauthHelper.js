@@ -12,43 +12,43 @@ const {decodeToken} = require('./jwtHelper');
 const logger = require('sb_logger_util_v2')
 
 const keycloakGoogle = getKeyCloakClient({
-  resource: envHelper.KEYCLOAK_GOOGLE_CLIENT.clientId,
+  resource: envHelper?.KEYCLOAK_GOOGLE_CLIENT?.clientId,
   bearerOnly: true,
   serverUrl: envHelper.PORTAL_AUTH_SERVER_URL,
   realm: envHelper.PORTAL_REALM,
   credentials: {
-    secret: envHelper.KEYCLOAK_GOOGLE_CLIENT.secret
+    secret: envHelper?.KEYCLOAK_GOOGLE_CLIENT?.secret
   }
 })
 
 // keycloack client for account merge poiting to subdomain
 const keycloakMergeGoogle = getKeyCloakClient({
-  resource: envHelper.KEYCLOAK_GOOGLE_CLIENT.clientId,
+  resource: envHelper?.KEYCLOAK_GOOGLE_CLIENT?.clientId,
   bearerOnly: true,
   serverUrl: envHelper.PORTAL_MERGE_AUTH_SERVER_URL,
   realm: envHelper.PORTAL_REALM,
   credentials: {
-    secret: envHelper.KEYCLOAK_GOOGLE_CLIENT.secret
+    secret: envHelper?.KEYCLOAK_GOOGLE_CLIENT?.secret
   }
 })
 
 
 const keycloakGoogleAndroid = getKeyCloakClient({
-  resource: envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.clientId,
+  resource: envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.clientId,
   bearerOnly: true,
   serverUrl: envHelper.PORTAL_AUTH_SERVER_URL,
   realm: envHelper.PORTAL_REALM,
   credentials: {
-    secret: envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.secret
+    secret: envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.secret
   }
 })
 const keycloakMergeGoogleAndroid = getKeyCloakClient({
-  resource: envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.clientId,
+  resource: envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.clientId,
   bearerOnly: true,
   serverUrl: envHelper.PORTAL_MERGE_AUTH_SERVER_URL,
   realm: envHelper.PORTAL_REALM,
   credentials: {
-    secret: envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.secret
+    secret: envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.secret
   }
 })
 
