@@ -23,22 +23,22 @@ const keycloakTrampoline = getKeyCloakClient({
   }
 })
 const keycloakTrampolineAndroid = getKeyCloakClient({
-  resource: envHelper.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT.clientId,
+  resource: envHelper?.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT?.clientId,
   bearerOnly: true,
   serverUrl: envHelper.PORTAL_AUTH_SERVER_URL,
   realm: envHelper.PORTAL_REALM,
   credentials: {
-    secret: envHelper.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT.secret
+    secret: envHelper?.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT?.secret
   }
 })
 
 const keyCloakClient = getKeyCloakClient({
-  resource: envHelper.KEYCLOAK_GOOGLE_CLIENT.clientId,
+  resource: envHelper?.KEYCLOAK_GOOGLE_CLIENT?.clientId,
   bearerOnly: true,
   serverUrl: envHelper.PORTAL_AUTH_SERVER_URL,
   realm: envHelper.PORTAL_REALM,
   credentials: {
-    secret: envHelper.KEYCLOAK_GOOGLE_CLIENT.secret
+    secret: envHelper?.KEYCLOAK_GOOGLE_CLIENT?.secret
   }
 });
 

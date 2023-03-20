@@ -9,21 +9,21 @@ const logger = require('sb_logger_util_v2')
 
 const keyClockMobileClients = {
 }
-if(envHelper.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT.clientId){
-  keyClockMobileClients[envHelper.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT.clientId] = {
-    client_id: envHelper.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT.clientId,
-    client_secret: envHelper.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT.secret
+if(envHelper?.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT?.clientId){
+  keyClockMobileClients[envHelper?.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT?.clientId] = {
+    client_id: envHelper?.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT?.clientId,
+    client_secret: envHelper?.KEYCLOAK_TRAMPOLINE_ANDROID_CLIENT?.secret
   }
 }
-if(envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.clientId){
-  keyClockMobileClients[envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.clientId] = {
-    client_id: envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.clientId,
-    client_secret: envHelper.KEYCLOAK_GOOGLE_ANDROID_CLIENT.secret
+if(envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.clientId){
+  keyClockMobileClients[envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.clientId] = {
+    client_id: envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.clientId,
+    client_secret: envHelper?.KEYCLOAK_GOOGLE_ANDROID_CLIENT?.secret
   }
 }
-if(envHelper.KEYCLOAK_ANDROID_CLIENT.clientId){
-  keyClockMobileClients[envHelper.KEYCLOAK_ANDROID_CLIENT.clientId] = {
-    client_id: envHelper.KEYCLOAK_ANDROID_CLIENT.clientId
+if(envHelper?.KEYCLOAK_ANDROID_CLIENT?.clientId){
+  keyClockMobileClients[envHelper?.KEYCLOAK_ANDROID_CLIENT?.clientId] = {
+    client_id: envHelper?.KEYCLOAK_ANDROID_CLIENT?.clientId
   }
 }
 
