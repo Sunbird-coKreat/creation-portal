@@ -4,22 +4,21 @@ const fs = require('fs')
 const packageObj = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 
 const stageingEdEnvUrl = 'https://staging.sunbirded.org';
-const docStageingEdEnvUrl = 'https://dockstaging.sunbirded.org/';
+const docStageingEdEnvUrl = 'https://dockstaging.sunbirded.org';
 
 
 let envVariables = {
 
 
   //Mandatory Changes
-
-  SUNBIRD_PORTAL_API_AUTH_TOKEN: env.sunbird_api_auth_token || "",
-  CONTENT_URL: env.sunbird_content_player_url || docStageingEdEnvUrl+'/api/',
   PORTAL_API_AUTH_TOKEN: env.dock_api_auth_token || '',
-  sunbird_cloud_storage_key: env.sunbird_cloud_storage_key || "",
-  sunbird_cloud_storage_secret: env.sunbird_cloud_storage_secret  || "",
-  cloud_storage_provider: env.sunbird_cloud_storage_provider || 'azure', // azure, aws or gcloud
+  SUNBIRD_PORTAL_API_AUTH_TOKEN: env.sunbird_api_auth_token || '',
   LEARNER_URL: env.sunbird_learner_player_url || stageingEdEnvUrl+'/api/',
-  CONTENT_PROXY_URL: env.sunbird_content_proxy_url || docStageingEdEnvUrl+'/api/',
+  CONTENT_URL: env.sunbird_content_player_url || docStageingEdEnvUrl+'/api/',
+  CONTENT_PROXY_URL: env.sunbird_content_proxy_url || docStageingEdEnvUrl+'',
+  cloud_storage_provider: env.sunbird_cloud_storage_provider || 'azure', // azure, aws or gcloud
+  sunbird_cloud_storage_secret: env.sunbird_cloud_storage_secret || '',
+  sunbird_cloud_storage_key: env.sunbird_cloud_storage_key || 'sunbirddev',
   PORTAL_AUTH_SERVER_URL: env.sunbird_portal_auth_server_url || stageingEdEnvUrl+'/auth',
 
   //Mandatory Default
