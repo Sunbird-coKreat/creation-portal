@@ -65,7 +65,7 @@
     "common-form-elements-web-v9": "4.7.2",
     "core-js": "^2.4.1",
     "datatables.net-dt": "1.10.19",
-    "epubjs": "0.3.88",
+    "epubjs": "^0.3.93",
     "export-to-csv": "^0.2.1",
     "fine-uploader": "^5.15.7",
     "font-awesome": "^4.7.0",
