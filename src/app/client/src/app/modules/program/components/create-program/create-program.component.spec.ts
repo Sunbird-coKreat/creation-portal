@@ -551,7 +551,7 @@ it('Should call the onChangeTargetCollectionCategory method', () => {
     });
     component.selectedTargetCollection = 'Course';
     spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
-    spyOn(component, 'showTexbooklist').and.callFake(() => {return true});
+    spyOn(component, 'onFrameworkChange').and.callFake(() => {return true});
     component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getformConfigData').and.returnValue(of({result:{data:{properties:{categories:'categories'}}},
     id: 'api.programsService',
@@ -568,7 +568,7 @@ it('Should call the onChangeTargetCollectionCategory method', () => {
     spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{data:{properties:'kkk'}}}));
     
     component.onChangeTargetCollectionCategory();
-    expect(component.showTexbooklist).toHaveBeenCalled();
+    expect(component.onFrameworkChange).toHaveBeenCalled();
     expect(component.projectScopeForm.value.pcollections).toEqual([]);
     expect(component.getCollectionCategoryDefinition).toHaveBeenCalled();
     expect(component.tempCollections).toEqual([]);
