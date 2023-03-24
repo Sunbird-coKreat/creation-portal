@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "variables";
 @import 'mixins/mixins';
 
@@ -191,7 +192,7 @@
         width: 100%;
         border: calculateRem(1px) dotted #80A7CE;
         background: #F5F9FC;
-        border-radius: ($base-block-space / 2);
+        border-radius: math.div($base-block-space, 2);
       }
     }
   }
@@ -307,7 +308,7 @@
         width: 100%;
         border: calculateRem(1px) dotted #80A7CE;
         background: #F5F9FC;
-        border-radius: ($base-block-space / 2);
+        border-radius: math.div($base-block-space, 2);
       }
     }
   }

@@ -1,3 +1,4 @@
+@use "sass:math";
 // label
 $sb-label-status-width: calculateRem(130px);
 $sb-label-status-height: calculateRem(16px);
@@ -36,15 +37,15 @@ $sb-label-status-indicator-error-background: $tertiary-color;
     }
 }
 // label sizes
-.sb-label-xs, 
-.sb-label-normal, 
+.sb-label-xs,
+.sb-label-normal,
 .sb-label-sm,
 .sb-label-md {
     padding: ($base-block-space / 1) ($base-block-space * 2);
 }
 .sb-label-xs {
     height: ($base-block-space * 3);
-    padding: ($base-block-space / 2) ($base-block-space / 2);
+    padding: math.div($base-block-space, 2) math.div($base-block-space, 2);
     font-size: $font-size-sm;
 }
 //primary label style
@@ -66,7 +67,7 @@ $sb-label-status-indicator-error-background: $tertiary-color;
   font-size: $font-size-lg;
 }
 .sb-label-table {
-    padding: ($base-block-space / 2) ($base-block-space);
+    padding: math.div($base-block-space, 2) ($base-block-space);
     font-size: $font-size-sm;
     min-width: $base-block-space*6;
     text-align: center;
@@ -82,29 +83,29 @@ $sb-label-status-indicator-error-background: $tertiary-color;
 // default outline colored labels
 .sb-label-outline-primary {
     @include label-theme-bgwhite($primary-color);
-} 
+}
 .sb-label-outline-secondary {
     @include label-theme-bgwhite($secondary-200);
-} 
+}
 .sb-label-outline-tertiary {
     @include label-theme-bgwhite($tertiary-color);
 }
 // status outline labels
 .sb-label-outline-info {
     @include label-theme-bgwhite($primary-color);
-} 
+}
 .sb-label-outline-success {
     @include label-theme-bgwhite($secondary-200);
-} 
+}
 .sb-label-outline-warning {
     @include label-theme-bgwhite($tertiary-color);
-}   
+}
 .sb-label-outline-error {
     @include label-theme-bgwhite($red);
-} 
+}
 .sb-label-outline-gray {
     @include label-theme-bgwhite($gray-800);
-} 
+}
 // default colored labels
 .sb-label-primary,
 .sb-label-info {
@@ -114,11 +115,11 @@ $sb-label-status-indicator-error-background: $tertiary-color;
 .sb-label-info-100 {
     @include label-theme($primary-100);
     color: $primary-color;
-} 
+}
 .sb-label-text-primary-100,
 .sb-label-text-info-100 {
     color: $primary-color;
-} 
+}
 .sb-label-secondary,
 .sb-label-success {
     @include label-theme($secondary-200);
@@ -147,13 +148,13 @@ $sb-label-status-indicator-error-background: $tertiary-color;
 }
 .sb-label-success {
     @include label-theme($success-color);
-} 
+}
 .sb-label-info {
     @include label-theme($info-color);
 }
 .sb-label-warning {
     @include label-theme($warning-color);
-} 
+}
 .sb-label-error {
     @include label-theme($danger-color);
 }
@@ -180,7 +181,7 @@ $sb-label-status-indicator-error-background: $tertiary-color;
 .sb-pageSection-count{
     background: $tertiary-color;
     padding: ($base-block-space/2) ($base-block-space);
-    border-radius: ($base-block-space / 2);
+    border-radius: math.div($base-block-space, 2);
     font-size:calculateRem(16px);
     border: none;
     height: auto;
@@ -223,7 +224,7 @@ $sb-label-status-indicator-error-background: $tertiary-color;
 }
 //network status label offline
 .sb-label-status {
-   width: $sb-label-status-width; 
+   width: $sb-label-status-width;
    position: relative;
    padding: $sb-label-status-padding;
    height:$sb-label-status-height;
@@ -235,7 +236,7 @@ $sb-label-status-indicator-error-background: $tertiary-color;
     &:before {
         content: "";
         position: absolute;
-        border: $sb-label-status-before-border; 
+        border: $sb-label-status-before-border;
         top: $sb-label-status-before-top;
         bottom: $sb-label-status-before-bottom;
         left: $sb-label-status-before-left;
@@ -251,7 +252,7 @@ $sb-label-status-indicator-error-background: $tertiary-color;
         background-color: $sb-label-status-success-background-color;
     }
     &.sb-label-status-error:before {
-        border-color:$sb-label-status-error-border-color;  
+        border-color:$sb-label-status-error-border-color;
         background-color:$sb-label-status-error-background-color;
     }
     .sb-label-status-indicator {
@@ -269,10 +270,10 @@ $sb-label-status-indicator-error-background: $tertiary-color;
     }
  }
 .sb-label-status-error {
-    color: $sb-label-status-error-color;  
+    color: $sb-label-status-error-color;
 }
 .sb-label-status-success {
-    color: $sb-label-status-success-color;  
+    color: $sb-label-status-success-color;
   }
 
 // cbse

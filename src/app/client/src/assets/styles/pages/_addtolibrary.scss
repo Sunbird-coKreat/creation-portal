@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+@use "sass:math";
 @import './variables';
 @import 'mixins/mixins';
 /* // @import './pages/addtolibrary'; */
@@ -216,7 +217,7 @@
         text-overflow: ellipsis;
         min-height: ($base-block-space * 4);
         margin-right: 8px;
-        padding: ($base-block-space / 2) ($base-block-space);
+        padding: math.div($base-block-space, 2) ($base-block-space);
         border-radius: calculateRem(2px);
         text-transform: capitalize;
         text-decoration: none;
@@ -252,7 +253,7 @@
       align-items: center;
       flex-wrap: wrap;
       border-radius: ($base-block-space * 2);
-      padding: ($base-block-space / 2) ($base-block-space * 2);
+      padding: math.div($base-block-space, 2) ($base-block-space * 2);
       color: var(--primary-400);
       min-height: ($base-block-space * 4);
       cursor: pointer;
@@ -996,7 +997,7 @@
   .ui.label.visible{
     margin: 0.4rem 0.125rem 0.25rem 0.125rem !important;
   }
-}  
+}
   .sb-select-searchfilter{
     .text{
       padding: 5px 8px !important;
@@ -1023,7 +1024,7 @@
         text-align: inherit !important;
         margin: inherit !important;
       }
-          
+
       .ui.selection.dropdown {
         border-color: #999;
       }
@@ -1082,22 +1083,22 @@
         position: relative;
         height: 0;
         width: 100%;
-    
+
         &[data-ratio="16:9"] {
           padding-top: 56.25%;
         }
-    
+
         [data-ratio="4:3"] {
           padding-top: 75%;
         }
-    
+
         &>* {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-    
+
           video {
             width: 100%;
             height: 100%;
@@ -1117,7 +1118,7 @@
         align-items: center;
         text-align: center;
         padding: 0 10%;
-    
+
         h3 {
           color: #024f9d;
           font-weight: bold;

@@ -1,3 +1,4 @@
+@use "sass:math";
 /* sb-field */
 $sb-field-margin-bottom: calculateRem(8px);
 $sb-field-disabled-background: $gray-0;
@@ -90,7 +91,7 @@ $sb-selection-line-height: calculateRem(18px);
     font-size: calculateRem(12px);
     width: 100%;
     min-height: $sb-selection-dropdown-min-height;
-    padding: ($base-block-space / 2) ($base-block-space * 1);
+    padding: math.div($base-block-space, 2) ($base-block-space * 1);
     border-color: var(--gray-200);
     display: flex;
     align-items: center;

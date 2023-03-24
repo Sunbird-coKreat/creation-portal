@@ -1,3 +1,4 @@
+@use "sass:math";
 .sb-dock-menu-bar {
   height: 3rem;
 
@@ -1069,7 +1070,7 @@ app-question-set-editor{
         width: 100%;
         border: calculateRem(1px) dotted #80A7CE;
         background: #F5F9FC;
-        border-radius: ($base-block-space / 2);
+        border-radius: math.div($base-block-space, 2);
       }
     }
   }
