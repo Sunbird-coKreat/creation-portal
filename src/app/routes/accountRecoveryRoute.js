@@ -11,14 +11,14 @@ const {encrypt, encriptWithTime} = require('../helpers/crypto');
 
 module.exports = (app) => {
 
-  // app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.SUNBIRD_LEARNER_URL, {
-  //   proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
-  //   proxyReqPathResolver: (req) => {
-  //     logger.info({msg: '/learner/user/v1/fuzzy/search called'});
-  //     return envHelper.SUNBIRD_LEARNER_URL + 'private/user/v1/search';
-  //     // return require('url').parse(envHelper.SUNBIRD_LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
-  //   }
-  // }))
+  app.post('/learner/user/v1/fuzzy/search', proxy(envHelper.SUNBIRD_LEARNER_URL, {
+    proxyReqOptDecorator: proxyUtils.decorateSunbirdRequestHeaders(),
+    proxyReqPathResolver: (req) => {
+      logger.info({msg: '/learner/user/v1/fuzzy/search called'});
+      return envHelper.SUNBIRD_LEARNER_URL + 'private/user/v1/search';
+      // return require('url').parse(envHelper.SUNBIRD_LEARNER_URL.replace('/api/', '')+ req.originalUrl).path
+    }
+  }))
 
   app.post('/learner/user/v1/password/reset', bodyParser.urlencoded({ extended: false }), bodyParser.json({ limit: '10mb' }),
     proxy(envHelper.LEARNER_URL, {
