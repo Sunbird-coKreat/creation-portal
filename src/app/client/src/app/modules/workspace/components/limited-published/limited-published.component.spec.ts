@@ -19,7 +19,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import * as mockData from './limited-published.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from 'angular-inport';
+import { NgInviewModule } from '@stockopedia/angular-inport';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
 xdescribe('LimitedPublishedComponent', () => {
