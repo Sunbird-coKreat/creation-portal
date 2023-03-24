@@ -1,11 +1,12 @@
+@use "sass:math";
 //rem calculator
 @function calculateRem($size) {
-  $remSize: $size / 16px;
+  $remSize: math.div($size, 16px);
   @return #{$remSize}rem;
 }
 
 @function calculateEm($size) {
-  $emSize: $size / 16px;
+  $emSize: math.div($size, 16px);
   @return #{$emSize}em;
 }
 

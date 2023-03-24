@@ -1,3 +1,4 @@
+@use "sass:math";
 .sb-secondary-pointing-menu {
   margin-left: 0;
   margin-right: 0;
@@ -78,8 +79,8 @@
 }
 
 .sb-dotmenu {
-  width: $base-block-space/2;
-  height: $base-block-space/2;
+  width: math.div($base-block-space, 2);
+  height: math.div($base-block-space, 2);
   border-radius: 50%;
   background-color: $gray-200;
   box-shadow: 0px -6px 0px $gray-200, 0px 6px 0px $gray-200;

@@ -1,4 +1,4 @@
-// Card component
+@use "sass:math";
 $sb-card-width: calculateRem(292px);
 $sb-card-height: calculateRem(208px);
 $sb-card-body-height: calculateRem(204px);
@@ -166,7 +166,7 @@ $sb-card-meta-org-font-size-ur: $font-size-sm;
 
     &.sb-card-hover-grey {
       background: rgba(153, 153, 153, .95);
-      
+
       .sb-exclamation-icon, p {
         color: white;
       }
@@ -232,7 +232,7 @@ app-card[lang="ur"] {
   max-width: $sb-card-width;
   @include border(border, 0.5px, $gray-0);
   @include border(border-left, 4px, $white);
-  border-radius: $base-block-space/2;
+  border-radius: math.div($base-block-space, 2);
   background: $white;
   padding: $base-block-space*2 $base-block-space*3;
   margin: 0px calculateRem(24px) calculateRem(24px) 0;

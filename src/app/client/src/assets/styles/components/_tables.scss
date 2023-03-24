@@ -1,3 +1,4 @@
+@use "sass:math";
 .sb-data-table-container {
 
   .ui.table {
@@ -129,7 +130,7 @@
 }
 
 .sb-table-responsive, .sb-table-responsive-div {
-    display: block; 
+    display: block;
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -151,7 +152,7 @@
       background: $gray-0;
       border: 1px solid $gray-100;
       border-bottom: none;
-      border-radius: ($base-block-space/2) ($base-block-space/2) 0 0;
+      border-radius: math.div($base-block-space, 2) math.div($base-block-space, 2) 0 0;
     }
 
     .download-file {

@@ -155,7 +155,7 @@
     }
     .characters-left {
       position: absolute;
-      bottom: $base-block-space/2;
+      bottom: math.div($base-block-space, 2);
       right: $base-block-space;
       color: $gray-400;
       font-size: $font-size-xs;
