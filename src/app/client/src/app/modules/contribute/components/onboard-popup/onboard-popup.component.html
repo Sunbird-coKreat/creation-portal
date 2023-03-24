@@ -1,5 +1,5 @@
 <sui-modal [mustScroll]="true" [isClosable]="isClosable" [transitionDuration]="0" [size]="'normal'" class="sb-modal"
-  appBodyScroll #modal (dismissed)="modal.deny();close.emit();" *ngIf="formFieldOptions.length" #modal>
+  appBodyScroll (dismissed)="modal.deny();close.emit();" *ngIf="formFieldOptions.length" #modal>
   <div class="sb-modal-header">
     {{'Please fill the form to continue'}}&lrm;
   </div>
@@ -19,7 +19,7 @@
         <div *ngIf="field.inputType ==='select'" class="field mt-15">
           <label>{{field.label}}</label>
           <div class="field">
-            <sui-select [isSearchable]="true" id={{field.code}} name={{field.code}} class="selection" 
+            <sui-select [isSearchable]="true" id={{field.code}} name={{field.code}} class="selection"
               [(ngModel)]="selectedOption[field.code]" labelField="name" valueField="name"
               (ngModelChange)="handleFieldChange($event, field)" [options]="field.range" #select>
               <sui-select-option *ngFor="let option of select.filteredOptions" [value]="option"></sui-select-option>
