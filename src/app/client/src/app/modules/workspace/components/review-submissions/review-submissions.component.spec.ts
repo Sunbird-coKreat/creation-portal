@@ -20,7 +20,7 @@ const testData = mockData.mockRes;
 // Import Module
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from 'angular-inport';
+import { NgInviewModule } from '@stockopedia/angular-inport';
 const fakeActivatedRoute = {
   'params': observableOf({ 'pageNumber': 1 }),
   snapshot: {

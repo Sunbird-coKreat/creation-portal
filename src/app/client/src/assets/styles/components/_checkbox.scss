@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "radiobutton";
 // Checkbox
 $sb-checkbox-primary-background: $primary-color;
@@ -196,8 +197,8 @@ $sb-radio-btn-border-color: $primary-300;
 
   label:after {
     position: absolute;
-    left: $base-block-space/2;
-    top: $base-block-space/2;
+    left: math.div($base-block-space, 2);
+    top: math.div($base-block-space, 2);
     border-radius: 50%;
     height: $base-block-space;
     width: $base-block-space;
@@ -270,7 +271,7 @@ $sb-radio-btn-border-color: $primary-300;
       left: unset;
       right: 0;
     }
-    
+
     &::after {
       left: unset;
       right: 4px;

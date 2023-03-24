@@ -2,7 +2,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule, ResourceService } from '@sunbird/shared';
 import { CoreModule, UserService, SearchService, PlayerService , LearnerService, CoursesService} from '@sunbird/core';
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
-import { NgInviewModule } from 'angular-inport';
+import { NgInviewModule } from '@stockopedia/angular-inport';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ProfileService } from '@sunbird/profile';
 import {ProfilePageComponent} from './profile-page.component';
@@ -56,7 +56,7 @@ describe('ProfilePageComponent', () => {
     },
     languageSelected$: observableOf({})
   };
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

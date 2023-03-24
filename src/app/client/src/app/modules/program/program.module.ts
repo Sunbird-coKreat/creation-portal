@@ -12,7 +12,7 @@ import { CreateProgramComponent } from './components/create-program/create-progr
 import { ProgramNominationsComponent } from './components/program-nominations/program-nominations.component';
 import { ListContributorTextbooksComponent } from './components/list-contributor-textbooks/list-contributor-textbooks.component';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
-import { NgInviewModule } from 'angular-inport';
+import { NgInviewModule } from '@stockopedia/angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
 import { SourcingModule } from '../sourcing/sourcing.module';

@@ -15,7 +15,7 @@ import * as mockData from './batch-page-section.component.spec.data';
 const testData = mockData.mockRes;
 import * as _ from 'lodash-es';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from 'angular-inport';
+import { NgInviewModule } from '@stockopedia/angular-inport';
 import { PageApiService } from '@sunbird/core';
 
 xdescribe('BatchPageSectionComponent', () => {

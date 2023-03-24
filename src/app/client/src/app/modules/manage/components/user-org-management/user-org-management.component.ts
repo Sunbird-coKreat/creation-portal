@@ -7,7 +7,7 @@ import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import 'datatables.net';
 import * as moment from 'moment';
 

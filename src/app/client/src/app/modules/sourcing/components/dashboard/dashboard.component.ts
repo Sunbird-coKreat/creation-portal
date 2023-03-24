@@ -2,7 +2,7 @@ import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { PublicDataService, UserService, ActionService, ContentService } from '@sunbird/core';
 import { ConfigService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { map, catchError } from 'rxjs/operators';
-import * as $ from 'jquery';
+import $ from 'jquery';
 //import 'datatables.net';
 import * as _ from 'lodash-es';
 import { ExportToCsv } from 'export-to-csv';

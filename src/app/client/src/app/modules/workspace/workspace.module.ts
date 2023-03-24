@@ -19,7 +19,7 @@ import {
   AllContentComponent, FlagReviewerComponent, AllMyContentFilterComponent, CollaboratingOnComponent,
   CollaborationContentFilterComponent
 } from './components';
-import { NgInviewModule } from 'angular-inport';
+import { NgInviewModule } from '@stockopedia/angular-inport';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ReviewCommentsComponent } from './components/review-comments/review-comments.component';
 import { OrderModule } from 'ngx-order-pipe';
@@ -28,7 +28,7 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
 @NgModule({
   imports: [
     CommonModule,
-    
+
     WorkspaceRoutingModule,
     SharedModule,
     SuiModule,

@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "variables";
 @import "mixins/mixins";
 // State Selection and Board Medium Selection CSS starts here
@@ -96,8 +97,8 @@
       -webkit-appearance: none;
       text-overflow: ellipsis;
       min-height: ($base-block-space * 4);
-      margin: 0px ($base-block-space/2) 0px ($base-block-space/2);
-      padding: ($base-block-space / 2) ($base-block-space);
+      margin: 0px math.div($base-block-space, 2) 0px math.div($base-block-space, 2);
+      padding: math.div($base-block-space, 2) ($base-block-space);
       border-radius: 2px;
       text-transform: capitalize;
       text-decoration: none;
@@ -131,7 +132,7 @@
     display: inline-flex;
     align-items: center;
     border-radius: ($base-block-space * 2);
-    padding: ($base-block-space / 2) ($base-block-space * 2);
+    padding: math.div($base-block-space, 2) ($base-block-space * 2);
     color: var(--primary-400);
     min-height: ($base-block-space * 4);
     font-size:calculateRem(14px);
@@ -184,7 +185,7 @@
     padding: 8px;
     height: 88px;
   }
-  .sbcard__img {  
+  .sbcard__img {
     height: 100%;
     overflow: hidden;
     margin-right: 8px;
