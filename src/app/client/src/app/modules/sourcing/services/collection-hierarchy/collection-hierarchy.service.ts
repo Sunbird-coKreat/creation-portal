@@ -146,7 +146,7 @@ export class CollectionHierarchyService {
     if (allFields) {
       delete(option.data.request.fields);
     }
-    if (!isUndefined(preferencefilters)) {
+    if (!_.isUndefined(preferencefilters)) {
         if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
           option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
         }
