@@ -6,7 +6,7 @@ import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../shared/services/cache-service/cache.service';
 import { ActivatedRoute, Router} from '@angular/router';
 import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';

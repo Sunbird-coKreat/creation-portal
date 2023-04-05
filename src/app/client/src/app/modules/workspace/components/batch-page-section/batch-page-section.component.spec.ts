@@ -75,7 +75,7 @@ xdescribe('BatchPageSectionComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       imports: [SuiModule, FormsModule, ReactiveFormsModule, HttpClientTestingModule,
         RouterTestingModule, SharedModule.forRoot(), CoreModule,
-        TelemetryModule.forRoot(), NgInviewModule],
+        TelemetryModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, ResourceService, ToasterService, BatchService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },

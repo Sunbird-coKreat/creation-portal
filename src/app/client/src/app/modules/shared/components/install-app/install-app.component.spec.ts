@@ -4,13 +4,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { InstallAppComponent } from './install-app.component';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '../../services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 describe('InstallAppComponent', () => {
     let comp: InstallAppComponent;
     let fixture: ComponentFixture<InstallAppComponent>;
 
-    
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
@@ -25,7 +25,7 @@ describe('InstallAppComponent', () => {
     afterEach(() => {
         fixture.destroy();
       });
-    
+
     it('can load instance', () => {
         expect(comp).toBeTruthy();
     });

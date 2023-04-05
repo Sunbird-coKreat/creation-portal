@@ -6,7 +6,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { Response } from './card.component.spec.data';
 import { CardComponent } from './card.component';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { CdnprefixPipe } from '../../pipes/cdnprefix.pipe';
 describe('CardComponent', () => {
   let component: CardComponent;

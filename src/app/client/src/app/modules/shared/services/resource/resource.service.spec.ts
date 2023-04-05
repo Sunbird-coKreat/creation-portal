@@ -4,7 +4,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { ResourceService } from './resource.service';
 import { ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import {mockRes} from './resource.service.spec.data';
 describe('ResourceService', () => {
   beforeEach(() => {

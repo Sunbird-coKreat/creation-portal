@@ -6,7 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule, ResourceService, ConfigService, ToasterService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { mockData } from './bulk-approval.component.spec.data'
@@ -38,7 +38,7 @@ describe('BulkApprovalComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule, TelemetryModule,
-        RouterTestingModule, SharedModule.forRoot()],      
+        RouterTestingModule, SharedModule.forRoot()],
       schemas: [ NO_ERRORS_SCHEMA ],
       declarations: [ BulkApprovalComponent ],
       providers: [

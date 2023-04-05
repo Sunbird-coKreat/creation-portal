@@ -9,7 +9,7 @@ import { Observable, BehaviorSubject, of } from 'rxjs';
 import { skipWhile, mergeMap, map } from 'rxjs/operators';
 import { PublicDataService } from './../public-data/public-data.service';
 import * as _ from 'lodash-es';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 @Injectable({
   providedIn: 'root'
 })

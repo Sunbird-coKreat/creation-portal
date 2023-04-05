@@ -16,7 +16,7 @@ import * as _ from 'lodash-es';
 import { DatePipe } from '@angular/common';
 import { ProfileService } from '@sunbird/profile';
 import { animate, AnimationBuilder, AnimationMetadata, AnimationPlayer, style } from '@angular/animations';
-import { CacheService } from '../app/modules/shared/services/cache-service/cache.service';
+import { CacheService } from './modules/shared/services/cache-service/cache.service';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
 class RouterStub {

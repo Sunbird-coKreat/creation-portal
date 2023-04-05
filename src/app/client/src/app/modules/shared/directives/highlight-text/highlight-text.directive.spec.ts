@@ -1,4 +1,4 @@
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { TestBed } from '@angular/core/testing';
 import { HighlightTextDirective } from './highlight-text.directive';
 import { ResourceService, ConfigService } from '@sunbird/shared';

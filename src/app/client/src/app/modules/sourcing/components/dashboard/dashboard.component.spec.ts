@@ -3,7 +3,7 @@ import {
   ResourceService, ToasterService, SharedModule, ConfigService,
   UtilService, BrowserCacheTtlService, NavigationHelperService
 } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { SourcingService } from '../../services';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
@@ -19,7 +19,7 @@ import { ActionService, ContentService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { ExportToCsv } from 'export-to-csv';
 import { RouterTestingModule } from '@angular/router/testing';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
 xdescribe('DashboardComponent', () => {
   let component: DashboardComponent;

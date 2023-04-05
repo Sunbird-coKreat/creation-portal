@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
 import { CreateContentComponent } from './create-content.component';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import * as mockData from './create-content.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';

@@ -13,7 +13,7 @@ import { IInteractEventEdata } from "@sunbird/telemetry";
 import { Output, EventEmitter } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { SourcingService } from "./../../../sourcing/services";
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { forkJoin, of } from 'rxjs';
 
 @Component({

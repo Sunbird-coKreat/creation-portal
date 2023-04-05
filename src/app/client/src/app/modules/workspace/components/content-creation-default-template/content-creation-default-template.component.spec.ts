@@ -8,7 +8,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { EditorService, WorkSpaceService } from './../../services';
 import { ResourceService, SharedModule } from '@sunbird/shared';
 import { UserService, LearnerService, CoreModule } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { DefaultTemplateComponent } from './content-creation-default-template.component';
 import { mockData } from './content-creation-default-template.component.spec.data';
 import { expand } from 'rxjs/operators';

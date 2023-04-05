@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ResourceService, ConfigService, InterpolatePipe, BrowserCacheTtlService } from '@sunbird/shared';
 import { ProgramTelemetryService } from '../../../program/services';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { APP_BASE_HREF } from '@angular/common';
 import { mockData} from './mvc-list.component.spec.data';
 

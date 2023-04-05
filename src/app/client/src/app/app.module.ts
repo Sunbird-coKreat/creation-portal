@@ -18,7 +18,7 @@ import { PluginModules } from './framework.config';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
 import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
-import { CacheService } from '../app/modules/shared/services/cache-service/cache.service';
+import { CacheService } from './modules/shared/services/cache-service/cache.service';
 
 @NgModule({
   declarations: [

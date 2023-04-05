@@ -70,7 +70,7 @@ xdescribe('FlaggedComponent', () => {
     TestBed.configureTestingModule({
       declarations: [FlaggedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
-        NgInviewModule],
+      ],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,

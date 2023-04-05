@@ -5,7 +5,7 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {ModalPreviewComponent} from './modal-preview.component';
 import {of as observableOf} from 'rxjs';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
-import {CacheService} from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import {HttpClient, HttpHandler} from '@angular/common/http';
 import { ToasterService } from '@sunbird/shared';
 

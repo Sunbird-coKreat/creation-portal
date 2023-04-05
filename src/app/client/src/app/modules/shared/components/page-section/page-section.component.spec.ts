@@ -5,7 +5,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { Response } from './page-section.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 

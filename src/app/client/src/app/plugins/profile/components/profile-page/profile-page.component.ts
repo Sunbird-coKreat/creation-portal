@@ -10,7 +10,7 @@ import * as _ from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../../modules/shared/services/cache-service/cache.service';
 @Component({
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.scss']
