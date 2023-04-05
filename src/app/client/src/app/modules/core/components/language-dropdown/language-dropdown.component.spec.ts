@@ -5,11 +5,11 @@ import { SharedModule, ResourceService, ConfigService, BrowserCacheTtlService, U
 import { CoreModule, OrgDetailsService, ContentService, PublicDataService } from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterModule } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import * as _ from 'lodash-es';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { LanguageDropdownComponent } from './language-dropdown.component';
-import { APP_BASE_HREF } from '@angular/common'; 
+import { APP_BASE_HREF } from '@angular/common';
 
 describe('LanguageDropdownComponent', () => {
     let component: LanguageDropdownComponent;
@@ -43,7 +43,7 @@ describe('LanguageDropdownComponent', () => {
             }
         }
     };
-  
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })],

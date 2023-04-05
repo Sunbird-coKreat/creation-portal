@@ -80,7 +80,6 @@
     "moment": "^2.20.1",
     "ng-dynamic-component": "^5.0.0",
     "ng-recaptcha": "^4.2.1",
-    "ng2-cache-service": "^1.1.1",
     "ng2-material-dropdown": "^0.11.0",
     "ng2-semantic-ui-v9": "0.0.3",
     "ngx-avatar": "^3.3.3",

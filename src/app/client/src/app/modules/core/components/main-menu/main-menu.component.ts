@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { UserService, PermissionService, ProgramsService } from '../../services';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { first, filter, tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { environment } from '@sunbird/environment';

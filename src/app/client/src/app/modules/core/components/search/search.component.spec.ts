@@ -11,9 +11,9 @@ import { Location } from '@angular/common';
 import { ActivatedRoute, Router, Params, UrlSegment, NavigationEnd} from '@angular/router';
 import { UserService, LearnerService, ContentService } from '@sunbird/core';
 import { mockResponse } from './search.component.spec.data';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 describe('SearchComponent', () => {
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
@@ -33,7 +33,7 @@ describe('SearchComponent', () => {
     });
   }
 
- 
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ SearchComponent ],

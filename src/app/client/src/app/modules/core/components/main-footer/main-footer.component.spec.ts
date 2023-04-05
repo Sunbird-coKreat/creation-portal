@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { ResourceService, ConfigService, SharedModule } from '@sunbird/shared';
 import { MainFooterComponent } from './main-footer.component';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { of } from 'rxjs';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -38,7 +38,7 @@ xdescribe('MainFooterComponent', () => {
         },
         path: 'resource'
     };
-  
+
 
     beforeEach(() => {
         TestBed.configureTestingModule({

@@ -14,7 +14,6 @@ import {APP_BASE_HREF} from '@angular/common';
 import * as _ from 'lodash-es';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
-import { CacheService } from 'ng2-cache-service';
 
 describe('OnboardPopupComponent', () => {
 
@@ -27,7 +26,7 @@ describe('OnboardPopupComponent', () => {
         SuiAccordionModule, TelemetryModule.forRoot(),
         HttpClientTestingModule],
       declarations: [ OnboardPopupComponent ],
-      providers: [ResourceService, ToasterService, BrowserCacheTtlService, CacheService,
+      providers: [ResourceService, ToasterService, BrowserCacheTtlService,
         ConfigService, {provide: APP_BASE_HREF, useValue: '/'}]
     })
     .compileComponents();
@@ -35,7 +34,7 @@ describe('OnboardPopupComponent', () => {
     component = fixture.componentInstance;
   });
 
-  
+
   afterEach(() => {
     fixture.destroy();
   });
