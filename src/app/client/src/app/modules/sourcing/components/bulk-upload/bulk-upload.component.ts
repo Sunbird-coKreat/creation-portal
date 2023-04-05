@@ -5,7 +5,7 @@ import { FineUploader } from 'fine-uploader';
 import CSVFileValidator, { CSVFileValidatorResponse } from './csv-helper-util';
 import * as _ from 'lodash-es';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
 import { forkJoin, Subject } from 'rxjs';

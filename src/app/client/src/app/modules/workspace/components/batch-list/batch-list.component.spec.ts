@@ -15,7 +15,7 @@ import * as mockData from './batch-list.component.spec.data';
 const testData = mockData.mockRes;
 import * as _ from 'lodash-es';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 
 xdescribe('BatchListComponent', () => {
   let component: BatchListComponent;

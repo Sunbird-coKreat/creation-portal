@@ -9,18 +9,18 @@
 <table class="ui single line sortable upForReviewTable table" *ngIf="collaboratingContent.length > 0 && !showLoader && !noResult ">
   <thead>
     <tr>
-      <th (click)="sortColumns('name')" class="five wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' && 
+      <th (click)="sortColumns('name')" class="five wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' &&
       column === 'name','descending':sortDirection === 'desc' && column === 'name'}">
         {{ resourceService?.frmelmnts?.lbl?.contentLabel}}
       </th>
-      <th (click)="sortColumns('creator')" class="four wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' && 
+      <th (click)="sortColumns('creator')" class="four wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' &&
       column === 'creator','descending':sortDirection === 'desc' && column === 'creator'}">{{ resourceService?.frmelmnts?.lbl?.creator}}
       </th>
-      <th (click)="sortColumns('lastUpdatedOn')" class="four wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' && 
+      <th (click)="sortColumns('lastUpdatedOn')" class="four wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' &&
       column === 'lastUpdatedOn','descending':sortDirection === 'desc' && column === 'lastUpdatedOn'}">
         {{ resourceService?.frmelmnts?.lbl?.lastupdatedCaps}}
       </th>
-      <th (click)="sortColumns('status')" class="two wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' && 
+      <th (click)="sortColumns('status')" class="two wide UpReviewTableHeader sorted bl-0" [ngClass]="{'ascending':sortDirection === 'asc' &&
       column === 'status','descending':sortDirection === 'desc' && column === 'status'}">
         {{ resourceService?.frmelmnts?.lbl?.status}}
       </th>
@@ -28,8 +28,8 @@
       </th>
     </tr>
   </thead>
-  <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)" [throttle]="1000" [trigger]="collaboratingContent">
-    <tr in-view-item class="UpForReviewListHover" *ngFor="let content of collaboratingContent |orderBy: column :reverse ; trackBy: trackByFn let i = index;"
+  <tbody [appTelemetryImpression]="telemetryImpression" [throttle]="1000" [trigger]="collaboratingContent">
+    <tr class="UpForReviewListHover" *ngFor="let content of collaboratingContent |orderBy: column :reverse ; trackBy: trackByFn let i = index;"
       [id]="i" [data]="content" appTelemetryInteract [telemetryInteractObject]="{id:content.identifier,type:content.contentType,ver:content.pkgVersion ? content.pkgVersion.toString(): '1.0' }"
       [telemetryInteractEdata]="{id:'collaborating-on',type:'click',pageid:'CollaboratingOn'}">
       <td>
@@ -92,7 +92,7 @@
   <div class="sb-modal sb-error">
     <div class="ui modal visible active small">
       <i class="icon close" (click)="modal.deny('denied')" tabindex="0"></i>
-      
+
       <!--Header-->
       <div class="sb-modal-header">
         {{resourceService?.frmelmnts?.lbl?.deletecontent}}
@@ -107,15 +107,15 @@
 
       <!--Actions-->
       <div class="sb-modal-actions">
-        <button 
-          class="sb-btn sb-btn-normal sb-btn-error" 
-          (click)="modal.approve('approved')" 
+        <button
+          class="sb-btn sb-btn-normal sb-btn-error"
+          (click)="modal.approve('approved')"
           autofocus
         >
           {{resourceService?.frmelmnts?.btn?.yes}}
         </button>
-        <button 
-          class="sb-btn sb-btn-normal sb-btn-outline-error" 
+        <button
+          class="sb-btn sb-btn-normal sb-btn-outline-error"
           (click)="modal.deny('denied')"
         >
           {{resourceService?.frmelmnts?.btn?.no}}

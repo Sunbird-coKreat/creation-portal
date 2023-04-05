@@ -3,7 +3,7 @@ import { UserService, FrameworkService,
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { map, catchError, tap, take } from 'rxjs/operators';

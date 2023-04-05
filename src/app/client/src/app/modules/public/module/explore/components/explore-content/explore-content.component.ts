@@ -213,6 +213,7 @@ export class ExploreContentComponent implements OnInit, OnDestroy, AfterViewInit
   ngAfterViewInit() {
     setTimeout(() => {
       this.setTelemetryData();
+      this.inView({ inview: [] });
     });
   }
   ngOnDestroy() {

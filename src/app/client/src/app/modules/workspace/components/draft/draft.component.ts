@@ -308,6 +308,7 @@ export class DraftComponent extends WorkSpace implements OnInit, AfterViewInit {
                     duration: this.navigationhelperService.getPageLoadTime()
                 }
             };
+            this.inview({ inview: [] });
         });
     }
     /**

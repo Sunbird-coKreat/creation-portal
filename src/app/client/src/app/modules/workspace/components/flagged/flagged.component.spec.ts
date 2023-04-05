@@ -11,7 +11,7 @@ import { UserService, LearnerService, CoursesService, PermissionService } from '
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './flagged.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { APP_BASE_HREF } from '@angular/common';
 
 xdescribe('FlaggedComponent', () => {

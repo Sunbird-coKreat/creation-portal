@@ -7,7 +7,7 @@ import { UserService, ActionService, ContentService, NotificationService, Progra
 import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap, first, filter, takeUntil, take } from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { of, forkJoin, throwError, Subject, iif, Observable } from 'rxjs';
 import { SourcingService } from '../../services';
 import { ItemsetService } from '../../services/itemset/itemset.service';

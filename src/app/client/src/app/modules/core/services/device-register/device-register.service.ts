@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { PublicDataService } from './../public-data/public-data.service';
 import { ConfigService,  HttpOptions} from '@sunbird/shared';
 import * as moment from 'moment';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { HttpClient } from '@angular/common/http';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import {Observable, timer, Subscription, of} from 'rxjs';

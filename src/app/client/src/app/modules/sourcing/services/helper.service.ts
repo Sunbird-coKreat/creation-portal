@@ -10,7 +10,7 @@ import { CacheService } from 'ng2-cache-service';
 import { ActivatedRoute, Router} from '@angular/router';
 import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 

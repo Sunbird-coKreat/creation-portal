@@ -28,6 +28,12 @@ export class MvcListComponent implements OnInit, OnDestroy {
     this.telemetryPageId = this.sessionContext.telemetryPageId;
   }
 
+  ngAfterViewInit () {
+    setTimeout(() => {
+      this.inView({ inview: [] });
+    });
+  }
+
   onContentChange(selectedContent: any) {
     this.contentChangeEvent.emit({content: selectedContent});
   }
