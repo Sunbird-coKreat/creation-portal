@@ -10,7 +10,6 @@ import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-bulk-upload',

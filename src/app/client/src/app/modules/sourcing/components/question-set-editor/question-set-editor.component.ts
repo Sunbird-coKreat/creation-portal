@@ -11,7 +11,6 @@ import { SourcingService } from '../../services';
 import { Subject} from 'rxjs';
 import * as _ from 'lodash-es';
 import { map} from 'rxjs/operators';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-question-set-editor',
