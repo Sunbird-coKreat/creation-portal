@@ -22,38 +22,37 @@ import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml
 import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserAnimationsModule, // used this instaed of browser module since it includes in it.
-    CoreModule,
-    CommonModule,
-    HttpClientModule,
-   // ChatLibModule,
-    SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
-    SuiRatingModule, SuiCollapseModule,
-    SharedModule.forRoot(),
-    WebExtensionModule.forRoot(),
-    TelemetryModule.forRoot(),
-    SharedFeatureModule,
-    ...PluginModules,
-    QumlLibraryModule,
-    CollectionEditorLibraryModule,
-    AppRoutingModule // don't add any module below this because it contains wildcard route
-  ],
-  entryComponents: [AppComponent],
-  bootstrap: [AppComponent],
-  providers: [
-    CacheService,
-    DatePipe,
-    DeviceDetectorService,
-    //ChatLibService,
-    { provide: CacheStorageAbstract, useClass: CacheSessionStorage },
-    { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true },
-    { provide: QuestionCursor, useExisting: QumlPlayerService },
-    { provide: EditorCursor, useExisting: QumlPlayerService }
-  ]
+    declarations: [
+        AppComponent
+    ],
+    imports: [
+        BrowserAnimationsModule,
+        CoreModule,
+        CommonModule,
+        HttpClientModule,
+        // ChatLibModule,
+        SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
+        SuiRatingModule, SuiCollapseModule,
+        SharedModule.forRoot(),
+        WebExtensionModule.forRoot(),
+        TelemetryModule.forRoot(),
+        SharedFeatureModule,
+        ...PluginModules,
+        QumlLibraryModule,
+        CollectionEditorLibraryModule,
+        AppRoutingModule // don't add any module below this because it contains wildcard route
+    ],
+    bootstrap: [AppComponent],
+    providers: [
+        CacheService,
+        DatePipe,
+        DeviceDetectorService,
+        //ChatLibService,
+        { provide: CacheStorageAbstract, useClass: CacheSessionStorage },
+        { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true },
+        { provide: QuestionCursor, useExisting: QumlPlayerService },
+        { provide: EditorCursor, useExisting: QumlPlayerService }
+    ]
 })
 export class AppModule {
   constructor(bootstrapFramework: BootstrapFramework) {

@@ -3,7 +3,6 @@
   "angularCompilerOptions": {
     "genDir": "aot",
     "debug": true,
-    "enableIvy": false
   },
   "compilerOptions": {
     "baseUrl": "./",
