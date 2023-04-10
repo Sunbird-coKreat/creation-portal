@@ -3,7 +3,7 @@ import { TopicPickerComponent } from './topic-picker.component';
 import { FormsModule } from '@angular/forms';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('TopicPickerComponent', () => {

@@ -6,7 +6,7 @@ import { CdnprefixPipe } from '../../pipes/cdnprefix.pipe';
 import { BrowserCompatibilityComponent } from './browser-compatibility.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '../../services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { Response } from './browser-compatibility.component.spec.data';
 
 describe('BrowserCompatibilityComponent', () => {

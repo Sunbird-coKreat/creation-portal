@@ -20,7 +20,7 @@ const testData = mockData.mockRes;
 // Import Module
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 const fakeActivatedRoute = {
   'params': observableOf({ 'pageNumber': 1 }),
   snapshot: {
@@ -63,7 +63,7 @@ xdescribe('ReviewSubmissionsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ReviewSubmissionsComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
-        TelemetryModule.forRoot(), NgInviewModule],
+        TelemetryModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ToasterService,

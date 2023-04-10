@@ -3,7 +3,7 @@ import { PublicDataService, UserService, ActionService, FrameworkService, Progra
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { TelemetryService, IInteractEventEdata , IImpressionEventInput} from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { SourcingService } from '../../services';
 import { map, catchError, first, filter, takeUntil } from 'rxjs/operators';
 import { throwError, Observable, Subject } from 'rxjs';

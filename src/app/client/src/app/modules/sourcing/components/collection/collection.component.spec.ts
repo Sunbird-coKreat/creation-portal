@@ -9,7 +9,7 @@ import { CollectionComponent} from '../index';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ContentService, UserService, ProgramsService } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { ProgramStageService } from '../../../program/services';
 import { collectionComponentInput, collectionWithCard, searchCollectionResponse,
    userProfile, addParticipentResponseSample, objectCategoryDefinition } from './collection.component.spec.data';

@@ -11,8 +11,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { animate, AnimationBuilder, AnimationMetadata, AnimationPlayer, style } from '@angular/animations';
 // import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { CacheService } from 'ng2-cache-service';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
 describe('MainHeaderComponent', () => {
   let component: MainHeaderComponent;

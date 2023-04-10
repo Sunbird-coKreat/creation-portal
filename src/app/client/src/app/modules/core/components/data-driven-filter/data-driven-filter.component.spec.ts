@@ -9,8 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule, ResourceService, ConfigService, ToasterService, BrowserCacheTtlService } from '@sunbird/shared';
 import { CoreModule, FrameworkService, FormService, UserService, PublicDataService } from '@sunbird/core';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { CacheService } from 'ng2-cache-service';
 // import { MainHeaderComponent } from './../../../core/components/main-header/main-header.component';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -42,12 +42,12 @@ describe('DataDrivenFilterComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC', 'CONTENT_REVIEWER']
   };
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule,RouterTestingModule, TelemetryModule.forRoot()],
-      // declarations: [MainHeaderComponent],      
+      // declarations: [MainHeaderComponent],
       providers: [ConfigService, CacheService, ResourceService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
@@ -81,7 +81,7 @@ describe('DataDrivenFilterComponent', () => {
   afterEach(() => {
     fixture.destroy();
   });
-  
+
   xit('should get formated filter data by calling framework service and form service and set formated date in session', () => {
     mockHashTagId = undefined;
     mockFrameworkInput = undefined;

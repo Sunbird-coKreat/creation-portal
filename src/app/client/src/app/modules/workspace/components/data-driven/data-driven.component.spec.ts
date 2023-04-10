@@ -10,7 +10,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { EditorService, WorkSpaceService } from './../../services';
 import { ResourceService, SharedModule, NavigationHelperService, ToasterService } from '@sunbird/shared';
 import { FrameworkService, FormService, ContentService, UserService, CoreModule } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { mockFrameworkData } from './data-driven.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterTestingModule } from '@angular/router/testing';

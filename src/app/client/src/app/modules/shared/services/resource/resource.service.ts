@@ -7,9 +7,9 @@ import { HttpOptions, RequestParam, ServerResponse } from './../../interfaces';
 import { ConfigService } from './../config/config.service';
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import * as moment from 'moment';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import * as _ from 'lodash-es';
 /**
  * Service to fetch resource bundle
@@ -118,8 +118,8 @@ export class ResourceService {
       'X-Org-code': '',
       'X-Source': 'web',
       'ts': moment().format(),
-      'X-msgid': UUID.UUID(),
-      'X-Request-ID': UUID.UUID()
+      'X-msgid': UUID(),
+      'X-Request-ID': UUID()
     };
   }
   /**

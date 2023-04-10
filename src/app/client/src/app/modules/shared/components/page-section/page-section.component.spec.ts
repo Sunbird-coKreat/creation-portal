@@ -5,10 +5,10 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { Response } from './page-section.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -29,7 +29,7 @@ describe('PageSectionComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SuiModule,  NgInviewModule, TelemetryModule.forRoot(), RouterTestingModule],
+      imports: [HttpClientTestingModule, SuiModule, TelemetryModule.forRoot(), RouterTestingModule],
       declarations: [PageSectionComponent],
       providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }],

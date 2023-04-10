@@ -10,7 +10,7 @@ import { nodes, commonMessageApiResp } from './collection-tree.component.spec.da
 import { ResourceService, BrowserCacheTtlService, ConfigService, ToasterService } from '@sunbird/shared';
 import { UserService, OrgDetailsService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import {APP_BASE_HREF} from '@angular/common';
 
@@ -34,7 +34,7 @@ describe('CollectionTreeComponent', () => {
       }
     }
   };
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

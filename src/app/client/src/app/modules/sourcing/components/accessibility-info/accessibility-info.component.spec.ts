@@ -12,7 +12,7 @@ import { ProgramTelemetryService } from '../../../program/services';
 import { HelperService } from '../../services/helper.service';
 import { SourcingService } from '../../services';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { RouterTestingModule } from '@angular/router/testing';
 
 describe('AccessibilityInfoComponent', () => {

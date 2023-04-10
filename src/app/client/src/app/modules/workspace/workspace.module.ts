@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { CoreModule } from '@sunbird/core';
 import { WorkspaceRoutingModule } from './workspace-routing.module';
 import { SharedModule } from '@sunbird/shared';
-
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { WorkSpaceService, EditorService , BatchService, ReviewCommentsService} from './services';
@@ -19,7 +18,7 @@ import {
   AllContentComponent, FlagReviewerComponent, AllMyContentFilterComponent, CollaboratingOnComponent,
   CollaborationContentFilterComponent
 } from './components';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ReviewCommentsComponent } from './components/review-comments/review-comments.component';
 import { OrderModule } from 'ngx-order-pipe';
@@ -35,7 +34,6 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
     FormsModule,
     CoreModule,
     ReactiveFormsModule,
-    NgInviewModule,
     TelemetryModule,
     OrderModule,
     PlayerHelperModule

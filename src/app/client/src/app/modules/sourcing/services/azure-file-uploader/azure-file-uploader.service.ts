@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash-es';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { Observable, throwError, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 

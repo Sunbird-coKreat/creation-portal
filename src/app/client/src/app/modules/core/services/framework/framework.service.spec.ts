@@ -4,7 +4,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FrameworkService, UserService, CoreModule, PublicDataService } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { mockFrameworkData } from './framework.mock.spec.data';
 import { RouterTestingModule } from '@angular/router/testing';
 

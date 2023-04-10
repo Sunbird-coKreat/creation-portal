@@ -7,7 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContributeRoutingModule } from './contibute-routing.module';
 import { ProgramComponent } from './components/program/program.component';
 import { OnboardPopupComponent } from './components/onboard-popup/onboard-popup.component';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
 import { SourcingModule } from '../sourcing/sourcing.module';
@@ -39,7 +39,6 @@ import { QumlPlayerService } from '../sourcing';
     ReactiveFormsModule,
     SharedModule,
     CoreModule,
-    NgInviewModule,
     TelemetryModule,
     SourcingModule,
     SharedFeatureModule,

@@ -16,7 +16,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 // Test data
 import * as mockData from './draft.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import {APP_BASE_HREF} from '@angular/common';
 
 const testData = mockData.mockRes;
@@ -65,7 +65,7 @@ xdescribe('DraftComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DraftComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(),
-        TelemetryModule.forRoot(), NgInviewModule],
+        TelemetryModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService, SuiModalService,

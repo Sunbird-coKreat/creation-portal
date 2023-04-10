@@ -10,7 +10,7 @@ import { Validators, FormGroup, FormControl, NgForm, FormArray, FormBuilder } fr
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import * as _ from 'lodash-es';
 import { SourcingService } from '../../services';
 import { HelperService } from '../../services/helper.service';
@@ -118,7 +118,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     this.initialized = true;
     this.telemetryPageId =  this.sessionContext.telemetryPageId;
     this.telemetryEventsInput.telemetryPageId = this.telemetryPageId;
-    this.solutionUUID = UUID.UUID();
+    this.solutionUUID = UUID();
     this.initialize();
     if (this.questionMetaData && this.questionMetaData.data) {
       this.mediaArr = this.questionMetaData.data.media || [];
@@ -379,7 +379,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
                   'status': 'Draft',
                   'name': this.sessionContext.questionType + '_' + this.sessionContext.framework,
                   'type': 'reference',
-                  'code': UUID.UUID(),
+                  'code': UUID(),
                   'template_id': 'NA',
                   'media': this.mediaArr
                 }

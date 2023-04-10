@@ -5,7 +5,7 @@ import { ExploreContentComponent} from './components';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CoreModule } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { ExploreComponent } from './components/explore/explore.component';
 import {SharedFeatureModule} from '@sunbird/shared-feature';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
@@ -18,7 +18,6 @@ import { WebExtensionModule } from '@project-sunbird/web-extensions';
     TelemetryModule,
     CoreModule,
     SharedModule,
-    NgInviewModule,
     ExploreRoutingModule,
     SharedFeatureModule,
     SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,

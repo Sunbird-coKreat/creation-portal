@@ -13,7 +13,7 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import {
   ResourceService, ToasterService, SharedModule, ConfigService, UtilService, BrowserCacheTtlService,
   NavigationHelperService } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { TelemetryService } from '@sunbird/telemetry';
 import { of as observableOf, of, throwError as observableError } from 'rxjs';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
@@ -48,7 +48,7 @@ describe('QuestionListComponent', () => {
     navigate = jasmine.createSpy('navigate');
     url = jasmine.createSpy('url');
   };
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -60,7 +60,7 @@ describe('QuestionListComponent', () => {
       TelemetryService, ResourceService, DatePipe,
       CacheService, BrowserCacheTtlService, NavigationHelperService,
       HelperService, ActionService, ChangeDetectorRef, FormBuilder, NotificationService,
-      SourcingService, ContentService, ItemsetService, ProgramStageService, 
+      SourcingService, ContentService, ItemsetService, ProgramStageService,
       ProgramsService, FrameworkService, ProgramTelemetryService,
       {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}},
       {provide: Router, useValue: RouterStub},

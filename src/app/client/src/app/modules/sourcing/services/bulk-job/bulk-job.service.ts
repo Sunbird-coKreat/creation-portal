@@ -4,7 +4,7 @@ import { ContentService, ProgramsService, PublicDataService, ActionService, Lear
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 @Injectable({
   providedIn: 'root'

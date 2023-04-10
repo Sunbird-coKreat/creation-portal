@@ -6,7 +6,7 @@ import { By } from '@angular/platform-browser';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 // Import services
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '../../services/index';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { DateFormatPipe } from '../../pipes/index';
 import { Announcement } from '../../interfaces/index';
 import { AnnouncementInboxCardComponent } from './announcement-inbox-card.component';

@@ -9,9 +9,9 @@
   [telemetryInteractCdata]="getTelemetryInteractCdata('show_added_content',!showAddedContent)"
   [telemetryInteractPdata]="sessionContext.telemetryInteractPdata">{{resourceService.frmelmnts.lbl.showContentAddedToTextbook}}</sui-checkbox>
   <!-- Class separator -->
-  <div class="sb-library-scroll" id="suggestions-tab" in-view-container (inview)="inView($event)">
-    <div in-view-item [id]="i" [data]="content" *ngFor="let content of contentList; let i = index">
-      <div class="sbchapter__item mb-0 d-flex flex-dc" 
+  <div class="sb-library-scroll" id="suggestions-tab">
+    <div [id]="i" [data]="content" *ngFor="let content of contentList; let i = index">
+      <div class="sbchapter__item mb-0 d-flex flex-dc"
       [ngClass]="{'selected':content.identifier === selectedContentId,'active':content.isAdded}"
       (click)="onContentChange(content);" [class.d-none]="content.isAdded && !showAddedContent"
       appTelemetryInteract
@@ -28,7 +28,7 @@
         </div>
       </h4>
       <div class="btn-addtoLibrary pt-5 pr-10" *ngIf="content.identifier === selectedContentId && !content.isAdded">
-        <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold text-inherit" (click)="addToLibrary();" 
+        <button class="sb-btn sb-btn-xs sb-btn-dark-green sb-left-icon-btn font-weight-bold text-inherit" (click)="addToLibrary();"
         appTelemetryInteract
         [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('select_content_from_list', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
         [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', {l1:sessionContext.collection,l2: sessionContext.collectionUnitId})"

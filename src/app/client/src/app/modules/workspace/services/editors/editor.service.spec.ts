@@ -8,7 +8,7 @@ import { WorkSpaceService } from './../work-space/workspace.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SharedModule } from '@sunbird/shared';
 import { CoreModule } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 xdescribe('EditorService', () => {
   beforeEach(() => {

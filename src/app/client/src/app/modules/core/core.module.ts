@@ -15,10 +15,11 @@ import {
   LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent, ContentDataFormComponent
 } from './components';
 import { AuthGuard } from './guard/auth-gard.service';
-import { CacheService } from 'ng2-cache-service';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CommonFormElementsModule } from 'common-form-elements-web-v9';
+import { CacheService } from '../shared/services/cache-service/cache.service';
+
 @NgModule({
   imports: [
     CommonModule,

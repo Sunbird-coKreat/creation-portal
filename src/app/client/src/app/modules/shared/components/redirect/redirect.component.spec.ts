@@ -11,7 +11,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { Observable } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SharedModule } from '../../shared.module';
 

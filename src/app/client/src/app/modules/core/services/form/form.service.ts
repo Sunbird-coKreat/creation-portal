@@ -5,7 +5,7 @@ import { UserService } from './../user/user.service';
 import { ConfigService, ServerResponse, BrowserCacheTtlService } from '@sunbird/shared';
 import { Observable, of } from 'rxjs';
 import { PublicDataService } from './../public-data/public-data.service';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 @Injectable({
   providedIn: 'root'
 })

@@ -6,7 +6,7 @@ import { HttpOptions, ConfigService, ToasterService,
 import { RouterTestingModule } from '@angular/router/testing';
 import { TelemetryService } from '@sunbird/telemetry';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { ActionService, PlayerService, FrameworkService, UserService, LearnerService } from '@sunbird/core';
 import {  userProfile, addParticipentResponseSample, mockError, mockData} from './collection-hierarchy.service.spec.data';
 import { of as observableOf, throwError as observableError } from 'rxjs';

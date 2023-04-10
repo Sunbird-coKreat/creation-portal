@@ -17,8 +17,8 @@ import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
-import { UUID } from 'angular2-uuid';
-import { CacheService } from 'ng2-cache-service';
+import { v4 as UUID } from 'uuid';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { InitialState } from '../../interfaces';
@@ -1507,7 +1507,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               request: {
                 questionset: {
                   'name': 'Untitled',
-                  'code': UUID.UUID(),
+                  'code': UUID(),
                   'mimeType': 'application/vnd.sunbird.questionset',
                   'createdBy': this.userService.userid,
                   'primaryCategory': primaryCategoryInteractiveVideoQSet, // primaryCategories[0],

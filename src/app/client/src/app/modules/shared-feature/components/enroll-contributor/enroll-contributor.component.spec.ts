@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InterpolatePipe, ToasterService, ResourceService, ConfigService,
         NavigationHelperService, BrowserCacheTtlService , UtilService} from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common';
 import { DatePipe } from '@angular/common';

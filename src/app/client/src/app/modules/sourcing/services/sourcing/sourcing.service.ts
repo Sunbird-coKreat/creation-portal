@@ -6,7 +6,7 @@ import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import * as _ from 'lodash-es';
 import { themeObject, stageObject, questionSetObject, questionObject, questionSetConfigCdataObject } from './data';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -45,7 +45,7 @@ export class SourcingService {
   getQuestionPluginConfig(res, questionSetConfigCdata, collections, roles) {
     const question = _.cloneDeep(questionObject);
     const questionConfigCdata: any = {};
-    question.id = UUID.UUID();
+    question.id = UUID();
     questionConfigCdata.question = _.get(res, 'result.assessment_item.body');
     const media = _.map(_.get(res, 'result.assessment_item.media'), (mediaObj) => {
       delete mediaObj.baseUrl;
@@ -82,9 +82,9 @@ export class SourcingService {
     const theme = _.cloneDeep(themeObject);
     const stage = _.cloneDeep(stageObject);
     const questionSet = _.cloneDeep(questionSetObject);
-    stage.id = UUID.UUID();
+    stage.id = UUID();
     theme.startStage = stage.id;
-    questionSet.id = UUID.UUID();
+    questionSet.id = UUID();
     questionSet.data.__cdata.push({
       identifier: questionSet.id
     });

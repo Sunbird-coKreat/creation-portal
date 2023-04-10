@@ -14,7 +14,7 @@ import {APP_BASE_HREF} from '@angular/common';
 import * as _ from 'lodash-es';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 describe('OnboardPopupComponent', () => {
 
@@ -35,7 +35,7 @@ describe('OnboardPopupComponent', () => {
     component = fixture.componentInstance;
   });
 
-  
+
   afterEach(() => {
     fixture.destroy();
   });

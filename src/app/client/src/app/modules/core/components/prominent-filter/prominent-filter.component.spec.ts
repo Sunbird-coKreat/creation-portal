@@ -11,7 +11,7 @@ import {
   CoreModule, FrameworkService, FormService, UserService, PublicDataService
 } from '@sunbird/core';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { RouterTestingModule } from '@angular/router/testing';
 // import * as mockData from ./prominent-filter.component.spec.data';
 import { Response } from './prominent-filter.component.spec.data';
@@ -41,7 +41,7 @@ xdescribe('ProminentFilterComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC', 'CONTENT_REVIEWER']
   };
-  
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

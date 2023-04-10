@@ -10,7 +10,7 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import {
   ResourceService, ToasterService, SharedModule, ConfigService, UtilService, BrowserCacheTtlService,
   NavigationHelperService } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { TelemetryService } from '@sunbird/telemetry';
 import { of as observableOf, throwError as observableError, of } from 'rxjs';

@@ -7,7 +7,7 @@ import { UserService, ActionService, ContentService, NotificationService, Progra
 import { TelemetryService, IStartEventInput, IEndEventInput} from '@sunbird/telemetry';
 import { tap, map, catchError, mergeMap, first, filter, takeUntil, take } from 'rxjs/operators';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { of, forkJoin, throwError, Subject, iif, Observable } from 'rxjs';
 import { SourcingService } from '../../services';
 import { ItemsetService } from '../../services/itemset/itemset.service';
@@ -1163,7 +1163,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           'objectType': 'AssessmentItem',
           'metadata': {
             'itemType': 'UNIT',
-            'code': UUID.UUID(),
+            'code': UUID(),
             'qumlVersion': 1.0,
             'qlevel': 'MEDIUM',
             'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
@@ -1244,7 +1244,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public createItemSet(questionId) {
     const reqBody = {
-      'code': UUID.UUID(),
+      'code': UUID(),
       'name': this.resourceName,
       'description': this.resourceName,
       'language': [

@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { catchError, map, finalize, tap } from 'rxjs/operators';
 import { throwError, forkJoin, Subject} from 'rxjs';
 import { TelemetryService, IImpressionEventInput} from '@sunbird/telemetry';
@@ -52,7 +52,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.uniqueId = UUID.UUID();
+    this.uniqueId = UUID();
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.collectionId = params.get('collectionId');
       this.collectionUnitId = params.get('collectionUnitId');
@@ -303,7 +303,7 @@ export class MvcLibraryComponent implements OnInit, AfterViewInit, OnDestroy {
   onFilterChange(event: any) {
     if (event.action === 'filterDataChange') {
       this.activeFilterData = _.omitBy(_.assign(this.activeFilterData, event.filters), v => _.isEmpty(v));
-      this.uniqueId = UUID.UUID();
+      this.uniqueId = UUID();
       this.prepareTelemetryEvents();
       this.fetchContentList();
     } else if (event.action === 'filterStatusChange') {

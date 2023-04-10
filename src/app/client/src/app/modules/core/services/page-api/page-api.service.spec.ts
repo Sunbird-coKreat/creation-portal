@@ -5,7 +5,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PageApiService } from './page-api.service';
 import { ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { testData } from './page-api.service.spec.data';
 import { RouterTestingModule } from '@angular/router/testing';
 

@@ -11,7 +11,7 @@ import { UserService, LearnerService, CoursesService, PermissionService } from '
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Response } from './flagged.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { APP_BASE_HREF } from '@angular/common';
 
 xdescribe('FlaggedComponent', () => {
@@ -70,7 +70,7 @@ xdescribe('FlaggedComponent', () => {
     TestBed.configureTestingModule({
       declarations: [FlaggedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SharedModule.forRoot(), TelemetryModule.forRoot(),
-        NgInviewModule],
+      ],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,

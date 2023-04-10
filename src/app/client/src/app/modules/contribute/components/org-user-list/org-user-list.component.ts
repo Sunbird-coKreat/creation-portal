@@ -4,9 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../sourcing/interfaces';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject, TelemetryService } from '@sunbird/telemetry';
 import { UserService, RegistryService, ProgramsService } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
 import { SourcingService, HelperService } from '../../../sourcing/services';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
+
 @Component({
   selector: 'app-org-user-list',
   templateUrl: './org-user-list.component.html',
