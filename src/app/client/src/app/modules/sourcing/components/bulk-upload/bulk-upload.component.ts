@@ -10,7 +10,6 @@ import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
 import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -767,7 +766,7 @@ export class BulkUploadComponent implements OnInit {
         creator: creatorName,
         author: row.creator,
         audience: [_.upperFirst(_.toLower(row.audience))],
-        code: UUID.UUID(),
+        code: UUID(),
         mimeType: this.getMimeType(_.toLower(row.fileFormat)),
         primaryCategory: row.contentType,
         lastPublishedBy: userId,

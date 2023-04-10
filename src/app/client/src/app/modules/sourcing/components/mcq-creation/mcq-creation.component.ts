@@ -373,7 +373,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
         });
 
         let metadata = {
-          'code': UUID.UUID(),
+          'code': UUID(),
           'category': this.sessionContext.questionType.toUpperCase(),
           'templateId': this.mcqForm.templateId,
           'name': this.sessionContext.questionType + '_' + this.sessionContext.framework,

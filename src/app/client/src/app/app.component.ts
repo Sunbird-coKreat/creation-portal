@@ -176,7 +176,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
         this.initApp = true;
-        this.initializeChatbot();
+        //this.initializeChatbot();
       }, error => {
          this.initApp = true;
       });

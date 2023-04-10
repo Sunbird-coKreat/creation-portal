@@ -184,8 +184,8 @@ export class DataService {
       // 'X-Consumer-ID': 'X-Consumer-ID',
       'X-Source': 'web',
       'ts': moment().format(),
-      'X-msgid': UUID.UUID(),
-      'X-Request-ID': UUID.UUID()
+      'X-msgid': UUID(),
+      'X-Request-ID': UUID()
     };
 
     try {

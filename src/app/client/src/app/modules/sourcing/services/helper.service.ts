@@ -1461,7 +1461,7 @@ export class HelperService {
 
     let obj= {
       'name': 'Untitled',
-      'code': UUID.UUID(),
+      'code': UUID(),
       'mimeType': mimeType || templateDetails.mimeType[0],
       'createdBy': this.userService.userid,
       'primaryCategory': templateDetails.name,

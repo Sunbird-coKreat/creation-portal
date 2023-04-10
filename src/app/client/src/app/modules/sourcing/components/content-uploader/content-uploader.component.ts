@@ -1507,7 +1507,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
               request: {
                 questionset: {
                   'name': 'Untitled',
-                  'code': UUID.UUID(),
+                  'code': UUID(),
                   'mimeType': 'application/vnd.sunbird.questionset',
                   'createdBy': this.userService.userid,
                   'primaryCategory': primaryCategoryInteractiveVideoQSet, // primaryCategories[0],

@@ -90,7 +90,7 @@ export class DeviceRegisterService  {
       ver: this.portalVersion,
       ts: moment().format(),
       params: {
-        msgid: UUID.UUID()
+        msgid: UUID()
       },
       request: {
         did: this.deviceId,
@@ -123,7 +123,7 @@ export class DeviceRegisterService  {
       ver: this.portalVersion,
       ts: moment().format(),
       params: {
-        msgid: UUID.UUID()
+        msgid: UUID()
       },
       request: {
         did: this.deviceId,

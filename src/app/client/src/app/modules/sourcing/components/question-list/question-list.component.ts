@@ -1163,7 +1163,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
           'objectType': 'AssessmentItem',
           'metadata': {
             'itemType': 'UNIT',
-            'code': UUID.UUID(),
+            'code': UUID(),
             'qumlVersion': 1.0,
             'qlevel': 'MEDIUM',
             'organisation': this.sessionContext.onBoardSchool ? [this.sessionContext.onBoardSchool] : [],
@@ -1244,7 +1244,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public createItemSet(questionId) {
     const reqBody = {
-      'code': UUID.UUID(),
+      'code': UUID(),
       'name': this.resourceName,
       'description': this.resourceName,
       'language': [

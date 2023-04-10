@@ -379,7 +379,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
                   'status': 'Draft',
                   'name': this.sessionContext.questionType + '_' + this.sessionContext.framework,
                   'type': 'reference',
-                  'code': UUID.UUID(),
+                  'code': UUID(),
                   'template_id': 'NA',
                   'media': this.mediaArr
                 }
