@@ -311,7 +311,7 @@
             "codeCoverage": true,
             "main": "projects/desktop/src/test.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "projects/desktop/tsconfig.spec.json",
+            "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "projects/desktop/karma.conf.js",
             "assets": [
               {
