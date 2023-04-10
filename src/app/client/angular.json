@@ -218,7 +218,7 @@
             "index": "projects/desktop/src/index.html",
             "main": "projects/desktop/src/main.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "projects/desktop/tsconfig.app.json",
+            "tsConfig": "src/tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
