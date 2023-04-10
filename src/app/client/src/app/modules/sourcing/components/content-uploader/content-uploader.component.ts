@@ -10,7 +10,7 @@ import * as _ from 'lodash-es';
 import { catchError, map, filter, take, takeUntil, tap, mergeMap } from 'rxjs/operators';
 import { throwError, Observable, Subject, forkJoin, iif, of } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
-import { FormGroup, FormArray, Validators, NgForm } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
 import { AzureFileUploaderService } from '../../services';
 import { HelperService } from '../../services/helper.service';
@@ -63,8 +63,8 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   loading;
   contentURL;
   selectOutcomeOption = {};
-  contentDetailsForm: FormGroup;
-  textInputArr: FormArray;
+  contentDetailsForm: UntypedFormGroup;
+  textInputArr: UntypedFormArray;
   formValues: any;
   contentMetaData;
   visibility: any;
@@ -1313,7 +1313,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     return !!(this.sessionContext.currentOrgRole === 'individual' && this.sessionContext.sampleContent !== true);
   }
 
-  markFormGroupTouched(formGroup: FormGroup) {
+  markFormGroupTouched(formGroup: UntypedFormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
       control.markAsTouched();
 

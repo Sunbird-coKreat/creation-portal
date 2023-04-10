@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormGroup, FormControl } from '@angular/forms';
 import { ResourceService, ConfigService, ToasterService, ServerResponse, IUserData, IUserProfile, Framework } from '@sunbird/shared';
 import { FormService, FrameworkService, UserService } from '@sunbird/core';
 import * as _ from 'lodash-es';
@@ -51,7 +51,7 @@ export class DefaultTemplateComponent implements OnInit {
   /**
  * userForm name creation
  */
-  public creationForm: FormGroup;
+  public creationForm: UntypedFormGroup;
   /**
 * To call resource service which helps to use language constant
 */

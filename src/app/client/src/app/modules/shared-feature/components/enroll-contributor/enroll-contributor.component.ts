@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, AfterViewInit, ElementRef} from '@angular/core';
-import { FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { ProgramsService, UserService, RegistryService, EnrollContributorService } from '@sunbird/core';
 import { first, takeUntil, switchMap, catchError } from 'rxjs/operators';
@@ -26,7 +26,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
   telemetryImpression: any;
   options;
   disableSubmit = false;
-  public contributeForm: FormGroup;
+  public contributeForm: UntypedFormGroup;
   public mapUserId: string;
   public mapOrgId: string;
   public frameworkFetched = false;
@@ -39,7 +39,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
 
   constructor(private programsService: ProgramsService, private tosterService: ToasterService,
     public userService: UserService, private configService: ConfigService,
-    public toasterService: ToasterService, public formBuilder: FormBuilder, private navigationHelperService: NavigationHelperService,
+    public toasterService: ToasterService, public formBuilder: UntypedFormBuilder, private navigationHelperService: NavigationHelperService,
     public http: HttpClient, public enrollContributorService: EnrollContributorService, public router: Router,
     public resourceService: ResourceService, private datePipe: DatePipe, public activeRoute: ActivatedRoute,
     private registryService: RegistryService) {
@@ -87,7 +87,7 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
     });
   }
 
-  validateAllFormFields(formGroup: FormGroup) {
+  validateAllFormFields(formGroup: UntypedFormGroup) {
     Object.keys(formGroup.controls).forEach(field => {
       const control = formGroup.get(field);
       control.markAsTouched();

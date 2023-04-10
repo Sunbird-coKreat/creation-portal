@@ -5,7 +5,7 @@ import { UserService } from '@sunbird/core';
 import { environment } from '@sunbird/environment';
 import { ToasterService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PopupControlService } from '../../../../service/popup-control.service';
 
@@ -19,8 +19,8 @@ export class ValidateTeacherIdentifierPopupComponent implements OnInit, OnDestro
   @Input() labels: {};
   @Output() close = new EventEmitter<any>();
   @ViewChild('createValidateModal') createValidateModal;
-  userDetailsForm: FormGroup;
-  formBuilder: FormBuilder;
+  userDetailsForm: UntypedFormGroup;
+  formBuilder: UntypedFormBuilder;
   processValidation = false;
   enableSubmitButton: boolean;
   showError: boolean;
@@ -50,11 +50,11 @@ export class ValidateTeacherIdentifierPopupComponent implements OnInit, OnDestro
   }
 
   initializeFormField() {
-    this.userDetailsForm = new FormGroup({
-      extId: new FormControl('', Validators.required)
+    this.userDetailsForm = new UntypedFormGroup({
+      extId: new UntypedFormControl('', Validators.required)
     });
     if (this.showStateDropdown) {
-      this.userDetailsForm.addControl('state', new FormControl('', Validators.required));
+      this.userDetailsForm.addControl('state', new UntypedFormControl('', Validators.required));
     }
     this.handleSubmitButton();
   }

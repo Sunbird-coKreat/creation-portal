@@ -1,6 +1,6 @@
 // tslint:disable-next-line:max-line-length
 import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef, ViewChild, ElementRef, OnDestroy, AfterViewInit} from '@angular/core';
-import { FormGroup, FormArray, FormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
+import { FormGroup, FormArray, UntypedFormBuilder, Validators, NgForm, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ToasterService, ResourceService, NavigationHelperService } from '@sunbird/shared';
 import { UserService, ActionService, ContentService, NotificationService, ProgramsService, FrameworkService } from '@sunbird/core';
@@ -105,7 +105,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
     public configService: ConfigService, private userService: UserService,
     public actionService: ActionService, private deviceDetectorService: DeviceDetectorService,
     private cdr: ChangeDetectorRef, public toasterService: ToasterService,
-    public telemetryService: TelemetryService, private fb: FormBuilder,
+    public telemetryService: TelemetryService, private fb: UntypedFormBuilder,
     private notificationService: NotificationService, private sourcingService: SourcingService, public contentService: ContentService,
     private itemsetService: ItemsetService, private helperService: HelperService,
     public resourceService: ResourceService, private collectionHierarchyService: CollectionHierarchyService,

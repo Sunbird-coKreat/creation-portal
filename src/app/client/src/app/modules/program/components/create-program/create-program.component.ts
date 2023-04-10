@@ -6,7 +6,7 @@ import { tap, first, map, takeUntil, catchError, count, isEmpty, startWith, pair
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormBuilder, Validators, FormGroup, FormArray, FormGroupName } from '@angular/forms';
+import { UntypedFormControl, UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormArray, FormGroupName } from '@angular/forms';
 import { SourcingService, HelperService } from './../../../sourcing/services';
 import { programConfigObj } from './programconfig';
 import { IImpressionEventInput, IInteractEventEdata, IStartEventInput, IEndEventInput, TelemetryService } from '@sunbird/telemetry';
@@ -45,10 +45,10 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public editBlueprintFlag = false;
   public selectedTargetCategories: any;
   public selectedTargetCollection: any;
-  public createProgramForm: FormGroup;
-  public projectScopeForm: FormGroup;
-  public projectTargetForm: FormGroup;
-  public chaptersSelectionForm : FormGroup;
+  public createProgramForm: UntypedFormGroup;
+  public projectScopeForm: UntypedFormGroup;
+  public projectTargetForm: UntypedFormGroup;
+  public chaptersSelectionForm : UntypedFormGroup;
   public programDetails: any = {};
   public collections;
   public tempCollections = [];
@@ -132,7 +132,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private sourcingService: SourcingService,
-    private sbFormBuilder: FormBuilder,
+    private sbFormBuilder: UntypedFormBuilder,
     private navigationHelperService: NavigationHelperService,
     private helperService: HelperService,
     public configService: ConfigService,
@@ -264,7 +264,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.showFrameworkChangeModal = false;
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       this.tempCollections.length = 0;
-      const pcollectionsFormArray = <FormArray>this.projectScopeForm.controls.pcollections;
+      const pcollectionsFormArray = <UntypedFormArray>this.projectScopeForm.controls.pcollections;
       pcollectionsFormArray.controls.length = 0;
       this.projectScopeForm.value.pcollections.length = 0;
       this.textbooks = {};
@@ -921,7 +921,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     console.log(err);
   }
 
-  validateAllFormFields(formGroup: FormGroup) {
+  validateAllFormFields(formGroup: UntypedFormGroup) {
     Object.keys(formGroup.controls).forEach(field => {
       const control = formGroup.get(field);
       control.markAsTouched();
@@ -1356,13 +1356,13 @@ showTexbooklist() {
   }
 
   onCollectionCheck(collection, isChecked: boolean) {
-    const pcollectionsFormArray = <FormArray>this.projectScopeForm.controls.pcollections;
+    const pcollectionsFormArray = <UntypedFormArray>this.projectScopeForm.controls.pcollections;
     const collectionId = collection.identifier;
 
     if (isChecked) {
       const controls = _.get(pcollectionsFormArray, 'controls');
       if (controls.findIndex(c => c.value === collection.identifier) === -1) {
-        pcollectionsFormArray.push(new FormControl(collectionId));
+        pcollectionsFormArray.push(new UntypedFormControl(collectionId));
         this.tempCollections.push(collection);
 
         if(this.projectTargetType === 'questionSets') {

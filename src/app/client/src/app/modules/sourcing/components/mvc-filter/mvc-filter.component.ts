@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges} from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { debounceTime} from 'rxjs/operators';
 import * as _ from 'lodash-es';
@@ -17,11 +17,11 @@ export class MvcFilterComponent implements OnInit, OnChanges {
   @Input() activeFilterData: any;
   @Input() filterOpenStatus: Boolean;
   @Output() filterChangeEvent: EventEmitter<any> = new EventEmitter();
-  searchFilterForm: FormGroup;
+  searchFilterForm: UntypedFormGroup;
   public isFilterShow: Boolean = false;
   public telemetryPageId: string;
 
-  constructor( private sbFormBuilder: FormBuilder, public resourceService: ResourceService,
+  constructor( private sbFormBuilder: UntypedFormBuilder, public resourceService: ResourceService,
     public programTelemetryService: ProgramTelemetryService, public configService: ConfigService) { }
 
   ngOnInit() {

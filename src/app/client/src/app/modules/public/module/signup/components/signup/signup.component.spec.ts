@@ -8,7 +8,7 @@ import { CoreModule, TenantService } from '@sunbird/core';
 import {TelemetryModule, TelemetryService} from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RecaptchaModule } from 'ng-recaptcha';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import {of as observableOf, of, throwError as observableThrowError} from 'rxjs';
 import {SignUpComponentMockData} from './signup.component.spec.data';
@@ -63,7 +63,7 @@ describe('SignUpComponent', () => {
       imports: [SharedModule.forRoot(), RecaptchaModule, CoreModule,
         HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
       declarations: [ SignupComponent ],
-      providers: [FormBuilder, ResourceService, SignupService, ToasterService,
+      providers: [UntypedFormBuilder, ResourceService, SignupService, ToasterService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute },
         { provide: ResourceService, useValue: resourceBundle }, TelemetryService,

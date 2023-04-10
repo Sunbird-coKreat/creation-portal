@@ -4,7 +4,7 @@ import { ProgramsService, ActionService, UserService, ContentHelperService} from
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
-import { FormControl, FormBuilder, Validators, FormGroup, FormArray } from '@angular/forms';
+import { FormControl, UntypedFormBuilder, Validators, UntypedFormGroup, FormArray } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { isEmpty } from 'rxjs/operators';
 import {ProgramTelemetryService} from '../../../program/services';
@@ -42,8 +42,8 @@ export class TextbookListComponent implements OnInit {
   @Output() selectedCollection = new EventEmitter<any>();
   @Output() applyTextbookPreference = new EventEmitter<any>();
   @ViewChild('prefModal') prefModal;
-  prefernceForm: FormGroup;
-  sbFormBuilder: FormBuilder;
+  prefernceForm: UntypedFormGroup;
+  sbFormBuilder: UntypedFormBuilder;
   showTextbookFiltersModal = false;
   setPreferences = {};
   textbookFiltersApplied = false;
@@ -59,7 +59,7 @@ export class TextbookListComponent implements OnInit {
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
-    private userService: UserService, private formBuilder: FormBuilder, public configService: ConfigService,
+    private userService: UserService, private formBuilder: UntypedFormBuilder, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
     public contentHelperService: ContentHelperService
   )  {

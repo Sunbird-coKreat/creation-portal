@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { SignupService } from './../../services';
 import { ResourceService, ServerResponse } from '@sunbird/shared';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
 import {
@@ -21,7 +21,7 @@ export class OtpComponent implements OnInit {
   @Input() signUpdata: any;
   @Input() tncLatestVersion: any;
   @Output() redirectToParent = new EventEmitter();
-  otpForm: FormGroup;
+  otpForm: UntypedFormGroup;
   disableSubmitBtn = true;
   mode: string;
   errorMessage: string;
@@ -48,8 +48,8 @@ export class OtpComponent implements OnInit {
     this.emailAddress = this.signUpdata.value.email;
     this.phoneNumber = this.signUpdata.value.phone;
     this.mode = this.signUpdata.controls.contactType.value;
-    this.otpForm = new FormGroup({
-      otp: new FormControl('', [Validators.required])
+    this.otpForm = new UntypedFormGroup({
+      otp: new UntypedFormControl('', [Validators.required])
     });
     this.enableSignUpSubmitButton();
     this.unabletoVerifyErrorMessage = this.mode === 'phone' ? this.resourceService.frmelmnts.lbl.unableToVerifyPhone :

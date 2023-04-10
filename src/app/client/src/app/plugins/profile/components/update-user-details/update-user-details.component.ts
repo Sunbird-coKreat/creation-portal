@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild, OnDestroy } from '@angular/core';
 import { ResourceService, ToasterService } from '@sunbird/shared';
 import { ProfileService } from './../../services';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { UserService } from '@sunbird/core';
@@ -18,8 +18,8 @@ export class UpdateUserDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('userDetailsModal') userDetailsModal;
   allStates: any;
   allDistricts: any;
-  userDetailsForm: FormGroup;
-  sbFormBuilder: FormBuilder;
+  userDetailsForm: UntypedFormGroup;
+  sbFormBuilder: UntypedFormBuilder;
   enableSubmitBtn = false;
   showDistrictDivLoader = false;
   submitInteractEdata: IInteractEventEdata;
@@ -28,7 +28,7 @@ export class UpdateUserDetailsComponent implements OnInit, OnDestroy {
   selectedDistrict;
 
   constructor(public resourceService: ResourceService, public toasterService: ToasterService,
-    public profileService: ProfileService, formBuilder: FormBuilder,
+    public profileService: ProfileService, formBuilder: UntypedFormBuilder,
     public userService: UserService) {
     this.sbFormBuilder = formBuilder;
   }
@@ -40,9 +40,9 @@ export class UpdateUserDetailsComponent implements OnInit, OnDestroy {
 
   initializeFormFields() {
     this.userDetailsForm = this.sbFormBuilder.group({
-      name: new FormControl(this.userProfile.firstName, [Validators.required]),
-      state: new FormControl(null, [Validators.required]),
-      district: new FormControl(null, [Validators.required])
+      name: new UntypedFormControl(this.userProfile.firstName, [Validators.required]),
+      state: new UntypedFormControl(null, [Validators.required]),
+      district: new UntypedFormControl(null, [Validators.required])
     }, {
         validator: (formControl) => {
           const nameCtrl = formControl.controls.name;
