@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfigService, ResourceService, IUserProfile, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { PublicDataService, UserService, ActionService, ProgramsService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
-import { Validators, FormGroup, FormControl, NgForm, FormArray, FormBuilder } from '@angular/forms';
+import { Validators, UntypedFormGroup, FormControl, NgForm, FormArray, UntypedFormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -54,7 +54,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   public multiSelectionFields: Array<any>;
   public rejectComment: string;
   public questionLimit: Number;
-  questionMetaForm: FormGroup;
+  questionMetaForm: UntypedFormGroup;
   initialized = false;
   showFormError = false;
   editor: any;
@@ -101,7 +101,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
   constructor(
     private userService: UserService, private configService: ConfigService,
     private http: HttpClient, private sourcingService: SourcingService,
-    private formBuilder: FormBuilder, publicDataService: PublicDataService,
+    private formBuilder: UntypedFormBuilder, publicDataService: PublicDataService,
     toasterService: ToasterService, resourceService: ResourceService, public telemetryService: TelemetryService,
     public actionService: ActionService, private cdr: ChangeDetectorRef, private helperService: HelperService,
     public programTelemetryService: ProgramTelemetryService, public activeRoute: ActivatedRoute,
@@ -629,7 +629,7 @@ export class QuestionCreationComponent implements OnInit, AfterViewInit, OnChang
     });
   }
 
-  markFormGroupTouched(formGroup: FormGroup) {
+  markFormGroupTouched(formGroup: UntypedFormGroup) {
     (<any>Object).values(formGroup.controls).forEach(control => {
       control.markAsTouched();
 

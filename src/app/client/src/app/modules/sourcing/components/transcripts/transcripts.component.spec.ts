@@ -8,7 +8,7 @@ import { TranscriptService } from '../../../core/services/transcript/transcript.
 import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.service';
 import { ActionService, SearchService, ContentHelperService } from '@sunbird/core';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TelemetryService } from '@sunbird/telemetry';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
@@ -46,7 +46,7 @@ describe('TranscriptsComponent', () => {
                   ToasterService,
                   ConfigService,
                   ResourceService,
-                  FormBuilder,
+                  UntypedFormBuilder,
                   TelemetryService,
                   {provide: APP_BASE_HREF, useValue: '/'},
                   {provide: ActivatedRoute, useValue: fakeActivatedRoute},

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
 import {ResourceService, ServerResponse, ToasterService, NavigationHelperService, UtilService, RecaptchaService} from '@sunbird/shared';
 import { SignupService } from './../../services';
@@ -18,8 +18,8 @@ import { CacheService } from '../../../../../shared/services/cache-service/cache
 })
 export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   public unsubscribe = new Subject<void>();
-  signUpForm: FormGroup;
-  sbFormBuilder: FormBuilder;
+  signUpForm: UntypedFormGroup;
+  sbFormBuilder: UntypedFormBuilder;
   showContact = 'phone';
   disableSubmitBtn = true;
   showPassword = false;
@@ -41,7 +41,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   passwordError: string;
   showTncPopup = false;
 
-  constructor(formBuilder: FormBuilder, public resourceService: ResourceService,
+  constructor(formBuilder: UntypedFormBuilder, public resourceService: ResourceService,
     public signupService: SignupService, public toasterService: ToasterService, private cacheService: CacheService,
     public tenantService: TenantService, public deviceDetectorService: DeviceDetectorService,
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
@@ -140,14 +140,14 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initializeFormFields() {
     this.signUpForm = this.sbFormBuilder.group({
-      name: new FormControl(null, [Validators.required]),
-      password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
+      name: new UntypedFormControl(null, [Validators.required]),
+      password: new UntypedFormControl(null, [Validators.required, Validators.minLength(8)]),
+      confirmPassword: new UntypedFormControl(null, [Validators.required, Validators.minLength(8)]),
+      phone: new UntypedFormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
       // email: new FormControl(null, [Validators.email]),
-      contactType: new FormControl('phone'),
-      uniqueContact: new FormControl(null, [Validators.required]),
-      tncAccepted: new FormControl(false, [Validators.requiredTrue])
+      contactType: new UntypedFormControl('phone'),
+      uniqueContact: new UntypedFormControl(null, [Validators.required]),
+      tncAccepted: new UntypedFormControl(false, [Validators.requiredTrue])
     }, {
       validator: (formControl) => {
         const passCtrl = formControl.controls.password;
@@ -168,7 +168,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onPhoneChange();
   }
 
-  onPasswordChange(passCtrl: FormControl): void {
+  onPasswordChange(passCtrl: UntypedFormControl): void {
     let emailVal;
     if (this.showContact === 'email') {
       emailVal = this.signUpForm.get('email').value;

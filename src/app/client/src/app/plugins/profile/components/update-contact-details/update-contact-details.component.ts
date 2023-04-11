@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { UserService, OtpService } from '@sunbird/core';
 import { ResourceService, ServerResponse, ToasterService } from '@sunbird/shared';
@@ -16,7 +16,7 @@ export class UpdateContactDetailsComponent implements OnInit, OnDestroy {
   public unsubscribe = new Subject<void>();
   @Input() contactType: string;
   @Output() close = new EventEmitter<any>();
-  contactTypeForm: FormGroup;
+  contactTypeForm: UntypedFormGroup;
   enableSubmitBtn = false;
   showUniqueError = '';
   showForm = true;
@@ -35,15 +35,15 @@ export class UpdateContactDetailsComponent implements OnInit, OnDestroy {
 
   initializeFormFields() {
     if (this.contactType === 'phone') {
-      this.contactTypeForm = new FormGroup({
-        phone: new FormControl('', [Validators.required , Validators.pattern(/^[6-9]\d{9}$/)]),
-        uniqueContact: new FormControl(null, [Validators.required])
+      this.contactTypeForm = new UntypedFormGroup({
+        phone: new UntypedFormControl('', [Validators.required , Validators.pattern(/^[6-9]\d{9}$/)]),
+        uniqueContact: new UntypedFormControl(null, [Validators.required])
       });
       this.onContactValueChange();
     } else if (this.contactType === 'email') {
-      this.contactTypeForm = new FormGroup({
-        email: new FormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/)]),
-        uniqueContact: new FormControl(null, [Validators.required])
+      this.contactTypeForm = new UntypedFormGroup({
+        email: new UntypedFormControl('', [Validators.required, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/)]),
+        uniqueContact: new UntypedFormControl(null, [Validators.required])
       });
       this.onContactValueChange();
     }

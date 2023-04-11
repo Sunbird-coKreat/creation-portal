@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ResourceService, ServerResponse } from '@sunbird/shared';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import * as _ from 'lodash-es';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Subscription, Subject } from 'rxjs';
@@ -18,7 +18,7 @@ export class OtpPopupComponent implements OnInit, OnDestroy {
   @Output() redirectToParent = new EventEmitter();
   @Output() verificationSuccess = new EventEmitter();
   public unsubscribe = new Subject<void>();
-  otpForm: FormGroup;
+  otpForm: UntypedFormGroup;
   enableSubmitBtn = false;
   errorMessage: string;
   infoMessage: string;
@@ -42,8 +42,8 @@ export class OtpPopupComponent implements OnInit, OnDestroy {
       }
     );
 
-    this.otpForm = new FormGroup({
-      otp: new FormControl('', [Validators.required])
+    this.otpForm = new UntypedFormGroup({
+      otp: new UntypedFormControl('', [Validators.required])
     });
     this.enableSubmitButton();
     this.setInteractEventData();

@@ -6,7 +6,7 @@ import {
 import { UserService, ActionService, ProgramsService } from '@sunbird/core';
 import { NO_ERRORS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import * as _ from 'lodash-es';
-import { FormsModule, ReactiveFormsModule, NgForm, FormGroup, FormBuilder} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, NgForm, FormGroup, UntypedFormBuilder} from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClient } from '@angular/common/http';
 import { SuiModule } from 'ng2-semantic-ui-v9';
@@ -47,7 +47,7 @@ xdescribe('McqCreationComponent', () => {
             providers: [
                 ResourceService, HttpClient, ChangeDetectorRef,
                 ConfigService, ActionService, SourcingService, ,
-                ToasterService, BrowserCacheTtlService, FormBuilder,
+                ToasterService, BrowserCacheTtlService, UntypedFormBuilder,
                 DatePipe, TelemetryService, NavigationHelperService, 
                 ProgramTelemetryService, ProgramsService, HelperService,
                 {provide: Router, useValue: RouterStub},

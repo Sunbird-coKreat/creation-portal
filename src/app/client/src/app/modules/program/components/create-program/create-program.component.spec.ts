@@ -12,7 +12,7 @@ import { ProgramsService, DataService, FrameworkService, ActionService, ContentS
 import { of, Subject, throwError } from 'rxjs';
 import * as _ from 'lodash-es';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Validators, FormGroupName, FormsModule, FormBuilder, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { Validators, FormGroupName, FormsModule, UntypedFormBuilder, ReactiveFormsModule, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { SourcingService, HelperService } from './../../../sourcing/services';
 import { UserService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -85,7 +85,7 @@ describe('CreateProgramComponent', () => {
       declarations: [CreateProgramComponent],
       providers: [ToasterService, CacheService, ConfigService, DatePipe,
         ProgramsService, DataService, FrameworkService,
-        Component, ViewChild, Validators, FormGroupName, FormBuilder, NavigationHelperService,
+        Component, ViewChild, Validators, FormGroupName, UntypedFormBuilder, NavigationHelperService,
         SourcingService, ProgramTelemetryService, TelemetryService, HelperService,
         DeviceDetectorService,
         Subject,
@@ -409,9 +409,9 @@ it('getPageId should return page id', () => {
   });
 
 it('Should call the openForNominations method when type is public', () => {
-    component.createProgramForm = new FormGroup({
-      nomination_enddate: new FormControl(null),
-      shortlisting_enddate: new FormControl(null),
+    component.createProgramForm = new UntypedFormGroup({
+      nomination_enddate: new UntypedFormControl(null),
+      shortlisting_enddate: new UntypedFormControl(null),
     });
     spyOn(component, 'openForNominations').and.callThrough();
     component.openForNominations('public');
@@ -419,9 +419,9 @@ it('Should call the openForNominations method when type is public', () => {
   });
 
 it('Should call the openForNominations method when type is not public', () => {
-    component.createProgramForm = new FormGroup({
-      nomination_enddate: new FormControl(null),
-      shortlisting_enddate: new FormControl(null),
+    component.createProgramForm = new UntypedFormGroup({
+      nomination_enddate: new UntypedFormControl(null),
+      shortlisting_enddate: new UntypedFormControl(null),
     });
     spyOn(component, 'openForNominations').and.callThrough();
     component.openForNominations('private');
@@ -477,10 +477,10 @@ it('navigateTo should set showTextBookSelector to false', () => {
   });
 
 it('should call resetFilters', () => {
-    component.projectScopeForm = new FormGroup({
-      medium: new FormControl('English', Validators.required),
-      gradeLevel: new FormControl('Class1', Validators.required),
-      subject: new FormControl('Maths', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      medium: new UntypedFormControl('English', Validators.required),
+      gradeLevel: new UntypedFormControl('Class1', Validators.required),
+      subject: new UntypedFormControl('Maths', Validators.required),
     });
     spyOn(component, 'resetSorting').and.callFake(() => {});
     spyOn(component, 'showTexbooklist').and.callFake(() => {return true});
@@ -493,8 +493,8 @@ it('should call resetFilters', () => {
   });
 
 it('defaultContributeOrgReviewChanged should set variable', () => {
-    component.createProgramForm = new FormGroup({
-      value: new FormControl({defaultContributeOrgReview: false}, Validators.required)
+    component.createProgramForm = new UntypedFormGroup({
+      value: new UntypedFormControl({defaultContributeOrgReview: false}, Validators.required)
     });
     component.defaultContributeOrgReviewChecked = false;
     spyOn(component, 'defaultContributeOrgReviewChanged').and.callThrough();
@@ -504,18 +504,18 @@ it('defaultContributeOrgReviewChanged should set variable', () => {
   });
 
 it('should call  setValidations', () => {
-    component.createProgramForm = new FormGroup({
-      description: new FormControl('description', ),
-      enddate: new FormControl('2021-08-01T18:29:59.000Z',),
-      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z',),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', ),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', ),
-      type:new FormControl('type', ),
+    component.createProgramForm = new UntypedFormGroup({
+      description: new UntypedFormControl('description', ),
+      enddate: new UntypedFormControl('2021-08-01T18:29:59.000Z',),
+      content_submission_enddate: new UntypedFormControl('2021-08-01T18:29:59.000Z',),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', ),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', ),
+      type:new UntypedFormControl('type', ),
     });
 
-    component.projectScopeForm = new FormGroup({
-      target_collection_category: new FormControl('Course', Validators.required),
-      framework:new FormControl('framework', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      target_collection_category: new UntypedFormControl('Course', Validators.required),
+      framework:new UntypedFormControl('framework', Validators.required),
     });
 
 
@@ -545,9 +545,9 @@ it('should call clearValidations', () => {
   }); */
 
 it('Should call the onChangeTargetCollectionCategory method', () => {
-    component.projectScopeForm = new FormGroup({
-      target_collection_category: new FormControl('Course', Validators.required),
-      framework:new FormControl('framework', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      target_collection_category: new UntypedFormControl('Course', Validators.required),
+      framework:new UntypedFormControl('framework', Validators.required),
     });
     component.selectedTargetCollection = 'Course';
     spyOn(component, 'getCollectionCategoryDefinition').and.callFake(() => {});
@@ -575,9 +575,9 @@ it('Should call the onChangeTargetCollectionCategory method', () => {
   });
 
 xit('should call showTexbooklist', () => {
-    component.projectScopeForm = new FormGroup({
-      framework: new FormControl({framework:'framework'}, Validators.required),
-      target_collection_category: new FormControl({course:'Course'}, Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      framework: new UntypedFormControl({framework:'framework'}, Validators.required),
+      target_collection_category: new UntypedFormControl({course:'Course'}, Validators.required),
     });
     component.frameworkFormData = {vv:'cvv'};
     component.userprofile={
@@ -712,9 +712,9 @@ it('onChangeTopics should call programsService.filterBlueprintMetadata', () => {
 
   xit('changeFrameWork should change FrameWork', () => {
     component.showFrameworkChangeModal = false;
-    component.projectScopeForm = new FormGroup({
-      framework: new FormControl('framework', Validators.required),
-      pcollections: new FormControl(['pcollections'], Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      framework: new UntypedFormControl('framework', Validators.required),
+      pcollections: new UntypedFormControl(['pcollections'], Validators.required),
     });
    // component.projectScopeForm.value.pcollections = ['nnnn'];
     spyOn(component, 'onFrameworkChange').and.callFake(() => {return true});
@@ -820,24 +820,24 @@ it('should call getChapterLevelCount', () => {
   });  */
 
 it('validateFormBeforePublish method Should return false when createProgramForm is invalid ', () => {
-    component.createProgramForm = new FormGroup({
-      description: new FormControl('description', Validators.required),
-      enddate: new FormControl('', Validators.required),
-      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    component.createProgramForm = new UntypedFormGroup({
+      description: new UntypedFormControl('description', Validators.required),
+      enddate: new UntypedFormControl('', Validators.required),
+      content_submission_enddate: new UntypedFormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
     });
-    component.projectScopeForm = new FormGroup({
-      medium: new FormControl('English', Validators.required),
-      gradeLevel: new FormControl('Class1', Validators.required),
-      subject: new FormControl('Maths', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
-      type: new FormControl('public', Validators.required),
-      defaultContributeOrgReview: new FormControl(false, Validators.required),
-      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
-      framework: new FormControl('', Validators.required),
-      target_collection_category: new FormControl('Course', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      medium: new UntypedFormControl('English', Validators.required),
+      gradeLevel: new UntypedFormControl('Class1', Validators.required),
+      subject: new UntypedFormControl('Maths', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new UntypedFormControl('public', Validators.required),
+      defaultContributeOrgReview: new UntypedFormControl(false, Validators.required),
+      targetPrimaryCategories: new UntypedFormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new UntypedFormControl('', Validators.required),
+      target_collection_category: new UntypedFormControl('Course', Validators.required),
     });
     component.projectScopeForm.value.pcollections = [];
     component.validateFormBeforePublish();
@@ -845,24 +845,24 @@ it('validateFormBeforePublish method Should return false when createProgramForm 
   });
 
 it('validateFormBeforePublish method Should return false when projectScopeForm is invalid ', () => {
-    component.createProgramForm = new FormGroup({
-      description: new FormControl('description', Validators.required),
-      enddate: new FormControl('2022-08-01T18:29:59.000Z', Validators.required),
-      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    component.createProgramForm = new UntypedFormGroup({
+      description: new UntypedFormControl('description', Validators.required),
+      enddate: new UntypedFormControl('2022-08-01T18:29:59.000Z', Validators.required),
+      content_submission_enddate: new UntypedFormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
     });
-    component.projectScopeForm = new FormGroup({
-      medium: new FormControl('', Validators.required),
-      gradeLevel: new FormControl('Class1', Validators.required),
-      subject: new FormControl('Maths', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
-      type: new FormControl('public', Validators.required),
-      defaultContributeOrgReview: new FormControl(false, Validators.required),
-      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
-      framework: new FormControl('', Validators.required),
-      target_collection_category: new FormControl('Course', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      medium: new UntypedFormControl('', Validators.required),
+      gradeLevel: new UntypedFormControl('Class1', Validators.required),
+      subject: new UntypedFormControl('Maths', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new UntypedFormControl('public', Validators.required),
+      defaultContributeOrgReview: new UntypedFormControl(false, Validators.required),
+      targetPrimaryCategories: new UntypedFormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new UntypedFormControl('', Validators.required),
+      target_collection_category: new UntypedFormControl('Course', Validators.required),
     });
     component.projectScopeForm.value.pcollections = [];
     component['programsService'] = TestBed.inject(ProgramsService);
@@ -871,24 +871,24 @@ it('validateFormBeforePublish method Should return false when projectScopeForm i
   });
 
 it('validateFormBeforePublish method Should return false when createProgramForm is invalid ', () => {
-    component.createProgramForm = new FormGroup({
-      description: new FormControl('description', Validators.required),
-      enddate: new FormControl('', Validators.required),
-      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    component.createProgramForm = new UntypedFormGroup({
+      description: new UntypedFormControl('description', Validators.required),
+      enddate: new UntypedFormControl('', Validators.required),
+      content_submission_enddate: new UntypedFormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
     });
-    component.projectScopeForm = new FormGroup({
-      medium: new FormControl('English', Validators.required),
-      gradeLevel: new FormControl('Class1', Validators.required),
-      subject: new FormControl('Maths', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
-      type: new FormControl('public', Validators.required),
-      defaultContributeOrgReview: new FormControl(false, Validators.required),
-      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
-      framework: new FormControl('', Validators.required),
-      target_collection_category: new FormControl('Course', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      medium: new UntypedFormControl('English', Validators.required),
+      gradeLevel: new UntypedFormControl('Class1', Validators.required),
+      subject: new UntypedFormControl('Maths', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new UntypedFormControl('public', Validators.required),
+      defaultContributeOrgReview: new UntypedFormControl(false, Validators.required),
+      targetPrimaryCategories: new UntypedFormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new UntypedFormControl('', Validators.required),
+      target_collection_category: new UntypedFormControl('Course', Validators.required),
     });
     component.projectScopeForm.value.pcollections = [];
     component.validateFormBeforePublish();
@@ -898,24 +898,24 @@ it('validateFormBeforePublish method Should return false when createProgramForm 
 
 
 it('validateFormBeforePublish method Should return false when validateDates is truthy ', () => {
-    component.createProgramForm = new FormGroup({
-      description: new FormControl('description', Validators.required),
-      enddate: new FormControl('2022-08-01T18:29:59.000Z', Validators.required),
-      content_submission_enddate: new FormControl('2021-08-01T18:29:59.000Z', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
+    component.createProgramForm = new UntypedFormGroup({
+      description: new UntypedFormControl('description', Validators.required),
+      enddate: new UntypedFormControl('2022-08-01T18:29:59.000Z', Validators.required),
+      content_submission_enddate: new UntypedFormControl('2021-08-01T18:29:59.000Z', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
     });
-    component.projectScopeForm = new FormGroup({
-      medium: new FormControl('medium', Validators.required),
-      gradeLevel: new FormControl('Class1', Validators.required),
-      subject: new FormControl('Maths', Validators.required),
-      nomination_enddate: new FormControl('2021-07-01T18:29:59.000Z', Validators.required),
-      shortlisting_enddate: new FormControl('2021-07-20T18:29:59.000Z', Validators.required),
-      type: new FormControl('public', Validators.required),
-      defaultContributeOrgReview: new FormControl(false, Validators.required),
-      targetPrimaryCategories: new FormControl(['eTextbook', 'Explanation Content'], Validators.required),
-      framework: new FormControl('framework', Validators.required),
-      target_collection_category: new FormControl('Course', Validators.required),
+    component.projectScopeForm = new UntypedFormGroup({
+      medium: new UntypedFormControl('medium', Validators.required),
+      gradeLevel: new UntypedFormControl('Class1', Validators.required),
+      subject: new UntypedFormControl('Maths', Validators.required),
+      nomination_enddate: new UntypedFormControl('2021-07-01T18:29:59.000Z', Validators.required),
+      shortlisting_enddate: new UntypedFormControl('2021-07-20T18:29:59.000Z', Validators.required),
+      type: new UntypedFormControl('public', Validators.required),
+      defaultContributeOrgReview: new UntypedFormControl(false, Validators.required),
+      targetPrimaryCategories: new UntypedFormControl(['eTextbook', 'Explanation Content'], Validators.required),
+      framework: new UntypedFormControl('framework', Validators.required),
+      target_collection_category: new UntypedFormControl('Course', Validators.required),
     });
 
     component.projectScopeForm.value.pcollections = [];
@@ -931,8 +931,8 @@ it('validateFormBeforePublish method Should return false when validateDates is t
 
   xit('should call publishProject', () => {
    // const r:HTMLInputElement =fixture.debugElement.nativeElement.querySelector()
-   component.createProgramForm = new FormGroup({
-    type: new FormControl('', Validators.required),
+   component.createProgramForm = new UntypedFormGroup({
+    type: new UntypedFormControl('', Validators.required),
   });
   component.createProgramForm.setValue({
     type: 'public',
@@ -1016,8 +1016,8 @@ it('#updateTargetNode should update QuestionSet', () => {
       framework:'framework'
     }
   }
-  component.projectScopeForm = new FormGroup({
-    framework: new FormControl(['framework'], Validators.required),
+  component.projectScopeForm = new UntypedFormGroup({
+    framework: new UntypedFormControl(['framework'], Validators.required),
   });
     component['frameworkService'] = TestBed.inject(FrameworkService);
     spyOn(component['frameworkService'] , 'readChannel').and.returnValue(of({channelData: 'channelData'}));
@@ -1097,9 +1097,9 @@ xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
       },
 
     }
-    component.projectScopeForm = new FormGroup({
-      framework: new FormControl(['framework'], Validators.required),
-      board: new FormControl(['board'], Validators.required)
+    component.projectScopeForm = new UntypedFormGroup({
+      framework: new UntypedFormControl(['framework'], Validators.required),
+      board: new UntypedFormControl(['board'], Validators.required)
     });
         component['frameworkService'] = TestBed.inject(FrameworkService);
         spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{

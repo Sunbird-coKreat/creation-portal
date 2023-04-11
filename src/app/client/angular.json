@@ -218,7 +218,7 @@
             "index": "projects/desktop/src/index.html",
             "main": "projects/desktop/src/main.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "projects/desktop/tsconfig.app.json",
+            "tsConfig": "src/tsconfig.app.json",
             "assets": [
               {
                 "glob": "**/*",
@@ -311,7 +311,7 @@
             "codeCoverage": true,
             "main": "projects/desktop/src/test.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "projects/desktop/tsconfig.spec.json",
+            "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "projects/desktop/karma.conf.js",
             "assets": [
               {
@@ -363,7 +363,6 @@
       }
     }
   },
-  "defaultProject": "src",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

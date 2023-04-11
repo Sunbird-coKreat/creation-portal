@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { ResourceService, ToasterService, ServerResponse, ConfigService } from '@sunbird/shared';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ManageService } from '../../services/manage/manage.service';
 import { UserService } from '../../../core/services/user/user.service';
 import { IImpressionEventInput, IInteractEventEdata, IInteractEventObject } from '@sunbird/telemetry';
@@ -84,11 +84,11 @@ export class UserUploadComponent implements OnInit {
   /**
    * Upload org form name
    */
-  public uploadUserForm: FormGroup;
+  public uploadUserForm: UntypedFormGroup;
   /**
   * Contains reference of FormBuilder
   */
-  public sbFormBuilder: FormBuilder;
+  public sbFormBuilder: UntypedFormBuilder;
   /**
   * To show toaster(error, success etc) after any API calls
   */
@@ -109,7 +109,7 @@ export class UserUploadComponent implements OnInit {
   };
 
   constructor(resourceService: ResourceService, config: ConfigService, toasterService: ToasterService,
-    formBuilder: FormBuilder, manageService: ManageService, public userService: UserService) {
+    formBuilder: UntypedFormBuilder, manageService: ManageService, public userService: UserService) {
     this.resourceService = resourceService;
     this.sbFormBuilder = formBuilder;
     this.toasterService = toasterService;

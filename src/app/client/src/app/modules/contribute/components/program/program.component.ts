@@ -2,8 +2,8 @@ import { UserService, FrameworkService,
   ProgramsService, RegistryService, ActionService, ContentHelperService} from '@sunbird/core';
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { v4 as UUID } from 'uuid';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { UUID } from 'angular2-uuid';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService, PaginationService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { map, catchError, tap, take } from 'rxjs/operators';
@@ -66,7 +66,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   textbookFiltersApplied = false;
   userPreferences: any = {};
   setPreferences = {};
-  prefernceForm: FormGroup;
+  prefernceForm: UntypedFormGroup;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
   public contributorOrgUser: any = [];
@@ -123,7 +123,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private navigationHelperService: NavigationHelperService, public registryService: RegistryService,
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
-    private sbFormBuilder: FormBuilder, private sourcingService: SourcingService, private helperService: HelperService,
+    private sbFormBuilder: UntypedFormBuilder, private sourcingService: SourcingService, private helperService: HelperService,
     public programTelemetryService: ProgramTelemetryService, private contentHelperService: ContentHelperService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }

@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import _, { forEach } from 'lodash';
@@ -21,7 +21,7 @@ import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.se
 export class TranscriptsComponent implements OnInit {
   @Input() contentMetaData;
   @Output() closePopup = new EventEmitter<any>();
-  public transcriptForm: FormGroup;
+  public transcriptForm: UntypedFormGroup;
   public langControl = 'language';
   public languageOptions;
   public supportedLanguages;
@@ -37,7 +37,7 @@ export class TranscriptsComponent implements OnInit {
   public mimeType;
   public acceptFileExtensions;
 
-  constructor(private fb: FormBuilder,
+  constructor(private fb: UntypedFormBuilder,
     private cd: ChangeDetectorRef,
     private sourcingService: SourcingService,
     private transcriptService: TranscriptService,
@@ -85,8 +85,8 @@ export class TranscriptsComponent implements OnInit {
     this.getAssetList();
   }
 
-  get items(): FormArray {
-    return this.transcriptForm.get('items') as FormArray;
+  get items(): UntypedFormArray {
+    return this.transcriptForm.get('items') as UntypedFormArray;
   }
 
   getLanguage(index) {
@@ -118,7 +118,7 @@ export class TranscriptsComponent implements OnInit {
     this.disableAddItemBtn = true;
   }
 
-  createItem(data?): FormGroup {
+  createItem(data?): UntypedFormGroup {
     return this.fb.group({
       identifier: [data ? data.identifier : null],
       language: [data ? data.language : null],
@@ -129,11 +129,11 @@ export class TranscriptsComponent implements OnInit {
   }
 
   get transcripts() {
-    return this.transcriptForm.get('transcripts') as FormArray;
+    return this.transcriptForm.get('transcripts') as UntypedFormArray;
   }
 
   get languages() {
-    return this.transcriptForm.get('languages') as FormArray;
+    return this.transcriptForm.get('languages') as UntypedFormArray;
   }
 
   attachFile(event, index) {

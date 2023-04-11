@@ -8,7 +8,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { DebugElement, NO_ERRORS_SCHEMA, ChangeDetectorRef} from '@angular/core';
 import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
-import { FormsModule, ReactiveFormsModule, NgForm, FormBuilder } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, NgForm, UntypedFormBuilder } from '@angular/forms';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import {
   ResourceService, ToasterService, SharedModule, ConfigService, UtilService, BrowserCacheTtlService,
@@ -59,8 +59,8 @@ describe('QuestionListComponent', () => {
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService,
       TelemetryService, ResourceService, DatePipe,
       CacheService, BrowserCacheTtlService, NavigationHelperService,
-      HelperService, ActionService, ChangeDetectorRef, FormBuilder, NotificationService,
-      SourcingService, ContentService, ItemsetService, ProgramStageService,
+      HelperService, ActionService, ChangeDetectorRef, UntypedFormBuilder, NotificationService,
+      SourcingService, ContentService, ItemsetService, ProgramStageService, 
       ProgramsService, FrameworkService, ProgramTelemetryService,
       {provide: ActivatedRoute, useValue: {snapshot: {data: {telemetry: { env: 'program'}}}}},
       {provide: Router, useValue: RouterStub},

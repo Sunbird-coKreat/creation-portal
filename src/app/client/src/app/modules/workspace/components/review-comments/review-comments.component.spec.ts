@@ -8,7 +8,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ReviewCommentsService } from '../../services';
 import { of, throwError } from 'rxjs';
 import * as _ from 'lodash-es';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { OrderModule } from 'ngx-order-pipe';
 
 const mockUserService = {
@@ -157,7 +157,7 @@ xdescribe('ReviewCommentsComponent', () => {
     spyOn(toasterService, 'error').and.callFake(() => 'true');
     component.contentData = contentData;
     component.stageId = 'hhhh';
-    component.comments = new FormControl();
+    component.comments = new UntypedFormControl();
     // component.comments = { value: 'data', setValue: () = {}};
     component.comments.setValue('data');
     spyOn(reviewCommentsService, 'createComment').and.returnValue(of(commentList));
@@ -171,7 +171,7 @@ xdescribe('ReviewCommentsComponent', () => {
     spyOn(toasterService, 'error').and.callFake(() => 'true');
     component.contentData = contentData;
     component.stageId = 'hhhh';
-    component.comments = new FormControl();
+    component.comments = new UntypedFormControl();
     component.comments.setValue('data');
     spyOn(reviewCommentsService, 'createComment').and.returnValue(throwError(commentList));
     component.addReviewComments();

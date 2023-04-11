@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { InterpolatePipe } from './../../../../../shared/pipes/interpolate/interpolate.pipe';
-import { ReactiveFormsModule, FormsModule, FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, UntypedFormBuilder } from '@angular/forms';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { CacheService } from '../../../../../shared/services/cache-service/cache.service';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
@@ -50,7 +50,7 @@ describe('OtpComponent', () => {
       .compileComponents();
     fixture = TestBed.createComponent(OtpComponent);
     component = fixture.componentInstance;
-    const fb = TestBed.get(FormBuilder);
+    const fb = TestBed.get(UntypedFormBuilder);
     component.signUpdata = fb.group({
       name: ['test'],
       password: ['test1234'],

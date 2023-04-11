@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {ResourceService, ToasterService, ConfigService} from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { IImpressionEventInput, IEndEventInput, IStartEventInput, IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 
 @Component({
@@ -13,7 +13,7 @@ import { IImpressionEventInput, IEndEventInput, IStartEventInput, IInteractEvent
 export class VerifyAccountIdentifierComponent implements OnInit {
   disableFormSubmit = true;
   disableResendOtp = false;
-  form: FormGroup;
+  form: UntypedFormGroup;
   errorCount = 0;
   telemetryImpression: IImpressionEventInput;
   telemetryCdata = [{
@@ -23,7 +23,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
     id: 'SB-13755',
     type: 'Task'
   }];
-  constructor(public activatedRoute: ActivatedRoute, public resourceService: ResourceService, public formBuilder: FormBuilder,
+  constructor(public activatedRoute: ActivatedRoute, public resourceService: ResourceService, public formBuilder: UntypedFormBuilder,
     public toasterService: ToasterService, public router: Router, public recoverAccountService: RecoverAccountService,
               public configService: ConfigService) {
   }
@@ -36,7 +36,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
   }
   initializeForm() {
     this.form = this.formBuilder.group({
-      otp: new FormControl(null, [Validators.required])
+      otp: new UntypedFormControl(null, [Validators.required])
     });
     this.form.valueChanges.subscribe(val => {
       if (this.form.status === 'VALID') {

@@ -1,7 +1,7 @@
 import { TestBed, inject, ComponentFixture,  } from '@angular/core/testing';
 import { SharedModule, ToasterService, ResourceService, NavigationHelperService, PaginationService, ConfigService } from '@sunbird/shared';
 import { FrameworkService, UserService, ExtPluginService, RegistryService, ProgramsService, ActionService, ContentHelperService } from '@sunbird/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormGroup } from '@angular/forms';
 import { DynamicModule } from 'ng-dynamic-component';
 import { ProgramComponent } from './program.component';
 import * as _ from 'lodash-es';
@@ -191,7 +191,7 @@ xdescribe('ProgramComponent', () => {
           useValue: resourceServiceStub
         },
         HelperService, ConfigService, ProgramStageService, ProgramComponentsService, ProgramsService,
-        NavigationHelperService, PaginationService, ActionService, TelemetryService, FormBuilder,
+        NavigationHelperService, PaginationService, ActionService, TelemetryService, UntypedFormBuilder,
         SourcingService, ProgramTelemetryService, ContentHelperService
       ],
       schemas: [NO_ERRORS_SCHEMA]

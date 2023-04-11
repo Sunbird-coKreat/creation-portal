@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ProgramsService, UserService, FrameworkService, LearnerService } from '@sunbird/core';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { Router } from '@angular/router';
@@ -24,7 +24,7 @@ export class ProjectFilterComponent implements OnInit {
   @Output() dismiss = new EventEmitter<any>();
   @Output() applyFilters = new EventEmitter<any>();
   public initialProgramDetails = [];
-  public filterForm: FormGroup;
+  public filterForm: UntypedFormGroup;
   public showFilters = {};
   public currentFilters: any;
   public setPreferences = {};
@@ -41,7 +41,7 @@ export class ProjectFilterComponent implements OnInit {
   public showLoader: any;
   // tslint:disable-next-line: max-line-length
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
-  constructor(public sbFormBuilder: FormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
+  constructor(public sbFormBuilder: UntypedFormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
     public resourceService: ResourceService, public userService: UserService, public router: Router, public configService: ConfigService,
     public cacheService: CacheService, public learnerService: LearnerService, private browserCacheTtlService: BrowserCacheTtlService) { }
 
