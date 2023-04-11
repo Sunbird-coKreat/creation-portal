@@ -15,9 +15,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import * as _ from 'lodash-es';
 import { DatePipe } from '@angular/common';
 import { ProfileService } from '@sunbird/profile';
-import { CacheService } from 'ng2-cache-service';
 import { animate, AnimationBuilder, AnimationMetadata, AnimationPlayer, style } from '@angular/animations';
-
+import { CacheService } from './modules/shared/services/cache-service/cache.service';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 
 class RouterStub {
@@ -45,7 +44,7 @@ describe('AppComponent', () => {
   let userService;
   let timerCallback;
   let resourceService;
- 
+
 
   beforeEach(() => {
     TestBed.configureTestingModule({

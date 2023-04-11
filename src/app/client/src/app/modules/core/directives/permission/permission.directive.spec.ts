@@ -5,9 +5,9 @@ import { Component, Directive, ElementRef, Input, OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ConfigService, ResourceService, ToasterService , BrowserCacheTtlService} from '@sunbird/shared';
 import { UserService, LearnerService, PermissionService, ContentService } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { RouterTestingModule } from '@angular/router/testing';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
 @Component({
   template: `<a appPermission id="permission" [permission]= 'adminDashboard'

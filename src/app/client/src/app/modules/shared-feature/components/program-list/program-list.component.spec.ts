@@ -12,7 +12,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TelemetryService} from '@sunbird/telemetry';
 import { ProgramsService, RegistryService, UserService, FrameworkService } from '@sunbird/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 
 describe('ProgramListComponent', () => {
@@ -33,7 +33,7 @@ describe('ProgramListComponent', () => {
       imports: [ SharedModule.forRoot(), SuiModule,
         TelemetryModule, ReactiveFormsModule , RouterTestingModule, HttpClientTestingModule],
       declarations: [ ProgramListComponent, DaysToGoPipe ],
-      providers: [ DatePipe, ProgramsService, ResourceService, CacheService, RegistryService, FrameworkService, 
+      providers: [ DatePipe, ProgramsService, ResourceService, CacheService, RegistryService, FrameworkService,
         ToasterService, ConfigService, NavigationHelperService, SourcingService, HelperService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }, { provide: Router, useValue: routerStub },
          TelemetryService, UserService, {provide: APP_BASE_HREF, useValue: '/'},

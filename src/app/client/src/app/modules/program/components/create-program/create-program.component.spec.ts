@@ -4,7 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CoreModule } from '@sunbird/core';
 import { CreateProgramComponent } from './create-program.component';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import * as mockData from './create-program.spec.data';
 import { DatePipe } from '@angular/common';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
@@ -38,13 +38,13 @@ describe('CreateProgramComponent', () => {
         }
       }
     },
-     
+
       queryParams: {
         targetType :'',
         queryParamsHandling:''
       },
-   
-  
+
+
   };
   const userServiceStub = {
     userProfile : mockData.userProfile,
@@ -102,7 +102,7 @@ describe('CreateProgramComponent', () => {
     component = fixture.componentInstance;
   });
 
-  
+
   afterEach(() => {
     fixture.destroy();
   });
@@ -283,7 +283,7 @@ it('Should call the initializeCreateProgramForm method', () => {
         status : 'success'},
    responseCode: 'OK',
    ts:'',
-   ver:'' 
+   ver:''
     }));
     spyOn(component, 'initializeCreateProgramForm').and.callFake(() => {});
     spyOn(component, 'setPreSelectedContributors').and.callFake(() => {});
@@ -518,7 +518,7 @@ it('should call  setValidations', () => {
       framework:new UntypedFormControl('framework', Validators.required),
     });
 
-    
+
     component.projectTargetType='questionSets';
     spyOn(component, 'openForNominations').and.callFake(() => {});
     spyOn(component, 'setValidations').and.callFake(() => {});
@@ -541,7 +541,7 @@ it('should call clearValidations', () => {
     expect(component.projectScopeForm.value.pcollections).toEqual([]);
     expect(component.getCollectionCategoryDefinition).toHaveBeenCalled();
     expect(component.tempCollections).toEqual([]);
-    
+
   }); */
 
 it('Should call the onChangeTargetCollectionCategory method', () => {
@@ -566,7 +566,7 @@ it('Should call the onChangeTargetCollectionCategory method', () => {
    ver:'' }));
     component['frameworkService'] = TestBed.inject(FrameworkService);
     spyOn(component['frameworkService'], 'readFramworkCategories').and.returnValue(of({result:{data:{properties:'kkk'}}}));
-    
+
     component.onChangeTargetCollectionCategory();
     expect(component.showTexbooklist).toHaveBeenCalled();
     expect(component.projectScopeForm.value.pcollections).toEqual([]);
@@ -583,7 +583,7 @@ xit('should call showTexbooklist', () => {
     component.userprofile={
       rootOrgId:'rootOrgId'
     }
-    component.projectTargetType === 'NotquestionSets' 
+    component.projectTargetType === 'NotquestionSets'
     component['programsService'] = TestBed.inject(ProgramsService);
     spyOn(component['programsService'], 'getCollectionList').and.returnValue(of({result:{count:3},
       id: 'api.programsService',
@@ -596,7 +596,7 @@ xit('should call showTexbooklist', () => {
      responseCode: 'OK',
      ts:'',
      ver:'' }));
-    
+
     component.showTexbooklist();
     expect(component['programsService'].getCollectionList).toHaveBeenCalled();
   });
@@ -723,7 +723,7 @@ it('onChangeTopics should call programsService.filterBlueprintMetadata', () => {
   });
 
   xit('mapBlueprintToId should call toasterService.error', () => {
- 
+
     const toasterService = TestBed.get(ToasterService);
     spyOn(toasterService, 'error').and.callFake(() => {});
     //spyOn(component, 'isBlueprintValid').and.returnValue(true);
@@ -926,16 +926,16 @@ it('validateFormBeforePublish method Should return false when validateDates is t
     expect(component.disableCreateProgramBtn).toBeFalsy();
   });
 
-  
 
-  
+
+
   xit('should call publishProject', () => {
    // const r:HTMLInputElement =fixture.debugElement.nativeElement.querySelector()
    component.createProgramForm = new UntypedFormGroup({
     type: new UntypedFormControl('', Validators.required),
   });
   component.createProgramForm.setValue({
-    type: 'public', 
+    type: 'public',
   });
   const mockEvt = { target: { xyz: [] } };
 
@@ -962,7 +962,7 @@ it('validateFormBeforePublish method Should return false when validateDates is t
    ver:'' }));
     component.publishProject(mockEvt);
     expect(component['programsService'].publishProgram).toHaveBeenCalled();
-  
+
   });
 
 it('#editTargetNode should set #selectedTargetNodeData and #editTargetObjectFlag', () => {
@@ -1022,9 +1022,9 @@ it('#updateTargetNode should update QuestionSet', () => {
     component['frameworkService'] = TestBed.inject(FrameworkService);
     spyOn(component['frameworkService'] , 'readChannel').and.returnValue(of({channelData: 'channelData'}));
     spyOn(component, 'getFramework').and.returnValue(Promise.resolve(true))
-    
+
     spyOn(component['frameworkService'] , 'getMasterCategories').and.callFake(() => {});
-    
+
     component.setProjectScopeDetails();
     //expect(component['frameworkService'].getMasterCategories).toHaveBeenCalled();
     expect(component['frameworkService'].readChannel).toHaveBeenCalled();
@@ -1086,7 +1086,7 @@ xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
           {
             code : 'board'
           }
-        
+
       },
       userChannelData:
       {
@@ -1095,7 +1095,7 @@ xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
         type: 'type'
 
       },
-      
+
     }
     component.projectScopeForm = new UntypedFormGroup({
       framework: new UntypedFormControl(['framework'], Validators.required),
@@ -1107,7 +1107,7 @@ xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
           {
             defaultFramework : ['frameworks'],
             type: 'type'
-    
+
           }
         }}));
         component.getDefaultChannelFramework();
@@ -1116,6 +1116,6 @@ xit('#getDefaultChannelFramework should get Default Channel Framework', () => {
         expect( component['sourcingService'].generateAssetCreateRequest).toHaveBeenCalled();
      */
       });
-  
+
 
 });

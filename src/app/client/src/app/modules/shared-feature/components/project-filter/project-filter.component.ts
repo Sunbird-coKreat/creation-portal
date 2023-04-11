@@ -8,7 +8,7 @@ import { IInteractEventEdata } from '@sunbird/telemetry';
 import { EventEmitter } from '@angular/core';
 import { first, filter, map, tap } from 'rxjs/operators';
 import * as alphaNumSort from 'alphanum-sort';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { of, Observable } from 'rxjs';
 @Component({
   selector: 'app-project-filter',
@@ -373,7 +373,7 @@ export class ProjectFilterComponent implements OnInit {
       case 'sourcingOrgAdmin':
         if (this.forTargetType === 'searchCriteria') {
          this.setPreferences['target_collection_category'] = [];
-          this.cacheService.set('sourcingMyProgramAppliedFiltersSearchCriteria', filterLocalStorage); 
+          this.cacheService.set('sourcingMyProgramAppliedFiltersSearchCriteria', filterLocalStorage);
         } else {
           this.cacheService.set('sourcingMyProgramAppliedFilters', filterLocalStorage);
         }

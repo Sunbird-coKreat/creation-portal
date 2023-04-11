@@ -4,7 +4,7 @@ import { ConfigService, ResourceService, ToasterService } from '@sunbird/shared'
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
 import { HelperService } from '../../services/helper.service';
 import { ProgramTelemetryService } from '../../../program/services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import * as _ from 'lodash-es';
 import { map, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';

@@ -10,13 +10,13 @@ import { CollectionHierarchyService } from '../../services/collection-hierarchy/
 import {
   ResourceService, ToasterService, SharedModule, ConfigService, UtilService, BrowserCacheTtlService
 } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { TelemetryService } from '@sunbird/telemetry';
 import { ProgramTelemetryService } from '../../../program/services';
 import { of as observableOf, throwError as observableError } from 'rxjs';
 import { ActionService, UserService } from '@sunbird/core';
 import { RouterModule } from '@angular/router';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 import * as mockData from './resource-reorder.component.spec.data';
 const testData = mockData.mockRes;
 import { HelperService } from '../../services/helper.service'
@@ -43,7 +43,7 @@ xdescribe('ResourceReorderComponent', () => {
       }
     }
   };
- 
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' }), TelemetryModule.forRoot()],

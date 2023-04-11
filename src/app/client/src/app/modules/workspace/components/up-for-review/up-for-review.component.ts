@@ -290,6 +290,7 @@ export class UpForReviewComponent extends WorkSpace implements OnInit, AfterView
           visits: this.inviewLogs
         }
       };
+      this.inview({ inview: [] });
     });
   }
   getContentType() {

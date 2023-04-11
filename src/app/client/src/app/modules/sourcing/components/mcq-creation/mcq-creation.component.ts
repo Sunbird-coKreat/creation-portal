@@ -5,7 +5,7 @@ import { ConfigService, IUserProfile, ToasterService, NavigationHelperService, R
 import { UserService, ActionService, ProgramsService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
 import * as _ from 'lodash-es';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -139,7 +139,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
       channel: this.sessionContext.channel
     };
     this.userName = this.setUserName();
-    this.solutionUUID = UUID.UUID();
+    this.solutionUUID = UUID();
     this.isReadOnlyMode = this.sessionContext.isReadOnlyMode;
   }
 
@@ -373,7 +373,7 @@ export class McqCreationComponent implements OnInit, OnChanges, AfterViewInit {
         });
 
         let metadata = {
-          'code': UUID.UUID(),
+          'code': UUID(),
           'category': this.sessionContext.questionType.toUpperCase(),
           'templateId': this.mcqForm.templateId,
           'name': this.sessionContext.questionType + '_' + this.sessionContext.framework,

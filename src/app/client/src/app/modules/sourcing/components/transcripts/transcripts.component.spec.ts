@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { TranscriptsComponent } from './transcripts.component';
 import { contentMetaData, dummyItems} from './transcripts.component.spec.data';
-import { ResourceService, ToasterService, SharedModule, ConfigService, ServerResponse, 
+import { ResourceService, ToasterService, SharedModule, ConfigService, ServerResponse,
   UtilService, BrowserCacheTtlService, NavigationHelperService } from '@sunbird/shared';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { TranscriptService } from '../../../core/services/transcript/transcript.service';
@@ -13,7 +13,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TelemetryService } from '@sunbird/telemetry';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { of } from 'rxjs';
 describe('TranscriptsComponent', () => {
   let component: TranscriptsComponent;

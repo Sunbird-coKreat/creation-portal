@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 import * as moment from 'moment';
 import { DatePipe } from '@angular/common';
 import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { first } from 'rxjs/operators';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
@@ -157,7 +157,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.activatedRoute.queryParamMap
     .subscribe(params => {
       const tabName = !_.isEmpty(params.get('targetType')) ? params.get('targetType') : 'collections';
-      this.forTargetType = (tabName === 'noCollections') ? 'searchCriteria' : 'collections'; 
+      this.forTargetType = (tabName === 'noCollections') ? 'searchCriteria' : 'collections';
       if(tabName === 'questionSets') this.forTargetType = 'questionSets';
       this.getProgramsListByRole();
     });
@@ -656,7 +656,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     } else {
       if (type === 'framework' && _.has(program, 'frameworkObj') && !_.isEmpty(program.frameworkObj)) {
         paramName = 'frameworkObj';
-      } 
+      }
       const temp = this.getCorrectedValue(program[paramName], true);
       return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
     }
@@ -719,7 +719,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
     if (!nominationDate.isAfter(today) && !shortlistingDate.isAfter(today) && !contributionDate.isAfter(today) && endDate.isAfter(today)) {
       return 'enddate';
-    } 
+    }
   }
   getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: any): IInteractEventEdata {
     return _.omitBy({
@@ -757,15 +757,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       } else {
         filters['user_id'] = this.userService.userProfile.identifier;
       }
-  
+
       this.programsService.getNominationList(filters).subscribe((res)=>{
-        if (res.result && res.result.length) { 
+        if (res.result && res.result.length) {
           const nomination = _.first(res.result);
           if (nomination.status === 'Approved' || nomination.status === 'Rejected') {
             this.toasterService.error(`${this.resourceService.messages.emsg.modifyNomination.error} ${nomination.status}`);
             this.ngOnInit();
           } else if (nomination.status === 'Pending') {
-            const request = { 
+            const request = {
               "request" : {
                 program_id: this.selectedProgramToModify.program_id,
                 status: 'Initiated',

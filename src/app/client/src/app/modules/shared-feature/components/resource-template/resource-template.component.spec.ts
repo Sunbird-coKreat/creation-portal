@@ -8,7 +8,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF, DatePipe } from '@angular/common';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { throwError } from 'rxjs';
 import { ProgramTelemetryService } from '../../../program/services';
 import { ConfigService, ResourceService, ToasterService, BrowserCacheTtlService } from '@sunbird/shared';

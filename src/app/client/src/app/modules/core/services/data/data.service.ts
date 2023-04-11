@@ -4,7 +4,7 @@ import { mergeMap } from 'rxjs/operators';
 import { ServerResponse, RequestParam, HttpOptions } from '@sunbird/shared';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import * as moment from 'moment';
 import * as _ from 'lodash-es';
 
@@ -184,8 +184,8 @@ export class DataService {
       // 'X-Consumer-ID': 'X-Consumer-ID',
       'X-Source': 'web',
       'ts': moment().format(),
-      'X-msgid': UUID.UUID(),
-      'X-Request-ID': UUID.UUID()
+      'X-msgid': UUID(),
+      'X-Request-ID': UUID()
     };
 
     try {
@@ -220,5 +220,5 @@ export class DataService {
       return 0;
     }
   }
-  
+
 }

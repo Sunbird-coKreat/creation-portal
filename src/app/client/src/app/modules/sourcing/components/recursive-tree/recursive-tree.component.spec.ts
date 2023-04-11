@@ -11,7 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RecursiveTreeComponent } from './recursive-tree.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ConfigService, BrowserCacheTtlService, ToasterService, ResourceService } from '@sunbird/shared';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { DatePipe } from '@angular/common';
 import { RouterTestingModule } from '@angular/router/testing';
 import { recursiveTreeComponentInput } from './recursive-tree.component.spec.data';
@@ -176,9 +176,9 @@ xdescribe('RecursiveTreeComponent', () => {
 
   it('should check dynamic headers', () => {
     if(component.dynamicHeaders && component.dynamicHeaders.length == 0){
-      expect(fixture.debugElement.query(By.css('.dynamic-header'))).toBeUndefined(); 
+      expect(fixture.debugElement.query(By.css('.dynamic-header'))).toBeUndefined();
     }else{
-      expect(fixture.debugElement.query(By.css('.dynamic-header'))).toBeDefined(); 
+      expect(fixture.debugElement.query(By.css('.dynamic-header'))).toBeDefined();
     }
   });
 });

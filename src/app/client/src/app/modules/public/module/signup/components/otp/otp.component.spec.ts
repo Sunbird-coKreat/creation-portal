@@ -2,7 +2,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { InterpolatePipe } from './../../../../../shared/pipes/interpolate/interpolate.pipe';
 import { ReactiveFormsModule, FormsModule, UntypedFormBuilder } from '@angular/forms';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../../../shared/services/cache-service/cache.service';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import {TelemetryModule, TelemetryService} from '@sunbird/telemetry';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

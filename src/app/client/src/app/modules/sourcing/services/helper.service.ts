@@ -6,11 +6,11 @@ import { throwError, Observable, of, Subject, forkJoin } from 'rxjs';
 import { catchError, map, switchMap, tap, mergeMap, filter, first, skipWhile } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 import { ProgramStageService } from '../../program/services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../shared/services/cache-service/cache.service';
 import { ActivatedRoute, Router} from '@angular/router';
 import { SourcingService } from '../../sourcing/services';
 import { isUndefined } from 'lodash';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import * as moment from 'moment';
 import { HttpClient } from '@angular/common/http';
 
@@ -1461,7 +1461,7 @@ export class HelperService {
 
     let obj= {
       'name': 'Untitled',
-      'code': UUID.UUID(),
+      'code': UUID(),
       'mimeType': mimeType || templateDetails.mimeType[0],
       'createdBy': this.userService.userid,
       'primaryCategory': templateDetails.name,

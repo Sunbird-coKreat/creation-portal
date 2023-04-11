@@ -4,7 +4,7 @@ import { NavigationHelperService } from './navigation-helper.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Observable, of as observableOf } from 'rxjs';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { UtilService } from '../util/util.service';
 
 class RouterStub {

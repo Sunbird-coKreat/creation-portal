@@ -356,6 +356,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
           duration: this.navigationhelperService.getPageLoadTime()
         }
       };
+      this.inview({ inview: [] });
     });
   }
 

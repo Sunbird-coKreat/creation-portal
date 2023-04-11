@@ -4,7 +4,7 @@ import { ContentService } from './../content/content.service';
 import { Injectable, Inject } from '@angular/core';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 import * as _ from 'lodash-es';
 import { HttpClient } from '@angular/common/http';
 import { PublicDataService } from './../public-data/public-data.service';
@@ -118,7 +118,7 @@ export class UserService {
       this._authenticated = true;
     } catch (error) {
       this._authenticated = false;
-      this._anonymousSid = UUID.UUID();
+      this._anonymousSid = UUID();
     }
     try {
       this._appId = (<HTMLInputElement>document.getElementById('appId')).value;

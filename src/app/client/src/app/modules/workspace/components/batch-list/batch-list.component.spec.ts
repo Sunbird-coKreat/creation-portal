@@ -15,7 +15,7 @@ import * as mockData from './batch-list.component.spec.data';
 const testData = mockData.mockRes;
 import * as _ from 'lodash-es';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 
 xdescribe('BatchListComponent', () => {
   let component: BatchListComponent;
@@ -75,7 +75,7 @@ xdescribe('BatchListComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
       imports: [SuiModule, FormsModule, ReactiveFormsModule, HttpClientTestingModule,
         RouterTestingModule, SharedModule.forRoot(), CoreModule,
-        TelemetryModule.forRoot(), NgInviewModule],
+        TelemetryModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, ResourceService, ToasterService, BatchService,
         { provide: ResourceService, useValue: resourceBundle },
         { provide: Router, useClass: RouterStub },

@@ -6,7 +6,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { of as observableOf } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { UserService, OrgDetailsService } from '@sunbird/core';
 import { commonMessageApiResp } from './comming-soon.component.spec.data';
 import { RouterTestingModule } from '@angular/router/testing';

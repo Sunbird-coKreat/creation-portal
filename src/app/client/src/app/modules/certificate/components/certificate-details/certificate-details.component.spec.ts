@@ -4,7 +4,6 @@ import { MainHeaderComponent } from './../../../core/components/main-header/main
 import { PublicPlayerService } from '@sunbird/public';
 import { CertificateService } from '@sunbird/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { CacheService } from 'ng2-cache-service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CertificateDetailsComponent } from './certificate-details.component';
@@ -17,6 +16,7 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
 import { throwError as observableThrowError, of as observableOf } from 'rxjs';
 import { validateCertMockResponse } from './certificate-details.component.spec.data';
 import { DatePipe, Location } from '@angular/common';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 xdescribe('CertificateDetailsComponent', () => {
   let component: CertificateDetailsComponent;
@@ -61,7 +61,7 @@ xdescribe('CertificateDetailsComponent', () => {
   afterEach(() => {
     fixture.destroy();
   });
-  
+
 
   it('should verify the certificate', () => {
     component.loader = true;

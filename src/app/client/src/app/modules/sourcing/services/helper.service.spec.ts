@@ -10,7 +10,7 @@ import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClient } from '@angular/common/http';
 import { of as observableOf, of, throwError as observableError } from 'rxjs';
 import { childMetaFormData } from './sourcing/helper.service.spec.data';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../shared/services/cache-service/cache.service';
 import { SourcingService } from '../../sourcing/services';
 
 xdescribe('HelperService', () => {

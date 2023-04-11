@@ -7,7 +7,7 @@ import { Observable, of, throwError, BehaviorSubject, forkJoin, empty} from 'rxj
 import { switchMap, tap, catchError, skipWhile, isEmpty } from 'rxjs/operators';
 import { UserService } from './../user/user.service';
 import { LearnerService } from '../learner/learner.service';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import * as _ from 'lodash-es';
 import {TelemetryService } from '@sunbird/telemetry';
 

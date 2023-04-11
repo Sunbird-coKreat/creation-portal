@@ -14,10 +14,10 @@ import * as _ from 'lodash-es';
 import { ProfileService } from '@sunbird/profile';
 import { Observable, of, throwError, combineLatest, BehaviorSubject } from 'rxjs';
 import { first, filter, mergeMap, tap, map, skipWhile, startWith } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
 import { DOCUMENT } from '@angular/common';
 import { Location } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { CacheService } from '../app/modules/shared/services/cache-service/cache.service';
 
 /**
  * main app component

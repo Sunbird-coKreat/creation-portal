@@ -290,6 +290,7 @@ export class UploadedComponent extends WorkSpace implements OnInit, AfterViewIni
         }
       };
     });
+    this.inview({ inview: [] });
   }
 
   /**

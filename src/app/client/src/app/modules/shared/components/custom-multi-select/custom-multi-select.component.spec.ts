@@ -5,7 +5,7 @@ import { CustomMultiSelectComponent } from './custom-multi-select.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import {Response} from './custom-multi-select.component.spec.data';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from './../../services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 describe('CustomMultiSelectComponent', () => {
   let component: CustomMultiSelectComponent;
   let fixture: ComponentFixture<CustomMultiSelectComponent>;

@@ -15,7 +15,7 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import * as mockData from './published.component.spec.data';
 const testData = mockData.mockRes;
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { SuiModule } from 'ng2-semantic-ui-v9';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
@@ -59,7 +59,7 @@ xdescribe('PublishedComponent', () => {
     TestBed.configureTestingModule({
       declarations: [PublishedComponent],
       imports: [HttpClientTestingModule, RouterTestingModule, SuiModule , SharedModule.forRoot(),
-        TelemetryModule.forRoot(), NgInviewModule],
+        TelemetryModule.forRoot()],
       providers: [PaginationService, WorkSpaceService, UserService,
         SearchService, ContentService, LearnerService, CoursesService,
         PermissionService, ResourceService, ToasterService,

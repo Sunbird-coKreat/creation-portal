@@ -12,7 +12,7 @@ import {
 } from '@sunbird/shared';
 import { ProfileService } from '@sunbird/profile';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { RouterTestingModule } from '@angular/router/testing';
 import { userLocationMockData } from './user-location.component.spec.data';

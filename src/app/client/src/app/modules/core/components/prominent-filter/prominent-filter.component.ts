@@ -8,7 +8,7 @@ import { Component, OnInit, Input, Output, EventEmitter, ApplicationRef, ChangeD
 import { Router, ActivatedRoute } from '@angular/router';
 import { FrameworkService, FormService, PermissionService, OrgDetailsService } from './../../services';
 import * as _ from 'lodash-es';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { first, mergeMap, map, tap, catchError, filter } from 'rxjs/operators';
 @Component({

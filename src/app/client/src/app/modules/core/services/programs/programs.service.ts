@@ -19,7 +19,7 @@ import { DatePipe } from '@angular/common';
 import { LearnerService } from '../learner/learner.service';
 import { RegistryService } from '../registry/registry.service';
 import { ExportToCsv } from 'export-to-csv';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { isUndefined } from 'lodash';
 import * as moment from 'moment';
 

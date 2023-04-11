@@ -9,7 +9,7 @@ import { ProgramComponentsService } from '../../../contribute/services/program-c
 import { ProgramStageService, ProgramTelemetryService} from '../../../program/services';
 import { ISessionContext } from '../../../contribute/interfaces';
 import { HelperService, SourcingService } from '../../../sourcing/services';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 
 
 @Injectable({
@@ -30,7 +30,7 @@ export class ContentHelperService {
   public defaultVideoSize: any;
   constructor(private configService: ConfigService, private programComponentsService: ProgramComponentsService,
     private programStageService: ProgramStageService, private userService: UserService, private helperService: HelperService,
-    private programsService: ProgramsService, public resourceService: ResourceService, 
+    private programsService: ProgramsService, public resourceService: ResourceService,
     public actionService: ActionService, public activatedRoute: ActivatedRoute, private sourcingService: SourcingService) {
       this.defaultFileSize = (<HTMLInputElement>document.getElementById('dockDefaultFileSize')) ?
       (<HTMLInputElement>document.getElementById('dockDefaultFileSize')).value : 150;

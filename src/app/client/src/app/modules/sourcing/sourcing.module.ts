@@ -30,7 +30,7 @@ import { MvcListComponent } from './components/mvc-list/mvc-list.component';
 import { MvcFilterComponent } from './components/mvc-filter/mvc-filter.component';
 import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component';
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
-import { NgInviewModule } from '@stockopedia/angular-inport';
+
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
 import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
@@ -73,7 +73,6 @@ import { SendReminderModalComponent } from './components/send-reminder-modal/sen
       McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent,
       ContentEditorComponent, QuestionSetEditorComponent]),
-    NgInviewModule,
     CollectionEditorLibraryModule,
     CarouselModule.forRoot(),
     ResourceLibraryModule, SunbirdVideoPlayerModule

@@ -7,7 +7,6 @@ import { HttpOptions, ConfigService, ToasterService } from '@sunbird/shared';
 import { TelemetryService } from '@sunbird/telemetry';
 import { forkJoin } from 'rxjs';
 import * as _ from 'lodash-es';
-import { isUndefined } from 'util';
 
 @Injectable()
 
@@ -146,7 +145,7 @@ export class CollectionHierarchyService {
     if (allFields) {
       delete(option.data.request.fields);
     }
-    if (!isUndefined(preferencefilters)) {
+    if (!_.isUndefined(preferencefilters)) {
         if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
           option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
         }
@@ -352,7 +351,7 @@ export class CollectionHierarchyService {
         }
       }
     };
-    if (!isUndefined(this._preferencefilters)) {
+    if (!_.isUndefined(this._preferencefilters)) {
       if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
       }
@@ -414,7 +413,7 @@ export class CollectionHierarchyService {
       option.data.request['limit'] = 0;
     }
 
-    if (!isUndefined(this._preferencefilters)) {
+    if (!_.isUndefined(this._preferencefilters)) {
       if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
         option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
       }

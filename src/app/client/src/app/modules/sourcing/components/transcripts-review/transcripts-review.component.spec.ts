@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { TranscriptsReviewComponent } from './transcripts-review.component';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 describe('TranscriptsReviewComponent', () => {
   let component: TranscriptsReviewComponent;
   let fixture: ComponentFixture<TranscriptsReviewComponent>;

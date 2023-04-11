@@ -2,8 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BulkJobService } from './bulk-job.service';
-import { CacheService } from 'ng2-cache-service';
-import { APP_BASE_HREF,DatePipe } from '@angular/common'; 
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
+import { APP_BASE_HREF,DatePipe } from '@angular/common';
 import {
   ResourceService, ToasterService, SharedModule, ConfigService,
   UtilService, BrowserCacheTtlService, NavigationHelperService,
