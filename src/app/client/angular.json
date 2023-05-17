@@ -24,11 +24,6 @@
               "src/thirdparty",
               "src/favicon.png",
               {
-                "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
-                "output": "./assets/common-consumption"
-              },
-              {
                 "glob": "**/*",
                 "input": "./node_modules/@project-sunbird/sunbird-pdf-player-v9/lib/assets/",
                 "output": "/assets/"
@@ -40,7 +35,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "./node_modules/@project-sunbird/sunbird-collection-editor-v9/lib/assets/",
+                "input": "./node_modules/@project-sunbird/sunbird-collection-editor/lib/assets/",
                 "output": "/assets/"
               },
               {
@@ -69,7 +64,8 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/assets/styles/"
+                "src/assets/styles/",
+                "./node_modules"
               ]
             },
             "scripts": [
@@ -86,7 +82,7 @@
               "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
               "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
               {
-                "inject": true,
+                "inject": false,
                 "input": "src/assets/libs/semantic-ui-tree-picker/semantic-ui-tree-picker.js",
                 "bundleName": "semanticTreePicker"
               }
@@ -110,7 +106,6 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -131,7 +126,6 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -200,164 +194,6 @@
               "src/thidparty/**",
               "src/app/modules/offline/**"
             ]
-          }
-        }
-      }
-    },
-    "desktop": {
-      "root": "projects/desktop/",
-      "sourceRoot": "",
-      "projectType": "application",
-      "prefix": "app",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "../dist",
-            "index": "projects/desktop/src/index.html",
-            "main": "projects/desktop/src/main.ts",
-            "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "src/tsconfig.app.json",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "./src/assets",
-                "output": "./assets"
-              },
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
-                "output": "./assets/common-consumption"
-              }
-            ],
-            "styles": [
-              "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
-              "src/assets/styles/semantic/semantic.min.css",
-              "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/shepherd.js/dist/css/shepherd-theme-default.css",
-              "./node_modules/common-consumption-styles/assets/_styles.scss",
-              "src/assets/styles/styles.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets/styles/"
-              ]
-            },
-            "scripts": [
-              "src/assets/libs/iziToast/iziToast.min.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/@project-sunbird/telemetry-sdk/index.js",
-              "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
-            ],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/desktop/src/environments/environment.ts",
-                  "with": "projects/desktop/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "3mb",
-                  "maximumError": "6mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
-                }
-              ]
-            }
-          },
-          "defaultConfiguration": ""
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "desktop:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "desktop:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "desktop:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "codeCoverage": true,
-            "main": "projects/desktop/src/test.ts",
-            "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "projects/desktop/karma.conf.js",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "./src/assets",
-                "output": "./assets"
-              }
-            ],
-            "styles": [
-              "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
-              "src/assets/styles/semantic/semantic.min.css",
-              "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/shepherd.js/dist/css/shepherd-theme-default.css",
-              "src/assets/styles/styles.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets/styles/"
-              ]
-            },
-            "scripts": [
-              "src/assets/libs/iziToast/iziToast.min.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/@project-sunbird/telemetry-sdk/index.js",
-              "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
-            ]
-          }
-        }
-      }
-    },
-    "desktop-e2e": {
-      "root": "projects/desktop-e2e/",
-      "projectType": "application",
-      "prefix": "",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "projects/desktop-e2e/protractor.conf.js",
-            "devServerTarget": "desktop:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "desktop:serve:production"
-            }
           }
         }
       }

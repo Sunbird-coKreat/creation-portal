@@ -15,7 +15,6 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RecursiveTreeComponent } from './components/recursive-tree/recursive-tree.component';
 import { ContentUploaderComponent } from './components/content-uploader/content-uploader.component';
 import { DynamicModule } from 'ng-dynamic-component';
-import { CommonConsumptionModule } from '@project-sunbird/common-consumption-v8';
 import { CollectionComponent } from './components/collection/collection.component';
 import { ResourceReorderComponent } from './components/resource-reorder/resource-reorder.component';
 import { ContentEditorComponent } from './components/content-editor/content-editor.component';
@@ -32,7 +31,7 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
+//import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
@@ -59,7 +58,6 @@ import { SendReminderModalComponent } from './components/send-reminder-modal/sen
     CoreModule,
     CommonModule,
     SuiTabsModule,
-    CommonConsumptionModule,
     SuiModule,
     ReactiveFormsModule, FormsModule, SharedModule,
     InfiniteScrollModule,
@@ -73,13 +71,13 @@ import { SendReminderModalComponent } from './components/send-reminder-modal/sen
       McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent,
       ContentEditorComponent, QuestionSetEditorComponent]),
-    CollectionEditorLibraryModule,
+    //CollectionEditorLibraryModule,
     CarouselModule.forRoot(),
     ResourceLibraryModule, SunbirdVideoPlayerModule
   ],
   providers: [
     { provide: QuestionCursor, useExisting: QumlPlayerService },
-    { provide: EditorCursor, useExisting: QumlPlayerService },
+    //{ provide: EditorCursor, useExisting: QumlPlayerService },
     CollectionHierarchyService],
   exports: [ BulkUploadComponent, BulkApprovalComponent, SanitizeHtmlPipe, TranscriptsComponent, TranscriptsReviewComponent, QuestionSetEditorComponent  ]
 })
