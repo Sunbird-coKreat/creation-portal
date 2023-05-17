@@ -8,12 +8,12 @@ const routes: Routes = [
     path: '', component: LandingPageComponent, canActivate: [LandingpageGuard],
     data: { telemetry: { env: 'public', pageid: 'landing-page', type: 'edit', subtype: 'paginate' } }
   },
-  {
-    path: 'explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
-  },
-  {
-    path: ':slug/explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
-  },
+  // {
+  //   path: 'explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
+  // },
+  // {
+  //   path: ':slug/explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
+  // },
   {
     path: ':slug/signup', loadChildren: () => import('./module/signup/signup.module').then(m => m.SignupModule)
   },

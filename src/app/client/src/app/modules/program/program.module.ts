@@ -17,7 +17,6 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
 import { SourcingModule } from '../sourcing/sourcing.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../sourcing';
-import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgReportsComponent } from './components/org-reports/org-reports.component';
 import { ContributorsListComponent } from './components/contributors-list/contributors-list.component';
 import { CommonFormElementsModule } from 'common-form-elements-web-v9';
@@ -33,7 +32,6 @@ import { CommonFormElementsModule } from 'common-form-elements-web-v9';
   SuiModule,
     CommonModule,
     ProgramRoutingModule,
-    CommonConsumptionModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,

@@ -12,7 +12,6 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { DynamicModule } from 'ng-dynamic-component';
 import { SourcingModule } from '../sourcing/sourcing.module';
 import { CollectionComponent, DashboardComponent } from '../sourcing';
-import { CommonConsumptionModule} from '@project-sunbird/common-consumption-v8';
 import { OrgUserListComponent } from './components/org-user-list/org-user-list.component';
 import { SharedFeatureModule } from '../shared-feature/shared-feature.module';
 import { PlayerHelperModule } from '@sunbird/player-helper';
@@ -34,7 +33,6 @@ import { QumlPlayerService } from '../sourcing';
     SuiModule,
     CommonModule,
     ContributeRoutingModule,
-    CommonConsumptionModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
