@@ -16,6 +16,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
 //import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
+import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
 import { CacheService } from './modules/shared/services/cache-service/cache.service';
 
@@ -37,6 +38,7 @@ import { CacheService } from './modules/shared/services/cache-service/cache.serv
         SharedFeatureModule,
         ...PluginModules,
         QumlLibraryModule,
+        CollectionEditorLibraryModule,
         AppRoutingModule // don't add any module below this because it contains wildcard route
     ],
     bootstrap: [AppComponent],
@@ -47,6 +49,7 @@ import { CacheService } from './modules/shared/services/cache-service/cache.serv
         //ChatLibService,
         { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true },
         { provide: QuestionCursor, useExisting: QumlPlayerService },
+        { provide: EditorCursor, useExisting: QumlPlayerService }
     ]
 })
 export class AppModule {
