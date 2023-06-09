@@ -601,7 +601,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userRemoveRoleLoader = false;
 
       if (user.projectselectedRole !== "NONE") {
-        user.roles = this.rolesWithNone;
+        let noneRole = user.roles.find((role)=> role.name == "NONE");
+        if(noneRole == undefined){
+          user.roles.push({'id': 4, 'name': 'NONE', 'defaultTab': 4, 'tabs': [4]});
+        }
       } else {
         user.roles = this.roles;
         user.projectselectedRole = "Select Role"
