@@ -114,6 +114,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public contributeHelpSectionConfig: any;
   public noUsersFoundHelpConfig: any;
   public reviewHelpSectionConfig: any;
+  public userRoles: any = [
+        {id: 3, name: 'BOTH', defaultTab: 3, tabs: [3]},
+        {id: 4, name: 'NONE', defaultTab: 4, tabs: [4]}
+  ]
 
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
@@ -220,11 +224,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
       this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
-      this.roles =_.get(this.programDetails, 'config.roles');
-      this.roles.push({'id': 3, 'name': 'BOTH', 'defaultTab': 3, 'tabs': [3]});
-      this.rolesWithNone = _.cloneDeep(this.roles);
-      this.rolesWithNone.push({'id': 4, 'name': 'NONE', 'defaultTab': 4, 'tabs': [4]});
-      this.roleNames = _.map(this.rolesWithNone, 'name');
+      this.userRoles = this.userRoles.concat(_.get(this.programDetails, 'config.roles')).sort((a, b) => a.id - b.id);
+      this.roles = _.cloneDeep(this.userRoles); 
+      this.roleNames = _.map(this.userRoles, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.getNominationStatus();
@@ -465,11 +467,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
 
+      
       if (r.projectselectedRole) {
-        r.roles = this.rolesWithNone;
+        r.roles = this.userRoles.filter(role => role.name !== 'Select Role');
       } else {
-        r.projectselectedRole = 'Select Role';
-        r.roles = this.roles;
+        r.roles = this.userRoles.filter(role => role.name !== 'NONE');;
       }
 
       r.newRole = r.projectselectedRole;
@@ -601,10 +603,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userRemoveRoleLoader = false;
 
       if (user.projectselectedRole !== "NONE") {
-        user.roles = this.rolesWithNone;
+        user.roles = this.userRoles.filter(role => role.name !== 'Select Role');
       } else {
-        user.roles = this.roles;
-        user.projectselectedRole = "Select Role"
+        user.projectselectedRole = '';
+        user.roles = this.userRoles.filter(role => role.name !== 'NONE');
       }
       this.nominationDetails.rolemapping = progRoleMapping;
       this.toasterService.success(this.resourceService.messages.smsg.roles.m0001);

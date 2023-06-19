@@ -197,7 +197,7 @@
 									<div class="custom-selectbx">
 										<label>
 											<select [(ngModel)]="orgUser.projectselectedRole" labelField="name"  valueField="name" (change)="onRoleChange(orgUser)" >
-													<option [value]="orgUser.projectselectedRole"  *ngIf="orgUser.projectselectedRole === 'Select Role'" hidden> Select Role </option>
+													<option [value]="orgUser.projectselectedRole"  *ngIf="orgUser.projectselectedRole === 'Select Role' || orgUser.projectselectedRole === ''" hidden> Select Role </option>
 													<option [value]="option.name" *ngFor="let option of orgUser.roles;" >
 															{{option?.name}}
 												</option>
