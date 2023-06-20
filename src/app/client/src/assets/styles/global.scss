@@ -244,3 +244,7 @@ quml-main-player *:focus-visible {
   border: 0.0625rem solid #fe0000 !important;
   outline: 0;
 }
+
+epub-viewer {
+  overflow-y: scroll !important
+}
