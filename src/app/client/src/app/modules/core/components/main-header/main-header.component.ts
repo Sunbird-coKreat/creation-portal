@@ -82,6 +82,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notification: any;
  public showSubHeader = true;
  public unSubscribeShowSubHeader: any;
+ public userRegistryData: boolean = false;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -109,6 +110,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
         if (user && !user.err) {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
+          this.userRegistryData = true;
           // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
         }
@@ -168,6 +170,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   this.getNumberofNotification();
         this.unSubscribeShowSubHeader = this.programsService.getHeaderEmitter()
       .subscribe(status => this.showSubHeader = status );
+
   }
 
   ngOnDestroy() {
