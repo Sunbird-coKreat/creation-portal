@@ -110,6 +110,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
         if (user && !user.err) {
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
+          this.userRegistryData = true;
           // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
         }
@@ -170,14 +171,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
         this.unSubscribeShowSubHeader = this.programsService.getHeaderEmitter()
       .subscribe(status => this.showSubHeader = status );
 
-  
-    this.userService.userRegistryDataRecived.subscribe((userRegistryDatasSubjec: any ) =>{
-        this.userRegistryData = true;
-        setTimeout(() => {
-          this.handleActiveTabState('allPrograms');  
-        }, 1000);
-        
-    })
   }
 
   ngOnDestroy() {

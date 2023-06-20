@@ -25,8 +25,6 @@ export class UserService {
   private _userid: string;
 
   public userRegistryData = false;
-  userRegistryDataSubject: BehaviorSubject<boolean> = new BehaviorSubject(false); // inital value is "false"
-  userRegistryDataRecived = this.userRegistryDataSubject.asObservable();
 
   /**
     * Contains session id
@@ -361,7 +359,6 @@ export class UserService {
         userRegData['Org'] = res.result.Org[0];
       }
       this.userRegistryData = true;
-      this.userRegistryDataSubject.next(true)
       if (this._userProfile) {
         this._userProfile.userRegData = userRegData;
         return resolve(this._userProfile.userRegData);
