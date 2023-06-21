@@ -471,6 +471,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (r.projectselectedRole) {
         r.roles = this.userRoles.filter(role => role.name !== 'Select Role');
       } else {
+        r.projectselectedRole = 'Select Role';
         r.roles = this.userRoles.filter(role => role.name !== 'NONE');;
       }
 
@@ -605,7 +606,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       if (user.projectselectedRole !== "NONE") {
         user.roles = this.userRoles.filter(role => role.name !== 'Select Role');
       } else {
-        user.projectselectedRole = '';
+        user.projectselectedRole = 'Select Role';
         user.roles = this.userRoles.filter(role => role.name !== 'NONE');
       }
       this.nominationDetails.rolemapping = progRoleMapping;
