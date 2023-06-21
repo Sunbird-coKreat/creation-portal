@@ -359,6 +359,7 @@ export class UserService {
         userRegData['Org'] = res.result.Org[0];
       }
       this.userRegistryData = true;
+      console.log("this.userRegistryData", this.userRegistryData);
       if (this._userProfile) {
         this._userProfile.userRegData = userRegData;
         return resolve(this._userProfile.userRegData);
