@@ -107,7 +107,9 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.userService.loggedIn) {
       this.userService.userData$.subscribe((user: any) => {
+        console.log('here in user data', user);
         if (user && !user.err) {
+          console.log('here in user data', user);
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
           this.userRegistryData = true;
@@ -146,6 +148,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
     // maintain active tab state
     if (this.router.isActive('/contribute', true)) {
+      console.log("here is if condition");
       this.handleActiveTabState('allPrograms');
     } else if (this.router.isActive('/contribute/orglist', true) || this.router.isActive('/sourcing/orglist', true)) {
       this.handleActiveTabState('manageUsers');
