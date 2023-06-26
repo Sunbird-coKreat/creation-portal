@@ -171,6 +171,7 @@ export class UserService {
         }
 
         if (this.location.path().includes('/sourcing')) {
+          console.log("this is data ", data );
           this.setUserProfile(data);
         } else {
           this.openSaberRegistrySearch().then((userRegData) => {
