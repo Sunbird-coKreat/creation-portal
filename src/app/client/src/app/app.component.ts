@@ -35,7 +35,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * user to load app after fetching user/org details.
    */
-  public initApp = false;
+  // public initApp = false;
+  public initAppSubject = new BehaviorSubject(false);
+  public initApp = this.initAppSubject.asObservable()
   /**
    * stores organization details for Anonymous user.
    */
@@ -175,10 +177,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.logCdnStatus();
         this.setFingerPrintTelemetry();
         this.checkTncAndFrameWorkSelected();
-        this.initApp = true;
+        // this.initApp = true;
+        this.initAppSubject.next(true);
         //this.initializeChatbot();
       }, error => {
-         this.initApp = true;
+        //  this.initApp = true;
+         this.initAppSubject.next(true);
       });
 
     this.changeLanguageAttribute();
