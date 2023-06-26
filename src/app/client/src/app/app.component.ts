@@ -37,7 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   // public initApp = false;
   public initAppSubject = new BehaviorSubject(false);
-  public initApp = this.initAppSubject.asObservable()
+  public initApp = this.initAppSubject.asObservable();
   /**
    * stores organization details for Anonymous user.
    */
