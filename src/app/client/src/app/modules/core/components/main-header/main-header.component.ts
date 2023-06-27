@@ -9,7 +9,7 @@ import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { environment } from '@sunbird/environment';
 declare var jQuery: any;
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -82,7 +82,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   public notification: any;
  public showSubHeader = true;
  public unSubscribeShowSubHeader: any;
- public userRegistryData: boolean = false;
+ public userRegistryDataSubject = new BehaviorSubject(false)
+ public userRegistryData = this.userRegistryDataSubject.asObservable();
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -112,7 +113,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           console.log('here in user data', user);
           this.userProfile = user.userProfile;
           this.getLanguage(this.userService.channel);
-          this.userRegistryData = true;
+          this.userRegistryDataSubject.next(true);
           // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
         }
@@ -137,6 +138,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 
     // This subscription is only for offline and it checks whether the page is offline
     // help centre so that it can load its own header/footer
+    
     if (this.isOffline) {
       this.router.events.subscribe((val) => {
         if (_.includes(this.router.url, 'help-center')) {
