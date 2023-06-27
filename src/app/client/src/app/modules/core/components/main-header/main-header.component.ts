@@ -138,6 +138,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 
     // This subscription is only for offline and it checks whether the page is offline
     // help centre so that it can load its own header/footer
+    
     if (this.isOffline) {
       this.router.events.subscribe((val) => {
         if (_.includes(this.router.url, 'help-center')) {
