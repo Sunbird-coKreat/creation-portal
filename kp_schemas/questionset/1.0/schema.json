@@ -275,6 +275,12 @@
         "type": "string"
       }
     },
+    "learningOutcomeIds": {
+      "type": "array",
+      "items": {
+          "type": "string"
+      }
+    },
     "targetFWIds": {
       "type": "array",
       "items": {
