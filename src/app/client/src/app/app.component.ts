@@ -172,6 +172,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.setOrgDetails().subscribe(data =>{
 
         this.setUserData();
+        
       })
     }
 
