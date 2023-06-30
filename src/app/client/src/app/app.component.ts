@@ -152,42 +152,29 @@ export class AppComponent implements OnInit, OnDestroy {
     );
     this.handleHeaderNFooter();
     this.resourceService.initialize();
-    combineLatest([queryParams$, this.setSlug(), this.setDeviceId()])
-      .pipe(
-        mergeMap(data => {
-          this.navigationHelperService.initialize();
-          this.userService.initialize(this.userService.loggedIn);
-          if (this.userService.loggedIn) {
-            this.userLoggedIn = true;
-            this.userId = this.userService.userid;
-            this.permissionService.initialize();
-            // this.courseService.initialize();
-            this.programsService.initialize();
-            return this.setUserDetails();
-          } else {
-            this.userId = this.deviceId;
-            return this.setOrgDetails();
-          }
-        }))
-      .subscribe(data => {
-        console.log("in subscribe");
 
-        console.log(data);
-        // this.tenantService.getTenantInfo(this.slug);
-        this.setPortalTitleLogo();
-        this.telemetryService.initialize(this.getTelemetryContext());
-        this.logCdnStatus();
-        this.setFingerPrintTelemetry();
-        this.checkTncAndFrameWorkSelected();
-        // this.initApp = true;
-        this.initAppSubject.next(true);
-        this.showEnrollContributorModal = this.CheckEnrollContributorModal();
-      }, error => {
-        console.log("dasdasd" + JSON.stringify(error));
-        //  this.initApp = true;
-         this.initAppSubject.next(true);
-         this.showEnrollContributorModal = this.CheckEnrollContributorModal();
+    let combineData = combineLatest([queryParams$, this.setSlug(), this.setDeviceId()]);
+    this.navigationHelperService.initialize();
+    this.userService.initialize(this.userService.loggedIn);
+    if (this.userService.loggedIn) {
+      this.userId = this.userService.userid;
+      this.permissionService.initialize();
+      // this.courseService.initialize();
+      this.programsService.initialize();
+      this.userService.startSession();
+      this.setUserDetails().subscribe(data =>{
+
+        this.setUserData()
       });
+    } else {
+      this.userId = this.deviceId;
+      this.setOrgDetails().subscribe(data =>{
+
+        this.setUserData();
+        
+      })
+    }
+
 
     this.changeLanguageAttribute();
     if (this.isOffline) {
@@ -196,9 +183,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.appId = this.userService.appId;
   }
 
-  CheckEnrollContributorModal() {
-   return !!(!this.isContributor && this.router.isActive('/contribute', true) && this.initApp && this.devicePopupShown)
+  setUserData(){
+    this.setPortalTitleLogo();
+    this.telemetryService.initialize(this.getTelemetryContext());
+    this.logCdnStatus();
+    this.setFingerPrintTelemetry();
+    this.checkTncAndFrameWorkSelected();
+    // this.initApp = true;
+    this.initAppSubject.next(true);
   }
+
   initializeChatbot() {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
