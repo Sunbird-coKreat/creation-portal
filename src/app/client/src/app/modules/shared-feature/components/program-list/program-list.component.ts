@@ -79,13 +79,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }
     });
     this.userService.userData$.subscribe(data =>{
+      this.userProfile = this.userService.userProfile;
       this.checkIfUserIsContributor();
+      this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
+      this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+      this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+      this.telemetryInteractObject = {};
+      this.setContextualHelpConfig();
     })
-    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
-    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-    this.telemetryInteractObject = {};
-    this.setContextualHelpConfig();
+    
   }
 
   setContextualHelpConfig() {
