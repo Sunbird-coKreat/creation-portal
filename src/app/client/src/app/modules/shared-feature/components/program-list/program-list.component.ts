@@ -78,12 +78,16 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.isFrameworkDetailsAvailable = true; // set apply apply filter button enable condition
       }
     });
-    this.checkIfUserIsContributor();
-    this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
-    this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-    this.telemetryInteractObject = {};
-    this.setContextualHelpConfig();
+    this.userService.userData$.subscribe(user =>{
+      this.userProfile = user.userProfile;
+      this.checkIfUserIsContributor();
+      this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
+      this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+      this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+      this.telemetryInteractObject = {};
+      this.setContextualHelpConfig();
+    })
+    
   }
 
   setContextualHelpConfig() {

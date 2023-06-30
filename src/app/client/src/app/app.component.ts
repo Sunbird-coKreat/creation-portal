@@ -153,43 +153,45 @@ export class AppComponent implements OnInit, OnDestroy {
     );
     this.handleHeaderNFooter();
     this.resourceService.initialize();
-    combineLatest(queryParams$, this.setSlug(), this.setDeviceId())
-      .pipe(
-        mergeMap(data => {
-          this.navigationHelperService.initialize();
-          this.userService.initialize(this.userService.loggedIn);
-          if (this.userService.loggedIn) {
-            this.userId = this.userService.userid;
-            this.permissionService.initialize();
-            // this.courseService.initialize();
-            this.programsService.initialize();
-            this.userService.startSession();
-            return this.setUserDetails();
-          } else {
-            this.userId = this.deviceId;
-            return this.setOrgDetails();
-          }
-        }))
-      .subscribe(data => {
-        // this.tenantService.getTenantInfo(this.slug);
-        this.setPortalTitleLogo();
-        this.telemetryService.initialize(this.getTelemetryContext());
-        this.logCdnStatus();
-        this.setFingerPrintTelemetry();
-        this.checkTncAndFrameWorkSelected();
-        // this.initApp = true;
-        this.initAppSubject.next(true);
-        //this.initializeChatbot();
-      }, error => {
-        //  this.initApp = true;
-         this.initAppSubject.next(true);
+
+    let combineData = combineLatest([queryParams$, this.setSlug(), this.setDeviceId()]);
+    this.navigationHelperService.initialize();
+    this.userService.initialize(this.userService.loggedIn);
+    if (this.userService.loggedIn) {
+      this.userId = this.userService.userid;
+      this.permissionService.initialize();
+      // this.courseService.initialize();
+      this.programsService.initialize();
+      this.userService.startSession();
+      this.setUserDetails().subscribe(data =>{
+
+        this.setUserData()
       });
+    } else {
+      this.userId = this.deviceId;
+      this.setOrgDetails().subscribe(data =>{
+
+        this.setUserData();
+        
+      })
+    }
+
 
     this.changeLanguageAttribute();
     if (this.isOffline) {
       document.body.classList.add('sb-offline');
     }
     this.appId = this.userService.appId;
+  }
+
+  setUserData(){
+    this.setPortalTitleLogo();
+    this.telemetryService.initialize(this.getTelemetryContext());
+    this.logCdnStatus();
+    this.setFingerPrintTelemetry();
+    this.checkTncAndFrameWorkSelected();
+    // this.initApp = true;
+    this.initAppSubject.next(true);
   }
 
   initializeChatbot() {
