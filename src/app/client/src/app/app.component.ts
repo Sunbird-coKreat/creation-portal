@@ -77,7 +77,6 @@ export class AppComponent implements OnInit, OnDestroy {
   * Variable to show popup to install the app
   */
   showAppPopUp = false;
-  viewinBrowser = false;
   isOffline: boolean = environment.isOffline;
   sessionExpired = false;
   instance: string;
@@ -92,10 +91,10 @@ export class AppComponent implements OnInit, OnDestroy {
   deviceProfile: any;
   isCustodianOrgUser: any;
   usersProfile: any;
-  isLocationConfirmed = true;
   isContributor = false;
+  showEnrollContributorModal = false;
+  userLoggedIn:Boolean = false;
   userFeed: any;
-  showUserVerificationPopup = false;
   feedCategory = 'OrgMigrationAction';
   labels: {};
   deviceId: string;
@@ -153,17 +152,17 @@ export class AppComponent implements OnInit, OnDestroy {
     );
     this.handleHeaderNFooter();
     this.resourceService.initialize();
-    combineLatest(queryParams$, this.setSlug(), this.setDeviceId())
+    combineLatest([queryParams$, this.setSlug(), this.setDeviceId()])
       .pipe(
         mergeMap(data => {
           this.navigationHelperService.initialize();
           this.userService.initialize(this.userService.loggedIn);
           if (this.userService.loggedIn) {
+            this.userLoggedIn = true;
             this.userId = this.userService.userid;
             this.permissionService.initialize();
             // this.courseService.initialize();
             this.programsService.initialize();
-            this.userService.startSession();
             return this.setUserDetails();
           } else {
             this.userId = this.deviceId;
@@ -171,6 +170,9 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }))
       .subscribe(data => {
+        console.log("in subscribe");
+
+        console.log(data);
         // this.tenantService.getTenantInfo(this.slug);
         this.setPortalTitleLogo();
         this.telemetryService.initialize(this.getTelemetryContext());
@@ -179,10 +181,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.checkTncAndFrameWorkSelected();
         // this.initApp = true;
         this.initAppSubject.next(true);
-        //this.initializeChatbot();
+        this.showEnrollContributorModal = this.CheckEnrollContributorModal();
       }, error => {
+        console.log("dasdasd" + JSON.stringify(error));
         //  this.initApp = true;
          this.initAppSubject.next(true);
+         this.showEnrollContributorModal = this.CheckEnrollContributorModal();
       });
 
     this.changeLanguageAttribute();
@@ -192,6 +196,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.appId = this.userService.appId;
   }
 
+  CheckEnrollContributorModal() {
+   return !!(!this.isContributor && this.router.isActive('/contribute', true) && this.initApp && this.devicePopupShown)
+  }
   initializeChatbot() {
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
       ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
@@ -506,29 +513,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
-  /**
-   * updates user framework. After update redirects to library
-   */
-  public updateFrameWork(event) {
-    const req = {
-      framework: event
-    };
-    this.profileService.updateProfile(req).subscribe(res => {
-      this.frameWorkPopUp.modal.deny();
-      this.showFrameWorkPopUp = false;
-      this.checkLocationStatus();
-      this.utilService.toggleAppPopup();
-      this.showAppPopUp = this.utilService.showAppPopUp;
-    }, err => {
-      this.toasterService.warning(this.resourceService.messages.emsg.m0012);
-      this.frameWorkPopUp.modal.deny();
-      this.checkLocationStatus();
-      this.cacheService.set('showFrameWorkPopUp', 'installApp');
-    });
-  }
-  viewInBrowser() {
-    this.router.navigate(['/resources']);
-  }
+
   closeIcon() {
     this.showFrameWorkPopUp = false;
     this.cacheService.set('showFrameWorkPopUp', 'installApp');
@@ -552,12 +537,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   interpolateInstance(message) {
     return message.replace('{instance}', _.upperCase(this.instance));
-  }
-  /** will be triggered once location popup gets closed */
-  onLocationSubmit() {
-    if (this.userFeed) {
-      this.showUserVerificationPopup = true;
-    }
   }
 
   onContributorModalSubmit() {
@@ -583,10 +562,6 @@ export class AppComponent implements OnInit, OnDestroy {
                     this.labels = _.get(formResponsedata[0], ('range[0]'));
                   }
                 );
-                // if location popup isn't opened on the very first time.
-                if (this.isLocationConfirmed) {
-                  this.showUserVerificationPopup = true;
-                }
               }
             },
             (error) => {

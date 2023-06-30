@@ -1,9 +1,3 @@
-<div *ngIf="showQrmodal">
-    <app-qr-code-modal (closeQrModal)="showQrmodal = false"></app-qr-code-modal>
-</div>
-<div *ngIf="showAccountMergemodal">
-    <app-account-merge-modal (closeAccountMergeModal)="showAccountMergemodal = false"></app-account-merge-modal>
-</div>
 <div class="ui fixed relative main menu bs-0 d-block sb-dock-header">
     <extension-point [name]="'network-status-notify'" *ngIf="isOffline"></extension-point>
     <!--Header White Section-->
@@ -115,7 +109,7 @@
     <!--Header Blue Section-->
     <!--Computer-->
     <div class="sb-bg-color-primary sb-dock-menu-bar"
-        *ngIf="showSubHeader && (showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !router.url.includes('/sourcing/program')">
+        *ngIf="showSubHeader && (userService.loggedIn || isOffline && !showOfflineHelpCentre) && !router.url.includes('/sourcing/program')">
 
         <ng-container *ngIf="programsTabActive else defaultView">
             <div class="ui container d-flex flex-ai-center mx-0">
@@ -132,7 +126,7 @@
       [telemetryInteractCdata]="telemetryInteractCdata"
       [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</a>
                     <ng-container *ngIf="userRegistryData">
-                        <a routerLink="contribute" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && programsService.checkforshowAllPrograms()"  [class.active]="activeTab['allPrograms']" (click)="handleActiveTabState('allPrograms')"
+                        <a routerLink="contribute" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && checkForAllPrograms"  [class.active]="activeTab['allPrograms']" (click)="handleActiveTabState('allPrograms')"
                     appTelemetryInteract
       [telemetryInteractEdata]="getTelemetryInteractEdata('all_programs', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
       [telemetryInteractObject]="telemetryInteractObject"
@@ -226,7 +220,7 @@
     </div>
     <!--/Computer-->
     <!--Mobile-->
-    <div class="p-8 mobile only" *ngIf="(showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !contributeTabActive">
+    <div class="p-8 mobile only" *ngIf="(userService.loggedIn || isOffline && !showOfflineHelpCentre) && !contributeTabActive">
         <div class="ui mobile-view container d-flex flex-jc-space-between mx-0">
             <!--QR Button-->
             <!-- <button class="ui button qr-code-btn d-flex flex-ai-center" appTelemetryInteract

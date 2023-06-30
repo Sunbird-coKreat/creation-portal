@@ -433,15 +433,6 @@ export class UserService {
     return _.cloneDeep(this._userProfile.roleOrgMap);
   }
 
-  /**
-   * method to log session start
-   */
-  public startSession(): void {
-    const deviceId = (<HTMLInputElement>document.getElementById('deviceId'))
-      ? (<HTMLInputElement>document.getElementById('deviceId')).value : '';
-    const url = `/v1/user/session/start/${deviceId}`;
-    // this.http.get(url).subscribe();
-  }
 
   getUserByKey(key) {
     return this.learnerService.get({ url: this.config.urlConFig.URLS.USER.GET_USER_BY_KEY + '/' + key});
@@ -536,6 +527,16 @@ export class UserService {
 
   isDefaultContributingOrg(program) {
     return program.rootorg_id === _.get(this._userProfile, 'userRegData.Org.orgId');
+  }
+   /*
+  * Logic to decide if the All programs should be shown to the contributor
+  */
+   isNotContributingOrgAdmin() {
+    if (!_.isEmpty(this._userProfile.userRegData.User_Org) &&
+      !this._userProfile.userRegData.User_Org.roles.includes('admin')) {
+        return false;
+    }
 
+    return true;
   }
 }

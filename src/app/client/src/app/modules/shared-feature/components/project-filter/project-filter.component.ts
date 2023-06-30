@@ -106,7 +106,7 @@ export class ProjectFilterComponent implements OnInit {
       this.activeUser = 'sourcingOrgAdmin'; // this is purpose of storing and getting the filters values
       this.isOnChangeFilterEnable = true;
       // for all projects and need to add one more condition for generic and common access
-    } else if (this.activeAllProgramsMenu && this.programsService.checkforshowAllPrograms()) {
+    } else if (this.activeAllProgramsMenu && this.userService.isNotContributingOrgAdmin()) {
       this.showFilters['nomination_date'] = false;
       this.showFilters['contribution_date'] = false;
       this.isOnChangeFilterEnable = true;

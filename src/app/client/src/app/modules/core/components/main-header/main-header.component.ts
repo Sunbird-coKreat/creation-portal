@@ -22,18 +22,10 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     formAction: 'search',
     filterEnv: 'resourcebundle'
   };
-  exploreButtonVisibility: string;
   queryParam: any = {};
-  showExploreHeader = false;
-  showQrmodal = false;
-  showAccountMergemodal = false;
   isValidCustodianOrgUser = true;
   tenantInfo: any = {};
   userProfile: IUserProfile;
-  adminDashboard: Array<string>;
-  announcementRole: Array<string>;
-  myActivityRole: Array<string>;
-  orgAdminRole: Array<string>;
   orgSetupRole: Array<string>;
   avtarMobileStyle = {
     backgroundColor: 'transparent',
@@ -84,26 +76,18 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
  public unSubscribeShowSubHeader: any;
  public userRegistryDataSubject = new BehaviorSubject(false)
  public userRegistryData = this.userRegistryDataSubject.asObservable();
+ public checkForAllPrograms: boolean;
+
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
     public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
     public programsService: ProgramsService, private location: Location) {
-      try {
-        this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
-      } catch (error) {
-        this.exploreButtonVisibility = 'false';
-      }
-      this.adminDashboard = this.config.rolesConfig.headerDropdownRoles.adminDashboard;
-      this.announcementRole = this.config.rolesConfig.headerDropdownRoles.announcementRole;
-      this.myActivityRole = this.config.rolesConfig.headerDropdownRoles.myActivityRole;
-      this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
-      this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
-      router.events.subscribe((event) => {
-        if (event instanceof NavigationEnd) {
-          this.onRouterChange();
-        }
-      });
+      // router.events.subscribe((event) => {
+      //   if (event instanceof NavigationEnd) {
+      //     this.onRouterChange();
+      //   }
+      // });
   }
   ngOnInit() {
     if (this.userService.loggedIn) {
@@ -116,6 +100,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
           this.userRegistryDataSubject.next(true);
           // this.isCustodianOrgUser();
           this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
+          this.checkForAllPrograms = this.userService.isNotContributingOrgAdmin();
         }
       });
     } else {
@@ -138,7 +123,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 
     // This subscription is only for offline and it checks whether the page is offline
     // help centre so that it can load its own header/footer
-    
+
     if (this.isOffline) {
       this.router.events.subscribe((val) => {
         if (_.includes(this.router.url, 'help-center')) {
@@ -187,15 +172,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  private isCustodianOrgUser() {
-    this.orgDetailsService.getCustodianOrgDetails().subscribe((custodianOrg) => {
-      if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(custodianOrg, 'result.response.value')) {
-        this.isValidCustodianOrgUser = true;
-      } else {
-        this.isValidCustodianOrgUser = false;
-      }
-    });
-  }
   getLanguage(channelId) {
     const isCachedDataExists = this._cacheService.get(this.languageFormQuery.filterEnv + this.languageFormQuery.formAction);
     if (isCachedDataExists) {
@@ -296,11 +272,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
         }
       }
       this.slug = _.get(this.activatedRoute, 'snapshot.firstChild.firstChild.params.slug');
-      if (_.includes(urlAfterRedirects.url, '/explore-course') || _.includes(urlAfterRedirects.url, '/explore')) {
-        this.showExploreHeader = true;
-      } else {
-        this.showExploreHeader = false;
-      }
     });
   }
 
