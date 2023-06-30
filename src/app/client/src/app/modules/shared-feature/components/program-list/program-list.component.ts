@@ -78,8 +78,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.isFrameworkDetailsAvailable = true; // set apply apply filter button enable condition
       }
     });
-    this.userService.userData$.subscribe(data =>{
-      this.userProfile = this.userService.userProfile;
+    this.userService.userData$.subscribe(user =>{
+      this.userProfile = user.userProfile;
       this.checkIfUserIsContributor();
       this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
       this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
