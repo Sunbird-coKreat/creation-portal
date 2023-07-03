@@ -13,15 +13,13 @@ import * as _ from 'lodash-es';
 export class CollectionHierarchyService {
   public chapterCount = 0;
   public sampleDataCount = 0;
-  public currentUserID;
   private _programDetails;
   private _preferencefilters;
   constructor(private actionService: ActionService, private configService: ConfigService,
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
     private programsService: ProgramsService, public learnerService: LearnerService) {
-      this.currentUserID = this.userService.userProfile.userId;
-     }
+    }
 
   setProgram(programDetails){
     this._programDetails = programDetails;
