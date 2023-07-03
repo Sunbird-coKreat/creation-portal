@@ -20,8 +20,8 @@ export class CollectionHierarchyService {
     public toasterService: ToasterService, public userService: UserService,
     public telemetryService: TelemetryService, private httpClient: HttpClient,
     private programsService: ProgramsService, public learnerService: LearnerService) {
-      this.currentUserID = this.userService.userProfile.userId;
-     }
+      this.currentUserID = _.get(this.userService,'userProfile.userId');
+    }
 
   setProgram(programDetails){
     this._programDetails = programDetails;
