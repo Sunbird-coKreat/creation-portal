@@ -13,7 +13,6 @@ import * as _ from 'lodash-es';
 export class CollectionHierarchyService {
   public chapterCount = 0;
   public sampleDataCount = 0;
-  public currentUserID;
   private _programDetails;
   private _preferencefilters;
   constructor(private actionService: ActionService, private configService: ConfigService,
