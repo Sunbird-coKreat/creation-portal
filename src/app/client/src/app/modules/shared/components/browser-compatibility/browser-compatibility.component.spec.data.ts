@@ -17,3 +17,4 @@ export const Response: any = {
     }
 
 };
+
