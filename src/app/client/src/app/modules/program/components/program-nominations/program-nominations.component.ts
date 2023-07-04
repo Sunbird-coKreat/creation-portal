@@ -107,6 +107,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public assignUsersHelpConfig: any;
   public noUsersFoundHelpConfig: any;
   public reviewNominationsHelpConfig: any;
+  public userServiceData:any;
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -115,14 +116,17 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
     private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService) {
-    this.userProfile = this.userService.userProfile;
-    this.programId = this.activatedRoute.snapshot.params.programId;
+
   }
 
   ngOnInit() {
     this.filterApplied = null;
     this.getPageId();
-    this.getProgramDetails();
+    this.programId = this.activatedRoute.snapshot.params.programId;
+    this.userServiceData = this.userService.userData$.subscribe((user: any) => {
+      this.userProfile = user.userProfile;
+      this.getProgramDetails();
+    });
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.sessionContext.telemetryPageDetails = {
@@ -214,6 +218,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   ngOnDestroy() {
     if (this.stageSubscription) {
       this.stageSubscription.unsubscribe();
+    }
+    if (this.userServiceData) {
+      this.userServiceData.unsubscribe();
     }
     if (this.unsubscribe) {
       this.unsubscribe.next();
