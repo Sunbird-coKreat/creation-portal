@@ -6,7 +6,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { SharedModule, ToasterService, ConfigService, ResourceService, NavigationHelperService } from '@sunbird/shared';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { DynamicModule } from 'ng-dynamic-component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {APP_BASE_HREF, DatePipe} from '@angular/common';
@@ -19,6 +19,7 @@ import { SourcingService } from './../../../sourcing/services';
 import { ProgramTelemetryService } from '../../services';
 import { ProgramStageService } from '../../services/program-stage/program-stage.service';
 import {userDetail, chunkedUserList} from '../../services/programUserTestData';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 
 describe('OrgUserListComponent', () => {
@@ -77,7 +78,7 @@ describe('OrgUserListComponent', () => {
          ],
        declarations: [ OrgUserListComponent],
        providers: [
-         { provide: Router },
+         
          { provide: ActivatedRoute, useValue: fakeActivatedRoute },
          { provide: UserService, useValue: userServiceStub },
          { provide: APP_BASE_HREF, useValue: '/' },
@@ -85,7 +86,7 @@ describe('OrgUserListComponent', () => {
          ToasterService , ConfigService, DatePipe, ProgramStageService,
          ProgramsService,RegistryService, FrameworkService, HelperService, Subject,
          ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
-         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService
+         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService, CacheService
        ],
        schemas: [NO_ERRORS_SCHEMA]
      })
@@ -131,7 +132,7 @@ describe('OrgUserListComponent', () => {
 
     component.searchInput = 'jnc68';
     component.searchLimitCount = 1;
-    const registryService = TestBed.get(RegistryService);
+    const registryService: any = TestBed.inject(RegistryService);
     spyOn(registryService, 'getSearchedUserList').and.returnValue(['bbbb', 'bbbbb']);
     
     spyOn(component, 'sortUsersList').and.callFake(() => {});

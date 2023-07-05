@@ -29,7 +29,7 @@ module.exports = function (config) {
       fixWebpackSourcePaths: true
     },
     
-    reporters: ['mocha'],
+    reporters: ['mocha', 'coverage-istanbul'],
     mochaReporter: {
       symbols: {
         success: '+',

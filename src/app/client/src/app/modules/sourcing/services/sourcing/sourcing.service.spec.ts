@@ -6,6 +6,7 @@ import { CoreModule, ActionService, ContentService } from '@sunbird/core';
 import { SharedModule, ToasterService, ConfigService } from '@sunbird/shared';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 describe('SourcingService', () => {
 
   const mockError = {
@@ -20,17 +21,17 @@ describe('SourcingService', () => {
     status: 'failed'
   };
 
-  let sourcingService;
-  let actionService;
-  let contentService;
+  let sourcingService: any;
+  let actionService: any;
+  let contentService: any;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
+      imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule, HttpClientTestingModule],
       providers: [ SourcingService, ActionService, TelemetryService, ToasterService, HttpClient, ConfigService, ContentService ]
     });
-    sourcingService = TestBed.get(SourcingService);
-    actionService   = TestBed.get(ActionService);
-    contentService  = TestBed.get(ContentService);
+    sourcingService = TestBed.inject(SourcingService);
+    actionService   = TestBed.inject(ActionService);
+    contentService  = TestBed.inject(ContentService);
   });
 
   it('should be created', () => {
@@ -38,7 +39,7 @@ describe('SourcingService', () => {
   });
 
   it('#postCertData() should call httpClient.post()', () => {
-    const httpClient = TestBed.get(HttpClient);
+    const httpClient: any = TestBed.inject(HttpClient);
     spyOn(httpClient, 'post').and.returnValue(observableOf({}));
     spyOn(sourcingService, 'postCertData').and.callThrough();
     sourcingService.postCertData('dummy', 'dummy', 'abcd1234', '123456789');
@@ -92,8 +93,8 @@ describe('SourcingService', () => {
       errorMsg: 'Something went wrong',
       telemetryPageId: 'dummyPage'
     };
-    const  toasterService  = TestBed.get(ToasterService);
-    const telemetryService = TestBed.get(TelemetryService);
+    const  toasterService: any  = TestBed.inject(ToasterService);
+    const telemetryService: any = TestBed.inject(TelemetryService);
     spyOn(toasterService, 'error').and.callThrough();
     spyOn(telemetryService, 'error').and.callThrough();
     spyOn(sourcingService, 'apiErrorHandling').and.callThrough();
