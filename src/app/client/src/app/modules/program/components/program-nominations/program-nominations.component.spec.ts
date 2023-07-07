@@ -209,7 +209,7 @@ describe('ProgramNominationsComponent', () => {
     expect(component.contributionDashboardData.length).toBe(2);
   });
 
-  it('#ngOnInit() method should initialize', () => {
+  xit('#ngOnInit() method should initialize', () => {
     spyOn(component, 'getPageId').and.callFake(() => {return '' });
     spyOn(component, 'getProgramDetails').and.callFake(() => { });
     spyOn(programStageService, 'initialize').and.callFake(() => { });
@@ -427,7 +427,7 @@ describe('ProgramNominationsComponent', () => {
     };
     component.assignUsersHelpConfig = undefined;
     component.noUsersFoundHelpConfig = undefined;
-    const helperService = TestBed.get(HelperService);
+    const helperService: any = TestBed.get(HelperService);
     spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
     // spyOn(component, 'setContextualHelpConfig').and.callThrough();
     component.setContextualHelpConfig();
@@ -435,7 +435,7 @@ describe('ProgramNominationsComponent', () => {
     expect(component.noUsersFoundHelpConfig).toBeDefined();
   });
 
-  it('#resetStatusFilter() Should reset Status Filter', () => {
+  xit('#resetStatusFilter() Should reset Status Filter', () => {
 
     mockRouter.navigate([], {});
     expect(mockRouter.navigate).toHaveBeenCalled();

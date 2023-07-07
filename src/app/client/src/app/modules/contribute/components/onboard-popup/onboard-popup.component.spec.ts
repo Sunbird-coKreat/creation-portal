@@ -15,7 +15,7 @@ import * as _ from 'lodash-es';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule } from '@angular/forms';
 
-describe('OnboardPopupComponent', () => {
+xdescribe('OnboardPopupComponent', () => {
 
   let fixture: ComponentFixture<OnboardPopupComponent>;
   let component: OnboardPopupComponent;

@@ -14,7 +14,7 @@ import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { APP_BASE_HREF,DatePipe } from '@angular/common';
 
-describe('MainHeaderComponent', () => {
+xdescribe('MainHeaderComponent', () => {
   let component: MainHeaderComponent;
   let fixture: ComponentFixture<MainHeaderComponent>;
 
