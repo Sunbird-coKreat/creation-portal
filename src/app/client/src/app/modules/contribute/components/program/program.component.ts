@@ -118,6 +118,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         {id: 3, name: 'BOTH', defaultTab: 3, tabs: [3]},
         {id: 4, name: 'NONE', defaultTab: 4, tabs: [4]}
   ]
+  public userServiceData:any;
+  public userProfile: any;
 
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
@@ -155,8 +157,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStage = 'programComponent';
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
-    this.getProgramDetails();
     this.setContextualHelpConfig();
+
+    this.userServiceData  = this.userService.userData$.subscribe((user: any) => {
+      this.userProfile = user.userProfile;
+      this.getProgramDetails();
+    });
   }
 
   ngAfterViewInit() {
@@ -225,7 +231,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails = _.get(programDetails, 'result');
       this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
       this.userRoles = this.userRoles.concat(_.get(this.programDetails, 'config.roles')).sort((a, b) => a.id - b.id);
-      this.roles = _.cloneDeep(this.userRoles); 
+      this.roles = _.cloneDeep(this.userRoles);
       this.roleNames = _.map(this.userRoles, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
@@ -360,7 +366,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       });
     }
-    const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
+    const req = this.programsService.getUserPreferencesforProgram(this.userProfile.identifier, this.programId);
     return req.pipe(
       tap((res) => {
         let prefres = _.get(res, 'result')
@@ -467,7 +473,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
 
-      
+
       if (r.projectselectedRole) {
         r.roles = this.userRoles.filter(role => role.name !== 'Select Role');
       } else {
@@ -933,7 +939,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.setPreferences['gradeLevel'] = [];
 
     // tslint:disable-next-line: max-line-length
-    this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
+    this.programsService.setUserPreferencesforProgram(this.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
       (response) => {
         this.userPreferences =  response.result;
         if (!_.isEmpty(this.userPreferences.contributor_preference)) {
@@ -1119,11 +1125,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getCollectionCategoryDefinition() {
     this.firstLevelFolderLabel = _.get(this.resourceService, 'frmelmnts.lbl.deafultFirstLevelFolders');
-    if (!_.isEmpty(this.programDetails.target_collection_category) && this.userService.userProfile.rootOrgId) {
+    if (!_.isEmpty(this.programDetails.target_collection_category) && this.userProfile.rootOrgId) {
       // tslint:disable-next-line:max-line-length
       let objType = 'Collection';
       if(_.get(this.programDetails, 'target_type') === 'questionSets') objType = 'QuestionSet';
-      this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0], this.userService.userProfile.rootOrgId, objType).subscribe(res => {
+      this.programsService.getCategoryDefinition(this.programDetails.target_collection_category[0], this.userProfile.rootOrgId, objType).subscribe(res => {
         const objectCategoryDefinition = res.result.objectCategoryDefinition;
         if (_.has(objectCategoryDefinition.objectMetadata.config, 'sourcingSettings.collection.hierarchy.level1.name')) {
           // tslint:disable-next-line:max-line-length
@@ -1257,5 +1263,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+    if (this.userServiceData) {
+      this.userServiceData.unsubscribe();
+    }
   }
 }

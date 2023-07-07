@@ -43,35 +43,51 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public impressionEventTriggered: Boolean =  false;
   public mangeUsersHelpConfig: any;
   public noUsersHelpConfig: any;
+  public userServiceData:any;
+  public userProfile: any;
+
   constructor(private toasterService: ToasterService, public configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService, private telemetryService: TelemetryService,
     private sourcingService: SourcingService, private helperService: HelperService ) {
-
-    this.getContributionOrgUsers();
+      const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+      this.userServiceData = this.userService.userData$.subscribe((user: any) => {
+        this.userProfile = user.userProfile;
+        this.generateTelemetryData();
+        this.getContributionOrgUsers();
+        this.orgLink = `${baseUrl}/contribute/join/${this.userProfile.userRegData.Org.osid}`;
+      });
   }
 
   ngOnInit() {
     this.position = 'top center';
     this.getPageId();
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
   }
 
+  ngOnDestroy() {
+    if (this.userServiceData) {
+      this.userServiceData.unsubscribe();
+    }
+  }
+
   ngAfterViewInit() {
+  }
+
+  generateTelemetryData() {
+    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
+
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
-    const telemetryCdata = [{ 'type': 'Organisation', 'id': this.userService.userProfile.rootOrgId || '' }];
+    const telemetryCdata = [{ 'type': 'Organisation', 'id': this.userProfile.rootOrgId || '' }];
      setTimeout(() => {
       this.telemetryImpression = {
         context: {

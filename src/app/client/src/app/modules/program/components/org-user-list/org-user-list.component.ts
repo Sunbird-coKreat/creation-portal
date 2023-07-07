@@ -46,6 +46,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   public mangeUsersContextualConfig: any;
   public noMangeUsersContextualConfig: any;
+  public userServiceData:any;
+  public userProfile: any;
+
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
@@ -55,26 +58,26 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     this.position = 'top center';
     const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
     ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-
-    this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
-      this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
-      this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
-      this.getOrgUsersDetails();
-    }, (error) => {
-     console.log('No opensaber org for sourcing');
-     const errInfo = {
-      telemetryPageId: this.getPageId(),
-      telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}],
-      env : this.activatedRoute.snapshot.data.telemetry.env,
-     };
-     this.sourcingService.apiErrorHandling(error, errInfo);
-   });
+    this.userServiceData = this.userService.userData$.subscribe((user: any) => {
+        this.userProfile = user.userProfile;
+        this.generateTelemetryData();
+        this.registryService.getOpenSaberOrgByOrgId(this.userProfile).subscribe((res1) => {
+          this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
+          this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
+          this.getOrgUsersDetails();
+        }, (error) => {
+        console.log('No opensaber org for sourcing');
+        const errInfo = {
+          telemetryPageId: this.getPageId(),
+          telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}],
+          env : this.activatedRoute.snapshot.data.telemetry.env,
+        };
+        this.sourcingService.apiErrorHandling(error, errInfo);
+      });
+    });
   }
 
   ngOnInit() {
-    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
@@ -91,7 +94,11 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  generateTelemetryData() {
+    this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
+
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
@@ -116,6 +123,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
         }
       };
      });
+  }
+  ngAfterViewInit() {
   }
 
   getPageId() {
