@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../sourcing/interfaces';
@@ -13,7 +13,7 @@ import { CacheService } from '../../../shared/services/cache-service/cache.servi
   templateUrl: './org-user-list.component.html',
   styleUrls: ['./org-user-list.component.scss']
 })
-export class OrgUserListComponent implements OnInit, AfterViewInit {
+export class OrgUserListComponent implements OnInit, AfterViewInit, OnDestroy {
   public position;
   public showNormalModal;
   public telemetryImpression: IImpressionEventInput;
@@ -43,6 +43,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public impressionEventTriggered: Boolean =  false;
   public mangeUsersHelpConfig: any;
   public noUsersHelpConfig: any;
+  public getUserService: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
@@ -50,24 +51,35 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
     private paginationService: PaginationService, private telemetryService: TelemetryService,
     private sourcingService: SourcingService, private helperService: HelperService ) {
 
-    this.getContributionOrgUsers();
+    
   }
 
   ngOnInit() {
-    this.position = 'top center';
-    this.getPageId();
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-    this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
-    this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
-    this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
-    this.pageLimit = this.registryService.programUserPageLimit;
-    this.setContextualHelpConfig();
+    this.getUserService = this.userService.userData$.subscribe(user =>{
+      this.position = 'top center';
+      this.getPageId();
+      const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+        ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+      this.orgLink = `${baseUrl}/contribute/join/${this.userService.userProfile.userRegData.Org.osid}`;
+      this.telemetryInteractCdata = [{id: this.userService.userProfile.rootOrgId || '', type: 'Organisation'}];
+      this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+      this.telemetryInteractObject = {};
+      this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
+      this.pageLimit = this.registryService.programUserPageLimit;
+      this.setContextualHelpConfig();
+      this.getContributionOrgUsers();
+      this.settelemtryData();
+    })
+
+    
+
+    
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(){}
+
+  settelemtryData() {
+    
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
     const version = buildNumber && buildNumber.value ? buildNumber.value.slice(0, buildNumber.value.lastIndexOf('.')) : '1.0';
     const deviceId = <HTMLInputElement>document.getElementById('deviceId');
@@ -159,7 +171,7 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public logTelemetryImpressionEvent() {
     if (this.impressionEventTriggered) { return false; }
     this.impressionEventTriggered = true;
-    const telemetryImpression = _.cloneDeep(this.telemetryImpression);
+    const telemetryImpression: any = _.cloneDeep(this.telemetryImpression);
     telemetryImpression.edata.visits = _.map(this.contributorOrgUsers, (user) => {
       return { objid: user.identifier, objtype: 'user' };
     });
@@ -335,5 +347,9 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  ngOnDestroy(): void {
+    this.getUserService.unsubscribe();
   }
 }

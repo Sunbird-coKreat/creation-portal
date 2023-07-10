@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../sourcing/interfaces';
@@ -15,13 +15,13 @@ import {DatePipe} from '@angular/common';
   styleUrls: ['./org-user-list.component.scss'],
   providers: [DatePipe]
 })
-export class OrgUserListComponent implements OnInit, AfterViewInit {
+export class OrgUserListComponent implements OnInit, AfterViewInit, OnDestroy {
   public position;
   public showNormalModal;
   public telemetryImpression: IImpressionEventInput;
   public telemetryInteractCdata: any;
   public telemetryInteractPdata: any;
-  public telemetryInteractObject: any;
+  public telemetryInteractObject: any = {};
   public orgLink;
   public paginatedContributorOrgUsers: any = [];
   public allContributorOrgUsers: any = [];
@@ -46,38 +46,52 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
   public telemetryPageId: string;
   public mangeUsersContextualConfig: any;
   public noMangeUsersContextualConfig: any;
+  public getUserService: any;
+  public getUserSaber: any;
   constructor(private toasterService: ToasterService, public configService: ConfigService, private telemetryService: TelemetryService,
     private navigationHelperService: NavigationHelperService, public resourceService: ResourceService,
     private activatedRoute: ActivatedRoute, public userService: UserService, private router: Router,
     public registryService: RegistryService, public programsService: ProgramsService, public cacheService: CacheService,
     private paginationService: PaginationService, private sourcingService: SourcingService,
     private helperService: HelperService) {
-    this.position = 'top center';
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-    ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
-
-    this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
-      this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
-      this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
-      this.getOrgUsersDetails();
-    }, (error) => {
-     console.log('No opensaber org for sourcing');
-     const errInfo = {
-      telemetryPageId: this.getPageId(),
-      telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}],
-      env : this.activatedRoute.snapshot.data.telemetry.env,
-     };
-     this.sourcingService.apiErrorHandling(error, errInfo);
-   });
+    
   }
 
   ngOnInit() {
+    this.getUserService = this.userService.userData$.subscribe((user: any) =>{
+      this.getOpenSaberOrg();
+    })
+  }
+
+  getOpenSaberOrg(){
+    this.getUserSaber = this.registryService.getOpenSaberOrgByOrgId(this.userService.userProfile).subscribe((res1) => {
+      this.position = 'top center';
+      const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
+      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : '';
+      this.userRegData['Org'] = (_.get(res1, 'result.Org').length > 0) ? _.first(_.get(res1, 'result.Org')) : {};
+      this.orgLink = `${baseUrl}/sourcing/join/${this.userRegData.Org.osid}`;
+      this.getOrgUsersDetails();
+      this.setTelemetryData();
+    }, (error) => {
+      console.log('No opensaber org for sourcing');
+      const errInfo = {
+        telemetryPageId: this.getPageId(),
+        telemetryCdata : [{id: this.userService.channel, type: 'sourcing_organization'}],
+        env : this.activatedRoute.snapshot.data.telemetry.env,
+      };
+      this.sourcingService.apiErrorHandling(error, errInfo);
+    });
+
+  }
+
+  setTelemetryData(){
+
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
+
   }
 
   setContextualHelpConfig() {
@@ -348,5 +362,10 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  ngOnDestroy(): void {
+    this.getUserSaber.unsubscribe();
+    this.getUserService.unsubscribe();
   }
 }
