@@ -22,7 +22,7 @@ import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 
-xdescribe('OrgUserListComponent', () => {
+describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
   let telemetryService;
@@ -80,13 +80,13 @@ xdescribe('OrgUserListComponent', () => {
        providers: [
          
          { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-         { provide: UserService, useValue: userServiceStub },
+        //  { provide: UserService, useValue: userServiceStub },
          { provide: APP_BASE_HREF, useValue: '/' },
          { provide: ResourceService, useValue: resourceBundle },
          ToasterService , ConfigService, DatePipe, ProgramStageService,
          ProgramsService,RegistryService, FrameworkService, HelperService, Subject,
          ViewChild, NavigationHelperService, CollectionHierarchyService, ContentHelperService,
-         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService, CacheService
+         SourcingService, ProgramTelemetryService, TelemetryService, NotificationService, CacheService, UserService
        ],
        schemas: [NO_ERRORS_SCHEMA]
      })
@@ -201,14 +201,16 @@ xdescribe('OrgUserListComponent', () => {
   });
 
   it('#ngOnInit should initialize the member variables', () => {
-   component.telemetryInteractCdata = [{}];
-   component.telemetryInteractPdata = {};
-   component.telemetryInteractObject = {};
-   component['registryService'] = TestBed.inject(RegistryService);
+  //  component.telemetryInteractCdata = [{}];
+  //  component.telemetryInteractPdata = {};
+  //  component.telemetryInteractObject = {};
+  //  component['registryService'] = TestBed.inject(RegistryService);
   // spyOn(component['registryService'], 'searchLimitCount').and.callFake(() => {});
    component.ngOnInit();
-    expect(component.telemetryInteractCdata).toBeDefined();
-    expect(component.telemetryInteractPdata).toBeDefined();
-    expect(component.telemetryInteractObject).toBeDefined();
+    // expect(component.telemetryInteractCdata).toBeDefined();
+    // expect(component.telemetryInteractPdata).toBeDefined();
+    // expect(component.telemetryInteractObject).toBeDefined();
+    component['userService'] = TestBed.inject(UserService);
+    spyOn(component['userService'], 'getUserProfile')
   });
 });

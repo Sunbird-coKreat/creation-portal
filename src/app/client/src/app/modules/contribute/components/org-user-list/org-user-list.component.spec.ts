@@ -16,7 +16,7 @@ import { SuiTabsModule, SuiModule } from 'ng2-semantic-ui-v9';
 import * as _ from 'lodash-es';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { contextualHelpConfig} from './org-user-list.component.spec.data';
-xdescribe('OrgUserListComponent', () => {
+describe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
   const fakeActivatedRoute = {

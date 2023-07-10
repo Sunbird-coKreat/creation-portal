@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ToasterService, ResourceService, NavigationHelperService, ConfigService, PaginationService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPagination} from '../../../sourcing/interfaces';
@@ -15,7 +15,7 @@ import {DatePipe} from '@angular/common';
   styleUrls: ['./org-user-list.component.scss'],
   providers: [DatePipe]
 })
-export class OrgUserListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class OrgUserListComponent implements OnInit, AfterViewInit {
   public position;
   public showNormalModal;
   public telemetryImpression: IImpressionEventInput;
@@ -364,8 +364,4 @@ export class OrgUserListComponent implements OnInit, AfterViewInit, OnDestroy {
     }, _.isUndefined);
   }
 
-  ngOnDestroy(): void {
-    this.getUserSaber.unsubscribe();
-    this.getUserService.unsubscribe();
-  }
 }
