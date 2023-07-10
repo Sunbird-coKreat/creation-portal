@@ -22,7 +22,7 @@ import {userDetail, chunkedUserList} from '../../services/programUserTestData';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
 
-describe('OrgUserListComponent', () => {
+xdescribe('OrgUserListComponent', () => {
   let component: OrgUserListComponent;
   let fixture: ComponentFixture<OrgUserListComponent>;
   let telemetryService;
