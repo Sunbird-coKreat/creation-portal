@@ -352,4 +352,5 @@ export class OrgUserListComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy(): void {
     this.getUserService.unsubscribe();
   }
+  
 }
