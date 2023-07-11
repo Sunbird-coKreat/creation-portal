@@ -201,15 +201,7 @@ describe('OrgUserListComponent', () => {
   });
 
   it('#ngOnInit should initialize the member variables', () => {
-  //  component.telemetryInteractCdata = [{}];
-  //  component.telemetryInteractPdata = {};
-  //  component.telemetryInteractObject = {};
-  //  component['registryService'] = TestBed.inject(RegistryService);
-  // spyOn(component['registryService'], 'searchLimitCount').and.callFake(() => {});
    component.ngOnInit();
-    // expect(component.telemetryInteractCdata).toBeDefined();
-    // expect(component.telemetryInteractPdata).toBeDefined();
-    // expect(component.telemetryInteractObject).toBeDefined();
     component['userService'] = TestBed.inject(UserService);
     spyOn(component['userService'], 'getUserProfile')
   });
