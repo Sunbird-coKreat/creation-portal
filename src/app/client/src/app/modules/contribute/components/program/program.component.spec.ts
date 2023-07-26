@@ -7,7 +7,7 @@ import { ProgramComponent } from './program.component';
 import * as _ from 'lodash-es';
 import { of as observableOf, throwError, of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
-import { addParticipentResponseSample, userProfile, frameWorkData, programDetailsWithOutUserDetails, programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection, contextualHelpConfig } from './program.component.spec.data';
+import { addParticipentResponseSample, userProfile, frameWorkData, programDetailsWithOutUserDetails, programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection, contextualHelpConfig, programTextbooks, programTextbooksWithCounts } from './program.component.spec.data';
 import { CollectionComponent } from '../../../sourcing/components/collection/collection.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
@@ -107,9 +107,7 @@ const resourceServiceStub = {
       }
     },
     smsg: {
-      project: {
         m0064: 'Content successfully deleted'
-      }
     }
   }
 };
@@ -279,7 +277,7 @@ describe('ProgramComponent', () => {
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
   });
 
-  xit('#showTexbooklist() should show Texbook list', () => {
+  it('#showTexbooklist() should show Texbook list', () => {
     component.programDetails = {
       target_type: 'questionSets'
     };
@@ -299,10 +297,9 @@ describe('ProgramComponent', () => {
       }
     )) as unknown as ServerResponse;
     spyOn(component['collectionHierarchyService'], 'getContentCounts').and.callFake(() => {return { sourcingOrgStatus: {}, total: 2, sample: 2, review: 2, draft: 2, rejected: 2, correctionsPending: 2, live: 2, individualStatus: {}, individualStatusForSample: {}, mvcContributionsCount: 2 } });
-    spyOn(component['collectionHierarchyService'], 'getIndividualCollectionStatus').and.callFake(() => { });
+    spyOn(component['collectionHierarchyService'], 'getIndividualCollectionStatus').and.callFake(() => {return { programTextbooksWithCounts} });
     spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => { return true});
-    component.showTexbooklist(['aaa']);
-
+    component.showTexbooklist(programTextbooks);
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
   });
 
@@ -334,12 +331,15 @@ describe('ProgramComponent', () => {
     expect(component.visibility).toBeTruthy();
   });
 
-  xit('#deleteContent() should retire contents ', () => {
+  it('#deleteContent() should retire contents ', () => {
     component.contributorTextbooks = [{
       identifier: 0
     }]
     component.contentId = '0';
     component['helperService'] = TestBed.inject(HelperService);
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
+    spyOn(toasterService, 'success').and.callThrough();
 
     spyOn(component['helperService'], 'retireContent').and.returnValue(of(
       { result: { node_id: 'node_id' },
@@ -351,8 +351,8 @@ describe('ProgramComponent', () => {
      }
       ));
     component.deleteContent();
-
     expect(component['helperService'].retireContent).toHaveBeenCalled();
+    expect(toasterService.success).toHaveBeenCalledWith(resourceService.messages.smsg.m0064);
   });
 
   it('#getOriginForApprovedContents() should get Origin For ApprovedContents ', () => {
@@ -510,7 +510,7 @@ describe('ProgramComponent', () => {
     expect(component['programsService'].getNominationList).toHaveBeenCalled();
   });
 
-  xit('#setProgramRole() should set Program Role', () => {
+  it('#setProgramRole() should set Program Role', () => {
 
     component.currentNominationStatus = 'Approved';
 
@@ -563,6 +563,7 @@ describe('ProgramComponent', () => {
           ]
       }
   ]
+    spyOn(component['userService'], 'getUserOrgRole').and.returnValue(['admin']);
     spyOn(component['userService'], 'isContributingOrgContributor').and.callFake(() => { return true  });
     spyOn(component['userService'], 'isDefaultContributingOrg').and.callFake(() => {return true });
     component.setProgramRole();
@@ -676,5 +677,20 @@ describe('ProgramComponent', () => {
     const returnObj = component.getTelemetryInteractEdata('select_content_types',
       'click', 'launch', 'sourcing_my_projects', undefined);
     expect(returnObj).not.toContain(undefined);
+  });
+  it('#setContextualHelpConfig should set variable values', () => {
+    component.assignUserHelpSectionConfig = undefined;
+    component.contributeHelpSectionConfig = undefined;
+    component.nominationHelpSectionConfig = undefined;
+    component.noUsersFoundHelpConfig = undefined;
+    component.reviewHelpSectionConfig = undefined;
+    const helperService = TestBed.get(HelperService);
+    spyOn(helperService, 'getContextualHelpConfig').and.returnValue(contextualHelpConfig);
+    component.setContextualHelpConfig();
+    expect(component.assignUserHelpSectionConfig).toBeDefined();
+    expect(component.contributeHelpSectionConfig).toBeDefined();
+    expect(component.nominationHelpSectionConfig).toBeDefined();
+    expect(component.noUsersFoundHelpConfig).toBeDefined();
+    expect(component.reviewHelpSectionConfig).toBeDefined();
   });
 });
