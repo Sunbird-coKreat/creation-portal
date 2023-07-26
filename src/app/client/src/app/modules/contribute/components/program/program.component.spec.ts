@@ -1,4 +1,10 @@
-import { TestBed, inject, ComponentFixture,  } from '@angular/core/testing';
+  it('should unsubscribe subject', () => {
+    component.ngOnDestroy();
+  });  it('should unsubscribe subject', () => {
+    component.ngOnDestroy();
+  });  it('should unsubscribe subject', () => {
+    component.ngOnDestroy();
+  });import { TestBed, inject, ComponentFixture,  } from '@angular/core/testing';
 import { SharedModule, ToasterService, ResourceService, NavigationHelperService, PaginationService, ConfigService } from '@sunbird/shared';
 import { FrameworkService, UserService, ExtPluginService, RegistryService, ProgramsService, ActionService, ContentHelperService } from '@sunbird/core';
 import { UntypedFormBuilder, FormGroup } from '@angular/forms';
@@ -692,5 +698,8 @@ describe('ProgramComponent', () => {
     expect(component.nominationHelpSectionConfig).toBeDefined();
     expect(component.noUsersFoundHelpConfig).toBeDefined();
     expect(component.reviewHelpSectionConfig).toBeDefined();
+  });
+  it('should unsubscribe subject', () => {
+    component.ngOnDestroy();
   });
 });
