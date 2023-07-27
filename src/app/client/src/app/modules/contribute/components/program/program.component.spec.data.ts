@@ -433,3 +433,263 @@ export const contextualHelpConfig = {
     }
   }
 };
+
+export const programTextbooks = [
+  {
+      "ownershipType": [
+          "createdBy"
+      ],
+      "copyright": "newDevSetUp2023channel",
+      "year": "2011",
+      "subject": [
+          "Art"
+      ],
+      "channel": "sunbird",
+      "organisation": [
+          "newDevSetUp2023"
+      ],
+      "language": [
+          "English"
+      ],
+      "mimeType": "application/vnd.ekstep.content-collection",
+      "objectType": "Content",
+      "chapterCountForContribution": 2,
+      "gradeLevel": [
+          "Class 4"
+      ],
+      "primaryCategory": "Digital Textbook",
+      "contentEncoding": "gzip",
+      "generateDIALCodes": "Yes",
+      "contentType": "TextBook",
+      "trackable": {
+          "enabled": "No",
+          "autoBatch": "No"
+      },
+      "identifier": "do_11380377932462489614",
+      "audience": [
+          "Student"
+      ],
+      "subjectIds": [
+          "vdn_k-12_subject_art"
+      ],
+      "visibility": "Default",
+      "author": "vvvv",
+      "consumerId": "028d6fb1-2d6f-4331-86aa-f7cf491a41e0",
+      "childNodes": [
+          "do_11380377932617318415",
+          "do_11380377932619776017",
+          "do_113804118740418560112",
+          "do_113804119475519488113",
+          "do_11380693911669964811",
+          "do_11382205541552947214",
+          "do_11384133645629030415",
+          "do_11384133783739596817",
+          "do_11384133939566182419",
+          "do_113841340665675776111",
+          "do_113841342822547456113",
+          "do_113841347772563456115",
+          "do_113841816500215808116",
+          "do_113842725425201152117"
+      ],
+      "discussionForum": {
+          "enabled": "No"
+      },
+      "mediaType": "content",
+      "osId": "org.ekstep.quiz.app",
+      "graph_id": "domain",
+      "languageCode": [
+          "en"
+      ],
+      "nodeType": "DATA_NODE",
+      "version": 2,
+      "allowedContentTypes": [
+          "Explanation Content"
+      ],
+      "license": "CC BY 4.0",
+      "IL_FUNC_OBJECT_TYPE": "Collection",
+      "name": "book2",
+      "mediumIds": [
+          "vdn_k-12_medium_english"
+      ],
+      "status": "Draft",
+      "code": "org.sunbird.y4HMk5",
+      "credentials": {
+          "enabled": "No"
+      },
+      "origin": "do_11380219689970073616",
+      "description": "Enter description for TextBook",
+      "medium": [
+          "English"
+      ],
+      "idealScreenSize": "normal",
+      "createdOn": "2023-05-25T16:20:55.842+0000",
+      "copyrightYear": 2022,
+      "contentDisposition": "inline",
+      "lastUpdatedOn": "2023-07-19T16:56:58.721+0000",
+      "originData": "{\"channel\":\"01379157488516300825\"}",
+      "dialcodeRequired": "No",
+      "createdFor": [
+          "01379157488516300825"
+      ],
+      "creator": "vvvv",
+      "os": [
+          "All"
+      ],
+      "IL_SYS_NODE_TYPE": "DATA_NODE",
+      "chapterCount": 2,
+      "versionKey": "1689785818721",
+      "idealScreenDensity": "hdpi",
+      "framework": "vdn_k-12",
+      "depth": 0,
+      "boardIds": [
+          "vdn_k-12_board_pune"
+      ],
+      "createdBy": "842e2f00-16d3-487b-99c2-576667e99f22",
+      "compatibilityLevel": 1,
+      "userConsent": "Yes",
+      "openForContribution": true,
+      "gradeLevelIds": [
+          "vdn_k-12_gradelevel_class4"
+      ],
+      "IL_UNIQUE_ID": "do_11380377932462489614",
+      "board": "Pune",
+      "programId": "02df53e0-fad2-11ed-9d2c-c1818048f076",
+      "resourceType": "Book",
+      "node_id": 61041,
+      "pendingBySourceOrg": []
+  }
+];
+
+export const programTextbooksWithCounts = [
+  {
+      "ownershipType": [
+          "createdBy"
+      ],
+      "copyright": "newDevSetUp2023channel",
+      "year": "2011",
+      "subject": [
+          "Art"
+      ],
+      "channel": "sunbird",
+      "organisation": [
+          "newDevSetUp2023"
+      ],
+      "language": [
+          "English"
+      ],
+      "mimeType": "application/vnd.ekstep.content-collection",
+      "objectType": "Content",
+      "chapterCountForContribution": 2,
+      "gradeLevel": [
+          "Class 4"
+      ],
+      "primaryCategory": "Digital Textbook",
+      "contentEncoding": "gzip",
+      "generateDIALCodes": "Yes",
+      "contentType": "TextBook",
+      "trackable": {
+          "enabled": "No",
+          "autoBatch": "No"
+      },
+      "identifier": "do_11380377932462489614",
+      "audience": [
+          "Student"
+      ],
+      "subjectIds": [
+          "vdn_k-12_subject_art"
+      ],
+      "visibility": "Default",
+      "author": "vvvv",
+      "consumerId": "028d6fb1-2d6f-4331-86aa-f7cf491a41e0",
+      "childNodes": [
+          "do_11380377932617318415",
+          "do_11380377932619776017",
+          "do_113804118740418560112",
+          "do_113804119475519488113",
+          "do_11380693911669964811",
+          "do_11382205541552947214",
+          "do_11384133645629030415",
+          "do_11384133783739596817",
+          "do_11384133939566182419",
+          "do_113841340665675776111",
+          "do_113841342822547456113",
+          "do_113841347772563456115",
+          "do_113841816500215808116",
+          "do_113842725425201152117"
+      ],
+      "discussionForum": {
+          "enabled": "No"
+      },
+      "mediaType": "content",
+      "osId": "org.ekstep.quiz.app",
+      "graph_id": "domain",
+      "languageCode": [
+          "en"
+      ],
+      "nodeType": "DATA_NODE",
+      "version": 2,
+      "allowedContentTypes": [
+          "Explanation Content"
+      ],
+      "license": "CC BY 4.0",
+      "IL_FUNC_OBJECT_TYPE": "Collection",
+      "name": "book2",
+      "mediumIds": [
+          "vdn_k-12_medium_english"
+      ],
+      "status": "Draft",
+      "code": "org.sunbird.y4HMk5",
+      "credentials": {
+          "enabled": "No"
+      },
+      "origin": "do_11380219689970073616",
+      "description": "Enter description for TextBook",
+      "medium": [
+          "English"
+      ],
+      "idealScreenSize": "normal",
+      "createdOn": "2023-05-25T16:20:55.842+0000",
+      "copyrightYear": 2022,
+      "contentDisposition": "inline",
+      "lastUpdatedOn": "2023-07-19T16:56:58.721+0000",
+      "originData": "{\"channel\":\"01379157488516300825\"}",
+      "dialcodeRequired": "No",
+      "createdFor": [
+          "01379157488516300825"
+      ],
+      "creator": "vvvv",
+      "os": [
+          "All"
+      ],
+      "IL_SYS_NODE_TYPE": "DATA_NODE",
+      "chapterCount": 2,
+      "versionKey": "1689785818721",
+      "idealScreenDensity": "hdpi",
+      "framework": "vdn_k-12",
+      "depth": 0,
+      "boardIds": [
+          "vdn_k-12_board_pune"
+      ],
+      "createdBy": "842e2f00-16d3-487b-99c2-576667e99f22",
+      "compatibilityLevel": 1,
+      "userConsent": "Yes",
+      "openForContribution": true,
+      "gradeLevelIds": [
+          "vdn_k-12_gradelevel_class4"
+      ],
+      "IL_UNIQUE_ID": "do_11380377932462489614",
+      "board": "Pune",
+      "programId": "02df53e0-fad2-11ed-9d2c-c1818048f076",
+      "resourceType": "Book",
+      "node_id": 61041,
+      "mvcContributionsCount": 0,
+      "draftCount": 0,
+      "reviewCount": 0,
+      "rejectedCount": 0,
+      "liveCount": 0,
+      "sampleContentInReview": 0,
+      "sampleContentInDraft": 0,
+      "totalSampleContent": 0,
+      "pendingBySourceOrg": []
+  }
+];

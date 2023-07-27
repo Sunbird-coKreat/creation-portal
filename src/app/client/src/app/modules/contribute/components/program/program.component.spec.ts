@@ -7,7 +7,7 @@ import { ProgramComponent } from './program.component';
 import * as _ from 'lodash-es';
 import { of as observableOf, throwError, of } from 'rxjs';
 // tslint:disable-next-line:max-line-length
-import { addParticipentResponseSample, userProfile, frameWorkData, programDetailsWithOutUserDetails, programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection, contextualHelpConfig } from './program.component.spec.data';
+import { addParticipentResponseSample, userProfile, frameWorkData, programDetailsWithOutUserDetails, programDetailsWithOutUserAndForm, extFrameWorkPostData, programDetailsWithUserDetails, programDetailsTargetCollection, contextualHelpConfig, programTextbooks, programTextbooksWithCounts } from './program.component.spec.data';
 import { CollectionComponent } from '../../../sourcing/components/collection/collection.component';
 import { OnboardPopupComponent } from '../onboard-popup/onboard-popup.component';
 // tslint:disable-next-line:prefer-const
@@ -105,6 +105,9 @@ const resourceServiceStub = {
       project: {
         m0001: 'm0001'
       }
+    },
+    smsg: {
+        m0064: 'Content successfully deleted'
     }
   }
 };
@@ -121,7 +124,7 @@ const frameworkServiceStub = {
   frameworkData$: of(frameWorkData)
 };
 
-xdescribe('ProgramComponent', () => {
+describe('ProgramComponent', () => {
   let component: ProgramComponent;
   let fixture: ComponentFixture<ProgramComponent>;
 
@@ -294,14 +297,13 @@ xdescribe('ProgramComponent', () => {
       }
     )) as unknown as ServerResponse;
     spyOn(component['collectionHierarchyService'], 'getContentCounts').and.callFake(() => {return { sourcingOrgStatus: {}, total: 2, sample: 2, review: 2, draft: 2, rejected: 2, correctionsPending: 2, live: 2, individualStatus: {}, individualStatusForSample: {}, mvcContributionsCount: 2 } });
-    spyOn(component['collectionHierarchyService'], 'getIndividualCollectionStatus').and.callFake(() => { });
+    spyOn(component['collectionHierarchyService'], 'getIndividualCollectionStatus').and.callFake(() => {return { programTextbooksWithCounts} });
     spyOn(component, 'logTelemetryImpressionEvent').and.callFake(() => { return true});
-    component.showTexbooklist(['aaa']);
-
+    component.showTexbooklist(programTextbooks);
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
   });
 
-  xit('#setOrgUsers() should set Org Users', () => {
+  it('#setOrgUsers() should set Org Users', () => {
     component.nominationDetails = { rolemapping: { ccc: 'cccc' } };
     spyOn(component['userService'], 'getMyRoleForProgram').and.returnValue(['CONTRIBUTOR']);
     spyOn(component, 'sortOrgUsers').and.callFake(() => { });
@@ -335,6 +337,9 @@ xdescribe('ProgramComponent', () => {
     }]
     component.contentId = '0';
     component['helperService'] = TestBed.inject(HelperService);
+    const toasterService = TestBed.get(ToasterService);
+    const resourceService = TestBed.get(ResourceService);
+    spyOn(toasterService, 'success').and.callThrough();
 
     spyOn(component['helperService'], 'retireContent').and.returnValue(of(
       { result: { node_id: 'node_id' },
@@ -346,8 +351,8 @@ xdescribe('ProgramComponent', () => {
      }
       ));
     component.deleteContent();
-
     expect(component['helperService'].retireContent).toHaveBeenCalled();
+    expect(toasterService.success).toHaveBeenCalledWith(resourceService.messages.smsg.m0064);
   });
 
   it('#getOriginForApprovedContents() should get Origin For ApprovedContents ', () => {
@@ -370,7 +375,6 @@ xdescribe('ProgramComponent', () => {
   it('#getProgramContentAggregation() should get Program Content Aggregation ', () => {
     component.currentNominationStatus = 'Initiated';
 
-    
     component['userService'] = TestBed.inject(UserService);
     component['collectionHierarchyService'] = TestBed.inject(CollectionHierarchyService);
     
@@ -384,8 +388,6 @@ xdescribe('ProgramComponent', () => {
 
     expect(component['collectionHierarchyService'].getContentAggregation).toHaveBeenCalled();
   });
-
-  
 
   it('#openCollection() should open Collection', () => {
     component.programDetails = {
@@ -419,7 +421,54 @@ xdescribe('ProgramComponent', () => {
 
     component.programDetails = {
       target_type: 'collections',
+      config: {
+        defaultContributeOrgReview: false,
+      },
+      type: 'restricted'
     };
+    component.sessionContext = {
+      nominationDetails: {
+        rolemapping: 'rolemapping',
+      },
+      currentRoles: ['CONTRIBUTOR'],
+      currentOrgRole: 'admin'
+    }
+    component.sessionContext.currentRoles = ['CONTRIBUTOR'];
+    component.roles = [
+      {
+          "id": 1,
+          "name": "CONTRIBUTOR",
+          "tabs": [
+              1
+          ],
+          "default": true,
+          "defaultTab": 1
+      },
+      {
+          "id": 2,
+          "name": "REVIEWER",
+          "tabs": [
+              2
+          ],
+          "defaultTab": 2
+      },
+      {
+          "id": 3,
+          "name": "BOTH",
+          "defaultTab": 3,
+          "tabs": [
+              3
+          ]
+      },
+      {
+          "id": 4,
+          "name": "NONE",
+          "defaultTab": 4,
+          "tabs": [
+              4
+          ]
+      }
+  ]
     component['programsService'] = TestBed.inject(ProgramsService);
     component['helperService'] = TestBed.inject(HelperService);
     component['frameworkService'] = TestBed.inject(FrameworkService);
@@ -461,7 +510,7 @@ xdescribe('ProgramComponent', () => {
     expect(component['programsService'].getNominationList).toHaveBeenCalled();
   });
 
-  xit('#setProgramRole() should set Program Role', () => {
+  it('#setProgramRole() should set Program Role', () => {
 
     component.currentNominationStatus = 'Approved';
 
@@ -469,21 +518,53 @@ xdescribe('ProgramComponent', () => {
       nominationDetails: {
         rolemapping: 'rolemapping',
       },
-      //currentRoles: ['name'],
+      currentRoles: ['CONTRIBUTOR'],
       currentOrgRole: 'admin'
     }
-    component.sessionContext.currentRoles = ['name'];
+    component.sessionContext.currentRoles = ['CONTRIBUTOR'];
     component.programDetails = {
       config: {
         defaultContributeOrgReview: false,
       },
       type: 'restricted'
     };
-    component.roles = [{
-      name: 'name',
-      id: 'id'
-    }];
-    spyOn(component['userService'], 'isContributingOrgContributor').and.callFake(() => { });
+    component.roles = [
+      {
+          "id": 1,
+          "name": "CONTRIBUTOR",
+          "tabs": [
+              1
+          ],
+          "default": true,
+          "defaultTab": 1
+      },
+      {
+          "id": 2,
+          "name": "REVIEWER",
+          "tabs": [
+              2
+          ],
+          "defaultTab": 2
+      },
+      {
+          "id": 3,
+          "name": "BOTH",
+          "defaultTab": 3,
+          "tabs": [
+              3
+          ]
+      },
+      {
+          "id": 4,
+          "name": "NONE",
+          "defaultTab": 4,
+          "tabs": [
+              4
+          ]
+      }
+  ]
+    spyOn(component['userService'], 'getUserOrgRole').and.returnValue(['admin']);
+    spyOn(component['userService'], 'isContributingOrgContributor').and.callFake(() => { return true  });
     spyOn(component['userService'], 'isDefaultContributingOrg').and.callFake(() => {return true });
     component.setProgramRole();
 
@@ -500,31 +581,10 @@ xdescribe('ProgramComponent', () => {
     helperService.fetchProgramFramework(component.sessionContext)
     expect(helperService.fetchProgramFramework).toHaveBeenCalledWith(component.sessionContext);
   });
-
   it('should tabChangeHandler be triggered', () => {
     component.tabChangeHandler('collectionComponent');
     expect(component.component).toBe(CollectionComponent);
   });
-
-  xit('stageSubscription should get subcribe on component initialize', () => {
-    expect(component.stageSubscription).toBeDefined();
-  });
-
-  xit('should call changeView on stage change', () => {
-    // const programStageSpy = jasmine.createSpyObj('programStageService', ['getStage']);
-    // programStageSpy.getStage.and.returnValue('stubValue');
-    component.programStageService.getStage = jasmine.createSpy('getstage() spy').and.callFake(() => {
-      return observableOf({ stages: [] });
-    });
-    spyOn(component, 'changeView');
-    component.ngOnInit();
-    expect(component.changeView).toHaveBeenCalled();
-  });
-
-  it('should unsubscribe subject', () => {
-    component.ngOnDestroy();
-  });
-
   it('#getUserDetailsBySearch() should call #sortUsersList() when there is no search input', () => {
     component.searchInput = '';
     component.initialSourcingOrgUser = ['dummyUser'];
@@ -533,7 +593,6 @@ xdescribe('ProgramComponent', () => {
     component.getUserDetailsBySearch();
     expect(component.sortUsersList).toHaveBeenCalledWith(['dummyUser'], true);
   });
-
   it('#getUserDetailsBySearch() should call registryService.getSearchedUserList() when there is a search input', () => {
     component.searchInput = 'jnc68';
     component.initialSourcingOrgUser = ['dummyUser'];
@@ -545,7 +604,6 @@ xdescribe('ProgramComponent', () => {
     expect(component['registryService'].getSearchedUserList).toHaveBeenCalledWith(['dummyUser'], 'jnc68');
     expect(component.sortUsersList).toHaveBeenCalledWith(sortUsersListData, true);
   });
-
   it('#sortUsersList() should call programsService.sortCollection()', () => {
     const usersList = ['user1', 'user2', 'user3'];
     const usersListDesc = ['user3', 'user2', 'user1'];
@@ -620,9 +678,7 @@ xdescribe('ProgramComponent', () => {
       'click', 'launch', 'sourcing_my_projects', undefined);
     expect(returnObj).not.toContain(undefined);
   });
-
-  
-  xit('#setContextualHelpConfig should set variable values', () => {
+  it('#setContextualHelpConfig should set variable values', () => {
     component.assignUserHelpSectionConfig = undefined;
     component.contributeHelpSectionConfig = undefined;
     component.nominationHelpSectionConfig = undefined;
@@ -636,5 +692,8 @@ xdescribe('ProgramComponent', () => {
     expect(component.nominationHelpSectionConfig).toBeDefined();
     expect(component.noUsersFoundHelpConfig).toBeDefined();
     expect(component.reviewHelpSectionConfig).toBeDefined();
+  });
+  it('should unsubscribe subject', () => {
+    component.ngOnDestroy();
   });
 });
