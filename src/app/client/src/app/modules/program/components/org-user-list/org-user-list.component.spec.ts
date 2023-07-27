@@ -205,4 +205,31 @@ describe('OrgUserListComponent', () => {
     component['userService'] = TestBed.inject(UserService);
     spyOn(component['userService'], 'getUserProfile')
   });
+
+  it('#getOpenSaberOrg ', () => {
+    spyOn(component, 'getOpenSaberOrg').and.callThrough();
+    const registryService: any = TestBed.inject(RegistryService);
+    spyOn(registryService, 'getOpenSaberOrgByOrgId').and.returnValue(of({
+      result: {
+        Org: ['aaa', 'bbb']
+      }
+    }));
+    spyOn(component, 'getOrgUsersDetails').and.callFake(()=>{});
+    spyOn(component, 'setTelemetryData').and.callFake(()=>{});
+    component.getOpenSaberOrg();
+    expect(component.getOpenSaberOrg).toHaveBeenCalled();
+    expect(component.setTelemetryData).toHaveBeenCalled();
+    expect(component.getOrgUsersDetails).toHaveBeenCalled();
+   });
+
+   it('#getOpenSaberOrg ', () => {
+    spyOn(component, 'getOpenSaberOrg').and.callThrough();
+    const registryService: any = TestBed.inject(RegistryService);
+    spyOn(registryService, 'getOpenSaberOrgByOrgId').and.returnValue(throwError({}));
+    spyOn(component, 'getPageId').and.returnValue("123");
+    const userService = TestBed.inject(UserService);
+    const sourcingService  = TestBed.inject(SourcingService);
+    spyOn(sourcingService, 'apiErrorHandling').and.callFake(()=>{})
+    component.getOpenSaberOrg();
+   });
 });
