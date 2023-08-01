@@ -18,7 +18,7 @@ import { validateCertMockResponse } from './certificate-details.component.spec.d
 import { DatePipe, Location } from '@angular/common';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 
-xdescribe('CertificateDetailsComponent', () => {
+describe('CertificateDetailsComponent', () => {
   let component: CertificateDetailsComponent;
   let fixture: ComponentFixture<CertificateDetailsComponent>;
 

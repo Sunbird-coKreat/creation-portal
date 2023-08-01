@@ -10,7 +10,7 @@ import {
 } from '@sunbird/shared';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
 
-xdescribe('BulkJobService', () => {
+describe('BulkJobService', () => {
   beforeEach(() => TestBed.configureTestingModule({
     imports: [HttpClientTestingModule,RouterTestingModule,TelemetryModule],
     providers: [ConfigService,ResourceService,CacheService,BrowserCacheTtlService,TelemetryService,ToasterService,DatePipe,

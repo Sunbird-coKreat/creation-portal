@@ -13,7 +13,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import {APP_BASE_HREF} from '@angular/common';
 import { TelemetryService} from '@sunbird/telemetry';
 
-xdescribe('MvcFilterComponent', () => {
+describe('MvcFilterComponent', () => {
   let component: MvcFilterComponent;
   let fixture: ComponentFixture<MvcFilterComponent>;
   let debugElement: DebugElement;

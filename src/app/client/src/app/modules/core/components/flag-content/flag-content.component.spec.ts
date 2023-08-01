@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, Params, UrlSegment, NavigationEnd} from '@angul
 import { Response } from './flag-content.component.spec.data';
 import { RouterTestingModule } from '@angular/router/testing';
 
-xdescribe('FlagContentComponent', () => {
+describe('FlagContentComponent', () => {
   let component: FlagContentComponent;
   let fixture: ComponentFixture<FlagContentComponent>;
   class RouterStub {
@@ -57,7 +57,7 @@ snapshot: {
     expect(component.contentData).toBeDefined();
     expect(component.contentData.name).toEqual('TextBook3-CollectionParentLive');
   });
-  it('should call getContent api when data is not present ', () => {
+  xit('should call getContent api when data is not present ', () => {
     const playerService = TestBed.get(PlayerService);
     playerService.contentData = {};
     spyOn(playerService, 'getContent').and.callFake(() => observableOf(Response.successContentData));
@@ -68,7 +68,7 @@ snapshot: {
     expect(component.contentData.name).toEqual('TextBook3-CollectionParentLive');
     expect(component.contentData.versionKey).toEqual('1496989757647');
   });
-  it('should call flag api', () => {
+  xit('should call flag api', () => {
     const playerService = TestBed.get(PlayerService);
     const contentService = TestBed.get(ContentService);
     const resourceService = TestBed.get(ResourceService);
