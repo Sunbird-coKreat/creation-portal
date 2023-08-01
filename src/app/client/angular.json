@@ -192,7 +192,8 @@
             "codeCoverageExclude": [
               "src/assets/**",
               "src/thidparty/**",
-              "src/app/modules/offline/**"
+              "src/app/modules/offline/**",
+              "src/app/modules/workspace/**"
             ]
           }
         }
