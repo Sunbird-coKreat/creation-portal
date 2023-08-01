@@ -7,13 +7,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SharedModule, ConfigService, ToasterService, ResourceService } from '@sunbird/shared';
 import { ProgramStageService } from '../../program/services';
 import { TelemetryModule, TelemetryService } from '@sunbird/telemetry';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHandler } from '@angular/common/http';
 import { of as observableOf, of, throwError as observableError } from 'rxjs';
 import { childMetaFormData } from './sourcing/helper.service.spec.data';
 import { CacheService } from '../../shared/services/cache-service/cache.service';
 import { SourcingService } from '../../sourcing/services';
 
-xdescribe('HelperService', () => {
+describe('HelperService', () => {
   const resourceBundle = {
     messages: {
       fmsg: {
@@ -66,7 +66,7 @@ xdescribe('HelperService', () => {
     navigate = jasmine.createSpy('navigate');
   }
   let helperService, actionService, programStageService, contentService, learnerService;
-  let programsService, frameworkService, toasterService, publicDataService, sourcingService, httpClient;
+  let programsService, frameworkService, toasterService, publicDataService, sourcingService, httpClient, httpHandler;
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CoreModule, SharedModule.forRoot(), TelemetryModule.forRoot(), RouterTestingModule],
@@ -85,6 +85,7 @@ xdescribe('HelperService', () => {
         FrameworkService,
         LearnerService,
         HttpClient,
+        HttpHandler,
         SourcingService,
         { provide: UserService, useValue: userServiceStub },
         { provide: ResourceService, useValue: resourceBundle },
@@ -103,13 +104,14 @@ xdescribe('HelperService', () => {
     sourcingService = TestBed.inject(SourcingService);
     learnerService = TestBed.inject(LearnerService);
     httpClient = TestBed.inject(HttpClient);
+    httpHandler = TestBed.inject(HttpHandler);
   });
 
-  it('should be created', () => {
+  xit('should be created', () => {
     expect(HelperService).toBeTruthy();
   });
 
-  it('#initialize() should call #fetchChannelData()', () => {
+  xit('#initialize() should call #fetchChannelData()', () => {
     const programDetails = {
       rootorg_id: '12345'
     };
@@ -440,7 +442,7 @@ xdescribe('HelperService', () => {
   });
 
 
-  it('#canAcceptContribution() should return boolean value', () => {
+  xit('#canAcceptContribution() should return boolean value', () => {
     const programDetails = {
       'program_id': '68443a40-3678-11ec-a56f-4b503455085f',
       'startdate': '2021-10-26T16:19:19.116Z',
@@ -480,7 +482,7 @@ xdescribe('HelperService', () => {
     expect(res).toEqual({});
   });
 
-  it('#fetchProgramFramework() should get freamework deatils', () => {
+  xit('#fetchProgramFramework() should get freamework deatils', () => {
     spyOn(frameworkService, 'initialize').and.callThrough();
     const sessionContext = {
       framework: 'NCF'

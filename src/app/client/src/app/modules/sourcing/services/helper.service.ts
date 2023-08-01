@@ -62,6 +62,8 @@ export class HelperService {
     this.programsService.getCategoryDefinition(category, channelId, objectType).subscribe(data => {
       this.selectedCategoryMetaData = data;
       this._categoryMetaData$.next(data);
+    }, err =>{
+      console.log(err);
     });
   }
 
@@ -190,7 +192,7 @@ export class HelperService {
         }
       }
     };
-    return this.contentService.post(req).pipe(map((res) => {
+    return this.contentService.post(req).pipe(map((res: any) => {
       return res.result;
     }), tap((data: any) => this._availableLicences = _.get(data, 'license')), catchError(err => {
       const errInfo = { errorMsg: 'search failed' };

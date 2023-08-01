@@ -32,5 +32,6 @@ export const recursiveTreeComponentInput = {
     dynamicHeaders: [
       {"label": "Question Type", "key": "questionCategories"},
       {"label": "Skill Tested", "key": "bloomsLevel"}
-    ]
+    ],
+    telemetryPageId: '1111111'
 };
