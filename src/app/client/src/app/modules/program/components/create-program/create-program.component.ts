@@ -602,7 +602,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       })).subscribe((response) => {
         const signedURL = response.result.pre_signed_url;
         const uploader =  new SunbirdFileUploadLib.FileUplrespoader()
-        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLocaleLowerCase()})
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase()})
             .on("error", (error) => {
               console.log(error);
               // this.uploadInprogress = false;

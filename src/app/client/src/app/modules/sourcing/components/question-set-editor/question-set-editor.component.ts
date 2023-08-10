@@ -121,7 +121,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   setEditorConfig() {
-    const provider = this.helperService.cloudStorageProvider.toLocaleLowerCase();
+    const provider = this.helperService.cloudStorageProvider.toLowerCase();
     // tslint:disable-next-line:max-line-length
     this.editorConfig = {
       context: {
