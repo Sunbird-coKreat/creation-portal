@@ -69,6 +69,7 @@
               ]
             },
             "scripts": [
+              "node_modules/@project-sunbird/sunbird-file-upload-library/sunbird-file-upload-library.js",
               "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
