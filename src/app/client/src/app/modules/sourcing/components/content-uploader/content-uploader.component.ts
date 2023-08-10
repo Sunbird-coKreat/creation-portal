@@ -23,6 +23,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { InitialState } from '../../interfaces';
 import { BulkJobService } from '../../services/bulk-job/bulk-job.service';
+declare const SunbirdFileUploadLib: any;
 interface IDynamicInput {
   questionSetEditorComponentInput?: any;
 }
@@ -716,50 +717,48 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       this.uploadInprogress = true;
       if (this.videoFileFormat) {
         // tslint:disable-next-line:max-line-length
-        this.azureUploadFileService.uploadToBlob(signedURL, this.uploader.getFile(0)).pipe(takeUntil(this.onComponentDestroy$)).subscribe((event: any) => {
-          this.fileUplaoderProgress.progress = event.percentComplete;
-          this.fileUplaoderProgress['remainingTime'] = event.remainingTime;
-        }, (error) => {
-          const errInfo = {
-            errorMsg: 'Unable to upload to Blob, Please Try Again',
-            telemetryPageId: this.telemetryPageId,
-            telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
-            env : this.activeRoute.snapshot.data.telemetry.env, request: signedURL
-           };
-          this.sourcingService.apiErrorHandling(error, errInfo);
-          console.error(error);
-          this.uploadInprogress = false;
-        }, () => {
-          const fileURL = signedURL.split('?')[0];
-          this.updateContentWithURL(fileURL, mimeType, contentId);
-        });
+        console.log("this is signedURL", signedURL);
+        console.log("this is file", this.uploader.getFile(0))
+        console.log("videoSizeLimit", this.templateDetails.filesConfig.size.defaultVideoSize);
+        const uploader =  new SunbirdFileUploadLib.FileUploader()
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase(), maxFileSizeForChunking: 50})
+            .on("error", (error) => {
+              console.log(error);
+              const errInfo = {
+                errorMsg: 'Unable to upload to Blob, Please Try Again',
+                telemetryPageId: this.telemetryPageId,
+                telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
+                env : this.activeRoute.snapshot.data.telemetry.env, request: signedURL
+               };
+              this.sourcingService.apiErrorHandling(error, errInfo);
+              console.error(error);
+              this.uploadInprogress = false;
+            })
+            .on("progress", (progress) => {
+              // need to update the progress bar
+            })
+            .on("completed", (completed) => {
+              console.log("completed", completed);
+              const fileURL = signedURL.split('?')[0];
+              this.updateContentWithURL(fileURL, mimeType, contentId);
+            })
       } else {
-        const headers = this.helperService.addCloudStorageProviderHeaders();
-        const config = {
-          processData: false,
-          contentType: contentType,
-          headers: headers
-        };
-        this.uploadToBlob(signedURL, config).subscribe(() => {
-          const fileURL = signedURL.split('?')[0];
-          this.updateContentWithURL(fileURL, mimeType, contentId);
-        }, err => {
-          console.error(err);
-          this.uploadInprogress = false;
-        });
+        const uploader =  new SunbirdFileUploadLib.FileUploader()
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase()})
+            .on("error", (error) => {
+              console.log(error);
+              this.uploadInprogress = false;
+            })
+            .on("progress", (progress) => console.log(progress))
+            .on("completed", (completed) => {
+              console.log("completed", completed)
+              const fileURL = signedURL.split('?')[0];
+              this.updateContentWithURL(fileURL, mimeType, contentId);
+            })
       }
     });
   }
 
-  uploadToBlob(signedURL, config): Observable<any> {
-    return this.actionService.http.put(signedURL, this.uploader.getFile(0), config).pipe(catchError(err => {
-      const errInfo = {
-        errorMsg: 'Unable to upload to Blob, Please Try Again',
-        telemetryPageId: this.telemetryPageId, telemetryCdata : _.get(this.sessionContext, 'telemetryPageDetails.telemetryInteractCdata'),
-        env : this.activeRoute.snapshot.data.telemetry.env, request: signedURL };
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-  }), map(data => data));
-  }
 
   updateContentWithURL(fileURL, mimeType, contentId) {
     const data = new FormData();

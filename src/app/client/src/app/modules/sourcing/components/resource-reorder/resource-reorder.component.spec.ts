@@ -22,7 +22,7 @@ const testData = mockData.mockRes;
 import { HelperService } from '../../services/helper.service'
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
-xdescribe('ResourceReorderComponent', () => {
+describe('ResourceReorderComponent', () => {
   let component: ResourceReorderComponent;
   let fixture: ComponentFixture<ResourceReorderComponent>;
   let debugElement: DebugElement;

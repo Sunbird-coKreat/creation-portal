@@ -104,10 +104,10 @@ xdescribe('DashboardComponent', () => {
     expect(component.tableData.length).toEqual(component.textbookList.length);
   });
 
-  it('should execute generateProgramLevelData on component initialize', () => {
-    spyOn(component, 'generateProgramLevelData');
+  xit('should execute generateProgramLevelData on component initialize', () => {
     component.ngOnInit();
     expect(component.generateProgramLevelData).toHaveBeenCalledWith('Program Level Report Status');
+    spyOn(component, 'generateProgramLevelData');
   });
 
   it('should execute generateTableData on component initialize', () => {

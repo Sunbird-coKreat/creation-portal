@@ -10,6 +10,7 @@ import { throwError, Observable} from 'rxjs';
 import { SourcingService } from '../../services';
 import { HelperService } from '../../services/helper.service';
 // import MathText from '../../../../../assets/libs/mathEquation/plugin/mathTextPlugin.js';
+declare const SunbirdFileUploadLib: any;
 
 @Component({
   selector: 'app-ckeditor-tool',
@@ -598,29 +599,30 @@ getAllVideos(offset, query) {
           return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
         })).subscribe((response) => {
           const signedURL = response.result.pre_signed_url;
-          const headers = this.helperService.addCloudStorageProviderHeaders();
-          const config = {
-            processData: false,
-            contentType: 'Asset',
-            headers: headers
-          };
-          this.uploadToBlob(signedURL, this.uploader.getFile(0), config).subscribe(() => {
-            const fileURL = signedURL.split('?')[0];
-            this.updateContentWithURL(fileURL, this.uploader.getFile(0).type, contentId);
-          });
+          const uploader =  new SunbirdFileUploadLib.FileUploader()
+          uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLocaleLowerCase()})
+            .on("error", (error) => {
+              console.log(error);
+            })
+            .on("progress", (progress) => console.log(progress))
+            .on("completed", (completed) => {
+              console.log("completed", completed)
+              const fileURL = signedURL.split('?')[0];
+              this.updateContentWithURL(fileURL, this.uploader.getFile(0).type, contentId);
+            })
         });
       });
     }
   }
 
-  uploadToBlob(signedURL, file, config): Observable<any> {
-    return this.actionService.http.put(signedURL, file, config).pipe(catchError(err => {
-      const errInfo = { errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again' };
-      this.isClosable = true;
-      this.loading = false;
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-    }), map(data => data));
-  }
+  // uploadToBlob(signedURL, file, config): Observable<any> {
+  //   return this.actionService.http.put(signedURL, file, config).pipe(catchError(err => {
+  //     const errInfo = { errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again' };
+  //     this.isClosable = true;
+  //     this.loading = false;
+  //     return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
+  //   }), map(data => data));
+  // }
 
   updateContentWithURL(fileURL, mimeType, contentId) {
     const data = new FormData();

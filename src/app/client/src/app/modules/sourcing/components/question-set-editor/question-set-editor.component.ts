@@ -121,7 +121,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
   }
 
   setEditorConfig() {
-    const presignedHeaders = this.helperService.addCloudStorageProviderHeaders();
+    const provider = this.helperService.cloudStorageProvider.toLocaleLowerCase();
     // tslint:disable-next-line:max-line-length
     this.editorConfig = {
       context: {
@@ -163,7 +163,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
         channelData: this.frameworkService['_channelData'],
         cloudStorageUrls : this.userService.cloudStorageUrls,
         cloudStorage: {
-          presigned_headers: presignedHeaders
+          provider: provider
         },
         labels: {
           // tslint:disable-next-line:max-line-length

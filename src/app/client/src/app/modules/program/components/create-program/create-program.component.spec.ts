@@ -223,7 +223,7 @@ it('Should call the uploadDocument method', () => {
     spyOn(sourcingService, 'generatePreSignedUrl').and.callFake(() => {});
     sourcingService.generatePreSignedUrl({}, 'do_1234');
 
-    spyOn(component, 'uploadToBlob').and.callFake(() => of({}));
+    // spyOn(component, 'uploadToBlob').and.callFake(() => of({}));
     spyOn(component, 'uploadDocument');
     component.uploadDocument();
     expect(component.uploadDocument).toHaveBeenCalled();
@@ -355,13 +355,6 @@ it('generateAssetCreateRequest should return data', () => {
     expect(data).toBeDefined();
   });
 
-it('uploadToBlob should call programsService.http.put', () => {
-    const programsService = TestBed.get(ProgramsService);
-    spyOn(programsService.http, 'put').and.returnValue(of({data: {}}));
-    spyOn(component, 'uploadToBlob').and.callThrough();
-    component.uploadToBlob('signedURL', 'file', {});
-    expect(programsService.http.put).toHaveBeenCalled();
-  });
 
 it('sortCollection should set variable values', () => {
     component.tempSortCollections = [];
