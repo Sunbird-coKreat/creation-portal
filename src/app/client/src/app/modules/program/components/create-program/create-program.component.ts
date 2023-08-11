@@ -601,7 +601,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       })).subscribe((response) => {
         const signedURL = response.result.pre_signed_url;
-        const uploader =  new SunbirdFileUploadLib.FileUplrespoader()
+        const uploader =  new SunbirdFileUploadLib.FileUploader()
         uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider})
             .on("error", (error) => {
               console.log(error);

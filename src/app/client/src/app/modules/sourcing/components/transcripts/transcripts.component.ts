@@ -357,7 +357,7 @@ export class TranscriptsComponent implements OnInit {
   uploadToBlob(response, item): Observable<any> {
     const signedURL = response.result.pre_signed_url;
     return new Observable(observable => {
-        const uploader =  new SunbirdFileUploadLib.FileUplrespoader()
+        const uploader =  new SunbirdFileUploadLib.FileUploader()
         uploader.upload({url: signedURL, file: item.get('transcriptFile')['file'], csp: this.helperService.cloudStorageProvider})
             .on("error", (error) => {
               console.log(error);
