@@ -645,9 +645,7 @@
             ],
             "dispatcher": "local",
             "localDispatcherEndpoint": "/content-editor/telemetry",
-            "cloudStorage" : {
-                "presigned_headers" : {}
-            },
+            "cloudStorage" : {},
             "showHelp": false,
             "previewConfig": {
                 "repos": [

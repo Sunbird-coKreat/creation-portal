@@ -600,9 +600,12 @@ getAllVideos(offset, query) {
         })).subscribe((response) => {
           const signedURL = response.result.pre_signed_url;
           const uploader =  new SunbirdFileUploadLib.FileUploader()
-          uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase()})
+          uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider})
             .on("error", (error) => {
               console.log(error);
+              const errInfo = { errorMsg: error };
+              return throwError(this.sourcingService.apiErrorHandling(error, errInfo));
+              
             })
             .on("progress", (progress) => console.log(progress))
             .on("completed", (completed) => {
@@ -615,14 +618,6 @@ getAllVideos(offset, query) {
     }
   }
 
-  // uploadToBlob(signedURL, file, config): Observable<any> {
-  //   return this.actionService.http.put(signedURL, file, config).pipe(catchError(err => {
-  //     const errInfo = { errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again' };
-  //     this.isClosable = true;
-  //     this.loading = false;
-  //     return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-  //   }), map(data => data));
-  // }
 
   updateContentWithURL(fileURL, mimeType, contentId) {
     const data = new FormData();

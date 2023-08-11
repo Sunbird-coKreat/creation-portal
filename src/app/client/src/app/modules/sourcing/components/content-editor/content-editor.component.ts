@@ -538,7 +538,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     window.config.headerConfig = {
       'managecollaborator': false, 'sendforreview': false, 'limitedsharing': false, 'showEditDetails': false
     };
-    const provider = this.helperService.cloudStorageProvider.toLowerCase();
+    const provider = this.helperService.cloudStorageProvider;
     window.config.cloudStorage.provider = provider;
   }
   /**

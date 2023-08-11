@@ -721,7 +721,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
         console.log("this is file", this.uploader.getFile(0))
         console.log("videoSizeLimit", this.templateDetails.filesConfig.size.defaultVideoSize);
         const uploader =  new SunbirdFileUploadLib.FileUploader()
-        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase(), maxFileSizeForChunking: 50})
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider, maxFileSizeForChunking: 50})
             .on("error", (error) => {
               console.log(error);
               const errInfo = {
@@ -744,7 +744,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             })
       } else {
         const uploader =  new SunbirdFileUploadLib.FileUploader()
-        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase()})
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider})
             .on("error", (error) => {
               console.log(error);
               this.uploadInprogress = false;

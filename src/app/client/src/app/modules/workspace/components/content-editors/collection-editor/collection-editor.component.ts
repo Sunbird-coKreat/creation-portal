@@ -224,7 +224,7 @@ export class CollectionEditorComponent implements OnInit, OnDestroy {
     window.config.build_number = this.buildNumber;
     window.config.enableTelemetryValidation = environment.enableTelemetryValidation; // telemetry validation
     window.config.lock = _.pick(this.queryParams, 'lockKey', 'expiresAt', 'expiresIn');
-    const provider = this.helperService.cloudStorageProvider.toLowerCase();
+    const provider = this.helperService.cloudStorageProvider;
     window.config.cloudStorage.provider = provider;
     if (this.routeParams.type.toLowerCase() === 'textbook') {
       window.config.plugins.push({

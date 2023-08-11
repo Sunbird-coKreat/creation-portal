@@ -1548,26 +1548,4 @@ export class HelperService {
     return (<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')) ?
     JSON.parse((<HTMLInputElement>document.getElementById('sunbirdContextualHelpConfig')).value) : undefined;
   }
-
-  addCloudStorageProviderHeaders() {
-    let presignedHeaders: any = {};
-    switch (this.cloudStorageProvider.toLowerCase()) {
-      case 'azure':
-        presignedHeaders = {
-          'x-ms-blob-type': 'BlockBlob' // This header is specific to azure storage provider.
-        };
-        break;
-      case 'aws':
-        break;
-
-      case 'gcloud':
-        presignedHeaders = {
-          // This header is specific to Google storage provider.
-        };
-        break;
-
-    }
-
-   return presignedHeaders;
-  }
 }

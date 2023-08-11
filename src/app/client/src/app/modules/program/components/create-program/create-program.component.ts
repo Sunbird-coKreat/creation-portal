@@ -602,9 +602,15 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       })).subscribe((response) => {
         const signedURL = response.result.pre_signed_url;
         const uploader =  new SunbirdFileUploadLib.FileUplrespoader()
-        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider.toLowerCase()})
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider})
             .on("error", (error) => {
               console.log(error);
+              const errInfo = {
+                errorMsg: error,
+                telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+                env : this.activatedRoute.snapshot.data.telemetry.env, request: req
+                };
+              return throwError(this.sourcingService.apiErrorHandling(error, errInfo));
               // this.uploadInprogress = false;
             })
             .on("progress", (progress) => console.log(progress))
@@ -668,18 +674,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.guidLinefileName = null;
     this.programDetails.guidelines_url = null;
   }
-
-  // uploadToBlob(signedURL, file, config): Observable<any> {
-  //   return this.programsService.http.put(signedURL, file, config).pipe(catchError(err => {
-  //     const errInfo = {
-  //       errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again',
-  //       telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
-  //       env : this.activatedRoute.snapshot.data.telemetry.env, request: signedURL };
-  //     this.isClosable = true;
-  //     this.loading = false;
-  //     return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-  //   }), map(data => data));
-  // }
 
   sortCollection(column) {
     this.collections = this.programsService.sortCollection(this.tempSortCollections, column, this.direction);
