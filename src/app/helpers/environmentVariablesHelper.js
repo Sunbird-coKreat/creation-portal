@@ -141,8 +141,9 @@ let envVariables = {
   sunbird_cloud_storage_secret: env.sunbird_cloud_storage_secret,
   sunbird_cloud_report_container: env.sunbird_cloud_report_container  || 'reports',
   sunbird_cloud_storage_region: env.sunbird_cloud_storage_region,
-  sunbird_cloud_storage_container: env.sunbird_cloud_storage_container || '',
   sunbird_gcloud_project_id: env.sunbird_gcloud_project_id || '',
+  sunbird_cloud_storage_resourceBundle_bucketname: env.sunbird_cloud_storage_resourceBundle_bucketname || 'label',
+  sunbird_cloud_private_storage_endpoint:env.sunbird_cloud_private_storage_endpoint||'',
 
 
   // Default Language Configuration
