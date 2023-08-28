@@ -187,7 +187,7 @@ describe('ProgramNominationsComponent', () => {
     expect(component).toBeDefined();
   });
 
-  xit('should contribution dashboard data should not be empty', () => {
+  it('should contribution dashboard data should not be empty', () => {
     spyOn(programsService, 'get').and.callFake(() => {
       return of(SpecData.readProgramApiSuccessRes);
     });
