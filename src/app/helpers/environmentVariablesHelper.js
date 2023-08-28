@@ -128,11 +128,6 @@ let envVariables = {
   PORTAL_CASSANDRA_REPLICATION_STRATEGY: env.sunbird_cassandra_replication_strategy || '{"class":"SimpleStrategy","replication_factor":1}',
   sunbird_portal_cdn_blob_url: env.sunbird_portal_cdn_blob_url || '',
 
-  // START - deprecated below 3 variables from release-5.1.0
-  sunbird_azure_report_container_name: env.sunbird_azure_report_container_name || 'reports',
-  sunbird_azure_account_name: env.sunbird_azure_account_name || '',
-  sunbird_azure_account_key: env.sunbird_azure_account_key || '',
-  // END - deprecated above 3 variables from release-5.1.0
 
 
   //Cloud Agnostic Changes
