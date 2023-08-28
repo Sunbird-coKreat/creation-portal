@@ -37,7 +37,7 @@ Installing Sunbird requires two primary software components:
 
 | Software dependencies |  |
 | :--- | ------- |
-| **[Node](https://nodejs.org/en/download/)** | > 8.x.x (Install the latest release of LTS version) |
+| **[Node](https://nodejs.org/en/download/)** | > 14.x.x (Install the latest release of LTS version) |
 | **[Gulp](https://github.com/gulpjs/gulp/blob/master/docs/getting-started/1-quick-start.md)** | Latest version of gulp: `npm install -g gulp-cli` |
 | **[nodemon](https://www.npmjs.com/package/nodemon)** | Latest version  of nodemon: `npm install -g nodemon` |
 
@@ -47,7 +47,7 @@ Installing Sunbird requires two primary software components:
 1. Clone project
 
     ```console
-    git clone https://github.com/Sunbird-Ed/SunbirdEd-portal.git
+    git clone https://github.com/Sunbird-coKreat/creation-portal.git
     ```
 
     > ***Note***: Stable versions of the sunbird portal are available via tags for each release, and the master branch contains latest stable release. For latest stable release [refer](https://github.com/Sunbird-Ed/SunbirdEd-portal/branches)
@@ -158,7 +158,6 @@ Installing Sunbird requires two primary software components:
     │   |   ├── /sunbird-plugins                 # Sunbird plugins for editors
     │   |   ├── /tests                           # Test case scripts for helpers and routes
     │   |   ├── framework.config.js              # Default framework configuration
-    │   |   ├── gulp-tenant.js                   # -|-
     │   |   ├── gulpfile.js                      # Gulp build configuration
     │   |   ├── package.json                     # Contains Node packages as specified as dependencies in package.json
     │   |   └── server.js                        # Main application program file / entry file for Sunbird services stack or the backend API interface
