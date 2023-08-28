@@ -11,6 +11,7 @@ import { ActionService } from '../../../core/services/action/action.service';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { TranscriptService } from '../../../core/services/transcript/transcript.service';
 import { SourcingService } from '../../../sourcing/services/sourcing/sourcing.service';
+declare const SunbirdFileUploadLib: any;
 
 @Component({
   selector: 'app-transcripts',
@@ -354,19 +355,22 @@ export class TranscriptsComponent implements OnInit {
   }
 
   uploadToBlob(response, item): Observable<any> {
-    try {
-      const signedURL = response.result.pre_signed_url;
-      const headers = this.helperService.addCloudStorageProviderHeaders();
-      const config = {
-        processData: false,
-        contentType: 'Asset',
-        headers: headers
-      };
-
-      return this.transcriptService.http.put(signedURL, item.get('transcriptFile')['file'], config);
-    } catch (err) {
-      console.log(err);
-    }
+    const signedURL = response.result.pre_signed_url;
+    return new Observable(observable => {
+        const uploader =  new SunbirdFileUploadLib.FileUploader()
+        uploader.upload({url: signedURL, file: item.get('transcriptFile')['file'], csp: this.helperService.cloudStorageProvider})
+            .on("error", (error) => {
+              console.log(error);
+              observable.error(error)
+            })
+            .on("progress", (progress) => {
+              console.log(progress);
+              observable.next(progress);
+            }).on("completed", (completed) => {
+              console.log("completed", completed)
+              observable.complete()
+            })
+      });
   }
 
   generatePreSignedUrl(asset, item): Observable<any> {

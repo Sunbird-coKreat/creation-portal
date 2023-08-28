@@ -16,6 +16,7 @@ import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { IContentEditorComponentInput } from '../../../sourcing/interfaces';
+declare const SunbirdFileUploadLib: any;
 
 @Component({
   selector: 'app-create-program',
@@ -600,16 +601,24 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
       })).subscribe((response) => {
         const signedURL = response.result.pre_signed_url;
-        const headers = this.helperService.addCloudStorageProviderHeaders();
-        const config = {
-          processData: false,
-          contentType: 'Asset',
-          headers: headers
-        };
-        this.uploadToBlob(signedURL, this.uploader.getFile(0), config).subscribe(() => {
-          const fileURL = signedURL.split('?')[0];
-          this.updateContentWithURL(fileURL, this.uploader.getFile(0).type, contentId);
-        });
+        const uploader =  new SunbirdFileUploadLib.FileUploader()
+        uploader.upload({url: signedURL, file: this.uploader.getFile(0), csp: this.helperService.cloudStorageProvider})
+            .on("error", (error) => {
+              console.log(error);
+              const errInfo = {
+                errorMsg: error,
+                telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
+                env : this.activatedRoute.snapshot.data.telemetry.env, request: req
+                };
+              return throwError(this.sourcingService.apiErrorHandling(error, errInfo));
+              // this.uploadInprogress = false;
+            })
+            .on("progress", (progress) => console.log(progress))
+            .on("completed", (completed) => {
+              console.log("completed", completed)
+              const fileURL = signedURL.split('?')[0];
+              this.updateContentWithURL(fileURL, this.uploader.getFile(0).type, contentId);
+            })
       });
     });
   }
@@ -664,18 +673,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.uploadedDocument = null;
     this.guidLinefileName = null;
     this.programDetails.guidelines_url = null;
-  }
-
-  uploadToBlob(signedURL, file, config): Observable<any> {
-    return this.programsService.http.put(signedURL, file, config).pipe(catchError(err => {
-      const errInfo = {
-        errorMsg: 'Unable to upload to Blob and Content Creation Failed, Please Try Again',
-        telemetryPageId: this.telemetryPageId, telemetryCdata : this.telemetryInteractCdata,
-        env : this.activatedRoute.snapshot.data.telemetry.env, request: signedURL };
-      this.isClosable = true;
-      this.loading = false;
-      return throwError(this.sourcingService.apiErrorHandling(err, errInfo));
-    }), map(data => data));
   }
 
   sortCollection(column) {
