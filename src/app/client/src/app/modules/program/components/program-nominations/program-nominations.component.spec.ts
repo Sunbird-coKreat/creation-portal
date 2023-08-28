@@ -75,7 +75,7 @@ const frameworkServiceStub = {
   frameworkData$: of(SpecData.frameWorkData)
 };
 
-xdescribe('ProgramNominationsComponent', () => {
+describe('ProgramNominationsComponent', () => {
   let component: ProgramNominationsComponent;
   let collectionHierarchyService: CollectionHierarchyService;
   let programsService: ProgramsService;
@@ -187,7 +187,7 @@ xdescribe('ProgramNominationsComponent', () => {
     expect(component).toBeDefined();
   });
 
-  it('should contribution dashboard data should not be empty', () => {
+  xit('should contribution dashboard data should not be empty', () => {
     spyOn(programsService, 'get').and.callFake(() => {
       return of(SpecData.readProgramApiSuccessRes);
     });
