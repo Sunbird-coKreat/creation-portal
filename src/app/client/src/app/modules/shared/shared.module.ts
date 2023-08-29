@@ -38,12 +38,12 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
     BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
     InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe],
+    HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe],
   exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
     ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
     CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe]
+    HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders<SharedModule> {
