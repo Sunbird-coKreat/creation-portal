@@ -23,8 +23,10 @@ import { FormsModule } from '@angular/forms';
 import { DynamicModule } from 'ng-dynamic-component';
 import { ProgramComponentsService } from '../../../program/services/program-components/program-components.service';
 import { HelperService } from '../../services/helper.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HttpClient } from '@angular/common/http';
 
-xdescribe('ChapterListComponent', () => {
+describe('ChapterListComponent', () => {
   let component: ChapterListComponent;
   let fixture: ComponentFixture<ChapterListComponent>;
   let errorInitiate, de: DebugElement;
@@ -117,24 +119,37 @@ xdescribe('ChapterListComponent', () => {
       return observableOf(fetchedQueCount);
     }
   };
+  const HelperServiceStub = {
+    getDynamicHeaders() {
+      return observableOf(fetchedQueCount);
+    },
+    getContextualHelpConfig() {
+      return (contextualHelpConfig);
+    },
+    checkIfMainCollection (data, target_type) {
+      return true;
+    }
+  };
   const compState = 'chapterListComponent';
-
+ let helperService;
  
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, RouterTestingModule, TelemetryModule.forRoot(), SuiModule,
-        SuiTabsModule, FormsModule, DynamicModule],
+        SuiTabsModule, FormsModule, DynamicModule, HttpClientTestingModule],
       declarations: [ChapterListComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
             { provide: ActionService, useValue: actionServiceStub }, 
             { provide: UserService, useValue: UserServiceStub },
+            { provide: HelperService, useValue:  HelperServiceStub },
             { provide: PublicDataService, useValue: PublicDataServiceStub }, 
             { provide: FrameworkService, useValue: frameworkServiceStub },
             { provide: ActivatedRoute, useValue: activatedRouteStub},
             { provide: Router, useValue: routerStub },
+            HttpClient,
             ToasterService, ConfigService, ProgramTelemetryService, TelemetryService, SourcingService,
-            ProgramComponentsService, NavigationHelperService, HelperService, ProgramStageService,
+            ProgramComponentsService, NavigationHelperService, ProgramStageService,
             ProgramsService, CollectionHierarchyService, ResourceService, DatePipe,]
     })
     .compileComponents();
@@ -147,6 +162,7 @@ xdescribe('ChapterListComponent', () => {
     component.sessionContext = chapterListComponentInput.sessionContext;
     ResourceServiceMock = TestBed.get(ResourceService);
     ResourceServiceMock.frmelmnts = {lbl: {reviewInProgess: 'Review in progress', allFirstLevelFolders: '{FIRST_LEVEL_FOLDER}'}};
+    helperService =  TestBed.inject(HelperService);
     fixture.detectChanges();
   });
   afterEach(() => {
@@ -168,7 +184,7 @@ xdescribe('ChapterListComponent', () => {
       expect(_.get(component.dynamicOutputs, 'uploadedContentMeta')).toBeDefined();
     });
 
-    xit('should call updateAccordianView on componet initialize', () => {
+    it('should call updateAccordianView on componet initialize', () => {
       spyOn(component, 'updateAccordianView');
       component.ngOnInit();
       expect(component.updateAccordianView).toHaveBeenCalled();
@@ -343,7 +359,7 @@ xdescribe('ChapterListComponent', () => {
     });
 
     it('should lastOpenedUnitParent be defined with parent do_id of given child-unit', () => {
-      component.lastOpenedUnit('do_112931801879011328152'); // do_id of child-unit
+      component.lastOpenedUnit('do_1127639059664486401136'); // do_id of child-unit
       expect(component.sessionContext.lastOpenedUnitParent).toEqual('do_1127639059664486401136');
     });
 
@@ -410,7 +426,7 @@ xdescribe('ChapterListComponent', () => {
       expect(component.blueprintTemplate).toBeDefined();
       expect(component.firstLevelFolderLabel).toBeDefined();
     });
-    xit('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
+    it('#getCollectionCategoryDefinition() Should not call programsService.getCategoryDefinition() method', () => {
       component.collection = {primaryCategory: undefined};
       component.programContext = {rootorg_id: undefined, target_collection_category: undefined};
       component.blueprintTemplate = undefined;
@@ -420,7 +436,7 @@ xdescribe('ChapterListComponent', () => {
       component.getCollectionCategoryDefinition();
       expect(component['programsService'].getCategoryDefinition).not.toHaveBeenCalled();
     });
-    xit('#setContextualHelpConfig should set reviewHelpSectionConfig and contributeHelpSectionConfig', () => {
+    it('#setContextualHelpConfig should set reviewHelpSectionConfig and contributeHelpSectionConfig', () => {
       component.reviewHelpSectionConfig = undefined;
       component.contributeHelpSectionConfig = undefined;
       const helperService = TestBed.get(HelperService);
