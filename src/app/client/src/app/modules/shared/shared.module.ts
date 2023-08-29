@@ -3,8 +3,7 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 
 import { FormsModule } from '@angular/forms';
 import {
-  AnnouncementInboxCardComponent, PageSectionComponent, NoResultComponent, AppLoaderComponent, CardComponent,
-  CardCreationComponent, ShareLinkComponent, QrCodeModalComponent, RedirectComponent,
+  AnnouncementInboxCardComponent, PageSectionComponent, NoResultComponent, AppLoaderComponent, CardComponent, ShareLinkComponent, QrCodeModalComponent, RedirectComponent,
   CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, AccountMergeModalComponent,
   FullPageModalComponent
 } from './components';
@@ -34,12 +33,12 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
     FormsModule,
     TelemetryModule
   ],
-  declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
+  declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, FilterPipe, InterpolatePipe,
     ShareLinkComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
     InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe],
   exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
-    PageSectionComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
+    PageSectionComponent, NoResultComponent, CardComponent, FilterPipe,
     ShareLinkComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
     CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe]
