@@ -20,7 +20,7 @@
   privateObjectStorage: envHelper.sunbird_cloud_report_container,
   publicObjectStorage: envHelper.sunbird_cloud_storage_resourceBundle_bucketname,
   region: envHelper.sunbird_cloud_storage_key,
-  projectId: envHelper.sunbird_gcloud_project_id,
+  projectId: envHelper.sunbird_cloud_project_id,
   endpoint:envHelper.sunbird_cloud_private_storage_endpoint
 };
 
