@@ -25,8 +25,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   exploreButtonVisibility: string;
   queryParam: any = {};
   showExploreHeader = false;
-  showQrmodal = false;
-  showAccountMergemodal = false;
   isValidCustodianOrgUser = true;
   tenantInfo: any = {};
   userProfile: IUserProfile;

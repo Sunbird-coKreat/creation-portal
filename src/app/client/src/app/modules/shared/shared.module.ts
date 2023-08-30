@@ -3,8 +3,8 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 
 import { FormsModule } from '@angular/forms';
 import {
-  AnnouncementInboxCardComponent, PageSectionComponent, NoResultComponent, AppLoaderComponent, ShareLinkComponent, QrCodeModalComponent, RedirectComponent,
-  CustomMultiSelectComponent, InstallAppComponent, AccountMergeModalComponent,
+  PageSectionComponent, NoResultComponent, AppLoaderComponent, ShareLinkComponent, RedirectComponent,
+  CustomMultiSelectComponent, InstallAppComponent,
   FullPageModalComponent
 } from './components';
 import {
@@ -33,15 +33,15 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
     FormsModule,
     TelemetryModule
   ],
-  declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe,
-    ShareLinkComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
+  declarations: [AppLoaderComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe,
+    ShareLinkComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
     InstallAppComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe],
-  exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
+    HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe],
+  exports: [AppLoaderComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, NoResultComponent, FilterPipe,
-    ShareLinkComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
+    ShareLinkComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
     CustomMultiSelectComponent, InstallAppComponent, ContentDirectionDirective,
-    HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe]
+    HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe]
 })
 export class SharedModule {
   static forRoot(): ModuleWithProviders<SharedModule> {
