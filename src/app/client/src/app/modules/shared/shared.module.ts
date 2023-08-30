@@ -4,7 +4,7 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 import { FormsModule } from '@angular/forms';
 import {
   AnnouncementInboxCardComponent, PageSectionComponent, NoResultComponent, AppLoaderComponent, ShareLinkComponent, QrCodeModalComponent, RedirectComponent,
-  CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, AccountMergeModalComponent,
+  CustomMultiSelectComponent, InstallAppComponent, AccountMergeModalComponent,
   FullPageModalComponent
 } from './components';
 import {
@@ -35,12 +35,12 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
   ],
   declarations: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe,
     ShareLinkComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
-    InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
+    InstallAppComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe],
   exports: [AppLoaderComponent, AnnouncementInboxCardComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
-    PageSectionComponent, NoResultComponent, CardComponent, FilterPipe,
+    PageSectionComponent, NoResultComponent, FilterPipe,
     ShareLinkComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
-    CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
+    CustomMultiSelectComponent, InstallAppComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, AccountMergeModalComponent, PageHelpComponent, ToCharCodePipe]
 })
 export class SharedModule {
