@@ -26,3 +26,5 @@
 
 let cloudClient = cloudService.init(cloudConfig);
 exports.CLOUD_CLIENT = cloudClient;
+
+
