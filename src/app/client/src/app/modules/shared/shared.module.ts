@@ -4,7 +4,7 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 import { FormsModule } from '@angular/forms';
 import {
   PageSectionComponent, NoResultComponent, AppLoaderComponent, CardComponent,
-  CardCreationComponent, ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, RedirectComponent,
+  CardCreationComponent, ShareLinkComponent, BrowserCompatibilityComponent, RedirectComponent,
   CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, BatchCardComponent,
   FullPageModalComponent
 } from './components';
@@ -36,12 +36,12 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
   ],
   declarations: [AppLoaderComponent, DateFormatPipe, PageSectionComponent,
     BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
-    ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
+    ShareLinkComponent, BrowserCompatibilityComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
     InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe],
   exports: [AppLoaderComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
-    ShareLinkComponent, BrowserCompatibilityComponent, QrCodeModalComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
+    ShareLinkComponent, BrowserCompatibilityComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
     CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe]
 })
