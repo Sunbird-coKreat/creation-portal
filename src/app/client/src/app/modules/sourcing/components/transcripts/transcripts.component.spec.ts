@@ -157,7 +157,13 @@ describe('TranscriptsComponent', () => {
     expect(component.disableAddItemBtn).toBeTruthy();
   });
 
-
+  xit('uploadToBlob should call transcriptService.http.put', () => {
+    const transcriptService = TestBed.get(TranscriptService);
+    spyOn(transcriptService.http, 'put').and.callFake(() => {});
+    spyOn(component, 'uploadToBlob').and.callThrough();
+    component.uploadToBlob({result: {pre_signed_url: ''}}, {get(){return {file: []}}});
+    expect(transcriptService.http.put).toHaveBeenCalled();
+  });
 
   it('generatePreSignedUrl should call sourcingService.generatePreSignedUrl', () => {
     const sourcingService = TestBed.get(SourcingService);
