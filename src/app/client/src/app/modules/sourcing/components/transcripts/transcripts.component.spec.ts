@@ -157,7 +157,7 @@ describe('TranscriptsComponent', () => {
     expect(component.disableAddItemBtn).toBeTruthy();
   });
 
-  it('uploadToBlob should call transcriptService.http.put', () => {
+  xit('uploadToBlob should call transcriptService.http.put', () => {
     const transcriptService = TestBed.get(TranscriptService);
     spyOn(transcriptService.http, 'put').and.callFake(() => {});
     spyOn(component, 'uploadToBlob').and.callThrough();

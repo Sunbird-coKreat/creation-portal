@@ -225,7 +225,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.programDetails = _.get(programDetails, 'result');
       this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
       this.userRoles = this.userRoles.concat(_.get(this.programDetails, 'config.roles')).sort((a, b) => a.id - b.id);
-      this.roles = _.cloneDeep(this.userRoles); 
+      this.roles = _.cloneDeep(this.userRoles);
       this.roleNames = _.map(this.userRoles, 'name');
       this.sessionContext.programId = this.programDetails.program_id;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
@@ -308,6 +308,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   setProgramRole() {
     //const nonInitiatedStatus = ['Pending', 'Approved', 'Rejected'];
     //if (this.currentNominationStatus && _.includes(nonInitiatedStatus, this.currentNominationStatus)) {
+
       if (this.userService.isUserBelongsToOrg()) {
         this.sessionContext.currentOrgRole = _.first(this.userService.getUserOrgRole());
         if (this.sessionContext.currentOrgRole === 'admin') {
@@ -330,6 +331,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         this.sessionContext.currentRoles = ['CONTRIBUTOR'];
         this.sessionContext.currentOrgRole = 'individual';
       }
+      //this.sessionContext.currentRoles = ['CONTRIBUTOR'];
       const roles = _.filter(this.roles, role => this.sessionContext.currentRoles.includes(role.name));
       this.sessionContext.currentRoleIds = !_.isEmpty(roles) ? _.map(roles, role => role.id) : null;
       this.roles.currentRoles = this.sessionContext.currentRoles;
@@ -780,7 +782,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         isTargetTypeQuestionSet ? this.programDetails.collection_ids :
         this.nominationDetails.collection_ids, collection.identifier);
     }) : contributorTextbooks;
-
+    
     let sampleValue, organisation_id, individualUserId;
     if (_.includes(['Initiated', 'Pending'], this.currentNominationStatus)) {
         sampleValue = true;
