@@ -12,7 +12,6 @@ import { throwError, Observable, Subject, forkJoin, iif, of } from 'rxjs';
 import { IContentUploadComponentInput} from '../../interfaces';
 import { UntypedFormGroup, UntypedFormArray, Validators, NgForm } from '@angular/forms';
 import { SourcingService } from '../../services';
-import { AzureFileUploaderService } from '../../services';
 import { HelperService } from '../../services/helper.service';
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -173,7 +172,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     public resourceService: ResourceService, public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
     public activeRoute: ActivatedRoute, public router: Router, private navigationHelperService: NavigationHelperService,
-    private programsService: ProgramsService, private azureUploadFileService: AzureFileUploaderService,
+    private programsService: ProgramsService,
     private contentService: ContentService, private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
     private deviceDetectorService: DeviceDetectorService, private telemetryService: TelemetryService,
     public bulkJobService: BulkJobService,
@@ -965,9 +964,6 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     this.showConfirmationModal = false;
     this.showQuestionSetEditModal = false;
     this.showQuestionSetPreview = false;
-    if (this.videoFileFormat) {
-      this.azureUploadFileService.abortUpload();
-    }
   }
 
   detectMimeType(fileName) {
