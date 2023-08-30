@@ -3,9 +3,8 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 
 import { FormsModule } from '@angular/forms';
 import {
-  PageSectionComponent, NoResultComponent, AppLoaderComponent, CardComponent,
-  CardCreationComponent, ShareLinkComponent, BrowserCompatibilityComponent, RedirectComponent,
-  CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, BatchCardComponent,
+  PageSectionComponent, NoResultComponent, AppLoaderComponent, ShareLinkComponent, RedirectComponent,
+  CustomMultiSelectComponent, InstallAppComponent,
   FullPageModalComponent
 } from './components';
 import {
@@ -34,15 +33,14 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
     FormsModule,
     TelemetryModule
   ],
-  declarations: [AppLoaderComponent, DateFormatPipe, PageSectionComponent,
-    BatchCardComponent, NoResultComponent, DateFilterXtimeAgoPipe, CardComponent, CardCreationComponent, FilterPipe, InterpolatePipe,
-    ShareLinkComponent, BrowserCompatibilityComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
-    InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
+  declarations: [AppLoaderComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe,
+    ShareLinkComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
+    InstallAppComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe],
   exports: [AppLoaderComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
-    PageSectionComponent, BatchCardComponent, NoResultComponent, CardComponent, CardCreationComponent, FilterPipe,
-    ShareLinkComponent, BrowserCompatibilityComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
-    CustomMultiSelectComponent, InstallAppComponent, LockInfoPopupComponent, ContentDirectionDirective,
+    PageSectionComponent, NoResultComponent, FilterPipe,
+    ShareLinkComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
+    CustomMultiSelectComponent, InstallAppComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe]
 })
 export class SharedModule {
