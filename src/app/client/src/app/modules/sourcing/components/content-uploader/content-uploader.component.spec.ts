@@ -29,7 +29,6 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import * as _ from 'lodash-es';
 import { SourcingService } from '../../services';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
-import { AzureFileUploaderService } from '../../services';
 
 // Following describe method is for 'PREVIEW' scenario
 xdescribe('ContentUploaderComponent', () => {
@@ -126,8 +125,7 @@ xdescribe('ContentUploaderComponent', () => {
                   RouterTestingModule, TelemetryModule, SharedModule],
       declarations: [ ContentUploaderComponent ],
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, SourcingService, ProgramsService,
-         TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService,
-         AzureFileUploaderService, ContentService,
+         TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService, ContentService,
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
                   { provide: HelperService, useValue: helperServiceStub }, { provide: ResourceService, useValue: resourceServiceStub },
@@ -318,8 +316,7 @@ xdescribe('ContentUploaderComponent', () => {
                   RouterTestingModule, TelemetryModule, SharedModule, CoreModule ],
       declarations: [ ContentUploaderComponent ],
       providers: [CollectionHierarchyService, ConfigService, UtilService, ToasterService, SourcingService, ProgramsService,
-         TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService,
-         AzureFileUploaderService, ContentService, DeviceDetectorService,
+         TelemetryService, DatePipe, ProgramStageService, ProgramTelemetryService, ChangeDetectorRef, NotificationService, ContentService, DeviceDetectorService,
                   CacheService, BrowserCacheTtlService, { provide: ActionService, useValue: actionServiceStub }, NavigationHelperService,
                   { provide: PlayerService, useValue: playerServiceStub }, { provide: FrameworkService, useValue: frameWorkServiceStub },
                   { provide: HelperService, useValue: helperServiceStub }, { provide: ResourceService, useValue: resourceServiceStub },
