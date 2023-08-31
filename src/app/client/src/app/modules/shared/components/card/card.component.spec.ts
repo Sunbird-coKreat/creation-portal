@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '../../services';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -18,7 +18,9 @@ describe('CardComponent', () => {
   }
   class FakeActivatedRoute {
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ CardComponent, CdnprefixPipe ],
@@ -27,9 +29,6 @@ describe('CardComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CardComponent);
     component = fixture.componentInstance;
   });

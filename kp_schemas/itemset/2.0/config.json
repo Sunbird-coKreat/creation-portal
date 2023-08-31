@@ -1,0 +1,16 @@
+{
+    "objectType": "ItemSet",
+    "relations": {
+        "items": {
+            "type": "hasSequenceMember",
+            "direction": "out",
+            "objects": ["AssessmentItem"]
+        }
+    },
+    "version": "disable",
+    "versionCheckMode": "OFF",
+    "frameworkCategories": [],
+    "orgFrameworkTerms": [],
+    "targetFrameworkTerms": [],
+    "cacheEnabled": false
+}

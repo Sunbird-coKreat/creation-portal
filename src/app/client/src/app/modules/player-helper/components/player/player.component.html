@@ -1,3 +1,16 @@
-<iframe #contentIframe id="contentPlayer" class="contentViewerIframeShadow br-4" name="contentPlayer"></iframe>
-<app-content-rating #modal *ngIf="contentRatingModal &&  playerOption?.showContentRating && playerConfig"  [contentData] = "playerConfig.metadata"></app-content-rating>
+<div id="contentPlayer" class="contentViewerIframeShadow">
+    <iframe #contentIframe *ngIf="playerType === 'default-player'" class="contentViewerIframeShadow h-100"
+        name="contentPlayer"></iframe>
+    <sunbird-epub-player *ngIf="playerType === 'epub-player'" [playerConfig]="playerConfig"
+        (playerEvent)="eventHandler($event)" (telemetryEvent)="generateContentReadEvent($event, true)">
+    </sunbird-epub-player>
+    <sunbird-pdf-player *ngIf="playerType === 'pdf-player'" [playerConfig]="playerConfig"
+        (playerEvent)="eventHandler($event)" (telemetryEvent)="generateContentReadEvent($event, true)">
+    </sunbird-pdf-player>
+    <sunbird-video-player *ngIf="playerType === 'video-player'" [playerConfig]="playerConfig"
+        (playerEvent)="eventHandler($event)" (telemetryEvent)="generateContentReadEvent($event, true)">
+    </sunbird-video-player>
+</div>
+<app-content-rating #modal *ngIf="contentRatingModal && playerOption?.showContentRating && playerConfig"
+    [contentData]="playerConfig.metadata"></app-content-rating>
 <!-- <button class="sb-btn sb-btn-primary sb-btn-normal pull-right view-fullscreen"[ngClass]="{'d-none': !viewFullscreenBtn}" (click)="viewInFullscreen()" appTelemetryInteract [telemetryInteractEdata]="viewFullScreenIntractEdata" [telemetryInteractObject]="viewFullScreenIntractObject"> <i class="expand icon"></i> View Full Screen</button> -->

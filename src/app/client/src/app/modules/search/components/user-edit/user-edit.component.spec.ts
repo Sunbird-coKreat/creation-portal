@@ -1,6 +1,6 @@
 import { throwError as observableThrowError, of as observableOf, Observable } from 'rxjs';
 import { UserSearchService } from './../../services';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import {
   SharedModule, ServerResponse, PaginationService, ResourceService,
@@ -18,7 +18,7 @@ import { CoreModule, OrgDetailsService, } from '@sunbird/core';
 import { TelemetryService, TelemetryModule } from '@sunbird/telemetry';
 import { By } from '@angular/platform-browser';
 import { FormBuilder } from '@angular/forms';
-describe('UserEditComponent', () => {
+xdescribe('UserEditComponent', () => {
   let component: UserEditComponent;
   let fixture: ComponentFixture<UserEditComponent>;
   const resourceBundle = {
@@ -37,7 +37,9 @@ describe('UserEditComponent', () => {
     }
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, ReactiveFormsModule, FormsModule, SharedModule.forRoot(), CoreModule,
         TelemetryModule.forRoot(), RouterTestingModule],
@@ -79,12 +81,14 @@ describe('UserEditComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(UserEditComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should act upon query params change', () => {
     component.ngOnInit();

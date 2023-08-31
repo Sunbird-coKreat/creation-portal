@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HttpClientModule } from '@angular/common/http';
 import { By } from '@angular/platform-browser';
@@ -17,7 +17,9 @@ describe('AnnouncementInboxCardComponent', () => {
   let component: AnnouncementInboxCardComponent;
   let fixture: ComponentFixture<AnnouncementInboxCardComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, HttpClientModule],
       declarations: [AnnouncementInboxCardComponent, DateFormatPipe],
@@ -25,9 +27,6 @@ describe('AnnouncementInboxCardComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AnnouncementInboxCardComponent);
     component = fixture.componentInstance;
   });

@@ -1,7 +1,7 @@
 var conceptModal;
 (function () {
   module.exports = function (options) {
-    var actionButtons, config, count, initialize, initializeNodeList, initializeNodes, loadNodes, modal, nodeClicked, nodeIsPicked, nodes, pickNode, picked, recursiveNodeSearch, renderList, renderTree, showPicked, showSearch, showTree, tabs, unpickNode, updatePickedIds, updatePickedNodes, widget;
+    var modalTemplate, clearSearch,  actionButtons, config, count, initialize, initializeNodeList, initializeNodes, loadNodes, modal, nodeClicked, nodeIsPicked, nodes, pickNode, picked, recursiveNodeSearch, renderList, renderTree, showPicked, showSearch, showTree, tabs, unpickNode, updatePickedIds, updatePickedNodes, widget, initializeNodeListForSelected;
     widget = $(this);
     picked = [];
     nodes = [];
@@ -210,7 +210,7 @@ var conceptModal;
       return initializeNodeListForSelected(list);
     };
     renderTree = function (nodes, css) {
-      var i, len, node, nodeElement, tree;
+      var i, len, node, nodeElement, tree, nodeElementHtml;
       if (css == null) {
         css = {};
       }
@@ -234,7 +234,7 @@ var conceptModal;
       return tree;
     };
     renderList = function (nodes, css) {
-      var i, len, list, node, nodeElement;
+      var i, len, list, node, nodeElement, nodeElementhtml;
       if (css == null) {
         css = {};
       }
@@ -259,7 +259,7 @@ var conceptModal;
     };
     initializeNodeList = function (tree) {
       return $('.node', tree).each(function () {
-        var content, head, node;
+        var content, head, node, clickHead;
         node = $(this);
         clickHead = $('>.head.selectable', node);
         head = $('>.head', node);
@@ -291,7 +291,7 @@ var conceptModal;
     };
     initializeNodeListForSelected = function (tree) {
       return $('.node', tree).each(function () {
-        var content, head, node;
+        var content, head, node, clickHead;
         node = $(this);
         clickHead = $('>.head', node);
         head = $('>.head', node);

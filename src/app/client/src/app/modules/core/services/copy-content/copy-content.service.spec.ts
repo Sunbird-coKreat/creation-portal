@@ -1,4 +1,4 @@
-
+import { RouterTestingModule } from '@angular/router/testing';
 import {of as observableOf,  Observable } from 'rxjs';
 import { TestBed, inject } from '@angular/core/testing';
 import { CopyContentService } from './copy-content.service';
@@ -15,8 +15,8 @@ class RouterStub {
 describe('CopyContentService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
-      providers: [CopyContentService, UserService, ContentService, { provide: Router, useClass: RouterStub }]
+      imports: [HttpClientTestingModule, RouterTestingModule,SharedModule.forRoot(), CoreModule],
+      providers: [CopyContentService, UserService, ContentService,{ provide: Router, useClass: RouterStub }]
     });
   });
 

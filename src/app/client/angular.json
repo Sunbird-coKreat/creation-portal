@@ -11,6 +11,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "../dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -19,13 +20,50 @@
             "assets": [
               "src/assets",
               "src/thirdparty",
-              "src/favicon.png"
+              "src/favicon.png",
+              {
+                "glob": "**/*.*",
+                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
+                "output": "./assets/common-consumption"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-pdf-player-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-collection-editor-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-resource-library/lib/assets/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
+              "src/assets/quml-styles/quml-carousel.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
               "src/assets/styles/semantic/semantic.min.css",
               "node_modules/font-awesome/css/font-awesome.css",
-              "src/assets/styles/styles.scss"
+              "src/assets/styles/styles.scss",
+              "./node_modules/common-consumption-styles/assets/_styles.scss",
+              "./node_modules/katex/dist/katex.min.css",
+              "src/assets/libs/iziModal/css/iziModal.min.css",
+              "node_modules/video.js/dist/video-js.min.css",
+              "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -33,20 +71,37 @@
               ]
             },
             "scripts": [
+              "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
+              "src/assets/libs/iziModal/js/iziModal.min.js",
               "node_modules/slick-carousel/slick/slick.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
+              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js",
+              "./node_modules/katex/dist/katex.min.js",
+              "node_modules/video.js/dist/video.js",
+              "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs-markers.js",
+              "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
+              {
+                "inject": true,
+                "input": "src/assets/libs/semantic-ui-tree-picker/semantic-ui-tree-picker.js",
+                "bundleName": "semanticTreePicker"
+              }
             ]
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -60,10 +115,15 @@
               ]
             },
             "staging": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -101,11 +161,13 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverage": true,
             "main": "src/test.ts",
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
+              "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/slick-carousel/slick/slick.min.js",
@@ -159,16 +221,21 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "../dist",
             "index": "projects/desktop/src/index.html",
             "main": "projects/desktop/src/main.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
             "tsConfig": "projects/desktop/tsconfig.app.json",
             "assets": [
-              { "glob": "**/*", "input": "./src/assets", "output": "./assets" },
+              {
+                "glob": "**/*",
+                "input": "./src/assets",
+                "output": "./assets"
+              },
               {
                 "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption/assets",
+                "input": "./node_modules/@project-sunbird/common-consumption-v8/assets",
                 "output": "./assets/common-consumption"
               }
             ],
@@ -205,7 +272,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -214,8 +280,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "3mb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -241,12 +311,17 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverage": true,
             "main": "projects/desktop/src/test.ts",
             "polyfills": "projects/desktop/src/polyfills.ts",
             "tsConfig": "projects/desktop/tsconfig.spec.json",
             "karmaConfig": "projects/desktop/karma.conf.js",
             "assets": [
-              { "glob": "**/*", "input": "./src/assets", "output": "./assets" }
+              {
+                "glob": "**/*",
+                "input": "./src/assets",
+                "output": "./assets"
+              }
             ],
             "styles": [
               "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
@@ -274,8 +349,8 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/desktop/tsconfig.app.json",
-              "projects/desktop/tsconfig.spec.json"
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -304,7 +379,7 @@
         "lint": {
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
-            "tsConfig": "projects/desktop-e2e/tsconfig.e2e.json",
+            "tsConfig": "e2e/tsconfig.e2e.json",
             "exclude": [
               "**/node_modules/**"
             ]
@@ -317,7 +392,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

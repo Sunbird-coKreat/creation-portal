@@ -7,15 +7,11 @@ import {
 } from '@sunbird/shared';
 import { SearchService, CoursesService, ISort, PlayerService, OrgDetailsService, UserService, FormService } from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { takeUntil, first, mergeMap, map, tap, filter } from 'rxjs/operators';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
-import { ContentManagerService
-} from './../../../../../../projects/desktop/src/app/modules/offline/services/content-manager/content-manager.service';
-
 @Component({
   selector: 'app-view-all',
   templateUrl: './view-all.component.html'
@@ -108,7 +104,7 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
    * Contains returned object of the pagination service
    * which is needed to show the pagination on inbox view
    */
-  pager: IPagination;
+  pager;
   /**
    *url value
    */
@@ -148,7 +144,7 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
     resourceService: ResourceService, toasterService: ToasterService, private publicPlayerService: PublicPlayerService,
     configService: ConfigService, coursesService: CoursesService, public utilService: UtilService,
     private orgDetailsService: OrgDetailsService, userService: UserService, private browserCacheTtlService: BrowserCacheTtlService,
-    public navigationhelperService: NavigationHelperService, public contentManagerService: ContentManagerService) {
+    public navigationhelperService: NavigationHelperService) {
     this.searchService = searchService;
     this.router = router;
     this.activatedRoute = activatedRoute;
@@ -204,17 +200,6 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
       this.toasterService.error(this.resourceService.messages.fmsg.m0051);
     });
 
-
-    if (this.isOffline) {
-      this.contentManagerService.downloadListEvent.pipe(
-        takeUntil(this.unsubscribe)).subscribe((data) => {
-        this.updateCardData(data);
-      });
-
-      this.contentManagerService.downloadEvent.pipe(tap(() => {
-        this.showDownloadLoader = false;
-      }), takeUntil(this.unsubscribe)).subscribe(() => {});
-    }
   }
   getContents(data) {
     this.getContentList(data).subscribe((response: any) => {
@@ -335,19 +320,6 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
 
   playContent(event) {
 
-    // For offline environment content will only play when event.action is open
-    if (event.action === 'download' && this.isOffline) {
-      this.startDownload(event.data.metaData.identifier);
-      this.showDownloadLoader = true;
-      this.contentName = event.data.name;
-      return false;
-    } else if (event.action === 'export' && this.isOffline) {
-      this.showExportLoader = true;
-      this.contentName = event.data.name;
-      this.exportOfflineContent(event.data.metaData.identifier);
-      return false;
-    }
-
     if (!this.userService.loggedIn && event.data.contentType === 'Course') {
       this.publicPlayerService.playExploreCourse(event.data.metaData.identifier);
     } else {
@@ -439,33 +411,6 @@ export class ViewAllComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   closeModal() {
     this.showLoginModal = false;
-  }
-
-  startDownload (contentId) {
-    this.contentManagerService.downloadContentId = contentId;
-    this.contentManagerService.startDownload({}).subscribe(data => {
-      this.contentManagerService.downloadContentId = '';
-    }, error => {
-      this.contentManagerService.downloadContentId = '';
-      this.showDownloadLoader = false;
-
-      _.each(this.searchList, (contents) => {
-        contents['downloadStatus'] = this.resourceService.messages.stmsg.m0138;
-      });
-      this.toasterService.error(this.resourceService.messages.fmsg.m0090);
-    });
-  }
-
-  exportOfflineContent(contentId) {
-    this.contentManagerService.exportContent(contentId).subscribe(data => {
-      this.showExportLoader = false;
-      this.toasterService.success(this.resourceService.messages.smsg.m0059);
-    }, error => {
-      this.showExportLoader = false;
-      if (error.error.responseCode !== 'NO_DEST_FOLDER') {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0091);
-      }
-    });
   }
 
   updateCardData(downloadListdata) {

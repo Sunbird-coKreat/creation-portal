@@ -12,7 +12,6 @@ import {
 import { CourseProgressService, UsageService } from './../../services';
 import { ICourseProgressData, IBatchListData } from './../../interfaces';
 import { IInteractEventInput, IImpressionEventInput } from '@sunbird/telemetry';
-import { IPagination } from '@sunbird/announcement';
 /**
  * This component shows the course progress dashboard
  */
@@ -123,7 +122,7 @@ export class CourseProgressComponent implements OnInit, OnDestroy, AfterViewInit
     * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
     */
-  pager: IPagination;
+  pager;
   /**
    * To send activatedRoute.snapshot to router navigation
    * service for redirection to parent component
@@ -351,20 +350,8 @@ export class CourseProgressComponent implements OnInit, OnDestroy, AfterViewInit
       .pipe(
         tap(response => {
           if (_.get(response, 'responseCode') === 'OK') {
-            const data = _.get(response, 'result');
-            const blob = new Blob(
-              [data],
-              {
-                type: 'text/csv;charset=utf-8'
-              }
-            );
-            const downloadUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            document.body.appendChild(a);
-            a.href = downloadUrl;
-            a.download = `${batchId}.csv`;
-            a.click();
-            document.body.removeChild(a);
+            const signedUrl = _.get(response, 'result.signedUrl');
+            if (signedUrl) { window.open(signedUrl, '_blank'); }
           } else {
             this.toasterService.error(this.resourceService.messages.stmsg.m0141);
           }
@@ -404,7 +391,7 @@ export class CourseProgressComponent implements OnInit, OnDestroy, AfterViewInit
         takeUntil(this.unsubscribe)
       )
       .subscribe(res => { }, err => {
-        this.toasterService.error(this.resourceService.messages.imsg.m0045);
+        this.toasterService.error(this.resourceService.messages.emsg.m0076);
       });
   }
 

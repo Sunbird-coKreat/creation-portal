@@ -2,7 +2,6 @@ import { ConfigService, ResourceService } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter, ApplicationRef, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SearchService } from '@sunbird/core';
-import { OrgTypeService } from '@sunbird/org-management';
 import * as _ from 'lodash-es';
 import { Observable } from 'rxjs';
 @Component({
@@ -15,7 +14,6 @@ export class OrgFilterComponent implements OnInit {
   public config: ConfigService;
   public resourceService: ResourceService;
   private searchService: SearchService;
-  private orgTypeService: OrgTypeService;
   private cdr: ChangeDetectorRef;
   private router: Router;
   searchOrgType: Array<string>;
@@ -29,11 +27,10 @@ export class OrgFilterComponent implements OnInit {
     * @param {PaginationService} paginationService Reference of PaginationService
     * @param {ConfigService} config Reference of ConfigService
   */
-  constructor(config: ConfigService, orgTypeService: OrgTypeService,
+  constructor(config: ConfigService,
     resourceService: ResourceService, router: Router, cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute) {
     this.config = config;
-    this.orgTypeService = orgTypeService;
     this.resourceService = resourceService;
     this.router = router;
     this.cdr = cdr;
@@ -74,32 +71,9 @@ export class OrgFilterComponent implements OnInit {
 
   setFilters() {
     this.label = this.config.dropDownConfig.FILTER.SEARCH.Organisations.label;
-    this.orgTypeService.orgTypeData$.subscribe((apiResponse) => {
-      if (apiResponse && apiResponse.orgTypeData) {
-        this.searchOrgType = apiResponse.orgTypeData.result.response;
-        const OrgType = [];
-        if (this.queryParams.OrgType) {
-          this.queryParams.OrgType.forEach((orgId) => {
-            this.searchOrgType.forEach((orgDetails: any) => {
-              if (orgDetails.id === orgId) {
-                OrgType.push(orgDetails);
-              }
-            });
-          });
-          this.queryParams.OrgType = OrgType;
-        }
-        const queryParamData = { ... this.queryParams };
-        delete queryParamData['key'];
-        if (!_.isEmpty(queryParamData)) {
-          this.isAccordianOpen = true;
-        }
-        this.queryParams = { ...this.config.dropDownConfig.FILTER.SEARCH.Organisations.DROPDOWN, ...this.queryParams };
-      }
-    });
   }
 
   ngOnInit() {
-    this.orgTypeService.getOrgTypes();
     this.activatedRoute.queryParams.subscribe((params) => {
       this.queryParams = { ...params };
       _.forIn(this.queryParams, (value, key) => {

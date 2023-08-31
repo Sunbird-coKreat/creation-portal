@@ -8,7 +8,6 @@ import {
   NavigationHelperService
 } from '@sunbird/shared';
 import { WorkSpaceService } from '../../services';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { IInteractEventInput, IImpressionEventInput } from '@sunbird/telemetry';
 
@@ -97,7 +96,7 @@ export class FlaggedComponent extends WorkSpace implements OnInit, AfterViewInit
   * Contains returned object of the pagination service
   * which is needed to show the pagination on inbox view
   */
-  pager: IPagination;
+  pager;
   /**
     * To call resource service which helps to use language constant
   */

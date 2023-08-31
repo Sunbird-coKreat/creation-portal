@@ -12,6 +12,7 @@ import {
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IEndEventInput, IStartEventInput } from '@sunbird/telemetry';
 import * as TreeModel from 'tree-model';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { PopupControlService } from '../../../../../../service/popup-control.service';
 
 @Component({
   selector: 'app-collection-player',
@@ -74,9 +75,13 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
 
   objectContentInteract: IInteractEventObject;
 
+  copyContentInteractEdata: IInteractEventEdata;
+
   collectionInteractObject: IInteractEventObject;
 
   closeIntractEdata: IInteractEventEdata;
+
+  printPdfInteractEdata: IInteractEventEdata;
 
   closeContentIntractEdata: IInteractEventEdata;
 
@@ -95,6 +100,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
     loaderMessage: 'Fetching content details!'
   };
 
+  dialCode: string;
   public collectionData: any;
 
   collectionTreeOptions: ICollectionTreeOptions;
@@ -107,13 +113,14 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
   public contentDetails = [];
   public nextPlaylistItem: any;
   public prevPlaylistItem: any;
-  public telemetryCdata: [{}];
+  public telemetryCdata: Array<{}>;
+  selectedContent: {};
   constructor(route: ActivatedRoute, playerService: PlayerService,
     windowScrollService: WindowScrollService, router: Router, public navigationHelperService: NavigationHelperService,
     private toasterService: ToasterService, private deviceDetectorService: DeviceDetectorService, private resourceService: ResourceService,
     public permissionService: PermissionService, public copyContentService: CopyContentService,
     public contentUtilsServiceService: ContentUtilsServiceService, config: ConfigService, private configService: ConfigService,
-    public navigationhelperService: NavigationHelperService) {
+    public popupControlService: PopupControlService, public navigationhelperService: NavigationHelperService) {
     this.route = route;
     this.playerService = playerService;
     this.windowScrollService = windowScrollService;
@@ -126,6 +133,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
     };
   }
   ngOnInit() {
+    this.dialCode = _.get(this.route, 'snapshot.queryParams.dialCode');
     this.contentType = _.get(this.route, 'snapshot.queryParams.contentType');
     this.getContent();
   }
@@ -141,7 +149,8 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       content.context.objectRollup = this.objectRollUp;
       this.telemetryContentImpression = {
         context: {
-          env: this.route.snapshot.data.telemetry.env
+          env: this.route.snapshot.data.telemetry.env,
+          cdata: this.dialCode ? [{id: this.dialCode, type: 'dialCode'} ] : []
         },
         edata: {
           type: this.route.snapshot.data.telemetry.env,
@@ -188,9 +197,10 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       relativeTo: this.route
     };
     if (id) {
-      navigationExtras.queryParams = { 'contentId': id, contentType: this.contentType };
+      navigationExtras.queryParams = {..._.get(this.route, 'snapshot.queryParams'), 'contentId': id, contentType: this.contentType };
     } else if (content) {
-      navigationExtras.queryParams = { 'contentId': content.id, contentType: this.contentType };
+      navigationExtras.queryParams = {..._.get(this.route, 'snapshot.queryParams'),
+      'contentId': content.id, contentType: this.contentType };
     }
     this.router.navigate([], navigationExtras);
   }
@@ -241,6 +251,9 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       mergeMap((params) => {
         this.collectionId = params.collectionId;
         this.telemetryCdata = [{ id: this.collectionId, type: this.contentType }];
+        if (this.dialCode) {
+          this.telemetryCdata.push({id: this.dialCode, type: 'dialCode'});
+        }
         this.collectionStatus = params.collectionStatus;
         return this.getCollectionHierarchy(params.collectionId);
       }), )
@@ -253,6 +266,7 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
           this.contentId = queryParams.contentId;
           if (this.contentId) {
             const content = this.findContentById(data, this.contentId);
+            this.selectedContent = content;
             if (content) {
               this.objectRollUp = this.contentUtilsServiceService.getContentRollup(content);
               this.OnPlayContent({ title: _.get(content, 'model.name'), id: _.get(content, 'model.identifier') });
@@ -272,6 +286,16 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
   setTelemetryData() {
     this.closeIntractEdata = {
       id: 'collection-close',
+      type: 'click',
+      pageid: 'collection-player'
+    };
+    this.printPdfInteractEdata = {
+      id: 'print-pdf-button',
+      type: 'click',
+      pageid: 'collection-player'
+    };
+    this.copyContentInteractEdata = {
+      id: 'copy-content-button',
       type: 'click',
       pageid: 'collection-player'
     };
@@ -299,15 +323,23 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       }));
   }
   closeCollectionPlayer() {
-    this.navigationHelperService.navigateToResource('/resources');
+    if (_.get(history.state, 'action') === 'dialcode') {
+      this.navigationHelperService.navigateToPreviousUrl();
+    } else {
+      this.navigationHelperService.navigateToResource('/resources');
+    }
   }
   closeContentPlayer() {
+    this.selectedContent = {};
     this.showPlayer = false;
     this.triggerContentImpression = false;
     const navigationExtras: NavigationExtras = {
       relativeTo: this.route,
       queryParams: { contentType: this.contentType }
     };
+    if (this.dialCode) {
+      navigationExtras.queryParams['dialCode'] = _.get(this.route, 'snapshot.queryParams.dialCode');
+    }
     this.router.navigate([], navigationExtras);
   }
 
@@ -344,7 +376,8 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
       this.telemetryImpression = {
         context: {
           env: this.route.snapshot.data.telemetry.env,
-          cdata: [{ id: this.route.snapshot.params.collectionId, type: this.contentType }]
+          cdata: this.dialCode ? [{ id: this.route.snapshot.params.collectionId, type: this.contentType },
+          {id: this.dialCode, type: 'dialCode'} ] : [{ id: this.route.snapshot.params.collectionId, type: this.contentType }]
         },
         object: {
           id: this.collectionId,
@@ -405,6 +438,10 @@ export class CollectionPlayerComponent implements OnInit, OnDestroy, AfterViewIn
         mode: 'play'
       }
     };
+  }
+
+  printPdf(pdfUrl: string) {
+    window.open(pdfUrl, '_blank');
   }
 
 }

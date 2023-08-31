@@ -1,20 +1,21 @@
-import { filter, first } from 'rxjs/operators';
-import { UserService, PermissionService, TenantService, OrgDetailsService, FormService } from './../../services';
-import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
+import {filter, first, map} from 'rxjs/operators';
+import { UserService, PermissionService, TenantService, OrgDetailsService, FormService, ProgramsService} from './../../services';
+import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy } from '@angular/core';
 import { ConfigService, ResourceService, IUserProfile, IUserData } from '@sunbird/shared';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, RoutesRecognized } from '@angular/router';
+import { Location } from '@angular/common';
 import * as _ from 'lodash-es';
 import { IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
-import { Observable } from 'rxjs';
 declare var jQuery: any;
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
   templateUrl: './main-header.component.html'
 })
-export class MainHeaderComponent implements OnInit {
+export class MainHeaderComponent implements OnInit, OnDestroy {
   @Input() routerEvents;
   languageFormQuery = {
     formType: 'content',
@@ -56,7 +57,9 @@ export class MainHeaderComponent implements OnInit {
   };
   public signUpInteractEdata: IInteractEventEdata;
   public enterDialCodeInteractEdata: IInteractEventEdata;
-  public telemetryInteractObject: IInteractEventObject;
+  public telemetryInteractCdata: any;
+  public telemetryInteractPdata: any;
+  public telemetryInteractObject: any;
   pageId: string;
   searchBox = {
     'center': false,
@@ -68,11 +71,20 @@ export class MainHeaderComponent implements OnInit {
   isOffline: boolean = environment.isOffline;
   languages: Array<any>;
   showOfflineHelpCentre = false;
-
+  contributeTabActive: boolean;
+  activeTab = {};
+  public sourcingOrgAdmin: boolean;
+  public notificationSubscription: Subscription;
+  public notificationData: Array<any>;
+  public showGlobalNotification: boolean;
+  public notification: any;
+ public showSubHeader = true;
+ public unSubscribeShowSubHeader: any;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
-    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef) {
+    public activatedRoute: ActivatedRoute, private cacheService: CacheService, private cdr: ChangeDetectorRef,
+    public programsService: ProgramsService, private location: Location) {
       try {
         this.exploreButtonVisibility = (<HTMLInputElement>document.getElementById('exploreButtonVisibility')).value;
       } catch (error) {
@@ -83,13 +95,20 @@ export class MainHeaderComponent implements OnInit {
       this.myActivityRole = this.config.rolesConfig.headerDropdownRoles.myActivityRole;
       this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
       this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
+      router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.onRouterChange();
+        }
+      });
   }
   ngOnInit() {
     if (this.userService.loggedIn) {
       this.userService.userData$.subscribe((user: any) => {
         if (user && !user.err) {
           this.userProfile = user.userProfile;
-            this.getLanguage(this.userService.channel);
+          this.getLanguage(this.userService.channel);
+          // this.isCustodianOrgUser();
+          this.sourcingOrgAdmin = this.userProfile.userRoles.includes('ORG_ADMIN') ? true : false;
         }
       });
     } else {
@@ -108,6 +127,7 @@ export class MainHeaderComponent implements OnInit {
     this.setInteractEventData();
     this.cdr.detectChanges();
     this.setWindowConfig();
+    this.onRouterChange();
 
     // This subscription is only for offline and it checks whether the page is offline
     // help centre so that it can load its own header/footer
@@ -120,6 +140,41 @@ export class MainHeaderComponent implements OnInit {
         }
       });
     }
+    // maintain active tab state
+    if (this.router.isActive('/contribute', true)) {
+      this.handleActiveTabState('allPrograms');
+    } else if (this.router.isActive('/contribute/orglist', true) || this.router.isActive('/sourcing/orglist', true)) {
+      this.handleActiveTabState('manageUsers');
+    } else if (this.router.isActive('/contribute/help', true) || this.router.isActive('/sourcing/help', true)) {
+      this.handleActiveTabState('contributorHelp');
+    } else if (this.router.isActive('/contribute/mycontent', true)) {
+      this.handleActiveTabState('myContent');
+    } else if (this.router.isActive('/sourcing/orgreports', true)) {
+      this.handleActiveTabState('organisationReports');
+    } else {
+      this.handleActiveTabState('myPrograms');
+    }
+    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
+    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
+    this.telemetryInteractObject = {};
+
+  this.notificationSubscription = this.programsService.programsNotificationData.subscribe(data => {
+    if (!_.isEmpty(data)) {
+      this.notificationData = _.filter(data, prg => prg.notificationData);
+    }
+  });
+  this.getNumberofNotification();
+        this.unSubscribeShowSubHeader = this.programsService.getHeaderEmitter()
+      .subscribe(status => this.showSubHeader = status );
+  }
+
+  ngOnDestroy() {
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+    if (this.unSubscribeShowSubHeader) {
+      this.unSubscribeShowSubHeader.unsubscribe();
+    }
   }
   getLanguage(channelId) {
     const isCachedDataExists = this._cacheService.get(this.languageFormQuery.filterEnv + this.languageFormQuery.formAction);
@@ -131,20 +186,30 @@ export class MainHeaderComponent implements OnInit {
         formAction: this.languageFormQuery.formAction,
         contentType: this.languageFormQuery.filterEnv
       };
-      this.formService.getFormConfig(formServiceInputParams, channelId).subscribe((data: any) => {
-        this.languages = data[0].range;
-        this._cacheService.set(this.languageFormQuery.filterEnv + this.languageFormQuery.formAction, data,
-          { maxAge: this.config.appConfig.cacheServiceConfig.setTimeInMinutes * this.config.appConfig.cacheServiceConfig.setTimeInSeconds});
-      }, (err: any) => {
+      // this.formService.getFormConfig(formServiceInputParams, channelId).subscribe((data: any) => {
+      //   this.languages = data[0].range;
+      //   this._cacheService.set(this.languageFormQuery.filterEnv + this.languageFormQuery.formAction, data,
+      // tslint:disable-next-line:max-line-length
+      //     { maxAge: this.config.appConfig.cacheServiceConfig.setTimeInMinutes * this.config.appConfig.cacheServiceConfig.setTimeInSeconds});
+      // }, (err: any) => {
         this.languages = [{ 'value': 'en', 'label': 'English', 'dir': 'ltr' }];
-      });
+      // });
     }
   }
   navigateToHome() {
     if (this.isOffline) {
       this.router.navigate(['']);
     } else if (this.userService.loggedIn) {
-      this.router.navigate(['resources']);
+      if (this.router.url.includes('/contribute')) {
+        if (this.userService.userRegistryData && this.userService.userProfile.userRegData && this.userService.userProfile.userRegData.User_Org &&
+          !this.userService.userProfile.userRegData.User_Org.roles.includes('admin')) {
+          this.router.navigateByUrl('/contribute/myenrollprograms');
+        } else {
+          this.router.navigate(['contribute']);
+        }
+      } else {
+        this.router.navigate(['sourcing']);
+      }
     } else {
       window.location.href = this.slug ? this.slug + '/explore'  : '/explore';
     }
@@ -194,6 +259,7 @@ export class MainHeaderComponent implements OnInit {
   getUrl() {
     this.routerEvents.subscribe((urlAfterRedirects: NavigationEnd) => {
       let currentRoute = this.activatedRoute.root;
+      this.contributeTabActive = this.router.isActive('/sourcing', true);
       if (currentRoute.children) {
         while (currentRoute.children.length > 0) {
           const child: ActivatedRoute[] = currentRoute.children;
@@ -224,11 +290,11 @@ export class MainHeaderComponent implements OnInit {
       type: 'click',
       pageid: 'public'
     };
-    this.telemetryInteractObject = {
-      id: '',
-      type: 'signup',
-      ver: '1.0'
-    };
+    // this.telemetryInteractObject = {
+    //   id: '',
+    //   type: 'signup',
+    //   ver: '1.0'
+    // };
     this.enterDialCodeInteractEdata = {
       id: 'click-dial-code',
       type: 'click',
@@ -239,8 +305,9 @@ export class MainHeaderComponent implements OnInit {
   getLogoutInteractEdata() {
     return {
       id: 'logout',
-      type: 'click',
-      pageid: this.router.url.split('/')[1]
+      type: this.config.telemetryLabels.eventType.click,
+      subtype: this.config.telemetryLabels.eventSubtype.launch,
+      pageid: this.pageId
     };
   }
 
@@ -284,5 +351,51 @@ export class MainHeaderComponent implements OnInit {
   }
   showSideBar() {
     jQuery('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('toggle');
+  }
+
+  handleActiveTabState(tab) {
+    this.activeTab = {}; // As only one property should available at a time
+    this.activeTab[tab] = true;
+  }
+
+  getTelemetryInteractEdata(id: string, type: string, subtype: string, pageid: string, extra?: string): IInteractEventEdata {
+    return _.omitBy({
+      id,
+      type,
+      subtype,
+      pageid,
+      extra
+    }, _.isUndefined);
+  }
+
+  onRouterChange() {
+    // maintain active tab state
+    this.showSubHeader = true;
+    if (this.location.path() === '/contribute') {
+     this.handleActiveTabState('allPrograms');
+     } else if (this.location.path() === '/contribute/orglist' || this.location.path() === '/sourcing/orglist') {
+       this.handleActiveTabState('manageUsers');
+     } else if (this.location.path() === '/contribute/myenrollprograms' || this.location.path() === '/sourcing') {
+      this.handleActiveTabState('myPrograms');
+    } else if (this.location.path() === '/contribute/mycontent') {
+      this.handleActiveTabState('myContent');
+    } else if (this.location.path() === '/contribute/help' || this.location.path() === '/sourcing/help' ) {
+      this.handleActiveTabState('contributorHelp');
+    } else if (this.location.path() === '/sourcing/orgreports') {
+      this.handleActiveTabState('organisationReports');
+    }
+
+    if (this.location.path() === '/sourcing') {
+      this.showGlobalNotification = true;
+    } else {
+      this.showGlobalNotification = false;
+    }
+  }
+
+  getNumberofNotification() {
+    const notificationArray = _.map(this.notificationData, data => {
+      return _.compact([_.get(data, 'notificationData.nominationCount'), _.get(data, 'notificationData.contributionCount')]);
+    });
+    this.notification =  _.flattenDeep(notificationArray).length;
   }
 }

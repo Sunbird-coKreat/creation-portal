@@ -5,7 +5,6 @@ NavigationHelperService } from '@sunbird/shared';
 import { SearchService, UserService } from '@sunbird/core';
 import { Component, OnInit, NgZone, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IPagination } from '@sunbird/announcement';
 import * as _ from 'lodash-es';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
 
@@ -84,7 +83,7 @@ export class OrgSearchComponent implements OnInit, AfterViewInit {
    * Contains returned object of the pagination service
    * which is needed to show the pagination on inbox view
    */
-  pager: IPagination;
+  pager;
   /**
    *url value
    */

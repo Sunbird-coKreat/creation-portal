@@ -44,6 +44,9 @@
                 }
             ],
             "localDispatcherEndpoint": "/collection-editor/telemetry",
+            "cloudStorage" : {
+                "presigned_headers" : {}
+            },
             "previewConfig": {
                 "repos": [
                     "/sunbird-plugins/renderer"
@@ -573,6 +576,38 @@
             "FlagDraft",
             "FlagReview"
         ],
+        "defaultStates": {
+            "nonInteractiveQuestions": {
+                "mtf": {
+                    "questionBody": "<p>Match the following:</p><table style='border-collapse: collapse; width: 100%; height: 36px;' border='1'><tbody><tr style='height: 18px;'><td style='width: 50%; height: 18px; text-align: center;'><strong>Column 1</strong></td><td style='width: 50%; height: 18px; text-align: center;'><strong>Column 2</strong></td></tr><tr style='height: 18px;'><td style='width: 50%; height: 18px; text-align: center;'></td><td style='width: 50%; height: 18px; text-align: center;'></td></tr></tbody></table>",
+                    "answerBody": "<p>Match the following:</p><table style='border-collapse: collapse; width: 100%; height: 36px;' border='1'><tbody><tr style='height: 18px;'><td style='width: 50%; height: 18px; text-align: center;'><strong>Column 1</strong></td><td style='width: 50%; height: 18px; text-align: center;'><strong>Column 2</strong></td></tr><tr style='height: 18px;'><td style='width: 50%; height: 18px; text-align: center;'></td><td style='width: 50%; height: 18px; text-align: center;'></td></tr></tbody></table>"
+                },
+                "ftb": {
+                    "questionBody": "",
+                    "answerBody": ""
+                },
+                "vsa": {
+                    "questionBody": "",
+                    "answerBody": ""
+                },
+                "sa": {
+                    "questionBody": "",
+                    "answerBody": ""
+                },
+                "la": {
+                    "questionBody": "",
+                    "answerBody": ""
+                },
+                "curiosity": {
+                    "questionBody": "",
+                    "answerBody": ""
+                },
+                "comprehension": {
+                    "questionBody": "",
+                    "answerBody": ""
+                }
+            }
+        },
         "WINDOW_CONFIG": {
             "baseURL": "",
             "modalId": "contentEditor",
@@ -610,6 +645,9 @@
             ],
             "dispatcher": "local",
             "localDispatcherEndpoint": "/content-editor/telemetry",
+            "cloudStorage" : {
+                "presigned_headers" : {}
+            },
             "showHelp": false,
             "previewConfig": {
                 "repos": [
@@ -662,6 +700,9 @@
                     "type": "plugin"
                 }
             ],
+            "cloudStorage" : {
+                "presigned_headers" : {}
+            },
             "previewConfig": {
                 "repos": [
                     "/sunbird-plugins/renderer"

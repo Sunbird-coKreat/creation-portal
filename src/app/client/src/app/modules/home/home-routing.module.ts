@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 // Import component
 import { MainHomeComponent } from './component/index';
-import { DetailsPopupComponent } from '@sunbird/announcement';
 const telemetryEnv = 'home';
 const objectType = 'home';
 const routes: Routes = [
@@ -16,15 +15,7 @@ const routes: Routes = [
       }
     },
     component: MainHomeComponent,
-    children: [
-      { path: 'view/:announcementId', component: DetailsPopupComponent,
-       data: {
-          telemetry: {
-            env: telemetryEnv, pageid: 'announcement-read', type: 'view', object: { type: objectType, ver: '1.0' }
-          }
-        }
-      }
-    ]
+
   }
 ];
 

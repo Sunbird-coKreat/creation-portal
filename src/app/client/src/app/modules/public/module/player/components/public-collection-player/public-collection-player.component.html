@@ -1,5 +1,5 @@
 <div class="ui container mt-24" [appTelemetryStart]="telemetryCourseStart" [appTelemetryEnd]="telemetryCourseEndEvent">
-  <div class="ui stackable grid">
+  <div class="ui stackable grid" *ngIf="(popupControlService.checkPopupStatus | async) else loading">
 
     <!--Content Section-->
     <div class="twelve wide column" [appTelemetryImpression]="telemetryContentImpression" id="app-player-collection-renderer" *ngIf="showPlayer && playerContent">
@@ -11,9 +11,6 @@
             {{playerContent.name}}
           </h1>
           <div class="ml-auto d-flex flex-ai-center">
-            <div *ngIf="isOffline" class="mr-16">
-                <app-content-download [contentData]="playerContent" [collectionId]="collectionId"></app-content-download>
-            </div>
             <button class="sb-btn sb-btn-xs sb-btn-error" type="button" (click)="closeContentPlayer()"
               appTelemetryInteract [telemetryInteractCdata]="telemetryCdata"
               [telemetryInteractObject]="playerTelemetryInteractObject"
@@ -76,9 +73,6 @@
             {{collectionTitle}}
           </h1>
           <div class="ml-auto d-flex flex-ai-center">
-            <div *ngIf="isOffline" class="mr-16">
-                <app-content-download [contentData]="collectionData"></app-content-download>
-                </div>
             <button class="sb-btn sb-btn-xs sb-btn-error " type="button" (click)="closeCollectionPlayer()"
               appTelemetryInteract [telemetryInteractCdata]="telemetryCdata"
               [telemetryInteractObject]="playerTelemetryInteractObject"
@@ -92,9 +86,7 @@
       </div>
       <!--/Collection Title-->
 
-      <!--Badges-->
-      <app-content-badge [data]="badgeData" ></app-content-badge>
-      <!--Badges-->
+  
       
       <!--Collection Tree-->
       <app-collection-tree 
@@ -121,4 +113,7 @@
     <!--/Collection metadata-->
 
   </div>
+  <ng-template #loading>
+    <app-loader></app-loader>
+  </ng-template>
 </div>

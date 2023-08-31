@@ -1,0 +1,20 @@
+<div *ngIf="transcripts.length" class="dynamicHeight px-15">
+    <label class="my-15">{{resourceService.frmelmnts?.lbl?.downloadTranscriptForLanguage}}</label>
+    <table class="sb-table sb-table-striped">
+        <tbody class="sb-table-body">
+            <tr *ngFor="let transcript of transcripts">
+                <td>
+                    <div class="d-flex w-100 sb-color-primary">
+                        <div class="w-90 d-flex"><i class="file icon mr-10"></i>
+                            {{transcript?.language + ' ' + transcript?.fileName}}
+                        </div>
+                        <div class="w-10 text-right" (click)="downloadFile(transcript.artifactUrl)"><i class="download icon text-right cursor-pointer"></i></div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div *ngIf="!transcripts.length">
+  {{resourceService?.frmelmnts?.lbl?.noTranscriptFile}}
+</div>

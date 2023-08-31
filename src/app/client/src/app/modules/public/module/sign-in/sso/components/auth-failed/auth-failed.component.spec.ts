@@ -1,5 +1,5 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {SuiModule} from 'ng2-semantic-ui';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
+import {SuiModule} from 'ng2-semantic-ui-v9';
 import {ActivatedRoute, Router} from '@angular/router';
 import {of as observableOf} from 'rxjs';
 import {ResourceService, InterpolatePipe} from '@sunbird/shared';
@@ -17,7 +17,9 @@ describe('AuthFailedComponent', () => {
     languageSelected$: observableOf({})
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule],
       declarations: [AuthFailedComponent, InterpolatePipe],
@@ -25,13 +27,15 @@ describe('AuthFailedComponent', () => {
         {provide: ResourceService, useValue: resourceBundle}]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AuthFailedComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();

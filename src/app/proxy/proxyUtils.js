@@ -1,10 +1,12 @@
 const envHelper = require('./../helpers/environmentVariablesHelper.js')
 const appId = envHelper.APPID
-const sunbirdApiAuthToken = envHelper.PORTAL_API_AUTH_TOKEN
+const dockApiAuthToken = envHelper.PORTAL_API_AUTH_TOKEN
+const sunbirdApiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const dateFormat = require('dateformat')
 const uuidv1 = require('uuid/v1')
 const _ = require('lodash')
 const ApiInterceptor = require('sb_api_interceptor')
+const { getAuthToken } = require('../helpers/kongTokenHelper')
 
 const keyCloakConfig = {
   'authServerUrl': envHelper.PORTAL_AUTH_SERVER_URL,
@@ -37,6 +39,31 @@ const decorateRequestHeaders = function () {
     srcReq.kauth.grant.access_token.token) {
       proxyReqOpts.headers['x-authenticated-user-token'] = srcReq.kauth.grant.access_token.token
     }
+    proxyReqOpts.headers.Authorization = 'Bearer ' + dockApiAuthToken
+    proxyReqOpts.rejectUnauthorized = false
+    return proxyReqOpts
+  }
+}
+
+const decorateSunbirdRequestHeaders = function () {
+  return function (proxyReqOpts, srcReq) {
+    var channel = _.get(srcReq, 'session.rootOrghashTagId') || _.get(srcReq, 'headers.X-Channel-Id') || envHelper.DEFAULT_CHANNEL
+    if (channel && !srcReq.get('X-Channel-Id')) {
+      proxyReqOpts.headers['X-Channel-Id'] = channel
+    }
+    if (srcReq.session) {
+      var userId = srcReq.session.userId
+      if (userId) { proxyReqOpts.headers['X-Authenticated-Userid'] = userId }
+    }
+    if(!srcReq.get('X-App-Id')){
+      proxyReqOpts.headers['X-App-Id'] = appId
+    }
+
+    let xAuthUserToken = getAuthToken(srcReq)
+    if (xAuthUserToken) {
+      proxyReqOpts.headers['x-authenticated-user-token'] = xAuthUserToken
+    }
+
     proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
     proxyReqOpts.rejectUnauthorized = false
     return proxyReqOpts
@@ -46,7 +73,7 @@ const decorateRequestHeaders = function () {
 const decoratePublicRequestHeaders = function () {
   return function (proxyReqOpts, srcReq) {
     proxyReqOpts.headers['X-App-Id'] = appId
-    proxyReqOpts.headers.Authorization = 'Bearer ' + sunbirdApiAuthToken
+    proxyReqOpts.headers.Authorization = 'Bearer ' + dockApiAuthToken
     return proxyReqOpts
   }
 }
@@ -133,6 +160,7 @@ const addCorsHeaders =  (req, res, next) => {
   };
 }
 module.exports.decorateRequestHeaders = decorateRequestHeaders
+module.exports.decorateSunbirdRequestHeaders = decorateSunbirdRequestHeaders
 module.exports.decoratePublicRequestHeaders = decoratePublicRequestHeaders
 module.exports.verifyToken = verifyToken
 module.exports.validateUserToken = validateUserToken

@@ -1,25 +1,64 @@
 <div *ngIf="showQrmodal">
     <app-qr-code-modal (closeQrModal)="showQrmodal = false"></app-qr-code-modal>
 </div>
-<div class="ui fixed relative main menu bs-0 d-block">
+<div *ngIf="showAccountMergemodal">
+    <app-account-merge-modal (closeAccountMergeModal)="showAccountMergemodal = false"></app-account-merge-modal>
+</div>
+<div class="ui fixed relative main menu bs-0 d-block sb-dock-header">
     <extension-point [name]="'network-status-notify'" *ngIf="isOffline"></extension-point>
     <!--Header White Section-->
     <div class="ui container">
-        <div class="ui grid padded width-100">
+        <div class="ui grid padded width-100 relative">
             <div class="six wide column p-0">
                 <!--Logo-->
-                <a class="d-flex logo" tabindex="0" title="{{tenantInfo.titleName}}" role="banner">
-                    <img (click)="navigateToHome()" class="cursor-pointer" alt={{tenantInfo.titleName}} src="{{tenantInfo.logo}}">
+                <a class="d-flex logo" tabindex="0" title="DOCK" role="banner">
+                    <img (click)="navigateToHome()" class="cursor-pointer" alt="DOCK" src="/tenant/ntp/logo.png">
                 </a>
                 <!--/Logo-->
             </div>
             <div class="six wide column p-0 d-flex flex-jc-flex-end flex-ai-center">
+                <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
+                <button routerLink="sourcing/create-program" class="px-10 sb-btn sb-btn-normal sb-btn-outline-primary" *ngIf="sourcingOrgAdmin && this.router.url.includes('/sourcing') && !this.router.url.includes('sourcing/create-program') && !this.router.url.includes('sourcing/help')"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('create_new_project',config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch ,pageId)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">
+            <i class="plus outline icon"></i> {{resourceService?.frmelmnts?.lbl?.createNewProgram}}</button>
+                <div class="item flex-jc-flex-end" *ngIf="router.url.includes('/sourcing') && userProfile?.organisationNames?.length">
+                    <span> {{ resourceService?.frmelmnts?.lbl?.organisation + ' : ' }} </span>
+                    <span class="pl-5 font-weight-bold"> {{ userProfile?.organisationNames?.join(', ') }} </span>
+                </div>
+                <div class="item" *ngIf="router.url.includes('/contribute')&& userProfile?.userRegData?.Org?.name">
+                    <span>{{ resourceService?.frmelmnts?.lbl?.organisation + ' : '}}</span>
+                    <span class="pl-5 font-weight-bold"> {{ userProfile?.userRegData?.Org?.name }}</span>
+                </div>
                 <!--Hamburger Icon-->
                 <i class="large bars icon link primary-color mobile only" (click)="showSideBar()" tabindex="0"></i>
                 <!--/Hamburger Icon-->
                 <!--Main Menu-->
-                <app-main-menu class="d-flex computer only ml-auto"></app-main-menu>
                 <!--/Main Menu-->
+                <a class="profile-avtar computer only p-0 ml-5" *ngIf="showGlobalNotification"
+                tabindex="0">
+                <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
+                    <i class="icon bell fs-1-3 sb-color-black" *ngIf='userProfile'></i>
+                    <div *ngIf= "notificationData && notification?.length" class="sb-circle-notification">{{notification?.length}}</div>
+                    <div class="menu" suiDropdownMenu>
+                      <ul class="sb-list-notification">
+                          <div *ngFor="let notification of notificationData">
+                              <div *ngIf="notification?.notificationData?.nominationCount">
+                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.nominationCount}}</strong> {{resourceService?.frmelmnts?.lbl?.nominationIn}} <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
+                                <div class="ui divider my-10"></div>
+                            </div>
+                            <div *ngIf="notification?.notificationData?.contributionCount">
+                                <li class="sb-color-black pl-0"><strong>{{notification?.notificationData?.contributionCount}}</strong> {{resourceService?.frmelmnts?.lbl?.contributionIn}} <strong>{{notification?.name}}</strong> <span class="divider mx-5"></span><em class="fxsmall sb-color-yellow">Last {{programsService.projectFeedDays}}days</em></li>
+                                <div class="ui divider my-10"></div>
+                            </div>
+                          </div>
+                      </ul>
+                    </div>
+                </div>
+            </a>
                 <!--Avtar Dropdown-->
                 <a class="profile-avtar computer only p-0 ml-15" *ngIf="userService.loggedIn && !isOffline"
                     tabindex="0">
@@ -32,13 +71,13 @@
                                 {{userProfile?.firstName}}&nbsp;{{userProfile?.lastName}}
                             </div>
                             <div class="ui divider"></div>
-                            <a class="item" routerLink="profile">
+                            <!--a class="item" routerLink="profile">
                                 {{resourceService.frmelmnts?.lnk?.profile}}
-                            </a>
-                            <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
+                            </a-->
+                            <!-- <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='adminDashboard' routerLink="dashBoard/organization">
                                 {{resourceService.frmelmnts?.lnk?.dashboard}}
-                            </a>
+                            </a> -->
                             <!-- <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='announcementRole' routerLink="announcement/outbox/1">
                                 {{resourceService.frmelmnts?.lnk?.announcement}}
@@ -47,23 +86,23 @@
                   routerLink="dashBoard/myActivity">
                   {{resourceService.frmelmnts?.lnk?.myactivity}}
                 </a> -->
-                            <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
+                            <!-- <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
                                 [permission]='orgSetupRole' routerLink="org/orgType">
                                 {{resourceService.frmelmnts?.lbl?.orgtypes}}
                             </a>
-                          <a class="item" *ngIf='!isValidCustodianOrgUser' (click)="showAccountMergemodal = true;">
-                            {{resourceService.frmelmnts?.lbl?.mergeAccount}}
-                          </a>
-                          <!-- <a class="item" *ngIf='permissionService.permissionAvailable' appPermission [permission]='orgAdminRole' routerLink="/org/userUpload">
+                            <a class="item" *ngIf='!isValidCustodianOrgUser' (click)="showAccountMergemodal = true;">
+                                {{resourceService.frmelmnts?.lbl?.mergeAccount}}
+                            </a> -->
+                            <!-- <a class="item" *ngIf='permissionService.permissionAvailable' appPermission [permission]='orgAdminRole' routerLink="/org/userUpload">
                             {{resourceService.frmelmnts?.lbl?.manageuser}}
                           </a> -->
-                          <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
-                              [permission]='orgAdminRole' routerLink="manage">
-                              {{resourceService.frmelmnts?.lbl?.manage}}
-                          </a>
-                          <a class="item" appTelemetryInteract [telemetryInteractEdata]="getLogoutInteractEdata()"
+                            <!-- <a class="item" *ngIf='permissionService.permissionAvailable' appPermission
+                                [permission]='orgAdminRole' routerLink="manage">
+                                {{resourceService.frmelmnts?.lbl?.manage}}
+                            </a> -->
+                            <a class="item" appTelemetryInteract [telemetryInteractEdata]="getLogoutInteractEdata()"
                                 (click)="logout()">
-                                {{resourceService.frmelmnts?.lnk?.logout}}
+                                {{resourceService?.frmelmnts?.lnk?.logout}}
                             </a>
                         </div>
                     </div>
@@ -75,62 +114,128 @@
     <!--Header White Section-->
     <!--Header Blue Section-->
     <!--Computer-->
-    <div class="sb-bg-color-primary p-8" *ngIf="showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre">
-        <div class="ui container d-flex flex-ai-center mx-0">
-            <!--QR Button-->
-            <button class="ui button qr-code-btn d-flex flex-ai-center computer only mr-0" appTelemetryInteract
-                [telemetryInteractEdata]="enterDialCodeInteractEdata" (click)="showQrmodal = true;"
-                title="{{resourceService.frmelmnts?.lbl?.enterQrCode}}">
-                <i class="qrcode icon d-flex flex-ai-center"></i>
-                <span>{{resourceService.frmelmnts?.lbl?.enterQrCode}}</span>
-            </button>
-            <!--/QR Button-->
-            <!--Divider-->
-            <span class="computer only mx-10 search-qrcode-divider">|</span>
-            <!--/Divider-->
-            <!--Search Box-->
-            <!--Logged in Pages-->
-            <app-search class="sb-search-box b-0 mr-auto" *ngIf="!showExploreHeader && !isOffline"
-                [ngClass]="{'ml-auto': searchBox.center, 'ml-0': !searchBox.center, 'small': searchBox.smallBox, 'large': searchBox.largeBox, 'medium': searchBox.mediumBox}">
-            </app-search>
-            <!--/Logged in Pages-->
-            <!--Explore Pages-->
-            <div class="sb-search-box b-0 mr-auto" *ngIf="showExploreHeader || isOffline"
-                [ngClass]="{'ml-auto': searchBox.center, 'ml-0': !searchBox.center, 'small': searchBox.smallBox, 'large': searchBox.largeBox, 'medium': searchBox.mediumBox}">
-                <div class="input-div relative">
-                    <i class="search icon"></i>
-                    <input type="text" id="keyword" name="filter_search" class="sb-search-input"
-                        title="{{resourceService?.frmelmnts?.prmpt?.search}}" [(ngModel)]='queryParam.key'
-                        placeholder="{{resourceService?.frmelmnts?.prmpt?.search}}"
-                        (keyup.enter)="onEnter(queryParam.key)" />
-                    <!-- <i class="close icon"></i> [(ngModel)]="key"
-            <div class="sb-loader"></div> -->
-                </div>
-                <button appTelemetryInteract [telemetryInteractEdata]="getSearchButtonInteractEdata(queryParam.key)"
-                    class="sb-btn sb-btn-normal" (click)="onEnter(queryParam.key)"
-                    title="{{resourceService?.frmelmnts?.prmpt?.search}}" tabindex="0">{{resourceService.frmelmnts?.lbl?.search}}</button>
+    <div class="sb-bg-color-primary sb-dock-menu-bar"
+        *ngIf="showSubHeader && (showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !router.url.includes('/sourcing/program')">
+
+        <ng-container *ngIf="programsTabActive else defaultView">
+            <div class="ui container d-flex flex-ai-center mx-0">
             </div>
-            <!--/Explore Pages-->
-            <!--/Search Box-->
-            <!--Language Dropdown-->
-            <app-language-dropdown [languageRange]='languages' class="computer only ml-auto"
-                *ngIf="languages && !router.isActive('workspace', false)">
-            </app-language-dropdown>
-            <!--/Language Dropdown-->
-        </div>
+        </ng-container>
+        <ng-template #defaultView>
+
+            <div class="ui container d-flex flex-ai-center mx-0 sb-dock-menu">
+                <!-- <a routerLink="contribute/dashboard" *ngIf="this.router.url.includes('/contribute')" [class.active]="this.router.isActive('/contribute/dashboard', true)">{{ resourceService.frmelmnts.lnk.dashboard }}</a> -->
+                    <a routerLink="sourcing" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/sourcing/help')" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('my_project', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</a>
+                    <ng-container *ngIf="userService.userRegistryData">
+                        <a routerLink="contribute" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && programsService.checkforshowAllPrograms()"  [class.active]="activeTab['allPrograms']" (click)="handleActiveTabState('allPrograms')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('all_programs', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService?.frmelmnts?.lbl?.allPrograms }}</span></a>
+                    </ng-container>
+                    <a routerLink="contribute/myenrollprograms" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help')" [class.active]="activeTab['myPrograms']" (click)="handleActiveTabState('myPrograms')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('my_programs', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch ,pageId)"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{ resourceService?.frmelmnts?.lbl?.myPrograms }}</span></a>
+                    <a routerLink="contribute/orglist" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && userProfile?.userRegData?.User_Org?.roles?.includes('admin')" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('manage_users', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch, pageId)"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
+      <a routerLink="contribute/mycontent" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help')" [class.active]="activeTab['myContent']" (click)="handleActiveTabState('myContent')"
+      appTelemetryInteract
+[telemetryInteractEdata]="getTelemetryInteractEdata('my_content', config.telemetryLabels.eventType.click,config.telemetryLabels.eventSubtype.launch ,pageId)"
+[telemetryInteractObject]="telemetryInteractObject"
+[telemetryInteractCdata]="telemetryInteractCdata"
+[telemetryInteractPdata]="telemetryInteractPdata"><span class="sb-color-white">{{resourceService?.frmelmnts?.lbl?.myContent}}</span></a>
+                    <a routerLink="sourcing/orglist" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin" [class.active]="activeTab['manageUsers']" (click)="handleActiveTabState('manageUsers')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('manage_users', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch,pageId)"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.manageUsers }}</a>
+      <a routerLink="sourcing/orgreports" *ngIf="router.url.includes('/sourcing') && !router.url.includes('/contribute/help') && sourcingOrgAdmin && !router.url.includes('/sourcing/help')" [class.active]="activeTab['organisationReports']" (click)="handleActiveTabState('organisationReports')"
+                    appTelemetryInteract
+      [telemetryInteractEdata]="getTelemetryInteractEdata('organisation_reports', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch, pageId)"
+      [telemetryInteractObject]="telemetryInteractObject"
+      [telemetryInteractCdata]="telemetryInteractCdata"
+      [telemetryInteractPdata]="telemetryInteractPdata">{{ resourceService?.frmelmnts?.lbl?.organisationReports }}</a>
+      <span class="computer only mx-10 search-qrcode-divider" *ngIf="router.url.includes('/contribute') && !router.url.includes('/contribute/help') && router.url.includes('/sourcing') && !router.url.includes('/sourcing/help')">|</span>
+                    <a class="sb-btn sb-btn-normal sb-btn-orange-link ml-10 py-0 px-10 fs-0-92 font-weight-bold text-inherit" target="_blank"
+                    *ngIf="(router.url.includes('/contribute') && !router.url.includes('/contribute/help')) || (router.url.includes('/sourcing') && !router.url.includes('/sourcing/help'))"
+                    [routerLink]="router.url.includes('/contribute') && !router.url.includes('/contribute/help') ? '/contribute/help' : '/sourcing/help'" (click)="handleActiveTabState('contributorHelp')"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('help', config.telemetryLabels.eventType.click, config.telemetryLabels.eventSubtype.launch, pageId )"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"><i class="icon play circle fs-1-16 mr-5"></i>{{resourceService?.frmelmnts?.lbl?.clickHereToGetStarted}}</a>
+                    <a *ngIf="router.url.includes('/contribute/help') || router.url.includes('/sourcing/help')"
+                    [routerLink]="router.url.includes('/contribute/help') ? '/contribute/help' : '/sourcing/help'" [class.active]="activeTab['contributorHelp']" (click)="handleActiveTabState('contributorHelp')">{{resourceService?.frmelmnts?.lbl?.help}}</a>
+
+                <!--QR Button-->
+                <!-- <button class="ui button qr-code-btn d-flex flex-ai-center computer only mr-0" appTelemetryInteract
+                    [telemetryInteractEdata]="enterDialCodeInteractEdata" (click)="showQrmodal = true;"
+                    title="{{resourceService.frmelmnts?.lbl?.enterQrCode}}">
+                    <i class="qrcode icon d-flex flex-ai-center"></i>
+                    <span>{{resourceService.frmelmnts?.lbl?.enterQrCode}}</span>
+                </button> -->
+                <!--/QR Button-->
+                <!--Divider-->
+                <!-- <span class="computer only mx-10 search-qrcode-divider">|</span> -->
+                <!--/Divider-->
+                <!--Search Box-->
+                <!--Logged in Pages-->
+                <!-- <app-search class="sb-search-box b-0 mr-auto" *ngIf="!showExploreHeader && !isOffline"
+                    [ngClass]="{'ml-auto': searchBox.center, 'ml-0': !searchBox.center, 'small': searchBox.smallBox, 'large': searchBox.largeBox, 'medium': searchBox.mediumBox}">
+                </app-search> -->
+                <!--/Logged in Pages-->
+                <!--Explore Pages-->
+                <!-- <div class="sb-search-box b-0 mr-auto" *ngIf="showExploreHeader || isOffline"
+                    [ngClass]="{'ml-auto': searchBox.center, 'ml-0': !searchBox.center, 'small': searchBox.smallBox, 'large': searchBox.largeBox, 'medium': searchBox.mediumBox}">
+                    <div class="input-div relative">
+                        <i class="search icon"></i>
+                        <input type="text" id="keyword" name="filter_search" class="sb-search-input"
+                            title="{{resourceService?.frmelmnts?.prmpt?.search}}" [(ngModel)]='queryParam.key'
+                            placeholder="{{resourceService?.frmelmnts?.prmpt?.search}}"
+                            (keyup.enter)="onEnter(queryParam.key)" /> -->
+                        <!-- <i class="close icon"></i> [(ngModel)]="key"
+                <div class="sb-loader"></div> -->
+                    <!-- </div>
+                    <button appTelemetryInteract [telemetryInteractEdata]="getSearchButtonInteractEdata(queryParam.key)"
+                        class="sb-btn sb-btn-normal" (click)="onEnter(queryParam.key)"
+                        title="{{resourceService?.frmelmnts?.prmpt?.search}}" tabindex="0">{{resourceService.frmelmnts?.lbl?.search}}</button>
+                </div> -->
+                <!--/Explore Pages-->
+                <!--/Search Box-->
+                <!--Language Dropdown-->
+                <!-- <app-language-dropdown [languageRange]='languages' class="computer only ml-auto"
+                    *ngIf="languages && !router.isActive('workspace', false)">
+                </app-language-dropdown> -->
+                <!--/Language Dropdown-->
+            </div>
+        </ng-template>
     </div>
     <!--/Computer-->
     <!--Mobile-->
-    <div class="p-8 mobile only" *ngIf="showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre">
+    <div class="p-8 mobile only" *ngIf="(showExploreHeader || userService.loggedIn || isOffline && !showOfflineHelpCentre) && !contributeTabActive">
         <div class="ui mobile-view container d-flex flex-jc-space-between mx-0">
             <!--QR Button-->
-            <button class="ui button qr-code-btn d-flex flex-ai-center" appTelemetryInteract
+            <!-- <button class="ui button qr-code-btn d-flex flex-ai-center" appTelemetryInteract
                 [telemetryInteractEdata]="enterDialCodeInteractEdata" (click)="showQrmodal = true;">
                 <i class="qrcode icon d-flex flex-ai-center"></i>
                 <span class="d-flex flex-ai-center">
                     {{resourceService.frmelmnts?.lbl?.enterQrCode}}
                 </span>
-            </button>
+            </button> -->
             <!--/QR Button-->
             <!--Language Dropdown-->
             <app-language-dropdown [languageRange]='languages' class="mobile only"

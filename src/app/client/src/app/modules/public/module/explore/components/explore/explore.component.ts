@@ -12,9 +12,6 @@ import { IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
 import { takeUntil, map, mergeMap, first, filter, tap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import { environment } from '@sunbird/environment';
-import {
-  ContentManagerService
-} from './../../../../../../../../projects/desktop/src/app/modules/offline/services/content-manager/content-manager.service';
 
 
 @Component({
@@ -59,7 +56,7 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
     public router: Router, private utilService: UtilService, private orgDetailsService: OrgDetailsService,
     private publicPlayerService: PublicPlayerService, private cacheService: CacheService,
     private browserCacheTtlService: BrowserCacheTtlService, private userService: UserService,
-    public navigationhelperService: NavigationHelperService, public contentManagerService: ContentManagerService) {
+    public navigationhelperService: NavigationHelperService) {
     this.router.onSameUrlNavigation = 'reload';
     this.filterType = this.configService.appConfig.explore.filterType;
   }
@@ -82,22 +79,6 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.navigate(['']);
       }
     );
-
-    if (this.isOffline) {
-      this.contentManagerService.downloadListEvent.pipe(
-        takeUntil(this.unsubscribe$)).subscribe((data) => {
-        this.updateCardData(data);
-      });
-      this.contentManagerService.completeEvent.pipe(
-        takeUntil(this.unsubscribe$)).subscribe((data) => {
-          if (this.router.url === '/') {
-            this.fetchPageData();
-          }
-      });
-      this.contentManagerService.downloadEvent.pipe(tap(() => {
-        this.showDownloadLoader = false;
-      }), takeUntil(this.unsubscribe$)).subscribe(() => {});
-    }
   }
 
   public getFilters(filters) {
@@ -197,19 +178,6 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   public playContent(event) {
 
-    // For offline environment content will only play when event.action is open
-    if (event.action === 'download' && this.isOffline) {
-      this.startDownload(event.data.metaData.identifier);
-      this.showDownloadLoader = true;
-      this.contentName = event.data.name;
-      return false;
-    } else if (event.action === 'export' && this.isOffline) {
-      this.showExportLoader = true;
-      this.contentName = event.data.name;
-      this.exportOfflineContent(event.data.metaData.identifier);
-      return false;
-    }
-
     if (!this.userService.loggedIn && event.data.contentType === 'Course') {
       this.showLoginModal = true;
       this.baseUrl = '/' + 'learn' + '/' + 'course' + '/' + event.data.metaData.identifier;
@@ -278,34 +246,6 @@ export class ExploreComponent implements OnInit, OnDestroy, AfterViewInit {
         'messageText': 'messages.stmsg.m0006'
       };
     }
-  }
-
-  startDownload (contentId) {
-    this.contentManagerService.downloadContentId = contentId;
-    this.contentManagerService.startDownload({}).subscribe(data => {
-      this.contentManagerService.downloadContentId = '';
-    }, error => {
-      this.contentManagerService.downloadContentId = '';
-      this.showDownloadLoader = false;
-      _.each(this.pageSections, (pageSection) => {
-        _.each(pageSection.contents, (pageData) => {
-          pageData['downloadStatus'] = this.resourceService.messages.stmsg.m0138;
-        });
-      });
-      this.toasterService.error(this.resourceService.messages.fmsg.m0090);
-    });
-  }
-
-  exportOfflineContent(contentId) {
-    this.contentManagerService.exportContent(contentId).subscribe(data => {
-      this.showExportLoader = false;
-      this.toasterService.success(this.resourceService.messages.smsg.m0059);
-    }, error => {
-      this.showExportLoader = false;
-      if (error.error.responseCode !== 'NO_DEST_FOLDER') {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0091);
-      }
-    });
   }
 
   updateCardData(downloadListdata) {

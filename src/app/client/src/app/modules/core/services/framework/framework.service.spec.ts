@@ -6,6 +6,7 @@ import { FrameworkService, UserService, CoreModule, PublicDataService } from '@s
 import { SharedModule } from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 import { mockFrameworkData } from './framework.mock.spec.data';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('FrameworkService', () => {
   let userService, publicDataService, frameworkService;
@@ -14,7 +15,7 @@ describe('FrameworkService', () => {
   let makeChannelReadSuc, makeFrameworkReadSuc  = true;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
+      imports: [HttpClientTestingModule, SharedModule.forRoot(), RouterTestingModule,CoreModule],
       providers: [CacheService]
     });
     userService = TestBed.get(UserService);
@@ -90,6 +91,31 @@ describe('FrameworkService', () => {
       expect(data.err).toBeDefined();
     });
   });
+
+  it ('#orgAndTargetFrameworkCategories should be set', () => {
+    frameworkService._orgAndTargetFrameworkCategories = mockFrameworkData._orgAndTargetFrameworkCategories;
+    expect(frameworkService._orgAndTargetFrameworkCategories).toBeDefined();
+  });
+
+  it ('#setOrgAndTargetFrameworkCategories set _orgAndTargetFrameworkCategories value', () => {
+    frameworkService.orgFrameworkCategories =  mockFrameworkData._orgAndTargetFrameworkCategories.orgFrameworkCategories;
+    frameworkService.targetFrameworkCategories = mockFrameworkData._orgAndTargetFrameworkCategories.targetFrameworkCategories;
+    spyOn(frameworkService, 'setOrgAndTargetFrameworkCategories').and.callThrough();
+    frameworkService.setOrgAndTargetFrameworkCategories();
+    expect(frameworkService._orgAndTargetFrameworkCategories).toBeDefined();
+  });
+
+  it ('#addUnlistedFrameworks should call #getFrameworkCategories()', () => {
+    const frameworkData = {result: {
+      framework: []
+    }};
+    frameworkService._frameworkData = [];
+    spyOn(frameworkService, 'getFrameworkCategories').and.returnValue(of(frameworkData));
+    spyOn(frameworkService, 'addUnlistedFrameworks').and.callThrough();
+    frameworkService.addUnlistedFrameworks('k12');
+    expect(frameworkService.getFrameworkCategories).toHaveBeenCalled();
+  });
+
 });
 
 

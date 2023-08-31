@@ -22,3 +22,8 @@
 .o-x-scroll {
     overflow-x: scroll !important
 }
+@include respond-above(md) {
+    .desktop-o-x-unset{
+      overflow: unset !important;
+    }
+  }

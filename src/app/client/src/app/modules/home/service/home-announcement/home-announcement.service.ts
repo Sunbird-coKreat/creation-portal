@@ -6,7 +6,6 @@ import { DataService } from '../../../core/services/data/data.service';
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import {  IAnnouncementSericeParam } from '@sunbird/announcement';
 import { ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { CacheService } from 'ng2-cache-service';
 import * as _ from 'lodash-es';
@@ -42,9 +41,8 @@ export class HomeAnnouncementService  extends DataService {
   * Method to make api call to get inbox data.
   * It calls the post method from data service class
   *
-  * @param {IAnnouncementSericeParam} requestParam Request object needed for inbox API call
   */
-  getInboxData(requestParam: IAnnouncementSericeParam) {
+  getInboxData(requestParam: any) {
     const InboxData: any = this.cacheService.get('HomeAnnouncementInboxData');
    if (InboxData) {
      return observableOf(InboxData);
