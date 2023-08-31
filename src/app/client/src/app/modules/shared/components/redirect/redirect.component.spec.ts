@@ -4,7 +4,7 @@ import {
   BrowserCacheTtlService,
   ToasterService,
   NavigationHelperService } from '@sunbird/shared';
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { RedirectComponent } from './redirect.component';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CacheService } from 'ng2-cache-service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { SharedModule } from '../../shared.module';
 
 describe('RedirectComponent', () => {
   let component: RedirectComponent;
@@ -40,14 +41,19 @@ describe('RedirectComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
+  class NavigationHelperServiceStub {
 
-  beforeEach(async(() => {
+  }
+
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [RedirectComponent],
       imports: [
         RouterTestingModule,
         HttpClientTestingModule,
-        TelemetryModule.forRoot()
+        TelemetryModule.forRoot(),
       ],
       providers: [
         ResourceService,
@@ -56,16 +62,17 @@ describe('RedirectComponent', () => {
         ToasterService,
         BrowserCacheTtlService,
         NavigationHelperService,
+        {provide: NavigationHelperService, useClass: NavigationHelperServiceStub},
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }
       ],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(RedirectComponent);
     component = fixture.componentInstance;
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should display the toaster messsage', inject(

@@ -1,11 +1,88 @@
 export const OtpComponentMockResponse = {
-    signupData: {
-        'controls': {
-            'contactType': {
-                'value': 'phone'
-            }
-        }
+  data : {
+    'firstName': 'test',
+    'password': 'Test@123',
+    'email': 'otptest10@yopmail.com',
+    'emailVerified': true,
+    'validator': `{
+      \"iv\":\"c541833780a389a6f01b65c192e207c3\",
+      \"encryptedData\":
+      \"c3eaeb67799ebc684ea2a696ab9916fe8f3de4f0
+      833c4ccd5173c32a9a60d6bc2f47fe7c5741c9b2280
+      5bb5562d1fc9f0af2c6b254788c4672758aebbce09db9\"
+    }`
+},
+  signupData: {
+    'controls': {
+      'contactType': {
+        'value': 'phone'
+      },
+      name: {
+        value: 'firstName'
+      },
+      password: {
+        value: 'password'
+      },
+      email: {
+        value: 'email@gmail.com'
+      },
+      tncAccepted: {
+        value: true,
+        status: 'VALID'
+      }
+
+    }
+  },
+  telemetryCreateUserError: {
+    context: {
+      env: 'self-signup'
     },
+    edata: {
+      type: 'sign-up',
+      level: 'ERROR',
+      message: 'sign-up failed'
+    }
+  },
+  telemetryCreateUserSuccess: {
+    context: {
+      env: 'self-signup'
+    },
+    edata: {
+      type: 'sign-up',
+      level: 'SUCCESS',
+      message: 'sign-up success'
+    }
+  },
+  telemetryTncError: {
+    context: {
+      env: 'self-signup'
+    },
+    edata: {
+      type: 'accept-tnc',
+      level: 'ERROR',
+      message: 'accept-tnc failed'
+    }
+  },
+  telemetryTncSuccess: {
+    context: {
+      env: 'self-signup'
+    },
+    edata: {
+      type: 'accept-tnc',
+      level: 'SUCCESS',
+      message: 'accept-tnc success'
+    }
+  },
+  tncAcceptResponse: {
+    id: 'api.user.tnc.accept',
+    params: {
+      err: null,
+      status: 'success',
+      errType: null
+    },
+    responseCode: 'OK',
+    result: {response: 'Success'}
+  },
     resourceBundle: {
         'frmelmnts': {
             'lbl': {

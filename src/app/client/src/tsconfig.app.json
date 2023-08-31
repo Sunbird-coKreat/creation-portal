@@ -17,12 +17,6 @@
       "@sunbird/dashboard": [
         "app/modules/dashboard"
       ],
-      "@sunbird/announcement": [
-        "app/modules/announcement"
-      ],
-      "@sunbird/notes": [
-        "app/modules/notes"
-      ],
       "@sunbird/admin": [
         "app/modules/admin"
       ],
@@ -50,9 +44,6 @@
       "@sunbird/telemetry": [
         "app/modules/telemetry"
       ],
-      "@sunbird/badge": [
-        "app/modules/badging"
-      ],
       "@sunbird/shared-feature": [
         "app/modules/shared-feature"
       ],
@@ -67,17 +58,16 @@
       ],
       "@sunbird/player-helper": [
         "app/modules/player-helper"
-      ],
-      "@sunbird/offline" : [
-        "./../projects/desktop/src/app/modules/offline"
       ]
     },
-    "module": "es2015",
     "types": []
   },
-  "exclude": [
-    "test.ts",
-    "**/*.spec.ts",
-    "**/*.spec.data.ts"
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts",
+    "./*.d.ts"
   ]
 }

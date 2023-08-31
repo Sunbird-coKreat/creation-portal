@@ -1,0 +1,41 @@
+<sui-modal *ngIf="showQuestionModal" [mustScroll]="false" [isClosable]="true" [transitionDuration]="0" [size]="'large'"
+    class="sb-modal" (dismissed)="onModalClose()" #modal>
+    <div class="sb-modal-header">
+        Preview of Questions
+    </div>
+    <div class="sb-modal-content"
+        infiniteScroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="500"
+        [infiniteScrollContainer]="'.sb-modal-content'"
+        (scrolled)="onScrollDown()"
+        [fromRoot]="true">
+
+        <div *ngFor="let question of questionList; let questionNo = index" class="flex-dc mb-15">
+            <div class="d-flex justify-content-start mb-10">
+                <p class="question-alignment">
+                    <span>Question {{questionNo+1}}:</span>
+                    <span [innerHtml]="question.editorState.question"></span>
+                </p>
+            </div>
+            <ng-container *ngIf="question.qType==='MCQ'">
+                <div class="container-grid">
+                    <ng-container *ngFor="let option of question.editorState.options; let optionIndex= index">
+                        <label style="font-weight: 100;">
+                            <span>{{optionIndex + 65 | toCharCode}}: </span>
+                            <span [innerHtml]="option.value.body"></span>
+                        </label>
+                    </ng-container>
+                </div>
+            </ng-container>
+            <div class="mt-10">
+                <label>Status:
+                <span [ngClass]="questionStatusMap[question.identifier]?.styleClass">
+                  {{questionStatusMap[question.identifier]['status']}}
+                </span>
+                </label>
+            </div>
+            <hr>
+        </div>
+    </div>
+</sui-modal>

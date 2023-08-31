@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title></title>
-  <base href="/">
+  <base href="/<%=slug%>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon">
 </head>
@@ -21,6 +21,15 @@
   <% } %>
   <% if (cloudStorageUrls) { %>
   <input type="hidden" id="cloudStorageUrls" value="<%=cloudStorageUrls%>" />
+  <% } %>
+  <% if (portalCloudStorageUrl) { %>
+    <input type="hidden" id="portalCloudStorageUrl" value="<%=portalCloudStorageUrl%>" />
+  <% } %>
+  <% if (dockDefaultFileSize) { %>
+    <input type="hidden" id="dockDefaultFileSize" value="<%=dockDefaultFileSize%>" />
+  <% } %>
+  <% if (dockDefaultVideoSize) { %>
+    <input type="hidden" id="dockDefaultVideoSize" value="<%=dockDefaultVideoSize%>" />
   <% } %>
   <% if (defaultTenant) { %>
   <input type="hidden" id="defaultTenant" value="<%=defaultTenant%>" />
@@ -65,9 +74,9 @@
   <input type="hidden" id="instance" value="<%=instance%>" />
   <% } %>
   <% if (deviceId) { %>
-  <input type="hidden" id="deviceId" value="<%=deviceId%>" />	
-  <%} else { %>	
-  <input type="hidden" id="deviceId"/>	
+  <input type="hidden" id="deviceId" value="<%=deviceId%>" />
+  <%} else { %>
+  <input type="hidden" id="deviceId"/>
   <% } %>
   <% if (googleCaptchaSiteKey) { %>
   <input type="hidden" id="googleCaptchaSiteKey" value="<%=googleCaptchaSiteKey%>" />
@@ -104,6 +113,58 @@
   <% } %>
   <% if (deviceApi) { %>
     <input type="hidden" id="deviceApi" value="<%=deviceApi%>" />
+  <% } %>
+  <% if (portalBaseUrl) { %>
+    <input type="hidden" id="portalBaseUrl" value="<%=portalBaseUrl%>" />
+  <% } %>
+  <% if (enableQuestionSetEditor) { %>
+    <input type="hidden" id="enableQuestionSetEditor" value="<%=enableQuestionSetEditor%>" />
+  <% } %>
+  <% if (dockSmsUrl) { %>
+    <input type="hidden" id="dockSmsUrl" value="<%=dockSmsUrl%>" />
+  <% } %>
+  <% if (sunbirdQuestionSetChildrenLimit) { %>
+    <input type="hidden" id="sunbirdQuestionSetChildrenLimit" value="<%=sunbirdQuestionSetChildrenLimit%>" />
+  <% } %>
+
+  <% if (sunbirdCollectionChildrenLimit) { %>
+    <input type="hidden" id="sunbirdCollectionChildrenLimit" value="<%=sunbirdCollectionChildrenLimit%>" />
+  <% } %>
+  <% if (sunbirdTranscriptSupportedLanguages) { %>
+    <input type="hidden" id="sunbirdTranscriptSupportedLanguages" value="<%=sunbirdTranscriptSupportedLanguages%>" />
+  <% } %>
+  <% if (sunbirdTranscriptFileFormat) { %>
+    <input type="hidden" id="sunbirdTranscriptFileFormat" value="<%=sunbirdTranscriptFileFormat%>" />
+  <% } %>
+  <% if (sunbirdTranscriptRequired) { %>
+    <input type="hidden" id="sunbirdTranscriptRequired" value="<%=sunbirdTranscriptRequired%>" />
+  <% } %>
+  <% if (sunbirdBulkUploadNameLength) { %>
+    <input type="hidden" id="sunbirdBulkUploadNameLength" value="<%=sunbirdBulkUploadNameLength%>" />
+  <% } %>
+  <% if (sunbirdBulkUploadDescriptionLength) { %>
+    <input type="hidden" id="sunbirdBulkUploadDescriptionLength" value="<%=sunbirdBulkUploadDescriptionLength%>" />
+  <% } %>
+  <% if (sunbirdContextualHelpConfig) { %>
+    <input type="hidden" id="sunbirdContextualHelpConfig" value="<%=sunbirdContextualHelpConfig%>" />
+  <% } %>
+  <% if (sunbirdAccessibilityGuidelinesUrl) { %>
+    <input type="hidden" id="sunbirdAccessibilityGuidelinesUrl" value="<%=sunbirdAccessibilityGuidelinesUrl%>" />
+  <% } %>
+  <% if (allowedFrameworkTypes) { %>
+    <input type="hidden" id="allowedFrameworkTypes" value="<%=allowedFrameworkTypes%>" />
+  <% } %>
+  <% if (enableReviewEdit) { %>
+    <input type="hidden" id="enableReviewEdit" value="<%=enableReviewEdit%>" />
+  <% } %>
+  <% if (cloudStorageProvider) { %>
+    <input type="hidden" id="cloudStorageProvider" value="<%=cloudStorageProvider%>" />
+  <% } %>
+  <% if (interactiveVideoQsetCategory) { %>
+    <input type="hidden" id="interactiveVideoQsetCategory" value="<%=interactiveVideoQsetCategory%>" />
+  <% } %>
+  <% if (isSendReminderEnabled) { %>
+    <input type="hidden" id="isSendReminderEnabled" value="<%=isSendReminderEnabled%>" />
   <% } %>
   <app-root></app-root>
 </body>

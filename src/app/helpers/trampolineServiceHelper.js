@@ -14,7 +14,7 @@ const trampolineClientId = envHelper.PORTAL_TRAMPOLINE_CLIENT_ID
 const trampolineServerUrl = envHelper.PORTAL_AUTH_SERVER_URL
 const trampolineRealm = envHelper.PORTAL_REALM
 const trampolineSecret = envHelper.PORTAL_TRAMPOLINE_SECRET
-const learnerAuthorization = envHelper.PORTAL_API_AUTH_TOKEN
+const learnerAuthorization = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 
 let keycloak = getKeyCloakClient({
   clientId: trampolineClientId,
@@ -224,7 +224,7 @@ module.exports = {
   createUser: function (req, payload, callback) {
     var options = {
       method: 'POST',
-      url: learnerURL + 'user/v1/create',
+      url: learnerURL + 'user/v1/sso/create',
       headers: {
         ts: dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
         'x-msgid': uuidv1(),
@@ -252,7 +252,7 @@ module.exports = {
     const telemetryData = {
       reqObj: req,
       options: options,
-      uri: 'user/v1/create',
+      uri: 'user/v1/sso/create',
       type: 'user',
       id: options.headers['x-consumer-id'],
       userId: options.headers['x-consumer-id']

@@ -1,5 +1,5 @@
 import { InterpolatePipe } from './../../pipes';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { InstallAppComponent } from './install-app.component';
@@ -10,20 +10,22 @@ describe('InstallAppComponent', () => {
     let comp: InstallAppComponent;
     let fixture: ComponentFixture<InstallAppComponent>;
 
-    beforeEach(async(() => {
-        TestBed.configureTestingModule({
-          imports: [HttpClientTestingModule],
-          declarations: [ InstallAppComponent, InterpolatePipe ],
-          providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService],
-          schemas: [NO_ERRORS_SCHEMA]
-        })
-        .compileComponents();
-    }));
+    
     beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+            declarations: [ InstallAppComponent, InterpolatePipe ],
+            providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService],
+            schemas: [NO_ERRORS_SCHEMA]
+          })
+          .compileComponents();
         fixture = TestBed.createComponent(InstallAppComponent);
         comp = fixture.componentInstance;
     });
-
+    afterEach(() => {
+        fixture.destroy();
+      });
+    
     it('can load instance', () => {
         expect(comp).toBeTruthy();
     });

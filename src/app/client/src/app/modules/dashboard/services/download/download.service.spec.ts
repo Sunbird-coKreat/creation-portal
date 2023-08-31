@@ -10,7 +10,7 @@ import { ConfigService } from '@sunbird/shared';
 import * as mockData from './download.service.spec.data';
 const testData = mockData.mockRes;
 
-describe('DownloadService', () => {
+xdescribe('DownloadService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientModule],

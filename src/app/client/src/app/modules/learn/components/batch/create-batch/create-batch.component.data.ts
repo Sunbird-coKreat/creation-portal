@@ -100,7 +100,7 @@ export const mockResponse = {
             'orgName': 'Sunbird',
             'updatedBy': 'user1',
             'externalId': null,
-            'isRootOrg': true,
+            'isTenant': true,
             'rootOrgId': null,
             'approvedDate': null,
             'imgUrl': null,

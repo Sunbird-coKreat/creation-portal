@@ -1,0 +1,112 @@
+{
+    "restrictProps": {
+        "create" : [
+            "status", "dialcodes"
+        ],
+        "copy" : [
+            "status"
+        ],
+        "update": []
+    },
+    "objectType": "Content",
+    "external": {
+        "tableName": "content_data",
+        "properties": {
+            "body": {
+                "type": "blob"
+            },
+            "oldBody": {
+                "type": "blob"
+            },
+            "stageIcons": {
+                "type": "blob"
+            },
+            "screenshots": {
+                "type": "blob"
+            },
+            "last_updated_on": {
+                "type": "timestamp"
+            }
+        },
+        "primaryKey": ["content_id"]
+    },
+    "relations": {
+        "questions": {
+            "type": "associatedTo",
+            "direction": "out",
+            "objects": ["AssessmentItem"]
+        },
+        "children": {
+            "type": "hasSequenceMember",
+            "direction": "out",
+            "objects": ["Content", "ContentImage"]
+        },
+        "collections": {
+            "type": "hasSequenceMember",
+            "direction": "in",
+            "objects": ["Content", "ContentImage"]
+        },
+        "itemSets": {
+          "type": "associatedTo",
+          "direction": "out",
+          "objects": ["ItemSet"]
+        }
+    },
+    "version": "enable",
+    "versionCheckMode": "ON",
+    "frameworkCategories": [],
+    "orgFrameworkTerms": [],
+    "targetFrameworkTerms": [],
+    "edge": {
+        "properties": {
+            "license": "License"
+        }
+    },
+    "copy": {
+        "scheme": {
+            "TextBookToCourse": {
+                "TextBook": "Course",
+                "TextBookUnit": "CourseUnit"
+            },
+            "TextBookToLessonPlan": {
+            }
+        }
+    },
+    "cacheEnabled": true,
+    "searchProps": {
+        "status": ["Live"],
+        "softConstraints": {
+            "medium": 15,
+            "subject": 15,
+            "ageGroup": 1,
+            "gradeLevel": 7,
+            "board": 4,
+            "relatedBoards": 4
+        }
+    },
+    "schema_restrict_api": false,
+    "captureAccessibilityInfo": false,
+    "modifyAccessibilityInfoByReviewer": false,
+    "accessibility": [
+        {
+            "need": "Visual challenged",
+            "feature": "Is navigable through keys"
+        },
+        {
+            "need": "Visual challenged",
+            "feature": "Has alt text for all images and keys"
+        },
+        {
+            "need": "Visual challenged",
+            "feature": "Support for text to speech readers"
+        },
+        {
+            "need": "Hearing challenged",
+            "feature": "Has subtitles, in case of video content"
+        },
+        {
+            "need": "Hearing challenged",
+            "feature": "Has visual clues for any audio in the content"
+        }
+    ]
+}

@@ -14,8 +14,8 @@ import { CollectionHierarchyAPI, ContentService } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput, IEndEventInput, IStartEventInput } from '@sunbird/telemetry';
 import * as TreeModel from 'tree-model';
-import { ContentManagerService } from '@sunbird/offline';
 import { environment } from '@sunbird/environment';
+import { PopupControlService } from '../../../../../../service/popup-control.service';
 @Component({
   selector: 'app-public-collection-player',
   templateUrl: './public-collection-player.component.html'
@@ -101,7 +101,7 @@ export class PublicCollectionPlayerComponent implements OnInit, OnDestroy, After
     public resourceService: ResourceService, private activatedRoute: ActivatedRoute, private deviceDetectorService: DeviceDetectorService,
     public externalUrlPreviewService: ExternalUrlPreviewService, private configService: ConfigService,
     public toasterService: ToasterService, private contentUtilsService: ContentUtilsServiceService,
-    public contentManagerService: ContentManagerService,
+    public popupControlService: PopupControlService,
     public utilService: UtilService) {
     this.contentService = contentService;
     this.route = route;
@@ -330,7 +330,16 @@ export class PublicCollectionPlayerComponent implements OnInit, OnDestroy, After
       sessionStorage.setItem('singleContentRedirect', 'singleContentRedirect');
       this.router.navigate(['/get/dial/', this.dialCode]);
     } else {
-      this.navigationHelperService.navigateToPreviousUrl('/explore');
+      if (this.isOffline) {
+       const  previousUrl =  this.navigationHelperService.getPreviousUrl();
+       if (Boolean(_.includes(previousUrl.url, '/play/collection/'))) {
+        return this.router.navigate(['/']);
+       }
+       // tslint:disable-next-line: max-line-length
+       previousUrl.queryParams ? this.router.navigate([previousUrl.url], {queryParams: previousUrl.queryParams}) : this.router.navigate([previousUrl.url]);
+      } else {
+        this.navigationHelperService.navigateToPreviousUrl('/explore');
+      }
     }
   }
   closeContentPlayer() {

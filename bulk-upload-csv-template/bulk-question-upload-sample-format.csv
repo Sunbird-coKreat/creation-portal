@@ -1,0 +1,62 @@
+Name of the Question,QuestionText,QuestionImage,Option Layout,Option1,Option1Image,Option2,Option2Image,Option3,Option3Image,Option4,Option4Image,AnswerNo,Level 1 Question Set Section,Keywords,Author,Copyright,Attributions
+"Mandatory: No
+Default: Multiple Choice Question
+Validations: 
+- Upto 120 characters
+- No special characters
+Tip: Please provide name for the question","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Length not more than 1000 characters.
+Tip: Provide text in Unicode.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Only JPG format. Google Drive Link - Publicly accessible.
+Tip: Only JPG format. Google Drive Link - Publicly accessible.","Mandatory: Yes
+Default: None
+Validation: Only 1, 2, or 3
+Tip: Layout number = Needs involved decision making, depending on question length and answer/option length.
+1 = vertical (most flexible)
+2 = horizontal (suitable for one-two words or images)
+3 = grid (suitable for a few words or images)","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Length not more than 1000 characters.
+Tip: Provide text in Unicode.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Only JPG format. Google Drive Link - Publicly accessible.
+Tip: Only JPG format. Google Drive Link - Publicly accessible.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Length not more than 1000 characters.
+Tip: Provide text in Unicode.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Only JPG format. Google Drive Link - Publicly accessible.
+Tip: Only JPG format. Google Drive Link - Publicly accessible.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Length not more than 1000 characters.
+Tip: Provide text in Unicode.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Only JPG format. Google Drive Link - Publicly accessible.
+Tip: Only JPG format. Google Drive Link - Publicly accessible.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Length not more than 1000 characters.
+Tip: Provide text in Unicode.","Mandatory: Conditional - any one of text or image should be provided.
+Default: None
+Validation: Only JPG format. Google Drive Link - Publicly accessible.
+Tip: Only JPG format. Google Drive Link - Publicly accessible.","Mandatory: Yes
+Default: None
+Validation: Only 1, 2, 3, or 4
+Tip: Enter Correct answer option value between 1 to 4","Mandatory: No
+Default: None
+Validation: Should match with the names provided in the question set hierarchy. Not case-sensitive / Case insensitive. 
+Tip: Provide name of the folder where you want to upload a question","Mandatory: No
+Default: None
+Validation: Comma separated values. No special characters.
+Tip: Keywords","
+Mandatory: No
+Default: None
+Validation: No special characters. Max 300 characters.
+Tip: The person or organization who has authored the content","Mandatory: No
+Default: Name of the tenant.
+Validation: No special characters. Max 300 characters.
+Tip: Person or Organization who owns the copyright. Default name is DIKSHA tenant.","Mandatory: No
+Default: None
+Validation: No special characters. Max 300 characters.
+Tip: List of persons or organizations who have contributed to this content."

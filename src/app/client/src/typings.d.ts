@@ -17,11 +17,12 @@ declare module '*.json' {
 declare const EkTelemetry: any;
 declare const Fingerprint2: any;
 declare const iziToast: any;
+declare const iziModal: any;
 
 
 interface JQuery {
   treePicker(options?: any);
-  topicTreePicker(options?: any)
+  topicTreePicker(options?: any);
   iziModal(options?: any);
   dropdown(options?: any);
   DataTable(options?: any);

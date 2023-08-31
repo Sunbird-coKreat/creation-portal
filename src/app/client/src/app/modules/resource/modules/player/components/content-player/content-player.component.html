@@ -2,7 +2,7 @@
 <div id="content-player" class="content-grid ui stackable grid">
     <div class="twelve wide column">
         <div class='mt-5 videosegment ui segment'>
-            <div class='content-player-body'>
+            <div class='content-player-body' *ngIf="(popupControlService.checkPopupStatus | async) else loading">
                 <div *ngIf="showPlayer && contentData" class="videosegment  ui clearing segment">
                     <div [appTelemetryImpression]="telemetryImpression" class="content-grid">
                         <div class="sb-pageSection">
@@ -20,17 +20,23 @@
                                 </a>
                                 <span *ngIf='permissionService.permissionAvailable' appPermission [permission]="['CONTENT_CREATOR', 'CONTENT_REVIEWER']"
                                     (click)="copyContent(contentData)" class="d-inline-block">
-                                    <a class="cursor-pointer btn-bg p-8 d-inline-block font-weight-bold">
+                                    <a appTelemetryInteract [telemetryInteractEdata]="copyContentInteractEdata" [telemetryInteractObject]="objectInteract" class="cursor-pointer btn-bg p-8 d-inline-block font-weight-bold sb-color-primary">
                                         <i class="blue clone outline icon"></i>
                                         {{resourceService?.frmelmnts?.lbl?.copy}}
                                     </a>
                                 </span>
-                                <app-content-badge [data]="badgeData" class="ml-20 m-responsive-cp-badge-ml"></app-content-badge>
                                 <!-- Temporarily disable flagging-->
                                 <!-- <a routerLink="flag" class="pr-10 blue-text-color-sunbird">
                                     <i class="ui large blue flag outline icon"></i>
                                     {{resourceService?.frmelmnts?.lbl?.report}}
                                 </a> -->
+                                <!-- Print Button for printable contents-->
+                                <span class="d-inline-block" *ngIf="contentData.itemSetPreviewUrl">
+                                    <a appTelemetryInteract [telemetryInteractEdata]="printPdfInteractEdata" [telemetryInteractObject]="objectInteract" class="cursor-pointer btn-bg p-8 d-flex font-weight-bold sb-color-primary" (click)="printPdf(contentData.itemSetPreviewUrl)">
+                                        <img src="assets/images/print.svg" width="16" /> <span>&nbsp;&nbsp;{{resourceService.frmelmnts.btn.print}}</span>
+                                    </a>
+                                </span>
+                                <!-- /Print Button for printable contents-->
                             </div>
                         </div>
                         <div class="ui divider"></div>
@@ -55,14 +61,7 @@
                                         <div class="row">
                                             <div class="four wide column "></div>
                                             <div class="four wide column ">
-                                                <h2 class="ui centered aligned icon tiny header toc-note">
-                                                    <a appTelemetryInteract [telemetryInteractObject]="objectInteract" [telemetryInteractEdata]="{id:'take-note', type:'click',pageid:'content-player'}" class="ui take-note-card cursor-pointer" (click)="showNoteEditor=!showNoteEditor">
-                                                        <app-popup-editor *ngIf="showNoteEditor" [mode]="'create'" [ids]="{contentId:contentId}" (exitModal)="showNoteEditor=false"
-                                                            (createEventEmitter)="createEventEmitter($event)"></app-popup-editor>
-                                                        <img src="{{'assets/images/takenote.png' | cdnprefixurl }}">
-                                                        <span>{{resourceService?.frmelmnts?.lbl?.takenote}}</span>
-                                                    </a>
-                                                </h2>
+
                                             </div>
                                         </div>
                                         <div class="four wide column "></div>
@@ -79,9 +78,6 @@
                                 <div class="twelve wide column mt-20">
                                     <!-- <app-discussions></app-discussions> -->
                                 </div>
-                            </div>
-                            <div *ngIf="contentStatus !== 'Unlisted'" class="four wide column">
-                                <app-note-card [ids]="{contentId:contentId}" [createNoteData]="createNoteData"></app-note-card>
                             </div>
                         </div>
                     </div>
@@ -104,6 +100,9 @@
                     </div>
                 </div>
             </div>
+            <ng-template #loading>
+                <app-loader></app-loader>
+            </ng-template>
         </div>
     </div>
 </div>

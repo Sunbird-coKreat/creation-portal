@@ -1,0 +1,80 @@
+{
+  "objectType": "Collection",
+  "external": {
+    "tableName": "content_hierarchy",
+    "properties": {
+      "hierarchy": {
+        "type": "string"
+      },
+      "relational_metadata": {
+        "type": "string"
+      }
+    },
+    "primaryKey": ["identifier"]
+  },
+  "relations": {
+    "questions": {
+      "type": "associatedTo",
+      "direction": "out",
+      "objects": ["AssessmentItem"]
+    },
+    "children": {
+      "type": "hasSequenceMember",
+      "direction": "out",
+      "objects": ["Content", "ContentImage", "Collection", "CollectionImage", "QuestionSet", "QuestionSetImage"]
+    },
+    "collections": {
+      "type": "hasSequenceMember",
+      "direction": "in",
+      "objects": ["Content", "ContentImage"]
+    }
+  },
+  "version": "enable",
+  "frameworkCategories": [],
+  "orgFrameworkTerms": [],
+  "targetFrameworkTerms": [],
+  "edge": {
+    "properties": {
+      "license": "License"
+    }
+  },
+  "copy": {
+    "scheme": {
+      "TextBookToCourse": {
+        "TextBook": "Course",
+        "TextBookUnit": "CourseUnit"
+      },
+      "TextBookToLessonPlan": {
+      }
+    }
+  },
+  "schema_restrict_api": false,
+  "headers": [
+    {"label": "Question Type", "key": "questionCategories"},
+    {"label": "Skill Tested", "key": "bloomsLevel"}
+  ],
+  "captureAccessibilityInfo": false,
+  "modifyAccessibilityInfoByReviewer": false,
+  "accessibility": [
+      {
+          "need": "Visual challenged",
+          "feature": "Is navigable through keys"
+      },
+      {
+        "need": "Visual challenged",
+        "feature": "Has alt text for all images and keys"
+      },
+      {
+          "need": "Visual challenged",
+          "feature": "Support for text to speech readers"
+      },
+      {
+          "need": "Hearing challenged",
+          "feature": "Has subtitles, in case of video content"
+      },
+      {
+          "need": "Hearing challenged",
+          "feature": "Has visual clues for any audio in the content"
+      }
+  ]
+}

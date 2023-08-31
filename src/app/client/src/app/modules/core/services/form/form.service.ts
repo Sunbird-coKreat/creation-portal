@@ -61,7 +61,7 @@ export class FormService {
       return of(data);
     } else {
       if (formInputParams.framework) {
-        channelOptions.data.request.framework = formInputParams.framework;
+        channelOptions.data.request.framework = Array.isArray(formInputParams.framework) ? formInputParams.framework[0] : formInputParams.framework;
       }
       return this.publicDataService.post(channelOptions).pipe(map(
         (formConfig: ServerResponse) => {

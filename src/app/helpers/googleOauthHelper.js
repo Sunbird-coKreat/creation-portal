@@ -43,7 +43,8 @@ const keycloakMergeGoogleAndroid = getKeyCloakClient({
 class GoogleOauth {
   createConnection(req) {
     const  { clientId, clientSecret } = GOOGLE_OAUTH_CONFIG;
-    const redirect = `${req.protocol}://${req.get('host')}${redirectPath}`;
+    const protocol = envHelper.SUNBIRD_PROTO;
+    const redirect = `${protocol}://${req.get('host')}${redirectPath}`;
     return new google.auth.OAuth2(clientId, clientSecret, redirect);
   }
   generateAuthUrl(req) {
@@ -144,11 +145,16 @@ const createSession = async (emailId, reqQuery, req, res) => {
     });
     keycloakClient.storeGrant(grant, req, res);
     req.kauth.grant = grant;
-    keycloakClient.authenticated(req)
-    return {
-      access_token: grant.access_token.token,
-      refresh_token: grant.refresh_token.token
-    };
+    return new Promise((resolve, reject) => {
+      keycloakClient.authenticated(req, function (error) {
+        if (error) {
+          logger.info({msg: 'googleauthhelper:createSession error creating session', additionalInfo: error});
+          reject('GOOGLE_CREATE_SESSION_FAILED')
+        } else {
+          resolve({access_token: grant.access_token.token, refresh_token: grant.refresh_token.token})
+        }
+      });
+    })
   }
 }
 const fetchUserByEmailId = async (emailId, req) => {
@@ -174,7 +180,7 @@ const createUserWithMailId = async (accountDetails, client_id, req) => {
   }
   const options = {
     method: 'POST',
-    url: envHelper.LEARNER_URL + 'user/v1/signup',
+    url: envHelper.LEARNER_URL + 'user/v2/signup',
     headers: getHeaders(req),
     body: {
       params: {
@@ -205,7 +211,7 @@ const getHeaders = (req) => {
     'ts': dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss:lo'),
     'content-type': 'application/json',
     'accept': 'application/json',
-    'Authorization': 'Bearer ' + envHelper.PORTAL_API_AUTH_TOKEN
+    'Authorization': 'Bearer ' + envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
   }
 }
 module.exports = { googleOauth, createSession, fetchUserByEmailId, createUserWithMailId };

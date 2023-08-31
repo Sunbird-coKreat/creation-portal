@@ -1,8 +1,8 @@
 import { BatchCardComponent } from './batch-card.component';
-import { async, ComponentFixture, TestBed, inject } from '@angular/core/testing';
+import { ComponentFixture, TestBed, inject,  } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { PaginationService, ToasterService, ResourceService } from '../../services/index';
 import { CoreModule } from '@sunbird/core';
@@ -34,7 +34,9 @@ describe('BatchCardComponent', () => {
   class RouterStub {
     navigate = jasmine.createSpy('navigate');
   }
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [],
       schemas: [NO_ERRORS_SCHEMA],
@@ -47,11 +49,12 @@ describe('BatchCardComponent', () => {
       ]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BatchCardComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should take Batch INPUT', () => {
@@ -62,7 +65,7 @@ describe('BatchCardComponent', () => {
 
   it('should set batchDetails', inject([Router],
     (route) => {
-      spyOn(component.clickEvent, 'emit').and.returnValue({});
+      spyOn(component.clickEvent, 'emit').and.callFake(() => { });
       spyOn(component, 'onAction').and.callThrough();
       component.onAction(Response.successData);
       component.batch = Response.successData;

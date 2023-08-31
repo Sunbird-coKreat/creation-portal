@@ -1,7 +1,7 @@
 
 import {of,  Observable } from 'rxjs';
 import { CourseHierarchyGetMockResponse } from '../public-course-player/public-course-player.component.mock.data';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { PublicCourseConsumptionPageComponent } from './public-course-consumption-page.component';
 import {SharedModule, ResourceService, ToasterService, ContentUtilsServiceService, NavigationHelperService } from '@sunbird/shared';
 import { CoreModule, CoursesService } from '@sunbird/core';
@@ -9,6 +9,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import {CourseConsumptionService, CourseProgressService, CourseBatchService} from '@sunbird/learn';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 const resourceServiceMockData = {
   messages : {
@@ -45,9 +46,11 @@ describe('PublicCourseConsumptionPageComponent', () => {
   let component: PublicCourseConsumptionPageComponent;
   let fixture: ComponentFixture<PublicCourseConsumptionPageComponent>;
   let activatedRouteStub, courseService, toasterService, courseConsumptionService, navigationHelperService;
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
+      imports: [RouterTestingModule, HttpClientTestingModule, SharedModule.forRoot(), CoreModule],
       declarations: [ PublicCourseConsumptionPageComponent ],
       providers: [{ provide: ActivatedRoute, useClass: ActivatedRouteStub },
         { provide: ResourceService, useValue: resourceServiceMockData },
@@ -55,9 +58,6 @@ describe('PublicCourseConsumptionPageComponent', () => {
         CourseProgressService, CourseBatchService, ContentUtilsServiceService],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PublicCourseConsumptionPageComponent);
     component = fixture.componentInstance;
     activatedRouteStub = TestBed.get(ActivatedRoute);
@@ -68,6 +68,10 @@ describe('PublicCourseConsumptionPageComponent', () => {
     spyOn(navigationHelperService, 'navigateToResource').and.returnValue('');
     spyOn(toasterService, 'error').and.returnValue('');
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should fetch course details on page load', () => {
     activatedRouteStub.snapshot.firstChild.params = {courseId: 'do_212347136096788480178'};

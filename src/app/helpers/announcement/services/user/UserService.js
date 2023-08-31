@@ -44,7 +44,7 @@ class UserService {
     /**
 		 * @property {string} profileUri - router path used to store profile path uri
 		 */
-    this.profileUri = 'user/v1/read/'
+    this.profileUri = 'user/v5/read/'
   }
   /**
 	 * Get user profile of given user

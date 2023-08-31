@@ -2,7 +2,7 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { UserService } from '../../../core/services/user/user.service';
 import { ManageService } from '../../services/manage/manage.service';
 import { ResourceService } from '../../../shared/services/resource/resource.service';
-import { NavigationHelperService } from '@sunbird/shared';
+import { ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
@@ -39,21 +39,22 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
     'districts': 0,
     'blocks': 0,
     'schools': 0,
-    'teachers': 0
+    'subOrgRegistered': 0,
+    'rootOrgRegistered': 0
   };
   public validatedUserSummary;
   public geoButtonText;
   public teachersButtonText;
   public manageService: ManageService;
   public slug: any = (<HTMLInputElement>document.getElementById('defaultTenant'));
-  public geoJSON = 'geo-summary.json';
-  public geoCSV = 'geo-detail.csv';
-  public geoDetail = 'geo-summary-district.json';
-  public userJSON = 'user-summary.json';
-  public userCSV = 'user-detail.csv';
-  public userSummary = 'validated-user-summary.json';
-  public userDetail = 'validated-user-summary-district.json';
-  public userZip = 'validated-user-detail.csv';
+  public geoJSON = 'geo-summary';
+  public geoCSV = 'geo-detail';
+  public geoDetail = 'geo-summary-district';
+  public userJSON = 'user-summary';
+  public userCSV = 'user-detail';
+  public userSummary = 'validated-user-summary';
+  public userDetail = 'validated-user-summary-district';
+  public userZip = 'validated-user-detail';
   public GeoTableId = 'GeoDetailsTable';
   public geoTableHeader;
   public geoTabledata = [];
@@ -71,7 +72,7 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
   public selectFileInteractEdata: IInteractEventEdata;
 
   constructor(activatedRoute: ActivatedRoute, public navigationhelperService: NavigationHelperService,
-    userService: UserService, manageService: ManageService, resourceService: ResourceService) {
+    userService: UserService, manageService: ManageService, private toasterService: ToasterService, resourceService: ResourceService) {
     this.userService = userService;
     this.manageService = manageService;
     this.activatedRoute = activatedRoute;
@@ -159,7 +160,7 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
   }
 
   public getUserJSON() {
-    this.manageService.getData(this.slug, this.userJSON).subscribe(
+    this.manageService.getData(this.userJSON, `${this.slug}.json`).subscribe(
       data => {
         const result = _.get(data, 'result');
         this.uploadedDetails = {
@@ -179,7 +180,7 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
   }
 
   public getGeoJSON() {
-    this.manageService.getData(this.slug, this.geoJSON).subscribe(
+    this.manageService.getData(this.geoJSON, `${this.slug}.json`).subscribe(
       data => {
         const result = _.get(data, 'result');
         this.geoData = {
@@ -195,14 +196,15 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
   }
 
   public getUserSummary() {
-    this.manageService.getData(this.slug, this.userSummary).subscribe(
+    this.manageService.getData(this.userSummary, `${this.slug}.json`).subscribe(
       data => {
         const result = _.get(data, 'result');
         this.validatedUser = {
           'districts': result['districts'] ? result['districts'] : 0,
           'blocks': result['blocks'] ? result['blocks'] : 0,
           'schools': result['schools'] ? result['schools'] : 0,
-          'teachers': result['registered'] ? result['registered'] : 0
+          'subOrgRegistered': result['subOrgRegistered'] ? result['subOrgRegistered'] : 0,
+          'rootOrgRegistered': result['rootOrgRegistered'] ? result['rootOrgRegistered'] : 0
         };
       },
       error => {
@@ -212,7 +214,7 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
   }
 
   public getGeoDetail() {
-    this.manageService.getData(this.slug, this.geoDetail).subscribe(
+    this.manageService.getData(this.geoDetail, `${this.slug}.json`).subscribe(
       data => {
         const result = _.get(data, 'result');
         this.geoSummary = result;
@@ -224,7 +226,7 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
   }
 
   public getUserDetail() {
-    this.manageService.getData(this.slug, this.userDetail).subscribe(
+    this.manageService.getData(this.userDetail, `${this.slug}.json`).subscribe(
       data => {
         const result = _.get(data, 'result');
         this.validatedUserSummary = result;
@@ -325,8 +327,8 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
     }, 500);
   }
 
-  public downloadCSVFile(fileName: any) {
-    this.manageService.getData(this.slug, fileName)
+  public downloadCSVFile(slug, fileName: any) {
+    this.manageService.getData(slug, fileName)
       .subscribe(
         response => {
           const url = (_.get(response, 'result.signedUrl'));
@@ -338,16 +340,19 @@ export class UserOrgManagementComponent implements OnInit, AfterViewInit {
       );
   }
 
-  public downloadZipFile(fileName: any) {
-    this.manageService.getData(this.slug, fileName)
+  public downloadZipFile(slug, fileName: any) {
+    this.manageService.getData(slug, fileName)
       .subscribe(
         response => {
           if (response && response.result && response.result.signedUrl) {
             window.open(response.result.signedUrl, '_blank');
+          } else {
+            this.toasterService.error(this.resourceService.messages.emsg.m0076);
           }
         },
         error => {
           console.log(error);
+          this.toasterService.error(this.resourceService.messages.emsg.m0076);
         }
       );
   }

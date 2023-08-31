@@ -2,6 +2,12 @@
     height: 100%;
     max-height: 100%;
 }
+.max-height {
+    height:380px !important;
+}
+.auto-height {
+    height:auto !important;
+}
 .w-100 {
     width:100%;
     max-width:100%;
@@ -46,6 +52,26 @@
     width:20%;
     max-width:20%;
 }
+.w-17-5 {
+    width: 17.5%;
+    max-width: 17.5%;
+}
+.w-15 {
+    width:15%;
+    max-width:15%;
+}
+.w-10 {
+    width:10%;
+    max-width:10%;
+}
+.w-8 {
+    width:8%;
+    max-width:8%;
+}
+.w-5 {
+    width:5%;
+    max-width:5%;
+}
 .w-auto {
     width:auto;
     max-width:auto;
@@ -62,4 +88,15 @@
 }
 .min-height-auto {
     min-height: auto !important;
+}
+.maxmin-h-375{
+    min-height: 375px;
+    max-height: 375px;
+}
+.min-w-125{
+    min-width: 125px;
+}
+
+.max-h-375 {
+    max-height: 375px;
 }

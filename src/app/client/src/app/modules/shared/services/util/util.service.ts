@@ -1,15 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import * as _ from 'lodash-es';
-import { ICard } from '@sunbird/shared';
-import { Subject, Observable } from 'rxjs';
+import { ICard, ILanguage } from '@sunbird/shared';
+import { Subject } from 'rxjs';
+import { ResourceService } from '../resource/resource.service';
   // Dependency injection creates new instance each time if used in router sub-modules
+@Injectable()
 export class UtilService {
   static singletonInstance: UtilService;
   public showAppPopUp = false;
   private searchQuery = new Subject<any>();
   public searchQuery$ = this.searchQuery.asObservable();
+  public languageChange = new EventEmitter<ILanguage>();
+  public hideHeaderTabs = new EventEmitter<boolean>();
+  public searchKeyword = new EventEmitter<string>();
 
-  constructor() {
+  constructor(private resourceService: ResourceService) {
     if (!UtilService.singletonInstance) {
       UtilService.singletonInstance = this;
     }
@@ -42,12 +47,18 @@ export class UtilService {
       metaData: {},
       completionPercentage: data.completionPercentage || 0,
       mimeTypesCount: data.mimeTypesCount || 0,
-      cardImg: data.appIcon || data.courseLogoUrl || 'assets/images/book.png',
+      cardImg: data.appIcon || data.courseLogoUrl || data.cardImg || 'assets/images/book.png',
       resourceType: data.resourceType,
       badgeAssertions: data.badgeAssertions,
-      organisation: data.organisation
-    };
+      organisation: data.organisation,
+      hoverData: data.hoverData,
+      board: data.board || '',
+      identifier: data.identifier,
 
+    };
+    if (data.desktopAppMetadata) {
+      content['desktopAppMetadata'] = data.desktopAppMetadata;
+    }
     // this customization is done for enrolled courses
     if (_.has(data, 'content')) {
       content['topic'] = this.getTopicSubTopic('topic', data.content.topic);
@@ -171,14 +182,30 @@ export class UtilService {
     return formInputData;
   }
   getPlayerDownloadStatus(status, content, currentRoute) {
-    if (currentRoute === 'browse') {
-      if (status === 'DOWNLOAD') {
-        return (!content['downloadStatus'] || content['downloadStatus'] === 'FAILED');
-      }
-      return (content['downloadStatus'] === status);
+    if (content) {
+    const downloadStatus = content['downloadStatus'];
+    const addedUsing  = _.get(content, 'desktopAppMetadata.addedUsing');
+    if (addedUsing && addedUsing === 'import' && !downloadStatus) {
+      return this.isDownloaded(content, status);
+    } else {
+      const contentStatus = ['DOWNLOAD', 'FAILED', 'CANCELED'];
+        if (status === 'DOWNLOAD') {
+        return  downloadStatus ? _.includes(contentStatus, downloadStatus) : this.isDownloaded(content, status);
+        } else {
+         return downloadStatus ? downloadStatus === status : this.isDownloaded(content, status);
+        }
     }
-    return false;
+    }
   }
+
+  isDownloaded(content, status) {
+    if (this.isAvailable(content)) {
+      return status === 'DOWNLOADED';
+    } else {
+      return status === 'DOWNLOAD';
+    }
+  }
+
   getPlayerUpdateStatus(status, content, currentRoute, isUpdated) {
     if (currentRoute === 'library' && isUpdated) {
       if (status === 'UPDATE') {
@@ -191,5 +218,76 @@ export class UtilService {
 
   clearSearchQuery() {
       this.searchQuery.next();
+  }
+
+  updateSearchKeyword(keyword: string) {
+    this.searchKeyword.emit(keyword);
+  }
+
+  /* This will add hover data in card content */
+  addHoverData(contentList, isOnlineSearch) {
+    const status = {
+      DOWNLOADING: this.resourceService.messages.stmsg.m0140,
+      FAILED: this.resourceService.messages.stmsg.m0143,
+      DOWNLOADED: this.resourceService.messages.stmsg.m0139,
+      PAUSED: this.resourceService.messages.stmsg.m0142,
+      CANCELED: this.resourceService.messages.stmsg.m0143,
+      COMPLETED: this.resourceService.messages.stmsg.m0139,
+      INPROGRESS: this.resourceService.messages.stmsg.m0140,
+      RESUME: this.resourceService.messages.stmsg.m0140,
+      INQUEUE: this.resourceService.messages.stmsg.m0140,
+      goToMyDownloads: this.resourceService.frmelmnts.lbl.goToMyDownloads,
+      saveToPenDrive: this.resourceService.frmelmnts.lbl.saveToPenDrive,
+    };
+
+    _.each(contentList, (value) => {
+      const contentStatus = status[_.get(value, 'downloadStatus')];
+      value['hoverData'] = {
+        note: isOnlineSearch ? (contentStatus ? (contentStatus === 'DOWNLOADED' ?  status.goToMyDownloads : '')
+        : this.isAvailable(value) ? status.goToMyDownloads : '') : '',
+        actions: [
+          {
+            type: isOnlineSearch ? 'download' : (contentStatus  ? (contentStatus !== 'DOWNLOADED' ? 'download' : 'save') : 'save') ,
+            label: isOnlineSearch ? (contentStatus ? _.capitalize(contentStatus) :
+            this.isAvailable(value) ? _.capitalize(status.COMPLETED) : _.capitalize(status.CANCELED)) :
+            (contentStatus ? (contentStatus === 'DOWNLOADED' ? status.saveToPenDrive : _.capitalize(contentStatus)) :
+            this.isAvailable(value) ? status.saveToPenDrive : _.capitalize(status.CANCELED)),
+            disabled: isOnlineSearch ? contentStatus ? _.includes(['DOWNLOADED', 'DOWNLOADING', 'PAUSED'], contentStatus) :
+            this.isAvailable(value) : contentStatus ? _.includes(['DOWNLOADING', 'PAUSED'], contentStatus) : !this.isAvailable(value)
+          },
+          {
+            type: 'open',
+            label: this.resourceService.frmelmnts.lbl.open
+          }
+        ]
+      };
+    });
+
+    return contentList;
+  }
+  isAvailable(content) {
+    return (_.has(content, 'desktopAppMetadata') ? (!_.has(content, 'desktopAppMetadata.isAvailable')
+    || _.get(content, 'desktopAppMetadata.isAvailable')) : false);
+  }
+
+  emitLanguageChangeEvent(language: ILanguage) {
+    this.languageChange.emit(language);
+  }
+
+  emitHideHeaderTabsEvent(hideTab: boolean) {
+    this.hideHeaderTabs.emit(hideTab);
+  }
+
+  /**
+   * Parses string to object
+   * Throws error if unable to parse
+   * @param string
+   */
+  parseJson(string) {
+    try {
+      return JSON.parse(string);
+    } catch (e) {
+      throw new Error('ERROR_PARSING_STRING');
+    }
   }
 }

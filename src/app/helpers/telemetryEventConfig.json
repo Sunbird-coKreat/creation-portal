@@ -24,6 +24,13 @@
       "message": "Calling get user profile",
       "env": "user"
     },
+    "user/v5/read": {
+      "title": "Read user profile",
+      "category": "userread",
+      "url": "user/v5/read",
+      "message": "Calling get user profile",
+      "env": "user"
+    },
     "user/v1/update/logintime": {
       "title": "Update user login time",
       "category": "logintimeupdate",
@@ -35,6 +42,13 @@
       "title": "Org search",
       "category": "orgsearch",
       "url": "org/v1/search",
+      "message": "Calling org search",
+      "env": "org"
+    },
+    "org/v2/search": {
+      "title": "Org search",
+      "category": "orgsearch",
+      "url": "org/v2/search",
       "message": "Calling org search",
       "env": "org"
     },
@@ -56,6 +70,13 @@
       "title": "Create user profile",
       "category": "createuser",
       "url": "user/v1/create",
+      "message": "Calling create user",
+      "env": "user"
+    },
+    "user/v1/sso/create": {
+      "title": "Create user profile",
+      "category": "createuser",
+      "url": "user/v1/sso/create",
       "message": "Calling create user",
       "env": "user"
     },

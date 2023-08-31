@@ -14,7 +14,7 @@ describe('BrowserCacheTtlService', () => {
   }));
   it('should return apiCacheTtl when browserCacheTtl get method is called', inject([BrowserCacheTtlService],
      (service: BrowserCacheTtlService) => {
-      spyOn(document, 'getElementById').and.returnValue('600');
+      spyOn(document, 'getElementById').and.returnValue('600' as any);
     expect(service.browserCacheTtl).toBeDefined();
   }));
 });

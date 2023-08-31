@@ -6,6 +6,7 @@ import {
   IInteractEventInput, IShareEventInput, IErrorEventInput, IEndEventInput, ILogEventInput, ITelemetryContext, IFeedBackEventInput
 } from './../../interfaces/telemetry';
 import { environment } from '@sunbird/environment';
+declare const EkTelemetry;
 
 export const TELEMETRY_PROVIDER = new InjectionToken('telemetryProvider');
 /**
@@ -148,6 +149,19 @@ export class TelemetryService {
     }
   }
 
+  public generateErrorEvent(data) {
+    const telemetryErrorData = {
+      context: {env: data.env},
+      edata: {
+        err: data.errorMessage,
+        errtype: data.errorType,
+        stacktrace: data.stackTrace,
+        pageid: data.pageid
+      }
+    };
+    this.error(telemetryErrorData);
+  }
+
   /**
    * Logs 'end' telemetry event
    *
@@ -252,14 +266,17 @@ export class TelemetryService {
    */
   private getEventContext(eventInput: any) {
     const eventContextData: ITelemetryContextData = {
-      channel: eventInput.edata.channel || this.context.config.channel,
-      pdata: eventInput.edata.pdata || this.context.config.pdata,
+      channel: eventInput.edata.channel || eventInput.context.channel || this.context.config.channel,
+      pdata: eventInput.context.pdata || this.context.config.pdata,
       env: eventInput.context.env || this.context.config.env,
       sid: eventInput.sid || this.context.config.sid,
       uid: this.context.config.uid,
       cdata: eventInput.context.cdata || [],
       rollup: this.getRollUpData(this.context.userOrgDetails.organisationIds)
     };
+    if (eventInput.did) {
+      eventContextData['did'] = eventInput.did;
+    }
     return eventContextData;
   }
 

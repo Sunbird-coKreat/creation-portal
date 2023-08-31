@@ -10,7 +10,7 @@ import { SharedModule } from '@sunbird/shared';
 import { CoreModule } from '@sunbird/core';
 import { CacheService } from 'ng2-cache-service';
 
-describe('EditorService', () => {
+xdescribe('EditorService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule,

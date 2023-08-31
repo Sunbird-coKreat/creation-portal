@@ -1,0 +1,15 @@
+<span class="fs-0-785 sb-color-gray-400 pl-10 pr-10 sb-color-primary d-flex">
+  <span suiPopup [popupTemplate]="helpSectionTemplate" [popupPlacement]="popupPlacement" class="cursor-pointer d-flex sb-help-section" popupTrigger="manual"  #popup="suiPopup" hoverable>
+    <i id="{{pageid}}" aria-hidden="true" class="question circle icon fs-1-286" (mouseenter) ="mouseEnter(popup)"></i>
+  </span>
+  <label class="mt-5 mb-5 cursor-pointer">{{resourceService?.frmelmnts?.lbl?.needHelp | titlecase }}</label>
+</span>
+<ng-template #helpSectionTemplate>
+  <div class="p-10 w-250">
+    <div class="fs-0-785 font-weight-bold mb-10" *ngIf="helpSectionConfig.header">{{helpSectionConfig.header}}</div>
+    <div class="fs-0-785 sb-color-gray-400 mb-5" *ngIf="helpSectionConfig.message">
+      {{helpSectionConfig.message}}
+    </div>
+    <button *ngIf="helpSectionConfig.url" class='sb-btn sb-btn-outline-primary sb-btn-normal mt-10' (click)="openLink(helpSectionConfig.url)">{{resourceService?.frmelmnts?.lbl?.knowMore | titlecase }}</button>
+  </div>
+</ng-template>

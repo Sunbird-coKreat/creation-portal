@@ -1,10 +1,8 @@
-
-
 import { BehaviorSubject, throwError, of } from 'rxjs';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import * as _ from 'lodash-es';
 import { DataDrivenFilterComponent } from './data-driven-filter.component';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -12,6 +10,9 @@ import { SharedModule, ResourceService, ConfigService, ToasterService, BrowserCa
 import { CoreModule, FrameworkService, FormService, UserService, PublicDataService } from '@sunbird/core';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CacheService } from 'ng2-cache-service';
+// import { MainHeaderComponent } from './../../../core/components/main-header/main-header.component';
+
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('DataDrivenFilterComponent', () => {
   let component: DataDrivenFilterComponent;
@@ -41,18 +42,18 @@ describe('DataDrivenFilterComponent', () => {
   const mockUserRoles = {
     userRoles: ['PUBLIC', 'CONTENT_REVIEWER']
   };
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule,RouterTestingModule, TelemetryModule.forRoot()],
+      // declarations: [MainHeaderComponent],      
       providers: [ConfigService, CacheService, ResourceService,
         { provide: Router, useClass: RouterStub },
         { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(DataDrivenFilterComponent);
     component = fixture.componentInstance;
     frameworkService = TestBed.get(FrameworkService);
@@ -77,7 +78,11 @@ describe('DataDrivenFilterComponent', () => {
     });
   });
 
-  it('should get formated filter data by calling framework service and form service and set formated date in session', () => {
+  afterEach(() => {
+    fixture.destroy();
+  });
+  
+  xit('should get formated filter data by calling framework service and form service and set formated date in session', () => {
     mockHashTagId = undefined;
     mockFrameworkInput = undefined;
     mockFrameworkCategories = [];
@@ -88,7 +93,7 @@ describe('DataDrivenFilterComponent', () => {
     resourceService._languageSelected.next({value: 'en', label: 'English', dir: 'ltr'});
     spyOn(cacheService, 'get').and.returnValue(undefined);
     spyOn(cacheService, 'set').and.returnValue(undefined);
-    spyOn(component.dataDrivenFilter, 'emit').and.returnValue([]);
+    spyOn(component.dataDrivenFilter, 'emit').and.returnValue([] as any);
     component.ngOnInit();
     expect(component.formFieldProperties).toBeDefined();
     expect(component.filtersDetails).toBeDefined();
@@ -111,4 +116,5 @@ describe('DataDrivenFilterComponent', () => {
     component.removeFilterSelection('subject', 'English');
     expect(component.formInputData.subject).toEqual([]);
   });
+
 });

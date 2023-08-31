@@ -1,12 +1,11 @@
 import { ActivatedRoute } from '@angular/router';
 import { ResourceService, ConfigService } from '../../services';
-import { Component, Input, EventEmitter, Output, OnDestroy, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnDestroy, Inject, ViewChild, ChangeDetectorRef, OnInit } from '@angular/core';
 import { ICaraouselData } from '../../interfaces';
-import { OnInit } from '@angular/core/src/metadata/lifecycle_hooks';
 import * as _ from 'lodash-es';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { Subscription } from 'rxjs';
-import { DOCUMENT } from '@angular/platform-browser';
+import { DOCUMENT } from '@angular/common';
 import { environment } from '@sunbird/environment';
 
 /**
@@ -88,7 +87,7 @@ export class PageSectionComponent implements OnInit, OnDestroy {
       this.slideConfig['rtl'] = false;
     }
     try {
-      if (this.section.name !== 'My Courses') {
+      if (this.section.name !== this.resourceService.frmelmnts.lbl.mytrainings) {
         const display = JSON.parse(this.section['display']);
         if (_.has(display.name, data) && !_.isEmpty(display.name[data])) {
           this.section.name = display.name[data];

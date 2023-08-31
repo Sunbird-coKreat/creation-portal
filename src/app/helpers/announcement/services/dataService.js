@@ -71,7 +71,7 @@ class DataService {
   getGeoLocations (orgIds, token, reqID) {
     return new Promise((resolve, reject) => {
       try {
-        const DEFAULT_ENDPOINT = 'org/v1/search'
+        const DEFAULT_ENDPOINT = 'org/v2/search'
         let requestObj = {
           'filters': {
             'id': orgIds
@@ -88,7 +88,6 @@ class DataService {
           'json': true
         }
         options.headers = this.service.getRequestHeader(token)
-        // telemetry.generateApiCallLogEvent(reqID, options, 'org/v1/search')
         console.log('Announcement - get geolocations - Request', JSON.stringify(options))
 
         let data = new Promise((resolve, reject) => {

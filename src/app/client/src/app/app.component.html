@@ -1,17 +1,22 @@
 <div class="footer-fix" [ngClass]="{'loggedInUser': userService.loggedIn, 'guestUser': !userService.loggedIn}">
-  <app-popup #frameWorkPopUp *ngIf="showFrameWorkPopUp && !isOffline"
-    [buttonLabel]="resourceService.frmelmnts.btn.submit" (submit)="updateFrameWork($event)"></app-popup>
-  <app-tnc-popup (close)="onAcceptTnc()" #termsAndCondPopUp *ngIf="showTermsAndCondPopUp && !isOffline">
-  </app-tnc-popup>
+  <!-- <app-popup #frameWorkPopUp *ngIf="showFrameWorkPopUp && !isOffline"
+    [buttonLabel]="resourceService.frmelmnts.btn.submit" (submit)="updateFrameWork($event)"></app-popup> -->
+  <!-- <app-tnc-popup (close)="onAcceptTnc()" #termsAndCondPopUp *ngIf="showTermsAndCondPopUp && !isOffline">
+  </app-tnc-popup> -->
   <app-validate-teacher-identifier-popup *ngIf="showUserVerificationPopup && labels" [labels]="labels" [userFeedData]="userFeed"> </app-validate-teacher-identifier-popup>
   <app-user-location (close)="onLocationSubmit()" *ngIf="!isLocationConfirmed" [isCustodianOrgUser]="isCustodianOrgUser" [deviceProfile]="deviceProfile" [userProfile]="usersProfile">
   </app-user-location>
+  <div *ngIf="!isContributor && this.router.isActive('/contribute', true) && initApp && devicePopupShown">
+  <app-enroll-contributor  (close)="onContributorModalSubmit()" >
+  </app-enroll-contributor>
+</div>
   <app-header *ngIf="!hideHeaderNFooter" [routerEvents]="routeData$"></app-header>
   <app-install-app (viewInBrowser)="viewInBrowser($event)" *ngIf="showAppPopUp && userService.loggedIn && !isOffline">
   </app-install-app>
   <!--<app-breadcrumbs *ngIf="userService.loggedIn"></app-breadcrumbs>-->
   <router-outlet *ngIf="initApp"></router-outlet>
 </div>
+<lib-chat-window [inputValues]="chatbotInputObj" *ngIf="initApp"></lib-chat-window>
 <app-footer *ngIf="!hideHeaderNFooter"></app-footer>
 <sui-modal [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'small'" class="sb-modal"
   (dismissed)="showLoginModal = false" #modal *ngIf="sessionExpiryInterceptor.sessionExpired">
@@ -25,8 +30,25 @@
     </div>
   </div>
   <div class="sb-modal-actions">
-    <a (click)="handleLogin()" class="sb-btn sb-btn-normal sb-btn-primary">
+    <button type="button" (click)="handleLogin()" class="sb-btn sb-btn-normal sb-btn-primary">
       {{ resourceService?.frmelmnts?.btn?.login }}
-    </a>
+    </button>
+  </div>
+</sui-modal>
+
+<sui-modal [mustScroll]="false" [isClosable]="false" [transitionDuration]="0" [size]="'small'" class="sb-modal"
+  (dismissed)="onCloseDeviceNoticePopUp()" #deviceCheckPopUp *ngIf="!devicePopupShown">
+  <div class="sb-modal-header">
+    {{ resourceService?.frmelmnts?.lbl?.devicePopUpTitle }}
+    </div>
+  <div class="sb-modal-content">
+    <div class="ui center aligned segment">
+      <span class="font-weight-bold sb-color-error">{{ resourceService?.frmelmnts?.lbl?.devicePopUpText }}</span>
+    </div>
+  </div>
+  <div class="sb-modal-actions">
+    <button type="button" (click)="onCloseDeviceNoticePopUp()" class="sb-btn sb-btn-normal sb-btn-primary">
+      {{ resourceService?.frmelmnts?.btn?.ok }}
+    </button>
   </div>
 </sui-modal>

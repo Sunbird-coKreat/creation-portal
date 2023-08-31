@@ -1,0 +1,84 @@
+<div class="sb-bg-color-primary-0 practical-header py-16" [appTelemetryImpression]="telemetryImpression">
+  <div class="d-flex  flex-jc-space-between practical-header__content ui container pt-15">
+    <div class="practical-header__title">
+      <h5 class="m-0 p-0 font-weight-bold d-inline-block pb-5 break-word">
+        {{resourceService.frmelmnts.lbl.organisationReports}}
+      </h5>
+      <p class="fs-0-785 font-weight-normal pb-10 w-60">
+        {{resourceService.frmelmnts.lbl.allReportsProvidingNote}}      
+      </p>
+    </div>
+  </div>
+</div>
+<div class="sb-bg-color-white">
+  <div class="ui container pt-24 pb-40 m-0">
+    <div class="sb-table-responsive">
+        <table class="sb-table sb-table-striped sb-table-sortable sb-table-nowrap">
+            <thead class="sb-table-header sb-table-thead-gray">
+                <tr>
+                    <th class="w-10">{{resourceService.frmelmnts.lbl.reportName}}</th>
+                    <th class="w-25">{{resourceService.frmelmnts.lbl.description}}</th>
+                    <th class="w-5">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.collectionLevelContentGaps}}</td>
+                    <td>{{resourceService.frmelmnts.lbl.collectionLevelReportGapDescription}}</td>
+                    <td class="text-center">
+                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('CollectionLevel', true);"
+                      appTelemetryInteract
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_collection_level_content_gap_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                      [telemetryInteractObject]="telemetryInteractObject"
+                      [telemetryInteractCdata]="telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+                </tr>
+                <tr>
+                    <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.folderLevelContentGaps}}</td>
+                    <td>{{resourceService.frmelmnts.lbl.folderLevelReportGapDescription}}</td>
+                    <td class="text-center">
+                      <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FolderLevel', true);"
+                      appTelemetryInteract
+                      [telemetryInteractEdata]="getTelemetryInteractEdata('download_folder_level_content_gaps_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                      [telemetryInteractObject]="telemetryInteractObject"
+                      [telemetryInteractCdata]="telemetryInteractCdata"
+                      [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+                </tr>
+                <tr>
+                  <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.visitorsReport}}</td>
+                  <td>{{resourceService.frmelmnts.lbl.visitorsReportDescription}}</td>
+                  <td class="text-center">
+                    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('vidyadaan_visitor', false);" 
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('download_visitors_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+              </tr>
+                <tr>
+                  <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.projectLevelFunnelReport}}</td>
+                  <td>{{resourceService.frmelmnts.lbl.projectLevelFunnelReportDescription}}</td>
+                  <td class="text-center">
+                    <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FunnelReport', true);" 
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="getTelemetryInteractEdata('download__project_level_funnel_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="telemetryInteractObject"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+              </tr>
+              <tr>
+                <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.contentDetailsReport}}</td>
+                <td>{{resourceService.frmelmnts.lbl.contentDetailsReportDescription}}</td>
+                <td class="text-center">
+                  <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ContentDetailsReport', true);" 
+                  appTelemetryInteract
+                  [telemetryInteractEdata]="getTelemetryInteractEdata('download_content_details_report', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                  [telemetryInteractObject]="telemetryInteractObject"
+                  [telemetryInteractCdata]="telemetryInteractCdata"
+                  [telemetryInteractPdata]="telemetryInteractPdata">{{resourceService.frmelmnts.btn.download}}</button></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+  </div>
+</div>

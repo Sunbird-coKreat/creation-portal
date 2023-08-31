@@ -1,7 +1,7 @@
 <div class="ui container mt-24" [appTelemetryImpression]="telemetryImpression" id="content-player">
   <div class="ui stackable grid" *ngIf="showPlayer && contentData">
 
-      <div class="twelve wide column">
+      <div class="twelve wide column" *ngIf="(popupControlService.checkPopupStatus | async) else loading">
 
         <!--Content Title-->
         <div class="sb-pageSection">
@@ -12,10 +12,14 @@
               {{contentData.name}}
             </h1>
             <!--/Title-->
+            <!-- Print Button for printable contents-->
+            <span class="d-inline-block" *ngIf="contentData.itemSetPreviewUrl">
+              <a appTelemetryInteract [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]= "printPdfInteractEdata" class="cursor-pointer btn-bg p-8 d-flex font-weight-bold" (click)="printPdf(contentData.itemSetPreviewUrl)">
+                  <img src="assets/images/print.svg" width="16" /> <span>&nbsp;&nbsp;{{resourceService.frmelmnts.btn.print}}</span>
+              </a>
+            </span>
+            <!-- /Print Button for printable contents-->
             <div class="ml-auto d-flex flex-ai-center">
-              <div *ngIf="isOffline" class="mr-16">
-                  <app-content-download [contentData]="contentData"></app-content-download>
-            </div>
               <!--Close Button-->
               <button appTelemetryInteract [telemetryInteractCdata]="telemetryCdata"
                 [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractEdata]="closePlayerInteractEdata"
@@ -25,14 +29,11 @@
               </button>
                 <!--/Close Button-->
             </div>
-        
           </div>
         </div>
         <!--/Content Title-->
 
-        <!--Badges-->
-        <app-content-badge [data]="badgeData" *ngIf="showPlayer" ></app-content-badge>
-        <!--/Badges-->
+  
 
         <!--Warning message for external content-->
         <div class="ui warning message" *ngIf="showExtContentMsg">
@@ -55,6 +56,9 @@
         <!--/Meta Data of content-->
         
       </div>
+      <ng-template #loading>
+        <app-loader></app-loader>
+      </ng-template>
   </div>
 </div>
 

@@ -9,15 +9,16 @@ import {
   ToasterService, ResourceService, ExternalUrlPreviewService, ContentUtilsServiceService
 } from '@sunbird/shared';
 import { CourseConsumptionService, CourseBatchService, CourseProgressService, AssessmentScoreService } from './../../../services';
-import { INoteData } from '@sunbird/notes';
 import { IImpressionEventInput, IEndEventInput, IStartEventInput, IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import * as TreeModel from 'tree-model';
 const ACCESSEVENT = 'renderer:question:submitscore';
+import { PopupControlService } from '../../../../../service/popup-control.service';
 
 @Component({
   selector: 'app-course-player',
-  templateUrl: './course-player.component.html'
+  templateUrl: './course-player.component.html',
+  styleUrls: ['course-player.component.scss']
 })
 export class CoursePlayerComponent implements OnInit, OnDestroy {
 
@@ -55,7 +56,6 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
 
   public readMore = false;
 
-  public createNoteData: INoteData;
 
   public curriculum = [];
 
@@ -114,7 +114,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
   constructor(public activatedRoute: ActivatedRoute, private configService: ConfigService,
     private courseConsumptionService: CourseConsumptionService, public windowScrollService: WindowScrollService,
     public router: Router, public navigationHelperService: NavigationHelperService, private userService: UserService,
-    private toasterService: ToasterService, private resourceService: ResourceService,
+    private toasterService: ToasterService, private resourceService: ResourceService, public popupControlService: PopupControlService,
     private cdr: ChangeDetectorRef, public courseBatchService: CourseBatchService, public permissionService: PermissionService,
     public externalUrlPreviewService: ExternalUrlPreviewService, public coursesService: CoursesService,
     private courseProgressService: CourseProgressService, private deviceDetectorService: DeviceDetectorService,
@@ -405,9 +405,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       }, 100);
     }
   }
-  public createEventEmitter(data) {
-    this.createNoteData = data;
-  }
+
   showContentCreditsPopup() {
     this.showContentCreditsModal = true;
   }

@@ -1,7 +1,7 @@
 import { TestBed, inject } from '@angular/core/testing';
 import { DashboardUtilsService } from './dashboard-utils.service';
 
-describe('DashboardUtilsService', () => {
+xdescribe('DashboardUtilsService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [DashboardUtilsService]

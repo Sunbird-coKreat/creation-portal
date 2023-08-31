@@ -1,7 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 
 import { ValidateTeacherIdentifierPopupComponent } from './validate-teacher-identifier-popup.component';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { ResourceService, SharedModule, ToasterService } from '@sunbird/shared';
 import { CoreModule, UserService } from '@sunbird/core';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -27,7 +27,9 @@ describe('ValidateTeacherIdentifierPopupComponent', () => {
   let component: ValidateTeacherIdentifierPopupComponent;
   let fixture: ComponentFixture<ValidateTeacherIdentifierPopupComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [ValidateTeacherIdentifierPopupComponent],
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
@@ -35,14 +37,14 @@ describe('ValidateTeacherIdentifierPopupComponent', () => {
       providers: [ToasterService, ResourceService, { provide: UserService, useValue: mockUserService }]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ValidateTeacherIdentifierPopupComponent);
     component = fixture.componentInstance;
     component.userFeedData = mockUserData.feedSuccessResponse.result.response.userFeed[0];
     component.labels = mockUserData.formReadResponse.result.form.data.fields[0].range[0];
     fixture.detectChanges();
+  });
+  afterEach(() => {
+    fixture.destroy();
   });
 
   it('should call ngOnInit()', () => {

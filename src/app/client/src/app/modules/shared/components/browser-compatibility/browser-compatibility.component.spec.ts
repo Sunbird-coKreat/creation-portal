@@ -1,6 +1,6 @@
-import { of as observableOf, Observable } from 'rxjs';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SuiModule } from 'ng2-semantic-ui';
+import { of as observableOf, Observable, of } from 'rxjs';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { CdnprefixPipe } from '../../pipes/cdnprefix.pipe';
 import { BrowserCompatibilityComponent } from './browser-compatibility.component';
@@ -16,20 +16,23 @@ describe('BrowserCompatibilityComponent', () => {
     browser: 'chrome'
   };
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SuiModule, HttpClientTestingModule],
       declarations: [BrowserCompatibilityComponent, CdnprefixPipe],
       providers: [ResourceService, DeviceDetectorService, ConfigService, CacheService, BrowserCacheTtlService]
     })
       .compileComponents();
-  }));
-
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(BrowserCompatibilityComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -54,7 +57,7 @@ describe('BrowserCompatibilityComponent', () => {
 
   it('should call modalHandler method and modal will be displayed if it is not chrome browser or firefox', () => {
     component.showModal = false;
-    component.deviceInfo = Response.deviceInfo;
+    spyOn(component['_deviceDetectorService'], 'getDeviceInfo').and.returnValue(Response.deviceInfoIe);
     spyOn(component, 'modalHandler').and.callThrough();
     component.ngOnInit();
     expect(component.modalHandler).toHaveBeenCalled();
@@ -62,7 +65,7 @@ describe('BrowserCompatibilityComponent', () => {
 
   it('should call modalHandler method and modal will be displayed if it is firefox and being called from workspace', () => {
     component.showModal = true;
-    component.deviceInfo = Response.deviceInfo;
+    spyOn(component['_deviceDetectorService'], 'getDeviceInfo').and.returnValue(Response.deviceInfoFirefox);
     spyOn(component, 'modalHandler').and.callThrough();
     component.ngOnInit();
     expect(component.modalHandler).toHaveBeenCalled();

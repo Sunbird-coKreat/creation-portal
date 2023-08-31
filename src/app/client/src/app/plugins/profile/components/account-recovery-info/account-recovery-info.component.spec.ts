@@ -1,7 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { AccountRecoveryInfoComponent } from './account-recovery-info.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { ResourceService, SharedModule } from '@sunbird/shared';
 import { CoreModule } from '@sunbird/core';
 import { TelemetryModule } from '@sunbird/telemetry';
@@ -18,7 +18,9 @@ describe('AccountRecoveryInfoComponent', () => {
   let component: AccountRecoveryInfoComponent;
   let fixture: ComponentFixture<AccountRecoveryInfoComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [SharedModule.forRoot(), CoreModule, FormsModule, ReactiveFormsModule,
         HttpClientTestingModule, SuiModule, TelemetryModule.forRoot() , RouterTestingModule],
@@ -26,13 +28,15 @@ describe('AccountRecoveryInfoComponent', () => {
       providers: [ResourceService, ProfileService]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(AccountRecoveryInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should select email id radio button by default and call initialize initializeFormFields() ', () => {
     spyOn(component, 'initializeFormFields').and.callThrough();
