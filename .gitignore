@@ -12,5 +12,6 @@ mochawesome-report
 /src/app/.nyc_output
 /src/app/coverage
 .idea
+.angular
 
 
