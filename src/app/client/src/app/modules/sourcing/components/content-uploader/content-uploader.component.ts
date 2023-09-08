@@ -735,9 +735,11 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
             })
             .on("progress", (progress) => {
               // need to update the progress bar
+              this.fileUplaoderProgress.progress = progress.progress;
             })
             .on("completed", (completed) => {
               console.log("completed", completed);
+              this.fileUplaoderProgress.progress = 100;
               const fileURL = signedURL.split('?')[0];
               this.updateContentWithURL(fileURL, mimeType, contentId);
             })
