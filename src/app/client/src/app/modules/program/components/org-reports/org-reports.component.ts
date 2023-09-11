@@ -31,13 +31,15 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
     private router: Router, private navigationHelperService: NavigationHelperService,
     public programTelemetryService: ProgramTelemetryService, private sourcingService: SourcingService) {}
 
-  ngOnInit() {
-    this.reportsLocation = (<HTMLInputElement>document.getElementById('reportsLocation')).value;
-    this.slug = _.get(this.userService, 'userProfile.rootOrg.slug');
-    this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
-    this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
-    this.telemetryInteractObject = {};
-  }
+    ngOnInit() {
+      this.userService.userData$.subscribe(user =>{
+        this.slug = _.get(user, 'userProfile.rootOrg.slug');
+      });
+      this.reportsLocation = (<HTMLInputElement>document.getElementById('reportsLocation')).value;
+      this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
+      this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
+      this.telemetryInteractObject = {};
+    }
 
   ngAfterViewInit() {
     const buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'));
