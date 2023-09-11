@@ -79,11 +79,11 @@ export class ProgramsService extends DataService implements CanActivate {
     this.getOverridableMetaDataConfig().subscribe();
     this.mapSlugstoOrgId();
 
-    this.userService.userData$.subscribe((user: any) => {
+    /*this.userService.userData$.subscribe((user: any) => {
       if (user && !user.err) {
         this.userProfile = user.userProfile;
       }
-    });
+    });*/
   }
 
   mapSlugstoOrgId () {
@@ -348,19 +348,6 @@ export class ProgramsService extends DataService implements CanActivate {
           // this._allowToContribute$.next(allowedToContribute);
         })
       );
-  }
-
-  /*
-  * Logic to decide if the All programs should be shown to the contributor
-  */
-  checkforshowAllPrograms() {
-    if (this.userService.userRegistryData &&
-      !_.isEmpty(this.userProfile.userRegData.User_Org) &&
-      !this.userProfile.userRegData.User_Org.roles.includes('admin')) {
-        return false;
-    }
-
-    return true;
   }
 
   /**
