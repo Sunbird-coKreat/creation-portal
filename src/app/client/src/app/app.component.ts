@@ -73,10 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * constructor
    */
-  /**
-  * Variable to show popup to install the app
-  */
-  showAppPopUp = false;
   viewinBrowser = false;
   isOffline: boolean = environment.isOffline;
   sessionExpired = false;
@@ -103,7 +99,6 @@ export class AppComponent implements OnInit, OnDestroy {
   appId: string;
   isDesktopDevice = true;
   devicePopupShown = false;
-  chatbotInputObj: any = {};
   constructor(private cacheService: CacheService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     private permissionService: PermissionService, public resourceService: ResourceService,
@@ -192,28 +187,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.checkTncAndFrameWorkSelected();
     // this.initApp = true;
     this.initAppSubject.next(true);
-  }
-
-  initializeChatbot() {
-    const baseUrl = (<HTMLInputElement>document.getElementById('portalBaseUrl'))
-      ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org';
-
-      this.chatbotInputObj = {
-      chatbotUrl: `${baseUrl}/chatapi/bot`,
-      title: this.resourceService.frmelmnts.lbl.chatbot.title,
-      //imageUrl : image.imageUrl,
-      appId: this.appId,
-      channel: this.channel,
-      did: this.deviceId,
-      userId: this.userId,
-      collapsed : true,
-      context : 'contributor',
-      header : 'DIKSHA VANI'
-    };
-
-    if (this.location.path().includes('/sourcing')) {
-        this.chatbotInputObj.context = 'sourcing';
-    }
   }
 
   isLocationStatusRequired() {
@@ -508,26 +481,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
-  /**
-   * updates user framework. After update redirects to library
-   */
-  public updateFrameWork(event) {
-    const req = {
-      framework: event
-    };
-    this.profileService.updateProfile(req).subscribe(res => {
-      this.frameWorkPopUp.modal.deny();
-      this.showFrameWorkPopUp = false;
-      this.checkLocationStatus();
-      this.utilService.toggleAppPopup();
-      this.showAppPopUp = this.utilService.showAppPopUp;
-    }, err => {
-      this.toasterService.warning(this.resourceService.messages.emsg.m0012);
-      this.frameWorkPopUp.modal.deny();
-      this.checkLocationStatus();
-      this.cacheService.set('showFrameWorkPopUp', 'installApp');
-    });
-  }
+  
   viewInBrowser() {
     this.router.navigate(['/resources']);
   }

@@ -15,9 +15,6 @@ const appRoutes: Routes = [
     path: 'profile', loadChildren: () => import('./plugins/profile/profile.module').then(m => m.ProfileModule)
   },
   {
-    path: 'certs', loadChildren: () => import('./modules/certificate/certificate.module').then(m => m.CertificateModule)
-  },
-  {
     path: 'recover', loadChildren: () => import('./modules/recover-account/recover-account.module').then(m => m.RecoverAccountModule)
   },
   {
