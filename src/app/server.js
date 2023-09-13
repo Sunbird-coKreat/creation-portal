@@ -96,6 +96,7 @@ require('./routes/accountMergeRoute.js')(app, keycloak) // refresh token routes
 
 require('./routes/clientRoutes.js')(app, keycloak) // client app routes
 
+require('./routes/reportRoutes.js')(app, keycloak) // report routes
 
 app.all(['/content-editor/telemetry', '/collection-editor/telemetry'], bodyParser.urlencoded({ extended: false }),
   bodyParser.json({ limit: '50mb' }), keycloak.protect(), telemetryHelper.logSessionEvents)
