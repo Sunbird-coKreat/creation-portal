@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UsageService } from '@sunbird/dashboard';
 import { RouterTestingModule } from '@angular/router/testing';
 import { APP_BASE_HREF } from '@angular/common';
-import { throwError as observableThrowError, of as observableOf } from 'rxjs';
+import { throwError as observableThrowError, of as observableOf, of } from 'rxjs';
 import {mockData} from './org-reports.component.spec.data'
 import { ProgramTelemetryService } from '../../../program/services';
 import { SourcingService } from '../../../sourcing/services';
@@ -24,7 +24,16 @@ describe('OrgReportsComponent', () => {
     }}
   };
   const userServiceStub = {
-    userProfile : mockData.userProfile
+    userProfile : mockData.userProfile,
+    userData$: of({
+      userProfile: {
+        firstName: 'Creator',
+        lastName: 'ekstep',
+        rootOrg: {
+          slug: 'sunbird'
+        }
+      },
+  }) 
   };
   const resourceBundle = mockData.resourceBundle;
   const routerStub = { url: '/sourcing/orgreports' };
@@ -71,8 +80,11 @@ describe('OrgReportsComponent', () => {
           value: 'reports'
       } as any;
     });
+    component['userService'] = TestBed.inject(UserService);
     component.ngOnInit();
-    expect(component.slug).toBe('sunbird');
+    component['userService'].userData$.subscribe(userData => {
+      expect(component.slug).toBe('sunbird');
+    });
     expect(component.reportsLocation).toBe('reports');
     expect(component.telemetryInteractObject).toEqual({});
   });
