@@ -5,4 +5,3 @@ export * from './share-link/share-link.component';
 export * from './redirect/redirect.component';
 export * from './custom-multi-select/custom-multi-select.component';
 export * from './full-page-modal/full-page-modal.component';
-export * from './install-app/install-app.component';

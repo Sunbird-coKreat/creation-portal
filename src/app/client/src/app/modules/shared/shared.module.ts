@@ -4,7 +4,7 @@ import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, Su
 import { FormsModule } from '@angular/forms';
 import {
   PageSectionComponent, NoResultComponent, AppLoaderComponent, ShareLinkComponent, RedirectComponent,
-  CustomMultiSelectComponent, InstallAppComponent,
+  CustomMultiSelectComponent,
   FullPageModalComponent
 } from './components';
 import {
@@ -34,13 +34,12 @@ import { PageHelpComponent } from './components/page-help/page-help.component';
     TelemetryModule
   ],
   declarations: [AppLoaderComponent, DateFormatPipe, PageSectionComponent, NoResultComponent, DateFilterXtimeAgoPipe, FilterPipe, InterpolatePipe,
-    ShareLinkComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent,
-    InstallAppComponent, ContentDirectionDirective,
+    ShareLinkComponent, CdnprefixPipe, RedirectComponent, CustomMultiSelectComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe],
   exports: [AppLoaderComponent, DateFormatPipe, DateFilterXtimeAgoPipe,
     PageSectionComponent, NoResultComponent, FilterPipe,
     ShareLinkComponent, CdnprefixPipe, InterpolatePipe, RedirectComponent,
-    CustomMultiSelectComponent, InstallAppComponent, ContentDirectionDirective,
+    CustomMultiSelectComponent, ContentDirectionDirective,
     HighlightTextDirective, FullPageModalComponent, PageHelpComponent, ToCharCodePipe]
 })
 export class SharedModule {
