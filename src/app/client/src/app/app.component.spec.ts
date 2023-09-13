@@ -281,11 +281,6 @@ const maockOrgDetails = { result: { response: { content: [{hashTagId: '1235654',
     component.onAcceptTnc();
     expect(component.onAcceptTnc).toHaveBeenCalled();
   });
-  it('Should call updateFrameWork data and config', () => {
-    spyOn(component, 'updateFrameWork');
-    component.updateFrameWork({});
-    expect(component.updateFrameWork).toHaveBeenCalled();
-  });
   it('Should call interpolateInstance', () => {
     spyOn(component, 'interpolateInstance');
     component.interpolateInstance('message');

@@ -26,14 +26,14 @@ describe('OrgReportsComponent', () => {
   const userServiceStub = {
     userProfile : mockData.userProfile,
     userData$: of({
-      userProfile: {
-        firstName: 'Creator',
-        lastName: 'ekstep',
-        rootOrg: {
-          slug: 'sunbird'
-        }
-      },
-  }) 
+        userProfile: {
+          firstName: 'Creator',
+          lastName: 'ekstep',
+          rootOrg: {
+            slug: 'sunbird'
+          }
+        },
+    })
   };
   const resourceBundle = mockData.resourceBundle;
   const routerStub = { url: '/sourcing/orgreports' };
@@ -81,6 +81,7 @@ describe('OrgReportsComponent', () => {
       } as any;
     });
     component['userService'] = TestBed.inject(UserService);
+
     component.ngOnInit();
     component['userService'].userData$.subscribe(userData => {
       expect(component.slug).toBe('sunbird');
