@@ -37,7 +37,7 @@ export const programContext = {
     'updatedon': '2021-08-13T07:33:53.130Z',
     'rootorg_id': '01309282781705830427',
     'sourcing_org_name': 'NIT',
-    'channel': 'DIKSHA',
+    'channel': 'sunbird',
     'template_id': 'template1',
     'guidelines_url': null
 };

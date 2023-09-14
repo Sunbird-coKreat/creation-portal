@@ -340,7 +340,7 @@ export class HelperService {
   }
 
 
-  publishContentToDiksha(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
+  publishContentOnAdapter(action, collectionId, contentId, originData, contentMetaData, rejectedComments?) {
     const channel =  _.get(this._selectedCollectionMetaData.originData, 'channel');
     if (_.isString(channel)) {
       contentMetaData['createdFor'] = [channel];
@@ -1030,10 +1030,10 @@ export class HelperService {
           if (action === 'accept') {
             action = isMetadataOverridden ? 'acceptWithChanges' : 'accept';
             // tslint:disable-next-line:max-line-length
-            this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData);
+            this.publishContentOnAdapter(action, sessionContext.collection, contentData.identifier, originData, contentData);
           } else if (action === 'reject' && rejectComment.length) {
             // tslint:disable-next-line:max-line-length
-            this.publishContentToDiksha(action, sessionContext.collection, contentData.identifier, originData, contentData, rejectComment);
+            this.publishContentOnAdapter(action, sessionContext.collection, contentData.identifier, originData, contentData, rejectComment);
           }
         } else {
           action === 'accept' ? this.toasterService.error(this.resourceService.messages.fmsg.m00102) :
