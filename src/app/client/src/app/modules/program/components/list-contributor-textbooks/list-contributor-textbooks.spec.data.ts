@@ -500,7 +500,7 @@ export const programContext = {
 "updatedon": "2022-05-18T12:25:48.284Z",
 "rootorg_id": "01309282781705830427",
 "sourcing_org_name": "NIT",
-"channel": "DIKSHA",
+"channel": "Sunbird",
 "template_id": "template1",
 "guidelines_url": null,
 "acceptedcontents": null,

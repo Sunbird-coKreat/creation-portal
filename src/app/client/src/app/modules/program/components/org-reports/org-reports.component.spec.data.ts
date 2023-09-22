@@ -15,7 +15,7 @@ export const mockData = {
     reportReadSuccess: {
         responseCode : 'OK',
         result : {
-          signedUrl: 'https://vdnsample.blob.core.window.net/sample/sample.csv'
+          signedUrl: 'https://cokreatsample.blob.core.window.net/sample/sample.csv'
         }
     },
     reportReadFailed: {

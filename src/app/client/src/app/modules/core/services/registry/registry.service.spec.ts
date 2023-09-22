@@ -95,7 +95,7 @@ describe('RegistryService', () => {
     const telemetryService = TestBed.get(TelemetryService);
     spyOn(telemetryService, 'interact').and.callFake(() => {});
     spyOn(registryService, 'generateUserRoleUpdateTelemetry').and.callThrough();
-    registryService.generateUserRoleUpdateTelemetry('vdn', {}, {}, {});
+    registryService.generateUserRoleUpdateTelemetry('cokreat', {}, {}, {});
     expect(telemetryService.interact).toHaveBeenCalled();
   });
 

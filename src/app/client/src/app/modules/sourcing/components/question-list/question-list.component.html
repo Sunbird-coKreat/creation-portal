@@ -54,13 +54,13 @@
             <a id="viewContentOnConsumption" *ngIf="sourcingReviewStatus === 'Approved' && originPreviewUrl && originPreviewReady" class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
               href="{{originPreviewUrl}}" target="_blank"
               appTelemetryInteract
-            [telemetryInteractEdata]="{id: 'view_this_content_on_diksha', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
+            [telemetryInteractEdata]="{id: 'view_this_content_on_consumption', type: configService.telemetryLabels.eventType.click, subtype: configService.telemetryLabels.eventSubtype.launch, pageid: telemetryPageId }"
             [telemetryInteractObject]="telemetryEventsInput.telemetryInteractObject"
             [telemetryInteractCdata]="telemetryEventsInput.telemetryInteractCdata"
-            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContentOnConsumption}}
+            [telemetryInteractPdata]="telemetryEventsInput.telemetryInteractPdata">{{resourceService.frmelmnts.btn.viewContentOnConsumption | interpolate:'{instance}': instance}}
             </a>
             <label *ngIf="sourcingReviewStatus === 'Approved' && !originPreviewUrl && originPreviewReady" class="sb-color-error mr-8 pl-10 fs-0-785 font-weight-bold">
-              {{resourceService.frmelmnts.btn.viewContentOnConsumptionError}}
+              {{resourceService.frmelmnts.btn.viewContentOnConsumptionError | interpolate:'{instance}': instance}}
             </label>
           </div>
         </div>

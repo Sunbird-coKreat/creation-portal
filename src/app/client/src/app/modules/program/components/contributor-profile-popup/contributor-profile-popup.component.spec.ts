@@ -26,7 +26,7 @@ describe('ContributorProfilePopupComponent', () => {
       },
       data: {
         telemetry: {
-          env: 'vdn', pageid: 'create-program', subtype: '', type: '',
+          env: 'cokreat', pageid: 'create-program', subtype: '', type: '',
           object: { type: '', ver: '1.0' }
         }
       }

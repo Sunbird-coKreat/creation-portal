@@ -55,7 +55,7 @@
                                 {{slectedContent.isPublished ? resourceService.frmelmnts.lbl.publishedforconsumption : resourceService.frmelmnts.lbl.notPublishedforconsumption}}
                             </span>
                             <a id="viewContentOnConsumption"  *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
-                            href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnConsumption}}</a>
+                            href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnConsumption | interpolate:'{instance}': instance }}</a>
                         </div>
                     </div>
                     <div class="pt-10">

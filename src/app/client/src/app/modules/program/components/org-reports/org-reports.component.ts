@@ -25,6 +25,12 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public telemetryPageId: string;
+  public instance: string;
+  public visitorsReportDescription: string;
+  public contentDetailsReportDescription: string;
+  public collectionLevelReportGapDescription: string;
+  public folderLevelReportGapDescription: string;
+  public projectLevelFunnelReportDescription: string;
 
   constructor( public resourceService: ResourceService, private userService: UserService, public configService: ConfigService,
     private usageService: UsageService, private toasterService: ToasterService, private activatedRoute: ActivatedRoute,
@@ -39,6 +45,17 @@ export class OrgReportsComponent implements OnInit, AfterViewInit {
       this.telemetryInteractCdata = [{id: this.userService.channel || '', type: 'sourcing_organization'}];
       this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
       this.telemetryInteractObject = {};
+
+      this.instance = this.resourceService.instance;
+      this.visitorsReportDescription = this.resourceService.frmelmnts.lbl.visitorsReportDescription.replaceAll('{instance}', this.instance);
+
+      this.contentDetailsReportDescription = this.resourceService.frmelmnts.lbl.contentDetailsReportDescription.replaceAll('{instance}', this.instance);
+      
+      this.collectionLevelReportGapDescription = this.resourceService.frmelmnts.lbl.collectionLevelReportGapDescription.replaceAll('{instance}', this.instance);
+      
+      this.folderLevelReportGapDescription = this.resourceService.frmelmnts.lbl.folderLevelReportGapDescription.replaceAll('{instance}', this.instance);
+      
+      this.projectLevelFunnelReportDescription = this.resourceService.frmelmnts.lbl.projectLevelFunnelReportDescription.replaceAll('{instance}', this.instance);
     }
 
   ngAfterViewInit() {
