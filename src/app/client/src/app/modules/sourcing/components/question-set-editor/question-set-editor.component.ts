@@ -203,7 +203,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
 
     this.getEditableFields();
     this.getCorrectionComments();
-    this.getDikshaPreviewUrl();
+    this.getAdapterPreviewUrl();
     this.getStatustoShow();
     if (this.isQuestionMode) {
       this.setQuestionModeConfig()
@@ -277,7 +277,7 @@ export class QuestionSetEditorComponent implements OnInit, OnDestroy {
       this.editorConfig.context.correctionComments = contentComment;
   }
 
-  getDikshaPreviewUrl() {
+  getAdapterPreviewUrl() {
     const sourcingReviewStatus = _.get(this.questionSetEditorComponentInput, 'sourcingStatus') || '';
     if (sourcingReviewStatus === 'Approved') {
       this.editorConfig.config.showOriginPreviewUrl = true;

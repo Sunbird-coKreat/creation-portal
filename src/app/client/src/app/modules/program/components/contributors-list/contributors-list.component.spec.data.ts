@@ -736,7 +736,7 @@ export const userDetails = {
             {
                 'lastName': '',
                 'osUpdatedAt': '2020-12-03T12:10:36.371Z',
-                'firstName': 'vdn1',
+                'firstName': 'cokreat1',
                 'osCreatedAt': '2020-12-03T12:10:36.371Z',
                 'enrolledDate': '2020-12-03T12:10:36.366Z',
                 '@type': 'User',
@@ -1371,7 +1371,7 @@ export const userDetails = {
             },
             {
                 'lastName': '',
-                'firstName': 'dikshareviewer',
+                'firstName': 'reviewer',
                 'certificates': '',
                 'enrolledDate': '2020-05-01',
                 '@type': 'User',
@@ -1450,7 +1450,7 @@ export const userDetails = {
             },
             {
                 'lastName': '',
-                'firstName': 'dikshaadmin',
+                'firstName': 'admin',
                 'enrolledDate': '2020-05-01',
                 '@type': 'User',
                 'channel': '01301178944633241665',

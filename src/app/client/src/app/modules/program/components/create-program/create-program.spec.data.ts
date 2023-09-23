@@ -1704,7 +1704,7 @@ export const contentUploadComponentInput = {
     'updatedon': '2021-07-22T12:41:51.542Z',
     'rootorg_id': '01309282781705830427',
     'sourcing_org_name': 'NIT',
-    'channel': 'DIKSHA',
+    'channel': 'Sunbird',
     'template_id': 'template1',
     'guidelines_url': null
     }
@@ -1970,7 +1970,7 @@ export const contentUploadComponentInput = {
             'Textbook'
         ],
         // tslint:disable-next-line:max-line-length
-        'licenseterms': 'By creating and uploading content on DIKSHA, you consent to publishing this content under the Creative Commons Framework, specifically under the CC-BY-SA 4.0 license.',
+        'licenseterms': 'By creating and uploading content on sunbird, you consent to publishing this content under the Creative Commons Framework, specifically under the CC-BY-SA 4.0 license.',
         'lastUpdatedOn': '2021-07-29T08:56:38.794+0000',
         'dialcodeRequired': 'No',
         'createdFor': [
@@ -2223,7 +2223,7 @@ export const contentUploadComponentInput = {
         'createdOn': '2021-08-09T12:35:07.114+0000',
         'copyrightYear': 1234,
         'contentDisposition': 'inline',
-        'licenseterms': 'By creating and uploading content on DIKSHA, you consent to publishing this content under the Creative Commons Framework, specifically under the CC-BY-SA 4.0 license.',
+        'licenseterms': 'By creating and uploading content on Sunbird, you consent to publishing this content under the Creative Commons Framework, specifically under the CC-BY-SA 4.0 license.',
         'lastUpdatedOn': '2021-08-09T12:35:07.219+0000',
         'originData': {
           'channel': '01309282781705830427'

@@ -470,7 +470,7 @@ export const programTextbooks = [
           "Student"
       ],
       "subjectIds": [
-          "vdn_k-12_subject_art"
+          "subject_art"
       ],
       "visibility": "Default",
       "author": "vvvv",
@@ -509,7 +509,7 @@ export const programTextbooks = [
       "IL_FUNC_OBJECT_TYPE": "Collection",
       "name": "book2",
       "mediumIds": [
-          "vdn_k-12_medium_english"
+          "medium_english"
       ],
       "status": "Draft",
       "code": "org.sunbird.y4HMk5",
@@ -539,17 +539,17 @@ export const programTextbooks = [
       "chapterCount": 2,
       "versionKey": "1689785818721",
       "idealScreenDensity": "hdpi",
-      "framework": "vdn_k-12",
+      "framework": "cokreat_k-12",
       "depth": 0,
       "boardIds": [
-          "vdn_k-12_board_pune"
+          "cokreat_k-12_board_pune"
       ],
       "createdBy": "842e2f00-16d3-487b-99c2-576667e99f22",
       "compatibilityLevel": 1,
       "userConsent": "Yes",
       "openForContribution": true,
       "gradeLevelIds": [
-          "vdn_k-12_gradelevel_class4"
+          "cokreat_k-12_gradelevel_class4"
       ],
       "IL_UNIQUE_ID": "do_11380377932462489614",
       "board": "Pune",
@@ -596,7 +596,7 @@ export const programTextbooksWithCounts = [
           "Student"
       ],
       "subjectIds": [
-          "vdn_k-12_subject_art"
+          "cokreat_k-12_subject_art"
       ],
       "visibility": "Default",
       "author": "vvvv",
@@ -635,7 +635,7 @@ export const programTextbooksWithCounts = [
       "IL_FUNC_OBJECT_TYPE": "Collection",
       "name": "book2",
       "mediumIds": [
-          "vdn_k-12_medium_english"
+          "cokreat_k-12_medium_english"
       ],
       "status": "Draft",
       "code": "org.sunbird.y4HMk5",
@@ -665,17 +665,17 @@ export const programTextbooksWithCounts = [
       "chapterCount": 2,
       "versionKey": "1689785818721",
       "idealScreenDensity": "hdpi",
-      "framework": "vdn_k-12",
+      "framework": "cokreat_k-12",
       "depth": 0,
       "boardIds": [
-          "vdn_k-12_board_pune"
+          "board_pune"
       ],
       "createdBy": "842e2f00-16d3-487b-99c2-576667e99f22",
       "compatibilityLevel": 1,
       "userConsent": "Yes",
       "openForContribution": true,
       "gradeLevelIds": [
-          "vdn_k-12_gradelevel_class4"
+          "gradelevel_class4"
       ],
       "IL_UNIQUE_ID": "do_11380377932462489614",
       "board": "Pune",
