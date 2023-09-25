@@ -50,9 +50,9 @@
                                 {{slectedContent.name}} </div>
                         </div>
                         <div class="mt-8 practice-set__status">
-                            <span *ngIf="slectedContent.isPublished" class="sb-label sb-label-table sb-color-success"> {{resourceService.frmelmnts.lbl.publishedonDiksha | interpolate:'{instance}': instance }} </span>
+                            <span *ngIf="slectedContent.isPublished" class="sb-label sb-label-table sb-color-success"> {{resourceService.frmelmnts.lbl.publishedonConsumption | interpolate:'{instance}': instance }} </span>
                             <span *ngIf="!slectedContent.isPublished" class="sb-label sb-label-table sb-color-error">
-                                {{resourceService.frmelmnts.lbl.notPublishedOnDiksha | interpolate:'{instance}': instance}}
+                                {{resourceService.frmelmnts.lbl.notPublishedOnConsumption | interpolate:'{instance}': instance}}
                             </span>
                             <a id="viewContentOnConsumption"  *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
                             href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnConsumption | interpolate:'{instance}': instance}}</a>
