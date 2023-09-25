@@ -100,6 +100,7 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public modifyAccessibilityInfoByReviewer = false;
   public accessibilityInput: any;
   public publicStorageAccount: any;
+  public contentOnConsumptionEdata: any;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -158,6 +159,12 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.initAccessibilityDetails();
+    this.contentOnConsumptionEdata = this. programTelemetryService.getTelemetryInteractEdata(
+      this.programsService.interpolateInstancetoLowerCase(this.resourceService.lbl.viewContentOnDiksha),
+      this.configService.telemetryLabels.eventType.click,
+      this.configService.telemetryLabels.eventSubtype.launch,
+      this.telemetryPageId
+    );
   }
 
   setTelemetryStartData() {

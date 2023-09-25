@@ -72,7 +72,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
-
+  public contentOnConsumptionEdata: any;
   constructor(
     public resourceService: ResourceService,
     private toasterService: ToasterService,
@@ -139,6 +139,12 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
         this.helperService.setTargetFrameWorkData(targetFWIds);
       }
     }
+    this.contentOnConsumptionEdata = this. programTelemetryService.getTelemetryInteractEdata(
+      this.programsService.interpolateInstancetoLowerCase(this.resourceService.lbl.viewContentOnDiksha),
+      this.configService.telemetryLabels.eventType.click,
+      this.configService.telemetryLabels.eventSubtype.launch,
+      this.telemetryPageId
+    );
   }
   loadContentEditor() {
     if (!document.getElementById('contentEditor')) {

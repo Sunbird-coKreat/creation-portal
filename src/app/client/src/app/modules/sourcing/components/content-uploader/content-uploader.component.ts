@@ -163,6 +163,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public publicStorageAccount: any;
   public enableContentActions =  false;
   public ischeckBulkUploadStatus = true;
+  public contentOnConsumptionEdata: any;
 
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
@@ -234,6 +235,12 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
       });
     }
     this.initAccessibilityDetails();
+    this.contentOnConsumptionEdata = this. programTelemetryService.getTelemetryInteractEdata(
+      this.programsService.interpolateInstancetoLowerCase(this.resourceService.lbl.viewContentOnDiksha),
+      this.configService.telemetryLabels.eventType.click,
+      this.configService.telemetryLabels.eventSubtype.launch,
+      this.telemetryPageId
+    );
    }
 
    setTelemetryStartData() {

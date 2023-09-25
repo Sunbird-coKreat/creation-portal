@@ -1482,4 +1482,7 @@ export class ProgramsService extends DataService implements CanActivate {
   getHeaderEmitter() {
     return this.headerEventOnNewEditor;
   }
+  interpolateInstancetoLowerCase(message) {
+    return message.replace('{instance}', _.lowerCase(this.resourceService.instance));
+  }
 }
