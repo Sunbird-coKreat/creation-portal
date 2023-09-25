@@ -61,6 +61,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public baseUrl: string;
   public videoFileFormat: boolean;
   public instance: string;
+
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
