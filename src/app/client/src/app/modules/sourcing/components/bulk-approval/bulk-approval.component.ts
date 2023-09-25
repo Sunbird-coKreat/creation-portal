@@ -23,7 +23,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   public approvalPending: Array<any> = [];
   public folderData: Array<any> = [];
   public originFolderData: Array<any> = [];
-  public dikshaContents: Array<any>;
+  public contentsOnConsumption: Array<any>;
   public unitsInLevel: Array<any> = [];
   public unitGroup: any;
   public bulkApprove: any;
@@ -365,10 +365,10 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
           const contents = _.compact(_.concat(_.get(res.result, 'QuestionSet'), _.get(res.result, 'content')));
           if (contents.length) {
             const overallStats = this.bulkApprove && this.bulkApprove.overall_stats;
-            this.dikshaContents = contents;
-            overallStats['approve_success'] = _.filter(this.dikshaContents, content => content.status === 'Live').length;
+            this.contentsOnConsumption = contents;
+            overallStats['approve_success'] = _.filter(this.contentsOnConsumption, content => content.status === 'Live').length;
             // tslint:disable-next-line:max-line-length
-            overallStats['approve_failed'] = _.filter(this.dikshaContents, content => content.status === 'Failed').length;
+            overallStats['approve_failed'] = _.filter(this.contentsOnConsumption, content => content.status === 'Failed').length;
             overallStats['approve_pending'] = overallStats.total - (overallStats['approve_success'] + overallStats['approve_failed']);
             this.bulkApprove.overall_stats = overallStats;
             // tslint:disable-next-line:max-line-length
@@ -402,7 +402,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   }
 
   prepareTableData() {
-    const failedContent = _.filter(this.dikshaContents, content => content.status === 'Failed');
+    const failedContent = _.filter(this.contentsOnConsumption, content => content.status === 'Failed');
     if (!this.programContext.target_type || this.programContext.target_type === 'collections') {
       this.unitsInLevel = _.map(failedContent, content => {
         return this.findFolderLevel(this.storedCollectionData, content.origin);
@@ -446,10 +446,10 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   }
 
   downloadFailedContentReport() {
-    if (!this.dikshaContents) {
+    if (!this.contentsOnConsumption) {
       this.bulkJobService.searchContentWithProcessId(this.bulkApprove.process_id, this.bulkApprove.type).subscribe((res: any) => {
         if (res.result && res.result.content && res.result.content.length) {
-          this.dikshaContents = _.get(res, 'result.content');
+          this.contentsOnConsumption = _.get(res, 'result.content');
           this.prepareTableData();
         }
       });

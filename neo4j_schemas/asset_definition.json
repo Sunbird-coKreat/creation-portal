@@ -228,13 +228,11 @@
           "dataType": "Select",
           "propertyName": "organization",
           "title": "Focus Area",
-          "description": "organization. e.g: Diksha, etc",
+          "description": "organization. e.g: Sunbird etc",
           "category": "General",
           "displayProperty": "Editable",
           "range": [
-            "Diksha",
-            "Shikshalokam",
-            "Arghyam"
+            "Sunbird"
           ],
           "defaultValue": "",
           "renderingHints": "{ 'inputType': 'text',  'order': 14 }",

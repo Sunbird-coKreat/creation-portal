@@ -1404,7 +1404,7 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
  /**
-  * Function to get the hierarchy of the collection from origin i.e. Diksha
+  * Function to get the hierarchy of the collection from origin
   * @param identifier collection id
   * @returns API response
   */

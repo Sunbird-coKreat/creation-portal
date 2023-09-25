@@ -295,7 +295,7 @@ export const mockMvcLibraryData = {
           'updatedon': '2020-06-17T09:24:53.314Z',
           'rootorg_id': '013013637585788928216',
           'sourcing_org_name': 'Tamilnadu_Tenant',
-          'channel': 'DIKSHA',
+          'channel': 'Sunbird',
           'template_id': 'template1',
           'guidelines_url': ''
         }
