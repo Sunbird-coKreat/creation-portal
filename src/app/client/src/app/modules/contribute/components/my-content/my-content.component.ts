@@ -60,7 +60,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public isQumlPlayer: Boolean = false;
   public baseUrl: string;
   public videoFileFormat: boolean;
-  public instance: string;
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
     private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
@@ -77,7 +76,6 @@ export class MyContentComponent implements OnInit, AfterViewInit {
      }
 
   ngOnInit(): void {
-    this.instance = this.resourceService.instance;
     this.getPageId();
     this.telemetryInteractCdata = [{ id: this.userService.channel, type: 'sourcing_organization' }];
     this.telemetryInteractPdata = {

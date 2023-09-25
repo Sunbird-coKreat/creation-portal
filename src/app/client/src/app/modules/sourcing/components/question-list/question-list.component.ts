@@ -100,7 +100,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
   public modifyAccessibilityInfoByReviewer = false;
   public accessibilityInput: any;
   public publicStorageAccount: any;
-  public instance: string;
 
   constructor(
     public configService: ConfigService, private userService: UserService,
@@ -119,7 +118,6 @@ export class QuestionListComponent implements OnInit, AfterViewInit, OnDestroy {
      }
 
   ngOnInit() {
-    this.instance = this.resourceService.instance;
     this.overrideMetaData = this.programsService.overrideMetaData;
     this.sessionContext = _.get(this.practiceQuestionSetComponentInput, 'sessionContext');
     this.originCollectionData = _.get(this.practiceQuestionSetComponentInput, 'originCollectionData');
