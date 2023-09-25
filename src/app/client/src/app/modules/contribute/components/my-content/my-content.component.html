@@ -54,8 +54,8 @@
                             <span class="sb-label sb-label-table" [ngClass]="{'sb-color-success': slectedContent.isPublished, 'sb-color-error' : !slectedContent.isPublished }">
                                 {{slectedContent.isPublished ? resourceService.frmelmnts.lbl.publishedonDiksha : resourceService.frmelmnts.lbl.notPublishedOnDiksha}}
                             </span>
-                            <a id="viewContentOnDiksha"  *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
-                            href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnDiksha}}</a>
+                            <a id="viewContentOnConsumption"  *ngIf="slectedContent.isPublished && slectedContent?.originPreviewUrl " class="sb-color-primary mr-8 pl-10 fs-0-785 font-weight-bold"
+                            href="{{slectedContent.originPreviewUrl}}" target="_blank" rel="noopener" >{{resourceService.frmelmnts.btn.viewContentOnConsumption | interpolate:'{instance}': instance }}</a>
                         </div>
                     </div>
                     <div class="pt-10">

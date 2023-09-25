@@ -163,7 +163,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public publicStorageAccount: any;
   public enableContentActions =  false;
   public ischeckBulkUploadStatus = true;
-
+  public instance: string;
   constructor(public toasterService: ToasterService, private userService: UserService,
     public actionService: ActionService, public playerService: PlayerService,
     public configService: ConfigService, private sourcingService: SourcingService, public frameworkService: FrameworkService,
@@ -186,6 +186,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     }
 
   ngOnInit() {
+    this.instance = this.resourceService.instance;
     this.config = _.get(this.contentUploadComponentInput, 'config');
     this.originCollectionData = _.get(this.contentUploadComponentInput, 'originCollectionData');
     this.selectedOriginUnitStatus = _.get(this.contentUploadComponentInput, 'content.originUnitStatus');
