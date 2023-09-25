@@ -152,7 +152,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.isSendReminderEnabled =  (<HTMLInputElement>document.getElementById('isSendReminderEnabled')) ?
     (<HTMLInputElement>document.getElementById('isSendReminderEnabled')).value === 'true' : false;
 
-    this.allowedFrameworkTypes = (allowedTypes) ? allowedTypes.split(',') : ["K-12", "TPD"];
+    this.allowedFrameworkTypes = (allowedTypes) ? allowedTypes.split(',') : [];
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userprofile = this.userService.userProfile;
     this.localBlueprint = {};
