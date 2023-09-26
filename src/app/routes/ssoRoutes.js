@@ -19,6 +19,7 @@ const errorUrl = '/sso/sign-in/error';
 const logger = require('sb_logger_util_v2');
 const url = require('url');
 const {acceptTncAndGenerateToken} = require('../helpers/userService');
+const instanceName = envHelper.sunbird_instance_name;
 
 module.exports = (app) => {
 
@@ -481,9 +482,9 @@ const getErrorMessage = (error, errorType) => {
   if(_.get(error, 'params.err') === 'USER_ACCOUNT_BLOCKED') {
     return 'User account is blocked. Please contact admin';
   } else if (['VERIFY_SIGNATURE', 'PAYLOAD_DATA_MISSING', 'VERIFY_TOKEN'].includes(errorType) ) {
-    return 'Your account could not be signed in to DIKSHA due to invalid credentials provided. Please try again with valid credentials.';
+    return ('Your account could not be signed in to {instance} due to invalid credentials provided. Please try again with valid credentials.').replace('{instance}', instanceName);
   } else {
-    return 'Your account could not be signed in to DIKSHA due to technical issue. Please try again after some time';
+    return ('Your account could not be signed in to {instance} due to technical issue. Please try again after some time').replace('{instance}', instanceName);
   }
 }
 
