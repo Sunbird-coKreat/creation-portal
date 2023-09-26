@@ -5,6 +5,8 @@ const googleDid = '2c010e13a76145d864e459f75a176171';
 const logger = require('sb_logger_util_v2')
 const utils = require('../helpers/utilityService');
 const GOOGLE_SIGN_IN_DELAY = 2000;
+const envHelper = require('../helpers/environmentVariablesHelper');
+const instanceName = envHelper.sunbird_instance_name;
 
 module.exports = (app) => {
 
@@ -117,13 +119,13 @@ const getQueryParams = (queryObj) => {
 }
 const getErrorMessage = (error) => {
   if (error === 'USER_NAME_NOT_PRESENT' || _.get(error, 'message') === 'USER_NAME_NOT_PRESENT') {
-    return 'Your account could not be created on DIKSHA due to your Google Security settings';
+    return ('Your account could not be created on {instance} due to your Google Security settings').replace('{instance}', instanceName);
   } else if(error === 'GOOGLE_ACCESS_DENIED' || _.get(error, 'message') === 'GOOGLE_ACCESS_DENIED') {
-    return 'Your account could not be created on DIKSHA due to your Google Security settings';
+    return ('Your account could not be created on {instance} due to your Google Security settings').replace('{instance}', instanceName);
   } else if(_.get(error, 'params.err') === 'USER_ACCOUNT_BLOCKED') {
     return 'User account is blocked. Please contact admin';
   } else {
-    return 'Your account could not be signed in to DIKSHA due to technical issue. Please try again after some time';
+    return ('Your account could not be signed in to {instance} due to technical issue. Please try again after some time').replace('{instance}', instanceName);
   }
 }
 const handleCreateUserError = (error) => {
