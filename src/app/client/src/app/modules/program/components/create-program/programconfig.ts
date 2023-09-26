@@ -74,7 +74,7 @@ var programConfig = {
             },
             {
               'code': 'board',
-              'defaultValue': 'NCERT',
+              'defaultValue': '',
               'label': 'Board'
             },
             {

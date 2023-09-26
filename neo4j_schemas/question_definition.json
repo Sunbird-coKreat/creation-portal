@@ -505,7 +505,7 @@
           "dataType": "Term",
           "propertyName": "board",
           "title": "Curriculum (Board)",
-          "description": "Education Board (Like MP Board, NCERT, etc) associated with the Question",
+          "description": "Education Board (Like MP Board, etc) associated with the Question",
           "category": "Pedagogy",
           "displayProperty": "Editable",
           "defaultValue": "",

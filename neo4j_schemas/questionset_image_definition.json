@@ -593,7 +593,7 @@
           "dataType": "Term",
           "propertyName": "board",
           "title": "Curriculum (Board)",
-          "description": "Education Board (Like MP Board, NCERT, etc)",
+          "description": "Education Board (Like MP Board, etc)",
           "category": "Pedagogy",
           "displayProperty": "Editable",
           "defaultValue": "",
