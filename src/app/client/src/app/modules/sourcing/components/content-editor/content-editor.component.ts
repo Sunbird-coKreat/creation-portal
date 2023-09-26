@@ -140,7 +140,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
       }
     }
     this.contentOnConsumptionEdata = this. programTelemetryService.getTelemetryInteractEdata(
-      this.programsService.interpolateInstancetoLowerCase(this.resourceService.lbl.viewContentOnDiksha),
+      this.programsService.interpolateInstancetoLowerCase(this.resourceService.frmelmnts.telemetry.lbl.viewContentOnDiksha),
       this.configService.telemetryLabels.eventType.click,
       this.configService.telemetryLabels.eventSubtype.launch,
       this.telemetryPageId
