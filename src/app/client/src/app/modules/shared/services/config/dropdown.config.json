@@ -89,15 +89,6 @@
             "Urdu"
         ],
         "boards": [
-            "AP Board",
-            "BSER",
-            "CBSE",
-            "ICSE",
-            "MSCERT",
-            "NCERT",
-            "NCTE",
-            "TN Board",
-            "UP Board"
         ],
         "orgType": [
             "technical"
@@ -241,17 +232,7 @@
                 "Economics",
                 "Sanskrit"
             ],
-            "boards": [
-                "AP Board",
-                "BSER",
-                "CBSE",
-                "ICSE",
-                "MSCERT",
-                "NCERT",
-                "NCTE",
-                "TN Board",
-                "UP Board"
-            ],
+            "boards": [],
             "sortingOptions": [
                 {
                     "field": "lastUpdatedOn",
