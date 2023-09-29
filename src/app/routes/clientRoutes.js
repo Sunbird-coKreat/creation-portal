@@ -166,6 +166,7 @@ function getLocals(req) {
   locals.interactiveVideoQsetCategory = envHelper.DOCK_INTERACTIVE_VIDEO_QSET_CATEGORY;
   locals.isSendReminderEnabled = envHelper.IS_SEND_REMINDER_ENABLED;
   locals.instanceLink = envHelper.sunbird_instance_link;
+  locals.emailContact = envHelper.portal_contact_email;
   return locals
 }
 

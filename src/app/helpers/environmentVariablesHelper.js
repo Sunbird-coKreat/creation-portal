@@ -184,8 +184,8 @@ let envVariables = {
   sunbird_processing_kafka_host: process.env.sunbird_processing_kafka_host,
   sunbird_sso_kafka_topic: process.env.sunbird_sso_kafka_topic,
 
-  sunbird_instance_link:'https://dev.sunbirded.org'
-  
+  sunbird_instance_link:'https://dev.sunbirded.org',
+  portal_contact_email: 'vdnsupport@teamdiksha.org'
 }
 
 envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_cassandra_urls !== '')
