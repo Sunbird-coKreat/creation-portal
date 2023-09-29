@@ -10,7 +10,8 @@ export const mockData = {
           'emsg': {
             'm0076': 'No data available to download'
           }
-        }
+        },
+        'portalInstanceName': 'Vidyadaan'
     },
     reportReadSuccess: {
         responseCode : 'OK',

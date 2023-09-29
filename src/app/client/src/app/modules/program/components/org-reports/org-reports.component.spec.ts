@@ -92,6 +92,8 @@ describe('OrgReportsComponent', () => {
 
   it('should call #downloadReport() method', () => {
     const usageService = TestBed.get(UsageService);
+    const resourceService = TestBed.get(ResourceService);
+    resourceService.portalInstanceName = resourceBundle.portalInstanceName;
     spyOn(usageService, 'getData').and.returnValue(observableOf(mockData.reportReadSuccess));
     spyOn(window, 'open');
     component.downloadReport('TextbookLevel', true);
