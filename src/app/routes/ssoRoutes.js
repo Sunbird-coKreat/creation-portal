@@ -482,9 +482,9 @@ const getErrorMessage = (error, errorType) => {
   if(_.get(error, 'params.err') === 'USER_ACCOUNT_BLOCKED') {
     return 'User account is blocked. Please contact admin';
   } else if (['VERIFY_SIGNATURE', 'PAYLOAD_DATA_MISSING', 'VERIFY_TOKEN'].includes(errorType) ) {
-    return 'Your account could not be signed in to ${instanceName} due to invalid credentials provided. Please try again with valid credentials.'
+    return 'Your account could not be signed in to ${instanceName} due to invalid credentials provided. Please try again with valid credentials.';
   } else {
-    return 'Your account could not be signed in to ${instanceName} due to technical issue. Please try again after some time'
+    return 'Your account could not be signed in to ${instanceName} due to technical issue. Please try again after some time';
   }
 }
 
