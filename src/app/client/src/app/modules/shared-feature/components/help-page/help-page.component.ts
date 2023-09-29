@@ -1,7 +1,7 @@
 import { UserService } from '@sunbird/core';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import * as _ from 'lodash-es';
-import { ConfigService, NavigationHelperService } from '@sunbird/shared';
+import { ConfigService, NavigationHelperService, ResourceService} from '@sunbird/shared';
 import { IImpressionEventInput} from '@sunbird/telemetry';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -20,10 +20,13 @@ export class HelpPageComponent implements OnInit, AfterViewInit {
   @ViewChild('video5') video5: ElementRef;
   @ViewChild('video6') video6: ElementRef;
   @ViewChild('video7') video7: ElementRef;
+  welcomeLbl:string;
   constructor(public userService: UserService, private configService: ConfigService, private activatedRoute: ActivatedRoute,
-              public router: Router, private navigationHelperService: NavigationHelperService) { }
+              public router: Router, private navigationHelperService: NavigationHelperService,
+              public resourceService: ResourceService,) { }
 
   ngOnInit() {
+    this.welcomeLbl = this.resourceService.frmelmnts.lbl.helppage.welcomemsg.replace('{portalInstanceName}', this.resourceService.portalInstanceName);
   }
 
   ngAfterViewInit() {
