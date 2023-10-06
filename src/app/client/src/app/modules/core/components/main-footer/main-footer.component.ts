@@ -29,6 +29,7 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
   isOffline: boolean = environment.isOffline;
   instance: string;
   bodyPaddingBottom: string;
+  emailContact: string;
   constructor(resourceService: ResourceService, public userService: UserService, public router: Router, public activatedRoute: ActivatedRoute,
     public configService: ConfigService, private renderer: Renderer2, private cdr: ChangeDetectorRef
 ) {
@@ -37,6 +38,8 @@ export class MainFooterComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.instance = _.upperCase(this.resourceService.instance);
+    this.emailContact= (<HTMLInputElement>document.getElementById('instanceLink'))
+    ? (<HTMLInputElement>document.getElementById('instanceLink')).value : '';
   }
   checkRouterPath() {
     this.showDownloadmanager = this.router.url.includes('/profile') || this.router.url.includes('/play/collection') ||

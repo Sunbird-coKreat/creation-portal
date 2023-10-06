@@ -1235,13 +1235,8 @@ export class ProgramsService extends DataService implements CanActivate {
   }
 
   getContentOriginEnvironment() {
-    switch(window.location.hostname) {
-      case 'dock.sunbirded.org': return 'https://dev.sunbirded.org'; break;
-      case 'dockstaging.sunbirded.org': return 'https://staging.sunbirded.org'; break;
-      case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
-      case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
-      default: return  'https://dev.sunbirded.org'; break;
-    }
+    return (<HTMLInputElement>document.getElementById('instanceLink'))
+      ? (<HTMLInputElement>document.getElementById('instanceLink')).value : '';
   }
 
   setMvcStageData(data) {
