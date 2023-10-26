@@ -147,8 +147,6 @@ export class EnrollContributorComponent implements OnInit, AfterViewInit {
      // Add user to the registry
      const userAdd = {
       User: {
-        firstName: this.userService.userProfile.firstName,
-        lastName: this.userService.userProfile.lastName || '',
         userId: this.userService.userProfile.identifier,
         enrolledDate: new Date().toISOString(),
         channel: this.userService.userProfile.rootOrgId,
