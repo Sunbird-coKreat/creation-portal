@@ -798,7 +798,7 @@ export const addParticipentResponseSample = {
           "updatedon": "2020-07-17T00:54:17.411Z",
           "rootorg_id": "012983850117177344161",
           "sourcing_org_name": "Vidya2",
-          "channel": "DIKSHA",
+          "channel": "Sunbird",
           "template_id": "template1",
           "guidelines_url": ""
       }
@@ -937,7 +937,7 @@ export const addParticipentResponseSample = {
         "createdOn": "2020-04-22T11:24:50.995+0000",
         "copyrightYear": 2020,
         "contentDisposition": "inline",
-        "licenseterms": "By creating any type of content (resources, books, courses etc.) on DIKSHA, you consent to publish it under the Creative Commons License Framework. Please choose the applicable creative commons license you wish to apply to your content.",
+        "licenseterms": "By creating any type of content (resources, books, courses etc.) on Sunbird, you consent to publish it under the Creative Commons License Framework. Please choose the applicable creative commons license you wish to apply to your content.",
         "lastUpdatedOn": "2020-07-20T11:46:24.382+0000",
         "originData": "{\"channel\":\"012983850117177344161\"}",
         "dialcodeRequired": "No",
@@ -1000,7 +1000,7 @@ export const addParticipentResponseSample = {
         "createdOn": "2020-04-22T11:35:46.866+0000",
         "copyrightYear": 2020,
         "contentDisposition": "inline",
-        "licenseterms": "By creating any type of content (resources, books, courses etc.) on DIKSHA, you consent to publish it under the Creative Commons License Framework. Please choose the applicable creative commons license you wish to apply to your content.",
+        "licenseterms": "By creating any type of content (resources, books, courses etc.) on Sunbird, you consent to publish it under the Creative Commons License Framework. Please choose the applicable creative commons license you wish to apply to your content.",
         "lastUpdatedOn": "2020-07-17T07:37:29.949+0000",
         "originData": "{\"channel\":\"012983850117177344161\"}",
         "dialcodeRequired": "No",

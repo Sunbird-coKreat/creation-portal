@@ -1371,7 +1371,7 @@ export const userDetails = {
             },
             {
                 'lastName': '',
-                'firstName': 'dikshareviewer',
+                'firstName': 'sunbirdreviewer',
                 'certificates': '',
                 'enrolledDate': '2020-05-01',
                 '@type': 'User',
@@ -1450,7 +1450,7 @@ export const userDetails = {
             },
             {
                 'lastName': '',
-                'firstName': 'dikshaadmin',
+                'firstName': 'sunbirdaadmin',
                 'enrolledDate': '2020-05-01',
                 '@type': 'User',
                 'channel': '01301178944633241665',

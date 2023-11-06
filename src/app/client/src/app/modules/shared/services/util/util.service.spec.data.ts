@@ -358,7 +358,7 @@ export const contentList = [
     'cardImg': 'content/do_31288771643112652813019/notebook_1491393332116.thumb.png',
     'resourceType': 'Book',
     'organisation': [
-      'DIKSHA Support'
+      'Sunbird Support'
     ],
     'action': {
       'onImage': {
@@ -515,7 +515,7 @@ export const contentListWithHoverData = [
     'cardImg': 'content/do_31288771643112652813019/notebook_1491393332116.thumb.png',
     'resourceType': 'Book',
     'organisation': [
-      'DIKSHA Support'
+      'Sunbird Support'
     ],
     'hoverData': {
       'note': '',
