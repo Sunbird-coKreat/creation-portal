@@ -22,7 +22,6 @@ import { DaysToGoPipe } from '@sunbird/shared-feature';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
-import { programSession } from './data';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { ProgramStageService, ProgramTelemetryService } from '../../../program/services';
 import { ProgramComponentsService } from '../../services/program-components/program-components.service';

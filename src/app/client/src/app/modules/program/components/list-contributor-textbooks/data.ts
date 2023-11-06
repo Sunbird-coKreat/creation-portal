@@ -772,7 +772,7 @@ export let programContext = {
     "topic": null,
     "currentRoleId": 2,
     "collection": "do_1129365647606415361180",
-    "collectionName": "CBSE Demo Textbook"
+    "collectionName": "Demo Textbook"
   };
 
   export let configData = {
@@ -1018,7 +1018,7 @@ export let programContext = {
   };
 
   export let collection = {
-    "name": "CBSE Demo Textbook",
+    "name": "Demo Textbook",
     "description": "Enter description for TextBook",
     "rating": "0",
     "subject": "English",

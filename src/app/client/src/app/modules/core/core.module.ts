@@ -10,7 +10,7 @@ import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { SharedModule } from '@sunbird/shared';
 import { AvatarModule } from 'ngx-avatar';
 import {
-  MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
+  MainHeaderComponent, MainFooterComponent, MainMenuComponent,
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
   LanguageDropdownComponent, ProminentFilterComponent, TopicPickerComponent, DataFormComponent, ContentDataFormComponent
 } from './components';
@@ -34,7 +34,7 @@ import { CacheService } from '../shared/services/cache-service/cache.service';
     AvatarModule,
     CommonFormElementsModule
   ],
-  declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
+  declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, PermissionDirective,
     BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,
     ErrorPageComponent, FlagContentComponent, LanguageDropdownComponent,
     ProminentFilterComponent, TopicPickerComponent, StickyHeaderDirective, DataFormComponent, ContentDataFormComponent],
