@@ -143,7 +143,8 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   public qualityParamConfig: any;
   public sendReminderModal =false;
   public sendReminderButton;
-
+  public instance: string;
+  
   constructor(public publicDataService: PublicDataService, public configService: ConfigService,
     private userService: UserService, public actionService: ActionService,
     public telemetryService: TelemetryService, private sourcingService: SourcingService,
@@ -169,6 +170,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   ngOnInit() {
+    this.instance = this.resourceService.instance;
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {
       this.state.stages = state.stages;
       this.changeView();
@@ -800,7 +802,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.collectionHierarchy = this.setCollectionTree(this.collectionData, identifier);
     if (this.originalCollectionData && this.originalCollectionData.status !== 'Draft' && this.sourcingOrgReviewer) {
       // tslint:disable-next-line:max-line-length
-      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection);
+      this.textbookStatusMessage = this.resourceService.frmelmnts.lbl.textbookStatusMessage.replaceAll('{TARGET_NAME}', this.targetCollection).replace('{instance}', this.instance);
 
     }
     this.getFolderLevelCount(this.collectionHierarchy);
@@ -1683,7 +1685,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     // tslint:disable-next-line:max-line-length
     if (this.originalCollectionData && (_.indexOf(this.originalCollectionData.childNodes, collection.origin) < 0 || this.originalCollectionData.status !== 'Draft')) {
       // tslint:disable-next-line:max-line-length
-      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection);
+      collection.statusMessage = this.resourceService.frmelmnts.lbl.textbookNodeStatusMessage.replace('{TARGET_NAME}', this.targetCollection).replace('{instance}', this.instance);
     }
 
     // tslint:disable-next-line:max-line-length

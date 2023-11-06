@@ -24,7 +24,7 @@
             <tbody>
                 <tr>
                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.collectionLevelContentGaps}}</td>
-                    <td>{{resourceService.frmelmnts.lbl.collectionLevelReportGapDescription}}</td>
+                    <td>{{ collectionLevelReportGapDescription }}</td>
                     <td class="text-center">
                       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('CollectionLevel', true);"
                       appTelemetryInteract
@@ -35,7 +35,7 @@
                 </tr>
                 <tr>
                     <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.folderLevelContentGaps}}</td>
-                    <td>{{resourceService.frmelmnts.lbl.folderLevelReportGapDescription}}</td>
+                    <td>{{ folderLevelReportGapDescription }}</td>
                     <td class="text-center">
                       <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FolderLevel', true);"
                       appTelemetryInteract
@@ -46,7 +46,7 @@
                 </tr>
                 <tr>
                   <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.visitorsReport}}</td>
-                  <td>{{resourceService.frmelmnts.lbl.visitorsReportDescription}}</td>
+                  <td>{{ visitorsReportDescription }}</td>
                   <td class="text-center">
                     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('vidyadaan_visitor', false);" 
                     appTelemetryInteract
@@ -57,7 +57,7 @@
               </tr>
                 <tr>
                   <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.projectLevelFunnelReport}}</td>
-                  <td>{{resourceService.frmelmnts.lbl.projectLevelFunnelReportDescription}}</td>
+                  <td>{{ projectLevelFunnelReportDescription }}</td>
                   <td class="text-center">
                     <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('FunnelReport', true);" 
                     appTelemetryInteract
@@ -68,7 +68,7 @@
               </tr>
               <tr>
                 <td class="sb-color-primary font-weight-bold">{{resourceService.frmelmnts.lbl.contentDetailsReport}}</td>
-                <td>{{resourceService.frmelmnts.lbl.contentDetailsReportDescription}}</td>
+                <td>{{ contentDetailsReportDescription }}</td>
                 <td class="text-center">
                   <button type="button" class="sb-btn sb-btn-normal sb-btn-outline-primary" (click)="downloadReport('ContentDetailsReport', true);" 
                   appTelemetryInteract

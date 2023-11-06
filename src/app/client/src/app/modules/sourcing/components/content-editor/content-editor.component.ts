@@ -72,6 +72,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
+  public instance: string;
 
   constructor(
     public resourceService: ResourceService,
@@ -111,6 +112,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   ngOnInit() {
+    this.instance = this.resourceService.instance;
     this.userProfile = this.userService.userProfile;
     this.sessionContext = this.contentEditorComponentInput.sessionContext;
     // tslint:disable-next-line:max-line-length
