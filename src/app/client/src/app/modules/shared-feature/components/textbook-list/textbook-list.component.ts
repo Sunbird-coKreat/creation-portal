@@ -55,6 +55,48 @@ export class TextbookListComponent implements OnInit {
   public firstLevelFolderLabel: string;
   public prefernceFormOptions = {};
   public reviewContributionHelpConfig: any;
+  public fields:any = [
+    {
+        "code": "foodcrops",
+        "identifier": "fwCategory1",
+        "label": "Foodcrops",
+        "placeHolder": "Select Foodcrops",
+        "index": 1,
+        "translation": "{\"en\":\"Foodcrops\"}"
+    },
+    {
+        "code": "commercialcrops",
+        "identifier": "fwCategory2",
+        "label": "Commercial Crops",
+        "placeHolder": "Select Commercial Crops",
+        "index": 2,
+        "translation": "{\"en\":\"Commercial Crops\"}"
+    },
+    {
+        "code": "livestockmanagement",
+        "identifier": "fwCategory3",
+        "label": "Live Stock Management",
+        "placeHolder": "Select Live Stock Management",
+        "index": 3,
+        "translation": "{\"en\":\"Live Stock Management\"}"
+    },
+    {
+        "code": "livestockspecies",
+        "identifier": "fwCategory4",
+        "label": "Live Stock Species",
+        "placeHolder": "Select Live StockSpecies",
+        "index": 4,
+        "translation": "{\"en\":\"Live Stock Species\"}"
+    },
+    {
+        "code": "animalwelfare",
+        "identifier": "fwCategory5",
+        "label": "Animal Welfare",
+        "placeHolder": "Select Animal Welfare",
+        "index": 5,
+        "translation": "{\"en\":\"Animal Welfare\"}"
+    }
+  ]
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
@@ -225,9 +267,6 @@ export class TextbookListComponent implements OnInit {
             this.resourceService.frmelmnts.lbl.projectName,
             // tslint:disable-next-line:max-line-length
             this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
-            this.resourceService.frmelmnts.lbl.profile.Medium,
-            this.resourceService.frmelmnts.lbl.profile.Classes,
-            this.resourceService.frmelmnts.lbl.profile.Subjects,
             this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
             this.resourceService.frmelmnts.lbl.nominationReceived,
             this.resourceService.frmelmnts.lbl.samplesRecieved,
@@ -238,18 +277,16 @@ export class TextbookListComponent implements OnInit {
             this.resourceService.frmelmnts.lbl.contributionPending,
             this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
           ];
+          headers = [...headers, ...this.fields.map(field => field.code)];
         } else {
           headers = [
             this.resourceService.frmelmnts.lbl.projectName,
             this.resourceService.frmelmnts.lbl.contentname,
             this.resourceService.frmelmnts.lbl.framework,
-            this.resourceService.frmelmnts.lbl.board,
-            this.resourceService.frmelmnts.lbl.medium,
-            this.resourceService.frmelmnts.lbl.Class,
-            this.resourceService.frmelmnts.lbl.subject,
             this.resourceService.frmelmnts.lbl.creator,
             this.resourceService.frmelmnts.lbl.status,
           ];
+          headers = [...headers, ...this.fields.map(field => field.code)];
         }
         const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
         const tableData = [];
