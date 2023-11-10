@@ -96,7 +96,11 @@
           <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
         </span></th>
                 <th class="w-10">{{ contentTypeHeaderText }}</th>
-                <th class="w-15">{{ resourceService?.frmelmnts?.lbl?.MediumClassSubject }}</th>
+                <th class="w-15" >
+                  <span *ngFor="let item of fields">
+                    {{ item?.label }} ,
+                  </span>
+                  </th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService?.frmelmnts?.lbl?.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('contributionDate')">{{ resourceService?.frmelmnts?.lbl?.nominatedDate }}&nbsp;&nbsp;
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'contributionDate'"></i>
@@ -145,12 +149,16 @@
                   <div  class=" ui icon" [attr.data-tooltip]="getProgramContentTypes(program)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramContentTypes(program) }}</span></div>
                 </td>
                 <td class="mouse-pointer">
-                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'medium')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'medium') }}</span></div>
-                  <hr class="divider">
+                  <span *ngFor="let item of fields">
+                    test
+                    <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, item.code)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, item.code) }}</span></div>
+                    <hr class="divider">
 
-                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'gradeLevel')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'gradeLevel') }}</span></div>
+                  </span>
+
+                  <!-- <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'gradeLevel')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'gradeLevel') }}</span></div>
                   <hr class="divider">
-                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'subject')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'subject') }}</span></div>
+                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'subject')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'subject') }}</span></div> -->
                 </td>
 
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
@@ -368,5 +376,11 @@
   </div>
 </sui-modal>
 
-<app-project-filter *ngIf="showFiltersModal"  (dismiss)="showFiltersModal = false" (applyFilters)="getProgramsListByRole($event)"
- [programs]="programs" [telemetryPageId]="telemetryPageId" [filtersAppliedCount]="filtersAppliedCount" [forTargetType]="forTargetType"> </app-project-filter>
+<app-project-filter
+  *ngIf="showFiltersModal" 
+  (dismiss)="showFiltersModal = false" 
+  (applyFilters)="getProgramsListByRole($event)"
+ [programs]="programs" 
+ [telemetryPageId]="telemetryPageId" 
+ [filtersAppliedCount]="filtersAppliedCount" 
+ [forTargetType]="forTargetType"> </app-project-filter>

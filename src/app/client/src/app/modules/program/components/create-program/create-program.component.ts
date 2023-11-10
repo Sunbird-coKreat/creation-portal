@@ -795,15 +795,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type, null, null, this.selectedTargetCollection),
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', this.selectedTargetCollection),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
 
       forkJoin(request).subscribe(res => {
-        const formData = _.get(_.first(res), 'result.data.properties');
+        console.log('result.data.properties');
+        // const formData = this.props;
+        const formData = _.get(_.first(res), 'result.data.fields');
         const frameworkDetails = res[1];
         this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
         this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
+        console.log("this.formFieldProperties", this.formFieldProperties);
         this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
 
       });
