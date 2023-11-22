@@ -16,6 +16,7 @@ import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { collection } from '../list-contributor-textbooks/data';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 @Component({
   selector: 'app-program-nominations',
@@ -110,48 +111,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public userServiceData:any;
 
 
-  public fields:any = [
-    {
-        "code": "foodcrops",
-        "identifier": "fwCategory1",
-        "label": "Foodcrops",
-        "placeHolder": "Select Foodcrops",
-        "index": 1,
-        "translation": "{\"en\":\"Foodcrops\"}"
-    },
-    {
-        "code": "commercialcrops",
-        "identifier": "fwCategory2",
-        "label": "Commercial Crops",
-        "placeHolder": "Select Commercial Crops",
-        "index": 2,
-        "translation": "{\"en\":\"Commercial Crops\"}"
-    },
-    {
-        "code": "livestockmanagement",
-        "identifier": "fwCategory3",
-        "label": "Live Stock Management",
-        "placeHolder": "Select Live Stock Management",
-        "index": 3,
-        "translation": "{\"en\":\"Live Stock Management\"}"
-    },
-    {
-        "code": "livestockspecies",
-        "identifier": "fwCategory4",
-        "label": "Live Stock Species",
-        "placeHolder": "Select Live StockSpecies",
-        "index": 4,
-        "translation": "{\"en\":\"Live Stock Species\"}"
-    },
-    {
-        "code": "animalwelfare",
-        "identifier": "fwCategory5",
-        "label": "Animal Welfare",
-        "placeHolder": "Select Animal Welfare",
-        "index": 5,
-        "translation": "{\"en\":\"Animal Welfare\"}"
-    }
-  ]
+  public fields:any = []
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -159,7 +119,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
-    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService) {
+    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService,
+    public cslFrameworkService: CslFrameworkService) {
 
   }
 
@@ -191,6 +152,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
+    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    console.log(this.fields);
   }
 
   ngAfterViewInit() {
@@ -704,7 +667,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails = _.get(programDetails, 'result');
       this.sessionContext.programId = this.programDetails.program_id;
       this.getCollectionCategoryDefinition();
-      this.programDetails.config.categories = this.fields;
+      this.programDetails.config.categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
