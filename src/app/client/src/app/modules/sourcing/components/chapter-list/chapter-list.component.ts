@@ -163,10 +163,10 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     this.defaultVideoSize =  (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')) ?
     (<HTMLInputElement>document.getElementById('dockDefaultVideoSize')).value : 15000;
     this.configUrl =  (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')) ?
-    (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
+    (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "https://dockstorage.blob.core.windows.net/content-service/";
     this.enableReviewEdit =  (<HTMLInputElement>document.getElementById('enableReviewEdit')) ?
     (<HTMLInputElement>document.getElementById('enableReviewEdit')).value === 'true' : false;
-  }
+      }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {

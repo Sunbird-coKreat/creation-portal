@@ -9,7 +9,8 @@ import { EventEmitter } from '@angular/core';
 import { first, filter, map, tap } from 'rxjs/operators';
 import * as alphaNumSort from 'alphanum-sort';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
-import { of, Observable } from 'rxjs';
+import { of, Observable, forkJoin } from 'rxjs';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 @Component({
   selector: 'app-project-filter',
   templateUrl: './project-filter.component.html',
@@ -39,11 +40,58 @@ export class ProjectFilterComponent implements OnInit {
   public telemetryInteractPdata: any;
   public telemetryInteractObject: any;
   public showLoader: any;
+  public formFieldProperties_api: any = []
+  public appliedFiltersList: any [];
+
+  public framework: any ={
+    description: "Sunbird TPD framework",
+    identifier: "agriculture_framework",
+    index: 1,
+    name: "agriculture_framework",
+    objectType: "Framework",
+    relation: "hasSequenceMember",
+    status: "Live",
+    type: "K-12"
+  }
+
   // tslint:disable-next-line: max-line-length
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
   constructor(public sbFormBuilder: UntypedFormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
     public resourceService: ResourceService, public userService: UserService, public router: Router, public configService: ConfigService,
-    public cacheService: CacheService, public learnerService: LearnerService, private browserCacheTtlService: BrowserCacheTtlService) { }
+    public cacheService: CacheService, public learnerService: LearnerService, private browserCacheTtlService: BrowserCacheTtlService,
+    public cslFrameworkService: CslFrameworkService) {
+
+      const framework = this.framework;
+      const request = [ 
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
+        this.frameworkService.readFramworkCategories(framework.identifier),
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', 'filters', null, 'create', ""),
+      ];
+
+      forkJoin(request).subscribe(res => {
+        console.log("res", res);
+        console.log('result.data.properties');        
+        let formData = _.get(_.first(res), 'result.data.properties');
+        let categories:any = []
+        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
+        const filterFields = _.get(_.nth(res, 2), 'result.data.properties')
+        const frameworkDetails = res[1];
+        let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
+        console.log("this.formFieldProperties", this.formFieldProperties_api);
+        console.log(this.cslFrameworkService?.getFrameworkCategories());
+        console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+        formFieldProperties_api = [...formFieldProperties_api, ...filterFields];
+        if(this.appliedFiltersList){
+          formFieldProperties_api.forEach((val: any)=>{
+            val.default = this.appliedFiltersList[val['code']];
+          })
+          this.appliedFiltersList = [];
+        }
+        this.formFieldProperties_api = formFieldProperties_api;
+      });
+
+    }
 
   ngOnInit() {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true); // checking the router path
@@ -54,14 +102,12 @@ export class ProjectFilterComponent implements OnInit {
     this.createFilterForm(); // creating the filter form
     this.currentFilters = { // setting up initial values
       'rootorg_id': [],
-      'medium': [],
-      'gradeLevel': [],
-      'subject': [],
       'contentTypes': [],
       'target_collection_category': [],
       'nominations': this.nominationContributionStatus, // adding default values for open, close and any
       'contributions': this.nominationContributionStatus // adding default values for open, close and any
     };
+    console.log(this.currentFilters);
     this.checkFilterShowCondition();
      // getting content types as the content categories againts the project
     this.getContentCategories();
@@ -79,17 +125,16 @@ export class ProjectFilterComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.currentFilters['target_collection_category'] = this.sortFilters(collectionPrimaryCategories);
     this.currentFilters['contentTypes'] = this.sortFilters(this.currentFilters['contentTypes']);
+    console.log(this.currentFilters);
   }
   createFilterForm() {
     this.filterForm = this.sbFormBuilder.group({
       sourcingOrganisations: [],
-      medium: [],
-      gradeLevel: [],
-      subject: [],
       content_types: [],
       nominations: [],
       contributions: [],
-      target_collection_category: []
+      target_collection_category: [],
+
     });
     this.filterForm.valueChanges.subscribe(val => {
       this.enableApplyBtn = this.programsService.getFiltersAppliedCount(val); // getting applied filters count
@@ -159,7 +204,7 @@ export class ProjectFilterComponent implements OnInit {
   }
   onChangeSourcingOrg() { // this method will call only when any change in sourcing org drop down
     this.fetchFrameWorkDetails(this.filterForm.controls.sourcingOrganisations.value);
-    this.filterForm.controls['medium'].setValue('');
+    
   }
   getDefaultFrameWork(hashTagId): Observable<any> {
     const channelOptions = {
@@ -186,97 +231,11 @@ export class ProjectFilterComponent implements OnInit {
         first()).subscribe((frameworkInfo: any) => {
           if (frameworkInfo && !frameworkInfo.err) {
             this.frameworkCategories = _.get(frameworkInfo, `frameworkdata.${frameworkName}.categories`);
-            this.setFrameworkDataToProgram(); // set frame work details
+            // this.setFrameworkDataToProgram(); // set frame work details
            this.showLoader = false; // hide loader
           }
         });
     });
-  }
-  setFrameworkDataToProgram() { // set frame work details
-    const board = _.find(this.frameworkCategories, (element) => {
-      return element.code === 'board';
-    });
-    if (board) {
-      const mediumOption = this.programsService.getAssociationData(board.terms, 'medium', this.frameworkCategories);
-      if (mediumOption.length) {
-        this.currentFilters['medium'] = mediumOption;
-      }
-    }
-
-    this.frameworkCategories.forEach((element) => {
-      const sortedArray = alphaNumSort(_.reduce(element['terms'], (result, value) => {
-        result.push(value['name']);
-        return result;
-      }, []));
-      const sortedTermsArray = _.map(sortedArray, (name) => {
-        return _.find(element['terms'], { name: name });
-      });
-      this.currentFilters[element['code']] = sortedTermsArray;
-      // just keek the origional filter data used when not find values from the form
-      this.originalFiltersScope[element['code']] = sortedTermsArray;
-    });
-
-    const Kindergarten = _.remove(this.currentFilters['gradeLevel'], (item) => {
-      return item.name === 'Kindergarten';
-    });
-    this.currentFilters['gradeLevel'] = [...Kindergarten, ...this.currentFilters['gradeLevel']];
-  }
-  onMediumChange() {
-    // should enable for sourcing org admin(my projects tab) and for contributor org all projects and induvidual contributor all projects
-    if (this.isOnChangeFilterEnable) {
-      this.filterForm.controls['gradeLevel'].setValue('');
-      this.filterForm.controls['subject'].setValue('');
-      if (!_.isEmpty(this.filterForm.value.medium)) {
-        // tslint:disable-next-line: max-line-length
-        const data = this.getOnChangeAssociationValues(this.filterForm.value.medium, 'Medium'); // should get applied association data from framework details
-        const classOption = this.programsService.getAssociationData(data, 'gradeLevel', this.frameworkCategories);
-
-        if (classOption.length) {
-          this.currentFilters['gradeLevel'] = classOption;
-        }
-
-        this.onClassChange();
-      } else {
-        this.currentFilters['gradeLevel'] = this.originalFiltersScope['gradeLevel'];
-      }
-    }
-  }
-  // should get applied association data from framework details
-  getOnChangeAssociationValues(selectedFilter, caterory) {
-    const mediumData = _.find(this.frameworkCategories, (element) => {
-      return element.name === caterory;
-    });
-    let getAssociationsData = [];
-
-    _.forEach(selectedFilter, (value) => {
-      const getAssociationData = _.map(_.get(mediumData, 'terms'), (framework) => {
-        if (framework['name'] === value) {
-          return framework;
-        }
-      });
-      getAssociationsData = _.compact(_.concat(getAssociationsData, getAssociationData));
-    });
-    return getAssociationsData;
-  }
-  onClassChange() {
-    // should enable for sourcing org admin(my projects tab) and for contributor org all projects and induvidual contributor all projects
-    if (this.isOnChangeFilterEnable) {
-      this.filterForm.controls['subject'].setValue('');
-
-      if (!_.isEmpty(this.filterForm.value.gradeLevel)) {
-
-        // tslint:disable-next-line: max-line-length
-        const data = this.getOnChangeAssociationValues(this.filterForm.value.gradeLevel, 'Subject'); // should get applied association data from framework details
-
-        const subjectOption = this.programsService.getAssociationData(data, 'subject', this.frameworkCategories);
-
-        if (subjectOption.length) {
-          this.currentFilters['subject'] = subjectOption;
-        }
-      } else {
-        this.currentFilters['subject'] = this.originalFiltersScope['subject'];
-      }
-    }
   }
   getAppliedFiltersDetails() { // get applied filters and populate them on filter(auto pupolate) which are stored in cache service
     let appliedFilters: any;
@@ -313,23 +272,7 @@ export class ProjectFilterComponent implements OnInit {
   }
   setAppliedFilters(appliedFilters) { // for auto populate of applied filters
     if (appliedFilters) {
-      this.setPreferences['rootorg_id'] = appliedFilters['rootorg_id'] ? appliedFilters['rootorg_id'] : '';
-      this.setPreferences['medium'] = appliedFilters['medium'] ? appliedFilters['medium'] : [];
-      this.setPreferences['gradeLevel'] = appliedFilters['gradeLevel'] ? appliedFilters['gradeLevel'] : [];
-      this.setPreferences['subject'] = appliedFilters['subject'] ? appliedFilters['subject'] : [];
-      this.setPreferences['content_types'] = appliedFilters['content_types'] ? appliedFilters['content_types'] : [];
-      this.setPreferences['target_collection_category'] = appliedFilters['target_collection_category'] ?
-      appliedFilters['target_collection_category'] : [];
-      this.setPreferences['nomination_date'] = appliedFilters['nomination_date'] ? appliedFilters['nomination_date'] : '';
-      this.setPreferences['contribution_date'] = appliedFilters['contribution_date'] ? appliedFilters['contribution_date'] : '';
-      this.filterForm.controls['sourcingOrganisations'].setValue(this.setPreferences['rootorg_id']);
-      this.filterForm.controls['medium'].setValue(this.setPreferences['medium']);
-      this.filterForm.controls['gradeLevel'].setValue(this.setPreferences['gradeLevel']);
-      this.filterForm.controls['subject'].setValue(this.setPreferences['subject']);
-      this.filterForm.controls['content_types'].setValue(this.setPreferences['content_types']);
-      this.filterForm.controls['target_collection_category'].setValue(this.setPreferences['target_collection_category']);
-      this.filterForm.controls['nominations'].setValue(this.setPreferences['nomination_date']);
-      this.filterForm.controls['contributions'].setValue(this.setPreferences['contribution_date']);
+      this.appliedFiltersList = appliedFilters;
     }
 
     if (this.activeUser === 'contributeOrgAdminAllProject') {
@@ -403,6 +346,7 @@ export class ProjectFilterComponent implements OnInit {
       case 'contributeOrgAdminAllProjectTenantAccess':
         this.cacheService.set('contributeAllProgramAppliedFiltersTenantAccess', filterLocalStorage); break;
     }
+
     resetFilter ? this.applyFilters.emit() : this.applyFilters.emit(this.setPreferences); // emiting the filters data to parent component
     this.dismissed();
   }
@@ -419,5 +363,15 @@ export class ProjectFilterComponent implements OnInit {
       pageid,
       extra
     }, _.isUndefined);
+  }
+
+  getFormData(event){
+    console.log(event)
+    this.setPreferences = {...this.setPreferences, ...event};
+    console.log(this.setPreferences);
+  }
+
+  formStatusEventListener(event){
+    console.log(event)
   }
 }

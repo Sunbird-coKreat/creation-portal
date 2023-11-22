@@ -11,6 +11,8 @@ import { CacheService } from '../../../shared/services/cache-service/cache.servi
 import { first } from 'rxjs/operators';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
+
 
 @Component({
   selector: 'app-program-list',
@@ -61,13 +63,59 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public myProjectContextHelpConfig: any;
   public myProjectNotFoundHelpConfig: any;
   public contentTypeHeaderText;
+
+  public fields:any = [
+    {
+        "code": "foodcrops",
+        "identifier": "fwCategory1",
+        "label": "Foodcrops",
+        "placeHolder": "Select Foodcrops",
+        "index": 1,
+        "translation": "{\"en\":\"Foodcrops\"}"
+    },
+    {
+        "code": "commercialcrops",
+        "identifier": "fwCategory2",
+        "label": "Commercial Crops",
+        "placeHolder": "Select Commercial Crops",
+        "index": 2,
+        "translation": "{\"en\":\"Commercial Crops\"}"
+    },
+    {
+        "code": "livestockmanagement",
+        "identifier": "fwCategory3",
+        "label": "Live Stock Management",
+        "placeHolder": "Select Live Stock Management",
+        "index": 3,
+        "translation": "{\"en\":\"Live Stock Management\"}"
+    },
+    {
+        "code": "livestockspecies",
+        "identifier": "fwCategory4",
+        "label": "Live Stock Species",
+        "placeHolder": "Select Live StockSpecies",
+        "index": 4,
+        "translation": "{\"en\":\"Live Stock Species\"}"
+    },
+    {
+        "code": "animalwelfare",
+        "identifier": "fwCategory5",
+        "label": "Animal Welfare",
+        "placeHolder": "Select Animal Welfare",
+        "index": 5,
+        "translation": "{\"en\":\"Animal Welfare\"}"
+    }
+]
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
-    private sourcingService: SourcingService, private helperService: HelperService) {
+    private sourcingService: SourcingService, private helperService: HelperService,
+    private cslFrameworkService: CslFrameworkService) {
       this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
+     
+      
     }
 
   ngOnInit() {
@@ -86,7 +134,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
       this.telemetryInteractObject = {};
       this.setContextualHelpConfig();
-    })
+    });
+     
     
   }
 
@@ -180,33 +229,37 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsListByRole(setfilters?) {
+    // debugger;
+      console.log(this.cslFrameworkService?.getFrameworkCategories());
+      console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
         // tslint:disable-next-line: max-line-length
-        const sort = {
-          // tslint:disable-next-line: max-line-length
-          'medium': _.get(this.userService.userProfile, 'userRegData.User.medium') || [],
-          // tslint:disable-next-line: max-line-length
-          'gradeLevel': _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') || [],
-          // tslint:disable-next-line: max-line-length
-          'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') || []
-        };
+        // const sort = {
+        //   // tslint:disable-next-line: max-line-length
+        //   'medium': _.get(this.userService.userProfile, 'userRegData.User.medium') || [],
+        //   // tslint:disable-next-line: max-line-length
+        //   'gradeLevel': _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') || [],
+        //   // tslint:disable-next-line: max-line-length
+        //   'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') || []
+        // };
 
       if (this.activeMyProgramsMenu) {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess' : 'contributeMyProgramAppliedFilters');
         // tslint:disable-next-line: max-line-length
-        this.getMyProgramsForContrib(['Live', 'Unlisted', 'Closed'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
+        this.getMyProgramsForContrib(['Live', 'Unlisted', 'Closed'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else if (this.activeAllProgramsMenu) {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
 
         // tslint:disable-next-line: max-line-length
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else {
         this.showLoader = false;
       }
     } else {
+      // debugger;
       const applyFilters = (this.forTargetType === 'searchCriteria') ? this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFiltersSearchCriteria') : this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
@@ -594,8 +647,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       filters['user_id'] = this.userService.userid;
     }
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      // filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      filters = { ...filters,...appliedfilters};
     }
+
+    console.log("this.sourcingService.csService");
+    console.log(this.cslFrameworkService);
+    console.log(this.cslFrameworkService?.getFrameworkCategories());
+    console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
       this.programs = _.map(_.get(response, 'result.programs'), (program: any) => {
         if (program.program_id) {

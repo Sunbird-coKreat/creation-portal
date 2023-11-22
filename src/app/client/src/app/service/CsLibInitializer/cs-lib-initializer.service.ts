@@ -36,6 +36,10 @@ export class CsLibInitializerService {
               contentServiceConfig: {
                 hierarchyApiPath: '/learner/questionset/v1',
                 questionListApiPath: '/api/question/v1'
+              },frameworkServiceConfig: {
+                apiPath: '/api/framework/v1'
+              },formServiceConfig: {
+                apiPath: '/learner/data/v1/form',
               }
           }
       },
@@ -50,7 +54,9 @@ export class CsLibInitializerService {
           return new Promise(resolve => {
             const value = localStorage.getItem(key);
             console.log('localStorage.getItem(key)', value);
-            resolve(value);
+            if(!!value){
+              resolve(value);
+            }
           });
         }
     }
