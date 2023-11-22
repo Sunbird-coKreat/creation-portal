@@ -18,6 +18,9 @@ import { DOCUMENT } from '@angular/common';
 import { Location } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { CacheService } from '../app/modules/shared/services/cache-service/cache.service';
+import { CslFrameworkService } from '../app/modules/public/services/csl-framework/csl-framework.service';
+
+
 
 /**
  * main app component
@@ -108,7 +111,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private profileService: ProfileService, private toasterService: ToasterService, public utilService: UtilService,
     public formService: FormService, private programsService: ProgramsService, private location: Location,
     @Inject(DOCUMENT) private _document: any, public sessionExpiryInterceptor: SessionExpiryInterceptor,
-    public deviceDetectorService: DeviceDetectorService) {
+    public deviceDetectorService: DeviceDetectorService,
+    public cslFrameworkService: CslFrameworkService
+    ) {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
       ? (<HTMLInputElement>document.getElementById('instance')).value : 'sunbird';
 
@@ -152,6 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
     let combineData = combineLatest([queryParams$, this.setSlug(), this.setDeviceId()]);
     this.navigationHelperService.initialize();
     this.userService.initialize(this.userService.loggedIn);
+    
     if (this.userService.loggedIn) {
       this.userId = this.userService.userid;
       this.permissionService.initialize();
@@ -159,14 +165,13 @@ export class AppComponent implements OnInit, OnDestroy {
       this.programsService.initialize();
       this.userService.startSession();
       this.setUserDetails().subscribe(data =>{
+        this.setUserData(data);
 
-        this.setUserData()
       });
     } else {
       this.userId = this.deviceId;
       this.setOrgDetails().subscribe(data =>{
-
-        this.setUserData();
+        this.setUserData(data);
         
       })
     }
@@ -179,12 +184,14 @@ export class AppComponent implements OnInit, OnDestroy {
     this.appId = this.userService.appId;
   }
 
-  setUserData(){
+  setUserData(data: any){
+    console.log('data', data);
     this.setPortalTitleLogo();
     this.telemetryService.initialize(this.getTelemetryContext());
     this.logCdnStatus();
     this.setFingerPrintTelemetry();
     this.checkTncAndFrameWorkSelected();
+    
     // this.initApp = true;
     this.initAppSubject.next(true);
   }
@@ -391,7 +398,8 @@ export class AppComponent implements OnInit, OnDestroy {
         }
         this.userProfile = user.userProfile;
         this.slug = _.get(this.userProfile, 'rootOrg.slug');
-        this.channel = this.userService.hashTagId;
+        this.cslFrameworkService.setDefaultFWforCsl('', this.userService.hashTagId);
+        this.channel = this.userService.hashTagId;        
         return of(user.userProfile);
       }));
   }

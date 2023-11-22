@@ -11,6 +11,8 @@ import { CacheService } from '../../../shared/services/cache-service/cache.servi
 import { first } from 'rxjs/operators';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
+
 
 @Component({
   selector: 'app-program-list',
@@ -109,8 +111,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
-    private sourcingService: SourcingService, private helperService: HelperService) {
+    private sourcingService: SourcingService, private helperService: HelperService,
+    private cslFrameworkService: CslFrameworkService) {
       this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
+     
+      
     }
 
   ngOnInit() {
@@ -129,7 +134,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
       this.telemetryInteractObject = {};
       this.setContextualHelpConfig();
-    })
+    });
+     
     
   }
 
@@ -223,7 +229,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsListByRole(setfilters?) {
-    debugger;
+    // debugger;
+      console.log(this.cslFrameworkService?.getFrameworkCategories());
+      console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
         // tslint:disable-next-line: max-line-length
@@ -251,7 +259,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.showLoader = false;
       }
     } else {
-      debugger;
+      // debugger;
       const applyFilters = (this.forTargetType === 'searchCriteria') ? this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFiltersSearchCriteria') : this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
@@ -642,6 +650,12 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       // filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
       filters = { ...filters,...appliedfilters};
     }
+
+    console.log("this.sourcingService.csService");
+    console.log(this.cslFrameworkService);
+    console.log(this.cslFrameworkService?.getFrameworkCategories());
+    console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+
     return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
       this.programs = _.map(_.get(response, 'result.programs'), (program: any) => {
         if (program.program_id) {
