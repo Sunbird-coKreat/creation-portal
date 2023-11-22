@@ -9,6 +9,8 @@ import * as _ from 'lodash-es';
 import { isEmpty } from 'rxjs/operators';
 import {ProgramTelemetryService} from '../../../program/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { CslFrameworkService } from '../../../../modules/public/services/csl-framework/csl-framework.service';
+
 
 @Component({
   selector: 'app-textbook-list',
@@ -55,55 +57,15 @@ export class TextbookListComponent implements OnInit {
   public firstLevelFolderLabel: string;
   public prefernceFormOptions = {};
   public reviewContributionHelpConfig: any;
-  public fields:any = [
-    {
-        "code": "foodcrops",
-        "identifier": "fwCategory1",
-        "label": "Foodcrops",
-        "placeHolder": "Select Foodcrops",
-        "index": 1,
-        "translation": "{\"en\":\"Foodcrops\"}"
-    },
-    {
-        "code": "commercialcrops",
-        "identifier": "fwCategory2",
-        "label": "Commercial Crops",
-        "placeHolder": "Select Commercial Crops",
-        "index": 2,
-        "translation": "{\"en\":\"Commercial Crops\"}"
-    },
-    {
-        "code": "livestockmanagement",
-        "identifier": "fwCategory3",
-        "label": "Live Stock Management",
-        "placeHolder": "Select Live Stock Management",
-        "index": 3,
-        "translation": "{\"en\":\"Live Stock Management\"}"
-    },
-    {
-        "code": "livestockspecies",
-        "identifier": "fwCategory4",
-        "label": "Live Stock Species",
-        "placeHolder": "Select Live StockSpecies",
-        "index": 4,
-        "translation": "{\"en\":\"Live Stock Species\"}"
-    },
-    {
-        "code": "animalwelfare",
-        "identifier": "fwCategory5",
-        "label": "Animal Welfare",
-        "placeHolder": "Select Animal Welfare",
-        "index": 5,
-        "translation": "{\"en\":\"Animal Welfare\"}"
-    }
-  ]
+  public fields:any = []
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService, private formBuilder: UntypedFormBuilder, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
-    public contentHelperService: ContentHelperService
+    public contentHelperService: ContentHelperService,
+    public cslFrameworkService: CslFrameworkService
   )  {
     this.sbFormBuilder = formBuilder;
   }
@@ -116,6 +78,7 @@ export class TextbookListComponent implements OnInit {
     ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
+    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
     this.setContextualHelpConfig();
   }
 
