@@ -1,6 +1,6 @@
 import { ResourceService, ToasterService, ConfigService  } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { ProgramsService, ActionService, UserService, ContentHelperService} from '@sunbird/core';
+import { ProgramsService, ActionService, UserService, ContentHelperService, FrameworkService} from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
@@ -10,6 +10,7 @@ import { isEmpty } from 'rxjs/operators';
 import {ProgramTelemetryService} from '../../../program/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { CslFrameworkService } from '../../../../modules/public/services/csl-framework/csl-framework.service';
+import { forkJoin } from 'rxjs';
 
 
 @Component({
@@ -57,7 +58,18 @@ export class TextbookListComponent implements OnInit {
   public firstLevelFolderLabel: string;
   public prefernceFormOptions = {};
   public reviewContributionHelpConfig: any;
-  public fields:any = []
+  public fields:any = [];
+  public framework: any ={
+    description: "Sunbird TPD framework",
+    identifier: "agriculture_framework",
+    index: 1,
+    name: "agriculture_framework",
+    objectType: "Framework",
+    relation: "hasSequenceMember",
+    status: "Live",
+    type: "K-12"
+  };
+  public formFieldProperties_api: any = []
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
@@ -65,6 +77,7 @@ export class TextbookListComponent implements OnInit {
     private userService: UserService, private formBuilder: UntypedFormBuilder, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
     public contentHelperService: ContentHelperService,
+    public frameworkService: FrameworkService,
     public cslFrameworkService: CslFrameworkService
   )  {
     this.sbFormBuilder = formBuilder;
@@ -79,6 +92,29 @@ export class TextbookListComponent implements OnInit {
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    const framework = this.framework;
+      const request = [ 
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
+        this.frameworkService.readFramworkCategories(framework.identifier)
+      ];
+
+      forkJoin(request).subscribe(res => {
+        console.log("res", res);
+        console.log('result.data.properties');        
+        let formData = _.get(_.first(res), 'result.data.properties');
+        let categories:any = []
+        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
+        const frameworkDetails = res[1];
+        let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
+        // console.log("this.formFieldProperties", this.formFieldProperties_api);
+        console.log(this.cslFrameworkService?.getFrameworkCategories());
+        console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+        formFieldProperties_api = [...formFieldProperties_api];
+        
+        this.formFieldProperties_api = formFieldProperties_api;
+        console.log(this.formFieldProperties_api)
+      });
     this.setContextualHelpConfig();
   }
 
@@ -194,7 +230,9 @@ export class TextbookListComponent implements OnInit {
         } else {
           this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], data);
         }
+        console.log("this.collections", this.collections);
         this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
+
         this.tempSortCollections = this.collections;
         this.sortCollection(this.sortColumn);
         this.showLoader = false;
