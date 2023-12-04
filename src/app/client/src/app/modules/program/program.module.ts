@@ -19,7 +19,7 @@ import { SourcingModule } from '../sourcing/sourcing.module';
 import { CollectionComponent, DashboardComponent, ChapterListComponent } from '../sourcing';
 import { OrgReportsComponent } from './components/org-reports/org-reports.component';
 import { ContributorsListComponent } from './components/contributors-list/contributors-list.component';
-import { CommonFormElementsModule } from 'common-form-elements-web-v9';
+import { CommonFormElementsModule } from '@project-sunbird/common-form-elements-full';
 
 @NgModule({
   declarations: [
