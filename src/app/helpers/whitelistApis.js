@@ -563,7 +563,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/learner/questionset/v1/import': {
+    '/learner/questionset/v2/import': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -796,7 +796,7 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
-    '/action/questionset/v1/review/:do_id': {
+    '/action/questionset/v2/review/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -807,7 +807,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/action/questionset/v1/update/:do_id': {
+    '/action/questionset/v2/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -818,7 +818,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/action/questionset/v1/publish/:do_id': {
+    '/action/questionset/v2/publish/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -829,7 +829,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/action/questionset/v1/reject/:do_id': {
+    '/action/questionset/v2/reject/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -838,7 +838,7 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    '/action/questionset/v1/retire/:do_id': {
+    '/action/questionset/v2/retire/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -847,25 +847,25 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    '/action/questionset/v1/read/:do_id': {
+    '/action/questionset/v2/read/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
-    '/action/questionset/v1/hierarchy/:do_id': {
+    '/action/questionset/v2/hierarchy/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
-    '/action/question/v1/read/:do_id': {
+    '/action/question/v2/read/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
-    '/action/question/v1/review/:do_id': {
+    '/action/question/v2/review/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -876,7 +876,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/action/question/v1/publish/:do_id': {
+    '/action/question/v2/publish/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -887,7 +887,7 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/action/question/v1/update/:do_id': {
+    '/action/question/v2/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -898,13 +898,13 @@ const API_LIST = {
         ROLE.INDIVIDUAL_USER
       ]
     },
-    '/content/questionset/v1/read/:do_id': {
+    '/content/questionset/v2/read/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
-    '/content/question/v1/read/:do_id': {
+    '/content/question/v2/read/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
@@ -913,7 +913,7 @@ const API_LIST = {
     '/content/data/v1/telemetry': {
       checksNeeded: []
     },
-    '/api/question/v1/list': {
+    '/api/question/v2/list': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
@@ -931,13 +931,13 @@ const API_LIST = {
         ROLE.PUBLIC
       ]
     },
-    '/api/question/v1/bulkUpload' : {
+    '/api/question/v2/bulkUpload' : {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
       ]
     },
-    '/api/question/v1/bulkUploadStatus' : {
+    '/api/question/v2/bulkUploadStatus' : {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC
@@ -982,20 +982,20 @@ const API_LIST = {
     '/action/itemset/v3/retire/:do_id',
     '/action/questionset/v4/system/update/:do_id',
     '/action/framework/v3/read/:frameworkId',
-    '/action/questionset/v1/review/:do_id',
-    '/action/questionset/v1/update/:do_id',
-    '/action/questionset/v1/publish/:do_id',
-    '/action/questionset/v1/reject/:do_id',
-    '/action/questionset/v1/retire/:do_id',
-    '/action/questionset/v1/read/:do_id',
-    '/action/questionset/v1/hierarchy/:do_id',
-    '/action/question/v1/read/:do_id',
-    '/action/question/v1/review/:do_id',
-    '/action/question/v1/publish/:do_id',
-    '/action/question/v1/update/:do_id',
+    '/action/questionset/v2/review/:do_id',
+    '/action/questionset/v2/update/:do_id',
+    '/action/questionset/v2/publish/:do_id',
+    '/action/questionset/v2/reject/:do_id',
+    '/action/questionset/v2/retire/:do_id',
+    '/action/questionset/v2/read/:do_id',
+    '/action/questionset/v2/hierarchy/:do_id',
+    '/action/question/v2/read/:do_id',
+    '/action/question/v2/review/:do_id',
+    '/action/question/v2/publish/:do_id',
+    '/action/question/v2/update/:do_id',
     '/content/content/v1/read/:do_id',
-    '/content/questionset/v1/read/:do_id',
-    '/content/question/v1/read/:do_id',
+    '/content/questionset/v2/read/:do_id',
+    '/content/question/v2/read/:do_id',
     '/learner/user/v1/exists/phone/:phone',
     '/action/content/v4/read/:do_id',
     '/action/content/v4/upload/:do_id',

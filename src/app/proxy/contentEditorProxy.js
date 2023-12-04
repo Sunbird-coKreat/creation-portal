@@ -74,13 +74,13 @@ module.exports = function (app) {
   const contentURL = envHelper.CONTENT_URL;
   app.use(
     [
-      "/action/questionset/v1/read/*",
-      "/action/question/v1/read/*",
-      '/action/question/v1/retire/*',
-      "/action/questionset/v1/hierarchy/*",
-      "/action/questionset/v1/retire/*",
-      "/action/question/v1/list",
-      "/action/questionset/v1/copy/*",
+      "/action/questionset/v2/read/*",
+      "/action/question/v2/read/*",
+      '/action/question/v2/retire/*',
+      "/action/questionset/v2/hierarchy/*",
+      "/action/questionset/v2/retire/*",
+      "/action/question/v2/list",
+      "/action/questionset/v2/copy/*",
     ],
     proxy(contentURL, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),
@@ -100,14 +100,14 @@ module.exports = function (app) {
   );
   app.post(
     [
-      "/action/questionset/v1/create",
-      "/action/questionset/v1/review/*",
-      "/action/questionset/v1/publish/*",
-      "/action/question/v1/create",
-      "/action/question/v1/review/*",
-      "/action/question/v1/publish/*",
-      "/action/questionset/v1/reject/*",
-      '/action/question/v1/reject/*',
+      "/action/questionset/v2/create",
+      "/action/questionset/v2/review/*",
+      "/action/questionset/v2/publish/*",
+      "/action/question/v2/create",
+      "/action/question/v2/review/*",
+      "/action/question/v2/publish/*",
+      "/action/questionset/v2/reject/*",
+      '/action/question/v2/reject/*',
     ],
     proxy(contentURL, {
       limit: reqDataLimitOfContentUpload,
@@ -121,12 +121,12 @@ module.exports = function (app) {
   );
   app.patch(
     [
-      "/action/questionset/v1/hierarchy/update",
-      "/action/questionset/v1/update/*",
-      "/action/questionset/v1/add/*",
-      "/action/question/v1/update/*",
-      '/action/questionset/v1/add',
-      '/action/questionset/v1/remove',
+      "/action/questionset/v2/hierarchy/update",
+      "/action/questionset/v2/update/*",
+      "/action/questionset/v2/add/*",
+      "/action/question/v2/update/*",
+      '/action/questionset/v2/add',
+      '/action/questionset/v2/remove',
     ],
     proxyUtils.verifyToken(),
     proxy(contentURL, {
@@ -421,8 +421,8 @@ module.exports = function (app) {
       "/action/program/v1/process/create",
       "/action/program/v1/process/update",
       "/action/program/v1/process/search",
-      "/action/question/v1/bulkUpload",
-      "/action/question/v1/bulkUploadStatus",
+      "/action/question/v2/bulkUpload",
+      "/action/question/v2/bulkUploadStatus",
     ],
     proxy(contentURL, {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(),

@@ -242,7 +242,7 @@ export class HelperService {
 
   reviewQuestionSet(contentId): Observable<ServerResponse> {
     const option = {
-      url: `questionset/v1/review/${contentId}`,
+      url: `questionset/v2/review/${contentId}`,
       data: {
         'request': {
           'questionset': {}
@@ -286,7 +286,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `questionset/v1/publish/${contentId}`,
+      url: `questionset/v2/publish/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -392,7 +392,7 @@ export class HelperService {
             reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
             reqOption.data.request['questionset'] = {};
             reqOption.data.request['questionset'] = reqOption.data.request.content;
-            _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
+            _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v2/read/${contentMetaData.identifier}`;
             delete reqOption.data.request.content;
           }
           this.learnerService.post(reqOption).subscribe((res: any) => {
@@ -419,7 +419,7 @@ export class HelperService {
 
   publishQuestionSetToConsumption(questionSetId, programContext) {
     const option = {
-      url: 'questionset/v1/read/' + questionSetId,
+      url: 'questionset/v2/read/' + questionSetId,
       param: { 'mode': 'edit' }
     };
 
@@ -441,7 +441,7 @@ export class HelperService {
               ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org'
 
         const reqFormat = {
-            source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`
+            source: `${baseUrl}/api/questionset/v2/read/${questionSetData.identifier}`
         };
 
         if (programContext.target_type === 'searchCriteria') {
@@ -1129,7 +1129,7 @@ export class HelperService {
       reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
       reqOption.data.request['questionset'] = {};
       reqOption.data.request['questionset'] = reqOption.data.request.content;
-      _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
+      _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v2/read/${contentMetaData.identifier}`;
       delete reqOption.data.request.content;
     }
     return this.learnerService.post(reqOption).subscribe((res: any) => {
@@ -1505,7 +1505,7 @@ export class HelperService {
     };
 
     if (_.get(templateDetails, 'modeOfCreation') === 'questionset') {
-      option.url = 'questionset/v1/create';
+      option.url = 'questionset/v2/create';
       option.data.request['questionset'] = {};
       const questionsetObject = obj;
       if (programContext.target_type === 'searchCriteria') {
@@ -1520,7 +1520,7 @@ export class HelperService {
       }
       option.data.request['questionset'] = questionsetObject;
     } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
-      option.url = 'question/v1/create';
+      option.url = 'question/v2/create';
       option.data.request['question'] = {};
       option.data.request['question'] = obj;
     }
