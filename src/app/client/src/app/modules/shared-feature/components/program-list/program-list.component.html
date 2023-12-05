@@ -96,11 +96,7 @@
           <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
         </span></th>
                 <th class="w-10">{{ contentTypeHeaderText }}</th>
-                <th class="w-15" >
-                  <span *ngFor="let item of fields">
-                    {{ item?.label }} ,
-                  </span>
-                  </th>
+                <th class="w-15" >{{ frameworkFields }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService?.frmelmnts?.lbl?.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('contributionDate')">{{ resourceService?.frmelmnts?.lbl?.nominatedDate }}&nbsp;&nbsp;
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'contributionDate'"></i>
@@ -149,8 +145,7 @@
                   <div  class=" ui icon" [attr.data-tooltip]="getProgramContentTypes(program)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramContentTypes(program) }}</span></div>
                 </td>
                 <td class="mouse-pointer">
-                  <span *ngFor="let item of fields">
-                    test
+                  <span *ngFor="let item of frameworkObjectFields | slice:0:3">
                     <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, item.code)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, item.code) }}</span></div>
                     <hr class="divider">
 

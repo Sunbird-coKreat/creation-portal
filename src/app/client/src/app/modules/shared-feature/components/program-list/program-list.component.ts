@@ -13,7 +13,6 @@ import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
 import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
-
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
@@ -63,49 +62,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public myProjectContextHelpConfig: any;
   public myProjectNotFoundHelpConfig: any;
   public contentTypeHeaderText;
-
-  public fields:any = [
-    {
-        "code": "foodcrops",
-        "identifier": "fwCategory1",
-        "label": "Foodcrops",
-        "placeHolder": "Select Foodcrops",
-        "index": 1,
-        "translation": "{\"en\":\"Foodcrops\"}"
-    },
-    {
-        "code": "commercialcrops",
-        "identifier": "fwCategory2",
-        "label": "Commercial Crops",
-        "placeHolder": "Select Commercial Crops",
-        "index": 2,
-        "translation": "{\"en\":\"Commercial Crops\"}"
-    },
-    {
-        "code": "livestockmanagement",
-        "identifier": "fwCategory3",
-        "label": "Live Stock Management",
-        "placeHolder": "Select Live Stock Management",
-        "index": 3,
-        "translation": "{\"en\":\"Live Stock Management\"}"
-    },
-    {
-        "code": "livestockspecies",
-        "identifier": "fwCategory4",
-        "label": "Live Stock Species",
-        "placeHolder": "Select Live StockSpecies",
-        "index": 4,
-        "translation": "{\"en\":\"Live Stock Species\"}"
-    },
-    {
-        "code": "animalwelfare",
-        "identifier": "fwCategory5",
-        "label": "Animal Welfare",
-        "placeHolder": "Select Animal Welfare",
-        "index": 5,
-        "translation": "{\"en\":\"Animal Welfare\"}"
-    }
-]
+  public frameworkObjectFields;
+  public frameworkFields:any;
+ 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
@@ -113,9 +72,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
     private sourcingService: SourcingService, private helperService: HelperService,
     private cslFrameworkService: CslFrameworkService) {
-      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
-     
-      
+      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType; 
     }
 
   ngOnInit() {
@@ -135,8 +92,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.telemetryInteractObject = {};
       this.setContextualHelpConfig();
     });
-     
-    
   }
 
   setContextualHelpConfig() {
@@ -230,8 +185,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getProgramsListByRole(setfilters?) {
     // debugger;
-      console.log(this.cslFrameworkService?.getFrameworkCategories());
-      console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+      //console.log(this.cslFrameworkService?.getFrameworkCategories());
+    this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    this.frameworkFields = _.map(this.frameworkObjectFields, 'label').slice(0,3).join(',');
+
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
         // tslint:disable-next-line: max-line-length
@@ -431,6 +388,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
+    req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getAllProgramsByType(req)
       .subscribe((myProgramsResponse) => {
         this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (program: any) => {
@@ -537,6 +495,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
+    req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
       this.programs = _.map(_.get(programsResponse, 'result.programs'), (obj: any) => {
         if (obj.program) {
@@ -650,13 +609,16 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       // filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
       filters = { ...filters,...appliedfilters};
     }
+    let req: any;
+    // Request body for all programs tab for contributor org admin
+    req = {
+      request: {
+        filters: filters,
+        frameworkCategoryFields: _.map(this.frameworkObjectFields, 'code')
+      }
+    }
 
-    console.log("this.sourcingService.csService");
-    console.log(this.cslFrameworkService);
-    console.log(this.cslFrameworkService?.getFrameworkCategories());
-    console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
-
-    return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
+    return this.programsService.getMyProgramsForOrg(req).subscribe((response) => {
       this.programs = _.map(_.get(response, 'result.programs'), (program: any) => {
         if (program.program_id) {
           program.activeDate = this.setProgramActiveDate(program)
