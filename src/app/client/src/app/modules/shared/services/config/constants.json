@@ -1,5 +1,10 @@
 {
   "TEMPLATES": {
     "RESET_PASSWORD_TEMPLATE": "resetPasswordWithOtp"
+  },
+  "SIZE": {
+    "MEDIUM": "medium",
+    "SMALL": "small",
+    "LARGE": "large"
   }
 }

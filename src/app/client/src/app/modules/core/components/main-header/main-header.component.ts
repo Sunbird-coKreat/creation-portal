@@ -28,11 +28,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   isValidCustodianOrgUser = true;
   tenantInfo: any = {};
   userProfile: IUserProfile;
-  adminDashboard: Array<string>;
-  announcementRole: Array<string>;
-  myActivityRole: Array<string>;
-  orgAdminRole: Array<string>;
-  orgSetupRole: Array<string>;
+
   avtarMobileStyle = {
     backgroundColor: 'transparent',
     color: '#AAAAAA',
@@ -54,6 +50,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     borderRadius: '50%',
     height: '38px',
     width: '38px'
+  };
+  avatarConfig = {
+    size: this.config.constants.SIZE.MEDIUM,
+    view: this.config.constants.VIEW.HORIZONTAL,
+    isTitle:false
   };
   public signUpInteractEdata: IInteractEventEdata;
   public enterDialCodeInteractEdata: IInteractEventEdata;
@@ -92,11 +93,6 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       } catch (error) {
         this.exploreButtonVisibility = 'false';
       }
-      this.adminDashboard = this.config.rolesConfig.headerDropdownRoles.adminDashboard;
-      this.announcementRole = this.config.rolesConfig.headerDropdownRoles.announcementRole;
-      this.myActivityRole = this.config.rolesConfig.headerDropdownRoles.myActivityRole;
-      this.orgSetupRole = this.config.rolesConfig.headerDropdownRoles.orgSetupRole;
-      this.orgAdminRole = this.config.rolesConfig.headerDropdownRoles.orgAdminRole;
       router.events.subscribe((event) => {
         if (event instanceof NavigationEnd) {
           this.onRouterChange();
