@@ -96,7 +96,7 @@
           <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
         </span></th>
                 <th class="w-10">{{ contentTypeHeaderText }}</th>
-                <th class="w-15" >{{ frameworkFields }}</th>
+                <th class="w-15" >{{ resourceService?.frmelmnts?.lbl?.details }}</th>
                 <th *ngIf="!isContributor" class="w-10">{{ resourceService?.frmelmnts?.lbl?.programDates }}</th>
                 <th *ngIf="activeMyProgramsMenu" class="w-10 cursor-pointer sb-sorting" (click)="sortCollection('contributionDate')">{{ resourceService?.frmelmnts?.lbl?.nominatedDate }}&nbsp;&nbsp;
                   <i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'contributionDate'"></i>
@@ -125,9 +125,9 @@
                   <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold">
                     {{program?.name}}
                   </div>
-                  <div class="sb__ellipsis sb__ellipsis--three" *ngIf="program?.target_type === 'searchCriteria'">{{ getProgramInfo(program, 'framework') }}</div>
+                  <div class="sb__ellipsis sb__ellipsis--three" *ngIf="program?.target_type === 'searchCriteria'">{{ program['framework'] }}</div>
                   <div class="sb__ellipsis sb__ellipsis--three"*ngIf="!program.target_type || program?.target_type === 'collections' || program?.target_type === 'questionSets'">{{ getProgramTextbooksCount(program) }}</div>
-                  <div *ngIf="activeMyProgramsMenu && (!program.target_type || program?.target_type === 'collections') && getProgramInfo(program, 'board')" class="sb-label-value mt-4">{{ getProgramInfo(program, 'board') }}</div>
+                  <div *ngIf="activeMyProgramsMenu && (!program.target_type || program?.target_type === 'collections') && program['board']" class="sb-label-value mt-4">{{ program['board'] }}</div>
                   <div *ngIf = "program.notificationData" class="sb-label sb-label-table sb-label-warning-0 text-left sb-label-orange d-flex mt-5">
                     <div><i class="icon bell"></i></div>
                     <div class="text-inherit">
@@ -144,16 +144,14 @@
                 <td class="mouse-pointer">
                   <div  class=" ui icon" [attr.data-tooltip]="getProgramContentTypes(program)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramContentTypes(program) }}</span></div>
                 </td>
-                <td class="mouse-pointer">
-                  <span *ngFor="let item of frameworkObjectFields | slice:0:3">
-                    <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, item.code)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, item.code) }}</span></div>
-                    <hr class="divider">
+                <td>
+                  <span *ngFor="let item of frameworkObjectFields">
 
+                    <div *ngIf="program[item.code]" class="ui icon" [attr.data-tooltip]="item.label + ':' + program[item.code]">
+                      <hr class="divider">
+                      <span class="sb__ellipsis sb__ellipsis--breakAll">{{ item.label + ':' + program[item.code] }}</span>
+                    </div>
                   </span>
-
-                  <!-- <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'gradeLevel')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'gradeLevel') }}</span></div>
-                  <hr class="divider">
-                  <div class="ui icon" [attr.data-tooltip]="getProgramInfo(program, 'subject')"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramInfo(program, 'subject') }}</span></div> -->
                 </td>
 
                 <td *ngIf="!isContributor || activeAllProgramsMenu" class="nowrap">
