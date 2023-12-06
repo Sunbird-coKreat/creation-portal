@@ -680,14 +680,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getProgramNominationStatus(program) {
-    return program.nomination_status;
-  }
-
-  getSourcingOrgName(program) {
-    return program.sourcing_org_name ? program.sourcing_org_name : '-';
-  }
-
   getProgramContentTypes(program) {
     if (_.isEmpty(program) || _.isEmpty(program.program_id)) {
       return false;
