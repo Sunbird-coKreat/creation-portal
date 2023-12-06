@@ -670,18 +670,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     return count + ' ' + this.programsService.setTargetCollectionName(program, 'plural') ;
   }
 
-  /*getProgramInfo(program, paramName) {
-    console.log(program);
-    console.log(paramName);
-    if (paramName === 'framework' && _.has(program, 'frameworkObj') && !_.isEmpty(program.frameworkObj)) {
-        paramName = 'frameworkObj';
-      }
-      const temp = this.getCorrectedValue(program[paramName], true);
-      console.log(temp);
-
-      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
-  }*/
-
   getCorrectedValue(value) {
     try {
       const newparse = JSON.parse(value);
