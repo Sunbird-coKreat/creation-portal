@@ -127,6 +127,8 @@ module.exports = function (app) {
       "/action/question/v2/update/*",
       '/action/questionset/v2/add',
       '/action/questionset/v2/remove',
+      '/action/questionset/v2/system/update/*',
+      '/action/question/v2/system/update/*'
     ],
     proxyUtils.verifyToken(),
     proxy(contentURL, {
