@@ -42,56 +42,16 @@ export class ProjectFilterComponent implements OnInit {
   public showLoader: any;
   public formFieldProperties_api: any = []
   public appliedFiltersList: any [];
+  public framework_identifier: any;
 
-  public framework: any ={
-    description: "Sunbird TPD framework",
-    identifier: "agriculture_framework",
-    index: 1,
-    name: "agriculture_framework",
-    objectType: "Framework",
-    relation: "hasSequenceMember",
-    status: "Live",
-    type: "K-12"
-  }
+  
 
   // tslint:disable-next-line: max-line-length
   public nominationContributionStatus = [{ 'name': 'Open', 'value': 'open' }, { 'name': 'Closed', 'value': 'closed' }, { 'name': 'Any', 'value': 'any' }];
   constructor(public sbFormBuilder: UntypedFormBuilder, public programsService: ProgramsService, public frameworkService: FrameworkService,
     public resourceService: ResourceService, public userService: UserService, public router: Router, public configService: ConfigService,
     public cacheService: CacheService, public learnerService: LearnerService, private browserCacheTtlService: BrowserCacheTtlService,
-    public cslFrameworkService: CslFrameworkService) {
-
-      const framework = this.framework;
-      const request = [ 
-        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
-        this.frameworkService.readFramworkCategories(framework.identifier),
-        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', 'filters', null, 'create', ""),
-      ];
-
-      forkJoin(request).subscribe(res => {
-        console.log("res", res);
-        console.log('result.data.properties');        
-        let formData = _.get(_.first(res), 'result.data.properties');
-        let categories:any = []
-        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
-        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
-        const filterFields = _.get(_.nth(res, 2), 'result.data.properties')
-        const frameworkDetails = res[1];
-        let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
-        console.log("this.formFieldProperties", this.formFieldProperties_api);
-        console.log(this.cslFrameworkService?.getFrameworkCategories());
-        console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
-        formFieldProperties_api = [...formFieldProperties_api, ...filterFields];
-        if(this.appliedFiltersList){
-          formFieldProperties_api.forEach((val: any)=>{
-            val.default = this.appliedFiltersList[val['code']];
-          })
-          this.appliedFiltersList = [];
-        }
-        this.formFieldProperties_api = formFieldProperties_api;
-      });
-
-    }
+    public cslFrameworkService: CslFrameworkService) {}
 
   ngOnInit() {
     this.activeAllProgramsMenu = this.router.isActive('/contribute', true); // checking the router path
@@ -111,6 +71,7 @@ export class ProjectFilterComponent implements OnInit {
     this.checkFilterShowCondition();
      // getting content types as the content categories againts the project
     this.getContentCategories();
+    this.getFilters();
   }
 
   getContentCategories() {
@@ -142,6 +103,7 @@ export class ProjectFilterComponent implements OnInit {
   }
   // check the filters to dispaly to user with respect to roles and tab's
   checkFilterShowCondition() {
+    debugger;
       // show filter for sourcing org admin for my projects
     if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {
       this.fetchFrameWorkDetails(this.userService.hashTagId);
@@ -225,6 +187,7 @@ export class ProjectFilterComponent implements OnInit {
     this.showLoader = true; // show loader
     this.getDefaultFrameWork(orgId).subscribe(channelData => {
       const frameworkName = _.get(channelData, 'defaultFramework');
+      this.framework_identifier = frameworkName;
       this.programsService.frameworkInitialize(frameworkName); // initialize framework details here
       this.frameworkService.frameworkData$.pipe(filter(data =>
         _.get(data, `frameworkdata.${frameworkName}`)),
@@ -373,5 +336,32 @@ export class ProjectFilterComponent implements OnInit {
 
   formStatusEventListener(event){
     console.log(event)
+  }
+
+  getFilters(){
+    // const framework = this.framework;
+      const request = [ 
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
+        this.frameworkService.readFramworkCategories(this.framework_identifier),
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', 'filters', null, 'create', ""),
+      ];
+
+      forkJoin(request).subscribe(res => {
+        let formData = _.get(_.first(res), 'result.data.properties');
+        let categories:any = []
+        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
+        const filterFields = _.get(_.nth(res, 2), 'result.data.properties')
+        const frameworkDetails = res[1];
+        let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
+        formFieldProperties_api = [...formFieldProperties_api, ...filterFields];
+        if(this.appliedFiltersList){
+          formFieldProperties_api.forEach((val: any)=>{
+            val.default = this.appliedFiltersList[val['code']];
+          })
+          this.appliedFiltersList = [];
+        }
+        this.formFieldProperties_api = formFieldProperties_api;
+      });
   }
 }

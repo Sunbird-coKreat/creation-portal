@@ -185,7 +185,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   setUserData(data: any){
-    console.log('data', data);
     this.setPortalTitleLogo();
     this.telemetryService.initialize(this.getTelemetryContext());
     this.logCdnStatus();

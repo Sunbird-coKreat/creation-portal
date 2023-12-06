@@ -810,7 +810,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         const frameworkDetails = res[1];
         this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
         this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, _.get(this.programDetails, 'config'));
-        console.log("this.formFieldProperties", this.formFieldProperties);
         this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
 
       });

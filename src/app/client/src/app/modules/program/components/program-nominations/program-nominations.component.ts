@@ -153,7 +153,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
     this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
-    console.log(this.fields);
   }
 
   ngAfterViewInit() {

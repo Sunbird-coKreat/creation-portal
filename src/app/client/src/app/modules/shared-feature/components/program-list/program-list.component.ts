@@ -64,48 +64,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public myProjectNotFoundHelpConfig: any;
   public contentTypeHeaderText;
 
-  public fields:any = [
-    {
-        "code": "foodcrops",
-        "identifier": "fwCategory1",
-        "label": "Foodcrops",
-        "placeHolder": "Select Foodcrops",
-        "index": 1,
-        "translation": "{\"en\":\"Foodcrops\"}"
-    },
-    {
-        "code": "commercialcrops",
-        "identifier": "fwCategory2",
-        "label": "Commercial Crops",
-        "placeHolder": "Select Commercial Crops",
-        "index": 2,
-        "translation": "{\"en\":\"Commercial Crops\"}"
-    },
-    {
-        "code": "livestockmanagement",
-        "identifier": "fwCategory3",
-        "label": "Live Stock Management",
-        "placeHolder": "Select Live Stock Management",
-        "index": 3,
-        "translation": "{\"en\":\"Live Stock Management\"}"
-    },
-    {
-        "code": "livestockspecies",
-        "identifier": "fwCategory4",
-        "label": "Live Stock Species",
-        "placeHolder": "Select Live StockSpecies",
-        "index": 4,
-        "translation": "{\"en\":\"Live Stock Species\"}"
-    },
-    {
-        "code": "animalwelfare",
-        "identifier": "fwCategory5",
-        "label": "Animal Welfare",
-        "placeHolder": "Select Animal Welfare",
-        "index": 5,
-        "translation": "{\"en\":\"Animal Welfare\"}"
-    }
-]
+
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,

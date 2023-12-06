@@ -99,8 +99,7 @@ export class TextbookListComponent implements OnInit {
       ];
 
       forkJoin(request).subscribe(res => {
-        console.log("res", res);
-        console.log('result.data.properties');        
+        
         let formData = _.get(_.first(res), 'result.data.properties');
         let categories:any = []
         categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
@@ -108,8 +107,8 @@ export class TextbookListComponent implements OnInit {
         const frameworkDetails = res[1];
         let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
         // console.log("this.formFieldProperties", this.formFieldProperties_api);
-        console.log(this.cslFrameworkService?.getFrameworkCategories());
-        console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+        this.cslFrameworkService?.getFrameworkCategories();
+        this.cslFrameworkService?.getFrameworkCategoriesObject();
         formFieldProperties_api = [...formFieldProperties_api];
         
         this.formFieldProperties_api = formFieldProperties_api;
