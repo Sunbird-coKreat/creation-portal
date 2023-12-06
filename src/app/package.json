@@ -34,8 +34,8 @@
     "yargs": "^9.0.1"
   },
   "engines": {
-    "node": ">=12.16.1",
-    "npm": ">=6.13.4"
+    "node": ">=16.19.0",
+    "npm": ">=8.19.3"
   },
   "nodemonConfig": {
     "ignore": [
@@ -81,7 +81,6 @@
     "@project-sunbird/program": "0.0.5",
     "@project-sunbird/review-comment": "0.0.8",
     "async": "^2.5.0",
-    "asyncawait": "^3.0.0",
     "body-parser": "^1.17.2",
     "cassandra-session-store": "1.0.6",
     "client-cloud-services": "3.0.4",
