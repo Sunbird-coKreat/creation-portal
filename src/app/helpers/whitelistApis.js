@@ -781,7 +781,7 @@ const API_LIST = {
         ROLE.CONTRIBUTE_ORG_ADMIN
       ]
     },
-    '/action/questionset/v4/system/update/:do_id': {
+    '/action/questionset/v5/system/update/:do_id': {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
         ROLE.PUBLIC,
@@ -980,7 +980,7 @@ const API_LIST = {
     '/action/itemset/v3/read/:do_id',
     '/action/itemset/v3/review/:do_id',
     '/action/itemset/v3/retire/:do_id',
-    '/action/questionset/v4/system/update/:do_id',
+    '/action/questionset/v5/system/update/:do_id',
     '/action/framework/v3/read/:frameworkId',
     '/action/questionset/v2/review/:do_id',
     '/action/questionset/v2/update/:do_id',
