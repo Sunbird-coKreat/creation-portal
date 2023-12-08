@@ -13,7 +13,6 @@ import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
 import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
-
 @Component({
   selector: 'app-program-list',
   templateUrl: './program-list.component.html',
@@ -63,8 +62,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public myProjectContextHelpConfig: any;
   public myProjectNotFoundHelpConfig: any;
   public contentTypeHeaderText;
-
-
+  public frameworkObjectFields;
+  public frameworkFields:any;
+ 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
@@ -72,9 +72,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
     private sourcingService: SourcingService, private helperService: HelperService,
     private cslFrameworkService: CslFrameworkService) {
-      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
-     
-      
+      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType; 
     }
 
   ngOnInit() {
@@ -94,8 +92,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       this.telemetryInteractObject = {};
       this.setContextualHelpConfig();
     });
-     
-    
   }
 
   setContextualHelpConfig() {
@@ -189,8 +185,10 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getProgramsListByRole(setfilters?) {
     // debugger;
-      console.log(this.cslFrameworkService?.getFrameworkCategories());
-      console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
+      //console.log(this.cslFrameworkService?.getFrameworkCategories());
+    this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    this.frameworkFields = _.map(this.frameworkObjectFields, 'label').join(',');
+
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
         // tslint:disable-next-line: max-line-length
@@ -390,12 +388,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
+    req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getAllProgramsByType(req)
       .subscribe((myProgramsResponse) => {
+      
         this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (program: any) => {
           if (program.program_id) {
-            program.activeDate = this.setProgramActiveDate(program)
-            return program;
+            return this.setProgramFields(program);
           }
         });
         this.count = this.programs.length;
@@ -496,6 +495,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
       req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
     }
+    req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
       this.programs = _.map(_.get(programsResponse, 'result.programs'), (obj: any) => {
         if (obj.program) {
@@ -609,17 +609,19 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       // filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
       filters = { ...filters,...appliedfilters};
     }
+    let req: any;
+    // Request body for all programs tab for contributor org admin
+    req = {
+      request: {
+        filters: filters,
+        frameworkCategoryFields: _.map(this.frameworkObjectFields, 'code')
+      }
+    }
 
-    console.log("this.sourcingService.csService");
-    console.log(this.cslFrameworkService);
-    console.log(this.cslFrameworkService?.getFrameworkCategories());
-    console.log(this.cslFrameworkService?.getFrameworkCategoriesObject());
-
-    return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
+    return this.programsService.getMyProgramsForOrg(req).subscribe((response) => {
       this.programs = _.map(_.get(response, 'result.programs'), (program: any) => {
         if (program.program_id) {
-          program.activeDate = this.setProgramActiveDate(program)
-          return program;
+          return this.setProgramFields(program);
         }
       });
       this.count = _.get(response, 'result.count');
@@ -668,39 +670,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     return count + ' ' + this.programsService.setTargetCollectionName(program, 'plural') ;
   }
 
-  getProgramInfo(program, type) {
-    let paramName = type;
-    if (program && program.config) {
-      if (type === 'framework' && _.has(program, 'config.frameworkObj') && !_.isEmpty(program.config.frameworkObj)) {
-        paramName = 'frameworkObj';
-      }
-      const temp = this.getCorrectedValue(program.config[paramName], false);
-      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
-    } else {
-      if (type === 'framework' && _.has(program, 'frameworkObj') && !_.isEmpty(program.frameworkObj)) {
-        paramName = 'frameworkObj';
-      }
-      const temp = this.getCorrectedValue(program[paramName], true);
-      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
-    }
-  }
-
-  getCorrectedValue(value, isJsonString) {
+  getCorrectedValue(value) {
     try {
-      const newparse = (isJsonString) ? JSON.parse(value) : value;
+      const newparse = JSON.parse(value);
       return (_.isArray(newparse)) ? _.join(_.compact(_.uniq(newparse)), ', ') : newparse;
     }
     catch {
       return value;
     }
-  }
-
-  getProgramNominationStatus(program) {
-    return program.nomination_status;
-  }
-
-  getSourcingOrgName(program) {
-    return program.sourcing_org_name ? program.sourcing_org_name : '-';
   }
 
   getProgramContentTypes(program) {
@@ -885,5 +862,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getTelemetryInteractCdata(id, type) {
     return [...this.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
+  }
+
+  setProgramFields(program) {
+      program.activeDate = this.setProgramActiveDate(program)
+      program.framework = this.getCorrectedValue(program.frameworkObj)
+
+    _.forEach(this.frameworkObjectFields, (field)=> {
+      program[field.code] = this.getCorrectedValue(program[field.code]);
+    })
+    return program;
   }
 }
