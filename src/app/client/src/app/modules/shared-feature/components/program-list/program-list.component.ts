@@ -499,6 +499,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
       this.programs = _.map(_.get(programsResponse, 'result.programs'), (obj: any) => {
         if (obj.program) {
+          obj.program = this.setProgramFields(obj.program);
           obj.program = _.merge({}, obj.program, {
             contributionDate: obj.createdon,
             nomination_status: obj.status,
@@ -508,6 +509,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           });
           return obj.program;
         }
+
       });
       this.enrollPrograms = this.programs;
       this.tempSortPrograms = this.programs;
@@ -869,7 +871,9 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       program.framework = this.getCorrectedValue(program.frameworkObj)
 
     _.forEach(this.frameworkObjectFields, (field)=> {
-      program[field.code] = this.getCorrectedValue(program[field.code]);
+      if (program[field.code]) {
+        program[field.code] = this.getCorrectedValue(program[field.code]);
+      }
     })
     return program;
   }
