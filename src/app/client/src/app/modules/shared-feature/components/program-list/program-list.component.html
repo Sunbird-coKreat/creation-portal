@@ -145,11 +145,10 @@
                   <div  class=" ui icon" [attr.data-tooltip]="getProgramContentTypes(program)"><span class="sb__ellipsis sb__ellipsis--breakAll">{{ getProgramContentTypes(program) }}</span></div>
                 </td>
                 <td>
-                  <span *ngFor="let item of frameworkObjectFields">
-
-                    <div *ngIf="program[item.code]" class="ui icon" [attr.data-tooltip]="item.label + ':' + program[item.code]">
-                      <hr class="divider">
-                      <span class="sb__ellipsis sb__ellipsis--breakAll">{{ item.label + ':' + program[item.code] }}</span>
+                  <span *ngFor="let item of frameworkObjectFields; last as isLast">
+                    <div *ngIf="program[item.code]" class="ui icon" [attr.data-tooltip]=" program[item.code]">
+                      <span class="sb__ellipsis sb__ellipsis--breakAll">{{ program[item.code] }}</span>
+                      <hr *ngIf="!isLast" class="divider">
                     </div>
                   </span>
                 </td>
