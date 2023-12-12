@@ -1392,10 +1392,6 @@
     "gujarati": "gu",
     "punjabi": "pa",
     "oriya": "or"
-  },"frameworkCatConfig": {
-    "changeChannel": false,
-    "channel":"0138934136407244800",
-    "defaultFW": "agriculture_framework"
   }
 
 }

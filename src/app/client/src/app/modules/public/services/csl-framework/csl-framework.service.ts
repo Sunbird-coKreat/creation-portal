@@ -28,7 +28,7 @@ export class CslFrameworkService {
         // Retrieve the default framework from channelData
         this.defaultFramework = _.get(channelData, 'result.channel.defaultFramework');
         // Determine the selected framework based on configuration or default value for test
-        let selectedFW = this.configService.appConfig.frameworkCatConfig.changeChannel ? this.configService.appConfig.frameworkCatConfig.defaultFW : this.defaultFramework;
+        let selectedFW = this.defaultFramework;
         // Set the framework categories based on the selected framework
         console.log(selectedFW);
         this.setFWCatConfigFromCsl(selectedFW);
