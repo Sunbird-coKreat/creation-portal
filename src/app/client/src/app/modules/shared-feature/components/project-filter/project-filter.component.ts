@@ -103,7 +103,6 @@ export class ProjectFilterComponent implements OnInit {
   }
   // check the filters to dispaly to user with respect to roles and tab's
   checkFilterShowCondition() {
-    debugger;
       // show filter for sourcing org admin for my projects
     if (this.userService.isSourcingOrgAdmin() && this.router.url.includes('/sourcing')) {
       this.fetchFrameWorkDetails(this.userService.hashTagId);

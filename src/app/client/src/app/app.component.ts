@@ -397,6 +397,7 @@ export class AppComponent implements OnInit, OnDestroy {
         }
         this.userProfile = user.userProfile;
         this.slug = _.get(this.userProfile, 'rootOrg.slug');
+
         this.cslFrameworkService.setDefaultFWforCsl('', this.userService.hashTagId);
         this.channel = this.userService.hashTagId;        
         return of(user.userProfile);

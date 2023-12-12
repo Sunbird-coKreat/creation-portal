@@ -59,16 +59,6 @@ export class TextbookListComponent implements OnInit {
   public prefernceFormOptions = {};
   public reviewContributionHelpConfig: any;
   public fields:any = [];
-  public framework: any ={
-    description: "Sunbird TPD framework",
-    identifier: "agriculture_framework",
-    index: 1,
-    name: "agriculture_framework",
-    objectType: "Framework",
-    relation: "hasSequenceMember",
-    status: "Live",
-    type: "K-12"
-  };
   public formFieldProperties_api: any = []
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
@@ -92,10 +82,9 @@ export class TextbookListComponent implements OnInit {
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
-    const framework = this.framework;
       const request = [ 
         this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
-        this.frameworkService.readFramworkCategories(framework.identifier)
+        this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
       ];
 
       forkJoin(request).subscribe(res => {

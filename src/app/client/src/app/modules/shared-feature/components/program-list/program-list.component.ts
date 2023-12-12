@@ -184,7 +184,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsListByRole(setfilters?) {
-    // debugger;
       //console.log(this.cslFrameworkService?.getFrameworkCategories());
     this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
     this.frameworkFields = _.map(this.frameworkObjectFields, 'label').join(',');
@@ -216,7 +215,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
         this.showLoader = false;
       }
     } else {
-      // debugger;
       const applyFilters = (this.forTargetType === 'searchCriteria') ? this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFiltersSearchCriteria') : this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
