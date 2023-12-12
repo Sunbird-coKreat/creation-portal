@@ -20,7 +20,6 @@
     "PUBLIC_PREFIX": "/api/",
     "ACTION_PREFIX": "/action/",
     "EXT_PLUGIN_PREFIX": "/plugin/",
-    "ANNOUNCEMENT_PREFIX": "/announcement/v1",
     "TENANT_PREFIX": "/v1/tenant",
     "RESOURCEBUNDLES_PREFIX": "resourcebundles/v1",
     "DEVICE_REGISTER": "v3/device/register/",

@@ -8,7 +8,6 @@ import {
 } from 'ng2-semantic-ui-v9';
 import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { SharedModule } from '@sunbird/shared';
-import { AvatarModule } from 'ngx-avatar';
 import {
   MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
@@ -31,7 +30,6 @@ import { CacheService } from '../shared/services/cache-service/cache.service';
     ReactiveFormsModule,
     WebExtensionModule,
     TelemetryModule,
-    AvatarModule,
     CommonFormElementsModule
   ],
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
