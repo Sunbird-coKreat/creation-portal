@@ -205,7 +205,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
       }
       if (!_.isEmpty(reqFormat)) {
         if (_.get(item, 'mimeType').toLowerCase() === 'application/vnd.sunbird.questionset') {
-          reqFormat['source'] = `${baseUrl}/api/questionset/v1/read/${item.identifier}`;
+          reqFormat['source'] = `${baseUrl}/api/questionset/v2/read/${item.identifier}`;
           questionSets.push(reqFormat);
         } else {
           reqFormat['source'] = `${baseUrl}/api/content/v1/read/${item.identifier}`;

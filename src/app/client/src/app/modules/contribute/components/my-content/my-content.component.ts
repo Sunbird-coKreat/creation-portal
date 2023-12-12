@@ -258,7 +258,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     forkJoin([this.playerService.getQuestionSetHierarchy(content.identifier), this.playerService.getQuestionSetRead(content.identifier)])
     .subscribe(([hierarchyRes, questionSetData]: any) => {
         this.isQumlPlayer = true;
-        const questionSet = _.get(hierarchyRes, 'result.questionSet');
+        const questionSet = _.get(hierarchyRes, 'result.questionset');
         questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
         const contentDetails = {
           contentId: content.identifier,
