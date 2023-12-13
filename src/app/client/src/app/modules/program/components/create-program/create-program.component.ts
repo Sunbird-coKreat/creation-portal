@@ -797,7 +797,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', this.selectedTargetCollection),
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', this.selectedTargetCollection),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
 

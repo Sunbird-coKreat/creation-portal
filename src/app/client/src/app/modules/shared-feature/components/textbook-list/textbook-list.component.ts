@@ -83,7 +83,7 @@ export class TextbookListComponent implements OnInit {
     this.telemetryInteractObject = {};
     this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
       const request = [ 
-        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
         this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
       ];
 

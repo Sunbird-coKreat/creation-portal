@@ -340,7 +340,7 @@ export class ProjectFilterComponent implements OnInit {
   getFilters(){
     // const framework = this.framework;
       const request = [ 
-        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'create', ""),
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
         this.frameworkService.readFramworkCategories(this.framework_identifier),
         this.programsService.getformConfigData(this.userService.hashTagId, 'framework', 'filters', null, 'create', ""),
       ];
