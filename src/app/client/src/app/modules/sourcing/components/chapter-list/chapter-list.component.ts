@@ -710,7 +710,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     // let hierarchyUrl = 'content/v3/hierarchy/' + identifier;
     if(this.projectTargetType === 'questionSets') {
       hierarchyUrl = `${this.configService.urlConFig.URLS.QUESTIONSET.HIERARCHY_READ}/${identifier}`;
-      objectType = 'questionSet';
+      objectType = 'questionset';
     }
 
 

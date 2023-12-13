@@ -102,16 +102,16 @@
       "HIERARCHY_REMOVE": "collection/v4/hierarchy/remove"
     },
     "QUESTIONSET" : {
-      "GET": "questionset/v1/read",
-      "UPDATE": "questionset/v1/update/",
-      "HIERARCHY_READ": "questionset/v1/hierarchy",
-      "HIERARCHY_ADD": "questionset/v1/add",
-      "HIERARCHY_REMOVE": "questionset/v1/remove",
-      "COPY": "questionset/v1/copy/"
+      "GET": "questionset/v2/read",
+      "UPDATE": "questionset/v2/update/",
+      "HIERARCHY_READ": "questionset/v2/hierarchy",
+      "HIERARCHY_ADD": "questionset/v2/add",
+      "HIERARCHY_REMOVE": "questionset/v2/remove",
+      "COPY": "questionset/v2/copy/"
     },
     "QUESTION" : {
-      "READ": "question/v1/read",
-      "RETIRE": "question/v1/retire"
+      "READ": "question/v2/read",
+      "RETIRE": "question/v2/retire"
     },
     "DASHBOARD": {
       "ORG_CREATION": "dashboard/v1/creation/org",
@@ -304,7 +304,7 @@
       "SEARCH": "program/v1/process/search",
       "DOCK_IMPORT": "content/v4/import",
       "DOCK_IMPORT_V1": "content/v1/import",
-      "DOCK_QS_IMPORT_V1": "questionset/v1/import"
+      "DOCK_QS_IMPORT_V1": "questionset/v2/import"
     },
     "DOCK_TENANT": {
       "LIST": "program/v1/tenant/list"

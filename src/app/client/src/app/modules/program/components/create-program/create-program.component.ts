@@ -398,7 +398,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   getFramework () {
     let frameworks = [];
     let systemRequests = [];
-    const channelFrameworks = _.get(this.programScope['userChannelData'], 'frameworks');
+    const channelFrameworks = _.filter(_.get(this.programScope['userChannelData'], 'frameworks'), {'status': 'Live'});
     const frameworkTypeGroup = _.groupBy(channelFrameworks, 'type');
     return new Promise ((resolve, reject) => {
       _.forEach(this.allowedFrameworkTypes, type => {

@@ -31,7 +31,7 @@ import { MvcPlayerComponent } from './components/mvc-player/mvc-player.component
 import { SkeletonLoaderComponent } from './components/skeleton-loader/skeleton-loader.component';
 
 import { QuestionSetEditorComponent } from './components/question-set-editor/question-set-editor.component';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
+import { QuestionsetEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-questionset-editor';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { QumlPlayerService } from './services/quml-player/quml-player.service';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
@@ -71,7 +71,7 @@ import { SendReminderModalComponent } from './components/send-reminder-modal/sen
       McqTemplateSelectionComponent, QuestionPreviewComponent, QuestionCreationHeaderComponent,
       DashboardComponent, RecursiveTreeComponent, ContentUploaderComponent,
       ContentEditorComponent, QuestionSetEditorComponent]),
-    CollectionEditorLibraryModule,
+    QuestionsetEditorLibraryModule,
     CarouselModule.forRoot(),
     ResourceLibraryModule, SunbirdVideoPlayerModule
   ],
