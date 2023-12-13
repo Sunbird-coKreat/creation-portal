@@ -16,6 +16,7 @@ import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { IContentEditorComponentInput } from '../../../sourcing/interfaces';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 declare const SunbirdFileUploadLib: any;
 
 @Component({
@@ -141,7 +142,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public programTelemetryService: ProgramTelemetryService,
     public actionService: ActionService,
     private contentService: ContentService,
-    public cacheService: CacheService
+    public cacheService: CacheService,
+    public cslFrameworkService: CslFrameworkService
   ) { }
 
   ngOnInit() {
@@ -795,15 +797,19 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type, null, null, this.selectedTargetCollection),
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', this.selectedTargetCollection),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
 
       forkJoin(request).subscribe(res => {
-        const formData = _.get(_.first(res), 'result.data.properties');
+        let formData = [];
+        formData = _.get(_.first(res), 'result.data.properties');
+        let categories:any = []
+        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
         const frameworkDetails = res[1];
         this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
-        this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
+        this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, _.get(this.programDetails, 'config'));
         this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
 
       });

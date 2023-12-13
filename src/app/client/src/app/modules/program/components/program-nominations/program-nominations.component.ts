@@ -16,6 +16,7 @@ import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { collection } from '../list-contributor-textbooks/data';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 @Component({
   selector: 'app-program-nominations',
@@ -108,6 +109,9 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public noUsersFoundHelpConfig: any;
   public reviewNominationsHelpConfig: any;
   public userServiceData:any;
+
+
+  public fields:any = []
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -115,7 +119,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
-    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService) {
+    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService,
+    public cslFrameworkService: CslFrameworkService) {
 
   }
 
@@ -147,6 +152,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
+    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
   }
 
   ngAfterViewInit() {
@@ -660,6 +666,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails = _.get(programDetails, 'result');
       this.sessionContext.programId = this.programDetails.program_id;
       this.getCollectionCategoryDefinition();
+      this.programDetails.config.categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
@@ -1318,9 +1325,6 @@ downloadReport(report) {
 textbookLevelReportHeaders() {
   const headers = [
     this.resourceService.frmelmnts.lbl.projectName,
-    this.resourceService.frmelmnts.lbl.profile.Medium,
-    this.resourceService.frmelmnts.lbl.profile.Classes,
-    this.resourceService.frmelmnts.lbl.profile.Subjects,
     // tslint:disable-next-line:max-line-length
     this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
     // tslint:disable-next-line:max-line-length
@@ -1333,8 +1337,10 @@ textbookLevelReportHeaders() {
     this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
     // tslint:disable-next-line:max-line-length
     this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
-    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` ),
+    ...this.fields.map(field => field.code)
   ];
+  
   return headers;
 }
 
@@ -1351,7 +1357,8 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
-    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` ),
+    ...this.fields.map(field => field.code)
   ];
   return headers;
 }

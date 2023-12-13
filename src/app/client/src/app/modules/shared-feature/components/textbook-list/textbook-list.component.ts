@@ -1,6 +1,6 @@
 import { ResourceService, ToasterService, ConfigService  } from '@sunbird/shared';
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { ProgramsService, ActionService, UserService, ContentHelperService} from '@sunbird/core';
+import { ProgramsService, ActionService, UserService, ContentHelperService, FrameworkService} from '@sunbird/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CollectionHierarchyService } from '../../../sourcing/services/collection-hierarchy/collection-hierarchy.service';
 import { HttpClient } from '@angular/common/http';
@@ -9,6 +9,9 @@ import * as _ from 'lodash-es';
 import { isEmpty } from 'rxjs/operators';
 import {ProgramTelemetryService} from '../../../program/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
+import { CslFrameworkService } from '../../../../modules/public/services/csl-framework/csl-framework.service';
+import { forkJoin } from 'rxjs';
+
 
 @Component({
   selector: 'app-textbook-list',
@@ -55,13 +58,17 @@ export class TextbookListComponent implements OnInit {
   public firstLevelFolderLabel: string;
   public prefernceFormOptions = {};
   public reviewContributionHelpConfig: any;
+  public fields:any = [];
+  public formFieldProperties_api: any = []
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
     public actionService: ActionService, private collectionHierarchyService: CollectionHierarchyService,
     private userService: UserService, private formBuilder: UntypedFormBuilder, public configService: ConfigService,
     public programTelemetryService: ProgramTelemetryService, public helperService: HelperService,
-    public contentHelperService: ContentHelperService
+    public contentHelperService: ContentHelperService,
+    public frameworkService: FrameworkService,
+    public cslFrameworkService: CslFrameworkService
   )  {
     this.sbFormBuilder = formBuilder;
   }
@@ -74,6 +81,28 @@ export class TextbookListComponent implements OnInit {
     ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
+    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      const request = [ 
+        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
+        this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
+      ];
+
+      forkJoin(request).subscribe(res => {
+        
+        let formData = _.get(_.first(res), 'result.data.properties');
+        let categories:any = []
+        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
+        const frameworkDetails = res[1];
+        let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
+        // console.log("this.formFieldProperties", this.formFieldProperties_api);
+        this.cslFrameworkService?.getFrameworkCategories();
+        this.cslFrameworkService?.getFrameworkCategoriesObject();
+        formFieldProperties_api = [...formFieldProperties_api];
+        
+        this.formFieldProperties_api = formFieldProperties_api;
+        console.log(this.formFieldProperties_api)
+      });
     this.setContextualHelpConfig();
   }
 
@@ -189,7 +218,9 @@ export class TextbookListComponent implements OnInit {
         } else {
           this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForAll([], data);
         }
+        console.log("this.collections", this.collections);
         this.collections = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, data);
+
         this.tempSortCollections = this.collections;
         this.sortCollection(this.sortColumn);
         this.showLoader = false;
@@ -225,9 +256,6 @@ export class TextbookListComponent implements OnInit {
             this.resourceService.frmelmnts.lbl.projectName,
             // tslint:disable-next-line:max-line-length
             this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
-            this.resourceService.frmelmnts.lbl.profile.Medium,
-            this.resourceService.frmelmnts.lbl.profile.Classes,
-            this.resourceService.frmelmnts.lbl.profile.Subjects,
             this.firstLevelFolderLabel ? this.firstLevelFolderLabel : this.resourceService.frmelmnts.lbl.deafultFirstLevelFolders,
             this.resourceService.frmelmnts.lbl.nominationReceived,
             this.resourceService.frmelmnts.lbl.samplesRecieved,
@@ -238,18 +266,16 @@ export class TextbookListComponent implements OnInit {
             this.resourceService.frmelmnts.lbl.contributionPending,
             this.resourceService.frmelmnts.lbl.contributioncorrectionsPending
           ];
+          headers = [...headers, ...this.fields.map(field => field.code)];
         } else {
           headers = [
             this.resourceService.frmelmnts.lbl.projectName,
             this.resourceService.frmelmnts.lbl.contentname,
             this.resourceService.frmelmnts.lbl.framework,
-            this.resourceService.frmelmnts.lbl.board,
-            this.resourceService.frmelmnts.lbl.medium,
-            this.resourceService.frmelmnts.lbl.Class,
-            this.resourceService.frmelmnts.lbl.subject,
             this.resourceService.frmelmnts.lbl.creator,
             this.resourceService.frmelmnts.lbl.status,
           ];
+          headers = [...headers, ...this.fields.map(field => field.code)];
         }
         const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
         const tableData = [];

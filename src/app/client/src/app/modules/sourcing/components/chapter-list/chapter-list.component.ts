@@ -166,7 +166,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     (<HTMLInputElement>document.getElementById('portalCloudStorageUrl')).value : "";
     this.enableReviewEdit =  (<HTMLInputElement>document.getElementById('enableReviewEdit')) ?
     (<HTMLInputElement>document.getElementById('enableReviewEdit')).value === 'true' : false;
-  }
+      }
 
   ngOnInit() {
     this.stageSubscription = this.programStageService.getStage().subscribe(state => {

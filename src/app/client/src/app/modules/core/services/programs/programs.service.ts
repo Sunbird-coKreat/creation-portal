@@ -725,16 +725,13 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForOrg(reqFilters): Observable<ServerResponse> {
-    const req = {
+  getMyProgramsForOrg(req): Observable<ServerResponse> {
+    const request = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      data: {
-        request: {
-          filters: reqFilters
-        }
-      }
+      //url: 'http://localhost:6000/program/v1/list',
+      data: req
     };
-    return this.API_URL(req);
+    return this.API_URL(request);
   }
 
   /* Get the org details by filters*/
