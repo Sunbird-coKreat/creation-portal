@@ -126,9 +126,7 @@ module.exports = function (app) {
       "/action/questionset/v2/add/*",
       "/action/question/v2/update/*",
       '/action/questionset/v2/add',
-      '/action/questionset/v2/remove',
-      '/action/questionset/v2/system/update/*',
-      '/action/question/v2/system/update/*'
+      '/action/questionset/v2/remove'
     ],
     proxyUtils.verifyToken(),
     proxy(contentURL, {
@@ -390,8 +388,8 @@ module.exports = function (app) {
       "/action/itemset/v3/read/*",
       "/action/itemset/v3/review/*",
       "/action/itemset/v3/retire/*",
-      "/action/questionset/v4/system/update/*",
-      "/action/question/v4/system/update/*",
+      "/action/questionset/v5/system/update/*",
+      "/action/question/v5/system/update/*",
     ],
     bodyParser.json({ limit: "50mb" }),
     proxy(kp_assessment_service_base_url, {
