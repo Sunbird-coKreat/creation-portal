@@ -34,8 +34,8 @@ export class CsLibInitializerService {
           },
           services: {
               contentServiceConfig: {
-                hierarchyApiPath: '/learner/questionset/v1',
-                questionListApiPath: '/api/question/v1'
+                hierarchyApiPath: '/learner/questionset/v2',
+                questionListApiPath: '/api/question/v2'
               },frameworkServiceConfig: {
                 apiPath: '/api/framework/v1'
               },formServiceConfig: {
