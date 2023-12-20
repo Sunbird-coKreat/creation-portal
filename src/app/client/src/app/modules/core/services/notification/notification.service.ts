@@ -71,7 +71,7 @@ export class NotificationService {
       emailTemplateType: this.getTemplate(nomination.status, mode),
       projectName: nomination.programData.name,
       baseUrl: window.location.origin,
-      body: 'VidyaDaan'
+      body: this.resourceService.portalInstanceName
     };
     return this.sendNotification(request).subscribe();
   }
@@ -79,6 +79,7 @@ export class NotificationService {
   getEmailSubject(nomination: any) {
     let status = '';
     let subject = this.resourceService.messages.stmsg.notification.subject;
+    subject = _.replace(subject, '{portalInstanceName}', this.resourceService.portalInstanceName);
     subject = _.replace(subject, '{PROJECT_NAME}', nomination.programData.name);
     if (nomination.status === 'Approved' || nomination.status === 'Pending') {
       status = 'accepted';
@@ -120,7 +121,7 @@ export class NotificationService {
 
         const request = {
           mode: 'sms',
-          subject: 'VidyaDaan',
+          subject: this.resourceService.portalInstanceName,
           body: body,
           recipientUserIds: [nomination.user_id]
         };
@@ -182,7 +183,7 @@ export class NotificationService {
       orgName: notificationData.org.name,
       contentName: notificationData.content.name,
       projectName: notificationData.program.name,
-      body: 'VidyaDaan'
+      body: this.resourceService.portalInstanceName
     };
     return this.sendNotification(request).subscribe();
   }
@@ -190,6 +191,7 @@ export class NotificationService {
   getEmailSubjectForContent(notificationData: any) {
     let status = '';
     let subject = this.resourceService.messages.stmsg.content.notification.status.subject;
+    subject = _.replace(subject, '{portalInstanceName}', this.resourceService.portalInstanceName);
     subject = _.replace(subject, '{PROJECT_NAME}', notificationData.program.name);
     subject = _.replace(subject, '{CONTENT_NAME}', notificationData.content.name);
 
@@ -255,7 +257,7 @@ export class NotificationService {
 
         const request = {
           mode: 'sms',
-          subject: 'VidyaDaan',
+          subject: this.resourceService.portalInstanceName,
           body: body,
           recipientUserIds: [notificationData.user_id]
         };
@@ -287,7 +289,7 @@ export class NotificationService {
 
         const request = {
           mode: 'sms',
-          subject: 'VidyaDaan',
+          subject: this.resourceService.portalInstanceName,
           body: body,
           recipientUserIds: [...user_ids]
         };

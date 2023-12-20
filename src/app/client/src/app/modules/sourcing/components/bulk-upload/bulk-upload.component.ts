@@ -22,7 +22,6 @@ export class BulkUploadComponent implements OnInit {
   @Input('programContext') programContext: any;
   @Input() storedCollectionData;
   @ViewChild('fineUploaderUI') fineUploaderUI: ElementRef;
-
   public process: any = {
     process_id: '',
     status: '',
@@ -72,6 +71,7 @@ export class BulkUploadComponent implements OnInit {
   public unsubscribe = new Subject<void>();
   public bulkUploadNameLength;
   public bulkUploadDescriptionLength;
+  public portalInstanceName:string;
   constructor(
     private userService: UserService,
     private resourceService: ResourceService,
@@ -95,6 +95,8 @@ export class BulkUploadComponent implements OnInit {
 
     this.bulkUploadDescriptionLength = (<HTMLInputElement>document.getElementById('sunbirdBulkUploadDescriptionLength')) ?
     (<HTMLInputElement>document.getElementById('sunbirdBulkUploadDescriptionLength')).value : 500;
+    
+    this.portalInstanceName = this.resourceService.portalInstanceName;
 
     this.userService.userData$.pipe(
       takeUntil(this.unsubscribe))

@@ -224,7 +224,8 @@
       <div class="sb-color-gray-200 fxsmall line-height-1-3 w-100">
         {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine1}}
         <b>'{{resourceService?.frmelmnts?.btn?.close}}'</b>
-        {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine2}}<br />
+        {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine2 |
+          interpolate:'{portalInstanceName}': portalInstanceName }}<br />
         {{resourceService?.frmelmnts?.lbl?.bulkUploadNoticeLine3}}
       </div>
     </div>

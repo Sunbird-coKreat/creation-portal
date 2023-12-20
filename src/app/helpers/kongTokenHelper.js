@@ -44,7 +44,7 @@ const getKongAccessToken = (req, cb) => {
           _.get(req, "sessionID") || "no_key" + " ]"
       );
       const keycloakObj = JSON.parse(_.get(req, "session.keycloak-token"));
-      // Use default token in case of VDN; as there is no anonymous session workflow for VDN
+      // Use default token in case of coKreat; as there is no anonymous session workflow for coKreat
       const _bearerKey = KONG_LOGGEDIN_DEVICE_REGISTER_TOKEN;
       var options = {
         method: "POST",

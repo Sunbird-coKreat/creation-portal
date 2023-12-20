@@ -36,6 +36,8 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
   public telemetryPageId: string;
   public disableBulkApprove = false;
   public buttonDisabled = false;
+  public portalInstanceName:string;
+
   @Input() programContext;
   @Input() sessionContext;
   @Input() storedCollectionData;
@@ -66,6 +68,7 @@ export class BulkApprovalComponent implements OnInit, OnChanges {
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.sessionContext.collection, 'Content', '1.0', { l1: this.sessionContext.collection });
     this.telemetryPageId = this.sessionContext.telemetryPageDetails.telemetryPageId;
+    this.portalInstanceName = this.resourceService.portalInstanceName;
   }
 
   ngOnChanges() {

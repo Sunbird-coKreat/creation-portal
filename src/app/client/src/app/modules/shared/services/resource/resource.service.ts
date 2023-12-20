@@ -38,6 +38,11 @@ export class ResourceService {
    * Contains instance name
    */
   private _instance: string;
+
+  /**
+   * Contains instance name
+   */
+  private _portalInstanceName: string;
   // Observable navItem source
   private _languageSelected = new BehaviorSubject<any>({});
   // Observable navItem stream
@@ -56,6 +61,7 @@ export class ResourceService {
       this.baseUrl = this.config.urlConFig.URLS.RESOURCEBUNDLES_PREFIX;
       try {
         this._instance = (<HTMLInputElement>document.getElementById('instance')).value;
+        this._portalInstanceName = (<HTMLInputElement>document.getElementById('portalInstanceName')).value;
       } catch (error) {
       }
       ResourceService.singletonInstance = this;
@@ -127,6 +133,13 @@ export class ResourceService {
  */
   get instance(): string {
     return _.upperCase(this._instance);
+  }
+
+  /**
+ * get method to fetch instance.
+ */
+  get portalInstanceName(): string {
+    return _.upperCase(this._portalInstanceName);
   }
 
   getLanguageChange(language) {
