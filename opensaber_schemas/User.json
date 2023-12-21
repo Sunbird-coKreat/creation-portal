@@ -16,7 +16,6 @@
       "type": "object",
       "title": "The User Schema",
       "required": [
-        "firstName",
         "userId"
       ],
       "additionalProperties": false,
