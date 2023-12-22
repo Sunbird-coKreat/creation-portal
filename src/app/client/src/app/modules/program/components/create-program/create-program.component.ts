@@ -795,7 +795,6 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     this.createProgramForm.controls['shortlisting_enddate'].updateValueAndValidity();
   }
   onFrameworkChange() {
-    debugger;
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
