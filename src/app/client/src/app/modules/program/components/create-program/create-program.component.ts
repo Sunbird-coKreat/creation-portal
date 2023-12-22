@@ -123,6 +123,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public frameworkFormData: any;
   public fetchedCategory: string = '';
   public isSendReminderEnabled: boolean;
+  public frameworkCategories: any = [];
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -804,13 +805,18 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
       forkJoin(request).subscribe(res => {
         let formData = [];
         formData = _.get(_.first(res), 'result.data.properties');
-        let categories:any = []
-        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
-        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
         const frameworkDetails = res[1];
         this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
-        this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, _.get(this.programDetails, 'config'));
-        this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+        if(!!formData){
+          let categories:any = []
+          categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+          let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+          this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, _.get(this.programDetails, 'config'));
+          this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+        }else{
+          this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
+          this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+        }
 
       });
       if (!this.projectTargetType || _.includes(['collections', 'questionSets'], this.projectTargetType)) {
@@ -1244,11 +1250,22 @@ onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
     this.projectScopeForm.value.pcollections = [];
-    if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
-      this.onFrameworkChange();
-    } else {
-      this.showTexbooklist();
-    }
+    let formData: any = [];
+    let fwCategories: any = [];
+    formData = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', this.selectedTargetCollection);
+    fwCategories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+
+    formData.subscribe(res =>{
+      let cat = res.result.data.properties
+      this.frameworkCategories = fwCategories.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      console.log(this.frameworkCategories);   
+      this.resource.frmelmnts.fwCategories = this.frameworkCategories;
+      if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
+        this.onFrameworkChange();
+      } else {
+        this.showTexbooklist();
+      }
+    })
   }
 
   if(this.programScope['userChannelData']) {
@@ -1451,12 +1468,12 @@ showTexbooklist() {
   }
 
   addCollectionsDataToConfig() {
-    const config = {
+    let config: any = {
       'framework': [],
-      'board': [],
-      'gradeLevel': [],
-      'medium': [],
-      'subject': []
+      // 'board': [],
+      // 'gradeLevel': [],
+      // 'medium': [],
+      // 'subject': []
     };
 
     _.forEach(this.tempCollections, (collection) => {
@@ -1473,46 +1490,25 @@ showTexbooklist() {
         }
       }
 
-      if (_.isArray(collection.board)) {
-        _.forEach(collection.board, (single) => {
-          if (config.board.indexOf(single) === -1) {
-            config.board.push(single);
-          }
-        });
-      } else if (_.isString(collection.board)) {
-        if (config.board.indexOf(collection.board) === -1) {
-          config.board.push(collection.board);
-        }
-      }
+      this.frameworkCategories.forEach(cat =>{
 
-      if (_.isArray(collection.medium)) {
-        _.forEach(collection.medium, (single) => {
-          if (config.medium.indexOf(single) === -1) {
-            config.medium.push(single);
-          }
-        });
-      } else {
-        if (config.medium.indexOf(collection.medium) === -1) {
-          config.medium.push(collection.medium);
-        }
-      }
-      if (_.isArray(collection.subject)) {
-        _.forEach(collection.subject, (single) => {
-          if (config.subject.indexOf(single) === -1) {
-            config.subject.push(single);
-          }
-        });
-      } else {
-        if (config.subject.indexOf(collection.subject) === -1) {
-          config.subject.push(collection.subject);
-        }
-      }
+        let code = cat.code;
+        config.code = [];
 
-      _.forEach(collection.gradeLevel, (single) => {
-        if (config.gradeLevel.indexOf(single) === -1) {
-          config.gradeLevel.push(single);
+        if (_.isArray(code)) {
+          _.forEach(code, (single) => {
+            if (code.indexOf(single) === -1) {
+              code.push(single);
+            }
+          });
+        } else if (_.isString(code)) {
+          if (code.indexOf(code) === -1) {
+            code.push(code);
+          }
         }
-      });
+
+      })
+
     });
 
     return config;
@@ -2107,5 +2103,12 @@ showTexbooklist() {
   }
   isSendReminderChanged($event){
     this.isSendReminderEnabled = $event.target.checked;
+  }
+
+  getProgramInfo(data,type) {
+    let paramName = type;
+    const newparse = data[paramName];
+    const temp = (_.isArray(newparse)) ? _.join(_.compact(_.uniq(newparse)), ', ') : newparse;
+    return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
   }
 }
