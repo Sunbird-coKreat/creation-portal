@@ -1498,13 +1498,13 @@ showTexbooklist() {
 
         if (_.isArray(code)) {
           _.forEach(code, (single) => {
-            if (config.board.indexOf(single) === -1) {
-              config.board.push(single);
+            if (code.indexOf(single) === -1) {
+              code.push(single);
             }
           });
         } else if (_.isString(code)) {
-          if (config.board.indexOf(code) === -1) {
-            config.board.push(code);
+          if (code.indexOf(code) === -1) {
+            code.push(code);
           }
         }
 

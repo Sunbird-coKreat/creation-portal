@@ -136,8 +136,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
       this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
       formCat.subscribe(res =>{
-        let cat = res.result.data.properties
-        this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+        let cat = res?.result?.data?.properties
+        if(!!cat){
+          this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)}))
+        }
         this.userProfile = user.userProfile;
         this.getProgramDetails();
       });
