@@ -349,7 +349,7 @@ export class ProjectFilterComponent implements OnInit {
         let formData = _.get(_.first(res), 'result.data.properties');
         let categories:any = []
         categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
-        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
         const filterFields = _.get(_.nth(res, 2), 'result.data.properties')
         const frameworkDetails = res[1];
         let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");

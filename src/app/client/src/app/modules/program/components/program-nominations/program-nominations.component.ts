@@ -109,6 +109,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public noUsersFoundHelpConfig: any;
   public reviewNominationsHelpConfig: any;
   public userServiceData:any;
+  public frameworkCategories: any = [];
 
 
   public fields:any = []
@@ -122,6 +123,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService,
     public cslFrameworkService: CslFrameworkService) {
 
+      
+
   }
 
   ngOnInit() {
@@ -129,8 +132,16 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.getPageId();
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userServiceData = this.userService.userData$.subscribe((user: any) => {
-      this.userProfile = user.userProfile;
-      this.getProgramDetails();
+      let formCat: any = [];
+      formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
+      this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      formCat.subscribe(res =>{
+        let cat = res.result.data.properties
+        this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+        this.userProfile = user.userProfile;
+        this.getProgramDetails();
+      });
+      
     });
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
@@ -152,7 +163,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
-    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    
+    
   }
 
   ngAfterViewInit() {
@@ -666,7 +678,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails = _.get(programDetails, 'result');
       this.sessionContext.programId = this.programDetails.program_id;
       this.getCollectionCategoryDefinition();
-      this.programDetails.config.categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      this.programDetails.config.categories = this.frameworkCategories;
       this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
       this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
       this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);

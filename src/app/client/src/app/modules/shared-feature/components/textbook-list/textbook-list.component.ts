@@ -92,7 +92,7 @@ export class TextbookListComponent implements OnInit {
         let formData = _.get(_.first(res), 'result.data.properties');
         let categories:any = []
         categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
-        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)}));
+        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
         const frameworkDetails = res[1];
         let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
         // console.log("this.formFieldProperties", this.formFieldProperties_api);
