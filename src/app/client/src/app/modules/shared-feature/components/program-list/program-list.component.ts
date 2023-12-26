@@ -187,6 +187,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       //console.log(this.cslFrameworkService?.getFrameworkCategories());
     this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
     this.frameworkFields = _.map(this.frameworkObjectFields, 'label').join(',');
+    const fwCats: any = this.cslFrameworkService?.getFrameworkCategories();
 
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {

@@ -124,6 +124,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public fetchedCategory: string = '';
   public isSendReminderEnabled: boolean;
   public frameworkCategories: any = [];
+  public fwCats: any = '';
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -1256,8 +1257,10 @@ onChangeTargetCollectionCategory() {
     fwCategories = this.cslFrameworkService?.getFrameworkCategoriesObject();
 
     formData.subscribe(res =>{
-      let cat = res.result.data.properties
-      this.frameworkCategories = fwCategories.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      if(!this.fwCats){
+        this.fwCats = res.result.data.properties;
+      }
+      this.frameworkCategories = fwCategories.map(t1 => ({...t1, ...this.fwCats.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
       console.log(this.frameworkCategories);   
       this.resource.frmelmnts.fwCategories = this.frameworkCategories;
       if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
