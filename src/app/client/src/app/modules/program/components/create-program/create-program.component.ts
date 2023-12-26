@@ -124,6 +124,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public fetchedCategory: string = '';
   public isSendReminderEnabled: boolean;
   public frameworkCategories: any = [];
+  public fwCats: any = '';
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -1256,8 +1257,10 @@ onChangeTargetCollectionCategory() {
     fwCategories = this.cslFrameworkService?.getFrameworkCategoriesObject();
 
     formData.subscribe(res =>{
-      let cat = res.result.data.properties
-      this.frameworkCategories = fwCategories.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      if(!this.fwCats){
+        this.fwCats = res.result.data.properties;
+      }
+      this.frameworkCategories = fwCategories.map(t1 => ({...t1, ...this.fwCats.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
       console.log(this.frameworkCategories);   
       this.resource.frmelmnts.fwCategories = this.frameworkCategories;
       if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
@@ -1493,17 +1496,17 @@ showTexbooklist() {
       this.frameworkCategories.forEach(cat =>{
 
         let code = cat.code;
-        config.code = [];
+        config[cat.code] = [];
 
-        if (_.isArray(code)) {
-          _.forEach(code, (single) => {
-            if (code.indexOf(single) === -1) {
-              code.push(single);
+        if (_.isArray(collection[cat.code])) {
+          _.forEach(collection[cat.code], (single) => {
+            if (config[cat.code].indexOf(single) === -1) {
+              config[cat.code].push(single);
             }
           });
-        } else if (_.isString(code)) {
-          if (code.indexOf(code) === -1) {
-            code.push(code);
+        } else if (_.isString(collection[cat.code])) {
+          if (config[cat.code].indexOf(collection[cat.code]) === -1) {
+            config[cat.code].push(collection[cat.code]);
           }
         }
 
