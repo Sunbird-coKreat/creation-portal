@@ -403,7 +403,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       this.handleActiveTabState('organisationReports');
     }
 
-    if (this.location.path() === '/sourcing') {
+    if (this.location.path() === '/sourcing' || (this.router.url.includes('/sourcing') && this.queryParam.targetType || _.includes(["collections", "questionSets", "searchCriteria"], this.queryParam.targetType)
+    )) {      
       this.showGlobalNotification = true;
     } else {
       this.showGlobalNotification = false;
