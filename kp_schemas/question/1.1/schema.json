@@ -246,6 +246,9 @@
       "items": {
         "type": "string",
         "enum": [
+          "knowledge",
+          "understanding",
+          "application",
           "remember",
           "understand",
           "apply",
