@@ -1566,6 +1566,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       };
+      req.header = {
+        ['X-Channel-Id']: this.programContext.rootorg_id
+      }
     }
     this.actionService.patch(req).pipe(map((data: any) => data.result), catchError(err => {
       return throwError('');
