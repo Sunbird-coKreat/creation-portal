@@ -260,6 +260,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
         this.isQumlPlayer = true;
         const questionSet = _.get(hierarchyRes, 'result.questionset');
         questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
+        questionSet.outcomeDeclaration = _.get(questionSetData, 'result.questionset.outcomeDeclaration');
         const contentDetails = {
           contentId: content.identifier,
           contentData: questionSet

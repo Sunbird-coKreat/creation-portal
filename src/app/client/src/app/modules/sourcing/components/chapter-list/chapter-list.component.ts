@@ -1086,6 +1086,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             if (data.bloomsLevel) {
               this.parseBloomLevel(data.bloomsLevel);
             }
+            if (data.complexityLevel) {
+              this.parseBloomLevel(data.complexityLevel);
+            }
             if(this.localBlueprint) {
               if(data.topic && data.topic.length) {
                 _.forEach(data.topic, (topic)=> {
@@ -1201,9 +1204,11 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         ...sharedMeta
       },
       learningOutcome: node.learningOutcome,
-      bloomsLevel: node.bloomsLevel
+      bloomsLevel: node.bloomsLevel,
+      qumlVersion : node.qumlVersion,
+      complexityLevel: node.complexityLevel
     };
-    return nodeMeta;
+    return _.omitBy(nodeMeta, _.isUndefined);
   }
 
   getContentVisibility(branch) {
