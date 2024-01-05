@@ -1556,6 +1556,9 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           'unitId': this.unitIdentifier,
           'children': children
         }
+      },
+      header : {
+        ['X-Channel-Id']: this.programContext.rootorg_id
       }
     };
     if (resourceType === 'Question') {
@@ -1569,39 +1572,50 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
           }
         }
       };
-      req.header = {
-        ['X-Channel-Id']: this.programContext.rootorg_id
-      }
     }
-    this.actionService.patch(req).pipe(map((data: any) => data.result), catchError(err => {
-      return throwError('');
-    })).subscribe(res => {
+
+    this.actionService.patch(req).subscribe((data) => {
+      console.log(data.result);
       if (isAddedFromLibrary) {
-        this.updateContentReusedContribution();
+            this.updateContentReusedContribution(resourceType);
       } else {
         this.updateAccordianView();
       }
-    });
+    }, (err: any) => {
+      console.log('Error occured', err);
+    })
   }
 
-  public updateContentReusedContribution() {
+  public updateContentReusedContribution(resourceType) {
+    const contentUrl = (resourceType === 'Question') ? this.configService.urlConFig.URLS.QUESTIONSET.GET :
+    this.configService.urlConFig.URLS.DOCKCONTENT.GET;
     const option = {
-      url: `${this.configService.urlConFig.URLS.DOCKCONTENT.GET}/${this.sessionContext.collection}`,
+      url: `${contentUrl}/${this.sessionContext.collection}`,
       param: { 'mode': 'edit', 'fields': 'versionKey' }
     };
-    this.actionService.get(option).pipe(map((res: any) => res.result.content)).subscribe((data) => {
+
+    this.actionService.get(option).subscribe((res: any) => {
+      const data = (resourceType !== 'Question') ? res.result.content : res.result.questionset;
+
       const request = {
         content: {
           'versionKey': data.versionKey,
           reusedContributions: this.reusedContributions
         }
       };
-      // tslint:disable-next-line:max-line-length
-      this.helperService.updateContent(request, this.sessionContext.collection, this.programContext.rootorg_id).subscribe(res => {
-        this.updateAccordianView();
-      }, err => {
-        this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
-      });
+
+      const updateService = (resourceType === 'Question') ?
+        this.helperService.updateQuestionset(request, this.sessionContext.collection, this.programContext.rootorg_id) :
+        this.helperService.updateContent(request, this.sessionContext.collection, this.programContext.rootorg_id);
+
+      updateService.subscribe(
+        () => {
+          this.updateAccordianView();
+        },
+        (err) => {
+          this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
+        }
+      );
     });
   }
 

@@ -233,6 +233,21 @@ export class HelperService {
     return this.actionService.patch(option);
   }
 
+  updateQuestionset(req, contentId, channelId?): Observable<ServerResponse> {
+    const option = {
+      url: this.configService.urlConFig.URLS.QUESTIONSET.UPDATE + '/' + contentId,
+      data: {
+        'request': req
+      }
+    };
+    if (channelId) {
+      option['header'] = {
+        ['X-Channel-Id']: channelId
+      }
+    }
+    return this.actionService.patch(option);
+  }
+
   reviewContent(contentId): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.CONTENT.REVIEW + '/' + contentId,
