@@ -1597,7 +1597,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         }
       };
       // tslint:disable-next-line:max-line-length
-      this.helperService.updateContent(request, this.sessionContext.collection).subscribe(res => {
+      this.helperService.updateContent(request, this.sessionContext.collection, this.programContext.rootorg_id).subscribe(res => {
         this.updateAccordianView();
       }, err => {
         this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
