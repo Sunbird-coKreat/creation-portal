@@ -995,6 +995,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
   }
 
   getContentStatusCount(data) {
+    if (_.includes(['Question', 'Questionset'], data?.objectType)) {
+      if (data?.complexityLevel) {
+        data['bloomsLevel'] = data.complexityLevel;
+        delete data.complexityLevel;
+      }
+    }
     const self = this;
     if (['admin', 'user'].includes(this.sessionContext.currentOrgRole)  && (this.sessionContext.currentRoles.includes('REVIEWER') || this.sessionContext.currentRoles.includes('CONTRIBUTOR') )) {
       // tslint:disable-next-line:max-line-length
@@ -1085,9 +1091,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
             }
             if (data.bloomsLevel) {
               this.parseBloomLevel(data.bloomsLevel);
-            }
-            if (data.complexityLevel) {
-              this.parseBloomLevel(data.complexityLevel);
             }
             if(this.localBlueprint) {
               if(data.topic && data.topic.length) {
