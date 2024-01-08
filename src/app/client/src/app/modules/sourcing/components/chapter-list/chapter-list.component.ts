@@ -1576,7 +1576,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.actionService.patch(req).subscribe((data) => {
       if (isAddedFromLibrary) {
-            this.updateContentReusedContribution(resourceType);
+        this.updateContentReusedContribution(resourceType);
       } else {
         this.updateAccordianView();
       }
@@ -1595,7 +1595,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.actionService.get(option).subscribe((res: any) => {
       const data = (resourceType !== 'Question') ? res.result.content : res.result.questionset;
-
       const request = {
         content: {
           'versionKey': data.versionKey,
@@ -1604,14 +1603,12 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
       };
 
       const updateService = (resourceType === 'Question') ?
-        this.helperService.updateQuestionset(request, this.sessionContext.collection, this.programContext.rootorg_id) :
-        this.helperService.updateContent(request, this.sessionContext.collection, this.programContext.rootorg_id);
+      this.helperService.updateQuestionset(request, this.sessionContext.collection, this.programContext.rootorg_id) :
+      this.helperService.updateContent(request, this.sessionContext.collection, this.programContext.rootorg_id);
 
-      updateService.subscribe(
-        () => {
+      updateService.subscribe(() => {
           this.updateAccordianView();
-        },
-        (err) => {
+        },(err) => {
           this.toasterService.error(this.resourceService.messages.emsg.bulkApprove.updateToc);
         }
       );
