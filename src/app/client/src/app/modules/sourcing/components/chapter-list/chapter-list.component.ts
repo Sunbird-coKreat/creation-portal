@@ -1575,14 +1575,13 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     }
 
     this.actionService.patch(req).subscribe((data) => {
-      console.log(data.result);
       if (isAddedFromLibrary) {
             this.updateContentReusedContribution(resourceType);
       } else {
         this.updateAccordianView();
       }
     }, (err: any) => {
-      console.log('Error occured', err);
+      return throwError('');
     })
   }
 
