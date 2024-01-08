@@ -51,17 +51,17 @@ export class QumlPlayerService implements QuestionCursor, EditorCursor {
 
   getQuestionSet(identifier) {
     const hierarchy =  this.http.get('action/questionset/v2/hierarchy/' + identifier + '?mode=edit');
-    const questionSet = this.http.get(`action/questionset/v2/read/${identifier}?fields=instructions`);
+    const questionSet = this.http.get(`action/questionset/v2/read/${identifier}?fields=instructions,outcomeDeclaration`);
     return (
       forkJoin([hierarchy, questionSet]).pipe(
           map(res => {
-              let questionSet =  _.get(res[0], 'result.questionset');
-              const instructions =  _.get(res[1], 'result.questionset.instructions');
-              if (questionSet && instructions) {
-                  // tslint:disable-next-line:no-unused-expression
-                  questionSet['instructions'] = instructions;
-              }
-              return {questionSet};
+            const questionSet = _.get(res[0], 'result.questionset');
+            const { instructions, outcomeDeclaration } = _.get(res[1], 'result.questionset') || {};
+
+            if (questionSet) {
+                _.assign(questionSet, _.pickBy({ instructions, outcomeDeclaration }, _.identity));
+            }
+            return {questionSet};
           })
       ));
   }

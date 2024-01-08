@@ -11,7 +11,7 @@
       "fields": "contentType,topic,name,channel",
       "batchDetails": "name,endDate,startDate,status,enrollmentType,createdBy,certificates"
     },
-    "questionSetRead": "instructions"
+    "questionSetRead": "instructions,outcomeDeclaration"
   },
   "URLS": {
     "LEARNER_PREFIX": "/learner/",
