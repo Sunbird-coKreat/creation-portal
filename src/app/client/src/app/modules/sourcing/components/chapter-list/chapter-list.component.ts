@@ -998,7 +998,6 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
     if (_.includes(['Question', 'Questionset'], data?.objectType)) {
       if (data?.complexityLevel) {
         data['bloomsLevel'] = data.complexityLevel;
-        delete data.complexityLevel;
       }
     }
     const self = this;
@@ -1207,7 +1206,7 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
         ...sharedMeta
       },
       learningOutcome: node.learningOutcome,
-      bloomsLevel: node.bloomsLevel,
+      bloomsLevel: node.complexityLevel || node.bloomsLevel,
       qumlVersion : node.qumlVersion,
       complexityLevel: node.complexityLevel
     };
