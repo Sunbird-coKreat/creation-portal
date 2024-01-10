@@ -102,12 +102,12 @@
 									{{data.name}}
 								</div>
 							</td>
-							<td>
-								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ data?.medium }}">
-									{{data.medium}}
+							<td *ngFor="let field of formFieldProperties_api">
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{field.code}}" popupText="{{ data[field.code] }}">
+									{{data[field.code]}}
 								</div>
 							</td>
-							<td>
+							<!-- <td>
 								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ data?.gradeLevel }}">
 									{{data.gradeLevel}}
 								</div>
@@ -116,7 +116,7 @@
 								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ data?.subject }}">
 									{{data.subject}}
 								</div>
-							</td>
+							</td> -->
 							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
 							<td class="fsmall"  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'">
 								<span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}
