@@ -103,7 +103,7 @@
 				</div>
 			</div>
 			<div class="ui segment p-0 m-0 mt-4 sb-bg-color-white dynamicHeight" suiTabContent="3">
-				<div class="ui container">
+								<div class="ui container">
 					<div class="pt-24">
 					  <div class="d-flex flex-ai-center flex-jc-space-between sb-pageSection">
 						<div class="sb-pageSection-header">
@@ -141,22 +141,22 @@
 								</span>
 							</th>
 							<th class="w-10">{{resourceService.frmelmnts.lbl.emailOrMobile}}</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('gradeLevel')">
-								{{resourceService.frmelmnts.lbl.class}} &nbsp;&nbsp;
-								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'gradeLevel' "></i>
-								<span  *ngIf="sortColumnOrgUsers == 'gradeLevel'" class="d-inline-block">
+							<th *ngFor="let fwCat of frameworkCategories" class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('fwCat.name')">
+								{{fwCat.name}} &nbsp;&nbsp;
+								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'fwCat.name' "></i>
+								<span  *ngIf="sortColumnOrgUsers == 'fwCat.name'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
 							</th>
-							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
+							<!-- <th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('subject')">
 								{{resourceService.frmelmnts.lbl.subject}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'subject' "></i>
 								<span  *ngIf="sortColumnOrgUsers == 'subject'" class="d-inline-block">
 									<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'asc'}"></i>
 									<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':directionOrgUsers == 'desc'}"></i>
 								</span>
-							</th>
+							</th> -->
 							<th class="w-5 cursor-pointer sb-sorting" (click)="sortOrgUsers('contentTypes')">
 								{{resourceService.frmelmnts.lbl.contentType}} &nbsp;&nbsp;
 								<i class="fa fa-sort" aria-hidden="true" *ngIf="directionOrgUsers == '' || sortColumnOrgUsers != 'contentTypes' "></i>
@@ -182,8 +182,8 @@
 								<div *ngIf="orgUser?.maskedEmail">{{orgUser?.maskedEmail}}</div>
 								<div *ngIf="orgUser?.maskedPhone"> {{orgUser?.maskedPhone}}</div>
 							</td>
-							<td>{{orgUser?.gradeLevel?.join(', ')}}</td>
-							<td>{{orgUser?.subject?.join(', ')}}</td>
+							<td *ngFor="let fwCat of frameworkCategories">{{orgUser[fwCat.code] ?orgUser[fwCat.code] : '' }}</td>
+							<!-- <td>{{orgUser?.subject?.join(', ')}}</td> -->
 							<td>
 								<div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold" style="width: 250px;">
 									{{orgUser?.contentTypes?.join(', ')}}
@@ -313,23 +313,24 @@
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th scope="col" *ngIf="programDetails?.target_type === 'searchCriteria'" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
+					
+					<!-- <th scope="col" *ngIf="programDetails?.target_type === 'searchCriteria'" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('board')">
 						{{resourceService.frmelmnts.lbl.board}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'board' "></i>
 						<span  *ngIf="sortColumn == 'board'" class="d-inline-block">
 							<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
-					</th>
-					<th scope="col" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('medium')">
-						{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
-						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
-						<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
+					</th> -->
+					<th scope="col" *ngFor="let fwCat of frameworkCategories" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('fwCat.name')">
+						{{fwCat.name}} &nbsp;&nbsp;
+						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'fwCat.name' "></i>
+						<span  *ngIf="sortColumn == 'fwCat.name'" class="d-inline-block">
 							<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
 					</th>
-					<th scope="col" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
+					<!-- <th scope="col" class="w-5 cursor-pointer sb-sorting" (click)="sortCollection('gradeLevel')">
 						{{resourceService.frmelmnts.lbl.Class}} &nbsp;&nbsp;
 						<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'gradeLevel' "></i>
 						<span  *ngIf="sortColumn == 'gradeLevel'" class="d-inline-block">
@@ -344,7 +345,7 @@
 							<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 							<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 						</span>
-					</th>
+					</th> -->
 					<th scope="col" class="w-5" *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')">{{firstLevelFolderLabel}}</th>
 					<th class="w-5" *ngIf="visibility.showCollectionLevelSamples">
 						<span>Sample Content</span>
@@ -384,16 +385,16 @@
 						<td class="hand">
 							{{contributorTextbook.name}}
 						</td>
-						<td *ngIf="programDetails?.target_type === 'searchCriteria'">{{contributorTextbook.board}}</td>
-						<td>
-							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ contributorTextbook?.medium }}">{{contributorTextbook.medium}}</span>
+						<!-- <td *ngIf="programDetails?.target_type === 'searchCriteria'">{{contributorTextbook.board}}</td> -->
+						<td *ngFor="let fwCat of frameworkCategories">
+							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{fwCat.code}}" popupText="{{ contributorTextbook?.medium }}">{{contributorTextbook[fwCat.code]}}</span>
 						</td>
-						<td>
+						<!-- <td>
 							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ contributorTextbook?.gradeLevel }}">{{contributorTextbook.gradeLevel}}</span>
 						</td>
 						<td>
-							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ contributorTextbook?.subject }}">{{contributorTextbook.subject}}</span>
-						</td>
+							<span class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ contributorTextbook?.subject }}">{{contributorTextbook.subject}}...</span>
+						</td> -->
 						<td *ngIf="(!nominationDetails?.id || nominationDetails?.status === 'Initiated') && (!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets')">
 							{{ contributorTextbook.chapterCountForContribution || contributorTextbook.chapterCount || 0 }}
 						</td>

@@ -20,6 +20,7 @@ import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { isEmpty } from 'lodash';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 
 interface IDynamicInput {
@@ -118,6 +119,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         {id: 3, name: 'BOTH', defaultTab: 3, tabs: [3]},
         {id: 4, name: 'NONE', defaultTab: 4, tabs: [4]}
   ]
+  public frameworkCategories: any = [];
+  public fields:any = []
 
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
@@ -128,7 +131,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
     private sbFormBuilder: UntypedFormBuilder, private sourcingService: SourcingService, private helperService: HelperService,
-    public programTelemetryService: ProgramTelemetryService, private contentHelperService: ContentHelperService) {
+    public programTelemetryService: ProgramTelemetryService, private contentHelperService: ContentHelperService,
+    private cslFrameworkService: CslFrameworkService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
   ngOnInit() {
@@ -157,6 +161,15 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pageLimit = this.registryService.programUserPageLimit;
     this.getProgramDetails();
     this.setContextualHelpConfig();
+    let formCat: any = [];
+      formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
+      this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      formCat.subscribe(res =>{
+        let cat = res?.result?.data?.properties
+        if(!!cat){
+          this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)}))
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -725,7 +738,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
         this.contentCount = 0;
-        this.contributorTextbooks = _.cloneDeep(contents);
+                this.contributorTextbooks = _.cloneDeep(contents);
         _.map(this.contributorTextbooks, (content) => {
           content['contentVisibility'] = this.contentHelperService.shouldContentBeVisible(content, this.programDetails, this.currentNominationStatus, this.sessionContext.currentRoles);
           content['sourcingStatus'] = this.contentHelperService.checkSourcingStatus(content, this.programDetails);
@@ -775,7 +788,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const notInitiatedNoms = ['Pending', 'Approved', 'Rejected'];
     // tslint:disable-next-line:max-line-length
     const isTargetTypeQuestionSet = this.programDetails?.target_type === 'questionSets' ? true : false;
-
+    
     contributorTextbooks = (!_.isUndefined(this.currentNominationStatus) && _.includes(notInitiatedNoms, this.currentNominationStatus)) ? _.filter(contributorTextbooks, (collection) => {
 
       return _.includes(
@@ -808,7 +821,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           // tslint:disable-next-line:max-line-length
           this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid, contributorTextbooks);
         }
-        this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
+                this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
         this.contentCount = this.contributorTextbooks.length;
         const collectionsWithSamples = _.map(_.filter(this.contributorTextbooks, c => c.totalSampleContent > 0), 'identifier');
         if (!_.isEmpty(this.selectedCollectionIds)) {
