@@ -159,8 +159,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStage = 'programComponent';
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
-    this.getProgramDetails();
-    this.setContextualHelpConfig();
     let formCat: any = [];
       formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
       this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
@@ -169,6 +167,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if(!!cat){
           this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)}))
         }
+        this.getProgramDetails();
+        this.setContextualHelpConfig();
       });
   }
 
@@ -236,6 +236,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   getProgramDetails() {
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.programDetails.config.categories = this.frameworkCategories;
       this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
       this.userRoles = this.userRoles.concat(_.get(this.programDetails, 'config.roles')).sort((a, b) => a.id - b.id);
       this.roles = _.cloneDeep(this.userRoles);
