@@ -156,73 +156,14 @@
 	<div class="sb-modal-content">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
 		<div class="segment mt-5 pb-30 pt-10">
-			<form class="ui form sb-dock-dropdown" [formGroup]="prefernceForm">
-				<div class="ui grid">
-					<div class="six wide column py-10">
-						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-							<sui-multi-select class="selection p-5 b-100"
-							formControlName="medium" #mediums
-							[options]="prefernceFormOptions['medium']"
-							[(ngModel)]="setPreferences['medium']"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="six wide column py-10">
-						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-							<sui-multi-select class="selection p-5 b-100"
-							formControlName="subject" #subjects
-							[options]="prefernceFormOptions['subject']"
-							[(ngModel)]="setPreferences['subject']"
-							appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select,configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [subject]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="six wide column py-10">
-						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-							<sui-multi-select formControlName="gradeLevel"
-							class="selection p-5 b-100" #gradeLevels
-							[options]="prefernceFormOptions['gradeLevel']"
-							[(ngModel)]="setPreferences['gradeLevel']"
-							appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select,configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [gradeLevel]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-				</div>
-			</form>
+			<app-content-data-form
+			#formData
+			(formStatus)="formStatusEventListener($event)"
+			(formInputData)="getFormData($event)"
+			[formFieldProperties]="formFilters">
+		  </app-content-data-form>
+
+			
 		</div>
 	</div>
 	<div class="sb-modal-actions py-20">
