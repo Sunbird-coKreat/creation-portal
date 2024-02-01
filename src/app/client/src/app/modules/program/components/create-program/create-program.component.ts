@@ -1130,10 +1130,11 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['framework'] = config.framework;
-          this.programConfig['board'] = config.board;
-          this.programConfig['gradeLevel'] = config.gradeLevel;
-          this.programConfig['medium'] = config.medium;
-          this.programConfig['subject'] = config.subject;
+
+          this.frameworkCategories.forEach(cat =>{
+            this.programConfig[cat.code] = config[cat.code];
+          });
+
           this.programConfig['collections'] = this.getCollections();
           _.forEach(this.projectScopeForm.value.pcollections, item => {
             programData['collection_ids'].push(item.id);
@@ -1206,10 +1207,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['framework'] = config.framework;
-          this.programConfig['board'] = config.board;
-          this.programConfig['gradeLevel'] = config.gradeLevel;
-          this.programConfig['medium'] = config.medium;
-          this.programConfig['subject'] = config.subject;
+          this.frameworkCategories.forEach(cat =>{
+            this.programConfig[cat.code] = config[cat.code];
+          });
           this.programConfig['collections'] = this.getCollections();
           _.forEach(this.projectScopeForm.value.pcollections, item => {
             prgData['collection_ids'].push(item);
