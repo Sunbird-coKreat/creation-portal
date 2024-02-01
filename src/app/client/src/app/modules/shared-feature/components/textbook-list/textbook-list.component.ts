@@ -60,6 +60,7 @@ export class TextbookListComponent implements OnInit {
   public reviewContributionHelpConfig: any;
   public fields:any = [];
   public formFieldProperties_api: any = []
+  public formFilters: any = [];
   constructor(public activatedRoute: ActivatedRoute, private router: Router,
     public programsService: ProgramsService, private httpClient: HttpClient,
     public toasterService: ToasterService, public resourceService: ResourceService,
@@ -74,36 +75,30 @@ export class TextbookListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.initialize();
     this.telemetryInteractCdata = [
       {id: this.activatedRoute.snapshot.params.programId, type: 'project'},
       {id: this.userService.channel, type: 'sourcing_organization'}
     ];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
-    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
-      const request = [ 
-        this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
-        this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
-      ];
-
-      forkJoin(request).subscribe(res => {
+    const request = [ 
+      this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
+      this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
+    ];
+    forkJoin(request).subscribe(res => {
         
-        let formData = _.get(_.first(res), 'result.data.properties');
-        let categories:any = []
-        categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
-        let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
-        const frameworkDetails = res[1];
-        let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
-        // console.log("this.formFieldProperties", this.formFieldProperties_api);
-        this.cslFrameworkService?.getFrameworkCategories();
-        this.cslFrameworkService?.getFrameworkCategoriesObject();
-        formFieldProperties_api = [...formFieldProperties_api];
-        
-        this.formFieldProperties_api = formFieldProperties_api;
-        console.log(this.formFieldProperties_api)
-      });
-    this.setContextualHelpConfig();
+      let formData = _.get(_.first(res), 'result.data.properties');
+      let categories:any = []
+      categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      const frameworkDetails = res[1];
+      let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
+      this.formFilters = formFieldProperties_api;
+      this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      this.initialize();
+      this.setContextualHelpConfig();
+    });
+    
   }
 
   setContextualHelpConfig() {
@@ -133,17 +128,11 @@ export class TextbookListComponent implements OnInit {
       if (!_.isEmpty(this.userPreferences.sourcing_preference)) {
         this.textbookFiltersApplied = true;
         // tslint:disable-next-line: max-line-length
-        this.setPreferences['medium'] = (this.userPreferences.sourcing_preference.medium) ? this.userPreferences.sourcing_preference.medium : [];
-        // tslint:disable-next-line: max-line-length
-        this.setPreferences['subject'] = (this.userPreferences.sourcing_preference.subject) ? this.userPreferences.sourcing_preference.subject : [];
-        // tslint:disable-next-line: max-line-length
-        this.setPreferences['gradeLevel'] = (this.userPreferences.sourcing_preference.gradeLevel) ? this.userPreferences.sourcing_preference.gradeLevel : [];
+        this.formFilters.forEach((val: any)=>{
+          this.setPreferences[val['code']] =   (this.userPreferences.sourcing_preference[val['code']]) ? this.userPreferences.sourcing_preference[val['code']] : [];
+        })
       }
     }
-    
-    this.prefernceFormOptions['medium'] = this.programDetails.config.medium;
-    this.prefernceFormOptions['gradeLevel'] = this.programDetails.config.gradeLevel;
-    this.prefernceFormOptions['subject'] = this.programDetails.config.subject;
     if (this.programDetails.target_type === 'searchCriteria'  && !_.isEmpty(this.frameworkCategories)) {
       this.frameworkCategories.forEach((element) => {
         if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
@@ -151,11 +140,6 @@ export class TextbookListComponent implements OnInit {
         }
       });
     }
-    this.prefernceForm = this.sbFormBuilder.group({
-      medium: [],
-      subject: [],
-      gradeLevel: [],
-    });
   }
 
   setTargetCollectionValue() {
@@ -199,7 +183,7 @@ export class TextbookListComponent implements OnInit {
   applyTextbookFilters() {
     this.prefModal.deny();
     const prefData = {
-        ...this.prefernceForm.value
+      ...this.setPreferences
     };
     this.applyTextbookPreference.emit(prefData);
   }
@@ -317,4 +301,10 @@ export class TextbookListComponent implements OnInit {
       }
     });
   }
+
+  getFormData(event){
+    this.setPreferences = {...this.setPreferences, ...event};
+  }
+
+  formStatusEventListener(event){}
 }
