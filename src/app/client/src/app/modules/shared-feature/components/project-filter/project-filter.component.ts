@@ -309,6 +309,12 @@ export class ProjectFilterComponent implements OnInit {
         this.cacheService.set('contributeAllProgramAppliedFiltersTenantAccess', filterLocalStorage); break;
     }
 
+    Object.keys(this.setPreferences).forEach(key => {
+      if (this.setPreferences[key] === null) {
+        delete this.setPreferences[key];
+      }
+    });
+
     resetFilter ? this.applyFilters.emit() : this.applyFilters.emit(this.setPreferences); // emiting the filters data to parent component
     this.dismissed();
   }
