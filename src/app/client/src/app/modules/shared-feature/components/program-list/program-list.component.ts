@@ -217,6 +217,13 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }
     } else {
       const applyFilters = (this.forTargetType === 'searchCriteria') ? this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFiltersSearchCriteria') : this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
+      if(!!applyFilters){
+        Object.keys(applyFilters).forEach(key => {
+          if (applyFilters[key] === null) {
+            delete applyFilters[key];
+          }
+        });        
+      }
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
   }
