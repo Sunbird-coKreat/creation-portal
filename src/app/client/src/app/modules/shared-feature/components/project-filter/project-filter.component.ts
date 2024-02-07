@@ -250,17 +250,6 @@ export class ProjectFilterComponent implements OnInit {
     if (origionalPrograms && origionalPrograms['length']) { // taking origional Programs list display the all filter values
       programs = origionalPrograms;
     }
-    _.map(programs, (program) => {
-      this.currentFilters['gradeLevel'] = _.concat(this.currentFilters['gradeLevel'],
-        _.get(program, 'config.gradeLevel') ? program.config.gradeLevel : JSON.parse(program.gradeLevel));
-      this.currentFilters['medium'] = _.concat(this.currentFilters['medium'],
-        _.get(program, 'config.medium') ? program.config.medium : JSON.parse(program.medium));
-      this.currentFilters['subject'] = _.concat(this.currentFilters['subject'],
-        _.get(program, 'config.subject') ? program.config.subject : JSON.parse(program.subject));
-    });
-    this.currentFilters['gradeLevel'] = this.sortFilters(_.uniq(_.compact(_.flattenDeep(this.currentFilters['gradeLevel']))));
-    this.currentFilters['medium'] = this.sortFilters(_.uniq(_.compact(_.flattenDeep(this.currentFilters['medium']))));
-    this.currentFilters['subject'] = this.sortFilters(_.uniq(_.compact(_.flattenDeep(this.currentFilters['subject']))));
     this.showLoader = false;
   }
   sortFilters(unSortedArray) {

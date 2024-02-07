@@ -11,7 +11,7 @@
               <div class="row">
                 <div class="three wide column d-inline-block" *ngFor="let cat of programDetails.config.categories">
                   <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ cat?.name }}</label>
-                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{cat.label}}" popupText="{{ programDetails?.board }}">
+                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{cat.label}}" popupText="{{ getProgramInfo(cat.code) }}">
                     {{ getProgramInfo(cat.code) }}
                   </div>
                 </div>
