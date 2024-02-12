@@ -296,14 +296,8 @@ export class ProgramsService extends DataService implements CanActivate {
                 // Add user to the registry
                 const userAdd = {
                   User: {
-                    firstName: this.userService.userProfile.firstName,
-                    lastName: this.userService.userProfile.lastName || '',
                     userId: this.userService.userProfile.identifier,
-                    enrolledDate: new Date().toISOString(),
-                    board : contibutorOrg.board,
-                    medium: contibutorOrg.medium,
-                    gradeLevel: contibutorOrg.gradeLevel,
-                    subject: contibutorOrg.subject
+                    enrolledDate: new Date().toISOString()
                   }
                 };
 
