@@ -51,7 +51,7 @@
 							</span>
 						</th>
 
-						<th scope="col" *ngFor="let field of formFieldProperties_api" class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{field.name}} &nbsp;&nbsp;
+						<th scope="col" *ngFor="let field of formFilters" class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{field.name}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
 							<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -102,7 +102,7 @@
 									{{data.name}}
 								</div>
 							</td>
-							<td *ngFor="let field of formFieldProperties_api">
+							<td *ngFor="let field of formFilters">
 								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{field.code}}" popupText="{{ data[field.code] }}">
 									{{data[field.code]}}
 								</div>

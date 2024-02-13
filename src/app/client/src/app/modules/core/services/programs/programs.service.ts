@@ -274,7 +274,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * logic which decides if user is with join link shoule we add him to the organisation or not
    */
-  addUsertoContributorOrg(orgId) {
+  addUsertoContributorOrg(orgId, frameworkObjectFields?) {
       // Check if organisation exists
       const orgSearch = {
         entityType: ['Org'],
@@ -294,18 +294,17 @@ export class ProgramsService extends DataService implements CanActivate {
             if (_.get(userRegData, 'error') === false) {
               if (_.isEmpty(_.get(userRegData, 'user'))) {
                 // Add user to the registry
-                const userAdd = {
+                const userAdd: any = {
                   User: {
-                    firstName: this.userService.userProfile.firstName,
-                    lastName: this.userService.userProfile.lastName || '',
                     userId: this.userService.userProfile.identifier,
                     enrolledDate: new Date().toISOString(),
-                    board : contibutorOrg.board,
-                    medium: contibutorOrg.medium,
-                    gradeLevel: contibutorOrg.gradeLevel,
-                    subject: contibutorOrg.subject
                   }
                 };
+                frameworkObjectFields.forEach((field:any)=>{
+                  if(!!contibutorOrg[field]){
+                    userAdd.User[field] = contibutorOrg[field];
+                  }
+                })
 
                 this.addToRegistry(userAdd).subscribe((res) => {
                   this.mapUsertoContributorOrgReg(orgOsid, res.result.User.osid, userRegData);
