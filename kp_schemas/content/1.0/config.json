@@ -111,7 +111,7 @@
     ],
     "PII_Fields": {
         "user": {
-          "createdBy": ["creator"]
+          "createdBy": ["creator","author"]
         },
         "org": {
         }
