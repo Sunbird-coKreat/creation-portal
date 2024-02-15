@@ -2,18 +2,22 @@ import { Inject, Injectable } from '@angular/core';
 import { CsFrameworkService } from '@project-sunbird/client-services/services/framework';
 import { ChannelService } from '@sunbird/core';
 import _ from 'lodash';
-import { ConfigService } from '../../../shared/services/config/config.service'
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CslFrameworkService {
 
+  private categoriedSetSubject = new Subject<any>();
+
+  // Observable that components can subscribe to
+  getFrameworkCategories$ = this.categoriedSetSubject.asObservable();
+
   defaultFramework;
   constructor(
     @Inject('CS_FRAMEWORK_SERVICE') private csFrameworkService: CsFrameworkService, 
-    private channelService: ChannelService, 
-    private configService: ConfigService
+    private channelService: ChannelService
   ) { }
 
   /**
@@ -29,28 +33,15 @@ export class CslFrameworkService {
         this.defaultFramework = _.get(channelData, 'result.channel.defaultFramework');
         // Determine the selected framework based on configuration or default value for test
         let selectedFW = this.defaultFramework;
-        // Set the framework categories based on the selected framework
-        console.log(selectedFW);
-        this.setFWCatConfigFromCsl(selectedFW);
+        
+        // Set framework categories object based on the provided user-selected framework
+        this.setFwCatObjConfigFromCsl(this.defaultFramework);
         
       });
     } else {
       // If userSelFramework is provided, use it directly and set the framework categories
       this.setFWCatConfigFromCsl(userSelFramework);
     }
-  }
-
-  /**
-   * Fetches framework categories and its object based on the selected framework.
-   * @param selectedFramework - Selected framework
-   */
-
-  fetchFWCatObjFromCsl(selectedFramework: any): void {
-    // Set framework categories based on the selected framework
-    this.setFwCatObjConfigFromCsl(selectedFramework);
-
-    // Set framework categories object in local storage based on the selected framework
-    this.setFwCatObjConfigFromCsl(selectedFramework);
   }
 
   /**
@@ -103,9 +94,6 @@ export class CslFrameworkService {
             // Save the new framework categories object to local storage
             localStorage.setItem('fwCategoryObject', JSON.stringify(fwData));
 
-            // Set framework categories object based on the provided user-selected framework
-            this.setFwCatObjConfigFromCsl(userSelFramework);
-
             resolve(); // Resolve the Promise when the operation completes
           },
           (error) => {
@@ -156,6 +144,7 @@ export class CslFrameworkService {
           console.log('getFrameworkConfig success', fwData);
           localStorage.removeItem('fwCategoryObjectValues');
           localStorage.setItem('fwCategoryObjectValues', JSON.stringify(fwData));
+          this.categoriedSetSubject.next(fwData);
         },
         (error) => {
           // Handle error in fetching framework configuration

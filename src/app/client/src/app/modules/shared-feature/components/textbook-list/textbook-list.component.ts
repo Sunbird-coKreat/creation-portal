@@ -92,8 +92,7 @@ export class TextbookListComponent implements OnInit {
       categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
       let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
       const frameworkDetails = res[1];
-      let formFieldProperties_api = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
-      this.formFilters = formFieldProperties_api;
+      this.formFilters = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
       this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
       this.initialize();
       this.setContextualHelpConfig();

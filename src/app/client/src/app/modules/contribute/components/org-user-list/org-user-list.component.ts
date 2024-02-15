@@ -137,7 +137,8 @@ export class OrgUserListComponent implements OnInit, AfterViewInit {
 
   getContributionOrgUsers() {
     this.registryService.getOrgUsersDetails().then((orgUsers:[]) => {
-      this.setOrgUsers(orgUsers);
+      const filteredUsers = orgUsers.filter((obj: any) => obj.maskedEmail && obj.name);
+      this.setOrgUsers(filteredUsers);
     });
   }
   getUserDetailsBySearch(clearInput?) {

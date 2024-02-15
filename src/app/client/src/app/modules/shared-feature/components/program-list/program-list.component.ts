@@ -84,13 +84,17 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }
     });
     this.userService.userData$.subscribe(user =>{
-      this.userProfile = user.userProfile;
-      this.checkIfUserIsContributor();
-      this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-      this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
-      this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-      this.telemetryInteractObject = {};
-      this.setContextualHelpConfig();
+      this.cslFrameworkService.setDefaultFWforCsl('', this.userService.hashTagId);
+      this.cslFrameworkService.getFrameworkCategories$.subscribe((categories: any)=>{
+        this.userProfile = user.userProfile;
+        this.checkIfUserIsContributor();
+        this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
+        this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+        this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+        this.telemetryInteractObject = {};
+        this.setContextualHelpConfig();
+      })
+      
     });
   }
 
@@ -145,13 +149,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
+    this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    console.log("this.frameworkObjectFields", this.frameworkObjectFields);
     // TODO implement based on api and remove url checks
     // this.isContributor = !isContributor;
     const orgId = this.activatedRoute.snapshot.params.orgId;
 
     // Check if user part of that organisation
     if (this.router.url.includes('/join/' + orgId)) {
-      this.programsService.addUsertoContributorOrg(orgId);
+      this.programsService.addUsertoContributorOrg(orgId, this.frameworkObjectFields);
     }
     if (this.userService.isContributingOrgUser()
       && !this.router.url.includes('/sourcing')
@@ -184,8 +190,6 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsListByRole(setfilters?) {
-      //console.log(this.cslFrameworkService?.getFrameworkCategories());
-    this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
     this.frameworkFields = _.map(this.frameworkObjectFields, 'label').join(',');
     const fwCats: any = this.cslFrameworkService?.getFrameworkCategories();
 
