@@ -7,6 +7,7 @@ import { catchError, map, mergeMap } from 'rxjs/operators';
 import { forkJoin, iif, of, throwError } from 'rxjs';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 @Component({
   selector: 'app-my-content',
@@ -60,9 +61,13 @@ export class MyContentComponent implements OnInit, AfterViewInit {
   public isQumlPlayer: Boolean = false;
   public baseUrl: string;
   public videoFileFormat: boolean;
+  public frameworkCategories: any = [];
+  public fields:any = [];
+  public fwCategories: any = [];
   constructor(public resourceService: ResourceService, private actionService: ActionService,
     private userService: UserService, private activatedRoute: ActivatedRoute,
-    private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector) {
+    private learnerService: LearnerService, private cd: ChangeDetectorRef, public injector: Injector,
+    public cslFrameworkService: CslFrameworkService) {
       this.playerService = injector.get<PlayerService>(PlayerService);
       this.helperService = injector.get<HelperService>(HelperService);
       this.configService = injector.get<ConfigService>(ConfigService);
@@ -82,7 +87,20 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       id: this.userService.appId,
       pid: this.configService.appConfig.TELEMETRY.PID
     };
-    this.initialize();
+
+    let formCat: any = [];
+    formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
+    this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    formCat.subscribe(res =>{
+      let cat = res?.result?.data?.properties
+      if(!!cat){
+        this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)}))
+        this.frameworkCategories = this.frameworkCategories.filter(item => item.name !== undefined && item.name !== '');
+        this.fwCategories = this.frameworkCategories.map(item => item.code);
+      }
+      this.initialize();
+    });
+    
   }
 
   ngAfterViewInit() {
@@ -174,6 +192,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       };
     });
     const obj = {};
+    let fwCats: any = {};
     _.forEach(this.contents, (value) => {
       value.origin = _.get(this.publishedContentMap[value.identifier], 'identifier');
       value.lastPublishedId = _.get(this.publishedContentMap[value.identifier], 'userId');
@@ -184,14 +203,16 @@ export class MyContentComponent implements OnInit, AfterViewInit {
       value.publisher = _.get(this.publishedContentMap[value.identifier], 'publisher');
       if (value && !_.isEmpty(value.frameworkType)) {
         obj[value.frameworkType] = obj[value.frameworkType] || {};
+        this.fwCategories.forEach((cat: any)=>{
+          fwCats[cat] = this.getUniqValue(obj[value.frameworkType], value, cat)
+        });
         obj[value.frameworkType] = {
-          board: this.getUniqValue(obj[value.frameworkType], value, 'board'),
-          gradeLevel: this.getUniqValue(obj[value.frameworkType], value, 'gradeLevel'),
-          medium: this.getUniqValue(obj[value.frameworkType], value, 'medium'),
-          subject: this.getUniqValue(obj[value.frameworkType], value, 'subject'),
           published: this.getPublishedContentCount(obj[value.frameworkType], value),
-          notPublished: this.getNotPublishedContentCount(obj[value.frameworkType], value)
+          notPublished: this.getNotPublishedContentCount(obj[value.frameworkType], value),
+          ...fwCats
         };
+        
+        
       }
 
       if (value.isPublished) {
@@ -212,17 +233,26 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     this.selectedFrameworkType = selectedCard;
     const filteredContent = _.filter(this.contents, (content) => content.frameworkType === selectedCard.key);
     const obj = {};
+    
+    let fwCats: any = {};
+    
     _.forEach(filteredContent, (content) => {
-      const groupKey = content.board + '_' + content.medium + '_' + content.gradeLevel + '_' + content.subject;
+      let groupKey: any = "";
+      this.fwCategories.forEach((cat: any) => {
+        fwCats[cat] = content[cat]
+        if(groupKey == ""){
+          groupKey = content[cat];
+        }else{
+          groupKey = groupKey + "_" + content[cat];
+        }
+      });
+      // const groupKey = content.board + '_' + content.medium + '_' + content.gradeLevel + '_' + content.subject;
       obj[groupKey] = obj[groupKey] || {};
       obj[groupKey] = {
-        board: content.board,
-        gradeLevel: content.gradeLevel,
-        medium: content.medium,
-        subject: content.subject,
         contents: obj[groupKey].contents ? [...obj[groupKey].contents, content] : _.castArray(content),
         published: this.getPublishedContentCount(obj[groupKey], content),
-        notPublished: this.getNotPublishedContentCount(obj[groupKey], content)
+        notPublished: this.getNotPublishedContentCount(obj[groupKey], content),
+        ...fwCats
       };
     });
     this.selectedContributionDetails = _.map(obj);
@@ -376,9 +406,8 @@ export class MyContentComponent implements OnInit, AfterViewInit {
           exists: ['programId'],
           not_exists: ['sampleContent'],
           fields: [
-            'name', 'status', 'framework', 'board', 'gradeLevel', 'medium',
-          'subject', 'creator', 'mimeType', 'lastPublishedBy', 'me_totalRatingsCount', 'me_averageRating',
-          'me_totalTimeSpentInSec', 'me_totalPlaySessionCount', 'createdOn', 'primaryCategory', 'channel'],
+            'name', 'status', 'framework', 'creator', 'mimeType', 'lastPublishedBy', 'me_totalRatingsCount', 'me_averageRating',
+          'me_totalTimeSpentInSec', 'me_totalPlaySessionCount', 'createdOn', 'primaryCategory', 'channel', ...this.fwCategories],
           limit: 10000
         }
       }
@@ -502,7 +531,7 @@ export class MyContentComponent implements OnInit, AfterViewInit {
     return [
       'Content id', 'Content Name', 'Content Category', 'Content Mimetype', 'Created On', 'Created By',
       'Last Published Date', 'Publisher Organization', 'Total No of Plays', 'Average Play Time in mins',
-      'Average Rating (Out of 5)', 'Board', 'Medium', 'Class', 'Subject'
+      'Average Rating (Out of 5)', ...this.fwCategories
     ];
   }
 
