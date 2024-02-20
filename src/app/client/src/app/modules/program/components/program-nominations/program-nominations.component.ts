@@ -681,9 +681,6 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.sessionContext.programId = this.programDetails.program_id;
       this.getCollectionCategoryDefinition();
       this.programDetails.config.categories = this.frameworkCategories;
-      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
-      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
-      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
@@ -1008,22 +1005,23 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-    if (this.sessionContext && this.programDetails && this.currentStage === 'programNominations') {
-      this.showTextbookLoader = true;
-      setTimeout(() => {
-        const req = {
-          url: `program/v1/read/${this.programId}`
-        };
-        this.programsService.get(req).subscribe((programDetails) => {
-          this.programDetails = _.get(programDetails, 'result');
-          this.programDetails.config.categories = this.frameworkCategories;
-          forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
-          (response) => {
-              this.checkActiveTab();
-          });
-        });
-      }, 3000);
-    }
+    // if (this.sessionContext && this.programDetails && this.currentStage === 'programNominations') {
+      // this.showTextbookLoader = true;
+      // setTimeout(() => {
+      //   const req = {
+      //     url: `program/v1/read/${this.programId}`
+      //   };
+      //   this.programsService.get(req).subscribe((programDetails) => {
+      //     this.programDetails = _.get(programDetails, 'result');
+      //     this.programDetails.config.categories = this.frameworkCategories;
+      //     forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
+      //     (response) => {
+      //         this.checkActiveTab();
+      //     });
+      //   });
+      // }, 3000);
+    // }
+    this.checkActiveTab();
   }
 
   applyPreferences(preferences?) {
