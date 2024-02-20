@@ -1016,6 +1016,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
         };
         this.programsService.get(req).subscribe((programDetails) => {
           this.programDetails = _.get(programDetails, 'result');
+          this.programDetails.config.categories = this.frameworkCategories;
           forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
           (response) => {
               this.checkActiveTab();
