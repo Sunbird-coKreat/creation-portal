@@ -302,7 +302,7 @@ export class ProgramsService extends DataService implements CanActivate {
                 };
                 frameworkObjectFields.forEach((field:any)=>{
                   if(!!contibutorOrg[field]){
-                    userAdd.User[field] = contibutorOrg[field];
+                    userAdd.User[field.code] = contibutorOrg[field.code];
                   }
                 })
 
