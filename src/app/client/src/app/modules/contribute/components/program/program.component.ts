@@ -165,7 +165,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       formCat.subscribe(res =>{
         let cat = res?.result?.data?.properties
         if(!!cat){
-          this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)}))
+          this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
         }
         this.getProgramDetails();
         this.setContextualHelpConfig();

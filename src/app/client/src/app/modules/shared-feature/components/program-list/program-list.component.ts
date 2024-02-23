@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ProgramsService, RegistryService, UserService, FrameworkService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,7 +19,7 @@ import { CslFrameworkService } from '../../../public/services/csl-framework/csl-
   styleUrls: ['./program-list.component.scss'],
   providers: [DatePipe]
 })
-export class ProgramListComponent implements OnInit, AfterViewInit {
+export class ProgramListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public programs: IProgram[];
   public program: any;
@@ -64,6 +64,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public contentTypeHeaderText;
   public frameworkObjectFields;
   public frameworkFields:any;
+  public prgramListSubscriber: any;
  
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
@@ -85,7 +86,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     });
     this.userService.userData$.subscribe(user =>{
       this.cslFrameworkService.setDefaultFWforCsl('', this.userService.hashTagId);
-      this.cslFrameworkService.getFrameworkCategories$.subscribe((categories: any)=>{
+      this.prgramListSubscriber = this.cslFrameworkService.getFrameworkCategories$.subscribe((categories: any)=>{
         this.userProfile = user.userProfile;
         this.checkIfUserIsContributor();
         this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
@@ -886,5 +887,11 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }
     })
     return program;
+  }
+
+  ngOnDestroy(){
+    if(this.prgramListSubscriber){
+      this.prgramListSubscriber.unsubscribe();
+    }
   }
 }
