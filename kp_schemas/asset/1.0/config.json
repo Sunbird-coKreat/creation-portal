@@ -107,6 +107,6 @@
     },
     "org": {
     }
-  }
-    "schema_restrict_api": true
+  },
+  "schema_restrict_api": true
 }
