@@ -74,7 +74,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   public formstatus: any;
   public formInputData: any;
   public categories: any;
-  public fwCategoriAsNames: any;
+  public fwCategoriesAsNames: any = "";
 
   constructor(
     public resourceService: ResourceService,
@@ -134,7 +134,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
     this.categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
     if(!!this.categories){
-      this.fwCategoriAsNames = this.categories.map(item => item.code).join(',');
+      this.fwCategoriesAsNames = this.categories.map(item => item.code).join(',');
     }
     this.getContentMetadata();
     this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
@@ -548,7 +548,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     };
     const provider = this.helperService.cloudStorageProvider;
     window.config.cloudStorage.provider = provider;
-    window.config.contentFields = this.fwCategoriAsNames;
+    window.config.contentFields = this.fwCategoriesAsNames;
   }
   /**
    * Re directed to the preview mode
