@@ -14,6 +14,7 @@ import { ProgramStageService, ProgramTelemetryService } from '../../../program/s
 import { CollectionHierarchyService } from '../../services/collection-hierarchy/collection-hierarchy.service';
 import { HelperService } from '../../services/helper.service';
 import { NgForm } from '@angular/forms';
+import { CslFrameworkService } from '../../../../../app/modules/public/services/csl-framework/csl-framework.service';
 // jQuery.fn.iziModal = iziModal;
 
 @Component({
@@ -72,6 +73,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
   private onComponentDestroy$ = new Subject<any>();
   public formstatus: any;
   public formInputData: any;
+  public categories: any;
+  public fwCategoriesAsNames: any = "";
 
   constructor(
     public resourceService: ResourceService,
@@ -91,7 +94,8 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     public programTelemetryService: ProgramTelemetryService,
     private notificationService: NotificationService,
     private programsService: ProgramsService,
-    public actionService: ActionService
+    public actionService: ActionService,
+    public cslFrameworkService: CslFrameworkService
   ) {
     const buildNumber = <HTMLInputElement>(
       document.getElementById('buildNumber')
@@ -128,6 +132,10 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     this.telemetryInteractPdata = this.programTelemetryService.getTelemetryInteractPdata(this.userService.appId, this.configService.appConfig.TELEMETRY.PID );
     // tslint:disable-next-line:max-line-length
     this.telemetryInteractObject = this.programTelemetryService.getTelemetryInteractObject(this.contentEditorComponentInput.contentId, 'Content', '1.0', { l1: this.sessionContext.collection, l2: this.contentEditorComponentInput.unitIdentifier});
+    this.categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    if(!!this.categories){
+      this.fwCategoriesAsNames = this.categories.map(item => item.code).join(',');
+    }
     this.getContentMetadata();
     this.helperService.getNotification().pipe(takeUntil(this.onComponentDestroy$)).subscribe((action) => {
       this.contentStatusNotify(action);
@@ -540,6 +548,7 @@ export class ContentEditorComponent implements OnInit, OnDestroy, AfterViewInit 
     };
     const provider = this.helperService.cloudStorageProvider;
     window.config.cloudStorage.provider = provider;
+    window.config.contentFields = this.fwCategoriesAsNames;
   }
   /**
    * Re directed to the preview mode
