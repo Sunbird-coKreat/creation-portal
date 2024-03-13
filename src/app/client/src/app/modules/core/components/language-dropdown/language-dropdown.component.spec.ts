@@ -46,7 +46,7 @@ describe('LanguageDropdownComponent', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })],
+            imports: [HttpClientTestingModule, SharedModule.forRoot(), CoreModule, RouterModule.forRoot([], {})],
             providers: [ConfigService, OrgDetailsService, CacheService, BrowserCacheTtlService, UtilService,
                 { provide: ResourceService, useValue: resourceBundle },
                 {provide: APP_BASE_HREF, useValue: '/'}

@@ -74,7 +74,7 @@ describe('OrgUserListComponent', () => {
              FormsModule,
              TelemetryModule.forRoot(),
              HttpClientTestingModule,
-             RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })
+             RouterModule.forRoot([], {})
          ],
        declarations: [ OrgUserListComponent],
        providers: [

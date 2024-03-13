@@ -77,7 +77,7 @@ const errorInitiate = false;
              FormsModule,
              TelemetryModule.forRoot(),
              HttpClientTestingModule,
-             RouterModule.forRoot([], { relativeLinkResolution: 'legacy' })
+             RouterModule.forRoot([], {})
          ],
        declarations: [ ListContributorTextbooksComponent, DaysToGoPipe],
        providers: [
