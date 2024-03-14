@@ -1240,6 +1240,7 @@ export class ProgramsService extends DataService implements CanActivate {
       case 'dockstaging.sunbirded.org': return 'https://staging.sunbirded.org'; break;
       case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
+      case 'ckoci.sunbirded.org': return 'https://hotfix.sunbirded.org'; break;
       default: return  'https://dev.sunbirded.org'; break;
     }
   }
