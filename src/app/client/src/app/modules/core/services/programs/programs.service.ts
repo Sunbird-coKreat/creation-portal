@@ -41,7 +41,6 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
-  public sunbirdUlr: any;
   public defaultRedirectUrl: any = "";
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   ///private _contentTypes: any[];
@@ -69,11 +68,11 @@ export class ProgramsService extends DataService implements CanActivate {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
-      this.sunbirdUlr = (<HTMLInputElement>document.getElementById('sunbirdportalurl'))
-      ? (<HTMLInputElement>document.getElementById('sunbirdportalurl')).value : window.location.origin;
+      let sunbirdUlr: any = (<HTMLInputElement>document.getElementById('sunbirdportalurl')).value || null;
+      sunbirdUlr = sunbirdUlr ? sunbirdUlr : window.location.origin;
 
-      if(!!this.sunbirdUlr){
-        this.defaultRedirectUrl = new URL(this.sunbirdUlr);
+      if(!!sunbirdUlr){
+        this.defaultRedirectUrl = new URL(sunbirdUlr);
       }
     }
 
