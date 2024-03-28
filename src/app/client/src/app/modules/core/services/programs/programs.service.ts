@@ -41,6 +41,7 @@ export class ProgramsService extends DataService implements CanActivate {
   public config: ConfigService;
   baseUrl: string;
   public http: HttpClient;
+  public defaultRedirectUrl: any = "";
   private API_URL = this.publicDataService.post; // TODO: remove API_URL once service is deployed
   ///private _contentTypes: any[];
   //private _contentCategories: any[];
@@ -67,6 +68,12 @@ export class ProgramsService extends DataService implements CanActivate {
       super(http);
       this.config = config;
       this.baseUrl = this.config.urlConFig.URLS.CONTENT_PREFIX;//"http://localhost:6000/";//
+      let sunbirdUlr: any = (<HTMLInputElement>document.getElementById('sunbirdportalurl')).value || null;
+      sunbirdUlr = sunbirdUlr ? sunbirdUlr : window.location.origin;
+
+      if(!!sunbirdUlr){
+        this.defaultRedirectUrl = new URL(sunbirdUlr);
+      }
     }
 
   /**
@@ -1236,7 +1243,7 @@ export class ProgramsService extends DataService implements CanActivate {
       case 'dockstaging.sunbirded.org': return 'https://staging.sunbirded.org'; break;
       case 'vdn.diksha.gov.in': return 'https://diksha.gov.in'; break;
       case 'dock.preprod.ntp.net.in': return 'https://preprod.ntp.net.in'; break;
-      default: return  'https://dev.sunbirded.org'; break;
+      default: return  this.defaultRedirectUrl.origin; break;
     }
   }
 
