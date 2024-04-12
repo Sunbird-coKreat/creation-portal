@@ -53,7 +53,6 @@
     "@project-sunbird/sunbird-epub-player-v9": "5.6.0",
     "@project-sunbird/sunbird-file-upload-library": "1.0.2",
     "@project-sunbird/sunbird-pdf-player-v9": "5.5.0",
-
     "@project-sunbird/sunbird-questionset-editor": "7.0.4",
     "@project-sunbird/sunbird-quml-player": "7.0.3",
     "@project-sunbird/sunbird-quml-player-v9": "5.1.5",
@@ -66,7 +65,6 @@
     "angular2-uuid": "1.1.1",
     "core-js": "2.4.1",
     "datatables.net-dt": "1.10.20",
-    
     "epubjs": "0.3.93",
     "export-to-csv": "0.2.1",
     "filesize": "9",
@@ -80,11 +78,8 @@
     "izimodal": "1.6.1",
     "jquery": "3.7.1",
     "jquery.fancytree": "2.38.3",
-    
     "katex": "0.12.0",
-    
     "lodash-es": "4.17.15",
-    
     "ng-recaptcha": "9.0.0",
     "ng2-cache-service": "1.1.1",
     "ng2-charts": "2.4.2",
@@ -95,47 +90,29 @@
     "ngx-device-detector": "4.0.1",
     "ngx-filesize": "3.0.1",
     "ngx-infinite-scroll": "8.0.2",
-    
     "rxjs": "6.5.5",
     "sass": "1.56.1",
-    
     "tree-model": "1.0.7",
-    
     "tslib": "2.0.0",
-    
     "video.js": "7.18.1",
     "videojs-contrib-quality-levels": "2.1.0",
     "videojs-http-source-selector": "1.1.6",
     "zone.js": "0.11.4",
-
-
-
-
     "@angular-devkit/core": "15.2.10",
     "@angular-devkit/schematics": "^15.2.4",
-    
     "@project-sunbird/common-form-elements-full": "8.0.0",
-    
     "alphanum-sort": "^1.0.2",
-    
     "common-consumption-styles": "0.0.12",
-    
     "moment": "^2.20.1",
     "ng-dynamic-component": "^5.0.0",
-    
     "ng2-material-dropdown": "^0.11.0",
-    
     "ngx-avatar": "^3.3.3",
-    
     "ngx-order-pipe": "^2.0.1",
     "papaparse": "^5.3.0",
-    
     "util": "0.12.5",
     "videojs-thumbnails": "^1.0.3"
-    
   },
   "devDependencies": {
-
     "@angular/language-service": "15.2.10",
     "@types/jquery": "3.5.29",
     "@types/jquery.fancytree": "2.7.34",
