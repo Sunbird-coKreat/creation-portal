@@ -82,6 +82,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
  public unSubscribeShowSubHeader: any;
  public userRegistryDataSubject = new BehaviorSubject(false)
  public userRegistryData = this.userRegistryDataSubject.asObservable();
+ avatarConfig = {
+  size: this.config.constants.SIZE.MEDIUM,
+  view: this.config.constants.VIEW.HORIZONTAL,
+  isTitle:false
+  };
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,

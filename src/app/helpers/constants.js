@@ -17,5 +17,10 @@ module.exports = {
     V1: 'v1',
     V3: 'v3'
   },
+  SIZE: {
+    "MEDIUM": "medium",
+    "SMALL": "small",
+    "LARGE": "large"
+  },
   GOOGLE_VERIFICATION_URL: 'https://www.google.com/recaptcha/api/siteverify'
 };

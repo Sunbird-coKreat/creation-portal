@@ -425,7 +425,8 @@ export class TranscriptsComponent implements OnInit {
 
   getAssetList(): void {
     const transcripts = _.get(this.contentMetaData, 'transcripts') || [];
-    const identifier = _.map(transcripts, e => e.identifier);
+    // const identifier = _.map(transcripts, e => e.identifier);
+    const identifier: any = "";
     if (identifier && identifier.length) {
       const req = {
         'filters': {

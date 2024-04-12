@@ -15,7 +15,7 @@ import { CoreModule } from '@sunbird/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { AvatarModule } from 'ngx-avatar';
+import {CommonConsumptionModule} from '@project-sunbird/common-consumption';
 @NgModule({
   imports: [
     CommonModule,
@@ -28,8 +28,7 @@ import { AvatarModule } from 'ngx-avatar';
     ReactiveFormsModule,
     // WebExtensionModule,
     TelemetryModule,
-    
-    AvatarModule,
+    CommonConsumptionModule,
     SharedFeatureModule
   ],
   declarations: [ProfilePageComponent, ProfileBadgeComponent, UpdateContactDetailsComponent, UpdateUserDetailsComponent,
