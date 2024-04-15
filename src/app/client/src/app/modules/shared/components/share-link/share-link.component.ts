@@ -4,7 +4,7 @@ import {
   ElementRef, ViewChild, Renderer2, Output
 } from '@angular/core';
 import { ResourceService } from '../../services/index';
-import { IPopup } from 'ng2-semantic-ui-v9';
+import { IPopup } from '@project-sunbird/ng2-semantic-ui';
 import { ISharelink, ITelemetryShare } from './../../interfaces';
 @Component({
   selector: 'app-share-link',

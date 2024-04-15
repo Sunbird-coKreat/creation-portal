@@ -12,9 +12,9 @@ import { DaysToGoPipe } from './pipes';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SuiModule } from 'ng2-semantic-ui-v9';
+import { SuiModule } from '@project-sunbird/ng2-semantic-ui';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
-  SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule} from 'ng2-semantic-ui-v9';
+  SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule} from '@project-sunbird/ng2-semantic-ui';
 import { HelpPageComponent } from './components/help-page/help-page.component';
 import { CommonFormElementsModule } from '@project-sunbird/common-form-elements-full';
 

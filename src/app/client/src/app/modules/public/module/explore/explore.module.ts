@@ -9,7 +9,7 @@ import { SharedModule } from '@sunbird/shared';
 import { ExploreComponent } from './components/explore/explore.component';
 import {SharedFeatureModule} from '@sunbird/shared-feature';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
-  SuiRatingModule, SuiCollapseModule, SuiDimmerModule } from 'ng2-semantic-ui-v9';
+  SuiRatingModule, SuiCollapseModule, SuiDimmerModule } from '@project-sunbird/ng2-semantic-ui';
 import { WebExtensionModule } from '@project-sunbird/web-extensions';
 
 @NgModule({
