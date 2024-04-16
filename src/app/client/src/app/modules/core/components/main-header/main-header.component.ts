@@ -13,7 +13,8 @@ import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
-  templateUrl: './main-header.component.html'
+  templateUrl: './main-header.component.html',
+  styleUrls: ['./main-header.component.scss']
 })
 export class MainHeaderComponent implements OnInit, OnDestroy {
   @Input() routerEvents;
@@ -52,8 +53,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     lineHeight: '38px',
     border: '1px solid #e8e8e8',
     borderRadius: '50%',
-    height: '38px',
-    width: '38px'
+    height: '36px',
+    width: '36px'
   };
   public signUpInteractEdata: IInteractEventEdata;
   public enterDialCodeInteractEdata: IInteractEventEdata;
@@ -83,10 +84,11 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
  public userRegistryDataSubject = new BehaviorSubject(false)
  public userRegistryData = this.userRegistryDataSubject.asObservable();
  avatarConfig = {
-  size: this.config.constants.SIZE.MEDIUM,
+  size: this.config.constants.SIZE.SMALL,
   view: this.config.constants.VIEW.HORIZONTAL,
   isTitle:false
   };
+  public isLoading: boolean = false;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, private _cacheService: CacheService, public formService: FormService,
@@ -421,5 +423,15 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       return _.compact([_.get(data, 'notificationData.nominationCount'), _.get(data, 'notificationData.contributionCount')]);
     });
     this.notification =  _.flattenDeep(notificationArray).length;
+  }
+
+  fetchStyle() {
+    
+    return {
+      'border-color': 'rgb(170, 170, 170)',
+      'color': 'rgb(170, 170, 170)',
+      'border': '1px solid rgb(170, 170, 170)'
+      
+    };
   }
 }
