@@ -19,32 +19,32 @@ gulp.task('clean:editors', () => {
     return gulp.src('./' + editorsDestPath, {allowEmpty: true, read: false })
         .pipe(clean())
 })
-gulp.task('download:content:editor', () => {
-    return download(contentEditor)
-        .pipe(decompress())
-        .pipe(gulp.dest(editorsDestPath + 'content-editor'))
-})
+// gulp.task('download:content:editor', () => {
+//     return download(contentEditor)
+//         .pipe(decompress())
+//         .pipe(gulp.dest(editorsDestPath + 'content-editor'))
+// })
 
-gulp.task('download:collection:editor', () => {
-    return download(collectionEditor)
-        .pipe(decompress())
-        .pipe(gulp.dest(editorsDestPath + 'collection-editor'))
-})
+// gulp.task('download:collection:editor', () => {
+//     return download(collectionEditor)
+//         .pipe(decompress())
+//         .pipe(gulp.dest(editorsDestPath + 'collection-editor'))
+// })
 
-gulp.task('download:generic:editor', () => {
-    return download(genericEditor)
-        .pipe(decompress())
-        .pipe(gulp.dest(editorsDestPath + 'generic-editor'))
-})
+// gulp.task('download:generic:editor', () => {
+//     return download(genericEditor)
+//         .pipe(decompress())
+//         .pipe(gulp.dest(editorsDestPath + 'generic-editor'))
+// })
 
 
-gulp.task('gzip:editors', () => {
-    return gulp.src(['./client/src/thirdparty/editors/**/*.js', './client/src/thirdparty/editors/**/*.css'])
-        .pipe(gzip())
-        .pipe(gulp.dest('./client/src/thirdparty/editors'))
-})
+// gulp.task('gzip:editors', () => {
+//     return gulp.src(['./client/src/thirdparty/editors/**/*.js', './client/src/thirdparty/editors/**/*.css'])
+//         .pipe(gzip())
+//         .pipe(gulp.dest('./client/src/thirdparty/editors'))
+// })
 
-gulp.task('download:editors', gulp.series('clean:editors', gulp.parallel('download:content:editor', 'download:collection:editor', 'download:generic:editor'), 'gzip:editors'))
+// gulp.task('download:editors', gulp.series('clean:editors', gulp.parallel('download:content:editor', 'download:collection:editor', 'download:generic:editor'), 'gzip:editors'))
 
 gulp.task('clean:client:install', (done) => {
     return gulp.src('./client/node_modules', { read: false })
@@ -52,7 +52,7 @@ gulp.task('clean:client:install', (done) => {
 })
 
 gulp.task('client:install', (cb) => {
-    exec('npm install  --prefix ./client', { maxBuffer: Infinity }, function (err, stdout, stderr) {
+    exec('yarn add --ignore-engines ./client', { maxBuffer: Infinity }, function (err, stdout, stderr) {
         console.log(stdout)
         console.log(stderr)
         cb(err)
@@ -103,7 +103,7 @@ gulp.task('prepare:app:dist', () => {
         'themes/**/*',
         'package.json',
         'framework.config.js',
-        'package-lock.json',
+        'yarn.lock',
         'sunbird-plugins/**/*',
         'routes/**/*',
         'constants/**/*',
@@ -128,11 +128,7 @@ const compress = process.env.devBuild === 'true' ? '' : ['client:gzip'] // remov
 const cleanClient = process.env.devBuild === 'true' ? '' : 'clean:client:install'
 gulp.task('deploy',
     gulp.series('clean:app:dist',
-        'clean:editors',
-        gulp.parallel('download:content:editor',
-            'download:collection:editor',
-            'download:generic:editor'),
-        'gzip:editors',
+        
         'build-resource-bundles',
         // cleanClient,
         'client:install',
