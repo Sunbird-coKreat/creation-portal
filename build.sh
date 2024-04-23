@@ -1,6 +1,9 @@
 #!/bin/bash
+STARTTIME=$(date +%s)
+ENDTIME=$(date +%s)
+NODE_VERSION=16.19.0
+echo "Starting coKreat portal build from build.sh"
 set -euo pipefail
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -16,15 +19,15 @@ commit_hash=$(git rev-parse --short HEAD)
 
 rm -rf src/app/app_dist/
 rm -rf src/app/player-dist.tar.gz
-nvm install 14.18.1
-nvm use 14.18.1
+nvm install $NODE_VERSION
+nvm use $NODE_VERSION
 cd src/app
-npm set progress=false
-npm install  --unsafe-perm
+# npm set progress=false
+yarn --ignore-engines  --unsafe-perm
 npm run deploy
 cd app_dist
-npm i -g npm@6.14.15
-npm install --production  --unsafe-perm
+# npm i -g npm@6.14.15
+yarn --ignore-engines --production  --unsafe-perm
 sed -i "/version/a\  \"buildHash\": \"${commit_hash}\"," package.json
 echo 'Compressing assets directory'
 cd ..
@@ -34,3 +37,4 @@ cd ../..
 docker build --no-cache --label commitHash=$(git rev-parse --short HEAD) -t ${org}/${name}:${build_tag} .
 
 echo {\"image_name\" : \"${name}\", \"image_tag\" : \"${build_tag}\",\"commit_hash\" : \"${commit_hash}\", \"node_name\" : \"$node\"} > metadata.json
+echo "build completed. Took $[$ENDTIME - $STARTTIME] seconds."

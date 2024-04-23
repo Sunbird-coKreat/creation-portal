@@ -27,14 +27,26 @@ cd src/app
 npm install -g yarn
 # npm set progress=false
 # npm install  --unsafe-perm
-
+echo "npm run deployyyyyyyyyyyyyyyyyyyyyyyyyyyy"
 npm run deploy
+
+# cd client
+# echo "yarn client client client client client client client"
+# yarn  --ignore-engines --no-progress --production=true
+# echo "yarn client done-------------------------------------------------"
+
+# npm run deploy2
 cd app_dist
-echo "installing npm"
-# npm i -g npm@8.19.3
-echo "starting npm install"
-# yarn install --ingnore-engines  --no-progress --production=true
-echo "------starting npm install222222222"
+echo "installing YARN"
+# npm i npm@8.19.3
+#  echo "NPM Package removed"
+# yarn remove src
+# echo " package removed"
+# rm -rf node_modules package-lock.json
+# echo "Package removed"
+#  echo "starting YARN install"
+yarn  --ignore-engines --no-progress --production=true
+ echo "------starting npm install222222222"
 sed -i "/version/a\  \"buildHash\": "test"," package.json
 echo "starting docker build"
 echo 'Compressing assets directory'
@@ -44,5 +56,5 @@ cd ../..
 
 docker build --no-cache --label commitHash=$(git rev-parse --short HEAD) -t "ekStep"/"Shubham1.0" .
 
-# echo {\"image_name\" : \"${name}\", \"image_tag\" : "v15tov16",\"commit_hash\" : "test", \"node_name\" : \"$node\"} > metadata.json
+echo {\"image_name\" : \"${name}\", \"image_tag\" : "v15tov16",\"commit_hash\" : "test", \"node_name\" : \"$node\"} > metadata.json
 echo "build completed. Took $[$ENDTIME - $STARTTIME] seconds."
