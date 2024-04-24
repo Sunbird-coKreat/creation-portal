@@ -69,7 +69,7 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
     this.instance = _.upperCase('DIKSHA' || 'SUNBIRD');
-    this.logo = '/tenant/ntp/appLogo.png';
+    this.logo = '/tenant/ntp/appLogo.svg';
     this.tenantName = 'dock';
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
       data => {

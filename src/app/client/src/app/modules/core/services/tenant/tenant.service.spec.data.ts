@@ -13,18 +13,18 @@ export const response = {
     'responseCode': 'OK',
     'result': {
       'titleName': 'Sunbird',
-      'logo': 'http://localhost:3000/assets/images/sunbird_logo.png',
-      'poster': 'http://localhost:3000/assets/images/sunbird_logo.png',
+      'logo': 'http://localhost:3000/assets/images/sunbird_logo.svg',
+      'poster': 'http://localhost:3000/assets/images/sunbird_logo.svg',
       'favicon': 'http://localhost:3000/assets/images/favicon.ico',
-      'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.png'
+      'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.svg'
     }
   },
   default: {
     'titleName': 'Sunbird',
-    'logo': 'http://localhost:3000/assets/images/sunbird_logo.png',
-    'poster': 'http://localhost:3000/assets/images/sunbird_logo.png',
+    'logo': 'http://localhost:3000/assets/images/sunbird_logo.svg',
+    'poster': 'http://localhost:3000/assets/images/sunbird_logo.svg',
     'favicon': 'http://localhost:3000/assets/images/favicon.ico',
-    'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.png'
+    'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.svg'
 
   },
   failure: {

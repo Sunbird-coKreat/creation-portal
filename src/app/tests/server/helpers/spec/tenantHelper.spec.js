@@ -10,7 +10,7 @@ const testData = {
   baseUrl: 'localhost:9000',
   tenantId: 'sunbird',
   invalidTenantId: 'testTenant',
-  image: 'appLogo.png',
+  image: 'appLogo.svg',
   invalidImage: 'test.png',
   protocol: 'http'
 };
