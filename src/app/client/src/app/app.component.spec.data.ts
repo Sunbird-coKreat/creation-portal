@@ -14,10 +14,10 @@ export const mockData = {
         'responseCode': 'OK',
         'result': {
             'titleName': 'Sunbird',
-            'logo': 'http://localhost:3000/assets/images/sunbird_logo.png',
-            'poster': 'http://localhost:3000/assets/images/sunbird_logo.png',
+            'logo': 'http://localhost:3000/assets/images/sunbird_logo.svg',
+            'poster': 'http://localhost:3000/assets/images/sunbird_logo.svg',
             'favicon': 'http://localhost:3000/assets/images/favicon.ico',
-            'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.png'
+            'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.svg'
         }
     },
     tenantFailure: {
@@ -33,10 +33,10 @@ export const mockData = {
     },
     tenantDefault: {
         'titleName': 'Sunbird',
-        'logo': 'http://localhost:3000/assets/images/sunbird_logo.png',
-        'poster': 'http://localhost:3000/assets/images/sunbird_logo.png',
+        'logo': 'http://localhost:3000/assets/images/sunbird_logo.svg',
+        'poster': 'http://localhost:3000/assets/images/sunbird_logo.svg',
         'favicon': 'http://localhost:3000/assets/images/favicon.ico',
-        'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.png'
+        'appLogo': 'http://localhost:3000/assets/images/sunbird_logo.svg'
 
     },
     error: {
@@ -1145,9 +1145,9 @@ export const mockData = {
         'result': {
             'titleName': 'rj',
             'logo': 'https://staging.open-sunbird.org/assets/images/logo.png',
-            'appLogo': 'https://staging.open-sunbird.org/assets/images/appLogo.png',
+            'appLogo': 'https://staging.open-sunbird.org/assets/images/appLogo.svg',
             'favicon': 'https://staging.open-sunbird.org/assets/images/favicon.ico',
-            'poster': 'https://staging.open-sunbird.org/assets/images/sunbird_logo.png'
+            'poster': 'https://staging.open-sunbird.org/assets/images/sunbird_logo.svg'
         }
     },
 
