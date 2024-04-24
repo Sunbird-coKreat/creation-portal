@@ -397,7 +397,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit, OnDestroy {
     req.request.filters['nomination_enddate'] = 'open';
 
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      // req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      req.request.filters = { ...req.request.filters, ...appliedfilters };
     }
     req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getAllProgramsByType(req)
@@ -504,7 +505,8 @@ export class ProgramListComponent implements OnInit, AfterViewInit, OnDestroy {
       req.request.filters['status'] = status;
     }
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      // req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      req.request.filters = { ...req.request.filters, ...appliedfilters };
     }
     req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
