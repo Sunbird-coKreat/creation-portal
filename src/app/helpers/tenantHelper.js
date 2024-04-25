@@ -85,14 +85,14 @@ module.exports = {
               module.exports.getImagePath(baseUrl, tenantId, 'favicon.ico', callback)
             },
             appLogo: function (callback) {
-              module.exports.getImagePath(baseUrl, tenantId, 'appLogo.png', callback)
+              module.exports.getImagePath(baseUrl, tenantId, 'appLogo.svg', callback)
             }
           }, function (err, results) {
             if (err) { }
             responseObj.logo = results.logo
-              ? results.logo : baseUrl + '/assets/images/sunbird_logo.png'
+              ? results.logo : baseUrl + '/assets/images/sunbird_logo.svg'
             responseObj.poster = results.poster
-              ? results.poster : baseUrl + '/assets/images/sunbird_logo.png'
+              ? results.poster : baseUrl + '/assets/images/sunbird_logo.svg'
             responseObj.favicon = results.favicon
               ? results.favicon : baseUrl + '/assets/images/favicon.ico'
             responseObj.appLogo = results.appLogo

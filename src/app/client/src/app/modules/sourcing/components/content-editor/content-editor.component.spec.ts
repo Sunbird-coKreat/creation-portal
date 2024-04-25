@@ -86,7 +86,7 @@ xdescribe('ContentEditorComponent', () => {
     component.contentEditorComponentInputs = contentEditorComponentInput;
     // fixture.detectChanges();
     component.getDetails = jasmine.createSpy('getDetails() spy').and.callFake(() => {
-      return of({tenantDetails: { titleName: 'sunbird', logo: 'http://localhost:3000/assets/images/sunbird_logo.png'},
+      return of({tenantDetails: { titleName: 'sunbird', logo: 'http://localhost:3000/assets/images/sunbird_logo.svg'},
                  ownershipType: ['createdBy']});
     });
     component.sessionContext = {targetCollectionFrameworksData: {
