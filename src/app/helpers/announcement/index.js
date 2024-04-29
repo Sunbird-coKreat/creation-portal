@@ -10,8 +10,6 @@ let path = require('path')
 const _ = require('lodash')
 let dateFormat = require('dateformat')
 let uuidv1 = require('uuid/v1')
-let await = require('asyncawait/await')
-let async = require('asyncawait/async')
 let telemetry = require('./telemetry/telemetryHelper')
 
 const CREATE_ROLE = 'ANNOUNCEMENT_SENDER'

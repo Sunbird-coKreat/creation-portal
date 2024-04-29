@@ -46,7 +46,7 @@ xdescribe('ResourceReorderComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, RouterModule.forRoot([], { relativeLinkResolution: 'legacy' }), TelemetryModule.forRoot()],
+      imports: [SuiModule, SuiTabsModule, FormsModule, HttpClientTestingModule, RouterModule.forRoot([], {}), TelemetryModule.forRoot()],
       declarations: [ ResourceReorderComponent ],
       providers: [ProgramTelemetryService, ConfigService, ToasterService, CacheService, HelperService, BrowserCacheTtlService,
                   DatePipe,

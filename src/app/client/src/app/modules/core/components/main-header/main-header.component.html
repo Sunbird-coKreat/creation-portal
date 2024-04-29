@@ -58,9 +58,12 @@
                 <a class="profile-avtar computer only p-0 ml-15" *ngIf="userService.loggedIn && !isOffline"
                     tabindex="0">
                     <div suiDropdown class="ui dropdown right top pointing" id="dropdown-menu-list-header">
-                        <ngx-avatar *ngIf='userProfile' [style]="avtarDesktopStyle" [size]="38" initialsSize="1"
-                            name="{{userProfile?.firstName}}">
-                        </ngx-avatar>
+                        <div class="sb-avatar-list-item sb-avatar-list-item--small sb-avatar-list-item--horizontal sb-avatar-list-item--bold"
+                        tabindex="0">
+                        <div class="sb-avatar text-left">
+                            <div class="sb-avatar__img" [ngStyle]="fetchStyle()"><span>{{userProfile?.firstName.charAt(0) | titlecase}}</span></div>
+                        </div>
+                        </div>
                         <div class="menu" suiDropdownMenu>
                             <div class="item headerDropdownProfile" *ngIf='userProfile'>
                                 {{userProfile?.firstName}}&nbsp;{{userProfile?.lastName}}

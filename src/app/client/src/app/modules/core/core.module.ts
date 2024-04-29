@@ -5,10 +5,9 @@ import { CommonModule, APP_BASE_HREF, PlatformLocation} from '@angular/common';
 import {
   SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
   SuiProgressModule, SuiRatingModule, SuiCollapseModule
-} from 'ng2-semantic-ui-v9';
+} from '@project-sunbird/ng2-semantic-ui';
 import { FormsModule, ReactiveFormsModule, } from '@angular/forms';
 import { SharedModule } from '@sunbird/shared';
-import { AvatarModule } from 'ngx-avatar';
 import {
   MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent,
   DataDrivenFilterComponent, ErrorPageComponent, SortByComponent, FlagContentComponent,
@@ -19,6 +18,7 @@ import { WebExtensionModule } from '@project-sunbird/web-extensions';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { CommonFormElementsModule } from '@project-sunbird/common-form-elements-full';
 import { CacheService } from '../shared/services/cache-service/cache.service';
+import { CommonConsumptionModule } from '@project-sunbird/common-consumption';
 
 @NgModule({
   imports: [
@@ -31,8 +31,9 @@ import { CacheService } from '../shared/services/cache-service/cache.service';
     ReactiveFormsModule,
     WebExtensionModule,
     TelemetryModule,
-    AvatarModule,
-    CommonFormElementsModule
+    CommonConsumptionModule,
+    CommonFormElementsModule,
+    
   ],
   declarations: [MainHeaderComponent, MainFooterComponent, MainMenuComponent, SearchComponent, PermissionDirective,
     BodyScrollDirective, DataDrivenFilterComponent, SortByComponent,

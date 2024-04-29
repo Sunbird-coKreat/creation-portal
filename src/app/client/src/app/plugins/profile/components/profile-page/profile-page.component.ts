@@ -46,6 +46,11 @@ export class ProfilePageComponent implements OnInit, OnDestroy, AfterViewInit {
   addRecoveryIdInteractEdata: IInteractEventEdata;
   telemetryInteractObject: IInteractEventObject;
   showRecoveryId = false;
+  avatarConfig = {
+    size: this.configService.constants.SIZE.MEDIUM,
+    view: this.configService.constants.VIEW.HORIZONTAL,
+    isTitle:false
+  };
   constructor(private cacheService: CacheService, public resourceService: ResourceService, public coursesService: CoursesService,
     public toasterService: ToasterService, public profileService: ProfileService, public userService: UserService,
     public configService: ConfigService, public router: Router, public utilService: UtilService, public searchService: SearchService,

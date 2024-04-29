@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule, SuiProgressModule,
-  SuiRatingModule, SuiCollapseModule } from 'ng2-semantic-ui-v9';
+  SuiRatingModule, SuiCollapseModule } from '@project-sunbird/ng2-semantic-ui';
 import { CommonModule, DatePipe } from '@angular/common';
 import { CoreModule, SessionExpiryInterceptor } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
@@ -21,6 +21,7 @@ import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-
 import { CacheService } from './modules/shared/services/cache-service/cache.service';
 import { CsModule } from '@project-sunbird/client-services';
 import { CsLibInitializerService } from '../app/service/CsLibInitializer/cs-lib-initializer.service';
+import { ChapterListComponent, CollectionComponent, DashboardComponent } from './modules/sourcing';
 export const csFrameworkServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
   if (!CsModule.instance.isInitialised) {
     csLibInitializerService.initializeCs();
@@ -28,9 +29,13 @@ export const csFrameworkServiceFactory = (csLibInitializerService: CsLibInitiali
   return CsModule.instance.frameworkService;
 };
 
+
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        DashboardComponent,
+        CollectionComponent,
+        ChapterListComponent
     ],
     imports: [
         BrowserAnimationsModule,
