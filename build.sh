@@ -1,6 +1,5 @@
 #!/bin/bash
 STARTTIME=$(date +%s)
-ENDTIME=$(date +%s)
 NODE_VERSION=16.19.0
 echo "Starting coKreat portal build from build.sh"
 set -euo pipefail
@@ -37,4 +36,5 @@ cd ../..
 docker build --no-cache --label commitHash=$(git rev-parse --short HEAD) -t ${org}/${name}:${build_tag} .
 
 echo {\"image_name\" : \"${name}\", \"image_tag\" : \"${build_tag}\",\"commit_hash\" : \"${commit_hash}\", \"node_name\" : \"$node\"} > metadata.json
+ENDTIME=$(date +%s)
 echo "build completed. Took $[$ENDTIME - $STARTTIME] seconds."
