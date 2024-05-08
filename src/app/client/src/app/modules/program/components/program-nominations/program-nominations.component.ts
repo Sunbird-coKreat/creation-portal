@@ -685,7 +685,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
       this.frameworkService.initialize(this.sessionContext.framework);
-      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework), this.getAggregatedNominationsCount(),
+      forkJoin(this.frameworkService.readFramworkCategories(this.sessionContext.framework),this.getTotalNominationCount(),  this.getAggregatedNominationsCount(),
               this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
         (response) => {
             const frameworkRes = _.first(response);
@@ -1206,8 +1206,49 @@ this.programsService.post(req).subscribe((data) => {
   });
 }
 
+getTotalNominationCount(){
+  let nominationCount = [];
+  const reqForNominationCount = {
+    url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
+    data: {
+      request: {
+        filters: {
+          program_id: this.activatedRoute.snapshot.params.programId,
+          status: ['Pending', 'Approved', 'Rejected']
+        },
+        offset: 0,
+        limit: 1000
+      }
+    }
+  };
+
+  return this.programsService.post(reqForNominationCount).pipe(
+    tap((nominationData: any) => {
+      console.log(nominationData.result);
+      _.forEach(nominationData.result, (res) => {
+        const isOrg = !_.isEmpty(res.organisation_id);
+        const name = this.setContributorName(res, isOrg);
+        if (name) {
+          nominationCount.push({
+            name: name.trim()
+          });
+        }
+        
+      });
+
+      this.totalNominations = nominationCount.length;
+      
+    }),
+    catchError(err => {
+      console.error(err);
+      return of(false);
+    }))
+  
+
+}
+
 getAggregatedNominationsCount() {
-  const req = {
+    const req = {
     url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.NOMINATION_LIST}`,
     data: {
       request: {
@@ -1222,13 +1263,13 @@ getAggregatedNominationsCount() {
   };
   return this.programsService.post(req).pipe(
     tap((data: any) => {
-      const aggregatedCount = data.result.nomination;
-      this.totalNominations = aggregatedCount.count;
+            const aggregatedCount = data.result.nomination;
+      const totalNominations = aggregatedCount.count;
       if (aggregatedCount.fields && aggregatedCount.fields.length) {
         this.pager = this.paginationService.getPager(aggregatedCount.count, this.pageNumber, this.pageLimit);
         this.statusCount = _.get(_.find(aggregatedCount.fields, {name: 'status'}), 'fields');
         this.contributedByOrganisation = _.get(_.find(aggregatedCount.fields, {name: 'organisation_id'}), 'count');
-        this.contributedByIndividual = this.totalNominations - this.contributedByOrganisation;
+        this.contributedByIndividual = totalNominations - this.contributedByOrganisation;
         this.nominatedTextbook = _.get(_.find(aggregatedCount.fields, {name: 'collection_ids'}), 'count');
         this.nominatedContentTypeCount = _.get(_.find(aggregatedCount.fields, {name: 'content_types'}), 'count');
       }
