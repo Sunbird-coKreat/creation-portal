@@ -217,13 +217,17 @@ export class TextbookListComponent implements OnInit {
   }
 
   downloadCSV() {
+    let fltrs = {
+      program_id: [this.programId],
+      frameworkCategories: this.fields.map(field => field.code)
+    }
+
+    console.log(fltrs);
     const req = {
       url: `program/v1/list/download`,
       data: {
           'request': {
-              'filters': {
-                  program_id: [this.programId]
-          }
+              'filters': fltrs
         }
       }
     };
