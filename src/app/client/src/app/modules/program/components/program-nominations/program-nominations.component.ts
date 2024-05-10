@@ -1284,15 +1284,19 @@ getContribDashboardHeaders() {
 }
 
 downloadReport(report) {
+
+  let fltrs = {
+    program_id: [this.programId],
+    frameworkCategories: this.fields.map(field => field.code),
+    openForContribution: true,
+    report: report
+  }
+
   const req = {
     url: `program/v1/report`,
     data: {
         'request': {
-            'filters': {
-                program_id: [this.programId],
-                openForContribution: true,
-                report: report
-        }
+            'filters': fltrs
       }
     }
   };
