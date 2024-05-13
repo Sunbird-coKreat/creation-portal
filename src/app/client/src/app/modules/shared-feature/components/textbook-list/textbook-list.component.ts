@@ -266,6 +266,7 @@ export class TextbookListComponent implements OnInit {
         }
         const resObj = _.get(_.find(res.result.tableData, {program_id: this.programId}), 'values');
         const tableData = [];
+        const normalizedTableData = [];
         if (_.isArray(resObj) && resObj.length) {
           _.forEach(resObj, (obj) => {
             tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, obj));
@@ -273,9 +274,18 @@ export class TextbookListComponent implements OnInit {
         } else {
           tableData.push(_.assign({'Project Name': this.programDetails.name.trim()}, {}));
         }
+
+        tableData.map(row => {
+          const normalizedRow = {};
+          headers.forEach(header => {
+              normalizedRow[header] = row[header] || ''; // Set value or empty string if undefined
+          })
+          normalizedTableData.push(normalizedRow);
+        })
+
         const csvDownloadConfig = {
           filename: this.programDetails.name.trim(),
-          tableData: tableData,
+          tableData: normalizedTableData,
           headers: headers,
           showTitle: false
         };
