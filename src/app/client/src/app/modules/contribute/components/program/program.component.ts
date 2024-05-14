@@ -120,7 +120,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         {id: 4, name: 'NONE', defaultTab: 4, tabs: [4]}
   ]
   public frameworkCategories: any = [];
-  public fields:any = []
+  public fields:any = [];
+  public formFilters: any = [];
 
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
@@ -160,16 +161,26 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     let formCat: any = [];
-      formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
+    const request = [ 
+      this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
+      this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
+    ];
+    forkJoin(request).subscribe(res => {
+        
+      let formData = _.get(_.first(res), 'result.data.properties');
+      let categories:any = []
+      categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      this.frameworkCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      const frameworkDetails = res[1];
+      this.formFilters = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], this.frameworkCategories, "");
       this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
-      formCat.subscribe(res =>{
-        let cat = res?.result?.data?.properties
-        if(!!cat){
-          this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
-        }
-        this.getProgramDetails();
+      // this.initialize();
+      // this.setContextualHelpConfig();
+      this.getProgramDetails();
         this.setContextualHelpConfig();
-      });
+    });
+
+      
   }
 
   ngAfterViewInit() {
@@ -944,9 +955,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       preferences = {};
     }
     this.textbookFiltersApplied = false;
-    this.setPreferences['medium'] = [];
-    this.setPreferences['subject'] = [];
-    this.setPreferences['gradeLevel'] = [];
 
     // tslint:disable-next-line: max-line-length
     this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
@@ -955,11 +963,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if (!_.isEmpty(this.userPreferences.contributor_preference)) {
           this.textbookFiltersApplied = true;
           // tslint:disable-next-line: max-line-length
-          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          // this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
+          // // tslint:disable-next-line: max-line-length
+          // this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
+          // // tslint:disable-next-line: max-line-length
+          // this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
         }
       },
       (error) => {
@@ -983,7 +991,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   applyTextbookFilters() {
     this.prefModal.deny();
     const prefData = {
-        ...this.prefernceForm.value
+        ...this.setPreferences
     };
     this.applyPreferences(prefData);
   }
@@ -1274,5 +1282,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  getFormData(event){
+    this.setPreferences = {...this.setPreferences, ...event};
   }
 }
