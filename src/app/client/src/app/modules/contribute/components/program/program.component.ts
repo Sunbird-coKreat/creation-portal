@@ -1023,7 +1023,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       const request = {
         program_id: programId,
         status: status,
-        collection_ids: this.selectedCollectionIds
+        collection_ids: this.selectedCollectionIds, 
+        frameworkCategories: this.frameworkCategories
       };
 
       if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
