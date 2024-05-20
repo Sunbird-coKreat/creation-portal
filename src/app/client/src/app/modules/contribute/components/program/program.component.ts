@@ -122,7 +122,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   public frameworkCategories: any = [];
   public fields:any = [];
   public formFilters: any = [];
-  public frameworkCategoriesForNomination = [];
 
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
@@ -174,8 +173,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       this.frameworkCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
       const frameworkDetails = res[1];
       this.formFilters = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], this.frameworkCategories, "");
-      this.frameworkCategories.forEach((cat) => this.frameworkCategoriesForNomination.push(cat.code));
-      
       this.getProgramDetails();
         this.setContextualHelpConfig();
     });
@@ -1032,7 +1029,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         program_id: programId,
         status: status,
         collection_ids: this.selectedCollectionIds, 
-        frameworkCategories: this.frameworkCategoriesForNomination
+        frameworkCategories: this.frameworkCategories.map(item => item.code)
       };
 
       if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
