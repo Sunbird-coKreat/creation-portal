@@ -370,23 +370,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   getUserProgramPreferences() {
-    this.prefernceForm = this.sbFormBuilder.group({
-      medium: [],
-      subject: [],
-      gradeLevel: [],
-    });
 
-    this.prefernceFormOptions['medium'] = _.compact(this.programDetails.config.medium) || [];
-    this.prefernceFormOptions['gradeLevel'] = _.compact(this.programDetails.config.gradeLevel) || [];
-    this.prefernceFormOptions['subject'] = _.compact(this.programDetails.config.subject) || [];
-
-    if (this.programDetails.target_type === 'searchCriteria' && !_.isEmpty(this.sessionContext.frameworkData)) {
-      this.sessionContext.frameworkData.forEach((element) => {
-        if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
-          this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
-        }
-      });
-    }
     const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
     return req.pipe(
       tap((res) => {
@@ -396,12 +380,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         if (!_.isEmpty(this.userPreferences.contributor_preference)) {
           this.textbookFiltersApplied = true;
+          this.setPreferences = this.userPreferences.contributor_preference;
           // tslint:disable-next-line: max-line-length
-          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          this.formFilters.forEach((val: any)=>{
+            val.default = this.userPreferences.contributor_preference[val['code']];
+          });
         }
       }),catchError((error) => {
         const errInfo = {
@@ -552,6 +535,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   cancelRemoveUserFromProgram() {
     this.showUserRemoveRoleModal = false;
     this.selectedUserToRemoveRole.newRole = this.selectedUserToRemoveRole.projectselectedRole;
+    this.formFilters.forEach(val=> { val.default = null });
   }
 
   getProgramRoleMapping(user) {
@@ -963,11 +947,10 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if (!_.isEmpty(this.userPreferences.contributor_preference)) {
           this.textbookFiltersApplied = true;
           // tslint:disable-next-line: max-line-length
-          // this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // // tslint:disable-next-line: max-line-length
-          // this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // // tslint:disable-next-line: max-line-length
-          // this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          this.setPreferences = this.userPreferences.contributor_preference;
+          this.formFilters.forEach((val: any)=>{
+            val.default = this.userPreferences.contributor_preference[val['code']];
+          });
         }
       },
       (error) => {
