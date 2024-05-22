@@ -1594,16 +1594,16 @@ export class ChapterListComponent implements OnInit, OnChanges, OnDestroy, After
 
     this.actionService.get(option).subscribe((res: any) => {
       const data = (resourceType !== 'Question') ? res.result.content : res.result.questionset;
-      const request = {
-        content: {
-          'versionKey': data.versionKey,
-          reusedContributions: this.reusedContributions
-        }
-      };
+      const req = {
+        'versionKey': data.versionKey,
+        reusedContributions: this.reusedContributions
+      } 
+      const reqForQuestionSet =  { questionset : req}
+      const requestForUpdateContent = { content: req };
 
       const updateService = (resourceType === 'Question') ?
-      this.helperService.updateQuestionset(request, this.sessionContext.collection, this.programContext.rootorg_id) :
-      this.helperService.updateContent(request, this.sessionContext.collection, this.programContext.rootorg_id);
+      this.helperService.updateQuestionset(reqForQuestionSet, this.sessionContext.collection, this.programContext.rootorg_id) :
+      this.helperService.updateContent(requestForUpdateContent, this.sessionContext.collection, this.programContext.rootorg_id);
 
       updateService.subscribe(() => {
           this.updateAccordianView();
