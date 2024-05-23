@@ -948,6 +948,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           this.formFilters.forEach((val: any)=>{
             val.default = this.userPreferences.contributor_preference[val['code']];
           });
+        }else {
+          this.formFilters.forEach(val=> { val.default = null });
         }
       },
       (error) => {
