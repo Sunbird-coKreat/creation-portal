@@ -1111,6 +1111,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['program_id'] = '';
     this.setFrameworkAttributesToconfig();
     if (!this.programId) {
+      
       programData['config'] = this.programConfig;
       this.programsService.createProgram(programData).subscribe(
         (res) => {
@@ -1141,6 +1142,12 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
           });
         }
       }
+
+      this.formFieldProperties.forEach((data: any) =>{ 
+        this.programConfig.sharedContext.push(data.code);
+        let ids = data.code+"Ids"
+        this.programConfig.sharedContext.push(ids);
+      })
 
       programData['config'] = this.programConfig;
       programData['program_id'] = this.programId;
