@@ -204,14 +204,14 @@ var programConfig = {
   'sharedContext': [
     'channel',
     'framework',
-    'board',
-    'medium',
-    'gradeLevel',
-    'subject',
-    'boardIds',
-    'mediumIds',
-    'gradeLevelIds',
-    'subjectIds',
+    
+    
+    
+    
+    
+    
+    
+    
     'topic',
     'learningOutcome',
     'learningOutcomeIds'
