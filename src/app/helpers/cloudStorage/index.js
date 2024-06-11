@@ -19,7 +19,7 @@
   credential: envHelper.sunbird_cloud_storage_secret,
   privateObjectStorage: envHelper.sunbird_cloud_report_container,
   publicObjectStorage: envHelper.sunbird_cloud_storage_resourceBundle_bucketname,
-  region: envHelper.sunbird_cloud_storage_key,
+  region: envHelper.sunbird_cloud_storage_region,
   projectId: envHelper.sunbird_cloud_project_id,
   endpoint:envHelper.sunbird_cloud_private_storage_endpoint
 };
