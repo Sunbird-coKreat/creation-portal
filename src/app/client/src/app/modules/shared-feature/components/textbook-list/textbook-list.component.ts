@@ -128,7 +128,9 @@ export class TextbookListComponent implements OnInit {
         this.textbookFiltersApplied = true;
         // tslint:disable-next-line: max-line-length
         this.formFilters.forEach((val: any)=>{
-          this.setPreferences[val['code']] =   (this.userPreferences.sourcing_preference[val['code']]) ? this.userPreferences.sourcing_preference[val['code']] : [];
+          let defaultPrefrence = (this.userPreferences.sourcing_preference[val['code']]) ? this.userPreferences.sourcing_preference[val['code']] : [];
+          val.default = defaultPrefrence;
+          this.setPreferences[val['code']] = defaultPrefrence;
         })
       }
     }
