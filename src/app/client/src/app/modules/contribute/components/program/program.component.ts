@@ -764,8 +764,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if(this.programDetails?.target_type === 'questionSets') objType = 'QuestionSet';
         if (res && res.result && res.result[objType] && res.result[objType].length) {
           this.showTexbooklist(res.result[objType]);
-        }else{
-          if(!!this.loaders && !!this.loaders.showCollectionListLoader){
+        } else {
+          if(!!this.loaders && !!this.loaders.showCollectionListLoader) {
             this.loaders.showCollectionListLoader = false;
           }
           this.contentCount = 0
