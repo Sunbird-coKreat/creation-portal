@@ -1,5 +1,5 @@
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
-  SuiProgressModule, SuiRatingModule, SuiCollapseModule } from 'ng2-semantic-ui-v9';
+  SuiProgressModule, SuiRatingModule, SuiCollapseModule } from '@project-sunbird/ng2-semantic-ui';
 
 import { FormsModule } from '@angular/forms';
 import {

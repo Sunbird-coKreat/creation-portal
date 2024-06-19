@@ -264,7 +264,7 @@
                                 [telemetryInteractEdata]="getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
                                 [telemetryInteractObject]="telemetryInteractObject"
                                 [telemetryInteractCdata]="getTelemetryInteractCdata(program.program_id,'project')"
-                                [telemetryInteractPdata]="telemetryInteractPdata"></i>{{resourceService.frmelmnts.lbl.delete}}
+                                [telemetryInteractPdata]="telemetryInteractPdata"></i>{{resourceService?.frmelmnts?.lbl?.delete}}
                             </a>
                             <a class="item" (click)="setClose(program)">
                               <i class="icon close sb-color-primary cursor-pointer ui fs-0-785" data-tooltip="Close"></i>Close

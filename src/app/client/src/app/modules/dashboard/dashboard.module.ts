@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // Modules
 //import { ChartsModule } from 'ng2-charts';
-import { SuiModule } from 'ng2-semantic-ui-v9';
+import { SuiModule } from '@project-sunbird/ng2-semantic-ui';
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { TelemetryModule } from '@sunbird/telemetry';
 // Custome component(s) and services
@@ -16,7 +16,6 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 // SB core and shared services
 import { SearchService } from '@sunbird/core';
 import { SharedModule } from '@sunbird/shared';
-import { OrderModule } from 'ngx-order-pipe';
 
 @NgModule({
   imports: [
@@ -27,7 +26,6 @@ import { OrderModule } from 'ngx-order-pipe';
     //ChartsModule,
     SuiModule,
     SharedModule,
-    OrderModule,
     TelemetryModule,
     NgxDaterangepickerMd.forRoot()
   ],

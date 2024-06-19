@@ -1,6 +1,4 @@
 let _ = require('lodash')
-let async = require('asyncawait/async')
-let await = require('asyncawait/await')
 let ObjectStore = require('./ObjectStore.js')
 let envVariables = require('../../environmentVariablesHelper.js')
 let AppError = require('../services/ErrorInterface.js')

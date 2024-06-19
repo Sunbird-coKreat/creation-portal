@@ -52,7 +52,7 @@ gulp.task('clean:client:install', (done) => {
 })
 
 gulp.task('client:install', (cb) => {
-    exec('npm install  --prefix ./client', { maxBuffer: Infinity }, function (err, stdout, stderr) {
+    exec('cd ./client && yarn', { maxBuffer: Infinity }, function (err, stdout, stderr) {
         console.log(stdout)
         console.log(stderr)
         cb(err)
@@ -103,7 +103,7 @@ gulp.task('prepare:app:dist', () => {
         'themes/**/*',
         'package.json',
         'framework.config.js',
-        'package-lock.json',
+        'yarn.lock',
         'sunbird-plugins/**/*',
         'routes/**/*',
         'constants/**/*',
@@ -140,7 +140,8 @@ gulp.task('deploy',
         compress,
         'update:index:file',
         'clean:index:file',
-        'prepare:app:dist')
+        'prepare:app:dist'
+        )
 )
 
 // offline app preparation tasks

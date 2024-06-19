@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
 import { ResourceService } from '../../services/index';
 import * as _ from 'lodash-es';
-import { IPopup } from 'ng2-semantic-ui-v9';
+import { IPopup } from '@project-sunbird/ng2-semantic-ui';
 @Component({
   selector: 'app-page-help',
   templateUrl: './page-help.component.html',
