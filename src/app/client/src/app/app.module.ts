@@ -16,9 +16,17 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { PluginModules } from './framework.config';
 //import { ChatLibModule, ChatLibService } from 'sunbird-chatbot-client';
 import { QumlLibraryModule, QuestionCursor } from '@project-sunbird/sunbird-quml-player';
-import { CollectionEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-collection-editor';
+import { QuestionsetEditorLibraryModule, EditorCursor } from '@project-sunbird/sunbird-questionset-editor';
 import { QumlPlayerService } from './modules/sourcing/services/quml-player/quml-player.service';
 import { CacheService } from './modules/shared/services/cache-service/cache.service';
+import { CsModule } from '@project-sunbird/client-services';
+import { CsLibInitializerService } from '../app/service/CsLibInitializer/cs-lib-initializer.service';
+export const csFrameworkServiceFactory = (csLibInitializerService: CsLibInitializerService) => {
+  if (!CsModule.instance.isInitialised) {
+    csLibInitializerService.initializeCs();
+  }
+  return CsModule.instance.frameworkService;
+};
 
 @NgModule({
     declarations: [
@@ -38,7 +46,7 @@ import { CacheService } from './modules/shared/services/cache-service/cache.serv
         SharedFeatureModule,
         ...PluginModules,
         QumlLibraryModule,
-        CollectionEditorLibraryModule,
+        QuestionsetEditorLibraryModule,
         AppRoutingModule // don't add any module below this because it contains wildcard route
     ],
     bootstrap: [AppComponent],
@@ -49,7 +57,8 @@ import { CacheService } from './modules/shared/services/cache-service/cache.serv
         //ChatLibService,
         { provide: HTTP_INTERCEPTORS, useClass: SessionExpiryInterceptor, multi: true },
         { provide: QuestionCursor, useExisting: QumlPlayerService },
-        { provide: EditorCursor, useExisting: QumlPlayerService }
+        { provide: EditorCursor, useExisting: QumlPlayerService },
+        {provide: 'CS_FRAMEWORK_SERVICE',useFactory: csFrameworkServiceFactory,deps: [CsLibInitializerService]}
     ]
 })
 export class AppModule {

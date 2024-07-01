@@ -15,6 +15,7 @@ export class ContributorProfilePopupComponent implements OnInit, OnDestroy {
   @Input() userId?: string;
   @Input() orgId?: string;
   @Input() showProfile: boolean;
+  @Input() frameworkCategories: any;
   contributor: any;
   fullName: string;
   isOrg: boolean;

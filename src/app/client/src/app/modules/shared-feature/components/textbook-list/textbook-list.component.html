@@ -50,7 +50,15 @@
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
 						</th>
-						<th scope="col" class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
+
+						<th scope="col" *ngFor="let field of formFilters" class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('name')">{{field.name}} &nbsp;&nbsp;
+							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'name' "></i>
+							<span  *ngIf="sortColumn == 'name'" class="d-inline-block">
+								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+							</span>
+						</th>
+						<!-- <th scope="col" class="w-15 cursor-pointer sb-sorting" (click)="sortCollection('medium')">{{resourceService.frmelmnts.lbl.medium}} &nbsp;&nbsp;
 							<i class="fa fa-sort" aria-hidden="true" *ngIf="direction == '' || sortColumn != 'medium' "></i>
 							<span  *ngIf="sortColumn == 'medium'" class="d-inline-block">
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
@@ -70,7 +78,7 @@
 								<i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
 								<i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
 							</span>
-						</th>
+						</th> -->
 						<th scope="col" class="w-15" *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{firstLevelFolderLabel}}</th>
 						<th scope="col" class="w-15" *ngIf="programDetails?.target_type && programDetails?.target_type === 'searchCriteria'">{{ resourceService.frmelmnts.lbl.creator }}</th>
 						<th scope="col" class="w-20 cursor-pointer sb-sorting" (click)="sortCollection('resourceStatusText')">{{resourceService.frmelmnts.lbl.status}} &nbsp;&nbsp;
@@ -94,12 +102,12 @@
 									{{data.name}}
 								</div>
 							</td>
-							<td>
-								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.medium}}" popupText="{{ data?.medium }}">
-									{{data.medium}}
+							<td *ngFor="let field of formFilters">
+								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{field.code}}" popupText="{{ data[field.code] }}">
+									{{data[field.code]}}
 								</div>
 							</td>
-							<td>
+							<!-- <td>
 								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.Class}}" popupText="{{ data?.gradeLevel }}">
 									{{data.gradeLevel}}
 								</div>
@@ -108,7 +116,7 @@
 								<div class="sb__ellipsis sb__ellipsis--three cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ data?.subject }}">
 									{{data.subject}}
 								</div>
-							</td>
+							</td> -->
 							<td  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections'">{{ data.chapterCountForContribution || data.chapterCount || 0 }}</td>
 							<td class="fsmall"  *ngIf="!programDetails?.target_type || programDetails?.target_type === 'collections' || programDetails?.target_type === 'questionSets'">
 								<span class="d-inline-block mr-5">{{ (data?.pendingBySourceOrg?.length + data.mvcContributionsCount || 0) }}
@@ -148,73 +156,14 @@
 	<div class="sb-modal-content">
 		<p>{{resourceService.frmelmnts.lbl.pleaseSelectFiltersYouWishToAdd}}</p>
 		<div class="segment mt-5 pb-30 pt-10">
-			<form class="ui form sb-dock-dropdown" [formGroup]="prefernceForm">
-				<div class="ui grid">
-					<div class="six wide column py-10">
-						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.medium}}</label>
-							<sui-multi-select class="selection p-5 b-100"
-							formControlName="medium" #mediums
-							[options]="prefernceFormOptions['medium']"
-							[(ngModel)]="setPreferences['medium']"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let medium of mediums.filteredOptions" [value]="medium"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('medium', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [medium]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"> </sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="six wide column py-10">
-						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.subject}}</label>
-							<sui-multi-select class="selection p-5 b-100"
-							formControlName="subject" #subjects
-							[options]="prefernceFormOptions['subject']"
-							[(ngModel)]="setPreferences['subject']"
-							appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let subject of subjects.filteredOptions" [value]="subject"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('subject', configService.telemetryLabels.eventType.select,configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [subject]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-					<div class="six wide column py-10">
-						<div class="field">
-							<label class="d-block fs-0-785 font-weight-normal">{{resourceService.frmelmnts.lbl.class}}</label>
-							<sui-multi-select formControlName="gradeLevel"
-							class="selection p-5 b-100" #gradeLevels
-							[options]="prefernceFormOptions['gradeLevel']"
-							[(ngModel)]="setPreferences['gradeLevel']"
-							appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select, configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {key:'dialog_id',value:'filter_collections'})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata">
-								<sui-select-option *ngFor="let gradeLevel of gradeLevels.filteredOptions" [value]="gradeLevel"
-								appTelemetryInteract
-								[telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('class', configService.telemetryLabels.eventType.select,configService.telemetryLabels.eventSubtype.multiSelect,telemetryPageId, {values: [gradeLevel]})"
-								[telemetryInteractObject]="telemetryInteractObject"
-								[telemetryInteractCdata]="telemetryInteractCdata"
-								[telemetryInteractPdata]="telemetryInteractPdata"></sui-select-option>
-							</sui-multi-select>
-						</div>
-					</div>
-				</div>
-			</form>
+			<app-content-data-form
+			#formData
+			(formStatus)="formStatusEventListener($event)"
+			(formInputData)="getFormData($event)"
+			[formFieldProperties]="formFilters">
+		  </app-content-data-form>
+
+			
 		</div>
 	</div>
 	<div class="sb-modal-actions py-20">

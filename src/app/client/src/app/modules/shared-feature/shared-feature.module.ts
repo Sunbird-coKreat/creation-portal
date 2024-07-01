@@ -16,6 +16,7 @@ import { SuiModule } from 'ng2-semantic-ui-v9';
 import { SuiSelectModule, SuiModalModule, SuiAccordionModule, SuiPopupModule, SuiDropdownModule,
   SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule} from 'ng2-semantic-ui-v9';
 import { HelpPageComponent } from './components/help-page/help-page.component';
+import { CommonFormElementsModule } from '@project-sunbird/common-form-elements-full';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { HelpPageComponent } from './components/help-page/help-page.component';
     SuiProgressModule, SuiRatingModule, SuiCollapseModule, SuiDimmerModule,
     FormsModule,
     ReactiveFormsModule,
-    SuiModule
+    SuiModule,
+    CommonFormElementsModule
   ],
   declarations: [ViewAllComponent, ProfileFrameworkPopupComponent, TermsAndConditionsPopupComponent,
     OtpPopupComponent, BatchInfoComponent, SsoMergeConfirmationComponent, ValidateTeacherIdentifierPopupComponent,

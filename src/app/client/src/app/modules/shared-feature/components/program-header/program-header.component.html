@@ -9,7 +9,13 @@
           <div class="text-capitalize bt-1 bb-1 py-10">
             <div class="ui grid">
               <div class="row">
-                <div class="three wide column d-inline-block">
+                <div class="three wide column d-inline-block" *ngFor="let cat of programDetails.config.categories">
+                  <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ cat?.name }}</label>
+                  <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{cat.label}}" popupText="{{ getProgramInfo(cat.code) }}">
+                    {{ getProgramInfo(cat.code) }}
+                  </div>
+                </div>
+                <!-- <div class="three wide column d-inline-block">
                   <label class="d-block fsmall font-weight-normal mb-0 sb-color-gray-400">{{ resourceService?.frmelmnts?.lbl?.board }}</label>
                   <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.board}}" popupText="{{ programDetails?.board }}">
                     {{ programDetails?.board }}
@@ -32,7 +38,7 @@
                   <div class="content fnormal sb-color-gray-400 sb__ellipsis cursor-pointer" suiPopup popupHeader="{{resourceService.frmelmnts.lbl.subject}}" popupText="{{ programDetails?.subject }}">
                     {{ programDetails?.subject }}
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>

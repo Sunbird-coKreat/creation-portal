@@ -143,16 +143,9 @@ export class CollectionHierarchyService {
     if (allFields) {
       delete(option.data.request.fields);
     }
+    
     if (!_.isUndefined(preferencefilters)) {
-        if (!_.isEmpty(_.get(preferencefilters, 'medium'))) {
-          option.data.request.filters['medium'] = _.get(preferencefilters, 'medium');
-        }
-        if (!_.isEmpty(_.get(preferencefilters, 'gradeLevel'))) {
-          option.data.request.filters['gradeLevel'] = _.get(preferencefilters, 'gradeLevel');
-        }
-        if (!_.isEmpty(_.get(preferencefilters, 'subject'))) {
-          option.data.request.filters['subject'] = _.get(preferencefilters, 'subject');
-        }
+      option.data.request.filters = { ...option.data.request.filters, ...preferencefilters };
     }
     const req = {
       url: option.url,
@@ -350,15 +343,7 @@ export class CollectionHierarchyService {
       }
     };
     if (!_.isUndefined(this._preferencefilters)) {
-      if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
-        option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
-      }
-      if (!_.isEmpty(_.get(this._preferencefilters, 'gradeLevel'))) {
-        option.data.request.filters['gradeLevel'] = _.get(this._preferencefilters, 'gradeLevel');
-      }
-      if (!_.isEmpty(_.get(this._preferencefilters, 'subject'))) {
-        option.data.request.filters['subject'] = _.get(this._preferencefilters, 'subject');
-      }
+      option.data.request.filters = { ...option.data.request.filters, ...this._preferencefilters };
     }
 
     return this.actionService.post(option);
@@ -412,15 +397,7 @@ export class CollectionHierarchyService {
     }
 
     if (!_.isUndefined(this._preferencefilters)) {
-      if (!_.isEmpty(_.get(this._preferencefilters, 'medium'))) {
-        option.data.request.filters['medium'] = _.get(this._preferencefilters, 'medium');
-      }
-      if (!_.isEmpty(_.get(this._preferencefilters, 'gradeLevel'))) {
-        option.data.request.filters['gradeLevel'] = _.get(this._preferencefilters, 'gradeLevel');
-      }
-      if (!_.isEmpty(_.get(this._preferencefilters, 'subject'))) {
-        option.data.request.filters['subject'] = _.get(this._preferencefilters, 'subject');
-      }
+      option.data.request.filters = {...option.data.request.filters, ...this._preferencefilters}
     }
 
     return this.actionService.post(option);
