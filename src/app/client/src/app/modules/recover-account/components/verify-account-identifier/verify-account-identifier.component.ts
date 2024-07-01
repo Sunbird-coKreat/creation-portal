@@ -1,9 +1,9 @@
 import { RecoverAccountService } from './../../services';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ResourceService, ToasterService } from '@sunbird/shared';
+import {ResourceService, ToasterService, ConfigService} from '@sunbird/shared';
 import * as _ from 'lodash-es';
-import { FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { IImpressionEventInput, IEndEventInput, IStartEventInput, IInteractEventObject, IInteractEventEdata } from '@sunbird/telemetry';
 
 @Component({
@@ -13,7 +13,7 @@ import { IImpressionEventInput, IEndEventInput, IStartEventInput, IInteractEvent
 export class VerifyAccountIdentifierComponent implements OnInit {
   disableFormSubmit = true;
   disableResendOtp = false;
-  form: FormGroup;
+  form: UntypedFormGroup;
   errorCount = 0;
   telemetryImpression: IImpressionEventInput;
   telemetryCdata = [{
@@ -23,8 +23,10 @@ export class VerifyAccountIdentifierComponent implements OnInit {
     id: 'SB-13755',
     type: 'Task'
   }];
-  constructor(public activatedRoute: ActivatedRoute, public resourceService: ResourceService, public formBuilder: FormBuilder,
-    public toasterService: ToasterService, public router: Router, public recoverAccountService: RecoverAccountService) { }
+  constructor(public activatedRoute: ActivatedRoute, public resourceService: ResourceService, public formBuilder: UntypedFormBuilder,
+    public toasterService: ToasterService, public router: Router, public recoverAccountService: RecoverAccountService,
+              public configService: ConfigService) {
+  }
 
   ngOnInit() {
     if (this.verifyState()) {
@@ -34,7 +36,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
   }
   initializeForm() {
     this.form = this.formBuilder.group({
-      otp: new FormControl(null, [Validators.required])
+      otp: new UntypedFormControl(null, [Validators.required])
     });
     this.form.valueChanges.subscribe(val => {
       if (this.form.status === 'VALID') {
@@ -56,14 +58,15 @@ export class VerifyAccountIdentifierComponent implements OnInit {
     };
     this.recoverAccountService.verifyOTP(request)
     .subscribe(response => {
-        this.resetPassword();
+        this.resetPassword(response);
       }, error => {
+        this.form.controls.otp.setValue('');
         this.disableFormSubmit = false;
         this.handleError(error);
       }
     );
   }
-  resetPassword() {
+  resetPassword(data?: any) {
     const request = {
       request: {
         type: this.recoverAccountService.selectedAccountIdentifier.type,
@@ -71,6 +74,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
         userId: this.recoverAccountService.selectedAccountIdentifier.id
       }
     };
+    request.request['reqData'] = _.get(data, 'reqData');
     this.recoverAccountService.resetPassword(request)
     .subscribe(response => {
       if (response.result.link) {
@@ -94,7 +98,7 @@ export class VerifyAccountIdentifierComponent implements OnInit {
       const redirect_uri = reqQuery.error_callback + '?' + resQuery;
       window.location.href = redirect_uri;
     } else {
-      this.toasterService.error('OTP validation failed.');
+      this.toasterService.error(this.resourceService.frmelmnts.lbl.otpValidationFailed);
     }
   }
   handleResendOtp() {
@@ -102,7 +106,8 @@ export class VerifyAccountIdentifierComponent implements OnInit {
       request: {
         type: this.recoverAccountService.selectedAccountIdentifier.type,
         key: this.recoverAccountService.selectedAccountIdentifier.value,
-        userId: this.recoverAccountService.selectedAccountIdentifier.id
+        userId: this.recoverAccountService.selectedAccountIdentifier.id,
+        templateId: this.configService.constants.TEMPLATES.RESET_PASSWORD_TEMPLATE
       }
     };
     this.recoverAccountService.generateOTP(request).subscribe(response => {

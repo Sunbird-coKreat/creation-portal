@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ConfigService } from '../services';
 import { ElementRef } from '@angular/core';
 import { Renderer2 } from '@angular/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../shared/services/cache-service/cache.service';
 import { ContentDirectionDirective } from './content-direction.directive';
 import {mockRes} from './content-direction.directive.spec.data';
 describe('ContentDirectionDirective', () => {

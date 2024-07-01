@@ -1,0 +1,16 @@
+@use "sass:math";
+//rem calculator
+@function calculateRem($size) {
+  $remSize: math.div($size, 16px);
+  @return #{$remSize}rem;
+}
+
+@function calculateEm($size) {
+  $emSize: math.div($size, 16px);
+  @return #{$emSize}em;
+}
+
+@mixin fontSize($size) {
+  font-size: $size; //Fallback in px
+  font-size: calculateRem($size);
+}

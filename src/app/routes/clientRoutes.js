@@ -66,6 +66,7 @@ module.exports = (app, keycloak) => {
       next()
   })
 
+  app.use(express.static(path.join(__dirname, '../termOfUse')))
   app.use(express.static(path.join(__dirname, '../dist'), { extensions: ['ejs'], index: false }))
 
   app.use('/dist', express.static(path.join(__dirname, '../dist'), { extensions: ['ejs'], index: false }))
@@ -88,7 +89,7 @@ module.exports = (app, keycloak) => {
 
   app.all('/play/quiz/*', playContent);
 
-  app.all(['/', '/get', '/:slug/get', '/:slug/get/dial/:dialCode',  '/get/dial/:dialCode', '/explore',
+  app.all(['/', '/contribution-portal','/get', '/:slug/get', '/:slug/get/dial/:dialCode',  '/get/dial/:dialCode', '/explore',
     '/explore/*', '/:slug/explore', '/:slug/explore/*', '/play/*', '/explore-course', '/explore-course/*',
     '/:slug/explore-course', '/:slug/explore-course/*', '/:slug/signup', '/signup', '/:slug/sign-in/*',
     '/sign-in/*', '/download/*', '/:slug/download/*', '/certs/*', '/recover/*'], redirectTologgedInPage, indexPage(false))
@@ -99,14 +100,15 @@ module.exports = (app, keycloak) => {
 
   app.all(['/announcement', '/announcement/*', '/search', '/search/*',
     '/orgType', '/orgType/*', '/dashBoard', '/dashBoard/*',
-    '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources',
-    '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage'], keycloak.protect(), indexPage(true))
+    '/workspace', '/workspace/*', '/profile', '/profile/*', '/learn', '/learn/*', '/resources', '/sourcing', '/sourcing/*',
+    '/resources/*', '/myActivity', '/myActivity/*', '/org/*', '/manage', '/:slug/contribute', '/:slug/contribute/*', '/contribute','/contribute/*'], keycloak.protect(), indexPage(true))
 
   app.all('/:tenantName', renderTenantPage)
 }
 
 function getLocals(req) {
-  var locals = {}
+  var locals = {};
+  const slug = req.params.slug;
   if(req.includeUserDetail){
     locals.userId = _.get(req, 'session.userId') ? req.session.userId : null
     locals.sessionId = _.get(req, 'sessionID') && _.get(req, 'session.userId') ? req.sessionID : null
@@ -127,21 +129,43 @@ function getLocals(req) {
   locals.buildNumber = envHelper.BUILD_NUMBER
   locals.apiCacheTtl = envHelper.PORTAL_API_CACHE_TTL
   locals.cloudStorageUrls = envHelper.CLOUD_STORAGE_URLS
+  locals.portalCloudStorageUrl = envHelper.PORTAL_CLOUD_STORAGE_URL
   locals.userUploadRefLink = envHelper.sunbird_portal_user_upload_ref_link
   locals.deviceRegisterApi = envHelper.DEVICE_REGISTER_API
   locals.deviceApi = envHelper.sunbird_device_api
   locals.googleCaptchaSiteKey = envHelper.sunbird_google_captcha_site_key
   locals.videoMaxSize = envHelper.sunbird_portal_video_max_size
-  locals.reportsLocation = envHelper.sunbird_azure_report_container_name
+  locals.reportsLocation = envHelper.sunbird_cloud_report_container
   locals.previewCdnUrl = envHelper.sunbird_portal_preview_cdn_url
   locals.offlineDesktopAppTenant = envHelper.sunbird_portal_offline_tenant
   locals.offlineDesktopAppVersion = envHelper.sunbird_portal_offline_app_version
   locals.offlineDesktopAppReleaseDate = envHelper.sunbird_portal_offline_app_release_date
   locals.offlineDesktopAppSupportedLanguage = envHelper.sunbird_portal_offline_supported_languages,
-  locals.offlineDesktopAppDownloadUrl = envHelper.sunbird_portal_offline_app_download_url
+  locals.offlineDesktopAppDownloadUrl = envHelper.SUNBIRD_PORTAL_BASE_URL
+  locals.portalBaseUrl = envHelper.SUNBIRD_PORTAL_BASE_URL
   locals.logFingerprintDetails = envHelper.LOG_FINGERPRINT_DETAILS,
   locals.deviceId = '';
   locals.deviceProfileApi = envHelper.DEVICE_PROFILE_API;
+  locals.slug = slug || '';
+  locals.enableQuestionSetEditor = envHelper.DOCK_QUESTIONSET_ENABLE;
+  locals.dockSmsUrl = envHelper.DOCK_SMS_URL;
+  locals.dockDefaultFileSize = envHelper.DOCK_DEFAULT_FILE_SIZE;
+  locals.dockDefaultVideoSize = envHelper.DOCK_DEFAULT_VIDEO_SIZE;
+  locals.sunbirdQuestionSetChildrenLimit = envHelper.SUNBIRD_QUESTIONSET_CHILDREN_LIMIT;
+  locals.sunbirdCollectionChildrenLimit =  envHelper.SUNBIRD_COLLECTION_CHILDREN_LIMIT;
+  locals.sunbirdTranscriptSupportedLanguages = envHelper.SUNBIRD_TRANSCRIPT_SUPPORTED_LANGUAGES;
+  locals.sunbirdTranscriptFileFormat =  envHelper.SUNBIRD_TRANSCRIPT_FILE_FORMAT;
+  locals.sunbirdTranscriptRequired = envHelper.SUNBIRD_TRANSCRIPT_REQUIRED;
+  locals.sunbirdBulkUploadNameLength = envHelper.SUNBIRD_BULK_UPLOAD_NAME_LENGTH;
+  locals.sunbirdBulkUploadDescriptionLength = envHelper.SUNBIRD_BULK_UPLOAD_DESC_LENGTH;
+  locals.sunbirdContextualHelpConfig = envHelper.SUNBIRD_CONTEXTUAL_HELP_CONFIG;
+  locals.sunbirdAccessibilityGuidelinesUrl = envHelper.sunbird_accessibility_guidelines_url;
+  locals.allowedFrameworkTypes = envHelper.ALLOWED_FRAMEWORK_TYPES;
+  locals.enableReviewEdit = envHelper.ENABLE_REVIEW_EDIT;
+  locals.cloudStorageProvider = envHelper.cloud_storage_provider;
+  locals.interactiveVideoQsetCategory = envHelper.DOCK_INTERACTIVE_VIDEO_QSET_CATEGORY;
+  locals.isSendReminderEnabled = envHelper.IS_SEND_REMINDER_ENABLED;
+  locals.sunbirdportalurl = envHelper.SUNBIRD_PORTAL_URL;
   return locals
 }
 
@@ -234,7 +258,11 @@ const redirectTologgedInPage = (req, res) => {
 			if (_.get(redirectRoutes, `/${req.originalUrl.split('/')[1]}`)) {
 				const routes = _.get(redirectRoutes, `/${req.originalUrl.split('/')[1]}`);
 				res.redirect(routes)
-			} else {
+      } else if(_.includes(_.get(req, 'originalUrl'), 'get') || _.includes(_.get(req, 'originalUrl'), 'dial')){
+        req.includeUserDetail = true;
+        renderDefaultIndexPage(req, res);
+      }
+      else {
 				renderDefaultIndexPage(req, res)
 			}
 		}

@@ -1,0 +1,71 @@
+<div class="sb-modal-header">{{resourceService?.frmelmnts?.lbl?.addEditTranscript}}</div>
+<div class="sb-modal-content">
+  <div class="dynamicHeight" [ngClass]="{'d-flex':uploadInProgress}" >
+    <div class="ui tweleve wide column mb-20" *ngIf="loader">
+      <app-loader></app-loader>
+    </div>
+    <div *ngIf="!loader && !uploadInProgress">
+      <label class="mb-15">{{resourceService?.frmelmnts?.lbl?.addTranscriptForLanguage}}</label>
+      <form class="ui form" [formGroup]="transcriptForm">
+        <div formArrayName="items" *ngFor="let item of transcriptForm.get('items')['controls']; let i = index;">
+          <div class="ui grid" [formGroupName]="i">
+            <div class="three wide column">
+              <sui-select formControlName="language" (selectedOptionChange)="languageChange($event, i)"
+                placeholder="{{resourceService.frmelmnts?.btn?.selectLanguage}}" [options]="languageOptions" class="selection" #selectRef>
+                <sui-select-option *ngFor="let option of selectRef.filteredOptions" [value]="option">
+                </sui-select-option>
+              </sui-select>
+            </div>
+            <div class="seven wide column">
+              <div [class.block-hide]="item.controls.fileName.value" class="sb-before-upload-section">
+                <button class="sb-btn sb-btn-link sb-left-icon-btn p-0">
+                  <span class="sb-before-upload-input pl-15 sb-color-primary fs-0-785 mouse-pointer"><i
+                      class="fa fa-paperclip"></i>{{resourceService?.frmelmnts?.lbl?.attachFile}}</span>
+                  <input formControlName="transcriptFile" id="attachFileInput{{i}}" (change)="attachFile($event, i)" [accept]="acceptFileExtensions" type="file" #transcriptFileInput>
+                </button>
+                <div class="sb-color-error fsmall">
+                  <p class="fs-0-785"></p>
+                </div>
+              </div>
+              <!--End - Before Upload File Field-->
+
+              <!--Start - After Upload File Field-->
+              <div [class.block-hide]="!item.controls.fileName.value" class="sb-after-upload-section">
+                <div class="sb-after-upload-field d-flex bradius-2">
+                  <div class="pl-10 py-10 fs-0-785 cursor-pointer d-flex"><i class="file icon"></i>
+                    <div [ngClass]="{'sb__ellipsis w-250':identifierControl.value, 'sb__ellipsis w-285': !identifierControl.value}">
+                      <input formControlName="fileName" type="hidden" #fileNameControl>
+                      {{ fileNameControl?.value }}
+                    </div>
+                  </div>
+                  <button class="sb-after-upload-button sb-btn sb-btn-link sb-min-width-auto mouse-pointer"
+                    (click)="replaceFile(i)"><i class="icon refresh sb-color-primary"></i>
+                  </button>
+                  <button *ngIf="identifierControl.value" (click)="download(identifierControl.value)"
+                    class="sb-after-upload-download sb-btn sb-btn-link mouse-pointer sb-min-width-auto">
+                    <i class="download icon sb-color-primary"></i>
+                  </button>
+                  <button class="sb-after-upload-delete sb-btn sb-btn-link mouse-pointer sb-min-width-auto"
+                    (click)="reset(i)"><i class="trash icon sb-color-primary"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <input formControlName="identifier" type="hidden" #identifierControl>
+          </div>
+        </div>
+        <!-- End - Before Upload File Field-->
+      </form>
+      <button type="button" class="ui basic button icon sb-color-primary mt-15 sb-btn-primary-border" (click)="addItem()" [disabled]="disableAddItemBtn" ><i
+          class="plus icon"></i></button>
+    </div>
+    <div class="flex-as-center text-center w-100" *ngIf="uploadInProgress">
+      <img src="assets/images/loader.gif" width="64" class="process-icon">
+      <div class="sb-color-error fs-0-785 pt-10">Please do not close this window until the save is complete</div>
+    </div>
+  </div>
+</div>
+<div class="sb-modal-actions">
+  <button class="sb-btn sb-btn-normal sb-btn-primary" (click)="submit()" [disabled]="disableDoneBtn">{{resourceService?.frmelmnts?.btn?.save}}</button>
+  <button class="sb-btn sb-btn-outline-primary sb-btn-normal" (click)="close()">{{resourceService?.frmelmnts?.btn?.cancel}}</button>
+</div>

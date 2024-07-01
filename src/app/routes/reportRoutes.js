@@ -1,19 +1,19 @@
 const proxyUtils = require('../proxy/proxyUtils.js')
 const reportHelper = require('../helpers/reportHelper.js')
+const StorageService = require('../helpers/cloudStorage/index');
+const envHelper = require('../helpers/environmentVariablesHelper');
 
 module.exports = function (app) {
-
-    app.get('/courseReports/:slug/:filename',
-        reportHelper.validateRoles(['CONTENT_CREATOR']),
-        reportHelper.azureBlobStream());
-
-    app.get('/reports/:slug/:filename',
-        reportHelper.validateSlug(['public']),
-        reportHelper.validateRoles(['ORG_ADMIN', 'REPORT_VIEWER']),
-        reportHelper.azureBlobStream());
-
-    app.get('/admin-reports/:slug/:filename',
-        reportHelper.validateSlug(),
-        reportHelper.validateRoles(['ORG_ADMIN']),
-        reportHelper.azureBlobStream());
+  app.get('/reports/:reportPrefix?/:slug/:filename',
+  proxyUtils.verifyToken(),
+  reportHelper.validateSlug(['public']),
+  reportHelper.validateRoles(['ORG_ADMIN', 'REPORT_VIEWER']),
+  (req, res, next) => {
+    if(req.params.reportPrefix) {
+      req.params.slug = req.params.reportPrefix + '/' + req.params.slug;
+    }
+    console.log("req.params ", req.params)
+    next()
+  },
+  StorageService.CLOUD_CLIENT.fileReadStream(envHelper?.sunbird_cloud_report_container));
 }

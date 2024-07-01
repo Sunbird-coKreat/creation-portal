@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SuiModule } from 'ng2-semantic-ui';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { CustomMultiSelectComponent } from './custom-multi-select.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import {Response} from './custom-multi-select.component.spec.data';
 import { ResourceService, ConfigService, BrowserCacheTtlService } from './../../services';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 describe('CustomMultiSelectComponent', () => {
   let component: CustomMultiSelectComponent;
   let fixture: ComponentFixture<CustomMultiSelectComponent>;
@@ -17,7 +17,9 @@ describe('CustomMultiSelectComponent', () => {
       }
     }
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ HttpClientTestingModule, SuiModule],
       declarations: [ CustomMultiSelectComponent ],
@@ -26,12 +28,13 @@ describe('CustomMultiSelectComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CustomMultiSelectComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should call checkbox when checkbox value is false ', () => {
     const name = 'NCERT';
     component.checkBox = {};

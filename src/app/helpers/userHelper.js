@@ -1,18 +1,19 @@
 const request = require('request')
 const envHelper = require('./environmentVariablesHelper.js')
 const learnerURL = envHelper.LEARNER_URL
-const learnerAuthorization = envHelper.PORTAL_API_AUTH_TOKEN
+const learnerAuthorization = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const telemetryHelper = require('./telemetryHelper')
 const _ = require('lodash')
 const uuidv1 = require('uuid/v1');
 const requestPromise = require('request-promise'); //  'request' npm package with Promise support
-const apiAuthToken = envHelper.PORTAL_API_AUTH_TOKEN;
+const apiAuthToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN
 const logger = require('sb_logger_util_v2');
+const { getAuthToken } = require('../helpers/kongTokenHelper')
 
 module.exports = {
   updateLoginTime: function (req, callback) {
     var data = this.prepareRequestBody(req)
-    var token = req.kauth.grant.access_token.token
+    var token = getAuthToken(req);
     this.sendUpdateTimeReq(req, token, data, function (err, status) {
       callback(err, status)
     })
@@ -31,12 +32,16 @@ module.exports = {
       url: learnerURL + 'user/v1/update/logintime',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + learnerAuthorization,
-        'x-authenticated-user-token': token
+        'Authorization': 'Bearer ' + learnerAuthorization
       },
       body: data,
       json: true
     }
+
+    if (token) {
+      options.headers['x-authenticated-user-token'] = token
+    }
+
     const telemetryData = {reqObj: req,
       options: options,
       uri: 'user/v1/update/logintime',
@@ -44,7 +49,7 @@ module.exports = {
       id: data.request.userId,
       userId: data.request.userId}
     // telemetryHelper.logAPICallEvent(telemetryData)
-
+    /* istanbul ignore next  */
     request(options, function (error, response, body) {
       telemetryData.statusCode = _.get(response, 'statusCode');
       if (callback) {
@@ -67,7 +72,7 @@ module.exports = {
   getUserDetails: async function (userId, userToken) {
     const options = {
       method: 'GET',
-      url: learnerURL + 'user/v1/read/' + userId,
+      url: learnerURL + 'user/v5/read/' + userId,
       headers: {
         'x-msgid': uuidv1(),
         'content-type': 'application/json',
@@ -84,6 +89,41 @@ module.exports = {
       } else {
         throw new Error(_.get(data, 'params.errmsg') || _.get(data, 'params.err'));
       }
+    })
+  },
+  acceptTermsAndCondition: async function (data, userToken) {
+    const options = {
+      method: 'POST',
+      url: learnerURL + 'user/v1/tnc/accept',
+      headers: {
+        'x-msgid': uuidv1(),
+        'content-type': 'application/json',
+        'accept': 'application/json',
+        'Authorization': 'Bearer ' + apiAuthToken,
+        'x-authenticated-user-token': userToken
+      },
+      body: data,
+      json: true
+    };
+    logger.info({
+      msg: 'userHelper:acceptTermsAndCondition initiated',
+      body: options.body,
+      url: options.url
+    });
+    return requestPromise(options).then(data => {
+      if (data.responseCode === 'OK') {
+        logger.info({msg: 'userHelper:acceptTermsAndCondition success', data: data});
+        return _.get(data, 'result.response');
+      } else {
+        logger.info({msg: 'userHelper:acceptTermsAndCondition failed', data: data});
+        throw new Error(_.get(data, 'params.errmsg') || _.get(data, 'params.err' || 'FAILED'));
+      }
+    }, function (error) {
+      logger.error({
+        msg: 'userHelper:acceptTermsAndCondition errored', error: error,
+        params: _.get(error, 'error.params'), message: _.get(error, 'message')
+      });
+      throw new Error(_.get(data, 'params.errmsg') || _.get(data, 'params.err') || 'FAILED');
     })
   }
 };

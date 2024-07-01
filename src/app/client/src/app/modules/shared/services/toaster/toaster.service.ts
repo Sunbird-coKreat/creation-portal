@@ -10,16 +10,30 @@ export class ToasterService {
   /**
    * To show toaster messages
    */
-  public iziToast: any;
-
+  private iziToast: any;
+  private options = {
+    position: 'topCenter',
+    titleSize: '18',
+    timeout: 6000,
+    transitionIn: 'flipInX',
+    transitionOut: 'flipOutX'
+  };
   /**
 	 * Constructor to create injected service(s) object
 	 */
   constructor() {
     this.iziToast = iziToast; // global object
-    this.iziToast.settings({
+  }
+
+  InfoToasterCritical(title: string, message: string) {
+    iziToast.show({
+      title: title,
+      message: message,
+      class: 'sb-toaster sb-toast-success sb-toast-normal',
       position: 'topCenter',
-      titleSize: '18'
+      timeout: 6000,
+      transitionIn: 'flipInX',
+      transitionOut: 'flipOutX'
     });
   }
 
@@ -28,10 +42,13 @@ export class ToasterService {
    * @memberOf Services.toasterService
    * @param {string}  message - Success message
    */
-  success(message: string) {
+  success(title: string, message?: string) {
     this.iziToast.success({
-      title: message
-    });
+        title: title,
+        message: message ? message : '',
+        class: 'sb-toaster sb-toast-normal sb-toast-success',
+         ...this.options
+        });
   }
 
   /**
@@ -39,20 +56,28 @@ export class ToasterService {
    * @memberOf Services.toasterService
    * @param {string}  message - Info message
    */
-  info(message: string) {
+  info(title: string, message?: string) {
     this.iziToast.info({
-      title: message
+      title: title,
+      message: message ? message : '',
+      class: 'sb-toaster sb-toast-normal sb-toast-info',
+       ...this.options
     });
   }
+
+
 
   /**
    * Format error message
    * @memberOf Services.toasterService
    * @param {string}  message - Error message
    */
-  error(message: string) {
+  error(title: string, message?: string) {
     this.iziToast.error({
-      title: message
+      title: title,
+      message: message ? message : '',
+      class: 'sb-toaster sb-toast-normal sb-toast-danger',
+       ...this.options
     });
   }
 
@@ -61,9 +86,12 @@ export class ToasterService {
    * @memberOf Services.toasterService
    * @param {string}  message - Warning message
    */
-  warning(message: string) {
+  warning(title: string, message?: string) {
     this.iziToast.warning({
-      title: message
+      title: title,
+      message: message ? message : '',
+      class: 'sb-toaster sb-toast-normal sb-toast-warning',
+       ...this.options
     });
   }
 }

@@ -1,0 +1,95 @@
+.dynamic-form {
+  label {
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+  }
+  label[data-title]{
+    z-index: 1;
+  }
+  .required {
+    label {
+      &:after {
+        content: '*';
+        margin: -0.2em 0 0 0.2em;
+        color: #db2828;
+      }
+    }
+  }
+  sb-dynamic-checkbox{
+    label{
+      padding-left: 1.5rem !important;
+      &:after
+      {
+        color:#fff !important;
+        width:1rem!important;
+        height:1rem !important;
+      }
+    }
+  }
+  .sb-dropdown{
+    select{
+      font-size: 0.75rem !important;
+      font-weight: normal;
+      border: 1px solid rgba(34, 36, 38, 0.15) !important;
+      padding: 10px !important;
+    }
+  }
+  .dropdown-icon,
+  .caret-down
+  {
+    right: 10px !important;
+    top: 8px !important;
+  }
+  .multi-select-container{
+      .list-border{
+        font-size: 0.75rem !important;
+        padding: 0.25rem 0.5rem !important;
+        border: 1px solid rgba(34,36,38,.15) !important;
+        border-radius: 0.1875rem !important;
+      }
+      ul{
+        font-size: 12px !important;
+        font-weight: normal !important;
+        li{
+          input{
+            vertical-align: middle !important;
+          }
+          label{
+            margin-bottom: 0 !important;
+            padding-left: 10px !important;
+          }
+        }
+      }
+  }
+  .treepicker-parent{
+    .list-border{
+      font-size: 0.75rem !important;
+      padding: 0.25rem 0.5rem !important;
+      border: 1px solid rgba(34, 36, 38, 0.15) !important;
+      border-radius: 0.1875rem !important;
+    }
+  }
+  .sb-dropdown,
+  .treepicker-parent,
+  .multi-select-section-app
+  {
+    margin: 1rem 0;
+  }
+}
+sui-select{
+  border-radius: 0.1875rem !important;
+}
+.dynamic-form .label-html div {
+  font-size:0.785rem !important;
+  line-height:1.4 !important;
+  .font-italic{
+    font-size:0.785rem !important;
+  }
+}
+.two-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 2rem;
+}

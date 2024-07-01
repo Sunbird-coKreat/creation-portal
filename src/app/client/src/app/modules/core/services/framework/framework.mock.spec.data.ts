@@ -1336,5 +1336,9 @@ export const mockFrameworkData = {
           'status': 'Live'
         }
      },
+    _orgAndTargetFrameworkCategories: {
+        orgFrameworkCategories: { orgFrameworkCategoriesData: []},
+        targetFrameworkCategories: { targetFrameworkCategoriesData: []}
+    }
 };
 

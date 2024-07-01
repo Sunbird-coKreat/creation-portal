@@ -3,12 +3,12 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService, PlayerService, CopyContentService, PermissionService } from '@sunbird/core';
 import * as _ from 'lodash-es';
-import { INoteData } from '@sunbird/notes';
 import {
   ConfigService, IUserData, ResourceService, ToasterService, WindowScrollService, NavigationHelperService,
   PlayerConfig, ContentData, ContentUtilsServiceService, ITelemetryShare
 } from '@sunbird/shared';
 import { IInteractEventObject, IInteractEventEdata, IImpressionEventInput } from '@sunbird/telemetry';
+import { PopupControlService } from '../../../../../../service/popup-control.service';
 
 /**
  *Component to play content
@@ -25,7 +25,11 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit {
 
   closeIntractEdata: IInteractEventEdata;
 
+  printPdfInteractEdata: IInteractEventEdata;
+
   objectInteract: IInteractEventObject;
+
+  copyContentInteractEdata: IInteractEventEdata;
 
   sharelinkModal: boolean;
 
@@ -75,7 +79,6 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit {
   /**
    * This variable holds the details of the note created
    */
-  createNoteData: INoteData;
 
   /**
    * Page Load Time, used this data in impression telemetry
@@ -90,7 +93,7 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit {
     public userService: UserService, public resourceService: ResourceService, public router: Router,
     public toasterService: ToasterService, public windowScrollService: WindowScrollService, public playerService: PlayerService,
     public copyContentService: CopyContentService, public permissionService: PermissionService,
-    public contentUtilsServiceService: ContentUtilsServiceService,
+    public contentUtilsServiceService: ContentUtilsServiceService, public popupControlService: PopupControlService,
     private configService: ConfigService, public navigationhelperService: NavigationHelperService) {
       this.playerOption = {
         showContentRating: true
@@ -139,6 +142,16 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit {
       id: this.contentId,
       type: this.contentData.contentType,
       ver: this.contentData.pkgVersion ? this.contentData.pkgVersion.toString() : '1.0'
+    };
+    this.printPdfInteractEdata = {
+      id: 'print-pdf-button',
+      type: 'click',
+      pageid: 'content-player'
+    };
+    this.copyContentInteractEdata = {
+      id: 'copy-content-button',
+      type: 'click',
+      pageid: 'content-player'
     };
   }
   /**
@@ -218,9 +231,7 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit {
         this.toasterService.error(this.resourceService.messages.emsg.m0008);
       });
   }
-  createEventEmitter(data) {
-    this.createNoteData = data;
-  }
+
   onShareLink() {
     this.shareLink = this.contentUtilsServiceService.getPublicShareUrl(this.contentId, this.contentData.mimeType);
     this.setTelemetryShareData(this.contentData);
@@ -234,5 +245,9 @@ export class ContentPlayerComponent implements OnInit, AfterViewInit {
       type: param.contentType,
       ver: param.pkgVersion ? param.pkgVersion.toString() : '1.0'
     }];
+  }
+
+  printPdf(pdfUrl: string) {
+    window.open(pdfUrl, '_blank');
   }
 }

@@ -1,0 +1,258 @@
+<div *ngFor="let collection of collectionUnits; let i = index" class="sb-toc-accor-{{level}}">
+  <sui-accordion-panel appTelemetryInteract
+  [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('node_accordion', configService.telemetryLabels.eventType.click, undefined,telemetryPageId)"
+  [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+  [telemetryInteractCdata]="telemetryInteractCdata"
+  [telemetryInteractPdata]="telemetryInteractPdata"
+  [isOpen]=" (collection.identifier === sessionContext.lastOpenedUnitChild || collection.identifier === sessionContext.lastOpenedUnitParent) ? true : false">
+    <div title class="sb-accordion-title d-flex flex-jc-flex-end sb-color-primary flex-ai-center"><span class="chapter-status mr-16"></span>
+     <span class="flex-4"> {{collection.name}}</span>
+     <span class="sb-color-error font-weight-bold px-20 text-left w-30" *ngIf="sourcingOrgReviewer">{{collection.statusMessage}}</span>
+     <div *ngIf="sourcingOrgReviewer && collection.sourcingStatusDetail" class="single-row">
+      <div class="sb-color-warning sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approvalPending}}:</span>
+        <span class="font-weight-bold">{{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
+      </div>
+      <div class="sb-count sb-color-success" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
+      </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
+      </div>
+      <div class="sb-count sb-color-primary" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.correctionsPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending}}</span>
+      </div>
+     </div>
+     <div  *ngIf="!sourcingOrgReviewer && collection.sourcingStatusDetail && sessionContext.currentOrgRole !== 'individual'"
+     class="single-row">
+      <div class="sb-color-gray-300 sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft}}</span>
+      </div>
+      <div class="sb-count sb-color-primary" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.reviewPending">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.reviewInProgress}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.reviewPending}}</span>
+      </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.notAccepted">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.notAccepted}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.notAccepted}}</span>
+      </div>
+      <div class="sb-color-warning sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
+      </div>
+      <div class="sb-count sb-color-success" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.approved}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
+      </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
+      </div>
+      <div class="sb-count sb-color-primary" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.correctionsPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending}}</span>
+      </div>
+    </div>
+    <div *ngIf="!sourcingOrgReviewer && collection.sourcingStatusDetail && sessionContext.currentOrgRole === 'individual'" class="single-row">
+      <div class="sb-color-gray-300 sb-count" *ngIf="visibility['showAddresource'] && collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.draft}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.draft }}</span>
+      </div>
+      <div class="sb-color-warning sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approvalPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approvalPending}}</span>
+      </div>
+      <div class="sb-color-success sb-count" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.approved}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.approved}}</span>
+      </div>
+      <div class="sb-count sb-color-error" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.rejected}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.rejected}}</span>
+      </div>
+      <div class="sb-count sb-color-primary" *ngIf="collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending">
+        <span class="font-weight-normal"> {{resourceService.frmelmnts.lbl.correctionsPending}}:</span>
+        <span class="font-weight-bold"> {{collection.sourcingStatusDetail && collection.sourcingStatusDetail.correctionsPending}}</span>
+      </div>
+    </div>
+      <div class="sb-color-black sb-count">
+        <span class="font-weight-normal">{{resourceService.frmelmnts.lbl.totalContent}}:</span> <span class="font-weight-bold"> {{collection?.totalLeaf}}</span>
+      </div>
+
+     <div class="d-flex">
+       <ng-container *ngIf="sessionContext['addFromLibraryEnabled']; else noLibrary">
+         <button (click)="addFromLibrary($event, collection)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+                 appTelemetryInteract
+                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+                 [telemetryInteractCdata]="telemetryInteractCdata"
+                 [telemetryInteractPdata]="telemetryInteractPdata"
+                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && sessionContext['addFromLibraryEnabled']">
+           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+       </ng-container>
+       <ng-template #noLibrary>
+         <button (click)="goToAddLibrary(collection.identifier)" class="mr-10 sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+                 appTelemetryInteract
+                 [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('add_from_library', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                 [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+                 [telemetryInteractCdata]="telemetryInteractCdata"
+                 [telemetryInteractPdata]="telemetryInteractPdata"
+                 popupText="{{resourceService.frmelmnts.lbl.searchExistingContentFromLibrary}}"  suiPopup  *ngIf="visibility && visibility['showAddresource'] && programContext?.status === 'Unlisted' && mvcLibraryFeatureConfiguration === 'enable'">
+           <i class="add icon mr-4"></i>{{resourceService.frmelmnts.btn.addFromLibrary}}</button>
+       </ng-template>
+
+      <button class="sb-btn sb-btn-outline-primary sb-btn-xs sb-left-icon-btn sb-btn-radius text-inherit"
+        *ngIf="visibility && visibility['showAddresource']"
+        popupText="{{resourceService.frmelmnts.lbl.uploadFileOrCreateNew}}"  suiPopup appTelemetryInteract
+        [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('create_new', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+        [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(collection.identifier, 'Content', '1.0', {l1: sessionContext.collection})"
+        [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata"
+        (click)="showModal = false; createResource($event, collection)">
+          <i class="add icon mr-4"></i>Create new
+      </button>
+      <!-- Gray color button -->
+      <!-- <button class="sb-btn sb-btn-gray sb-btn-xs sb-left-icon-btn" *ngIf="visibility && visibility['showAddresource']"
+      (click)="showModal = false; createResource($event, collection)"><i class="add icon mr-4"></i>ADD</button> -->
+      <div class="chevron-icon">
+        <i class="chevron down icon mr-0 ml-0"></i>
+      </div>
+    </div>
+    </div>
+    <div content>
+      <div class="chapter-lists level1" *ngIf="collection.leaf">
+        <div class="header chapter-lists--item">
+          <span class="item-name item-sno item-header">{{resourceService.frmelmnts.lbl.sno}}</span>
+          <span class="item-name item-header">{{resourceService.frmelmnts.lbl.name}}</span>
+          <ng-container *ngIf="dynamicHeadersEnabled">
+            <ng-container *ngFor="let header of dynamicHeaders">
+              <span class="item-status item-header">{{header.label}}</span>
+            </ng-container>
+          </ng-container>
+          <span class="item-status item-header">{{resourceService.frmelmnts.lbl.contributor}}</span>
+          <span class="item-name item-header">{{resourceService.frmelmnts.lbl.status}}</span>
+        </div>
+        <ng-container *ngFor="let content of collection.leaf; let ind = index">
+          <div class="chapter-lists--item"
+          *ngIf="content.contentVisibility === true && includes(sourcingOrgReviewer, selectedStatus, content.sourcingStatus || content.status)"
+          appTelemetryInteract
+          [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview_resource', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+          [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+          [telemetryInteractCdata]="telemetryInteractCdata"
+          [telemetryInteractPdata]="telemetryInteractPdata"
+          (click)="previewResource($event, content, collection, originalCollectionData, i)">
+            <span class="item-name item-sno"> {{getIndex(collection, ind)}}</span>
+            <span class="item-name"> {{content.name}}<br />
+              <ng-container *ngFor="let tag of tags">
+                <span *ngIf="content[tag]" [ngClass]="'item-tag-'+tag">{{content[tag]}}</span>
+              </ng-container>
+            </span>
+            <ng-container *ngIf="dynamicHeadersEnabled">
+              <ng-container *ngFor="let header of dynamicHeaders">
+                <span class="item-status" *ngIf="header.key">{{content[header.key] || '-'}}</span>
+              </ng-container>
+            </ng-container>
+            <span class="item-status">{{content.creator}}</span>
+            <span class="item-name">
+              <ng-container *ngIf="!content.sampleContent">
+                <span [ngClass]="{'sb-color-gray-300':content.status === 'Draft'}" *ngIf="content.status === 'Draft' && content.prevStatus === null">{{content.status}}</span>
+                <span [ngClass]="{'sb-color-primary':content.status === 'Review'}"  *ngIf="content.status === 'Review'">{{resourceService.frmelmnts.lbl.reviewInProgress}}</span>
+                <span [ngClass]="{'sb-color-warning':content.status === 'Live'}"  *ngIf="content.status === 'Live' && !content.sourcingStatus">{{resourceService.frmelmnts.lbl.approvalPending}}</span>
+                <span [ngClass]="{'sb-color-success':content.sourcingStatus === 'Approved'}"  *ngIf="content.sourcingStatus === 'Approved' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.approved}}</span>
+                <span [ngClass]="{'sb-color-error':content.sourcingStatus === 'Rejected'}"  *ngIf="content.sourcingStatus === 'Rejected' && content.status === 'Live'">{{resourceService.frmelmnts.lbl.rejected}}</span>
+                <span [ngClass]="{'sb-color-gray-100': content.status === 'Draft' && content.prevStatus !== 'Review','sb-color-error': content.status === 'Draft' && content.prevStatus === 'Review'}" *ngIf="content.status === 'Draft' && content.prevStatus === 'Review'">{{resourceService.frmelmnts.lbl.notAccepted}}</span>
+                <span [ngClass]="{'sb-color-error':content.status == 'Failed'}"  *ngIf="content.status === 'Failed'">{{resourceService.frmelmnts.lbl.failed}}</span>
+                <span *ngIf="content.status === 'Processing'">{{resourceService.frmelmnts.lbl.processing}}</span>
+                <span class="sb-color-primary"  *ngIf="content.status === 'Draft' && content.prevStatus === 'Live'">{{resourceService.frmelmnts.lbl.correctionsPending}}</span>
+                <strong *ngIf="sessionContext['addFromLibraryEnabled'] && reusedContributions.indexOf(content.identifier) !== -1" class=""> (Added from library)</strong>
+              </ng-container>
+            </span>
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Draft' && !content.sourceURL">
+              <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+                suiDropdown
+                appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context_menu', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                autoClose="itemClick">
+                <div class="px-4 w-auto pb-4"><span class="sb-dotmenu"></span></div>
+                <div class="menu" suiDropdownMenu>
+                  <div class="item"
+                    *ngIf="visibility && visibility['showEditResource'] && (content.status === 'Draft' || content.status === 'Reject')"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('edit', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="previewResource($event, content, collection, originalCollectionData, i)">{{resourceService.frmelmnts.lbl.edit}}</div>
+                  <div class="item"
+                    *ngIf="visibility && visibility['showPreviewResource'] && (content.status === 'Live' || content.status === 'Review')"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('preview', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="previewResource($event, content, collection, originalCollectionData, i)">{{resourceService.frmelmnts.lbl.preview}}</div>
+                  <div class="item"
+                    *ngIf="(visibility && visibility['showMoveResource']) && content.status === 'Draft'"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="moveResource($event, content, collection)">{{resourceService.frmelmnts.lbl.move}}</div>
+                  <div class="item"
+                    *ngIf="(visibility && visibility['showDeleteResource']) && content.status === 'Draft'"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('delete', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="deleteResource($event, content, collection)">Delete</div>
+                </div>
+              </div>
+            </div>
+            <div class="item-dropdown absolute position" (click)="menuClick($event)" *ngIf="content.status === 'Live' && content.sourceURL && (content.sourcingStatus !== 'Approved' && content.sourcingStatus !== 'Rejected')">
+              <div *ngIf="!!(showActionMenu && content.createdBy === userId)" class="ui dropdown sb-dotted-dropdown chapter-dotted-menu"
+                suiDropdown
+                appTelemetryInteract
+                [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('context_menu', configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.launch,telemetryPageId)"
+                [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                [telemetryInteractCdata]="telemetryInteractCdata"
+                [telemetryInteractPdata]="telemetryInteractPdata"
+                autoClose="itemClick">
+                <div class="px-4 w-auto pb-4"><span class="sb-dotmenu"></span></div>
+                <div class="menu" suiDropdownMenu>
+
+                    <div class="item"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('move', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="moveResource($event, content, collection)">{{resourceService.frmelmnts?.lbl?.move}}</div>
+                    <div class="item"
+                    appTelemetryInteract
+                    [telemetryInteractEdata]="programTelemetryService.getTelemetryInteractEdata('remove', configService.telemetryLabels.eventType.click,configService.telemetryLabels.eventSubtype.launch, telemetryPageId)"
+                    [telemetryInteractObject]="programTelemetryService.getTelemetryInteractObject(content.identifier, 'Content', '1.0', { l1: sessionContext.collection,l2: collection.identifier})"
+                    [telemetryInteractCdata]="telemetryInteractCdata"
+                    [telemetryInteractPdata]="telemetryInteractPdata"
+                    (click)="removeResource($event, content, collection)">{{resourceService.frmelmnts?.btn?.remove}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="sb-chapterlist-child sb-dock-toc-accor" *ngIf="collection.children">
+      <app-recursive-tree [collectionUnits]="collection.children" [level]="childlevel" [programContext]="programContext" [sessionContext]="sessionContext"  [selectedChapter]="selectedChapter" [originalCollectionData]="originalCollectionData" [tags]="tags" [dynamicHeaders]="dynamicHeaders" [dynamicHeadersEnabled]="dynamicHeadersEnabled"
+        [selectedStatus]="selectedStatus" (nodeMeta)="nodeMetaEmitter($event)" [reusedContributions]="reusedContributions"></app-recursive-tree>
+      </div>
+    </div>
+  </sui-accordion-panel>
+</div>

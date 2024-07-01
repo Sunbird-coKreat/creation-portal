@@ -2,46 +2,31 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LandingPageComponent } from './components';
 import { LandingpageGuard } from './services';
-import { OfflineApplicationDownloadComponent } from '@sunbird/shared';
 
 const routes: Routes = [
   {
     path: '', component: LandingPageComponent, canActivate: [LandingpageGuard],
     data: { telemetry: { env: 'public', pageid: 'landing-page', type: 'edit', subtype: 'paginate' } }
   },
+  // {
+  //   path: 'explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
+  // },
+  // {
+  //   path: ':slug/explore', loadChildren: () => import('./module/explore/explore.module').then(m => m.ExploreModule)
+  // },
   {
-    path: 'explore', loadChildren: './module/explore/explore.module#ExploreModule'
+    path: ':slug/signup', loadChildren: () => import('./module/signup/signup.module').then(m => m.SignupModule)
   },
   {
-    path: ':slug/explore', loadChildren: './module/explore/explore.module#ExploreModule'
+    path: 'signup', loadChildren: () => import('./module/signup/signup.module').then(m => m.SignupModule)
   },
   {
-    path: 'explore-course', loadChildren: './module/course/course.module#CourseModule'
+    path: ':slug/sign-in/sso', loadChildren: () => import('./module/sign-in/sso/sso.module').then(m => m.SsoModule)
   },
   {
-    path: ':slug/explore-course', loadChildren: './module/course/course.module#CourseModule'
+    path: 'sign-in/sso', loadChildren: () => import('./module/sign-in/sso/sso.module').then(m => m.SsoModule)
   },
-  {
-    path: ':slug/signup', loadChildren: './module/signup/signup.module#SignupModule'
-  },
-  {
-    path: 'signup', loadChildren: './module/signup/signup.module#SignupModule'
-  },
-  {
-    path: ':slug/sign-in/sso', loadChildren: './module/sign-in/sso/sso.module#SsoModule'
-  },
-  {
-    path: 'sign-in/sso', loadChildren: './module/sign-in/sso/sso.module#SsoModule'
-  },
-  {
-    path: 'play', loadChildren: './module/player/player.module#PlayerModule'
-  },
-  {
-   path: ':slug/download/offlineapp', component: OfflineApplicationDownloadComponent
-  },
-  {
-   path: 'download/offlineapp', component: OfflineApplicationDownloadComponent
-   }];
+];
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]

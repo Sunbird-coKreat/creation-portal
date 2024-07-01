@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { SignupService } from './../../services';
 import { ResourceService, ServerResponse } from '@sunbird/shared';
-import { Validators, FormGroup, FormControl } from '@angular/forms';
+import { Validators, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash-es';
 import {
@@ -19,8 +19,9 @@ import { TelemetryService } from '@sunbird/telemetry';
 export class OtpComponent implements OnInit {
 
   @Input() signUpdata: any;
+  @Input() tncLatestVersion: any;
   @Output() redirectToParent = new EventEmitter();
-  otpForm: FormGroup;
+  otpForm: UntypedFormGroup;
   disableSubmitBtn = true;
   mode: string;
   errorMessage: string;
@@ -47,8 +48,8 @@ export class OtpComponent implements OnInit {
     this.emailAddress = this.signUpdata.value.email;
     this.phoneNumber = this.signUpdata.value.phone;
     this.mode = this.signUpdata.controls.contactType.value;
-    this.otpForm = new FormGroup({
-      otp: new FormControl('', [Validators.required])
+    this.otpForm = new UntypedFormGroup({
+      otp: new UntypedFormControl('', [Validators.required])
     });
     this.enableSignUpSubmitButton();
     this.unabletoVerifyErrorMessage = this.mode === 'phone' ? this.resourceService.frmelmnts.lbl.unableToVerifyPhone :
@@ -74,14 +75,15 @@ export class OtpComponent implements OnInit {
       (data: ServerResponse) => {
         this.infoMessage = '';
         this.errorMessage = '';
-        this.createUser();
+        this.createUser(data);
       },
       (err) => {
         this.logVerifyOtpError(err.error.params.errmsg);
         this.telemetryService.interact(this.generateVerifyOtpErrorInteractEdata);
         this.infoMessage = '';
+        this.otpForm.controls.otp.setValue('');
         this.errorMessage = err.error.params.status === 'ERROR_INVALID_OTP' ?
-          wrongOTPMessage : this.resourceService.messages.fmsg.m0085;
+          wrongOTPMessage : wrongOTPMessage;
         if (this.disableResendButton) {
           this.showSignUpLink = true;
           this.telemetryService.end(this.telemetryEnd);
@@ -98,7 +100,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'submit-otp',
+        id: 'invalid-otp-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -108,7 +110,8 @@ export class OtpComponent implements OnInit {
     };
   }
 
-  createUser() {
+  createUser(data?: any) {
+    let identifier = '';
     const createRequest = {
       params: {
         source: _.get(this.activatedRoute, 'snapshot.queryParams.client_id'),
@@ -122,32 +125,57 @@ export class OtpComponent implements OnInit {
     if (this.mode === 'phone') {
       createRequest.request['phone'] = this.signUpdata.controls.phone.value.toString();
       createRequest.request['phoneVerified'] = true;
+      identifier = this.signUpdata.controls.phone.value.toString();
     } else {
       createRequest.request['email'] = this.signUpdata.controls.email.value;
       createRequest.request['emailVerified'] = true;
+      identifier = this.signUpdata.controls.email.value;
     }
-    this.signupService.createUserV3(createRequest).subscribe(
-      (resp: ServerResponse) => {
-        const reqQuery = this.activatedRoute.snapshot.queryParams;
-        const queryObj = _.pick(reqQuery,
-          ['client_id', 'redirect_uri', 'scope', 'state', 'response_type', 'version']);
-        queryObj['success_message'] = this.mode === 'phone' ? this.resourceService.frmelmnts.lbl.createUserSuccessWithPhone :
-          this.resourceService.frmelmnts.lbl.createUserSuccessWithEmail;
-        const query = Object.keys(queryObj).map((key) => {
-          return encodeURIComponent(key) + '=' + encodeURIComponent(queryObj[key]);
-        }).join('&');
-        const redirect_uri = reqQuery.error_callback + '?' + query;
-        this.telemetryService.end(this.telemetryEnd);
-        window.location.href = redirect_uri;
-      },
-      (err) => {
-        this.infoMessage = '';
-        this.errorMessage = this.resourceService.messages.fmsg.m0085;
-        this.disableSubmitBtn = false;
-        this.logCreateUserError(err.error.params.errmsg);
-        this.telemetryService.interact(this.createUserErrorInteractEdata);
-      }
-    );
+    createRequest.request['reqData'] = _.get(data, 'reqData');
+    if (this.signUpdata.controls.tncAccepted.value && this.signUpdata.controls.tncAccepted.status === 'VALID') {
+      this.signupService.createUserV3(createRequest).subscribe((resp: ServerResponse) => {
+          this.telemetryLogEvents('sign-up', true);
+          const tncAcceptRequestBody = {
+            request: {
+              version: this.tncLatestVersion,
+              identifier: identifier
+            }
+          };
+          this.signupService.acceptTermsAndConditions(tncAcceptRequestBody).subscribe(res => {
+            this.telemetryLogEvents('accept-tnc', true);
+            this.redirectToSignPage();
+          }, (err) => {
+            this.telemetryLogEvents('accept-tnc', false);
+            this.redirectToSignPage();
+          });
+        },
+        (err) => {
+          this.telemetryLogEvents('sign-up', false);
+          this.infoMessage = '';
+          this.errorMessage = this.resourceService.messages.fmsg.m0085;
+          this.disableSubmitBtn = false;
+          this.logCreateUserError(err.error.params.errmsg);
+          this.telemetryService.interact(this.createUserErrorInteractEdata);
+        }
+      );
+    }
+  }
+
+  /**
+   * Redirects to sign in Page with success message
+   */
+  redirectToSignPage() {
+    const reqQuery = this.activatedRoute.snapshot.queryParams;
+    const queryObj = _.pick(reqQuery,
+      ['client_id', 'redirect_uri', 'scope', 'state', 'response_type', 'version']);
+    queryObj['success_message'] = this.mode === 'phone' ? this.resourceService.frmelmnts.lbl.createUserSuccessWithPhone :
+      this.resourceService.frmelmnts.lbl.createUserSuccessWithEmail;
+    const query = Object.keys(queryObj).map((key) => {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(queryObj[key]);
+    }).join('&');
+    const redirect_uri = reqQuery.error_callback + '?' + query;
+    this.telemetryService.end(this.telemetryEnd);
+    window.location.href = redirect_uri;
   }
 
   logCreateUserError(error) {
@@ -157,7 +185,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'create-user',
+        id: 'create-user-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -196,7 +224,7 @@ export class OtpComponent implements OnInit {
         cdata: this.telemetryCdata,
       },
       edata: {
-        id: 'resend-otp',
+        id: 'resend-otp-error',
         type: 'click',
         pageid: 'otp',
         extra: {
@@ -249,5 +277,25 @@ export class OtpComponent implements OnInit {
         mode: 'self'
       }
     };
+  }
+
+  telemetryLogEvents(api: any, status: boolean) {
+    let level = 'ERROR';
+    let msg = api + ' failed';
+    if (status) {
+      level = 'SUCCESS';
+      msg = api + ' success';
+    }
+    const event = {
+      context: {
+        env: 'self-signup'
+      },
+      edata: {
+        type: api,
+        level: level,
+        message: msg
+      }
+    };
+    this.telemetryService.log(event);
   }
 }
