@@ -16,6 +16,7 @@ import * as alphaNumSort from 'alphanum-sort';
 import { ProgramTelemetryService } from '../../services';
 import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { IContentEditorComponentInput } from '../../../sourcing/interfaces';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 declare const SunbirdFileUploadLib: any;
 
 @Component({
@@ -122,6 +123,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   public frameworkFormData: any;
   public fetchedCategory: string = '';
   public isSendReminderEnabled: boolean;
+  public frameworkCategories: any = [];
+  public fwCats: any = '';
   constructor(
     public frameworkService: FrameworkService,
     private telemetryService: TelemetryService,
@@ -141,7 +144,8 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     public programTelemetryService: ProgramTelemetryService,
     public actionService: ActionService,
     private contentService: ContentService,
-    public cacheService: CacheService
+    public cacheService: CacheService,
+    public cslFrameworkService: CslFrameworkService
   ) { }
 
   ngOnInit() {
@@ -396,7 +400,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
   getFramework () {
     let frameworks = [];
     let systemRequests = [];
-    const channelFrameworks = _.get(this.programScope['userChannelData'], 'frameworks');
+    const channelFrameworks = _.filter(_.get(this.programScope['userChannelData'], 'frameworks'), {'status': 'Live'});
     const frameworkTypeGroup = _.groupBy(channelFrameworks, 'type');
     return new Promise ((resolve, reject) => {
       _.forEach(this.allowedFrameworkTypes, type => {
@@ -795,16 +799,25 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     //Get framework fields data
     if (!_.isEmpty(this.projectScopeForm.value.framework)) {
       const framework = this.projectScopeForm.value.framework;
-      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', framework.type, null, null, this.selectedTargetCollection),
+      const request = [ this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', this.selectedTargetCollection),
                         this.frameworkService.readFramworkCategories(framework.identifier),
                         ];
 
       forkJoin(request).subscribe(res => {
-        const formData = _.get(_.first(res), 'result.data.properties');
+        let formData = [];
+        formData = _.get(_.first(res), 'result.data.properties');
         const frameworkDetails = res[1];
         this.programScope['selectedFramework'] = _.cloneDeep(frameworkDetails);
-        this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
-        this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+        if(!!formData){
+          let categories:any = []
+          categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+          let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+          this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, _.get(this.programDetails, 'config'));
+          this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+        }else{
+          this.formFieldProperties = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formData, _.get(this.programDetails, 'config'));
+          this.programScope['formFieldProperties'] = _.cloneDeep(this.formFieldProperties);
+        }
 
       });
       if (!this.projectTargetType || _.includes(['collections', 'questionSets'], this.projectTargetType)) {
@@ -1098,6 +1111,7 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
     programData['program_id'] = '';
     this.setFrameworkAttributesToconfig();
     if (!this.programId) {
+      
       programData['config'] = this.programConfig;
       this.programsService.createProgram(programData).subscribe(
         (res) => {
@@ -1117,16 +1131,23 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['framework'] = config.framework;
-          this.programConfig['board'] = config.board;
-          this.programConfig['gradeLevel'] = config.gradeLevel;
-          this.programConfig['medium'] = config.medium;
-          this.programConfig['subject'] = config.subject;
+
+          this.frameworkCategories.forEach(cat =>{
+            this.programConfig[cat.code] = config[cat.code];
+          });
+
           this.programConfig['collections'] = this.getCollections();
           _.forEach(this.projectScopeForm.value.pcollections, item => {
             programData['collection_ids'].push(item.id);
           });
         }
       }
+
+      this.formFieldProperties.forEach((data: any) =>{ 
+        this.programConfig.sharedContext.push(data.code);
+        let ids = data.code+"Ids"
+        this.programConfig.sharedContext.push(ids);
+      })
 
       programData['config'] = this.programConfig;
       programData['program_id'] = this.programId;
@@ -1193,10 +1214,9 @@ export class CreateProgramComponent implements OnInit, AfterViewInit {
         if (_.get(this.projectScopeForm, 'value.pcollections') && !_.isEmpty(this.projectScopeForm.value.pcollections)) {
           const config = this.addCollectionsDataToConfig();
           this.programConfig['framework'] = config.framework;
-          this.programConfig['board'] = config.board;
-          this.programConfig['gradeLevel'] = config.gradeLevel;
-          this.programConfig['medium'] = config.medium;
-          this.programConfig['subject'] = config.subject;
+          this.frameworkCategories.forEach(cat =>{
+            this.programConfig[cat.code] = config[cat.code];
+          });
           this.programConfig['collections'] = this.getCollections();
           _.forEach(this.projectScopeForm.value.pcollections, item => {
             prgData['collection_ids'].push(item);
@@ -1238,11 +1258,28 @@ onChangeTargetCollectionCategory() {
   if(this.projectScopeForm.controls && this.projectScopeForm.value) {
     this.projectScopeForm.controls['target_collection_category'].setValue(this.selectedTargetCollection);
     this.projectScopeForm.value.pcollections = [];
-    if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
-      this.onFrameworkChange();
-    } else {
-      this.showTexbooklist();
-    }
+    let formData: any = [];
+    let fwCategories: any = [];
+    formData = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', this.selectedTargetCollection);
+    fwCategories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+
+    formData.subscribe(res =>{
+
+      if(res?.result?.data?.properties){
+        if(!this.fwCats){
+          this.fwCats = res.result.data.properties;
+        }
+        this.frameworkCategories = fwCategories.map(t1 => ({...t1, ...this.fwCats.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+        this.resource.frmelmnts.fwCategories = this.frameworkCategories;
+        if (!_.isEmpty(this.projectScopeForm.value.framework) && _.isEmpty(this.programScope['formFieldProperties'])) {
+          this.onFrameworkChange();
+        } else {
+          this.showTexbooklist();
+        }
+      }else{
+        this.showTexbooklist();
+      }
+    })
   }
 
   if(this.programScope['userChannelData']) {
@@ -1445,12 +1482,12 @@ showTexbooklist() {
   }
 
   addCollectionsDataToConfig() {
-    const config = {
+    let config: any = {
       'framework': [],
-      'board': [],
-      'gradeLevel': [],
-      'medium': [],
-      'subject': []
+      // 'board': [],
+      // 'gradeLevel': [],
+      // 'medium': [],
+      // 'subject': []
     };
 
     _.forEach(this.tempCollections, (collection) => {
@@ -1467,46 +1504,25 @@ showTexbooklist() {
         }
       }
 
-      if (_.isArray(collection.board)) {
-        _.forEach(collection.board, (single) => {
-          if (config.board.indexOf(single) === -1) {
-            config.board.push(single);
-          }
-        });
-      } else if (_.isString(collection.board)) {
-        if (config.board.indexOf(collection.board) === -1) {
-          config.board.push(collection.board);
-        }
-      }
+      this.frameworkCategories.forEach(cat =>{
 
-      if (_.isArray(collection.medium)) {
-        _.forEach(collection.medium, (single) => {
-          if (config.medium.indexOf(single) === -1) {
-            config.medium.push(single);
-          }
-        });
-      } else {
-        if (config.medium.indexOf(collection.medium) === -1) {
-          config.medium.push(collection.medium);
-        }
-      }
-      if (_.isArray(collection.subject)) {
-        _.forEach(collection.subject, (single) => {
-          if (config.subject.indexOf(single) === -1) {
-            config.subject.push(single);
-          }
-        });
-      } else {
-        if (config.subject.indexOf(collection.subject) === -1) {
-          config.subject.push(collection.subject);
-        }
-      }
+        let code = cat.code;
+        config[cat.code] = [];
 
-      _.forEach(collection.gradeLevel, (single) => {
-        if (config.gradeLevel.indexOf(single) === -1) {
-          config.gradeLevel.push(single);
+        if (_.isArray(collection[cat.code])) {
+          _.forEach(collection[cat.code], (single) => {
+            if (config[cat.code].indexOf(single) === -1) {
+              config[cat.code].push(single);
+            }
+          });
+        } else if (_.isString(collection[cat.code])) {
+          if (config[cat.code].indexOf(collection[cat.code]) === -1) {
+            config[cat.code].push(collection[cat.code]);
+          }
         }
-      });
+
+      })
+
     });
 
     return config;
@@ -2101,5 +2117,12 @@ showTexbooklist() {
   }
   isSendReminderChanged($event){
     this.isSendReminderEnabled = $event.target.checked;
+  }
+
+  getProgramInfo(data,type) {
+    let paramName = type;
+    const newparse = data[paramName];
+    const temp = (_.isArray(newparse)) ? _.join(_.compact(_.uniq(newparse)), ', ') : newparse;
+    return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
   }
 }

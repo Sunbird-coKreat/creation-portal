@@ -20,6 +20,7 @@ import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { isEmpty } from 'lodash';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 
 interface IDynamicInput {
@@ -118,6 +119,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         {id: 3, name: 'BOTH', defaultTab: 3, tabs: [3]},
         {id: 4, name: 'NONE', defaultTab: 4, tabs: [4]}
   ]
+  public frameworkCategories: any = [];
+  public fields:any = [];
+  public formFilters: any = [];
 
   constructor(public frameworkService: FrameworkService, public resourceService: ResourceService,
     public configService: ConfigService, public activatedRoute: ActivatedRoute, private router: Router,
@@ -128,7 +132,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     private paginationService: PaginationService, public actionService: ActionService,
     private collectionHierarchyService: CollectionHierarchyService, private telemetryService: TelemetryService,
     private sbFormBuilder: UntypedFormBuilder, private sourcingService: SourcingService, private helperService: HelperService,
-    public programTelemetryService: ProgramTelemetryService, private contentHelperService: ContentHelperService) {
+    public programTelemetryService: ProgramTelemetryService, private contentHelperService: ContentHelperService,
+    private cslFrameworkService: CslFrameworkService) {
     this.programId = this.activatedRoute.snapshot.params.programId;
   }
   ngOnInit() {
@@ -155,8 +160,24 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     this.currentStage = 'programComponent';
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
-    this.getProgramDetails();
-    this.setContextualHelpConfig();
+    let formCat: any = [];
+    const request = [ 
+      this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
+      this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
+    ];
+    forkJoin(request).subscribe(res => {
+        
+      let formData = _.get(_.first(res), 'result.data.properties');
+      let categories:any = []
+      categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      this.frameworkCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      const frameworkDetails = res[1];
+      this.formFilters = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], this.frameworkCategories, "");
+      this.getProgramDetails();
+        this.setContextualHelpConfig();
+    });
+
+      
   }
 
   ngAfterViewInit() {
@@ -223,6 +244,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   getProgramDetails() {
     this.programsService.getProgram(this.programId).subscribe((programDetails) => {
       this.programDetails = _.get(programDetails, 'result');
+      this.programDetails.config.categories = this.frameworkCategories;
       this.programContentTypes = this.programsService.getProgramTargetPrimaryCategories(this.programDetails);
       this.userRoles = this.userRoles.concat(_.get(this.programDetails, 'config.roles')).sort((a, b) => a.id - b.id);
       this.roles = _.cloneDeep(this.userRoles);
@@ -345,23 +367,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   getUserProgramPreferences() {
-    this.prefernceForm = this.sbFormBuilder.group({
-      medium: [],
-      subject: [],
-      gradeLevel: [],
-    });
 
-    this.prefernceFormOptions['medium'] = _.compact(this.programDetails.config.medium) || [];
-    this.prefernceFormOptions['gradeLevel'] = _.compact(this.programDetails.config.gradeLevel) || [];
-    this.prefernceFormOptions['subject'] = _.compact(this.programDetails.config.subject) || [];
-
-    if (this.programDetails.target_type === 'searchCriteria' && !_.isEmpty(this.sessionContext.frameworkData)) {
-      this.sessionContext.frameworkData.forEach((element) => {
-        if (_.includes(['medium', 'subject', 'gradeLevel'], element.code)) {
-          this.prefernceFormOptions[element['code']] = _.map(element.terms, 'name');
-        }
-      });
-    }
     const req = this.programsService.getUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId);
     return req.pipe(
       tap((res) => {
@@ -371,12 +377,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         }
         if (!_.isEmpty(this.userPreferences.contributor_preference)) {
           this.textbookFiltersApplied = true;
+          this.setPreferences = this.userPreferences.contributor_preference;
           // tslint:disable-next-line: max-line-length
-          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          this.formFilters.forEach((val: any)=>{
+            val.default = this.userPreferences.contributor_preference[val['code']];
+          });
         }
       }),catchError((error) => {
         const errInfo = {
@@ -527,6 +532,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   cancelRemoveUserFromProgram() {
     this.showUserRemoveRoleModal = false;
     this.selectedUserToRemoveRole.newRole = this.selectedUserToRemoveRole.projectselectedRole;
+    this.formFilters.forEach(val=> { val.default = null });
   }
 
   getProgramRoleMapping(user) {
@@ -725,7 +731,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           contents = _.compact(_.concat(_.get(response.result, 'QuestionSet'), _.get(response.result, 'content')));
         }
         this.contentCount = 0;
-        this.contributorTextbooks = _.cloneDeep(contents);
+                this.contributorTextbooks = _.cloneDeep(contents);
         _.map(this.contributorTextbooks, (content) => {
           content['contentVisibility'] = this.contentHelperService.shouldContentBeVisible(content, this.programDetails, this.currentNominationStatus, this.sessionContext.currentRoles);
           content['sourcingStatus'] = this.contentHelperService.checkSourcingStatus(content, this.programDetails);
@@ -758,6 +764,11 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if(this.programDetails?.target_type === 'questionSets') objType = 'QuestionSet';
         if (res && res.result && res.result[objType] && res.result[objType].length) {
           this.showTexbooklist(res.result[objType]);
+        } else {
+          if(!!this.loaders && !!this.loaders.showCollectionListLoader) {
+            this.loaders.showCollectionListLoader = false;
+          }
+          this.contentCount = 0
         }
       },
       (err) => {
@@ -775,7 +786,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
     const notInitiatedNoms = ['Pending', 'Approved', 'Rejected'];
     // tslint:disable-next-line:max-line-length
     const isTargetTypeQuestionSet = this.programDetails?.target_type === 'questionSets' ? true : false;
-
+    
     contributorTextbooks = (!_.isUndefined(this.currentNominationStatus) && _.includes(notInitiatedNoms, this.currentNominationStatus)) ? _.filter(contributorTextbooks, (collection) => {
 
       return _.includes(
@@ -808,7 +819,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
           // tslint:disable-next-line:max-line-length
           this.contentStatusCounts = this.collectionHierarchyService.getContentCountsForIndividual(contents, this.userService.userid, contributorTextbooks);
         }
-        this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
+                this.contributorTextbooks = this.collectionHierarchyService.getIndividualCollectionStatus(this.contentStatusCounts, contributorTextbooks);
         this.contentCount = this.contributorTextbooks.length;
         const collectionsWithSamples = _.map(_.filter(this.contributorTextbooks, c => c.totalSampleContent > 0), 'identifier');
         if (!_.isEmpty(this.selectedCollectionIds)) {
@@ -930,9 +941,6 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       preferences = {};
     }
     this.textbookFiltersApplied = false;
-    this.setPreferences['medium'] = [];
-    this.setPreferences['subject'] = [];
-    this.setPreferences['gradeLevel'] = [];
 
     // tslint:disable-next-line: max-line-length
     this.programsService.setUserPreferencesforProgram(this.userService.userProfile.identifier, this.programId, preferences, 'contributor').subscribe(
@@ -941,11 +949,12 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
         if (!_.isEmpty(this.userPreferences.contributor_preference)) {
           this.textbookFiltersApplied = true;
           // tslint:disable-next-line: max-line-length
-          this.setPreferences['medium'] = (this.userPreferences.contributor_preference.medium) ? this.userPreferences.contributor_preference.medium : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['subject'] = (this.userPreferences.contributor_preference.subject) ? this.userPreferences.contributor_preference.subject : [];
-          // tslint:disable-next-line: max-line-length
-          this.setPreferences['gradeLevel'] = (this.userPreferences.contributor_preference.gradeLevel) ? this.userPreferences.contributor_preference.gradeLevel : [];
+          this.setPreferences = this.userPreferences.contributor_preference;
+          this.formFilters.forEach((val: any)=>{
+            val.default = this.userPreferences.contributor_preference[val['code']];
+          });
+        }else {
+          this.formFilters.forEach(val=> { val.default = null });
         }
       },
       (error) => {
@@ -969,7 +978,7 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
   applyTextbookFilters() {
     this.prefModal.deny();
     const prefData = {
-        ...this.prefernceForm.value
+        ...this.setPreferences
     };
     this.applyPreferences(prefData);
   }
@@ -1009,7 +1018,8 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
       const request = {
         program_id: programId,
         status: status,
-        collection_ids: this.selectedCollectionIds
+        collection_ids: this.selectedCollectionIds, 
+        frameworkCategories: this.frameworkCategories.map(item => item.code)
       };
 
       if (!_.isEmpty(this.programDetails.targetprimarycategories)) {
@@ -1259,5 +1269,9 @@ export class ProgramComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.stageSubscription.unsubscribe();
+  }
+
+  getFormData(event){
+    this.setPreferences = {...this.setPreferences, ...event};
   }
 }

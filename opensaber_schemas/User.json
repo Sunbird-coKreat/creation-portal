@@ -16,20 +16,14 @@
       "type": "object",
       "title": "The User Schema",
       "required": [
-        "firstName",
         "userId"
       ],
       "additionalProperties": false,
       "properties": {
-        "firstName": {
-          "$id": "#/properties/firstName",
-          "type": "string",
-          "$comment": "First Name"
-        },
-        "lastName": {
-          "$id": "#/properties/lastName",
-          "type": "string",
-          "$comment": "Last Name"
+        "isDeleted": {
+          "$id": "#/properties/isDeleted",
+          "type": "boolean",
+          "$comment": "set to true when deleted"
         },
         "userId": {
           "$id": "#/properties/userId",

@@ -515,37 +515,12 @@
 																	</span>
                               </th>
                               <th class="w-10 text-center cursor-pointer sb-sorting"
-                                  (click)="sortCollection('medium')">
-                                {{resource?.frmelmnts?.lbl?.medium}} &nbsp;&nbsp;
+                              *ngFor="let data of resource.frmelmnts.fwCategories"
+                                  (click)="sortCollection(data.name)">
+                                {{data.name}} &nbsp;&nbsp;
                                 <i class="fa fa-sort" aria-hidden="true"
-                                   *ngIf="direction === '' || sortColumn !== 'medium' "></i>
-                                <span *ngIf="sortColumn === 'medium'"
-                                      class="d-inline-block">
-																		<i class="fa fa-sort-asc" aria-hidden="true"
-                                       [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-																		<i class="fa fa-sort-desc" aria-hidden="true"
-                                       [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
-																	</span>
-                              </th>
-                              <th class="w-10 text-center cursor-pointer sb-sorting"
-                                  (click)="sortCollection('gradeLevel')">
-                                {{resource?.frmelmnts?.lbl?.class}} &nbsp;&nbsp;
-                                <i class="fa fa-sort" aria-hidden="true"
-                                   *ngIf="direction === '' || sortColumn !== 'gradeLevel' "></i>
-                                <span *ngIf="sortColumn === 'gradeLevel'"
-                                      class="d-inline-block">
-																		<i class="fa fa-sort-asc" aria-hidden="true"
-                                       [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
-																		<i class="fa fa-sort-desc" aria-hidden="true"
-                                       [ngClass]="{'sb-color-gray-100': direction === 'desc'}"></i>
-																	</span>
-                              </th>
-                              <th class="w-10 text-center cursor-pointer sb-sorting"
-                                  (click)="sortCollection('subject')">
-                                {{resource?.frmelmnts?.lbl?.subject}} &nbsp;&nbsp;
-                                <i class="fa fa-sort" aria-hidden="true"
-                                   *ngIf="direction === '' || sortColumn !== 'subject' "></i>
-                                <span *ngIf="sortColumn === 'subject'"
+                                   *ngIf="direction === '' || sortColumn !== data.name "></i>
+                                <span *ngIf="sortColumn === data.name"
                                       class="d-inline-block">
 																		<i class="fa fa-sort-asc" aria-hidden="true"
                                        [ngClass]="{'sb-color-gray-100': direction === 'asc'}"></i>
@@ -556,7 +531,7 @@
                               <th class="w-10">{{firstLevelFolderLabel}}</th>
                             </tr>
                             </thead>
-                            <tbody class="sb-table-body d-block w-100 o-y-auto max-height">
+                            <tbody class="sb-table-body d-block w-100 o-y-auto max-height txt-center">
                             <tr *ngFor="let data of collections">
                               <td class="collapsing">
                                 <div class="sb-checkbox sb-checkbox-primary">
@@ -578,12 +553,12 @@
                                   {{data.name}}
                                 </div>
                               </td>
-                              <td>
+                              <td *ngFor="let fwCategorie of resource.frmelmnts.fwCategories">
                                 <div class="sb__ellipsis sb__ellipsis--three">
-                                  {{data.medium}}
+                                  {{getProgramInfo(data,fwCategorie.code)}}
                                 </div>
                               </td>
-                              <td>
+                              <!-- <td>
                                 <div class="sb__ellipsis sb__ellipsis--three">
                                   {{data.gradeLevel}}
                                 </div>
@@ -592,7 +567,7 @@
                                 <div class="sb__ellipsis sb__ellipsis--three">
                                   {{data.subject}}
                                 </div>
-                              </td>
+                              </td> -->
                               <td>
                                 <div class="sb__ellipsis sb__ellipsis--three">
                                   {{ data.childNodes ? data.childNodes.length : 0 }}

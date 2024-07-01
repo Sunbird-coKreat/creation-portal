@@ -16,6 +16,7 @@ import {ProgramTelemetryService} from '../../services';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
 import { collection } from '../list-contributor-textbooks/data';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 @Component({
   selector: 'app-program-nominations',
@@ -108,6 +109,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
   public noUsersFoundHelpConfig: any;
   public reviewNominationsHelpConfig: any;
   public userServiceData:any;
+  public frameworkCategories: any = [];
+
+
+  public fields:any = []
   constructor(public frameworkService: FrameworkService, private programsService: ProgramsService,
     private sourcingService: SourcingService,
     public resourceService: ResourceService, public config: ConfigService, private collectionHierarchyService: CollectionHierarchyService,
@@ -115,7 +120,10 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     private navigationHelperService: NavigationHelperService, public toasterService: ToasterService, public userService: UserService,
     public programStageService: ProgramStageService, private datePipe: DatePipe, private paginationService: PaginationService,
     public programTelemetryService: ProgramTelemetryService, public registryService: RegistryService,
-    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService) {
+    private contentHelperService: ContentHelperService, public telemetryService: TelemetryService, private helperService: HelperService,
+    public cslFrameworkService: CslFrameworkService) {
+
+      
 
   }
 
@@ -124,8 +132,18 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.getPageId();
     this.programId = this.activatedRoute.snapshot.params.programId;
     this.userServiceData = this.userService.userData$.subscribe((user: any) => {
-      this.userProfile = user.userProfile;
-      this.getProgramDetails();
+      let formCat: any = [];
+      formCat = this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', "");
+      this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      formCat.subscribe(res =>{
+        let cat = res?.result?.data?.properties
+        if(!!cat){
+          this.frameworkCategories = this.fields.map(t1 => ({...t1, ...cat.find(t2 => t2.code === t1.code)}))
+        }
+        this.userProfile = user.userProfile;
+        this.getProgramDetails();
+      });
+      
     });
     this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}, {id: this.programId, type: 'project'}];
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
@@ -147,6 +165,8 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     this.searchLimitCount = this.registryService.searchLimitCount; // getting it from service file for better changing page limit
     this.pageLimit = this.registryService.programUserPageLimit;
     this.setContextualHelpConfig();
+    
+    
   }
 
   ngAfterViewInit() {
@@ -660,9 +680,7 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
       this.programDetails = _.get(programDetails, 'result');
       this.sessionContext.programId = this.programDetails.program_id;
       this.getCollectionCategoryDefinition();
-      this.programDetails.config.medium = _.compact(this.programDetails.config.medium);
-      this.programDetails.config.subject = _.compact(this.programDetails.config.subject);
-      this.programDetails.config.gradeLevel = _.compact(this.programDetails.config.gradeLevel);
+      this.programDetails.config.categories = this.frameworkCategories;
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
       this.showBulkApprovalButton = this.showBulkApproval();
       this.setTargetCollectionValue();
@@ -987,21 +1005,23 @@ export class ProgramNominationsComponent implements OnInit, AfterViewInit, OnDes
     if (!_.isEmpty(this.state.stages)) {
       this.currentStage = _.last(this.state.stages).stage;
     }
-    if (this.sessionContext && this.programDetails && this.currentStage === 'programNominations') {
-      this.showTextbookLoader = true;
-      setTimeout(() => {
-        const req = {
-          url: `program/v1/read/${this.programId}`
-        };
-        this.programsService.get(req).subscribe((programDetails) => {
-          this.programDetails = _.get(programDetails, 'result');
-          forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
-          (response) => {
-              this.checkActiveTab();
-          });
-        });
-      }, 3000);
-    }
+    // if (this.sessionContext && this.programDetails && this.currentStage === 'programNominations') {
+      // this.showTextbookLoader = true;
+      // setTimeout(() => {
+      //   const req = {
+      //     url: `program/v1/read/${this.programId}`
+      //   };
+      //   this.programsService.get(req).subscribe((programDetails) => {
+      //     this.programDetails = _.get(programDetails, 'result');
+      //     this.programDetails.config.categories = this.frameworkCategories;
+      //     forkJoin(this.getAggregatedNominationsCount(), this.getcontentAggregationData(), this.getOriginForApprovedContents()).subscribe(
+      //     (response) => {
+      //         this.checkActiveTab();
+      //     });
+      //   });
+      // }, 3000);
+    // }
+    this.checkActiveTab();
   }
 
   applyPreferences(preferences?) {
@@ -1264,15 +1284,19 @@ getContribDashboardHeaders() {
 }
 
 downloadReport(report) {
+
+  let fltrs = {
+    program_id: [this.programId],
+    frameworkCategories: this.fields.map(field => field.code),
+    openForContribution: true,
+    report: report
+  }
+
   const req = {
     url: `program/v1/report`,
     data: {
         'request': {
-            'filters': {
-                program_id: [this.programId],
-                openForContribution: true,
-                report: report
-        }
+            'filters': fltrs
       }
     }
   };
@@ -1318,9 +1342,6 @@ downloadReport(report) {
 textbookLevelReportHeaders() {
   const headers = [
     this.resourceService.frmelmnts.lbl.projectName,
-    this.resourceService.frmelmnts.lbl.profile.Medium,
-    this.resourceService.frmelmnts.lbl.profile.Classes,
-    this.resourceService.frmelmnts.lbl.profile.Subjects,
     // tslint:disable-next-line:max-line-length
     this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
     // tslint:disable-next-line:max-line-length
@@ -1333,17 +1354,16 @@ textbookLevelReportHeaders() {
     this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn8.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
     // tslint:disable-next-line:max-line-length
     this.firstLevelFolderLabel ? this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn9.replace('{FIRST_LEVEL_FOLDER}', this.firstLevelFolderLabel) : 'Folder',
-    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` )
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.TextbookLevelReportColumn10} ${type}` ),
+    ...this.fields.map(field => field.code)
   ];
+  
   return headers;
 }
 
 chapterLevelReportHeaders() {
   const headers = [
     this.resourceService.frmelmnts.lbl.projectName,
-    this.resourceService.frmelmnts.lbl.profile.Medium,
-    this.resourceService.frmelmnts.lbl.profile.Classes,
-    this.resourceService.frmelmnts.lbl.profile.Subjects,
     // tslint:disable-next-line:max-line-length
     this.programDetails.target_collection_category ? this.resourceService.frmelmnts.lbl.textbookName.replace('{TARGET_NAME}', this.programDetails.target_collection_category[0]) : 'Textbook Name',
     // tslint:disable-next-line:max-line-length
@@ -1351,7 +1371,8 @@ chapterLevelReportHeaders() {
     this.resourceService.frmelmnts.lbl.contentsContributed,
     this.resourceService.frmelmnts.lbl.contentsReviewed,
     this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn7,
-    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` )
+    ..._.map(this.programContentTypes.split(', '), type => `${this.resourceService.frmelmnts.lbl.ChapterLevelReportColumn8} ${type}` ),
+    ...this.fields.map(field => field.code)
   ];
   return headers;
 }

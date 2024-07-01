@@ -66,7 +66,7 @@ export class ModalPreviewComponent implements OnInit {
     const identifierList = this.getIdentifiersList();
     if (identifierList.length) {
       const req = {
-        url: 'question/v1/list',
+        url: 'question/v2/list',
         data: {
           request: {
             search: {

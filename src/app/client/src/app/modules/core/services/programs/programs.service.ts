@@ -281,7 +281,7 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * logic which decides if user is with join link shoule we add him to the organisation or not
    */
-  addUsertoContributorOrg(orgId) {
+  addUsertoContributorOrg(orgId, frameworkObjectFields?) {
       // Check if organisation exists
       const orgSearch = {
         entityType: ['Org'],
@@ -301,18 +301,17 @@ export class ProgramsService extends DataService implements CanActivate {
             if (_.get(userRegData, 'error') === false) {
               if (_.isEmpty(_.get(userRegData, 'user'))) {
                 // Add user to the registry
-                const userAdd = {
+                const userAdd: any = {
                   User: {
-                    firstName: this.userService.userProfile.firstName,
-                    lastName: this.userService.userProfile.lastName || '',
                     userId: this.userService.userProfile.identifier,
                     enrolledDate: new Date().toISOString(),
-                    board : contibutorOrg.board,
-                    medium: contibutorOrg.medium,
-                    gradeLevel: contibutorOrg.gradeLevel,
-                    subject: contibutorOrg.subject
                   }
                 };
+                frameworkObjectFields.forEach((field:any)=>{
+                  if(!!contibutorOrg[field]){
+                    userAdd.User[field.code] = contibutorOrg[field.code];
+                  }
+                })
 
                 this.addToRegistry(userAdd).subscribe((res) => {
                   this.mapUsertoContributorOrgReg(orgOsid, res.result.User.osid, userRegData);
@@ -732,16 +731,13 @@ export class ProgramsService extends DataService implements CanActivate {
   /**
    * makes api call to get list of programs from ext framework Service
    */
-  getMyProgramsForOrg(reqFilters): Observable<ServerResponse> {
-    const req = {
+  getMyProgramsForOrg(req): Observable<ServerResponse> {
+    const request = {
       url: `${this.config.urlConFig.URLS.CONTRIBUTION_PROGRAMS.LIST}`,
-      data: {
-        request: {
-          filters: reqFilters
-        }
-      }
+      //url: 'http://localhost:6000/program/v1/list',
+      data: req
     };
-    return this.API_URL(req);
+    return this.API_URL(request);
   }
 
   /* Get the org details by filters*/

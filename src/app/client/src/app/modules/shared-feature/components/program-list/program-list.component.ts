@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ProgramsService, RegistryService, UserService, FrameworkService } from '@sunbird/core';
 import { ResourceService, ToasterService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { CacheService } from '../../../shared/services/cache-service/cache.servi
 import { first } from 'rxjs/operators';
 import { SourcingService, HelperService } from '../../../sourcing/services';
 import { isEmpty } from 'lodash';
+import { CslFrameworkService } from '../../../public/services/csl-framework/csl-framework.service';
 
 @Component({
   selector: 'app-program-list',
@@ -18,7 +19,7 @@ import { isEmpty } from 'lodash';
   styleUrls: ['./program-list.component.scss'],
   providers: [DatePipe]
 })
-export class ProgramListComponent implements OnInit, AfterViewInit {
+export class ProgramListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public programs: IProgram[];
   public program: any;
@@ -61,13 +62,18 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   public myProjectContextHelpConfig: any;
   public myProjectNotFoundHelpConfig: any;
   public contentTypeHeaderText;
+  public frameworkObjectFields;
+  public frameworkFields:any;
+  public prgramListSubscriber: any;
+ 
   constructor(public programsService: ProgramsService, private toasterService: ToasterService, private registryService: RegistryService,
     public resourceService: ResourceService, private userService: UserService, private activatedRoute: ActivatedRoute,
     public router: Router, private datePipe: DatePipe, public configService: ConfigService, public cacheService: CacheService,
     private navigationHelperService: NavigationHelperService, public activeRoute: ActivatedRoute,
     private telemetryService: TelemetryService, public frameworkService: FrameworkService,
-    private sourcingService: SourcingService, private helperService: HelperService) {
-      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType;
+    private sourcingService: SourcingService, private helperService: HelperService,
+    private cslFrameworkService: CslFrameworkService) {
+      this.contentTypeHeaderText = this.resourceService?.frmelmnts?.lbl?.contentType; 
     }
 
   ngOnInit() {
@@ -79,15 +85,18 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       }
     });
     this.userService.userData$.subscribe(user =>{
-      this.userProfile = user.userProfile;
-      this.checkIfUserIsContributor();
-      this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
-      this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
-      this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
-      this.telemetryInteractObject = {};
-      this.setContextualHelpConfig();
-    })
-    
+      this.cslFrameworkService.setDefaultFWforCsl('', this.userService.hashTagId);
+      this.prgramListSubscriber = this.cslFrameworkService.getFrameworkCategories$.subscribe((categories: any)=>{
+        this.userProfile = user.userProfile;
+        this.checkIfUserIsContributor();
+        this.issourcingOrgAdmin = this.userService.isSourcingOrgAdmin();
+        this.telemetryInteractCdata = [{id: this.userService.channel, type: 'sourcing_organization'}];
+        this.telemetryInteractPdata = { id: this.userService.appId, pid: this.configService.appConfig.TELEMETRY.PID };
+        this.telemetryInteractObject = {};
+        this.setContextualHelpConfig();
+      })
+      
+    });
   }
 
   setContextualHelpConfig() {
@@ -141,13 +150,15 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
    * Check if logged in user is contributor or sourcing org
    */
   private checkIfUserIsContributor() {
+    this.frameworkObjectFields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+    console.log("this.frameworkObjectFields", this.frameworkObjectFields);
     // TODO implement based on api and remove url checks
     // this.isContributor = !isContributor;
     const orgId = this.activatedRoute.snapshot.params.orgId;
 
     // Check if user part of that organisation
     if (this.router.url.includes('/join/' + orgId)) {
-      this.programsService.addUsertoContributorOrg(orgId);
+      this.programsService.addUsertoContributorOrg(orgId, this.frameworkObjectFields);
     }
     if (this.userService.isContributingOrgUser()
       && !this.router.url.includes('/sourcing')
@@ -180,34 +191,44 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
   }
 
   getProgramsListByRole(setfilters?) {
+    this.frameworkFields = _.map(this.frameworkObjectFields, 'label').join(',');
+    const fwCats: any = this.cslFrameworkService?.getFrameworkCategories();
+
     this.showLoader = true; // show loader till getting the data
     if (this.isContributor) {
         // tslint:disable-next-line: max-line-length
-        const sort = {
-          // tslint:disable-next-line: max-line-length
-          'medium': _.get(this.userService.userProfile, 'userRegData.User.medium') || [],
-          // tslint:disable-next-line: max-line-length
-          'gradeLevel': _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') || [],
-          // tslint:disable-next-line: max-line-length
-          'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') || []
-        };
+        // const sort = {
+        //   // tslint:disable-next-line: max-line-length
+        //   'medium': _.get(this.userService.userProfile, 'userRegData.User.medium') || [],
+        //   // tslint:disable-next-line: max-line-length
+        //   'gradeLevel': _.get(this.userService.userProfile, 'userRegData.User.gradeLevel') || [],
+        //   // tslint:disable-next-line: max-line-length
+        //   'subject': _.get(this.userService.userProfile, 'userRegData.User.subject') || []
+        // };
 
       if (this.activeMyProgramsMenu) {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeMyProgramAppliedFiltersTenantAccess' : 'contributeMyProgramAppliedFilters');
         // tslint:disable-next-line: max-line-length
-        this.getMyProgramsForContrib(['Live', 'Unlisted', 'Closed'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
+        this.getMyProgramsForContrib(['Live', 'Unlisted', 'Closed'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else if (this.activeAllProgramsMenu) {
         // tslint:disable-next-line: max-line-length
         const applyFilters = this.getFilterDetails(setfilters, this.userService.slug ? 'contributeAllProgramAppliedFiltersTenantAccess' : 'contributeAllProgramAppliedFilters');
 
         // tslint:disable-next-line: max-line-length
-        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters, sort); // this method will call with applied req filters data other wise with origional req body
+        this.getAllProgramsForContrib('public', ['Live', 'Unlisted'], applyFilters); // this method will call with applied req filters data other wise with origional req body
       } else {
         this.showLoader = false;
       }
     } else {
       const applyFilters = (this.forTargetType === 'searchCriteria') ? this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFiltersSearchCriteria') : this.getFilterDetails(setfilters, 'sourcingMyProgramAppliedFilters');
+      if(!!applyFilters){
+        Object.keys(applyFilters).forEach(key => {
+          if (applyFilters[key] === null) {
+            delete applyFilters[key];
+          }
+        });        
+      }
       this.getMyProgramsForOrg(applyFilters); // this method will call with applied req filters data other wise with origional req body
     }
   }
@@ -376,14 +397,16 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     req.request.filters['nomination_enddate'] = 'open';
 
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      // req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      req.request.filters = { ...req.request.filters, ...appliedfilters };
     }
+    req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getAllProgramsByType(req)
       .subscribe((myProgramsResponse) => {
+      
         this.programs = _.map(_.get(myProgramsResponse, 'result.programs'), (program: any) => {
           if (program.program_id) {
-            program.activeDate = this.setProgramActiveDate(program)
-            return program;
+            return this.setProgramFields(program);
           }
         });
         this.count = this.programs.length;
@@ -482,11 +505,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       req.request.filters['status'] = status;
     }
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      // req.request.filters = { ...req.request.filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      req.request.filters = { ...req.request.filters, ...appliedfilters };
     }
+    req.request.frameworkCategoryFields = _.map(this.frameworkObjectFields, 'code');
     this.programsService.getMyProgramsForContrib(req).subscribe((programsResponse) => {
       this.programs = _.map(_.get(programsResponse, 'result.programs'), (obj: any) => {
         if (obj.program) {
+          obj.program = this.setProgramFields(obj.program);
           obj.program = _.merge({}, obj.program, {
             contributionDate: obj.createdon,
             nomination_status: obj.status,
@@ -496,6 +522,7 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
           });
           return obj.program;
         }
+
       });
       this.enrollPrograms = this.programs;
       this.tempSortPrograms = this.programs;
@@ -594,13 +621,22 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
       filters['user_id'] = this.userService.userid;
     }
     if (appliedfilters && this.filtersAppliedCount) { // add filters in request only when applied filters are there and its length
-      filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      // filters = { ...filters, ...this.addFiltersInRequestBody(appliedfilters) };
+      filters = { ...filters,...appliedfilters};
     }
-    return this.programsService.getMyProgramsForOrg(filters).subscribe((response) => {
+    let req: any;
+    // Request body for all programs tab for contributor org admin
+    req = {
+      request: {
+        filters: filters,
+        frameworkCategoryFields: _.map(this.frameworkObjectFields, 'code')
+      }
+    }
+
+    return this.programsService.getMyProgramsForOrg(req).subscribe((response) => {
       this.programs = _.map(_.get(response, 'result.programs'), (program: any) => {
         if (program.program_id) {
-          program.activeDate = this.setProgramActiveDate(program)
-          return program;
+          return this.setProgramFields(program);
         }
       });
       this.count = _.get(response, 'result.count');
@@ -649,39 +685,14 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
     return count + ' ' + this.programsService.setTargetCollectionName(program, 'plural') ;
   }
 
-  getProgramInfo(program, type) {
-    let paramName = type;
-    if (program && program.config) {
-      if (type === 'framework' && _.has(program, 'config.frameworkObj') && !_.isEmpty(program.config.frameworkObj)) {
-        paramName = 'frameworkObj';
-      }
-      const temp = this.getCorrectedValue(program.config[paramName], false);
-      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
-    } else {
-      if (type === 'framework' && _.has(program, 'frameworkObj') && !_.isEmpty(program.frameworkObj)) {
-        paramName = 'frameworkObj';
-      }
-      const temp = this.getCorrectedValue(program[paramName], true);
-      return (paramName === 'frameworkObj') ? temp.name || temp.code : temp;
-    }
-  }
-
-  getCorrectedValue(value, isJsonString) {
+  getCorrectedValue(value) {
     try {
-      const newparse = (isJsonString) ? JSON.parse(value) : value;
+      const newparse = JSON.parse(value);
       return (_.isArray(newparse)) ? _.join(_.compact(_.uniq(newparse)), ', ') : newparse;
     }
     catch {
       return value;
     }
-  }
-
-  getProgramNominationStatus(program) {
-    return program.nomination_status;
-  }
-
-  getSourcingOrgName(program) {
-    return program.sourcing_org_name ? program.sourcing_org_name : '-';
   }
 
   getProgramContentTypes(program) {
@@ -866,5 +877,23 @@ export class ProgramListComponent implements OnInit, AfterViewInit {
 
   getTelemetryInteractCdata(id, type) {
     return [...this.telemetryInteractCdata, { type: type, id: _.toString(id)} ];
+  }
+
+  setProgramFields(program) {
+      program.activeDate = this.setProgramActiveDate(program)
+      program.framework = this.getCorrectedValue(program.frameworkObj)
+
+    _.forEach(this.frameworkObjectFields, (field)=> {
+      if (program[field.code]) {
+        program[field.code] = this.getCorrectedValue(program[field.code]);
+      }
+    })
+    return program;
+  }
+
+  ngOnDestroy(){
+    if(this.prgramListSubscriber){
+      this.prgramListSubscriber.unsubscribe();
+    }
   }
 }

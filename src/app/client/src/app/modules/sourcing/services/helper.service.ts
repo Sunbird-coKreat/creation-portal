@@ -218,13 +218,33 @@ export class HelperService {
     return this.sendNotification.asObservable();
   }
 
-  updateContent(req, contentId): Observable<ServerResponse> {
+  updateContent(req, contentId, channelId?): Observable<ServerResponse> {
     const option = {
       url: this.configService.urlConFig.URLS.CONTENT.UPDATE + '/' + contentId,
       data: {
         'request': req
       }
     };
+    if (channelId) {
+      option['header'] = {
+        ['X-Channel-Id']: channelId
+      }
+    }
+    return this.actionService.patch(option);
+  }
+
+  updateQuestionset(req, contentId, channelId?): Observable<ServerResponse> {
+    const option = {
+      url: this.configService.urlConFig.URLS.QUESTIONSET.UPDATE + '/' + contentId,
+      data: {
+        'request': req
+      }
+    };
+    if (channelId) {
+      option['header'] = {
+        ['X-Channel-Id']: channelId
+      }
+    }
     return this.actionService.patch(option);
   }
 
@@ -242,7 +262,7 @@ export class HelperService {
 
   reviewQuestionSet(contentId): Observable<ServerResponse> {
     const option = {
-      url: `questionset/v1/review/${contentId}`,
+      url: `questionset/v2/review/${contentId}`,
       data: {
         'request': {
           'questionset': {}
@@ -286,7 +306,7 @@ export class HelperService {
       }
     };
     const option = {
-      url: `questionset/v1/publish/${contentId}`,
+      url: `questionset/v2/publish/${contentId}`,
       data: requestBody
     };
     return this.actionService.post(option);
@@ -392,7 +412,7 @@ export class HelperService {
             reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
             reqOption.data.request['questionset'] = {};
             reqOption.data.request['questionset'] = reqOption.data.request.content;
-            _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
+            _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v2/read/${contentMetaData.identifier}`;
             delete reqOption.data.request.content;
           }
           this.learnerService.post(reqOption).subscribe((res: any) => {
@@ -419,7 +439,7 @@ export class HelperService {
 
   publishQuestionSetToConsumption(questionSetId, programContext) {
     const option = {
-      url: 'questionset/v1/read/' + questionSetId,
+      url: 'questionset/v2/read/' + questionSetId,
       param: { 'mode': 'edit' }
     };
 
@@ -441,7 +461,7 @@ export class HelperService {
               ? (<HTMLInputElement>document.getElementById('portalBaseUrl')).value : 'https://dock.sunbirded.org'
 
         const reqFormat = {
-            source: `${baseUrl}/api/questionset/v1/read/${questionSetData.identifier}`
+            source: `${baseUrl}/api/questionset/v2/read/${questionSetData.identifier}`
         };
 
         if (programContext.target_type === 'searchCriteria') {
@@ -1002,7 +1022,7 @@ export class HelperService {
         url: `${configUrl}schemas/collection/1.0/config.json`,
       };
       if (projectTargetType === 'questionSets') {
-        req.url = `${configUrl}schemas/questionset/1.0/config.json`;
+        req.url = `${configUrl}schemas/questionset/1.1/config.json`;
       }
       return this.httpClient.get(req.url).pipe(map((response) => {
         return response;
@@ -1129,7 +1149,7 @@ export class HelperService {
       reqOption.url = this.configService.urlConFig.URLS.BULKJOB.DOCK_QS_IMPORT_V1;
       reqOption.data.request['questionset'] = {};
       reqOption.data.request['questionset'] = reqOption.data.request.content;
-      _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v1/read/${contentMetaData.identifier}`;
+      _.first(reqOption.data.request['questionset']).source = `${baseUrl}/api/questionset/v2/read/${contentMetaData.identifier}`;
       delete reqOption.data.request.content;
     }
     return this.learnerService.post(reqOption).subscribe((res: any) => {
@@ -1195,7 +1215,7 @@ export class HelperService {
        requestBody.request.questionset['requestChanges'] = _.trim(comment);
     }
     const option = {
-      url: `questionset/v4/system/update/${questionsetId}`,
+      url: `questionset/v5/system/update/${questionsetId}`,
       data: requestBody
     };
     return this.actionService.patch(option);
@@ -1505,7 +1525,7 @@ export class HelperService {
     };
 
     if (_.get(templateDetails, 'modeOfCreation') === 'questionset') {
-      option.url = 'questionset/v1/create';
+      option.url = 'questionset/v2/create';
       option.data.request['questionset'] = {};
       const questionsetObject = obj;
       if (programContext.target_type === 'searchCriteria') {
@@ -1520,7 +1540,7 @@ export class HelperService {
       }
       option.data.request['questionset'] = questionsetObject;
     } else if(_.get(templateDetails, 'mimeType[0]') === 'application/vnd.sunbird.question') {
-      option.url = 'question/v1/create';
+      option.url = 'question/v2/create';
       option.data.request['question'] = {};
       option.data.request['question'] = obj;
     }

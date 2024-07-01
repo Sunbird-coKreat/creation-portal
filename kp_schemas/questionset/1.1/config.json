@@ -4,12 +4,20 @@
     "children": {
       "type": "hasSequenceMember",
       "direction": "out",
-      "objects": ["Question", "QuestionImage", "QuestionSet", "QuestionSetImage"]
+      "objects": [
+        "Question",
+        "QuestionImage",
+        "QuestionSet",
+        "QuestionSetImage"
+      ]
     },
     "collection": {
       "type": "hasSequenceMember",
       "direction": "in",
-      "objects": ["QuestionSet", "QuestionSetImage"]
+      "objects": [
+        "QuestionSet",
+        "QuestionSetImage"
+      ]
     }
   },
   "version": "enable",
@@ -19,19 +27,33 @@
   "targetFrameworkTerms": [],
   "cacheEnabled": false,
   "schema_restrict_api": true,
-  "headers": [
-    {"label": "Question Type", "key": "qType"},
-    {"label": "Skill Tested", "key": "bloomsLevel"}
-  ],
   "restrictProps": {
-    "create" : [
+    "create": [
       "children",
-      "status"
+      "status",
+      "schemaVersion",
+      "rejectComment"
     ],
-    "update" : [
-      "children", "visibility", "code", "status", "mimeType"
+    "update": [
+      "children",
+      "visibility",
+      "code",
+      "status",
+      "mimeType",
+      "qumlVersion",
+      "schemaVersion",
+      "rejectComment"
+    ],
+    "updateHierarchy": [
+      "variants",
+      "config",
+      "reservedDialcodes",
+      "qumlVersion",
+      "schemaVersion",
+      "rejectComment"
     ]
   },
+  "oneOfProps": ["instructions"],
   "external": {
     "tableName": "questionset_hierarchy",
     "properties": {
@@ -45,7 +67,9 @@
         "type": "string"
       }
     },
-    "primaryKey": ["identifier"]
+    "primaryKey": [
+      "identifier"
+    ]
   },
   "captureAccessibilityInfo": false,
   "modifyAccessibilityInfoByReviewer": false,
@@ -70,6 +94,10 @@
           "need": "Hearing challenged",
           "feature": "Has visual clues for any audio in the content"
       }
+  ],
+  "headers": [
+    {"label": "Question Type", "key": "qType"},
+    {"label": "Skill Tested", "key": "complexityLevel"}
   ],
   "PII_Fields": {
     "user": {

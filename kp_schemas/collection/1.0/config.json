@@ -76,5 +76,12 @@
           "need": "Hearing challenged",
           "feature": "Has visual clues for any audio in the content"
       }
-  ]
+  ],
+  "PII_Fields": {
+    "user": {
+      "createdBy": ["creator"]
+    },
+    "org": {
+    }
+  }
 }

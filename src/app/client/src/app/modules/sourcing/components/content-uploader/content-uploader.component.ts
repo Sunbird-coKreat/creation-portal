@@ -1496,7 +1496,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
           const sharedMetaData = this.helperService.fetchRootMetaData(this.sharedContext, this.selectedSharedContext, this.programContext.target_type);
           _.merge(sharedMetaData, this.sessionContext.targetCollectionFrameworksData);
           const option = {
-            url: `questionset/v1/create`,
+            url: `questionset/v2/create`,
             header: {
               'X-Channel-Id': this.programContext.rootorg_id
             },
@@ -1696,7 +1696,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
   public deleteQuestionSet() {
     this.action = { name : 'play' };
     const option = {
-      url : `questionset/v1/retire/${this.selectedQuestionSet.identifier}`,
+      url : `questionset/v2/retire/${this.selectedQuestionSet.identifier}`,
       header: {
         'X-Channel-Id': this.programContext.rootorg_id
       }
@@ -1828,7 +1828,7 @@ export class ContentUploaderComponent implements OnInit, AfterViewInit, OnDestro
     forkJoin([this.playerService.getQuestionSetHierarchy(data.identifier, option), this.playerService.getQuestionSetRead(data.identifier, option)])
       .subscribe(([hierarchyRes, questionSetData]: any) => {
         this.showQuestionSetPreview = true;
-        const questionSet = _.get(hierarchyRes, 'result.questionSet');
+        const questionSet = _.get(hierarchyRes, 'result.questionset');
         questionSet.instructions = _.get(questionSetData, 'result.questionset.instructions');
         const contentDetails = {
             contentId: data.identifier,

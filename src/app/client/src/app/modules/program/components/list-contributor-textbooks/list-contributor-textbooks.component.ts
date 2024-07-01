@@ -14,7 +14,8 @@ import { NgForm } from '@angular/forms';
 import * as moment from 'moment';
 import { SourcingService } from '../../../sourcing/services';
 import { HelperService } from '../../../sourcing/services/helper.service';
-import { Subject, of } from 'rxjs';
+import { Subject, forkJoin, of } from 'rxjs';
+import { CslFrameworkService } from '../../../../modules/public/services/csl-framework/csl-framework.service';
 
 @Component({
   selector: 'app-list-contributor-textbooks',
@@ -70,13 +71,15 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
   private onComponentDestroy$ = new Subject<any>();
   public collectionsCnt = 0;
   public reviewContributionHelpConfig: any;
+  public formFilters: any;
+  public fields: any;
   constructor(private programsService: ProgramsService, public resourceService: ResourceService,
     private userService: UserService, private frameworkService: FrameworkService,
     public config: ConfigService, private activatedRoute: ActivatedRoute, private router: Router,
     public programStageService: ProgramStageService, private navigationHelperService: NavigationHelperService,
     public toasterService: ToasterService, private collectionHierarchyService: CollectionHierarchyService,
     private contentHelperService: ContentHelperService, private notificationService: NotificationService,
-    private sourcingService: SourcingService, private helperService: HelperService) { }
+    private sourcingService: SourcingService, private helperService: HelperService, public cslFrameworkService: CslFrameworkService) { }
 
   ngOnInit() {
     this.programId = this.activatedRoute.snapshot.params.programId;
@@ -99,6 +102,26 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
     this.telemetryInteractPdata = {id: this.userService.appId, pid: this.config.appConfig.TELEMETRY.PID};
     this.telemetryInteractObject = {};
     this.currentStage = 'listContributorTextbook';
+    const request = [ 
+      this.programsService.getformConfigData(this.userService.hashTagId, 'framework', '*', null, 'read', ""),
+      this.frameworkService.readFramworkCategories(this.cslFrameworkService.defaultFramework)
+    ];
+    forkJoin(request).subscribe(res => {
+        
+      let formData = _.get(_.first(res), 'result.data.properties');
+      let categories:any = []
+      categories = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      let formDataCategories = formData.map(t1 => ({...t1, ...categories.find(t2 => t2.code === t1.code)})).filter(t3 => t3.name);
+      const frameworkDetails = res[1];
+      this.formFilters = this.programsService.initializeFrameworkFormFields(frameworkDetails['categories'], formDataCategories, "");
+      this.fields = this.cslFrameworkService?.getFrameworkCategoriesObject();
+      this.initialize();
+      this.setContextualHelpConfig();
+    });
+  }
+
+  initialize(){
+
     this.fetchProgramDetails().subscribe((programDetails) => {
       this.programContext = _.get(programDetails, 'result');
       this.sessionContext.framework = _.isArray(_.get(this.programDetails, 'config.framework')) ? _.first(_.get(this.programDetails, 'config.framework')) : _.get(this.programDetails, 'config.framework');
@@ -121,7 +144,7 @@ export class ListContributorTextbooksComponent implements OnInit, AfterViewInit,
       // TODO: navigate to program list page
       const errorMes = typeof _.get(error, 'error.params.errmsg') === 'string' && _.get(error, 'error.params.errmsg');
     });
-    this.setContextualHelpConfig();
+
   }
 
   setContextualHelpConfig() {
