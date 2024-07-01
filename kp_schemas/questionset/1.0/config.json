@@ -1,0 +1,74 @@
+{
+  "objectType": "QuestionSet",
+  "relations": {
+    "children": {
+      "type": "hasSequenceMember",
+      "direction": "out",
+      "objects": ["Question", "QuestionImage", "QuestionSet", "QuestionSetImage"]
+    },
+    "collection": {
+      "type": "hasSequenceMember",
+      "direction": "in",
+      "objects": ["QuestionSet", "QuestionSetImage"]
+    }
+  },
+  "version": "enable",
+  "versionCheckMode": "OFF",
+  "frameworkCategories": [],
+  "orgFrameworkTerms": [],
+  "targetFrameworkTerms": [],
+  "cacheEnabled": false,
+  "schema_restrict_api": true,
+  "headers": [
+    {"label": "Question Type", "key": "qType"},
+    {"label": "Skill Tested", "key": "bloomsLevel"}
+  ],
+  "restrictProps": {
+    "create" : [
+      "children",
+      "status"
+    ],
+    "update" : [
+      "children", "visibility", "code", "status", "mimeType"
+    ]
+  },
+  "external": {
+    "tableName": "questionset_hierarchy",
+    "properties": {
+      "hierarchy": {
+        "type": "string"
+      },
+      "instructions": {
+        "type": "string"
+      },
+      "outcomeDeclaration": {
+        "type": "string"
+      }
+    },
+    "primaryKey": ["identifier"]
+  },
+  "captureAccessibilityInfo": false,
+  "modifyAccessibilityInfoByReviewer": false,
+  "accessibility": [
+      {
+          "need": "Visual challenged",
+          "feature": "Is navigable through keys"
+      },
+      {
+        "need": "Visual challenged",
+        "feature": "Has alt text for all images and keys"
+      },
+      {
+          "need": "Visual challenged",
+          "feature": "Support for text to speech readers"
+      },
+      {
+          "need": "Hearing challenged",
+          "feature": "Has subtitles, in case of video content"
+      },
+      {
+          "need": "Hearing challenged",
+          "feature": "Has visual clues for any audio in the content"
+      }
+  ]
+}

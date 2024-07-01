@@ -3,20 +3,21 @@ import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { TelemetryService, ITelemetryContext } from '@sunbird/telemetry';
 import {
   UtilService, ResourceService, ToasterService, IUserData, IUserProfile,
-  NavigationHelperService, ConfigService, BrowserCacheTtlService
+  NavigationHelperService, ConfigService
 } from '@sunbird/shared';
-import { Component, HostListener, OnInit, ViewChild, Inject, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import {
-  UserService, PermissionService, CoursesService, TenantService, OrgDetailsService, DeviceRegisterService,
-  SessionExpiryInterceptor, FormService
+  UserService, PermissionService, TenantService, OrgDetailsService, DeviceRegisterService,
+  SessionExpiryInterceptor, FormService, ProgramsService
 } from '@sunbird/core';
 import * as _ from 'lodash-es';
 import { ProfileService } from '@sunbird/profile';
-import { Observable, of, throwError, combineLatest, BehaviorSubject, forkJoin } from 'rxjs';
-import { first, filter, mergeMap, tap, map, skipWhile, startWith, takeUntil } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
-import { DOCUMENT } from '@angular/platform-browser';
-import { ShepherdService } from 'angular-shepherd';
+import { Observable, of, throwError, combineLatest, BehaviorSubject } from 'rxjs';
+import { first, filter, mergeMap, tap, map, skipWhile, startWith } from 'rxjs/operators';
+import { DOCUMENT } from '@angular/common';
+import { Location } from '@angular/common';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { CacheService } from '../app/modules/shared/services/cache-service/cache.service';
 
 /**
  * main app component
@@ -34,7 +35,9 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * user to load app after fetching user/org details.
    */
-  public initApp = false;
+  // public initApp = false;
+  public initAppSubject = new BehaviorSubject(false);
+  public initApp = this.initAppSubject.asObservable();
   /**
    * stores organization details for Anonymous user.
    */
@@ -49,6 +52,8 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public showTermsAndCondPopUp = false;
 
+
+  public showEnrollPopup = false;
   /**
    * Used to fetch tenant details and org details for Anonymous user. Possible values
    * 1. url slug param will be slug for Anonymous user
@@ -68,10 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
   /**
    * constructor
    */
-  /**
-  * Variable to show popup to install the app
-  */
-  showAppPopUp = false;
   viewinBrowser = false;
   isOffline: boolean = environment.isOffline;
   sessionExpired = false;
@@ -88,22 +89,31 @@ export class AppComponent implements OnInit, OnDestroy {
   isCustodianOrgUser: any;
   usersProfile: any;
   isLocationConfirmed = true;
+  isContributor = false;
   userFeed: any;
   showUserVerificationPopup = false;
   feedCategory = 'OrgMigrationAction';
   labels: {};
-  constructor(private cacheService: CacheService, private browserCacheTtlService: BrowserCacheTtlService,
+  deviceId: string;
+  userId: string;
+  appId: string;
+  isDesktopDevice = true;
+  devicePopupShown = false;
+  constructor(private cacheService: CacheService,
     public userService: UserService, private navigationHelperService: NavigationHelperService,
     private permissionService: PermissionService, public resourceService: ResourceService,
-    private deviceRegisterService: DeviceRegisterService, private courseService: CoursesService, private tenantService: TenantService,
+    private deviceRegisterService: DeviceRegisterService, private tenantService: TenantService,
     private telemetryService: TelemetryService, public router: Router, private configService: ConfigService,
     private orgDetailsService: OrgDetailsService, private activatedRoute: ActivatedRoute,
     private profileService: ProfileService, private toasterService: ToasterService, public utilService: UtilService,
-    public formService: FormService,
+    public formService: FormService, private programsService: ProgramsService, private location: Location,
     @Inject(DOCUMENT) private _document: any, public sessionExpiryInterceptor: SessionExpiryInterceptor,
-    private shepherdService: ShepherdService) {
+    public deviceDetectorService: DeviceDetectorService) {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
       ? (<HTMLInputElement>document.getElementById('instance')).value : 'sunbird';
+
+    this.isDesktopDevice = this.deviceDetectorService.isDesktop();
+    this.checkIfDeviceNoticeShown();
   }
   /**
    * dispatch telemetry window unload event before browser closes
@@ -114,7 +124,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.telemetryService.syncEvents(false);
   }
   handleLogin() {
-    window.location.reload();
+    window.location.replace('/sessionExpired');
+    this.cacheService.removeAll();
   }
   handleHeaderNFooter() {
     this.router.events
@@ -137,36 +148,45 @@ export class AppComponent implements OnInit, OnDestroy {
     );
     this.handleHeaderNFooter();
     this.resourceService.initialize();
-    combineLatest(queryParams$, this.setSlug(), this.setDeviceId())
-      .pipe(
-        mergeMap(data => {
-          this.navigationHelperService.initialize();
-          this.userService.initialize(this.userService.loggedIn);
-          if (this.userService.loggedIn) {
-            this.permissionService.initialize();
-            this.courseService.initialize();
-            this.userService.startSession();
-            return this.setUserDetails();
-          } else {
-            return this.setOrgDetails();
-          }
-        }))
-      .subscribe(data => {
-        this.tenantService.getTenantInfo(this.slug);
-        this.setPortalTitleLogo();
-        this.telemetryService.initialize(this.getTelemetryContext());
-        this.logCdnStatus();
-        this.setFingerPrintTelemetry();
-        this.checkTncAndFrameWorkSelected();
-        this.initApp = true;
-      }, error => {
-        this.initApp = true;
+
+    let combineData = combineLatest([queryParams$, this.setSlug(), this.setDeviceId()]);
+    this.navigationHelperService.initialize();
+    this.userService.initialize(this.userService.loggedIn);
+    if (this.userService.loggedIn) {
+      this.userId = this.userService.userid;
+      this.permissionService.initialize();
+      // this.courseService.initialize();
+      this.programsService.initialize();
+      this.userService.startSession();
+      this.setUserDetails().subscribe(data =>{
+
+        this.setUserData()
       });
+    } else {
+      this.userId = this.deviceId;
+      this.setOrgDetails().subscribe(data =>{
+
+        this.setUserData();
+        
+      })
+    }
+
 
     this.changeLanguageAttribute();
     if (this.isOffline) {
       document.body.classList.add('sb-offline');
     }
+    this.appId = this.userService.appId;
+  }
+
+  setUserData(){
+    this.setPortalTitleLogo();
+    this.telemetryService.initialize(this.getTelemetryContext());
+    this.logCdnStatus();
+    this.setFingerPrintTelemetry();
+    this.checkTncAndFrameWorkSelected();
+    // this.initApp = true;
+    this.initAppSubject.next(true);
   }
 
   isLocationStatusRequired() {
@@ -180,42 +200,42 @@ export class AppComponent implements OnInit, OnDestroy {
       return;
     }
     this.usersProfile = this.userService.userProfile;
-    const deviceRegister = this.deviceRegisterService.getDeviceProfile();
-    const custodianOrgDetails = this.orgDetailsService.getCustodianOrgDetails();
-    forkJoin([deviceRegister, custodianOrgDetails]).subscribe((res) => {
-      const deviceProfile = res[0];
-      this.deviceProfile = deviceProfile;
-      if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(res[1], 'result.response.value')) {
-        // non state user
-        this.isCustodianOrgUser = true;
-        this.deviceProfile = deviceProfile;
-        if (this.userService.loggedIn) {
-          if (!deviceProfile.userDeclaredLocation ||
-            !(this.usersProfile && this.usersProfile.userLocations && this.usersProfile.userLocations.length >= 1)) {
-            this.isLocationConfirmed = false;
-          }
-        } else {
-          if (!deviceProfile.userDeclaredLocation) {
-            this.isLocationConfirmed = false;
-          }
-        }
-      } else {
-        // state user
-        this.isCustodianOrgUser = false;
-        if (this.userService.loggedIn) {
-          if (!deviceProfile.userDeclaredLocation) {
-            this.isLocationConfirmed = false;
-          }
-        } else {
-          if (!deviceProfile.userDeclaredLocation) {
-            this.isLocationConfirmed = false;
-          }
-        }
-      }
-    }, (err) => {
-      this.isLocationConfirmed = true;
-    });
-    this.getUserFeedData();
+    // const deviceRegister = this.deviceRegisterService.getDeviceProfile();
+    // const custodianOrgDetails = this.orgDetailsService.getCustodianOrgDetails();
+    // forkJoin([deviceRegister, custodianOrgDetails]).subscribe((res) => {
+    //   const deviceProfile = res[0];
+    //   this.deviceProfile = deviceProfile;
+    //   if (_.get(this.userService, 'userProfile.rootOrg.rootOrgId') === _.get(res[1], 'result.response.value')) {
+    //     // non state user
+    //     this.isCustodianOrgUser = true;
+    //     this.deviceProfile = deviceProfile;
+    //     if (this.userService.loggedIn) {
+    //       if (!deviceProfile.userDeclaredLocation ||
+    //         !(this.usersProfile && this.usersProfile.userLocations && this.usersProfile.userLocations.length >= 1)) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     } else {
+    //       if (!deviceProfile.userDeclaredLocation) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     }
+    //   } else {
+    //     // state user
+    //     this.isCustodianOrgUser = false;
+    //     if (this.userService.loggedIn) {
+    //       if (!deviceProfile.userDeclaredLocation) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     } else {
+    //       if (!deviceProfile.userDeclaredLocation) {
+    //         this.isLocationConfirmed = false;
+    //       }
+    //     }
+    //   }
+    // }, (err) => {
+    //   this.isLocationConfirmed = true;
+    // });
+    // this.getUserFeedData();
   }
 
   setFingerPrintTelemetry() {
@@ -246,7 +266,7 @@ export class AppComponent implements OnInit, OnDestroy {
   logExData(type: string, data: object) {
     const event = {
       context: {
-        env: 'app'
+        env: 'portal'
       },
       edata: {
         type: type,
@@ -283,8 +303,27 @@ export class AppComponent implements OnInit, OnDestroy {
       _.has(this.userProfile, 'tncLatestVersion') && this.userProfile.promptTnC === true) {
       this.showTermsAndCondPopUp = true;
     } else {
-      this.checkFrameworkSelected();
+      this.showEnrollPopup = true;
+      // this.checkFrameworkSelected();
     }
+  }
+
+  /**
+   * checks if user has shown the device notice popup
+   */
+  public checkIfDeviceNoticeShown() {
+    const deviceNotice: boolean = this.cacheService.get('deviceNoticeShown');
+
+    if (!this.isDesktopDevice && !deviceNotice) {
+      this.devicePopupShown = false;
+    } else {
+        this.devicePopupShown = true;
+    }
+  }
+
+  onCloseDeviceNoticePopUp() {
+    this.devicePopupShown = true;
+    this.cacheService.set('deviceNoticeShown', true);
   }
 
   /**
@@ -309,7 +348,8 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   public onAcceptTnc() {
     this.showTermsAndCondPopUp = false;
-    this.checkFrameworkSelected();
+    this.showEnrollPopup = true;
+    // this.checkFrameworkSelected();
   }
 
   /**
@@ -323,6 +363,7 @@ export class AppComponent implements OnInit, OnDestroy {
                         (<HTMLInputElement>document.getElementById('deviceId')).value : deviceId;
           }
           (<HTMLInputElement>document.getElementById('deviceId')).value = deviceId;
+          this.deviceId = deviceId;
         this.deviceRegisterService.setDeviceId();
           observer.next(deviceId);
           observer.complete();
@@ -440,26 +481,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
   }
-  /**
-   * updates user framework. After update redirects to library
-   */
-  public updateFrameWork(event) {
-    const req = {
-      framework: event
-    };
-    this.profileService.updateProfile(req).subscribe(res => {
-      this.frameWorkPopUp.modal.deny();
-      this.showFrameWorkPopUp = false;
-      this.checkLocationStatus();
-      this.utilService.toggleAppPopup();
-      this.showAppPopUp = this.utilService.showAppPopUp;
-    }, err => {
-      this.toasterService.warning(this.resourceService.messages.emsg.m0012);
-      this.frameWorkPopUp.modal.deny();
-      this.checkLocationStatus();
-      this.cacheService.set('showFrameWorkPopUp', 'installApp');
-    });
-  }
+  
   viewInBrowser() {
     this.router.navigate(['/resources']);
   }
@@ -492,6 +514,10 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.userFeed) {
       this.showUserVerificationPopup = true;
     }
+  }
+
+  onContributorModalSubmit() {
+    this.isContributor = true;
   }
 
   /** It will fetch user feed data if user is custodian as well as logged in. */

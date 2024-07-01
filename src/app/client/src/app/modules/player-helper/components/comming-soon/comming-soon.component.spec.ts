@@ -1,14 +1,16 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { CommingSoonComponent } from './comming-soon.component';
 import { ResourceService, BrowserCacheTtlService, SharedModule } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import { of as observableOf } from 'rxjs';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { UserService, OrgDetailsService } from '@sunbird/core';
 import { commonMessageApiResp } from './comming-soon.component.spec.data';
+import { RouterTestingModule } from '@angular/router/testing';
+import {APP_BASE_HREF} from '@angular/common';
 
 
 describe('CommingSoonComponent', () => {
@@ -29,20 +31,27 @@ describe('CommingSoonComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SuiModule , HttpClientTestingModule, SharedModule.forRoot()],
+      imports: [RouterTestingModule, SuiModule , HttpClientTestingModule, SharedModule.forRoot()],
       declarations: [CommingSoonComponent],
       providers: [ResourceService, UserService, OrgDetailsService, CacheService, BrowserCacheTtlService,
-      { provide: ResourceService, useValue: resourceBundle }, { provide: Router, useClass: RouterStub }, ],
+      { provide: ResourceService, useValue: resourceBundle },
+      { provide: Router, useClass: RouterStub },
+      { provide: APP_BASE_HREF, useValue: '/'}
+    ],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-  beforeEach(() => {
     fixture = TestBed.createComponent(CommingSoonComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should set custom comming soon message from api response', () => {
     const orgDetailsService = TestBed.get(OrgDetailsService);

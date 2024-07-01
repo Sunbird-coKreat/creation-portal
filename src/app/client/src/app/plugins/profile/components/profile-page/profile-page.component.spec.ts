@@ -1,16 +1,18 @@
 import { TelemetryModule } from '@sunbird/telemetry';
 import { SharedModule, ResourceService } from '@sunbird/shared';
 import { CoreModule, UserService, SearchService, PlayerService , LearnerService, CoursesService} from '@sunbird/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NgInviewModule } from 'angular-inport';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
+
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ProfileService } from '@sunbird/profile';
 import {ProfilePageComponent} from './profile-page.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { SlickModule } from 'ngx-slick';
+
 import { Response } from './profile-page.spec.data';
 import {of as observableOf,  Observable } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
+
 
 describe('ProfilePageComponent', () => {
   let component: ProfilePageComponent;
@@ -54,10 +56,12 @@ describe('ProfilePageComponent', () => {
     },
     languageSelected$: observableOf({})
   };
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule,  SharedModule.forRoot(), CoreModule,
-        TelemetryModule, NgInviewModule, SlickModule],
+        TelemetryModule, RouterTestingModule],
       declarations: [ ProfilePageComponent ],
       providers: [ProfileService, UserService, SearchService,
         { provide: ActivatedRoute, useClass: ActivatedRouteStub },
@@ -66,12 +70,14 @@ describe('ProfilePageComponent', () => {
       schemas: [NO_ERRORS_SCHEMA]
     })
     .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProfilePageComponent);
     component = fixture.componentInstance;
   });
+
+  afterEach(() => {
+    fixture.destroy();
+  });
+
 
   it('should call user service', () => {
     const resourceService = TestBed.get(ResourceService);
@@ -123,4 +129,18 @@ describe('ProfilePageComponent', () => {
     component.getTrainingAttended();
     expect(component.attendedTraining).toBeDefined();
   });
+
+  it('should display root org location if org location is empty', () => {
+    const resourceService = TestBed.get(ResourceService);
+    resourceService.frelmnts = resourceBundle.frmelmnts;
+    resourceService.messages = resourceBundle.messages;
+    const userService = TestBed.get(UserService);
+    userService._userData$.next({ err: null, userProfile: Response.userData });
+    spyOn(component, 'getOrgDetails').and.callThrough();
+    component.ngOnInit();
+    expect(component).toBeTruthy();
+    expect(component.userProfile).toEqual(Response.userData);
+    expect(component.getOrgDetails).toHaveBeenCalled();
+  });
+
 });

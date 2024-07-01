@@ -7,7 +7,7 @@ import { SharedModule, ResourceService } from '@sunbird/shared';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { serverRes } from './public-player.service.spec.data';
-import { UUID } from 'angular2-uuid';
+import { v4 as UUID } from 'uuid';
 
 describe('PublicPlayerService', () => {
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe('PublicPlayerService', () => {
   it('should return player config without courseId', () => {
     const playerService = TestBed.get(PublicPlayerService);
     const userService = TestBed.get(UserService);
-    userService._anonymousSid = UUID.UUID();
+    userService._anonymousSid = UUID();
     userService._userId = 'anonymous';
     userService._channel = 'in.ekstep';
     userService._appId = 'd5773f35773feab';
@@ -52,6 +52,6 @@ describe('PublicPlayerService', () => {
     const resourceService = TestBed.get(ResourceService);
     resourceService.messages = serverRes.resourceServiceMockData.messages;
     playerService.updateDownloadStatus(serverRes.download_list, serverRes.successResult.result.content);
-    expect(serverRes.successResult.result.content.downloadStatus).toBe(resourceService.messages.stmsg.m0138);
+    expect(serverRes.successResult.result.content.downloadStatus).toBe(resourceService.messages.stmsg.m0143);
   });
 });

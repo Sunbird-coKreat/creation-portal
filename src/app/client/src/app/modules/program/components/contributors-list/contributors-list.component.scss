@@ -1,0 +1,9 @@
+.sb-fix-table-head {
+  overflow-y: auto;
+  height: 285px;
+}
+.sb-fix-table-head thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}

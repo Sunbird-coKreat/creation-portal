@@ -1,14 +1,14 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { PageSectionComponent } from './page-section.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { SuiModule } from 'ng2-semantic-ui';
-import { SlickModule } from 'ngx-slick';
+import { SuiModule } from 'ng2-semantic-ui-v9';
+
 import { ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { Response } from './page-section.component.spec.data';
 import { TelemetryModule } from '@sunbird/telemetry';
-import { NgInviewModule } from 'angular-inport';
+
 import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -25,21 +25,24 @@ describe('PageSectionComponent', () => {
   let component: PageSectionComponent;
   let fixture: ComponentFixture<PageSectionComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, SuiModule, SlickModule, NgInviewModule, TelemetryModule.forRoot(), RouterTestingModule],
+      imports: [HttpClientTestingModule, SuiModule, TelemetryModule.forRoot(), RouterTestingModule],
       declarations: [PageSectionComponent],
       providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService,
         { provide: ActivatedRoute, useValue: fakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(PageSectionComponent);
     component = fixture.componentInstance;
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+
   it('should show TEST INPUT for success data', () => {
     component.section = Response.successData;
     fixture.detectChanges();

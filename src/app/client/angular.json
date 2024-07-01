@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -19,37 +22,91 @@
             "assets": [
               "src/assets",
               "src/thirdparty",
-              "src/favicon.png"
+              "src/favicon.png",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-pdf-player-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-collection-editor/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-quml-player-v9/lib/assets/",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@project-sunbird/sunbird-resource-library/lib/assets/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
+              "src/assets/quml-styles/quml-carousel.css",
               "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
               "src/assets/styles/semantic/semantic.min.css",
               "node_modules/font-awesome/css/font-awesome.css",
-              "src/assets/styles/styles.scss"
+              "src/assets/styles/styles.scss",
+              "./node_modules/common-consumption-styles/assets/_styles.scss",
+              "./node_modules/katex/dist/katex.min.css",
+              "src/assets/libs/iziModal/css/iziModal.min.css",
+              "node_modules/video.js/dist/video-js.min.css",
+              "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs.markers.min.css",
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.css"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/assets/styles/"
+                "src/assets/styles/",
+                "./node_modules"
               ]
             },
             "scripts": [
+              "node_modules/@project-sunbird/sunbird-file-upload-library/sunbird-file-upload-library.js",
+              "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/slick-carousel/slick/slick.min.js",
+              "src/assets/libs/iziModal/js/iziModal.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
-            ]
+              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js",
+              "./node_modules/katex/dist/katex.min.js",
+              "node_modules/video.js/dist/video.js",
+              "node_modules/@project-sunbird/sunbird-video-player-v9/lib/assets/videojs-markers.js",
+              "node_modules/videojs-contrib-quality-levels/dist/videojs-contrib-quality-levels.min.js",
+              "node_modules/videojs-http-source-selector/dist/videojs-http-source-selector.min.js",
+              {
+                "inject": false,
+                "input": "src/assets/libs/semantic-ui-tree-picker/semantic-ui-tree-picker.js",
+                "bundleName": "semanticTreePicker"
+              }
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -60,13 +117,16 @@
               ]
             },
             "staging": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "fileReplacements": [
@@ -76,7 +136,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -101,14 +162,15 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "codeCoverage": true,
             "main": "src/test.ts",
             "karmaConfig": "./karma.conf.js",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
+              "node_modules/epubjs/dist/epub.js",
               "src/assets/libs/iziToast/iziToast.min.js",
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/slick-carousel/slick/slick.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/assets/libs/semantic.min.js",
               "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
@@ -134,190 +196,14 @@
               "src/app/modules/offline/**"
             ]
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "src/tsconfig.app.json",
-              "src/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "desktop": {
-      "root": "projects/desktop/",
-      "sourceRoot": "",
-      "projectType": "application",
-      "prefix": "app",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "../dist",
-            "index": "projects/desktop/src/index.html",
-            "main": "projects/desktop/src/main.ts",
-            "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "projects/desktop/tsconfig.app.json",
-            "assets": [
-              { "glob": "**/*", "input": "./src/assets", "output": "./assets" },
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@project-sunbird/common-consumption/assets",
-                "output": "./assets/common-consumption"
-              }
-            ],
-            "styles": [
-              "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
-              "src/assets/styles/semantic/semantic.min.css",
-              "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/shepherd.js/dist/css/shepherd-theme-default.css",
-              "./node_modules/common-consumption-styles/assets/_styles.scss",
-              "src/assets/styles/styles.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets/styles/"
-              ]
-            },
-            "scripts": [
-              "src/assets/libs/iziToast/iziToast.min.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/slick-carousel/slick/slick.min.js",
-              "node_modules/@project-sunbird/telemetry-sdk/index.js",
-              "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "projects/desktop/src/environments/environment.ts",
-                  "with": "projects/desktop/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "desktop:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "desktop:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "desktop:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/desktop/src/test.ts",
-            "polyfills": "projects/desktop/src/polyfills.ts",
-            "tsConfig": "projects/desktop/tsconfig.spec.json",
-            "karmaConfig": "projects/desktop/karma.conf.js",
-            "assets": [
-              { "glob": "**/*", "input": "./src/assets", "output": "./assets" }
-            ],
-            "styles": [
-              "node_modules/datatables.net-dt/css/jquery.dataTables.min.css",
-              "src/assets/styles/semantic/semantic.min.css",
-              "node_modules/font-awesome/css/font-awesome.css",
-              "node_modules/shepherd.js/dist/css/shepherd-theme-default.css",
-              "src/assets/styles/styles.scss"
-            ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets/styles/"
-              ]
-            },
-            "scripts": [
-              "src/assets/libs/iziToast/iziToast.min.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/slick-carousel/slick/slick.min.js",
-              "node_modules/@project-sunbird/telemetry-sdk/index.js",
-              "src/assets/libs/semantic.min.js",
-              "node_modules/jquery.fancytree/dist/jquery.fancytree-all-deps.min.js"
-            ]
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/desktop/tsconfig.app.json",
-              "projects/desktop/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        }
-      }
-    },
-    "desktop-e2e": {
-      "root": "projects/desktop-e2e/",
-      "projectType": "application",
-      "prefix": "",
-      "architect": {
-        "e2e": {
-          "builder": "@angular-devkit/build-angular:protractor",
-          "options": {
-            "protractorConfig": "projects/desktop-e2e/protractor.conf.js",
-            "devServerTarget": "desktop:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "desktop:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": "projects/desktop-e2e/tsconfig.e2e.json",
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
         }
       }
     }
   },
-  "defaultProject": "src",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "scss"
+      "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

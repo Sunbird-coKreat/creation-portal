@@ -1,0 +1,110 @@
+<div class="sb-modal-header">
+  {{resource?.frmelmnts?.lbl?.selectContributorsHeading}}
+</div>
+<div class="sb-modal-content">
+  <div class="d-flex">
+    <div class="sb-search-box medium mb-15 mt-20">
+      <div class="input-div relative">
+        <i class="search icon"></i>
+        <input class="sb-search-input" [(ngModel)]="searchInput" type="text"
+          placeholder="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.search}}" />
+        <i class="close icon" *ngIf="searchInput" (click)="clearSearch()"></i>
+      </div>
+      <button class="sb-btn sb-btn-normal" (click)="getData()"
+        [disabled]="showLoader" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('search',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.lbl?.search}}</button>
+    </div>
+    <div class="w-100 ml-20">
+      <label class="d-block font-weight-bold fs-0-785">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.types}}
+        <i class="pull-right question circle link icon pull-right" suiPopup popupDelay="500" [popupPlacement]="'left'"
+					popupText="{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.filter?.tooltip}}"></i>
+      </label>
+      <sui-select [(ngModel)]="contributorType" class="selecttarget d-block p-10" (selectedOptionChange)="getData(true)"
+        [options]="contributorTypes" #types [isDisabled]="showLoader">
+        <sui-select-option *ngFor="let option of contributorTypes;" [value]="option">
+        </sui-select-option>
+      </sui-select>
+    </div>
+  </div>
+  <div class="sb-fix-table-head" *ngIf="!showLoader && listCnt > 0">
+    <table class="sb-table sb-table-striped sb-table-hover sb-table-sortable sb-table-nowrap">
+      <thead class="sb-table-header sb-table-thead-gray">
+        <tr>
+          <th class="w-10 cursor-pointer sb-sorting" (click)="sortList()">
+            {{resource?.frmelmnts?.lbl?.name}} &nbsp;&nbsp;
+            <span class="d-inline-block">
+              <i class="fa fa-sort-asc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'desc'}"></i>
+              <i class="fa fa-sort-desc" aria-hidden="true" [ngClass]="{'sb-color-gray-100':direction == 'asc'}"></i>
+            </span>
+          </th>
+          <th class="w-5">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.email}}</th>
+          <th class="w-5">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor?.mobile}}</th>
+          <th class="w-5">{{resource?.frmelmnts?.lbl?.selectContributors?.contributor.cls.type}}</th>
+        </tr>
+      </thead>
+      <tbody class="sb-table-body">
+        <tr *ngFor="let contributor of contributorList; let i = index;"
+          [ngClass]="(contributor.isDisabled) ? 'sb-field-disabled':''">
+          <td>
+            <div [ngClass]="(contributor.isDisabled) ? 'disabled field':''" class="sb-checkbox sb-checkbox-primary">
+              <input id="{{contributor.osid}}" [disabled]="contributor.isDisabled" type="checkbox"
+                value="{{contributor.osid}}" [(ngModel)]="contributor.isChecked" (click)="updateSelection(contributor, $event)">
+              <label *ngIf="contributorType == 'Organisation'; else indName" for="{{contributor.osid}}"
+                class="sb__ellipsis sb__ellipsis--three">{{contributor?.name}}</label>
+              <ng-template #indName>
+                <label for="{{contributor.osid}}" class="sb__ellipsis sb__ellipsis--three">{{contributor?.firstName
+                  }}&nbsp;{{contributor?.lastName}}</label>
+              </ng-template>
+            </div>
+            <div class="sb__ellipsis sb__ellipsis--three sb-color-primary font-weight-bold"></div>
+          </td>
+          <td><span>{{contributor?.User?.maskedEmail}}</span></td>
+          <td><span>{{contributor?.User?.maskedPhone}}</span></td>
+          <td><span>{{contributorType}}</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="ui tweleve wide column mb-20" *ngIf="showLoader">
+    <app-loader></app-loader>
+  </div>
+  <div class="mt-12" *ngIf="!showLoader && listCnt == 0">
+    <app-no-result [data]="{ messageText: 'resource.messages.stmsg.m0006'}"> </app-no-result>
+  </div>
+
+  <div *ngIf="!showLoader"
+    class="sb-pagination-container flex-jc-flex-start pt-16">
+    <div class="sb-pagination">
+      <a [ngClass]="{disabled:pager.currentPage===1 }" class="sb-item" (click)="navigateToPage(pager.currentPage - 1)"
+        appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_previous_page', configService.telemetryLabels.eventType.click, undefined,telemetryPageId, {values: [pager.currentPage - 1]})"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">Previous</a>
+      <a *ngIf="contributorType =='Organisation'" [ngClass]="{disabled:orgLastPage}" (click)="navigateToPage(pager.currentPage + 1)"
+        class="sb-item" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
+      <a *ngIf="contributorType =='Individual'" [ngClass]="{disabled:indLastPage}" (click)="navigateToPage(pager.currentPage + 1)"
+        class="sb-item" appTelemetryInteract
+        [telemetryInteractEdata]="getTelemetryInteractEdata('contributor_org_user_list_next_page',configService.telemetryLabels.eventType.click,undefined,telemetryPageId, {values: [pager.currentPage + 1]})"
+        [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+        [telemetryInteractPdata]="telemetryInteractPdata">Next</a>
+      </div>
+  </div>
+
+</div>
+<div class="sb-modal-actions">
+  <button [ngClass]="(isDisabledSaveBtn) ? 'disabled field':''" [disabled]="isDisabledSaveBtn"
+    class="sb-btn sb-btn-normal sb-btn-primary" (click)="save()" appTelemetryInteract
+    [telemetryInteractEdata]="getTelemetryInteractEdata('save',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.submit, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
+    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.save}}</button>
+    <button
+    class="sb-btn sb-btn-normal" (click)="close()" appTelemetryInteract
+    [telemetryInteractEdata]="getTelemetryInteractEdata('close',configService.telemetryLabels.eventType.click, configService.telemetryLabels.eventSubtype.cancel, telemetryPageId, {key:'dialog_id',value:'select_contributors'})"
+    [telemetryInteractObject]="telemetryInteractObject" [telemetryInteractCdata]="telemetryInteractCdata"
+    [telemetryInteractPdata]="telemetryInteractPdata">{{resource?.frmelmnts?.btn?.close}}</button>
+  </div>

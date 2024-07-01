@@ -5,7 +5,7 @@ import { UserService } from './../user/user.service';
 import { ConfigService, ServerResponse, BrowserCacheTtlService } from '@sunbird/shared';
 import { Observable, of } from 'rxjs';
 import { PublicDataService } from './../public-data/public-data.service';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -61,7 +61,7 @@ export class FormService {
       return of(data);
     } else {
       if (formInputParams.framework) {
-        channelOptions.data.request.framework = formInputParams.framework;
+        channelOptions.data.request.framework = Array.isArray(formInputParams.framework) ? formInputParams.framework[0] : formInputParams.framework;
       }
       return this.publicDataService.post(channelOptions).pipe(map(
         (formConfig: ServerResponse) => {

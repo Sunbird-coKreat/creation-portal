@@ -5,7 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { Router } from '@angular/router';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MockResponse } from './exturl-util.service.mock.data';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../shared/services/cache-service/cache.service';
 import { BrowserCacheTtlService } from './../browser-cache-ttl/browser-cache-ttl.service';
 
 class RouterStub {

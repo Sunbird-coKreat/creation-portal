@@ -1,19 +1,18 @@
 import { BehaviorSubject, throwError, of} from 'rxjs';
-import { async, ComponentFixture, TestBed, tick, fakeAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, tick, fakeAsync,  } from '@angular/core/testing';
 import { ResourceService, ToasterService, SharedModule, ConfigService, UtilService, BrowserCacheTtlService
 } from '@sunbird/shared';
 import { PageApiService, OrgDetailsService, CoreModule, UserService} from '@sunbird/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PublicPlayerService } from './../../../../services';
-import { SuiModule } from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui-v9';
 import * as _ from 'lodash-es';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Response } from './explore.component.spec.data';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TelemetryModule } from '@sunbird/telemetry';
 import { ExploreComponent } from './explore.component';
-import { ContentManagerService } from '@sunbird/offline';
-
+import { RouterTestingModule } from '@angular/router/testing';
 describe('ExploreComponent', () => {
   let component: ExploreComponent;
   let fixture: ComponentFixture<ExploreComponent>;
@@ -53,18 +52,17 @@ describe('ExploreComponent', () => {
     };
     public changeQueryParams(queryParams) { this.queryParamsMock.next(queryParams); }
   }
-  beforeEach(async(() => {
+ 
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, SuiModule, TelemetryModule.forRoot()],
+      imports: [SharedModule.forRoot(), CoreModule, HttpClientTestingModule, RouterTestingModule,SuiModule, TelemetryModule.forRoot()],
       declarations: [ExploreComponent],
-      providers: [PublicPlayerService, ContentManagerService, { provide: ResourceService, useValue: resourceBundle },
+      providers: [PublicPlayerService, { provide: ResourceService, useValue: resourceBundle },
       { provide: Router, useClass: RouterStub },
       { provide: ActivatedRoute, useClass: FakeActivatedRoute }],
       schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ExploreComponent);
     component = fixture.componentInstance;
     toasterService = TestBed.get(ToasterService);
@@ -86,6 +84,10 @@ describe('ExploreComponent', () => {
       return throwError({});
     });
   });
+  afterEach(() => {
+    fixture.destroy();
+  });
+  
   it('should emit filter data when getFilters is called with data', () => {
     spyOn(component.dataDrivenFilterEvent, 'emit');
     component.getFilters([{ code: 'board', range: [{index: 0, name: 'NCRT'}, {index: 1, name: 'CBSC'}]}]);
@@ -164,13 +166,6 @@ describe('ExploreComponent', () => {
     expect(playerService.playContent).toHaveBeenCalled();
     expect(component.showLoginModal).toBeFalsy();
   });
-  it('showDownloadLoader to be true' , () => {
-    spyOn(component, 'startDownload');
-    component.isOffline = true;
-    expect(component.showDownloadLoader).toBeFalsy();
-    component.playContent(Response.download_event);
-    expect(component.showDownloadLoader).toBeTruthy();
-  });
 
   it('should call updateDownloadStatus when updateCardData is called' , () => {
     const playerService = TestBed.get(PublicPlayerService);
@@ -178,27 +173,6 @@ describe('ExploreComponent', () => {
     component.pageSections = mockPageSection;
     component.updateCardData(Response.download_list);
     expect(playerService.updateDownloadStatus).toHaveBeenCalled();
-  });
-
-  it('should call content manager service on when startDownload()', () => {
-    const contentManagerService = TestBed.get(ContentManagerService);
-    const resourceService = TestBed.get(ResourceService);
-    resourceService.messages = resourceBundle.messages;
-    spyOn(contentManagerService, 'startDownload').and.returnValue(of(Response.download_success));
-    component.startDownload(Response.result.result.content);
-    expect(contentManagerService.startDownload).toHaveBeenCalled();
-  });
-
-  it('startDownload should fail', () => {
-    const contentManagerService = TestBed.get(ContentManagerService);
-    const resourceService = TestBed.get(ResourceService);
-    toasterService = TestBed.get(ToasterService);
-    resourceService.messages = resourceBundle.messages;
-    component.pageSections = mockPageSection;
-    spyOn(contentManagerService, 'startDownload').and.returnValue(throwError(Response.download_error));
-    component.startDownload(Response.result.result.content);
-    expect(contentManagerService.startDownload).toHaveBeenCalled();
-    expect(component.showDownloadLoader).toBeFalsy();
   });
 
 

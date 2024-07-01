@@ -1,28 +1,28 @@
 
 import {of as observableOf,  Observable } from 'rxjs';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed,  } from '@angular/core/testing';
 import { UserService, CoreModule, BadgesService } from '@sunbird/core';
 import { ProfileBadgeComponent } from './profile-badge.component';
 import { mockRes } from './profile-badge.component.spec.data';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { SharedModule } from '@sunbird/shared';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ProfileBadgeComponent', () => {
   let component: ProfileBadgeComponent;
   let fixture: ComponentFixture<ProfileBadgeComponent>;
 
-  beforeEach(async(() => {
+
+
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [SharedModule.forRoot(), HttpClientTestingModule, CoreModule],
+      imports: [SharedModule.forRoot(), HttpClientTestingModule, CoreModule, RouterTestingModule],
       declarations: [ProfileBadgeComponent],
       providers: [UserService, BadgesService],
       schemas: [NO_ERRORS_SCHEMA]
     })
       .compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProfileBadgeComponent);
     component = fixture.componentInstance;
   });

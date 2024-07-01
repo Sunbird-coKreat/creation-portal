@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, FormControl, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, UntypedFormGroup, UntypedFormControl, AbstractControl } from '@angular/forms';
 import { Subject, Subscription } from 'rxjs';
-import { ResourceService, ServerResponse, ToasterService, NavigationHelperService } from '@sunbird/shared';
+import {ResourceService, ServerResponse, ToasterService, NavigationHelperService, UtilService, RecaptchaService} from '@sunbird/shared';
 import { SignupService } from './../../services';
 import { TenantService } from '@sunbird/core';
 import { TelemetryService } from '@sunbird/telemetry';
@@ -9,7 +9,7 @@ import * as _ from 'lodash-es';
 import { IStartEventInput, IImpressionEventInput, IInteractEventEdata } from '@sunbird/telemetry';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ActivatedRoute } from '@angular/router';
-import { CacheService } from 'ng2-cache-service';
+import { CacheService } from '../../../../../shared/services/cache-service/cache.service';
 
 @Component({
   selector: 'app-signup',
@@ -18,8 +18,8 @@ import { CacheService } from 'ng2-cache-service';
 })
 export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   public unsubscribe = new Subject<void>();
-  signUpForm: FormGroup;
-  sbFormBuilder: FormBuilder;
+  signUpForm: UntypedFormGroup;
+  sbFormBuilder: UntypedFormBuilder;
   showContact = 'phone';
   disableSubmitBtn = true;
   showPassword = false;
@@ -36,21 +36,45 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   submitInteractEdata: IInteractEventEdata;
   telemetryCdata: Array<{}>;
   instance: string;
+  tncLatestVersion: string;
+  termsAndConditionLink: string;
+  passwordError: string;
+  showTncPopup = false;
 
-  constructor(formBuilder: FormBuilder, public resourceService: ResourceService,
+  constructor(formBuilder: UntypedFormBuilder, public resourceService: ResourceService,
     public signupService: SignupService, public toasterService: ToasterService, private cacheService: CacheService,
     public tenantService: TenantService, public deviceDetectorService: DeviceDetectorService,
     public activatedRoute: ActivatedRoute, public telemetryService: TelemetryService,
-    public navigationhelperService: NavigationHelperService) {
+    public navigationhelperService: NavigationHelperService, public utilService: UtilService,
+    public recaptchaService: RecaptchaService) {
     this.sbFormBuilder = formBuilder;
   }
 
   ngOnInit() {
-    this.instance = _.upperCase(this.resourceService.instance);
+    this.signupService.getTncConfig().subscribe((data: ServerResponse) => {
+      this.telemetryLogEvents('fetch-terms-condition', true);
+        const response = _.get(data, 'result.response.value');
+        if (response) {
+          try {
+            const tncConfig = this.utilService.parseJson(response);
+            this.tncLatestVersion = _.get(tncConfig, 'latestVersion') || {};
+            this.termsAndConditionLink = tncConfig[this.tncLatestVersion].url;
+          } catch (e) {
+            this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
+          }
+        }
+      }, (err) => {
+      this.telemetryLogEvents('fetch-terms-condition', false);
+        this.toasterService.error(_.get(this.resourceService, 'messages.fmsg.m0004'));
+      }
+    );
+    this.instance = _.upperCase('DIKSHA' || 'SUNBIRD');
+    this.logo = '/tenant/ntp/appLogo.png';
+    this.tenantName = 'dock';
     this.tenantDataSubscription = this.tenantService.tenantData$.subscribe(
       data => {
         if (data && !data.err) {
-          this.logo = data.tenantData.logo;
+          this.logo = data.tenantData.appLogo;
           this.tenantName = data.tenantData.titleName;
         }
       }
@@ -116,13 +140,14 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
 
   initializeFormFields() {
     this.signUpForm = this.sbFormBuilder.group({
-      name: new FormControl(null, [Validators.required]),
-      password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      confirmPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      phone: new FormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
-      email: new FormControl(null, [Validators.email]),
-      contactType: new FormControl('phone'),
-      uniqueContact: new FormControl(null, [Validators.required])
+      name: new UntypedFormControl(null, [Validators.required]),
+      password: new UntypedFormControl(null, [Validators.required, Validators.minLength(8)]),
+      confirmPassword: new UntypedFormControl(null, [Validators.required, Validators.minLength(8)]),
+      phone: new UntypedFormControl(null, [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]),
+      // email: new FormControl(null, [Validators.email]),
+      contactType: new UntypedFormControl('phone'),
+      uniqueContact: new UntypedFormControl(null, [Validators.required]),
+      tncAccepted: new UntypedFormControl(false, [Validators.requiredTrue])
     }, {
       validator: (formControl) => {
         const passCtrl = formControl.controls.password;
@@ -143,7 +168,11 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     this.onPhoneChange();
   }
 
-  onPasswordChange(passCtrl: FormControl): void {
+  onPasswordChange(passCtrl: UntypedFormControl): void {
+    let emailVal;
+    if (this.showContact === 'email') {
+      emailVal = this.signUpForm.get('email').value;
+    }
     const val = _.get(passCtrl, 'value');
     const lwcsRegex = new RegExp('^(?=.*[a-z])');
     const upcsRegex = new RegExp('^(?=.*[A-Z])');
@@ -151,32 +180,37 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     const numRegex = new RegExp('^(?=.*[0-9])');
     const specRegex = new RegExp('^[^<>{}\'\"/|;:.\ ,~!?@#$%^=&*\\]\\\\()\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©_+]*$');
     if (!charRegex.test(val) || !lwcsRegex.test(val) || !upcsRegex.test(val) || !numRegex.test(val) || specRegex.test(val)) {
-      const passwordError = _.get(this.resourceService, 'frmelmnts.lbl.passwd');
-      passCtrl.setErrors({ passwordError });
+      this.passwordError = _.get(this.resourceService, 'frmelmnts.lbl.passwd');
+      passCtrl.setErrors({ passwordError: this.passwordError });
+    } else if (emailVal === val) {
+      this.passwordError = _.get(this.resourceService, 'frmelmnts.lbl.passwderr');
+      passCtrl.setErrors({ passwordError: this.passwordError });
     } else {
+      this.passwordError = _.get(this.resourceService, 'frmelmnts.lbl.passwd');
       passCtrl.setErrors(null);
     }
   }
 
   onContactTypeValueChanges(): void {
-    const emailControl = this.signUpForm.get('email');
+    // const emailControl = this.signUpForm.get('email');
     const phoneControl = this.signUpForm.get('phone');
     this.signUpForm.get('contactType').valueChanges.subscribe(
       (mode: string) => {
         this.setInteractEventData();
         this.signUpForm.controls['uniqueContact'].setValue('');
-        if (mode === 'email') {
-          this.signUpForm.controls['phone'].setValue('');
-          emailControl.setValidators([Validators.required, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/)]);
-          phoneControl.clearValidators();
-          this.onEmailChange();
-        } else if (mode === 'phone') {
-          this.signUpForm.controls['email'].setValue('');
-          emailControl.clearValidators();
+        // if (mode === 'email') {
+        //   this.signUpForm.controls['phone'].setValue('');
+        //   emailControl.setValidators([Validators.required, Validators.pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[a-z]{2,4}$/)]);
+        //   phoneControl.clearValidators();
+        //   this.onEmailChange();
+        // } else
+        if (mode === 'phone') {
+          // this.signUpForm.controls['email'].setValue('');
+          // emailControl.clearValidators();
           phoneControl.setValidators([Validators.required, Validators.pattern('^\\d{10}$')]);
           this.onPhoneChange();
         }
-        emailControl.updateValueAndValidity();
+        // emailControl.updateValueAndValidity();
         phoneControl.updateValueAndValidity();
       });
   }
@@ -252,12 +286,21 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   resolved(captchaResponse: string) {
-    const newResponse = captchaResponse
-      ? `${captchaResponse.substr(0, 7)}...${captchaResponse.substr(-7)}`
-      : captchaResponse;
-    this.captchaResponse += `${JSON.stringify(newResponse)}\n`;
-    if (this.captchaResponse) {
-      this.onSubmitSignUpForm();
+    if (captchaResponse) {
+      this.recaptchaService.validateRecaptcha(captchaResponse).subscribe((data: any) => {
+        if (_.get(data, 'result.success')) {
+          this.telemetryLogEvents('validate-recaptcha', true);
+          this.onSubmitSignUpForm();
+        }
+      }, (error) => {
+        const telemetryErrorData = {
+          env: 'self-signup', errorMessage: _.get(error, 'error.params.errmsg') || '',
+          errorType: 'SYSTEM', pageid: 'signup',
+          stackTrace: JSON.stringify((error && error.error) || '')
+        };
+        this.telemetryService.generateErrorEvent(telemetryErrorData);
+        this.resetGoogleCaptcha();
+      });
     }
   }
 
@@ -315,9 +358,6 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     this.unsubscribe.next();
     this.unsubscribe.complete();
-    if (this.resourceDataSubscription) {
-      this.resourceDataSubscription.unsubscribe();
-    }
   }
 
   setInteractEventData() {
@@ -329,5 +369,49 @@ export class SignupComponent implements OnInit, OnDestroy, AfterViewInit {
         'contactType': this.signUpForm.controls.contactType.value.toString()
       }
     };
+  }
+
+  generateTelemetry(e) {
+    const selectedType = e.target.checked ? 'selected' : 'unselected';
+    const interactData = {
+      context: {
+        env: 'self-signup',
+        cdata: [
+          {id: 'user:tnc:accept', type: 'Feature'},
+          {id: 'SB-16663', type: 'Task'}
+        ]
+      },
+      edata: {
+        id: 'user:tnc:accept',
+        type: 'click',
+        subtype: selectedType,
+        pageid: 'self-signup'
+      }
+    };
+    this.telemetryService.interact(interactData);
+  }
+
+  telemetryLogEvents(api: any, status: boolean) {
+    let level = 'ERROR';
+    let msg = api + ' failed';
+    if (status) {
+      level = 'SUCCESS';
+      msg = api + ' success';
+    }
+    const event = {
+      context: {
+        env: 'self-signup'
+      },
+      edata: {
+        type: api,
+        level: level,
+        message: msg
+      }
+    };
+    this.telemetryService.log(event);
+  }
+
+  showAndHidePopup(mode: boolean) {
+    this.showTncPopup = mode;
   }
 }

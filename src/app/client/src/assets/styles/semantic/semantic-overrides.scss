@@ -83,11 +83,16 @@ input[type=number]::-webkit-outer-spin-button {
   background: rgba(255, 255, 255, 1);
 }
 
-
 @include respond-below(sm) {
   .ui.container {
     margin: 0 8px !important;
     padding-left: 16px !important;
     padding-right: 16px !important;
+  }
+  .ui.steps:not(.unstackable){
+    flex-direction: row;
+  }
+  .ui.steps:not(.unstackable) .step{
+    width: 50% !important;
   }
 }

@@ -2,7 +2,7 @@ const _ = require('lodash');
 const envHelper = require('./environmentVariablesHelper.js');
 const {getUserIdFromToken} = require('../helpers/jwtHelper');
 const request = require('request-promise');
-const authorizationToken = envHelper.PORTAL_API_AUTH_TOKEN;
+const authorizationToken = envHelper.SUNBIRD_PORTAL_API_AUTH_TOKEN;
 
 const initiateAccountMerge = async (initiatorAccountDetails, fromAccountUserToken) => {
   var fromAccountId = getUserIdFromToken(fromAccountUserToken);

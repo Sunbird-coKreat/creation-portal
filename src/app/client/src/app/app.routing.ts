@@ -3,46 +3,28 @@ import { ErrorPageComponent, AuthGuard } from '@sunbird/core';
 import { RouterModule, Routes } from '@angular/router';
 const appRoutes: Routes = [
   {
-    path: 'learn', loadChildren: 'app/modules/learn/learn.module#LearnModule'
+    path: 'sourcing', loadChildren: () => import('./modules/program/program.module').then(m => m.ProgramModule)
   },
   {
-    path: 'resources', loadChildren: 'app/modules/resource/resource.module#ResourceModule'
+    path: 'contribute', loadChildren: () => import('./modules/contribute/contribute.module').then(m => m.ContributeModule)
   },
   {
-    path: 'search', loadChildren: 'app/modules/search/search.module#SearchModule'
+    path: 'dashBoard', loadChildren: () => import('./modules/dashboard/dashboard.module').then(m => m.DashboardModule)
   },
   {
-    path: 'workspace', loadChildren: 'app/modules/workspace/workspace.module#WorkspaceModule'
-  },
-  // {
-  //   path: 'home', loadChildren: 'app/modules/home/home.module#HomeModule'
-  // },
-  {
-    path: 'announcement', loadChildren: 'app/modules/announcement/announcement.module#AnnouncementModule'
+    path: 'profile', loadChildren: () => import('./plugins/profile/profile.module').then(m => m.ProfileModule)
   },
   {
-    path: 'org', loadChildren: 'app/modules/org-management/org-management.module#OrgManagementModule'
+    path: 'recover', loadChildren: () => import('./modules/recover-account/recover-account.module').then(m => m.RecoverAccountModule)
   },
   {
-    path: 'dashBoard', loadChildren: 'app/modules/dashboard/dashboard.module#DashboardModule'
+    path: 'contribution-portal', loadChildren: () => import('./modules/public/public.module').then(m => m.PublicModule)
   },
   {
-    path: 'profile', loadChildren: 'app/plugins/profile/profile.module#ProfileModule'
+    path: 'contribute/join/:orgId', loadChildren: () => import('./modules/contribute/contribute.module').then(m => m.ContributeModule)
   },
   {
-    path: 'certs', loadChildren: 'app/modules/certificate/certificate.module#CertificateModule'
-  },
-  {
-    path: 'recover', loadChildren: 'app/modules/recover-account/recover-account.module#RecoverAccountModule'
-  },
-  {
-    path: ':slug/get', loadChildren: 'app/modules/dial-code-search/dial-code-search.module#DialCodeSearchModule'
-  },
-  {
-    path: 'get', loadChildren: 'app/modules/dial-code-search/dial-code-search.module#DialCodeSearchModule'
-  },
-  {
-    path: '', loadChildren: 'app/modules/public/public.module#PublicModule'
+    path: '', loadChildren: () => import('./modules/public/public.module').then(m => m.PublicModule)
   },
   {
     path: 'error', component: ErrorPageComponent
@@ -53,7 +35,7 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes)],
+  imports: [RouterModule.forRoot(appRoutes, { relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
