@@ -11,7 +11,6 @@ const getUserIdFromToken = (accessToken) => {
     var splittedSub = jwtPayload.sub.split(':');
     return splittedSub[splittedSub.length - 1]
   } else {
-    // invalid JWT token
     return null;
   }
 };
