@@ -2,7 +2,7 @@
 
 ## Pre-requisites
 
-Before you install creation portal on your laptop, examine your environment and gather data to ensure an optimal installation experience. Review the [details](https://app.gitbook.com/o/-Mi9QwJlsfb7xuxTBc0J/s/SjljYc0PyD64vGgDlMl4/use/system-requirements) to ensure that the environment has the necessary resources and compliant target systems to successfully install and run creation portal.
+Before you install creation portal on your laptop, examine your environment and gather data to ensure an optimal installation experience. Review the [details](https://sunbird.gitbook.io/sunbird-cokreat-1/v/release-7.0.0-draft-1/use/developer-guide/reference-cokreat-web-app/reference-cokreat-web-app/installation-guide/ubuntu-or-mac-installation) to ensure that the environment has the necessary resources and compliant target systems to successfully install and run creation portal.
 
 ## Project Setup
 
