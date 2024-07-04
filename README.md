@@ -58,6 +58,7 @@ Before you install creation portal on your laptop, examine your environment and 
 5. Edit the Application Configuration
 
     > Open `<PROJECT-FOLDER>/src/app/helpers/environmentVariablesHelper.js` in any available text editor and update the contents of the file so that it contains exactly the following values
+    > Note: Environment variables are dependent on your infra and may change please contact the infra person for updated environment variables
 
     ```console
       module.exports = {
