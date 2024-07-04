@@ -84,7 +84,7 @@ Before you install creation portal on your laptop, examine your environment and 
 1. Creation portal or web application
 
     1. Run the following command in the **{PROJECT-FOLDER}/src/app/client** folder
-    2. $ nodemon
+    2. ng build --watch=true
     3. Wait for the build process to complete before proceeding to the next step. The following messge should appear on the screeen
       ```console
         [nodemon] clean exit - waiting for changes before restart
@@ -93,7 +93,7 @@ Before you install creation portal on your laptop, examine your environment and 
 2. Services stack or the backend API interface
 
     1. Run the following command in the **{PROJECT-FOLDER}/src/app** folder
-    2. $ node server.js
+    2. npm run server
 
 3. The local HTTP server is launched at `http://localhost:3000`
 
